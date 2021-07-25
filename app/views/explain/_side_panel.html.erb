@@ -11,7 +11,7 @@
   }
 
   #side_panel_header {
-    padding: 10px;
+    padding: 5px;
     cursor: move;
     z-index: 10;
     background-color: #2196F3;
@@ -21,7 +21,7 @@
 <% end %>
 
 <div id="side_panel" style="display:none">
-  <div id="side_panel_header">Click here to move</div>
+  <div id="side_panel_header">Side Panel</div>
   <% sectionIds.each do |sectionId|  %>
     <div id="<%=sectionId%>_section" style="display:none">
       <%= render sectionId %>
@@ -31,10 +31,9 @@
 </div>
 
 <script>
-  //Make the DIV element draggagle:
-  dragElement(document.getElementById("side_panel"));
+  makeDraggable(document.getElementById("side_panel"));
   
-  function dragElement(elmnt) {
+  function makeDraggable(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "_header")) {
       /* if present, the header is where you move the DIV from:*/

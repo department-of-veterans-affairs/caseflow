@@ -44,13 +44,13 @@
     </tbody>
   </table>
 
-  <div id="section_checkboxes" style="display: flex; flex-direction: column; background-color: lightcyan;">
+  <div id="section_checkboxes" style="z-index: 8; display: flex; flex-direction: column; background-color: lightcyan;">
     <% sections1 = %w[task_tree intake_tree hearing_tree] %>
     <% sections2 = %w[narrative_table] %>
     <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
-    <% sideSections = %w[details_section] %>
+    <% sideSections = %w[details_section legend_section] %>
 
-    <div class="section_checkbox_row">
+    <div class="section_checkbox_row" id="main_panel_section_btns">
       <% sections1.each do |sectionId| %>
         <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
                onclick="toggleElement(this, 'main_panel')">
@@ -64,15 +64,28 @@
     </div>
     <div class="section_checkbox_row">
       <input id="side_panel_chkbox" value="side_panel" type="checkbox"
-              onclick="toggleElement(this)">
-      <label for="side_panel_chkbox">Side Panel</label>
-      <% sideSections.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
-               onclick="toggleElement(this, 'side_panel')">
-        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
-      <% end %>
+             onclick="toggleSidePanel(this, event)">
+      <label for="side_panel_chkbox">Side Panel:</label>
+
+      <div id="side_panel_section_btns">
+        <% sideSections.each do |sectionId| %>
+          <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+                 onclick="toggleElement(this, 'side_panel')">
+          <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+        <% end %>
+      </div>
+
+      <div id="menubar_options" visibility="hidden">
+        <input id="autoshow_chkbox" type="checkbox" checked>
+        <label for="autoshow_chkbox">Show on scrollup</label>
+
+        <button id="hide_menubar_btn" style="padding: 5px; font-size: 0.9em;"
+                onclick="temporarilyHideStickyMenu()">Hide</button>
+      </div>
     </div>
   </div>
+
+  <%= render "menubar", menubarId: "section_checkboxes", contentId: "main_panel", autoshowId: "autoshow_chkbox" %>
 
   <div id="main_panel">
     <% (sections1 + sections2).each do |sectionId|  %>
@@ -86,6 +99,7 @@
   <%= render "side_panel", sectionIds: sideSections %>
 
   <script type="text/javascript">
+    const mainSectionBtns = document.querySelectorAll('#main_panel_section_btns input')
     function toggleElement(chkbox, panelId) {
       const section = document.getElementById(chkbox.value);
 
@@ -98,7 +112,46 @@
         vis = "block"
       }
       section.style.display = vis;
+
+      if(chkbox.checked){
+        // If more than 1 section visible, scroll to the newly visible section
+        const mainSectionCheckedBtns = Array.prototype.filter.call(mainSectionBtns, (btn) => btn.checked);
+        mainSectionCheckedBtns.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
+      }
       document.getElementById("details_content").innerHTML = " Checkbox: "+chkbox.value;
+    }
+
+    const sidePanelSectionBtns = document.querySelectorAll('#side_panel_section_btns input')
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    function toggleSidePanel(chkbox, event) {
+      const panel = document.getElementById(chkbox.value);
+      // console.error(chkbox, event);
+      toggleElement(chkbox);
+      panel.style.top || (panel.style.top = (event.clientY+10)+"px");
+      // panel.style.left || (panel.style.left = (event.clientX+10)+"px");
+      panel.style.left || (panel.style.left = Math.min(
+                             window.innerWidth - panel.offsetWidth - 140,
+                             window.innerWidth/4 * 3
+                           )+"px");
+
+      // disable btns if sidepanel is not visible
+      sidePanelSectionBtns.forEach((btn) => btn.disabled = !chkbox.checked);
+    }
+
+    function showDetailsSection(){
+      const chkbox = document.getElementById("details_section_section_chkbox");
+      if(!chkbox.checked){
+        chkbox.checked = true;
+        chkbox.onclick();
+      }
+    }
+
+    // Set initial state
+    showDetailsSection();
+    sidePanelSectionBtns.forEach((btn) => btn.disabled = true);
+
+    window.onresize = ()=>{
+      // To-do: Ensure side panel remains visible?
     }
   </script>
 </div>

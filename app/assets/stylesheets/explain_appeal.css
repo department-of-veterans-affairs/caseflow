@@ -48,6 +48,21 @@ li ul {
   border: 1px solid darkgray;
 }
 
+#side_panel_section_btns {
+  display: flex;
+  font-size: 0.9em;
+}
+
+#menubar_options {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  justify-content: flex-start;
+  font-size: 0.9em;
+  background-color: #baf1f1;
+  visibility: hidden; /* made visible when menu is in sticky mode */
+}
+
 summary {
   display: list-item;
 }

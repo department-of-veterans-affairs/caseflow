@@ -59,6 +59,10 @@
   background-color: var(--background-distribution-phase-color);
   border-color: var(--background-distribution-phase-color);
 }
+#timelineColors td.decision_phase {
+  background-color: var(--background-decision-phase-color);
+  border-color: var(--background-decision-phase-color);
+}
 #timelineColors td.dispatch_phase {
   background-color: var(--background-dispatch-phase-color);
   border-color: var(--background-dispatch-phase-color);
