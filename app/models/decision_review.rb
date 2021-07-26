@@ -409,7 +409,11 @@ class DecisionReview < CaseflowRecord
     veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
-  rescue PromulgatedRating::BackfilledRatingError, PromulgatedRating::LockedRatingError => error
+  rescue PromulgatedRating::BackfilledRatingError
+    # Ignore PromulgatedRating::BackfilledRatingErrors since they are a regular occurrence and we don't need to take
+    # any action when we see them.
+    []
+  rescue PromulgatedRating::LockedRatingError => error
     Raven.capture_exception(error)
     []
   end
