@@ -55,6 +55,7 @@ const itemDecoration = {
   }
 };
 
+// TODO: Move this into common location?
 const formatJson = (obj) => {
   return JSON.stringify(obj, null, ' ').
     replace('{\n', '').
