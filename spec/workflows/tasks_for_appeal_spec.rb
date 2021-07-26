@@ -22,6 +22,26 @@ describe TasksForAppeal do
         ihps = tasks.select { |t| t.is_a?(InformalHearingPresentationTask) }
         expect(ihps).not_to be_empty
       end
+
+      context "with HearingTask" do
+        let(:appeal) { create(:appeal, :hearing_docket) }
+
+        context "hearing has not been held" do
+          let!(:hearing) { create(:hearing, :with_tasks, :cancelled, appeal: appeal) }
+
+          it "does not include the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
+          end
+        end
+
+        context "hearing has been held" do
+          let!(:hearing) { create(:hearing, :with_tasks, :held, appeal: appeal) }
+          
+          it "includes the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to_not be_nil
+          end
+        end
+      end
     end
 
     context "for a legacy appeal with a travel board hearing request" do
