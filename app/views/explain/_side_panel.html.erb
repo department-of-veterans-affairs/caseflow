@@ -11,11 +11,19 @@
   }
 
   #side_panel_header {
+    display: flex;
+    justify-content: flex-start;
     padding: 5px;
     cursor: move;
     z-index: 10;
     background-color: #2196F3;
     color: #fff;
+  }
+  #close_side_panel_btn {
+    position: absolute;
+    right: 4px;
+    margin: 0px;
+    font-size: 0.8em;
   }
 
   #side_panel_checkbox_row {
@@ -31,7 +39,10 @@
 <% end %>
 
 <div id="side_panel" style="display:none">
-  <div id="side_panel_header">Floating Panel</div>
+  <div id="side_panel_header">
+    Floating Panel
+    <button id="close_side_panel_btn" class="menuBtn" onclick="closeSidePanel()">X</button>
+  </div>
 
   <% sectionIds = %w[details_pane legend_pane] %>
   <div id="side_panel_checkbox_row">
@@ -53,6 +64,14 @@
 </div>
 
 <script type="text/javascript">
+  function closeSidePanel() {
+    const chkbox = document.getElementById("side_panel_chkbox");
+    if(chkbox.checked){
+      chkbox.checked = false;
+      chkbox.onclick();
+    }
+  }
+  
   function showDetailsPane(){
     const chkbox = document.getElementById("details_pane_chkbox");
     if(!chkbox.checked){
