@@ -7,9 +7,7 @@
     You have a Client scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
   </p>
 
-  <h3>
-    <%= formatted_appellant_name(@virtual_hearing.hearing.appeal) %>
-  </h3>
+  <h3><%= @hearing.appeal.appellant_or_veteran_name %></h3>
   <p>
     <a href="<%= caseflow_url(@virtual_hearing.hearing.appeal) %>">
       View the case details

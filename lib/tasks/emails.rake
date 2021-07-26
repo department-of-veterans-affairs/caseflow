@@ -13,20 +13,20 @@ namespace :emails do
       )
 
       recipients = [
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Appellant", # Can't create a fake appellant without saving to the DB
-          email: hearing.virtual_hearing.appellant_email,
-          title: MailRecipient::RECIPIENT_TITLES[:appellant]
+          hearing_email_recipient: hearing.appellant_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          email: hearing.virtual_hearing.judge_email,
-          title: MailRecipient::RECIPIENT_TITLES[:judge]
+          hearing_email_recipient: hearing.judge_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          email: hearing.virtual_hearing.representative_email,
-          title: MailRecipient::RECIPIENT_TITLES[:representative]
+          hearing_email_recipient: hearing.representative_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
 
@@ -39,16 +39,18 @@ namespace :emails do
         ].each do |func|
           email = HearingMailer.send(
             func,
-            mail_recipient: recipient,
+            email_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
           email_body = email.html_part&.decoded || email.body
+          email_subject = email.subject
 
           next if email_body.blank?
 
           output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
 
-          File.write(output_file, email_body, mode: "w")
+          File.write(output_file, email_subject, mode: "w")
+          File.write(output_file, email_body, mode: "a")
         end
       end
     end
@@ -91,21 +93,39 @@ namespace :emails do
         )
       end
 
+      build(
+        :hearing_email_recipient,
+        :appellant_hearing_email_recipient,
+        hearing: hearing
+      )
+
+      build(
+        :hearing_email_recipient,
+        :representative_hearing_email_recipient,
+        hearing: hearing
+      )
+
+      build(
+        :hearing_email_recipient,
+        :judge_hearing_email_recipient,
+        hearing: hearing
+      )
+
       recipients = [
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Appellant Full Name", # Can't create a fake appellant without saving to the DB
-          email: "appellant@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:appellant]
+          hearing_email_recipient: hearing.appellant_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          email: "judge@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:judge]
+          hearing_email_recipient: hearing.judge_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          email: "poa@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:representative]
+          hearing_email_recipient: hearing.representative_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
 
@@ -113,16 +133,18 @@ namespace :emails do
         email = HearingMailer.send(
           :reminder,
           hearing: (args.request_type != :virtual) ? hearing : nil,
-          mail_recipient: recipient,
+          email_recipient: recipient,
           virtual_hearing: hearing.virtual_hearing
         )
         email_body = email.html_part&.decoded || email.body
+        email_subject = email.subject
 
         next if email_body.blank?
 
         output_file = Rails.root.join("tmp", "reminder_#{recipient.title}.html")
 
-        File.write(output_file, email_body, mode: "w")
+        File.write(output_file, email_subject, mode: "w")
+        File.write(output_file, email_body, mode: "a")
       end
     end
   end

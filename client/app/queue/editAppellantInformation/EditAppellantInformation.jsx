@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,8 @@ import { sprintf } from 'sprintf-js';
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
-import COPY, { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import Alert from '../../components/Alert';
+import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
 import { resetSuccessMessages,
@@ -31,8 +32,10 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const [loading, setLoading] = useState(false);
+  const [editFailure, setEditFailure] = useState(false);
 
   const {
+    formState: { isValid },
     handleSubmit,
   } = methods;
 
@@ -57,19 +60,31 @@ const EditAppellantInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    // CASEFLOW-1925
+    // eslint-disable-next-line no-unused-vars
     (error) => {
       // eslint-disable-next-line no-console
-      console.log(error);
+      setEditFailure(true);
+      setLoading(false);
     });
   };
 
   const editAppellantHeader = 'Edit Appellant Information';
-  const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
+  const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
+        {editFailure === true &&
+          <Alert
+            type="error"
+            title={COPY.EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
+            message={
+              <Fragment>Please try again and if this error persists,
+                <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>
+              </Fragment>
+            }
+          />
+        }
         <EditClaimantForm
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
@@ -81,6 +96,7 @@ const EditAppellantInformation = ({ appealId }) => {
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
+        disabled={!isValid}
         name="Save"
       >
         Save
