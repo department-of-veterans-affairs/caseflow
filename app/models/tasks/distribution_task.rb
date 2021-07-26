@@ -27,6 +27,8 @@ class DistributionTask < Task
       if FeatureToggle.enabled?(:scm_move_with_blocking_tasks, user: user) && !appeal.ready_for_distribution?
         return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
       end
+    elsif FeatureToggle.enabled?(:docket_switch, user: user)
+      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
     end
 
     []
