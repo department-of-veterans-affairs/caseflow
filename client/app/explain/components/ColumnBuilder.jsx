@@ -158,7 +158,7 @@ export const detailsColumn = (column, handleModalOpen) => {
       const count = eventProperties ? Object.keys(eventProperties).length : 0;
 
       if (count > 0) {
-        const formattedData = <pre id="formatedData" className="event_detail">
+        const formattedData = <pre id={`formattedEventData_${rowData.object_id}`} className="event_detail">
           { formatJson(eventProperties) }
         </pre>;
 

@@ -62,6 +62,7 @@ summary {
   display: list-item;
 }
 
+#details_content .event_detail,
 #details_content_for_react .event_detail {
   max-width: 400px;
   margin: 8px;
