@@ -1,23 +1,21 @@
-<% content_for :head do %>
-  <style>
-    .sticky {
-      position: fixed;
-      transition: top 0.5s;
-    }
+<style>
+  .sticky {
+    position: fixed;
+    transition: top 0.5s;
+  }
 
-    .sticky_show {
-      top: 0px;
-    }
+  .sticky_show {
+    top: 0px;
+  }
 
-    .sticky_temp_hide {
-      visibility: hidden;
-    }
+  .sticky_temp_hide {
+    visibility: hidden;
+  }
 
-    #menubar_options.show {
-      visibility: visible;
-    }
-  </style>
-<% end %>
+  #menubar_options.show {
+    visibility: visible;
+  }
+</style>
 
 <script type="text/javascript">
   // Adapted from https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
@@ -66,6 +64,7 @@
   }
 
   function temporarilyHideStickyMenu(){
+    menubar_options.classList.remove("show");
     menubar.classList.remove("sticky_show");
     menubar.classList.add('sticky_temp_hide');
   }

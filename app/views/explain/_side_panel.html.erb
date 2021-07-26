@@ -1,21 +1,27 @@
 <!-- Adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_draggable -->
 
-<% content_for :head do %>
-  <style>
+<style>
+  /* Side panel */
   #side_panel {
-    position: fixed;
-    z-index: 9;
     background-color: #f1f1f1;
     text-align: center;
     border: 1px solid #d3d3d3;
+
+    /* Make it float above other elements */
+    position: fixed;
+    z-index: 9;
+
+    /* Make it resizable */
+    resize: both;
+    overflow: auto;
   }
 
   #side_panel_header {
+    cursor: move;
+    z-index: 10;
     display: flex;
     justify-content: flex-start;
     padding: 5px;
-    cursor: move;
-    z-index: 10;
     background-color: #2196F3;
     color: #fff;
   }
@@ -35,8 +41,7 @@
   #side_panel_checkbox_row label {
     margin: 4px;
   }
-  </style>
-<% end %>
+</style>
 
 <div id="side_panel" style="display:none">
   <div id="side_panel_header">
