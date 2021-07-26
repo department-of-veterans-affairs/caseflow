@@ -22,9 +22,10 @@ RSpec.feature "Explain JSON" do
     scenario "admin visits explain page for legacy appeal" do
       visit "explain/appeals/#{legacy_appeal.vacols_id}"
       expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
+      page.find("#hearing_tree_chkbox + label").click
       expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
 
-      page.find("#narrative_table").click
+      page.find("#narrative_table_chkbox + label").click
       expect(page).to have_content("NOD received")
     end
   end
@@ -64,6 +65,7 @@ RSpec.feature "Explain JSON" do
       # intake.complete!(params)
 
       visit "explain/appeals/#{appeal.uuid}"
+      page.find("#task_tree_chkbox + label").click
       expect(page).to have_content("Appeal.find(#{appeal.id})")
     end
 
@@ -104,16 +106,16 @@ RSpec.feature "Explain JSON" do
     end
     scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
       visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
-      expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
+      expect(page).to have_content(appellant_substitution.target_appeal.id)
       expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
 
       visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}"
-      expect(page).to have_content("Appeal.find(#{appellant_substitution.source_appeal.id})")
+      expect(page).to have_content(appellant_substitution.source_appeal.id)
       expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
 
       cavc_remand = appellant_substitution.source_appeal.cavc_remand
       visit "explain/appeals/#{cavc_remand.source_appeal.uuid}"
-      expect(page).to have_content("Appeal.find(#{cavc_remand.source_appeal.id})")
+      expect(page).to have_content(cavc_remand.source_appeal.id)
       expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
     end
   end
@@ -128,24 +130,26 @@ RSpec.feature "Explain JSON" do
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}"
-        scroll_to(page.find("h3", text: "Timeline"))
-        # binding.pry
         expect(page).to have_content("show_pii = false")
         expect(page).to have_content("status: dispatched")
 
         expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+        page.find("#intake_tree_chkbox + label").click       
         expect(page).to have_content("Intake (no PII)")
+        page.find("#hearing_tree_chkbox + label").click
         expect(page).to have_content("Hearing (no PII)")
-        expect(page).to have_content("show_pii: false")
+        page.find("#narrative_table_chkbox + label").click
         expect(page).to have_content("Appeal Narrative (showing PII)")
+        page.find("#timeline_chart_chkbox + label").click
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
+        page.find("#intake_tree_chkbox + label").click       
         expect(page).to have_content("Intake (showing PII)")
+        page.find("#hearing_tree_chkbox + label").click
         expect(page).to have_content("Hearing (showing PII)")
-        expect(page).to have_content("show_pii: true")
+        page.find("#narrative_table_chkbox + label").click
         expect(page).to have_content("Appeal Narrative (showing PII)")
-        page.find("#narrative_table").click
         task = real_appeal.tasks.sample
         expect(page).to have_content("#{task.type}_#{task.id}")
       end
@@ -157,8 +161,7 @@ RSpec.feature "Explain JSON" do
         visit "explain/appeals/#{real_appeal.uuid}"
         expect(page).to have_content("status: distributed_to_judge")
         expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
-        # scroll_to(page.find("h3", text: "Timeline"))
-        # binding.pry
+        page.find("#timeline_chart_chkbox + label").click
       end
     end
 
@@ -182,7 +185,7 @@ RSpec.feature "Explain JSON" do
       end
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}"
-        page.find("#narrative_table").click
+        page.find("#narrative_table_chkbox + label").click
         req_issue = real_appeal.request_issues.sample
         expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
       end

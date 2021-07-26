@@ -32,7 +32,12 @@ feature "duplicate JudgeAssignTask investigation" do
       within_window open_new_window do
         # Get a narrative of what happened; search for ":50:38" and ":50:44"
         visit "/explain/appeals/#{appeal.uuid}"
-        expect(page).to have_content("Narrative table")
+        expect(page).to have_content("Narrative Table")
+        page.find("#narrative_table_chkbox + label").click
+        expect(page).to have_content("50:38")
+        expect(page).to have_content("JudgeAssignTask_2001775444")
+        expect(page).to have_content("50:44")
+        expect(page).to have_content("JudgeAssignTask_2001775445")
       end
 
       # Delete tasks created on or after 2021-06-13 so we can recreate the problem
