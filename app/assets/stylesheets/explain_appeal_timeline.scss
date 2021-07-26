@@ -1,0 +1,153 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ */
+
+@import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
+
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
+:root {
+  --assigned-task-color: #FFFF80;
+  --onhold-task-color: #A3A303;
+  --inprogress-task-color: #00FF00;
+  --completed-task-color: #00B800;
+  --cancelled-task-color: #D89696;
+
+  --background-distribution-phase-color: #F0F0F0;
+  --background-decision-phase-color: #D2D2D2;
+  --background-dispatch-phase-color: #B4B4B4;
+}
+
+/* Legend for timeline: color-coding table */
+#timelineColors {
+  margin: 0px;
+  font-size: 0.8em;
+
+  table {
+    margin: 0px;
+  }
+  td {
+    border-width: 0px;
+  }
+
+  // Tasks
+  td.assigned_task {
+    background-color: var(--assigned-task-color);
+    border-color: var(--assigned-task-color);
+  }
+  td.inprogress_task {
+    background-color: var(--inprogress-task-color);
+    border-color: var(--inprogress-task-color);
+  }
+  td.onhold_task {
+    background-color: var(--onhold-task-color);
+    border-color: var(--onhold-task-color);
+  }
+  td.cancelled_task {
+    background-color: var(--cancelled-task-color);
+    border-color: var(--cancelled-task-color);
+  }
+  td.completed_task {
+    background-color: var(--completed-task-color);
+    border-color: var(--completed-task-color);
+  }
+
+  // Phases
+  td.distribution_phase {
+    background-color: var(--background-distribution-phase-color);
+    border-color: var(--background-distribution-phase-color);
+  }
+  td.decision_phase {
+    background-color: var(--background-decision-phase-color);
+    border-color: var(--background-decision-phase-color);
+  }
+  td.dispatch_phase {
+    background-color: var(--background-dispatch-phase-color);
+    border-color: var(--background-dispatch-phase-color);
+  }
+}
+
+/* Timeline elements */
+#timeline{
+  .vis-item .vis-item-overflow {
+    overflow: visible; /* allow event labels to overflow its timeline box */
+  }
+
+  /* These task_<status> colors should roughly match with those for #events_table above */
+  .vis-range.task_assigned {
+    background-color: var(--assigned-task-color);
+    border-color: var(--assigned-task-color);
+  }
+  .vis-range.task_in_progress {
+    background-color: var(--inprogress-task-color);;
+    border-color: var(--inprogress-task-color);;
+  }
+  .vis-range.task_on_hold,
+  .vis-box.hearing_postponed {
+    background-color: var(--onhold-task-color);;
+    border-color: var(--onhold-task-color);;
+  }
+  .vis-range.task_cancelled,
+  .vis-box.hearing_cancelled {
+    background-color: var(--cancelled-task-color);;
+    border-color: var(--cancelled-task-color);;
+  }
+  .vis-range.task_completed,
+  .vis-box.hearing_held {
+    background-color: var(--completed-task-color);;
+    border-color: var(--completed-task-color);;
+  }
+
+  /* Color dots simlar to ranges above */
+  .vis-dot.task_assigned {
+    border-color: var(--assigned-task-color);
+  }
+  .vis-dot.task_in_progress {
+    border-color: var(--inprogress-task-color);
+  }
+  .vis-dot.task_on_hold {
+    border-color: var(--onhold-task-color);
+  }
+  .vis-dot.task_cancelled {
+    border-color: var(--cancelled-task-color);
+  }
+  .vis-dot.task_completed {
+    border-color: var(--completed-task-color);
+  }
+
+  /* events with "type=background" */
+  div.vis-background {
+    font-style: italic;
+  }
+  div.DistributionTask {
+    background-color: var(--background-distribution-phase-color);
+  }
+  div.JudgeDecisionReviewTask {
+    background-color: var(--background-decision-phase-color);
+  }
+  div.BvaDispatchTask {
+    background-color: var(--background-dispatch-phase-color);
+  }
+
+  /* minor tasks that don't really add much info to the timeline */
+  div.RootTask,
+  div.TrackVeteranTask {
+    font-size: 0.7em;
+  }
+
+  .event_detail {
+    max-width: 100px;
+    word-wrap: break-word;
+    margin: 0px;
+    font-size: 0.7em;
+    white-space: pre-line;
+  }
+}

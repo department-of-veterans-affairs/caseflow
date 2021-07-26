@@ -12,7 +12,7 @@
     visibility: hidden;
   }
 
-  #menubar_options.show {
+  #menubar_settings.show {
     visibility: visible;
   }
 </style>
@@ -64,13 +64,12 @@
   }
 
   function temporarilyHideStickyMenu(){
-    menubar_options.classList.remove("show");
+    menubar_settings.classList.remove("show");
     menubar.classList.remove("sticky_show");
     menubar.classList.add('sticky_temp_hide');
   }
 
-  const menubar_options = document.getElementById("menubar_options");
-  const menubar_option_elems = document.getElementById("menubar_options").children;
+  const menubar_settings = document.getElementById("menubar_settings");
   function enableStickyMenu() {
     if (window.pageYOffset >= stickyPos + hysteresisScrollingUp + hysteresisScrollingDown) {
       reactToScrolling();
@@ -91,7 +90,7 @@
     if (!menubar.classList.contains("sticky")) return;
 
     menubar.removeEventListener('mouseenter', mouseEnterHandler)
-    menubar_options.classList.remove("show");
+    menubar_settings.classList.remove("show");
     menubar.classList.remove("sticky", "sticky_show", "sticky_temp_hide");
   }
 
@@ -104,14 +103,14 @@
       (!autoshowElem || autoshowElem.checked) && showStickyMenu();
       prevScrollPos = currScrollPos;
     } else if (diff < -hysteresisScrollingDown) { //hide
-      menubar_options.classList.remove("show");
+      menubar_settings.classList.remove("show");
       menubar.classList.remove("sticky_show");
       prevScrollPos = currScrollPos;
     }
   }
 
   function showStickyMenu(){
-    menubar_options.classList.add("show");
+    menubar_settings.classList.add("show");
     menubar.classList.add("sticky_show");
   }
 </script>

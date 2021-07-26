@@ -11,7 +11,7 @@
 
 //================== Network graph ========================
 
-// These colors should match with those in export-appeal.css
+// These colors should match with those in explain_appeal_timeline.scss
 const taskNodeColor = {
   assigned: "#FFFF80",
   on_hold: "#A3A303",

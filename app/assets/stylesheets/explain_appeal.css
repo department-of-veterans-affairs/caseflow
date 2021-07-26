@@ -22,10 +22,6 @@ body {
   color: red;
 }
 
-#header_table td {
-  border: none;
-}
-
 li,
 li ul {
   margin-bottom: 0px
@@ -36,41 +32,6 @@ button.menuBtn {
   font-size: 0.9em;
 }
 
-#section_checkboxes label {
-  margin-top: 10px;
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-#section_checkboxes label::before {
-  /* space between checkbox and label text */
-  margin-right: 0.3em;
-}
-
-.section_checkbox_row {
-  display: flex;
-  justify-content: flex-start;
-  border: 1px solid darkgray;
-}
-
-#menubar_options {
-  position: absolute;
-  right: 12px;
-  display: flex;
-  justify-content: flex-start;
-  font-size: 0.9em;
-  background-color: #baf1f1;
-  visibility: hidden; /* made visible when menu is in sticky mode */
-}
-
 summary {
   display: list-item;
-}
-
-#details_content .event_detail,
-#details_content_for_react .event_detail {
-  margin: 8px;
-  font-size: 0.9em;
-  white-space: pre-line;
-  text-align: left;
 }

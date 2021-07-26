@@ -3,11 +3,56 @@
 
 <% content_for :head do %>
   <%= stylesheet_link_tag 'explain_appeal' %>
-  <%= stylesheet_link_tag 'explain_appeal_timeline' %>
+  <style>
+    #header_table td {
+      border: none;
+    }
+
+    #section_checkboxes {
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      background-color: lightcyan;
+      box-shadow: 0px 3px 5px 0px dimgrey;
+    }
+
+    #section_checkboxes .section_checkbox_row {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border: 1px solid darkgray;
+      font-size: .9em;
+    }
+
+    #section_checkboxes label {
+      margin-top: 10px;
+      margin-left: 30px;
+      margin-right: 4px;
+    }
+
+    #section_checkboxes label:nth-of-type(1) {
+      margin-left: 10px;
+    }
+
+    #section_checkboxes label::before {
+      /* space between checkbox and label text */
+      margin-right: 0.3em;
+    }
+
+    #menubar_settings {
+      position: absolute;
+      right: 12px;
+      display: flex;
+      justify-content: flex-start;
+      font-size: 0.9em;
+      background-color: #baf1f1;
+      visibility: hidden; /* made visible when menu is in sticky mode */
+    }
+  </style>
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
-  <table id="header_table" style="margin: 0em;">
+  <table id="header_table" style="margin: 4px;">
     <colgroup>
       <col style="width: 60%;">
       <col style="width: 40%;">
@@ -44,11 +89,11 @@
     </tbody>
   </table>
 
-  <div id="section_checkboxes" style="z-index: 8; display: flex; flex-direction: column; background-color: lightcyan;">
-    <% sections1 = %w[task_tree intake_tree hearing_tree] %>
-    <% sections2 = %w[narrative_table] %>
-    <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
+  <% sections1 = %w[task_tree intake_tree hearing_tree] %>
+  <% sections2 = %w[narrative_table] %>
+  <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
 
+  <div id="section_checkboxes">
     <div class="section_checkbox_row" id="main_panel_section_btns">
       <% sections1.each do |sectionId| %>
         <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
@@ -65,8 +110,8 @@
              onclick="toggleSidePanel(this, event)">
       <label for="side_panel_chkbox">Floating Panel</label>
     </div>
-    <div class="section_checkbox_row">
-      <div id="menubar_options" visibility="hidden">
+    <div>
+      <div id="menubar_settings" visibility="hidden">
         <input id="autoshow_chkbox" type="checkbox" checked>
         <label for="autoshow_chkbox">Show on scrollup</label>
 
@@ -76,7 +121,9 @@
   </div>
 
   <%= render "menubar", menubarId: "section_checkboxes", contentId: "main_panel", autoshowId: "autoshow_chkbox" %>
+  <%= render "side_panel" %>
 
+  <br/>
   <div id="main_panel">
     <% (sections1 + sections2).each do |sectionId|  %>
       <div id="<%=sectionId%>_section" style="display: none;">
@@ -85,8 +132,6 @@
       </div>
     <% end %>
   </div>
-
-  <%= render "side_panel" %>
 
   <script type="text/javascript">
     function toggleSection(chkbox, panelId) {
@@ -108,6 +153,18 @@
       setDetailsPaneMessage(" Showing "+chkbox.value);
     }
 
+    function showSection(sectionId){
+      const chkbox = document.getElementById(sectionId+"_chkbox");
+      if(!chkbox.checked){
+        chkbox.checked = true;
+        chkbox.onclick(); // calls toggleSection
+      }
+    }
+    function scrollToSection(sectionId){
+      const section = document.getElementById(sectionId+"_section")
+      section?.scrollIntoView({behavior: "smooth", block: "start"})
+    }
+
     const setDetailsPaneMessage = (htmlContent)=>{
       document.getElementById("side_panel_message").innerHTML = htmlContent;
     };
@@ -126,6 +183,14 @@
       //                      )+"px");
     }
 
+    window.onload = ()=>{
+      const isTreeFieldsParamsProvided = <%= fields_query_param != nil %>;
+      console.warn(isTreeFieldsParamsProvided)
+      if (isTreeFieldsParamsProvided) {
+        showSection("task_tree");
+        scrollToSection("task_tree");
+      }
+    }
 
     window.onresize = ()=>{
       // To-do: Ensure side panel remains visible?
