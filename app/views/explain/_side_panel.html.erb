@@ -17,11 +17,31 @@
     background-color: #2196F3;
     color: #fff;
   }
+
+  #side_panel_checkbox_row {
+    display: flex;
+    justify-content: flex-start;
+    border: 1px solid darkgray;
+    font-size: 0.9em;
+  }
+  #side_panel_checkbox_row label {
+    margin: 4px;
+  }
   </style>
 <% end %>
 
 <div id="side_panel" style="display:none">
-  <div id="side_panel_header">Side Panel</div>
+  <div id="side_panel_header">Floating Panel</div>
+
+  <% sectionIds = %w[details_pane legend_pane] %>
+  <div id="side_panel_checkbox_row">
+    <% sectionIds.each do |sectionId| %>
+      <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
+             onclick="toggleSection(this, 'side_panel')">
+      <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize.split.first%></label>
+    <% end %>
+  </div>
+
   <% sectionIds.each do |sectionId|  %>
     <div id="<%=sectionId%>_section" style="display:none">
       <%= render sectionId %>
@@ -29,6 +49,19 @@
     </div>
   <% end %>
 </div>
+
+<script type="text/javascript">
+  function showDetailsPane(){
+    const chkbox = document.getElementById("details_pane_chkbox");
+    if(!chkbox.checked){
+      chkbox.checked = true;
+      chkbox.onclick();
+    }
+  }
+
+  // const sidePanelSectionBtns = document.querySelectorAll('#side_panel_checkbox_row input')
+  // sidePanelSectionBtns.forEach((btn) => btn.disabled = true);
+</script>
 
 <script type="text/javascript">
   makeDraggable(document.getElementById("side_panel"));

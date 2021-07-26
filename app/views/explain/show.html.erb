@@ -48,33 +48,24 @@
     <% sections1 = %w[task_tree intake_tree hearing_tree] %>
     <% sections2 = %w[narrative_table] %>
     <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
-    <% sideSections = %w[details_pane legend_pane] %>
 
     <div class="section_checkbox_row" id="main_panel_section_btns">
       <% sections1.each do |sectionId| %>
         <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
-               onclick="toggleElement(this, 'main_panel')">
+               onclick="toggleSection(this, 'main_panel')">
         <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
       <% end %>
       <% sections2.each do |sectionId| %>
         <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
-               onclick="toggleElement(this, 'main_panel')">
+               onclick="toggleSection(this, 'main_panel')">
         <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
       <% end %>
-    </div>
-    <div class="section_checkbox_row">
+
       <input id="side_panel_chkbox" value="side_panel" type="checkbox"
              onclick="toggleSidePanel(this, event)">
-      <label for="side_panel_chkbox">Side Panel:</label>
-
-      <div id="side_panel_section_btns">
-        <% sideSections.each do |sectionId| %>
-          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
-                 onclick="toggleElement(this, 'side_panel')">
-          <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
-        <% end %>
-      </div>
-
+      <label for="side_panel_chkbox">Floating Panel</label>
+    </div>
+    <div class="section_checkbox_row">
       <div id="menubar_options" visibility="hidden">
         <input id="autoshow_chkbox" type="checkbox" checked>
         <label for="autoshow_chkbox">Show on scrollup</label>
@@ -89,34 +80,31 @@
 
   <div id="main_panel">
     <% (sections1 + sections2).each do |sectionId|  %>
-      <div id="<%=sectionId%>_section" style="display:none">
+      <div id="<%=sectionId%>_section" style="display: none;">
         <%= render sectionId %>
         <hr/>
       </div>
     <% end %>
   </div>
 
-  <%= render "side_panel", sectionIds: sideSections %>
+  <%= render "side_panel" %>
 
   <script type="text/javascript">
-    const mainSectionBtns = document.querySelectorAll('#main_panel_section_btns input')
-    function toggleElement(chkbox, panelId) {
+    function toggleSection(chkbox, panelId) {
       const section = document.getElementById(chkbox.value);
       section.style.display = chkbox.checked ? "block" : "none";
 
       if(chkbox.checked){
         if(panelId){
           const panel = document.getElementById(panelId);
-          // Don't add child element unless necessary to minimize DOM manipulation.
-          // DOM manipulation outside of React causes React to complain.
-          if(section.parentElement != panel) panel.appendChild(section);
+          panel.appendChild(section); // Add it to the bottom of the page
         }
       }
 
       if(chkbox.checked){
         // If more than 1 section visible, scroll to the newly visible section
-        const mainSectionCheckedBtns = Array.prototype.filter.call(mainSectionBtns, (btn) => btn.checked);
-        mainSectionCheckedBtns.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
+        const visibleMainSections = document.querySelectorAll('#main_panel > div[style="display: block;"]')
+        visibleMainSections.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
       }
       setDetailsPaneMessage(" Showing "+chkbox.value);
     }
@@ -125,34 +113,20 @@
       document.getElementById("details_message").innerHTML = htmlContent;
     };
 
-    const sidePanelSectionBtns = document.querySelectorAll('#side_panel_section_btns input')
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     function toggleSidePanel(chkbox, event) {
       const panel = document.getElementById(chkbox.value);
       // console.error(chkbox, event);
-      toggleElement(chkbox);
-      panel.style.top || (panel.style.top = (event.clientY+10)+"px");
-      // panel.style.left || (panel.style.left = (event.clientX+10)+"px");
-      panel.style.left || (panel.style.left = Math.min(
-                             window.innerWidth - panel.offsetWidth - 140,
-                             window.innerWidth/4 * 3
-                           )+"px");
-
-      // disable btns if sidepanel is not visible
-      sidePanelSectionBtns.forEach((btn) => btn.disabled = !chkbox.checked);
+      toggleSection(chkbox);
+      panel.style.top || showDetailsPane();
+      panel.style.top || (panel.style.top = "48px");
+      panel.style.left || (panel.style.left = "140px");
+      // panel.style.left || (panel.style.left = Math.min(
+      //                        window.innerWidth - panel.offsetWidth - 140,
+      //                        window.innerWidth/2
+      //                      )+"px");
     }
 
-    function showDetailsSection(){
-      const chkbox = document.getElementById("details_pane_chkbox");
-      if(!chkbox.checked){
-        chkbox.checked = true;
-        chkbox.onclick();
-      }
-    }
-
-    // Set initial state
-    showDetailsSection();
-    sidePanelSectionBtns.forEach((btn) => btn.disabled = true);
 
     window.onresize = ()=>{
       // To-do: Ensure side panel remains visible?

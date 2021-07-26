@@ -12,6 +12,10 @@
     .sticky_temp_hide {
       visibility: hidden;
     }
+
+    #menubar_options.show {
+      visibility: visible;
+    }
   </style>
 <% end %>
 
@@ -34,7 +38,7 @@
   const hiddenTop = "-"+hiddenPixels+"px";
 
   function updateStyles(){
-    function findStyle(className) {
+    function findStyleRule(className) {
       for(var styleSheet of document.styleSheets) {
         var rules = styleSheet.rules || styleSheet.cssRules
         const found = Array.prototype.find.call(rules, rule => rule.selectorText==className);
@@ -43,11 +47,11 @@
     }
 
     // Set the default sticky style (defined at the top of this file) to be hidden
-    s = findStyle(".sticky");
-    s.style.top = hiddenTop
+    stickyStyleRule = findStyleRule(".sticky");
+    stickyStyleRule.style.top = hiddenTop
 
     // Add padding on the main page as a placeholder for the now removed sticky menu
-    styleSheet = s.parentStyleSheet
+    styleSheet = stickyStyleRule.parentStyleSheet
     styleSheet.insertRule(".sticky ~ #<%= contentId %> { padding-top: "+menubar.offsetHeight+"px; }", 
                           styleSheet.cssRules.length);
   }
@@ -76,8 +80,6 @@
     if (menubar.classList.contains("sticky")) return;
 
     menubar.classList.add("sticky");
-    // for(elem of menubar_option_elems) elem.visibility = "unset";
-    menubar_options.style.visibility = "unset";
     menubar.addEventListener('mouseenter', mouseEnterHandler)
   }
 
@@ -90,8 +92,8 @@
     if (!menubar.classList.contains("sticky")) return;
 
     menubar.removeEventListener('mouseenter', mouseEnterHandler)
-    // for(elem of menubar_option_elems) elem.style.visibility = "hidden";
-    menubar_options.style.visibility = "hidden";
+    // menubar_options.style.visibility = "hidden";
+    menubar_options.classList.remove("show");
     menubar.classList.remove("sticky", "sticky_show", "sticky_temp_hide");
   }
 
@@ -104,12 +106,16 @@
       (!autoshowElem || autoshowElem.checked) && showStickyMenu();
       prevScrollPos = currScrollPos;
     } else if (diff < -hysteresisScrollingDown) { //hide
+      // menubar_options.style.visibility = "hidden";
+      menubar_options.classList.remove("show");
       menubar.classList.remove("sticky_show");
       prevScrollPos = currScrollPos;
     }
   }
 
   function showStickyMenu(){
+    // menubar_options.style.visibility = "unset";
+    menubar_options.classList.add("show");
     menubar.classList.add("sticky_show");
   }
 </script>

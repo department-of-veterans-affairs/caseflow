@@ -48,11 +48,6 @@ li ul {
   border: 1px solid darkgray;
 }
 
-#side_panel_section_btns {
-  display: flex;
-  font-size: 0.9em;
-}
-
 #menubar_options {
   position: absolute;
   right: 12px;
