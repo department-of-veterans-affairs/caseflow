@@ -114,7 +114,7 @@ class AddIssuesPage extends React.Component {
     const { correctClaimReviews } = featureToggles;
 
     return (
-      !formType || this.requestIssuesWithoutDecisionDates(intakeData) || (this.editingClaimReview() && !processedAt) ||
+      !formType || (this.editingClaimReview() && !processedAt) ||
        intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
     );
   }
@@ -130,8 +130,6 @@ class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
-    } else if (this.requestIssuesWithoutDecisionDates(intakeData)) {
-      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
   }
 
@@ -209,8 +207,12 @@ class AddIssuesPage extends React.Component {
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
-
     }
+
+    if (this.requestIssuesWithoutDecisionDates(intakeData)) {
+      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
+    }
+
     const requestStatus = intakeData.requestStatus;
     const requestState =
       requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
