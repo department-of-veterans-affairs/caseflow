@@ -48,18 +48,18 @@
     <% sections1 = %w[task_tree intake_tree hearing_tree] %>
     <% sections2 = %w[narrative_table] %>
     <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
-    <% sideSections = %w[details_section legend_section] %>
+    <% sideSections = %w[details_pane legend_pane] %>
 
     <div class="section_checkbox_row" id="main_panel_section_btns">
       <% sections1.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+        <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
                onclick="toggleElement(this, 'main_panel')">
-        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+        <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
       <% end %>
       <% sections2.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+        <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
                onclick="toggleElement(this, 'main_panel')">
-        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+        <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
       <% end %>
     </div>
     <div class="section_checkbox_row">
@@ -69,9 +69,9 @@
 
       <div id="side_panel_section_btns">
         <% sideSections.each do |sectionId| %>
-          <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
                  onclick="toggleElement(this, 'side_panel')">
-          <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+          <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
         <% end %>
       </div>
 
@@ -102,27 +102,27 @@
     const mainSectionBtns = document.querySelectorAll('#main_panel_section_btns input')
     function toggleElement(chkbox, panelId) {
       const section = document.getElementById(chkbox.value);
+      section.style.display = chkbox.checked ? "block" : "none";
 
-      var vis = "none";
       if(chkbox.checked){
         if(panelId){
           const panel = document.getElementById(panelId);
-          panel.appendChild(section);
+          // Don't add child element unless necessary to minimize DOM manipulation.
+          // DOM manipulation outside of React causes React to complain.
+          if(section.parentElement != panel) panel.appendChild(section);
         }
-        vis = "block"
       }
-      section.style.display = vis;
 
       if(chkbox.checked){
         // If more than 1 section visible, scroll to the newly visible section
         const mainSectionCheckedBtns = Array.prototype.filter.call(mainSectionBtns, (btn) => btn.checked);
         mainSectionCheckedBtns.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
       }
-      setDetailsContent(" Checkbox: "+chkbox.value);
+      setDetailsPaneMessage(" Showing "+chkbox.value);
     }
 
-    const setDetailsContent = (content)=>{
-      document.getElementById("details_content").innerHTML = content;
+    const setDetailsPaneMessage = (htmlContent)=>{
+      document.getElementById("details_message").innerHTML = htmlContent;
     };
 
     const sidePanelSectionBtns = document.querySelectorAll('#side_panel_section_btns input')
@@ -143,7 +143,7 @@
     }
 
     function showDetailsSection(){
-      const chkbox = document.getElementById("details_section_section_chkbox");
+      const chkbox = document.getElementById("details_pane_chkbox");
       if(!chkbox.checked){
         chkbox.checked = true;
         chkbox.onclick();
