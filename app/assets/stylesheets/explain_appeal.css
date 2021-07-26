@@ -69,10 +69,8 @@ summary {
 
 #details_content .event_detail,
 #details_content_for_react .event_detail {
-  max-width: 400px;
   margin: 8px;
   font-size: 0.9em;
   white-space: pre-line;
   text-align: left;
-  max-height: 600px;
 }
