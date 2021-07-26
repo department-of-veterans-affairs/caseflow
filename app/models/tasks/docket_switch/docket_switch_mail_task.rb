@@ -26,7 +26,6 @@ class DocketSwitchMailTask < MailTask
 
     def create_from_params(params, user)
       parent_task = DistributionTask.find_by(appeal_id: params[:appeal].id)
-      # binding.pry
 
       verify_user_can_create!(user, parent_task)
 
@@ -40,8 +39,6 @@ class DocketSwitchMailTask < MailTask
             instructions: [params[:instructions]].flatten
           )
         end
-
-        # distribution_task.update!(status: :on_hold)
 
         if child_task_assignee(parent_task, params).eql? ClerkOfTheBoard.singleton
           parent_task

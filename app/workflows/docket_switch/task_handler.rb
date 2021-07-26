@@ -30,7 +30,7 @@ class DocketSwitch::TaskHandler
 
   def call
     complete_docket_switch_tasks
-    DistributionTask.where(appeal: old_docket_stream).ready_for_distribution
+    # DistributionTask.where(appeal: old_docket_stream).ready_for_distribution
 
     return if disposition == "denied"
 

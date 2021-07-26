@@ -28,7 +28,7 @@ class DistributionTask < Task
         return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
       end
     elsif FeatureToggle.enabled?(:docket_switch, user: user)
-      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
+      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.to_h]
     end
 
     []

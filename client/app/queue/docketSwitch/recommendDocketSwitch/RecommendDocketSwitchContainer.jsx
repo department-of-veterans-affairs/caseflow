@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from 'app/queue/QueueActions';
 
-import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
+import { appealWithDetailSelector, distributionTasksForAppeal } from '../../selectors';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
@@ -44,8 +44,8 @@ export const RecommendDocketSwitchContainer = () => {
   const dispatch = useDispatch();
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
-  const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
-
+  const distributionTask = useSelector((state) => distributionTasksForAppeal(state, { appealId }))[0];
+  debugger
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
     () =>
@@ -67,7 +67,7 @@ export const RecommendDocketSwitchContainer = () => {
 
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
-      parent_id: rootTask.taskId,
+      parent_id: distributionTask.taskId,
       type: 'DocketSwitchRulingTask',
       external_id: appeal.externalId,
       instructions,
