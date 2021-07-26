@@ -7,7 +7,7 @@ class AttorneyCaseReview < CaseflowRecord
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
-  belongs_to :task
+  belongs_to :task, class_name: "AttorneyTask"
 
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :untimely_evidence, inclusion: { in: [true, false] }
