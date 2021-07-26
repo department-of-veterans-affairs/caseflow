@@ -144,7 +144,7 @@ RSpec.feature "Explain JSON" do
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
-        page.find("#intake_tree_chkbox + label").click       
+        page.find("#intake_tree_chkbox + label").click
         expect(page).to have_content("Intake (showing PII)")
         page.find("#hearing_tree_chkbox + label").click
         expect(page).to have_content("Hearing (showing PII)")
