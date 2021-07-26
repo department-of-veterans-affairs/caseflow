@@ -496,4 +496,26 @@ FactoryBot.define do
       end
     end
   end
+
+  trait :decision_issue_with_no_end_product_last_action_date do
+    description = "Service connection for pain disorder"
+    notes = "Pain disorder notes"
+    after(:create) do |appeal, evaluator|
+      request_issue = create(:request_issue,
+                             :rating,
+                             decision_review: appeal,
+                             veteran_participant_id: appeal.veteran.participant_id,
+                             contested_issue_description: description,
+                             notes: notes)
+      decision_issue = create(:decision_issue,
+                              :rating,
+                              decision_review: appeal,
+                              disposition: evaluator.disposition,
+                              description: "Issue description",
+                              decision_text: "Decision text",
+                              caseflow_decision_date: nil,
+                              rating_promulgation_date: nil)
+      request_issue.decision_issues << decision_issue
+    end
+  end
 end

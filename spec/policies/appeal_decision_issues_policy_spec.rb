@@ -32,11 +32,30 @@ describe AppealDecisionIssuesPolicy, :postgres do
           end
         end
 
-        context "when a decision issue has no decision date" do
+        context "when a decision issue has a nil decision date" do
           let(:appeal) { create(:appeal, :decision_issue_with_no_decision_date) }
 
           it "cannot be seen" do
             expect(subject).to be_empty
+          end
+        end
+
+        context "when a decision issue was processed in caseflow and approx_decision_date returns nil" do
+          let(:appeal) { create(:appeal, :decision_issue_with_no_end_product_last_action_date) }
+
+          it "cannot be seen" do
+            expect(subject).to be_empty
+          end
+        end
+
+        context "when approx_decision_date throws an error that does not stem from comparing time to nil" do
+          let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
+
+          before do
+            allow_any_instance_of(DecisionIssue).to receive(:approx_decision_date).and_throw("Error!")
+          end
+          it "surfaces the error" do
+            expect { subject }.to raise_error
           end
         end
       end
