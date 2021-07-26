@@ -9,6 +9,7 @@ if ENV["SINGLE_COV"]
 else
   # default is aggregate via simplecov for CI
   require "simplecov"
+  SimpleCov.start 'rails'
 end
 if ENV["CI"]
   require "rspec/retry"
