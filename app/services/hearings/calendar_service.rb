@@ -34,7 +34,7 @@ class Hearings::CalendarService
     # Sent when a virtual hearing is switched back to a video hearing.
     def update_to_video_calendar_invite(virtual_hearing, recipient)
       create_calendar_event(virtual_hearing.hearing) do |event, time_zone, start_time|
-        if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+        if recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
           # For judges, just cancel the original invitation.
           event.status = "CANCELLED"
         else
@@ -57,9 +57,10 @@ class Hearings::CalendarService
 
     def summary(recipient)
       case recipient.title
-      when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+      when HearingEmailRecipient::RECIPIENT_TITLES[:veteran],
+        HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         "Hearing with the Board of Veterans' Appeals"
-      when MailRecipient::RECIPIENT_TITLES[:judge]
+      when HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         "Virtual Hearing"
       end
     end
