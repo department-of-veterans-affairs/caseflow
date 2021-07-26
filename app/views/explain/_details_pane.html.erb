@@ -1,4 +1,21 @@
-<h4>Details</h4>
+<style>
+  #details_header {
+    /* position: absolute; */
+    display: flex;
+    justify-content: flex-start;
+    /* background-color: #baf1f1; */
+  }
+  #clear_details_btn {
+    position: absolute;
+    right: 12px;
+  }
+</style>
+
+<div id="details_header">
+  <h4>Details</h4>
+  <button id="clear_details_btn" class="menuBtn" onclick="clearDetailPanes()">Clear</button>
+</div>
+
 <div id="details_content">
   <!-- Element for non-React Javascript to modify. -->
 </div>
@@ -10,3 +27,25 @@
     -->
 </div>
 
+<script type="text/javascript">
+  function showDetailsPane(){
+    const chkbox = document.getElementById("details_pane_chkbox");
+    if(!chkbox.checked){
+      chkbox.checked = true;
+      chkbox.onclick();
+    }
+  }
+
+  const detailPaneIds = ["details_content", "details_content_for_react"]
+  function clearDetailPanes(){
+    detailPaneIds.forEach(paneId=>{
+      const pane = document.getElementById(paneId);
+      if(pane){
+        Array.prototype.forEach.call(pane.children, child=>child.innerText = "");
+      }
+    })
+  }
+
+  // const sidePanelSectionBtns = document.querySelectorAll('#side_panel_checkbox_row input')
+  // sidePanelSectionBtns.forEach((btn) => btn.disabled = true);
+</script>
