@@ -46,7 +46,7 @@ class LegacyAppeal < CaseflowRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_name_suffix, :veteran_gender
+  vacols_attr_accessor :veteran_name_suffix
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
@@ -82,7 +82,7 @@ class LegacyAppeal < CaseflowRecord
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher
 
-  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex, :gender,
            :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
