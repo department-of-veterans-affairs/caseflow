@@ -120,7 +120,6 @@ const linkToDetailsPane = (formattedData, handleModalOpen, data, count) => {
   const showInPane = function () {
     const sidePanel = window.document.getElementById('side_panel');
     const detailsPane = window.document.getElementById('details_pane_section');
-    const detailsContentPane = window.document.getElementById('details_content_for_react');
 
     if (!detailsPane || !sidePanel || detailsPane.style.display === 'none' || sidePanel.style.display === 'none') {
       // Update React state with new data
@@ -129,6 +128,7 @@ const linkToDetailsPane = (formattedData, handleModalOpen, data, count) => {
       // Add React component to non-React parent element.
       // Ensure that the React component is not moved or removed from its parent element outside of React.
       // Otherwise warnings are emitted in the browser console.
+      const detailsContentPane = window.document.getElementById('details_content_for_react');
       ReactDOM.render(formattedData, detailsContentPane);
     }
   };

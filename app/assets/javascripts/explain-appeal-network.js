@@ -58,7 +58,6 @@ function decorateNodes(nodes){
       node.title = formatJson(node);
     }
   });
-  // console.log(nodes)
   return nodes;
 }
 
@@ -98,6 +97,7 @@ function addNetworkGraph(elementId, network_graph_data){
   return new vis.Network(netgraph, { nodes: nodesView, edges: edgesView }, network_options);
 }
 
+// Used be node-type checkboxes to hide/show nodes in the graph
 function toggleNodeType(checkbox){
   nodesFilterValues[checkbox.value] = checkbox.checked;
   nodesView.refresh();

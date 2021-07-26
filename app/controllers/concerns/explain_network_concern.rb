@@ -176,7 +176,7 @@ module ExplainNetworkConcern
     remaining_table_names.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
   end
 
-  # Use `fetch` to raise error if key doesn't exist
+  # Use `fetch` so that if key doesn't exist, an error is raised
   DEFAULT_NODE_ID_LAMBDA = ->(record) { "#{record.fetch('class')}#{record.fetch('id')}" }
   DEFAULT_NODE_LABEL_LAMBDA = ->(record) { "#{record['type'] || record.fetch('class')}_#{record.fetch('id')}" }
 

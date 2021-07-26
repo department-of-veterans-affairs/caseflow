@@ -134,7 +134,7 @@ RSpec.feature "Explain JSON" do
         expect(page).to have_content("status: dispatched")
 
         expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
-        page.find("#intake_tree_chkbox + label").click       
+        page.find("#intake_tree_chkbox + label").click
         expect(page).to have_content("Intake (no PII)")
         page.find("#hearing_tree_chkbox + label").click
         expect(page).to have_content("Hearing (no PII)")
