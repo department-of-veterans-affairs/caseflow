@@ -129,6 +129,7 @@ const linkToDetailsPane = (formattedData, handleModalOpen, data, count) => {
       // Ensure that the React component is not moved or removed from its parent element outside of React.
       // Otherwise warnings are emitted in the browser console.
       const detailsContentPane = window.document.getElementById('details_content_for_react');
+
       ReactDOM.render(formattedData, detailsContentPane);
     }
   };
