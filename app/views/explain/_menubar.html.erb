@@ -92,7 +92,6 @@
     if (!menubar.classList.contains("sticky")) return;
 
     menubar.removeEventListener('mouseenter', mouseEnterHandler)
-    // menubar_options.style.visibility = "hidden";
     menubar_options.classList.remove("show");
     menubar.classList.remove("sticky", "sticky_show", "sticky_temp_hide");
   }
@@ -106,7 +105,6 @@
       (!autoshowElem || autoshowElem.checked) && showStickyMenu();
       prevScrollPos = currScrollPos;
     } else if (diff < -hysteresisScrollingDown) { //hide
-      // menubar_options.style.visibility = "hidden";
       menubar_options.classList.remove("show");
       menubar.classList.remove("sticky_show");
       prevScrollPos = currScrollPos;
@@ -114,7 +112,6 @@
   }
 
   function showStickyMenu(){
-    // menubar_options.style.visibility = "unset";
     menubar_options.classList.add("show");
     menubar.classList.add("sticky_show");
   }
