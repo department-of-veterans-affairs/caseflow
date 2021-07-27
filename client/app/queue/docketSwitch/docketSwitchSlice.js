@@ -61,7 +61,7 @@ export const createDocketSwitchRulingTask = createAsyncThunk(
     try {
       const res = await ApiUtil.post('/tasks', { data });
       const updatedTasks = res.body?.tasks?.data;
-
+      debugger
       return updatedTasks;
     } catch (error) {
       console.error('Error creating task', error);

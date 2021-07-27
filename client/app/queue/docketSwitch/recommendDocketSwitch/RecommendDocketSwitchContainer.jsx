@@ -45,7 +45,7 @@ export const RecommendDocketSwitchContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const distributionTask = useSelector((state) => distributionTasksForAppeal(state, { appealId }))[0];
-  debugger
+  
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
     () =>
@@ -83,7 +83,7 @@ export const RecommendDocketSwitchContainer = () => {
       title: sprintf(DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE, appeal.appellantFullName, formData.judge.label),
       detail: DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
     };
-
+    debugger
     try {
       await dispatch(createDocketSwitchRulingTask(data));
 

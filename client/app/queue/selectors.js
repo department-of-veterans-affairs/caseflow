@@ -147,7 +147,7 @@ export const rootTasksForAppeal = createSelector(
 );
 
 export const distributionTasksForAppeal = createSelector(
-  [actionableTasksForAppeal],(tasks) => _.filter(tasks, (task) => task.type === 'DistributionTask')
+  [getAllTasksForAppeal],(tasks) => _.filter(tasks, (task) => task.type === 'DistributionTask')
 );
 
 export const caseTimelineTasksForAppeal = createSelector(
