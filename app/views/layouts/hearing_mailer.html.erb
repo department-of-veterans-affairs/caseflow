@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      h3 { margin-bottom: 0px; }
+      h3 + p { margin-top: 5px; }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+    <%= yield :intro %>
+    <%= yield :date_time %>
+    <%= yield :location %>
+    <%= yield :how_to_join %>
+    <%= yield :test_your_connection %>
+    <%= yield :help_desk %>
+    <%= yield :rescheduling_or_canceling_your_hearing %>
+    <%= yield :signature %>
+    <% if @representative_reminder != true %>
+      <%= render "hearing_mailer/sections/internal_use" %>
+    <% end %>
+  </body>
+</html>
