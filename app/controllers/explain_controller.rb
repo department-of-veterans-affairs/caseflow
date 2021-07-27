@@ -29,7 +29,7 @@ class ExplainController < ApplicationController
   private
 
   helper_method :legacy_appeal?, :appeal,
-                :show_pii_query_param, :fields_query_param, :treee_fields,
+                :show_pii_query_param, :fields_query_param, :treee_fields, :enabled_sections,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
@@ -145,6 +145,13 @@ class ExplainController < ApplicationController
 
   def fields_query_param
     request.query_parameters["fields"]
+  end
+
+  def enabled_sections
+    sections_query_param = request.query_parameters["sections"]
+    return [] unless sections_query_param
+
+    sections_query_param.split(",").map(&:strip)
   end
 
   def render_access_error

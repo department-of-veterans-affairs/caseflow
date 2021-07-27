@@ -20,13 +20,11 @@ RSpec.feature "Explain JSON" do
              vacols_case: create(:case, :aod))
     end
     scenario "admin visits explain page for legacy appeal" do
-      visit "explain/appeals/#{legacy_appeal.vacols_id}"
+      visit "explain/appeals/#{legacy_appeal.vacols_id}?sections=all"
       expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
-      page.find("#hearing_tree_chkbox + label").click
-      expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ", wait: 30)
+      expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
 
-      page.find("#narrative_table_chkbox + label").click
-      expect(page).to have_content("NOD received", wait: 30)
+      expect(page).to have_content("NOD received")
     end
   end
 
@@ -64,9 +62,8 @@ RSpec.feature "Explain JSON" do
     scenario "admin visits explain page for intaken appeal" do
       # intake.complete!(params)
 
-      visit "explain/appeals/#{appeal.uuid}"
-      page.find("#task_tree_chkbox + label").click
-      expect(page).to have_content("Appeal.find(#{appeal.id})", wait: 30)
+      visit "explain/appeals/#{appeal.uuid}?sections=all"
+      expect(page).to have_content("Appeal.find(#{appeal.id})")
     end
 
     # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
@@ -105,16 +102,16 @@ RSpec.feature "Explain JSON" do
       )
     end
     scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
-      visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
+      visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}?sections=all"
       expect(page).to have_content(appellant_substitution.target_appeal.id)
       expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
 
-      visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}"
+      visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}?sections=all"
       expect(page).to have_content(appellant_substitution.source_appeal.id)
       expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
 
       cavc_remand = appellant_substitution.source_appeal.cavc_remand
-      visit "explain/appeals/#{cavc_remand.source_appeal.uuid}"
+      visit "explain/appeals/#{cavc_remand.source_appeal.uuid}?sections=all"
       expect(page).to have_content(cavc_remand.source_appeal.id)
       expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
     end
@@ -129,28 +126,21 @@ RSpec.feature "Explain JSON" do
     context "given a dispatched appeal" do
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
-        visit "explain/appeals/#{real_appeal.uuid}"
+        visit "explain/appeals/#{real_appeal.uuid}?sections=all"
         expect(page).to have_content("show_pii = false")
         expect(page).to have_content("status: dispatched")
 
         expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
-        page.find("#intake_tree_chkbox + label").click
-        expect(page).to have_content("Intake (no PII)", wait: 30)
-        page.find("#hearing_tree_chkbox + label").click
-        expect(page).to have_content("Hearing (no PII)", wait: 30)
-        page.find("#narrative_table_chkbox + label").click
-        expect(page).to have_content("Appeal Narrative (showing PII)", wait: 30)
-        page.find("#timeline_chart_chkbox + label").click
-        expect(page).to have_content("Timeline visualization", wait: 30)
+        expect(page).to have_content("Intake (no PII)")
+        expect(page).to have_content("Hearing (no PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)")
+        expect(page).to have_content("Timeline visualization")
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
-        page.find("#intake_tree_chkbox + label").click
-        expect(page).to have_content("Intake (showing PII)", wait: 30)
-        page.find("#hearing_tree_chkbox + label").click
-        expect(page).to have_content("Hearing (showing PII)", wait: 30)
-        page.find("#narrative_table_chkbox + label").click
-        expect(page).to have_content("Appeal Narrative (showing PII)", wait: 30)
+        expect(page).to have_content("Intake (showing PII)")
+        expect(page).to have_content("Hearing (showing PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)")
         task = real_appeal.tasks.sample
         expect(page).to have_content("#{task.type}_#{task.id}")
       end
@@ -159,11 +149,10 @@ RSpec.feature "Explain JSON" do
     context "given an AOD appeal" do
       let(:json_filename) { "appeal-121304-dup_jatasks.json" }
       it "present realistic appeal events" do
-        visit "explain/appeals/#{real_appeal.uuid}"
+        visit "explain/appeals/#{real_appeal.uuid}?sections=all"
         expect(page).to have_content("status: distributed_to_judge")
         expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
-        page.find("#timeline_chart_chkbox + label").click
-        expect(page).to have_content("Timeline visualization", wait: 30)
+        expect(page).to have_content("Timeline visualization")
       end
     end
 
@@ -173,7 +162,7 @@ RSpec.feature "Explain JSON" do
       end
       let(:json_filename) { "appeal-dispatch_before_quality_review_complete.json" }
       it "present realistic appeal events" do
-        visit "explain/appeals/#{real_appeal.uuid}"
+        visit "explain/appeals/#{real_appeal.uuid}?sections=all"
         expect(page).to have_content("status: assigned_to_colocated")
         expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
       end
@@ -186,10 +175,9 @@ RSpec.feature "Explain JSON" do
         FactoryBot.create(:higher_level_review, id: 2_000_085_625)
       end
       it "present realistic appeal events" do
-        visit "explain/appeals/#{real_appeal.uuid}"
-        page.find("#narrative_table_chkbox + label").click
+        visit "explain/appeals/#{real_appeal.uuid}?sections=all"
         req_issue = real_appeal.request_issues.sample
-        expect(page).to have_content("#{req_issue.type}_#{req_issue.id}", wait: 30)
+        expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
       end
     end
   end

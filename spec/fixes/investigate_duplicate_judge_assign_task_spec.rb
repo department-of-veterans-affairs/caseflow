@@ -31,10 +31,8 @@ feature "duplicate JudgeAssignTask investigation" do
     scenario "Caseflow creates 2 open JudgeAssignTasks" do
       within_window open_new_window do
         # Get a narrative of what happened; search for ":50:38" and ":50:44"
-        visit "/explain/appeals/#{appeal.uuid}"
-        expect(page).to have_content("Narrative Table")
-        page.find("#narrative_table_chkbox + label").click
-        expect(page).to have_content("Appeal Narrative", wait: 30)
+        visit "/explain/appeals/#{appeal.uuid}?sections=all"
+        expect(page).to have_content("Appeal Narrative")
         expect(page).to have_content("50:38")
         expect(page).to have_content("JudgeAssignTask_2001775444")
         expect(page).to have_content("50:44")
