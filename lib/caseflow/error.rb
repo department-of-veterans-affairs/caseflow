@@ -104,6 +104,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidStatusOnPreDocketTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Task status has to be 'on_hold' on create for #{@task_type}"
+    end
+  end
+
   class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

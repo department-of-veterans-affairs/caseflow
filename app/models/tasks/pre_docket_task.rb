@@ -5,4 +5,15 @@
 # the Bva organization and remain "on hold" until the AssessDocumentationTask is completed.
 
 class PreDocketTask < Task
+
+  class << self
+    def create_pre_docket_task!(appeal)
+      pre_docket_task = create!(
+        appeal: appeal,
+        status: 'on_hold',
+        assigned_to: Bva.singleton
+      )
+    end
+  end
+
 end
