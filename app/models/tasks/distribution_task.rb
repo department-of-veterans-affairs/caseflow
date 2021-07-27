@@ -21,17 +21,25 @@ class DistributionTask < Task
   def available_actions(user)
     return [] unless user
 
-    if SpecialCaseMovementTeam.singleton.user_has_access?(user)
-      return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h] if appeal.ready_for_distribution?
+    if special_case_movement_task(user)
+      return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
 
-      if FeatureToggle.enabled?(:scm_move_with_blocking_tasks, user: user)
-        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h] if !appeal.ready_for_distribution?
+      if blocked_special_case_movement(user)
+        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
       end
     elsif FeatureToggle.enabled?(:docket_switch, user: user)
       return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
     end
 
     []
+  end
+
+  def special_case_movement_task(user)
+    SpecialCaseMovementTeam.singleton.user_has_access?(user) && appeal.ready_for_distribution?
+  end
+
+  def blocked_special_case_movement(user)
+    FeatureToggle.enabled?(:scm_move_with_blocking_tasks, user: user) && !appeal.ready_for_distribution?
   end
 
   def ready_for_distribution!
