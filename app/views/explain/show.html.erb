@@ -157,7 +157,7 @@
   <br/>
   <div id="main_panel">
     <% (sections1 + sections2).each do |sectionId|  %>
-      <div id="<%=sectionId%>_section" style="display: none;">
+      <div id="<%=sectionId%>_section" style="display: block;">
         <%= render sectionId %>
         <hr/>
       </div>
