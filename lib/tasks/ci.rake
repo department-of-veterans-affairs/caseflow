@@ -56,6 +56,7 @@ namespace :ci do
               "#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
     coverage_dir = "~/coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
+
     # Set the merge_timeout very large so that we don't exclude results
     # just because the runs took a long time.
     SimpleCov.merge_timeout(3600 * 24 * 30)
@@ -66,6 +67,12 @@ namespace :ci do
       c = URI.parse(u).read
       JSON.parse(c)
     end
+
+    # Merge the results using the "new" .collate method
+    SimpleCov.collate(resultsets, "rails") do
+      formatter SimpleCov::Formatter::HTMLFormatter
+    end
+
     # SimpleCov doesn't really support merging results after the fact.
     # This construct manually re-creates the SimpleCov merge process
     # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
@@ -74,7 +81,7 @@ namespace :ci do
       SimpleCov::Result.from_hash(resultset)
     end
     result = SimpleCov::ResultMerger.merge_results(*results)
-    SimpleCov::ResultMerger.store_result(result)
+    #SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
       exit!(1)
