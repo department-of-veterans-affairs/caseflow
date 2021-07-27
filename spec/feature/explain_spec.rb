@@ -23,10 +23,10 @@ RSpec.feature "Explain JSON" do
       visit "explain/appeals/#{legacy_appeal.vacols_id}"
       expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
       page.find("#hearing_tree_chkbox + label").click
-      expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
+      expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ", wait: 30)
 
       page.find("#narrative_table_chkbox + label").click
-      expect(page).to have_content("NOD received")
+      expect(page).to have_content("NOD received", wait: 30)
     end
   end
 
@@ -66,7 +66,7 @@ RSpec.feature "Explain JSON" do
 
       visit "explain/appeals/#{appeal.uuid}"
       page.find("#task_tree_chkbox + label").click
-      expect(page).to have_content("Appeal.find(#{appeal.id})")
+      expect(page).to have_content("Appeal.find(#{appeal.id})", wait: 30)
     end
 
     # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
@@ -135,21 +135,22 @@ RSpec.feature "Explain JSON" do
 
         expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
         page.find("#intake_tree_chkbox + label").click
-        expect(page).to have_content("Intake (no PII)")
+        expect(page).to have_content("Intake (no PII)", wait: 30)
         page.find("#hearing_tree_chkbox + label").click
-        expect(page).to have_content("Hearing (no PII)")
+        expect(page).to have_content("Hearing (no PII)", wait: 30)
         page.find("#narrative_table_chkbox + label").click
-        expect(page).to have_content("Appeal Narrative (showing PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)", wait: 30)
         page.find("#timeline_chart_chkbox + label").click
+        expect(page).to have_content("Timeline visualization", wait: 30)
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
         page.find("#intake_tree_chkbox + label").click
-        expect(page).to have_content("Intake (showing PII)")
+        expect(page).to have_content("Intake (showing PII)", wait: 30)
         page.find("#hearing_tree_chkbox + label").click
-        expect(page).to have_content("Hearing (showing PII)")
+        expect(page).to have_content("Hearing (showing PII)", wait: 30)
         page.find("#narrative_table_chkbox + label").click
-        expect(page).to have_content("Appeal Narrative (showing PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)", wait: 30)
         task = real_appeal.tasks.sample
         expect(page).to have_content("#{task.type}_#{task.id}")
       end
@@ -162,6 +163,7 @@ RSpec.feature "Explain JSON" do
         expect(page).to have_content("status: distributed_to_judge")
         expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
         page.find("#timeline_chart_chkbox + label").click
+        expect(page).to have_content("Timeline visualization", wait: 30)
       end
     end
 
@@ -187,7 +189,7 @@ RSpec.feature "Explain JSON" do
         visit "explain/appeals/#{real_appeal.uuid}"
         page.find("#narrative_table_chkbox + label").click
         req_issue = real_appeal.request_issues.sample
-        expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
+        expect(page).to have_content("#{req_issue.type}_#{req_issue.id}", wait: 30)
       end
     end
   end

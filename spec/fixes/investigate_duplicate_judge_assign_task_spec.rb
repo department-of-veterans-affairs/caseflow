@@ -34,6 +34,7 @@ feature "duplicate JudgeAssignTask investigation" do
         visit "/explain/appeals/#{appeal.uuid}"
         expect(page).to have_content("Narrative Table")
         page.find("#narrative_table_chkbox + label").click
+        expect(page).to have_content("Appeal Narrative", wait: 30)
         expect(page).to have_content("50:38")
         expect(page).to have_content("JudgeAssignTask_2001775444")
         expect(page).to have_content("50:44")
