@@ -8,6 +8,13 @@ commands:
           name: Ruby version
           command: ruby -v
 
+      - run:
+          name: Configure Bundler
+          command: |
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
+
       - restore_cache:
           keys:
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
@@ -95,7 +102,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.7.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -162,7 +169,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.7.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -276,7 +283,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.7.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
     steps:
@@ -316,7 +323,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: circleci/ruby:2.5.3-node-browsers # NodeJS Version defined in ./nvmrc
+      - image: circleci/ruby:2.7.3-node-browsers # NodeJS Version defined in ./nvmrc
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test

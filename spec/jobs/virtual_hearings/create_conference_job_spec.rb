@@ -116,7 +116,7 @@ describe VirtualHearings::CreateConferenceJob do
     context "appellant email fails to send" do
       before do
         expected_mailer_args = {
-          mail_recipient: having_attributes(title: MailRecipient::RECIPIENT_TITLES[:appellant]),
+          email_recipient: having_attributes(title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]),
           virtual_hearing: instance_of(VirtualHearing)
         }
 
@@ -247,18 +247,19 @@ describe VirtualHearings::CreateConferenceJob do
           # VACOLS value if the `RequestStore.store[:application]` isn't set
           expect(appeal.representative_name).to eq("Serrif Gnest")
 
-          expect(MailRecipient).to(
+          expect(EmailRecipientInfo).to(
             receive(:new)
               .with(instance_of(Hash))
               .twice
               .and_call_original
           )
-          expect(MailRecipient).to(
+          expect(EmailRecipientInfo).to(
             receive(:new)
               .with(
                 hash_including(
                   name: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-                  title: MailRecipient::RECIPIENT_TITLES[:representative]
+                  title: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
+                  hearing_email_recipient: hearing.representative_recipient
                 )
               )
               .once

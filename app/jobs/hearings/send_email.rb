@@ -18,15 +18,15 @@ class Hearings::SendEmail
     return if send_reminder
 
     if !virtual_hearing.appellant_email_sent
-      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
+      appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
 
     if should_judge_receive_email?
-      virtual_hearing.update!(judge_email_sent: send_email(judge_recipient))
+      judge_recipient.update!(email_sent: send_email(judge_recipient_info))
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
+      representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
 
@@ -34,29 +34,26 @@ class Hearings::SendEmail
 
   delegate :hearing, to: :virtual_hearing
   delegate :appeal, to: :hearing
+  delegate :appellant_recipient, :representative_recipient, :judge_recipient, to: :hearing
   delegate :veteran, to: :appeal
 
   def send_reminder
-    if type == "appellant_reminder" && send_email(appellant_recipient)
-      virtual_hearing.update!(appellant_reminder_sent_at: Time.zone.now)
-
+    if type == "appellant_reminder" && send_email(appellant_recipient_info)
       return true
     end
 
     if type == "representative_reminder" &&
        !virtual_hearing.representative_email.nil? &&
-       send_email(representative_recipient)
-      virtual_hearing.update!(representative_reminder_sent_at: Time.zone.now)
-
+       send_email(representative_recipient_info)
       return true
     end
 
     false
   end
 
-  def email_for_recipient(recipient)
+  def email_for_recipient(recipient_info)
     args = {
-      mail_recipient: recipient,
+      email_recipient: recipient_info,
       virtual_hearing: virtual_hearing
     }
 
@@ -99,7 +96,7 @@ class Hearings::SendEmail
   end
   # :nocov:
 
-  def send_email(recipient)
+  def send_email(recipient_info)
     # Why are we using `deliver_now!`? The documentation mentions that it ignores the flags:
     #
     #   * `perform_deliveries`
@@ -122,63 +119,64 @@ class Hearings::SendEmail
     # The benefit of using `deliver_now!` is that it returns the actual response from
     # GovDelivery. The actual web response gives Caseflow the ability to track
     # the email after it has been accepted by GovDelivery.
-    email = email_for_recipient(recipient)
+    email = email_for_recipient(recipient_info)
 
     return false if email.nil?
 
-    Rails.logger.info("Sending email to #{recipient.inspect}...")
-
+    Rails.logger.info("Sending email to #{recipient_info.inspect}...")
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
 
-    Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
+    Rails.logger.warn("Failed to send #{type} email to #{recipient_info.title}: #{error}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
     false
   else
-    Rails.logger.info("Sent #{type} email to #{recipient.title}!")
+    Rails.logger.info("Sent #{type} email to #{recipient_info.title}!")
 
-    create_sent_hearing_email_event(recipient, external_message_id(msg))
+    create_sent_hearing_email_event(recipient_info, external_message_id(msg))
 
     true
   end
 
   # :nocov:
-  def create_sent_hearing_email_event(recipient, external_id)
+  def create_sent_hearing_email_event(recipient_info, external_id)
     # The "appellant" title is used in the email and is consistent whether or not the
     # veteran is or isn't the appellant, but the email event can be more specific.
     recipient_is_veteran = (
-      recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] &&
+      recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
       !appeal.appellant_is_not_veteran
     )
+
     ::SentHearingEmailEvent.create!(
       hearing: hearing,
       email_type: type.ends_with?("reminder") ? "reminder" : type,
-      email_address: recipient.email,
+      email_address: recipient_info.email,
       external_message_id: external_id,
-      recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
-      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by
+      recipient_role: recipient_is_veteran ? "veteran" : recipient_info.title.downcase,
+      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by,
+      email_recipient: recipient_info.hearing_email_recipient
     )
   rescue StandardError => error
     Raven.capture_exception(error)
   end
   # :nocov:
 
-  def judge_recipient
-    MailRecipient.new(
+  def judge_recipient_info
+    EmailRecipientInfo.new(
       name: hearing.judge&.full_name,
-      email: virtual_hearing.judge_email,
-      title: MailRecipient::RECIPIENT_TITLES[:judge]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:judge],
+      hearing_email_recipient: judge_recipient
     )
   end
 
-  def representative_recipient
-    MailRecipient.new(
+  def representative_recipient_info
+    EmailRecipientInfo.new(
       name: appeal.representative_name,
-      email: virtual_hearing.representative_email,
-      title: MailRecipient::RECIPIENT_TITLES[:representative]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
+      hearing_email_recipient: representative_recipient
     )
   end
 
@@ -194,22 +192,22 @@ class Hearings::SendEmail
     fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
   end
 
-  def appellant_recipient
+  def appellant_recipient_info
     recipient_name = if appeal.appellant_is_not_veteran
-                       appeal.appellant_first_name
+                       appeal.appellant_name
                      elsif veteran.present?
                        validate_veteran_deceased
                        validate_veteran_name
 
-                       veteran.first_name
+                       appeal.veteran_full_name
                      else
                        "Appellant"
                      end
 
-    MailRecipient.new(
+    EmailRecipientInfo.new(
       name: recipient_name,
-      email: virtual_hearing.appellant_email,
-      title: MailRecipient::RECIPIENT_TITLES[:appellant]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+      hearing_email_recipient: appellant_recipient
     )
   end
 

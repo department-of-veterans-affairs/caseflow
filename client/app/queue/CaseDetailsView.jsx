@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
-import { CATEGORIES, TASK_ACTIONS } from './constants';
+import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
@@ -68,7 +68,7 @@ const alertPaddingStyle = css({
   marginTop: '2rem',
 });
 
-const editInformationLinkStyling = css({
+const editAppellantInformationLinkStyling = css({
   fontSize: '2rem',
   fontWeight: 'normal',
   margin: '5px',
@@ -153,8 +153,8 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
 
-  const editInformation =
-    appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
+  const editAppellantInformation =
+    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -259,8 +259,8 @@ export const CaseDetailsView = (props) => {
               appeal={appeal}
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
               additionalHeaderContent={
-                editInformation && (
-                  <span className="cf-push-right" {...editInformationLinkStyling}>
+                editAppellantInformation && (
+                  <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
                     <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
                       {COPY.EDIT_APPELLANT_INFORMATION_LINK}
                     </Link>
