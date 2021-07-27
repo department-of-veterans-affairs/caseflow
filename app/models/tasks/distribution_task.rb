@@ -23,10 +23,8 @@ class DistributionTask < Task
 
     if special_case_movement_task(user)
       return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
-
-      if blocked_special_case_movement(user)
-        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
-      end
+    elsif SpecialCaseMovementTeam.singleton.user_has_access?(user) && blocked_special_case_movement(user)
+      return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
     elsif FeatureToggle.enabled?(:docket_switch, user: user)
       return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
     end
