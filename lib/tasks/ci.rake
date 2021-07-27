@@ -62,24 +62,62 @@ namespace :ci do
     # just because the runs took a long time.
     SimpleCov.merge_timeout(3600 * 24 * 30)
     artifacts = JSON.parse(URI.parse(api_url).read)
+    # puts "Artifacts URL: #{api_url}"
+    # puts "Artifacts: #{artifacts}"
     artifact_urls = artifacts.map { |a| a["url"] }
     resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
-    resultsets = resultset_urls.map do |u|
-      puts "URI: #{u}"
-      c = URI.parse(u).read
-      JSON.parse(c)
+    # resultset_urls = %w(
+    # https://177259-51449239-gh.circle-artifacts.com/7/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/4/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/10/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/1/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/3/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/6/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/11/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/8/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/9/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/2/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/0/%7E/coverage/.resultset.json
+    # https://177259-51449239-gh.circle-artifacts.com/5/%7E/coverage/.resultset.json
+    # )
+    #
+    resultset_urls.each do |url|
+      contents = URI.parse(url).read
+      command = JSON.parse(contents).keys.first # this gets the worker name
+      file = File.new(command + ".json", "w")
+      file.write(contents)
+      file.close
     end
+    #
+    # puts Dir["./*.json"]
+    # exit(0)
 
-    # SimpleCov doesn't really support merging results after the fact.
-    # [mattw 2021: It kind of does with .collate but it's not an easy change.]
-    # This construct manually re-creates the SimpleCov merge process
-    # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
-    # which will print misleading results.
-    results = resultsets.map do |resultset|
-      SimpleCov::Result.from_hash(resultset)
-    end
-    result = SimpleCov::ResultMerger.merge_coverage(*results)
-    SimpleCov::ResultMerger.store_result(result)
+    result = SimpleCov.collate(Dir["./*.json"], "rails")
+    puts result.inspect
+
+    # resultsets = resultset_urls.map do |u|
+    #   puts "URI: #{u}"
+    #   c = URI.parse(u).read
+    #   JSON.parse(c).first.second # don't even ask
+    # end
+    #
+    # # SimpleCov doesn't really support merging results after the fact.
+    # # [mattw 2021: It kind of does with .collate but it's not an easy change.]
+    # # This construct manually re-creates the SimpleCov merge process
+    # # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
+    # # which will print misleading results.
+    # results = resultsets.map do |resultset|
+    #   t = Time.now.to_f
+    #   x = SimpleCov::Result.from_hash(resultset)
+    #   y = Time.now.to_f
+    #   puts "Finished resultset in #{y-t} seconds"
+    #   x
+    # end
+    # #puts "First resultset: #{resultsets.first.inspect}"
+    # # puts "About to compute result"
+    # # result = SimpleCov::ResultMerger.merge_valid_results(resultsets)
+    # # puts "Computed result"
+    # SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
       exit!(1)
