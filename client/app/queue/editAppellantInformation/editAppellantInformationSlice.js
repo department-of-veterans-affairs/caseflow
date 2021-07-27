@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import ApiUtil from '../../util/ApiUtil';
-import { mapAppellantDataToApi } from './utils';
 
 const initialState = {
   claimant: {},
@@ -11,22 +9,6 @@ const editClaimantSlice = createSlice({
   initialState,
   reducers: {
     cancel: () => ({ ...initialState }),
-    updateAppellantInformation: (_state, action) => {
-      const { formData, appellantId, appealId } = action.payload;
-      
-      const appellantPayload = mapAppellantDataToApi(formData);
-      ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload } ).then(
-        (response) => {
-          // CASEFLOW-1924
-          window.location = `/queue/appeals/${appealId}`
-        },
-        // CASEFLOW-1925
-        (error) => {
-          console.log(error)
-        }
-      )
-
-    },
     clearClaimant: (state) => {
       state.claimant = {};
     },
@@ -35,7 +17,6 @@ const editClaimantSlice = createSlice({
 
 export const {
   cancel,
-  updateAppellantInformation,
   clearClaimant,
 } = editClaimantSlice.actions;
 

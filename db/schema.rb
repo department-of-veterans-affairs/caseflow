@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_01_201156) do
+ActiveRecord::Schema.define(version: 2021_07_20_130851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -742,6 +742,18 @@ ActiveRecord::Schema.define(version: 2021_07_01_201156) do
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
+  create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email_address", comment: "PII. The recipient's email address"
+    t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
+    t.bigint "hearing_id", comment: "Associated hearing"
+    t.string "hearing_type"
+    t.string "timezone", limit: 50, comment: "The recipient's timezone"
+    t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
+    t.datetime "updated_at", null: false
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_issue_notes", force: :cascade do |t|
     t.boolean "allow", default: false
     t.datetime "created_at"
@@ -1292,6 +1304,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_201156) do
 
   create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
     t.string "email_address", comment: "Address the email was sent to"
+    t.bigint "email_recipient_id", comment: "Associated HearingEmailRecipient"
     t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.bigint "hearing_id", null: false, comment: "Associated hearing"
@@ -1650,6 +1663,10 @@ ActiveRecord::Schema.define(version: 2021_07_01_201156) do
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "board_grant_effectuations", "appeals"
+  add_foreign_key "board_grant_effectuations", "decision_documents"
+  add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
+  add_foreign_key "board_grant_effectuations", "end_product_establishments"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
@@ -1717,6 +1734,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_201156) do
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
