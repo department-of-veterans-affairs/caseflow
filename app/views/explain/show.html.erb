@@ -254,7 +254,6 @@
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     function toggleSidePanel(chkbox, event) {
       const panel = document.getElementById(chkbox.value);
-      // console.error(chkbox, event);
       toggleSection(chkbox);
       panel.style.top || showDetailsPane();
       panel.style.top || (panel.style.top = "48px");

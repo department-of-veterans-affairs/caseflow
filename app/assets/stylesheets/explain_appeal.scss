@@ -45,3 +45,35 @@ summary {
   font-size: 0.8em;
   float: right;
 }
+
+/* From https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown_hover */
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  .dropbtn {
+    background-color: #04AA6D;
+    margin-bottom: 0px; /* affects location of dropdown-content */
+  }
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+
+  label:hover {
+    background-color: #ddd;
+    padding: 0px 6px;
+  }
+}
+.dropdown:hover {
+  .dropdown-content {
+    display: block;
+  }
+  .dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+  }
+}
