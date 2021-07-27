@@ -22,7 +22,7 @@ namespace :ci do
   desc "Run all non-spec CI scripts"
   task other: %w[ci:verify_code_coverage lint security mocha]
 
-  desc "Verify code coverge (via simplecov) after tests have been run in parallel"
+  desc "Verify code coverage (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
     puts "\nVerifying code coverage"
     require "simplecov"
@@ -68,12 +68,8 @@ namespace :ci do
       JSON.parse(c)
     end
 
-    # Merge the results using the "new" .collate method
-    SimpleCov.collate(resultsets, "rails") do
-      formatter SimpleCov::Formatter::HTMLFormatter
-    end
-
     # SimpleCov doesn't really support merging results after the fact.
+    # [mattw 2021: It kind of does with .collate but it's not an easy change.]
     # This construct manually re-creates the SimpleCov merge process
     # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
     # which will print misleading results.
@@ -81,7 +77,7 @@ namespace :ci do
       SimpleCov::Result.from_hash(resultset)
     end
     result = SimpleCov::ResultMerger.merge_results(*results)
-    #SimpleCov::ResultMerger.store_result(result)
+    SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
       exit!(1)
