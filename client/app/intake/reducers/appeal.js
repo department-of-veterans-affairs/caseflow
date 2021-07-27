@@ -97,6 +97,18 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.docketType
       }
     });
+  case ACTIONS.SET_FILED_BY_VA_GOV:
+    return update(state, {
+      filedByVaGov: {
+        $set: action.payload.filedByVaGov
+      }
+    });
+  case ACTIONS.SET_FILED_BY_VA_GOV_ERROR:
+    return update(state, {
+      filedByVaGovError: {
+        $set: action.payload.filedByVaGovError
+      }
+    });
   case ACTIONS.SET_RECEIPT_DATE:
     return update(state, {
       receiptDate: {
