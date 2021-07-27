@@ -1,6 +1,6 @@
 <style>
   .sticky {
-    position: fixed;
+    position: sticky;
     transition: top 0.5s;
   }
 
@@ -97,20 +97,24 @@
   const autoshowElem = document.getElementById("<%= autoshowId %>");
   var prevScrollPos = window.pageYOffset;
   function reactToScrolling() {
-    const currScrollPos = window.pageYOffset;
-    const diff = prevScrollPos - currScrollPos
+    const diff = prevScrollPos - window.pageYOffset
     if (diff > hysteresisScrollingUp) {
       (!autoshowElem || autoshowElem.checked) && showStickyMenu();
-      prevScrollPos = currScrollPos;
-    } else if (diff < -hysteresisScrollingDown) { //hide
-      menubar_settings.classList.remove("show");
-      menubar.classList.remove("sticky_show");
-      prevScrollPos = currScrollPos;
+      prevScrollPos = window.pageYOffset;
+    } else if (diff < -hysteresisScrollingDown) {
+      hideStickyMenu();
     }
   }
 
   function showStickyMenu(){
     menubar_settings.classList.add("show");
     menubar.classList.add("sticky_show");
+    prevScrollPos = window.pageYOffset;
+  }
+
+  function hideStickyMenu(){
+    menubar_settings.classList.remove("show");
+    menubar.classList.remove("sticky_show");
+    prevScrollPos = window.pageYOffset;
   }
 </script>
