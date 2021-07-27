@@ -9,11 +9,7 @@ if ENV["SINGLE_COV"]
 else
   # default is aggregate via simplecov for CI
   require "simplecov"
-  SimpleCov.start "rails" do
-    # Skip the HTML formatter for the basic reports.
-    # rake ci:circleci_verify_code_coverage will reassemble the individual worker runs
-    formatter SimpleCov::Formatter::SimpleFormatter
-  end
+  SimpleCov.start "rails"
 end
 if ENV["CI"]
   require "rspec/retry"
