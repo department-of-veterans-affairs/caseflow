@@ -1,4 +1,4 @@
-class AddFiledByVaGovToIntakeDetails < ActiveRecord::Migration[5.2]
+class AddFiledByVaGovToIntakeDetails < Caseflow::Migration
   def change
     add_column :appeals, :filed_by_va_gov, :boolean, null: false, default: false,
       comment: "Indicates whether or not this form came from VA.gov"
