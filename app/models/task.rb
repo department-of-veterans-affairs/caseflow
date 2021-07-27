@@ -819,8 +819,6 @@ class Task < CaseflowRecord
   end
 
   def status_is_valid_on_create
-    puts "Status: #{status}"
-    puts "Constant: #{Constants.TASK_STATUSES.on_hold}"
     if status != Constants.TASK_STATUSES.assigned && type != "PreDocketTask"
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     elsif status != Constants.TASK_STATUSES.on_hold && type == "PreDocketTask"
