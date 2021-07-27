@@ -56,6 +56,7 @@ namespace :ci do
               "#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
     coverage_dir = "~/coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
+    SimpleCov.load_profile("rails")
 
     # Set the merge_timeout very large so that we don't exclude results
     # just because the runs took a long time.
@@ -64,6 +65,7 @@ namespace :ci do
     artifact_urls = artifacts.map { |a| a["url"] }
     resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
     resultsets = resultset_urls.map do |u|
+      puts "URI: #{u}"
       c = URI.parse(u).read
       JSON.parse(c)
     end
@@ -76,7 +78,7 @@ namespace :ci do
     results = resultsets.map do |resultset|
       SimpleCov::Result.from_hash(resultset)
     end
-    result = SimpleCov::ResultMerger.merge_results(*results)
+    result = SimpleCov::ResultMerger.merge_coverage(*results)
     SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
