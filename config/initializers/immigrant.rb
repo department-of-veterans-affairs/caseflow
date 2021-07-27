@@ -10,10 +10,6 @@ Immigrant.ignore_keys = [
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
 
-  # Add FK to users table
-  { from_table: "attorney_case_reviews", column: "attorney_id" },
-  { from_table: "attorney_case_reviews", column: "reviewing_judge_id" },
-
   # Investigate these next and add foreign key if possible.
   { from_table: "advance_on_docket_motions", column: "person_id" },
   { from_table: "ramp_issues", column: "source_issue_id" },
