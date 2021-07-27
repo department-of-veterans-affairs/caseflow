@@ -45,7 +45,7 @@ export const RecommendDocketSwitchContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const distributionTask = useSelector((state) => distributionTasksForAppeal(state, { appealId }))[0];
-  
+
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
     () =>
