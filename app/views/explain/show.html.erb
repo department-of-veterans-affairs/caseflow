@@ -101,10 +101,15 @@
   </ul>
 </td><td style="border: 1px solid lightgray;">
   <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
-  <br/>To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
+  <br/>To toggle PII, click
+    <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param,
+                                                    fields: fields_query_param.to_s,
+                                                    sections: sections_query_param.to_s}) %>.
   <br/>(
         <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
-          {action: 'show', show_pii: show_pii_query_param, fields: fields_query_param.to_s, format: "text"}) %>,
+          {action: 'show', format: "text", show_pii: show_pii_query_param,
+                                           fields: fields_query_param.to_s,
+                                           sections: sections_query_param.to_s}) %>,
         <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
        )
 </td></tr>
