@@ -1,4 +1,4 @@
-FROM ruby:2.5.3-slim
+FROM ruby:2.7.3-slim
 MAINTAINER Development and Operations team @ Department of Veterans Affairs
 
 # Build variables
