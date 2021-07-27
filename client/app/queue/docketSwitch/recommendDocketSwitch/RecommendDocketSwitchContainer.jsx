@@ -83,7 +83,7 @@ export const RecommendDocketSwitchContainer = () => {
       title: sprintf(DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE, appeal.appellantFullName, formData.judge.label),
       detail: DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
     };
-    debugger
+
     try {
       await dispatch(createDocketSwitchRulingTask(data));
 
