@@ -48,7 +48,7 @@ class TasksForAppeal
       .includes(*task_includes)
       .select do |task|
       task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
-        (task.is_a?(HearingTask) && task.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
+        (task.is_a?(HearingTask) && task&.hearing&.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
         task.is_a?(DistributionTask)
     end
   end
