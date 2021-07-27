@@ -34,6 +34,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     untimelyExemptionModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
+    filedByVaGov: null,
+    filedByVaGovError: null,
     docketType: null,
     docketTypeError: null,
     veteranIsNotClaimant: null,
