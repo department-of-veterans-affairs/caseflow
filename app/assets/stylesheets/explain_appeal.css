@@ -18,6 +18,10 @@ body {
   overflow-y: scroll;
 }
 
+h3 {
+  margin-top: 24px;
+}
+
 .show_pii_true {
   color: red;
 }
@@ -34,4 +38,10 @@ button.menuBtn {
 
 summary {
   display: list-item;
+}
+
+.resourceLink {
+  margin: 5px;
+  font-size: 0.8em;
+  float: right;
 }

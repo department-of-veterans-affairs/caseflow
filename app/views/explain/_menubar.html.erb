@@ -26,7 +26,7 @@
   const pixelsStillVisible = 8;
   // When menubar is sticky, don't toggle visibility until this much movement is observed
   const hysteresisScrollingDown = 20;
-  const hysteresisScrollingUp = 50;
+  const hysteresisScrollingUp = 150;
 
   // Number of pixels of menubar the will be hidden
   const hiddenPixels = menubar.offsetHeight - pixelsStillVisible
@@ -48,14 +48,17 @@
     stickyStyleRule = findStyleRule(".sticky");
     stickyStyleRule.style.top = hiddenTop
 
+    // For some reason, this placeholder is no longer needed, but keep this code around, just in case.
     // Add padding on the main page as a placeholder for the now removed sticky menu
-    styleSheet = stickyStyleRule.parentStyleSheet
-    styleSheet.insertRule(".sticky ~ #<%= contentId %> { padding-top: "+menubar.offsetHeight+"px; }", 
-                          styleSheet.cssRules.length);
+    // styleSheet = stickyStyleRule.parentStyleSheet
+    // styleSheet.insertRule(".sticky ~ #<%= contentId %> { padding-top: "+menubar.offsetHeight+"px; }", 
+    //                       styleSheet.cssRules.length);
   }
   updateStyles();
 
   window.onscroll = ()=>{
+    if(tempIgnoreScroll) return;
+
     if(window.pageYOffset < stickyPos - hiddenPixels){
       disableStickyMenu();
     } else if (window.pageYOffset >= stickyPos && !menubar.classList.contains("sticky_temp_hide")) {
@@ -97,12 +100,18 @@
   const autoshowElem = document.getElementById("<%= autoshowId %>");
   var prevScrollPos = window.pageYOffset;
   function reactToScrolling() {
+    const autoshowFlag = (!autoshowElem || autoshowElem.checked)
     const diff = prevScrollPos - window.pageYOffset
-    if (diff > hysteresisScrollingUp) {
-      (!autoshowElem || autoshowElem.checked) && showStickyMenu();
-      prevScrollPos = window.pageYOffset;
-    } else if (diff < -hysteresisScrollingDown) {
-      hideStickyMenu();
+    if(autoshowFlag){
+      if (diff > hysteresisScrollingUp) {
+        showStickyMenu();
+        prevScrollPos = window.pageYOffset;
+      } else if (diff < -hysteresisScrollingDown) {
+        hideStickyMenu();
+      }
+    } else {
+      if (Math.abs(diff) > 10)
+        hideStickyMenu();
     }
   }
 

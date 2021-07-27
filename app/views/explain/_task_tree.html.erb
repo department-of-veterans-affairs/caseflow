@@ -7,6 +7,11 @@
   <% end %>
 </code>
 <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
+
+<a class="resourceLink" target="_blank" rel="noopener noreferrer"
+   href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render">
+   Task Tree Render</a>
+
 <details>
   <summary id="treee_config" style="color: blue">Task tree configuration</summary>
 
@@ -22,11 +27,13 @@
   </div>
   <p/><a id="task_tree_link" href="">Update task tree</a>
 </details>
+<br/>
 
 <script type="text/javascript">
   // Handle Task Tree field checkboxes
   function updateTaskTreeLink(){
     const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.id);
+    // To-do: include other query params in the newUrl
     const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
     document.querySelector('#task_tree_link').setAttribute("href", newUrl);
   }

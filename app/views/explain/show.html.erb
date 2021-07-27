@@ -34,10 +34,10 @@
     }
 
     #section_checkboxes .row_item:nth-of-type(1) {
-      margin-left: 10px;
+      margin-left: 20px;
     }
     #section_checkboxes .row_item:nth-last-of-type(1) {
-      margin-right: 10px;
+      margin-right: 20px;
     }
 
     #section_checkboxes label {
@@ -99,28 +99,32 @@
       </li>
     <% end %>
   </ul>
-</td><td style="border: 1px solid lightgray;">
-  <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
-  <br/>To toggle PII, click
-    <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param,
-                                                    fields: fields_query_param.to_s,
-                                                    sections: sections_query_param.to_s}) %>.
-  <br/>(
-        <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
-          {action: 'show', format: "text", show_pii: show_pii_query_param,
-                                           fields: fields_query_param.to_s,
-                                           sections: sections_query_param.to_s}) %>,
-        <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
-       )
+</td><td>
+  <div style="border: 1px solid lightgray; padding: 10px;">
+    <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
+    <br/>To toggle PII, click
+      <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param,
+                                                      fields: fields_query_param.to_s,
+                                                      sections: sections_query_param.to_s}) %>.
+    <br/>(
+          <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
+            {action: 'show', format: "text", show_pii: show_pii_query_param,
+                                            fields: fields_query_param.to_s,
+                                            sections: sections_query_param.to_s}) %>,
+          <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
+        )
+  </div>
 </td></tr>
     </tbody>
   </table>
 
   <%
     sections1 = %w[task_tree intake_tree hearing_tree]
+
     sections2 = []
     sections2 += %w[timeline_chart network_graph] unless legacy_appeal?
     sections2 += %w[narrative_table]
+
     enabledSections = (enabled_sections.first&.downcase == 'all') ? sections1 + sections2 : enabled_sections
     enabledSections << "task_tree" unless fields_query_param.nil?;
   %>
@@ -148,7 +152,7 @@
     </div>
     <div>
       <div id="menubar_settings" visibility="hidden">
-        <input id="autoshow_chkbox" type="checkbox" checked>
+        <input id="autoshow_chkbox" type="checkbox">
         <label for="autoshow_chkbox" style="margin: 8px;">Show on scrollup</label>
 
         <button id="hide_menubar_btn" class="menuBtn" onclick="temporarilyHideStickyMenu()">Hide</button>
@@ -169,6 +173,7 @@
       </div>
     <% end %>
   </div>
+  <div id="blank_section" style="margin-bottom: 90vh;" />
 
   <script type="text/javascript">
     function toggleSection(chkbox, panelId, sectionId) {
@@ -187,8 +192,8 @@
         }
 
         // If more than 1 section visible, scroll to the newly visible section
-        const visibleMainSections = document.querySelectorAll('#main_panel > div[style="display: block;"]')
-        visibleMainSections.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
+        // const visibleMainSections = document.querySelectorAll('#main_panel > div[style="display: block;"]')
+        // visibleMainSections.length > 1 && scrollToSection(sectionId);
         setDetailsPaneMessage("Showing "+chkbox.value);
       } else {
         setDetailsPaneMessage("Hiding "+chkbox.value);
@@ -202,10 +207,44 @@
         chkbox.onclick(); // calls toggleSection
       }
     }
+
+    /**
+     * https://stackoverflow.com/questions/52292603/is-there-a-callback-for-window-scrollto
+     * Native scrollTo with callback
+     * @param offset - offset to scroll to
+     * @param callback - callback function
+     */
+    function smoothScrollTo(offset, callback) {
+      const fixedOffset = offset.toFixed();
+      const body = document.body
+      const yOffsetAtBottom = body.scrollHeight - body.scrollTop - body.clientHeight - 20
+      const onScroll = ()=>{
+        const atBottom = window.pageYOffset >=  yOffsetAtBottom;
+        if (atBottom || window.pageYOffset.toFixed() === fixedOffset) {
+          window.removeEventListener('scroll', onScroll);
+          callback();
+        }
+      }
+
+      window.addEventListener('scroll', onScroll);
+      onScroll();
+      window.scrollTo({
+          top: offset,
+          behavior: 'smooth'
+      });
+    }
+
+    var tempIgnoreScroll = false;
     function scrollToSection(sectionId){
+      tempIgnoreScroll = true;
       const section = document.getElementById(sectionId+"_section");
-      section?.scrollIntoView({behavior: "smooth", block: "start"});
-      hideStickyMenu();
+      const yPosAboveSection = section.getBoundingClientRect().top + window.pageYOffset - 100;
+      smoothScrollTo(yPosAboveSection, ()=>{
+        tempIgnoreScroll = false;
+        enableStickyMenu();
+        hideStickyMenu();
+        console.log("scrolled to section", sectionId);
+      });
     }
 
     const setDetailsPaneMessage = (htmlContent)=>{
