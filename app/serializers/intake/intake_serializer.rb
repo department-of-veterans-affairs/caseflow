@@ -28,6 +28,10 @@ class Intake::IntakeSerializer
     object.detail&.receipt_date
   end
 
+  attribute :filed_by_va_gov do |object|
+    object.detail&.filed_by_va_gov
+  end
+
   attribute :processedInCaseflow do |object|
     object.detail&.try(:processed_in_caseflow?)
   end
