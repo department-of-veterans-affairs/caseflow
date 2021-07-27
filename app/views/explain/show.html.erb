@@ -120,18 +120,18 @@
     <div class="section_checkbox_row" id="main_panel_section_btns">
       <% sections1.each do |sectionId| %>
         <span class="row_item">
-          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
+          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox" checked
                 onclick="toggleSection(this, 'main_panel', '<%=sectionId%>')">
           <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
-          <a id="<%=sectionId%>_goLink" class="go_to_section_link" onclick="scrollToSection('<%=sectionId%>')">(go there)</a>
+          <a id="<%=sectionId%>_goLink" class="go_to_section_link enabled" onclick="scrollToSection('<%=sectionId%>')">(go there)</a>
         </span>
       <% end %>
       <% sections2.each do |sectionId| %>
         <span class="row_item">
-          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
+          <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox" checked
                 onclick="toggleSection(this, 'main_panel', '<%=sectionId%>')">
           <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
-          <a id="<%=sectionId%>_goLink" class="go_to_section_link" onclick="scrollToSection('<%=sectionId%>')">(go there)</a>
+          <a id="<%=sectionId%>_goLink" class="go_to_section_link enabled" onclick="scrollToSection('<%=sectionId%>')">(go there)</a>
         </span>
       <% end %>
 
@@ -222,7 +222,6 @@
 
     window.onload = ()=>{
       const isTreeFieldsParamsProvided = <%= fields_query_param != nil %>;
-      console.warn(isTreeFieldsParamsProvided)
       if (isTreeFieldsParamsProvided) {
         showSection("task_tree");
         scrollToSection("task_tree");
