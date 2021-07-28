@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_27_140419) do
+ActiveRecord::Schema.define(version: 2021_07_27_210019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,7 +153,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_140419) do
     t.text "note"
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
-    t.string "task_id"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
@@ -920,7 +920,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_140419) do
     t.boolean "one_touch_initiative"
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
-    t.string "task_id"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
@@ -1666,6 +1666,8 @@ ActiveRecord::Schema.define(version: 2021_07_27_140419) do
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "attorney_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "attorney_case_reviews", "users", column: "reviewing_judge_id"
   add_foreign_key "board_grant_effectuations", "appeals"
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
