@@ -76,7 +76,7 @@ feature "Unrecognized appellants", :postgres do
       expect(ua.name).to eq("Organization 1")
       expect(ua.middle_name).to eq("")
       expect(ua.last_name).to eq("")
-      
+
       expect(ua.party_type).to eq("organization")
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
