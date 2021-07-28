@@ -64,7 +64,7 @@ export const ClaimantForm = ({
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
-  const showPartyType = watchRelationship === 'other' || attorneyNotListed;
+  const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
 
   const asyncFn = useCallback(
@@ -104,7 +104,7 @@ export const ClaimantForm = ({
           )}
         />
         <br />
-        {watchRelationship === 'attorney' && (
+        {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
             control={control}
             name="listedAttorney"
@@ -223,7 +223,7 @@ export const ClaimantForm = ({
             </PhoneNumber>
           </>
         )}
-        {(partyType && !attorneyRelationship) && (
+        {(partyType && !attorneyRelationship && !props.hidePOAForm) && (
           <RadioField
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical
@@ -243,7 +243,9 @@ ClaimantForm.propTypes = {
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
   editAppellantHeader: PropTypes.string,
-  editAppellantDescription: PropTypes.string
+  editAppellantDescription: PropTypes.string,
+  hidePOAForm: PropTypes.bool,
+  hideListedAttorney: PropTypes.bool
 };
 
 const FieldDiv = styled.div`

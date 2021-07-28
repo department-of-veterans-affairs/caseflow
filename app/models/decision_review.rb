@@ -174,7 +174,8 @@ class DecisionReview < CaseflowRecord
   end
 
   def claimant_participant_id
-    claimant&.participant_id
+    # EPs with an AttorneyClaimant need to be established with the veteran's participant ID, per BVA
+    claimant.is_a?(AttorneyClaimant) ? veteran&.participant_id : claimant&.participant_id
   end
 
   def claimant_type
@@ -408,7 +409,11 @@ class DecisionReview < CaseflowRecord
     veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
-  rescue PromulgatedRating::BackfilledRatingError, PromulgatedRating::LockedRatingError => error
+  rescue PromulgatedRating::BackfilledRatingError
+    # Ignore PromulgatedRating::BackfilledRatingErrors since they are a regular occurrence and we don't need to take
+    # any action when we see them.
+    []
+  rescue PromulgatedRating::LockedRatingError => error
     Raven.capture_exception(error)
     []
   end

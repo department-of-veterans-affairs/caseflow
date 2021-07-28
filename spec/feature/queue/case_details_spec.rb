@@ -192,6 +192,7 @@ RSpec.feature "Case details", :all_dbs do
 
   context "attorney case details view" do
     context "when Veteran is the appellant" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -200,7 +201,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -233,6 +234,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "when veteran is not in BGS" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -241,7 +243,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -256,10 +258,14 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(page).to have_content("About the Veteran")
         expect(page.has_no_content?("About the Appellant")).to eq(true)
-        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/1/1990")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to_not have_content("Regional Office")
+
+        # Veteran gender information comes from BGS so case details page will display no gender information when the
+        # Veteran is not in BGS.
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_MALE)
       end
     end
 
@@ -638,8 +644,7 @@ RSpec.feature "Case details", :all_dbs do
           vacols_case: create(
             :case,
             :assigned,
-            user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            user: attorney_user
           )
         )
       end
@@ -2199,6 +2204,75 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_current_path(case_details_page_path)
           end
         end
+      end
+    end
+  end
+
+  describe "POA/VSO restricted visibility" do
+    let(:appeal) { create(:appeal) }
+
+    RSpec.shared_context("with restrict_poa_visibility feature toggle") do
+      before { FeatureToggle.enable!(:restrict_poa_visibility) }
+      after { FeatureToggle.disable!(:restrict_poa_visibility) }
+    end
+
+    RSpec.shared_examples("access Case Details") do
+      it "should view Case Details page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+      end
+    end
+
+    RSpec.shared_examples("vso restricted") do
+      it "has VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    RSpec.shared_examples("vso unrestricted") do
+      it "does not have VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    context "as vso user" do
+      let(:user) { create(:user, :vso_role) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso restricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
+      end
+    end
+
+    context "as non-vso user" do
+      let(:user) { create(:default_user) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso unrestricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
       end
     end
   end
