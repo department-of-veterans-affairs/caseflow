@@ -21,6 +21,7 @@ const TabWindow = ({
   name = 'main',
   onChange,
   tabs = [],
+  tabPanelTabIndex = false
 }) => {
   const tabContent = (tab) => (
     <span>
@@ -44,6 +45,7 @@ const TabWindow = ({
       onChange={onChange}
       mountOnEnter
       unmountOnExit
+      tabPanelTabIndex={tabPanelTabIndex}
     >
       {tabs.map((item, idx) => (
         <Tab
@@ -73,6 +75,7 @@ TabWindow.propTypes = {
     })
   ),
   defaultPage: PropTypes.number,
+  tabPanelTabIndex: PropTypes.bool
 };
 
 TabWindow.defaultProps = {
