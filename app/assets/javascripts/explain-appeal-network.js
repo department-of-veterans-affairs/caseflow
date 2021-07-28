@@ -83,8 +83,6 @@ function addNetworkGraph(elementId, network_graph_data){
   edgesData.add(network_graph_data["edges"])
   // https://visjs.github.io/vis-network/docs/network/#options
   const network_options = {
-    width: '95%',
-    height: '800px',
     edges: {
       arrows: 'to'
     },

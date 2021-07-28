@@ -23,7 +23,6 @@ function addTimeline(elementId, timeline_data){
   const millisInAMonth = 1000*60*60*24*30 // an approximate month in milliseconds
   // https://visjs.github.io/vis-timeline/docs/timeline/#Configuration_Options
   const timeline_options = {
-    width: '95%',
     // maxHeight: 800,
     horizontalScroll: true,
     verticalScroll: true,
