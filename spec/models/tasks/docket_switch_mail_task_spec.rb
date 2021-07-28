@@ -4,6 +4,7 @@ describe DocketSwitchMailTask, :postgres do
   let(:user) { create(:user) }
   let(:cotb_team) { ClerkOfTheBoard.singleton }
   let(:root_task) { create(:root_task) }
+  let(:distribution_task) { create(:distribution_task, appeal: root_task.appeal, parent: root_task) }
   let(:task_class) { DocketSwitchMailTask }
 
   let(:task_actions) do
@@ -22,7 +23,7 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".available_actions" do
-    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: user) }
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: user) }
 
     subject { mail_task.available_actions(user) }
 
@@ -64,7 +65,10 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".create_from_params" do
-    let(:params) { { parent_id: root_task.id, instructions: "foo bar" } }
+    before { FeatureToggle.enable!(:docket_switch) }
+    after { FeatureToggle.disable!(:docket_switch) }
+    
+    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task.id, instructions: "foo bar" } }
 
     subject { DocketSwitchMailTask.create_from_params(params, user) }
 
@@ -113,8 +117,8 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".child_task_assignee" do
-    let(:org_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: cotb_team) }
-    let(:parent) { root_task }
+    let(:org_task) { task_class.create!(appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: cotb_team) }
+    let(:parent) { distribution_task }
     let(:params) { { parent_id: parent.id } }
 
     subject { DocketSwitchMailTask.child_task_assignee(parent, params) }
