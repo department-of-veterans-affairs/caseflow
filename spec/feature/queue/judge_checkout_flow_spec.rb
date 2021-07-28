@@ -56,6 +56,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       jdr_task.update(status: :assigned)
       appeal.request_issues.update_all(closed_at: nil)
       visit "queue/appeals/#{appeal.uuid}"
+      # Below sleep is needed so that the frontend will load with the required dropdown before the jdr task's status changes
+      sleep 1
 
       # Restore JudgeDecisionReviewTask status from the first checkout
       jdr_task.update(status: :completed)
@@ -353,6 +355,10 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       step("Navigate from case details to decision issues by way of actions dropdown") do
         visit("/queue/appeals/#{appeal.external_id}")
         click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
       end
 
