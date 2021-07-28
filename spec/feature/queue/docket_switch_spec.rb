@@ -87,6 +87,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       # The previously assigned judge should be selected
       expect(page).to have_content(judge_assign_task.assigned_to.display_name)
+
       click_button(text: "Submit")
 
       # Return back to user's queue
