@@ -177,7 +177,9 @@ export default class TestUsers extends React.PureComponent {
                 <br />
                 <h3>App Selector:</h3>
                 <TabWindow
-                  tabs={tabs} />
+                  tabs={tabs}
+                  tabPanelTabIndex
+                />
                 <p>
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.
