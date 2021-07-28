@@ -36,14 +36,4 @@ describe SentHearingEmailEvent do
       end
     end
   end
-
-  context "#update" do
-    let(:event) { create(:sent_hearing_email_event) }
-
-    it "fails with readonly error" do
-      expect { event.update!(email_address: "new@caseflow.va.gov") }.to(
-        raise_error(ActiveRecord::ReadOnlyRecord)
-      )
-    end
-  end
 end

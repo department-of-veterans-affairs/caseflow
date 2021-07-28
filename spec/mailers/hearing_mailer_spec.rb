@@ -32,7 +32,14 @@ describe HearingMailer do
     )
   end
   let(:recipient_title) { nil }
-  let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: recipient_title) }
+  let(:hearing_email_recipient) { nil }
+  let(:recipient_info) do
+    EmailRecipientInfo.new(
+      name: "LastName",
+      title: recipient_title,
+      hearing_email_recipient: hearing_email_recipient
+    )
+  end
   let(:pexip_url) { "fake.va.gov" }
 
   shared_context "ama_hearing" do
@@ -116,28 +123,48 @@ describe HearingMailer do
   end
 
   shared_context "cancellation_email" do
-    subject { HearingMailer.cancellation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.cancellation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "confirmation_email" do
-    subject { HearingMailer.confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "updated_time_confirmation_email" do
     subject do
-      HearingMailer.updated_time_confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+      HearingMailer.updated_time_confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
     end
   end
 
   shared_context "virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
     end
   end
 
   shared_context "non_virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: hearing)
+      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: nil, hearing: hearing)
+    end
+  end
+
+  shared_context "appellant_hearing_email_recipient" do
+    let(:hearing_email_recipient) do
+      AppellantHearingEmailRecipient.create!(
+        email_address: "test@email.com",
+        timezone: appellant_tz,
+        hearing: hearing
+      )
+    end
+  end
+
+  shared_context "representative_hearing_email_recipient" do
+    let(:hearing_email_recipient) do
+      RepresentativeHearingEmailRecipient.create!(
+        email_address: "test@email.com",
+        timezone: representative_tz,
+        hearing: hearing
+      )
     end
   end
 
@@ -297,7 +324,8 @@ describe HearingMailer do
   end
 
   context "for judge" do
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
+    let(:recipient_title) { HearingEmailRecipient::RECIPIENT_TITLES[:judge] }
+    let(:hearing_email_recipient) { virtual_hearing.hearing.judge_recipient }
 
     # we expect the judge to always see the hearing time in central office (eastern) time zone
 
@@ -450,7 +478,7 @@ describe HearingMailer do
   end
 
   context "for appellant" do
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
+    let(:recipient_title) { HearingEmailRecipient::RECIPIENT_TITLES[:appellant] }
 
     # we expect the appellant to always see the hearing time in the regional office time zone
     # unless appellant_tz in VirtualHearing is set
@@ -469,6 +497,8 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
+
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -533,7 +563,7 @@ describe HearingMailer do
 
         describe "#link" do
           it "has the test link" do
-            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
           end
 
           it "is guest link" do
@@ -612,7 +642,7 @@ describe HearingMailer do
 
         describe "#link" do
           it "has the test link" do
-            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
           end
 
           it "is guest link" do
@@ -713,6 +743,7 @@ describe HearingMailer do
     end
 
     context "with ama video hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "ama_hearing"
 
       describe "#reminder" do
@@ -731,6 +762,7 @@ describe HearingMailer do
     end
 
     context "with ama central hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "ama_central_hearing"
 
       describe "#reminder" do
@@ -749,6 +781,8 @@ describe HearingMailer do
     end
 
     context "with legacy virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
+
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -949,6 +983,7 @@ describe HearingMailer do
     end
 
     context "with legacy video hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "legacy_hearing"
 
       describe "#reminder" do
@@ -967,6 +1002,7 @@ describe HearingMailer do
     end
 
     context "with legacy central hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
@@ -986,7 +1022,7 @@ describe HearingMailer do
   end
 
   context "for representative" do
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
+    let(:recipient_title) { HearingEmailRecipient::RECIPIENT_TITLES[:representative] }
 
     # we expect the representative to always see the hearing time in the regional office time zone
     # unless representative_tz in VirtualHearing is set
@@ -1005,6 +1041,8 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.representative_recipient }
+
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -1069,7 +1107,7 @@ describe HearingMailer do
 
         describe "#link" do
           it "has the test link" do
-            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
           end
 
           it "is guest link" do
@@ -1125,7 +1163,7 @@ describe HearingMailer do
 
         describe "#link" do
           it "has the test link" do
-            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
           end
 
           it "is guest link" do
@@ -1225,6 +1263,7 @@ describe HearingMailer do
     end
 
     context "with ama video hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "ama_hearing"
 
       describe "#reminder" do
@@ -1243,6 +1282,7 @@ describe HearingMailer do
     end
 
     context "with ama central hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "ama_central_hearing"
 
       describe "#reminder" do
@@ -1261,6 +1301,8 @@ describe HearingMailer do
     end
 
     context "with legacy virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.representative_recipient }
+
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -1434,6 +1476,7 @@ describe HearingMailer do
     end
 
     context "with legacy video hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "legacy_hearing"
 
       describe "#reminder" do
@@ -1452,6 +1495,7 @@ describe HearingMailer do
     end
 
     context "with legacy central hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
