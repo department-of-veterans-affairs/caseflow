@@ -32,8 +32,10 @@ Immigrant.ignore_keys = [
 
   # Refers to the tasks table for AMA appeals, but something like `4107503-2021-05-31` for legacy appeals
   # Search for `review_class.complete(params)` in our code to see where task_id is set.
-  # Possible solution: Create new column for VACOLS task ID, transfer VACOLS non integer strings to new column, update the code to assign VACOLS strings to new column, 
-  # delete the VACOLS string from task_id column, and then add the FK
+  # Possible solution: Create new column for VACOLS task ID, copy VACOLS non-integer strings to new column,
+  # update the code to read and assign VACOLS strings to new column, 
+  # delete the VACOLS string from `task_id` column, convert `task_id` to a `bigint` column,
+  # and then add the FK for `task_id`.
   { from_table: "judge_case_reviews", column: "task_id" },
   { from_table: "attorney_case_reviews", column: "task_id" },
 
