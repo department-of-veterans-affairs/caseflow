@@ -31,6 +31,10 @@ li ul {
   margin-bottom: 0px
 }
 
+input[type="button"] {
+  height: auto;
+}
+
 button.menuBtn {
   padding: 5px;
   font-size: 0.9em;
@@ -52,28 +56,32 @@ summary {
   display: inline-block;
 
   .dropbtn {
-    background-color: #04AA6D;
-    margin-bottom: 0px; /* affects location of dropdown-content */
+    background-color: #04b5b5;
   }
 }
+
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  top: 46px;
+  width: max-content;
+  box-shadow: 0px 8px 12px 0px;
   z-index: 1;
-
+  background-color: lightcyan;
+  padding: 6px;
+  label {
+    padding: 4px 6px;
+    margin: 0px;
+  }
   label:hover {
-    background-color: #ddd;
-    padding: 0px 6px;
+    background-color: cyan;
   }
 }
 .dropdown:hover {
+  .dropbtn {
+    background-color: darkcyan;
+  }
   .dropdown-content {
     display: block;
-  }
-  .dropdown:hover .dropbtn {
-    background-color: #3e8e41;
   }
 }

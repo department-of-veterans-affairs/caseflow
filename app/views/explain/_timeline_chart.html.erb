@@ -6,8 +6,6 @@
 <details open>
   <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
   <div style="margin-left: 1em;">
-    <input type="button" id="fit" value="Fit all items" onclick="fitTimeline()">
-
     <div class="dropdown">
       <button class="dropbtn">Groups</button>
       <div class="dropdown-content">
@@ -18,20 +16,9 @@
         <% end %>
       </div>
     </div>
+    <input type="button" id="fit" value="Fit items" onclick="fitTimeline()">
 
-    <br/>
-    <div id="timeline"></div>
-
-    <details>
-      <summary id="timeline_config" style="color: blue">Timeline configuration</summary>
-
-      <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
-        <input id="<%=groupName%>_group_visible" value="<%=groupName%>" 
-          type="checkbox" checked onchange="toggleTimelineEventGroup(this)">
-        <label for="<%=groupName%>_group_visible"><%=groupName%></label>
-      <% end %>
-      Ctrl-scrollwheel zooms into the timeline.
-    </details>
+    <br/><div id="timeline"></div>
 
     <details>
       <summary style="color: gray">Timeline data</summary>

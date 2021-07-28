@@ -264,16 +264,13 @@
       //                      )+"px");
     }
 
-    window.onload = ()=>{
+    window.addEventListener('load', (event) => {
+      console.log('show.html.erb onLoadListener');
       const isTreeFieldsParamsProvided = <%= fields_query_param != nil %>;
       if (isTreeFieldsParamsProvided) {
         // showSection("task_tree");
         scrollToSection("task_tree");
       }
-    }
-
-    window.onresize = ()=>{
-      // To-do: Ensure side panel remains visible?
-    }
+    });
   </script>
 </div>

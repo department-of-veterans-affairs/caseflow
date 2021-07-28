@@ -1,4 +1,32 @@
 <h3>Task tree</h3>
+
+<span id="treeefields">
+  <%
+    taskFields={}
+    remainingFields = available_fields
+    remainingFields -= (taskFields[:time_fields] = remainingFields.select{|f| f.end_with?("_at", "_DATE", "_TIME")})
+    remainingFields -= (taskFields[:assign_fields] = remainingFields.select{|f| f.start_with?("assigned_", "ASGN_")})
+    taskFields[:remaining_fields] = remainingFields
+  %>
+  <% taskFields.each do |name, field_names| %>
+    <div class="dropdown">
+      <button class="dropbtn"><%=name.to_s.titleize%></button>
+      <div class="dropdown-content">
+        <% field_names.sort.each do |field_name| %>
+          <% if treee_fields.include?(field_name.to_sym) %>
+            <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()">
+          <% else %>
+            <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()">
+          <% end %>
+          <label for="<%=field_name%>"><%=field_name%></label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</span>
+<a id="task_tree_link" href="">Update task tree</a>
+<br/>
+
 <code style="color: green">
   Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
   <% if legacy_appeal? %>
@@ -11,22 +39,6 @@
 <a class="resourceLink" target="_blank" rel="noopener noreferrer"
    href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render">
    Task Tree Render</a>
-
-<details>
-  <summary id="treee_config" style="color: blue">Task tree configuration</summary>
-
-  <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-    <% available_fields.each do |field_name| %>
-      <% if treee_fields.include?(field_name.to_sym) %>
-        <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()">
-      <% else %>
-        <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()">
-      <% end %>
-      <label for="<%=field_name%>"><%=field_name%></label>
-    <% end %>
-  </div>
-  <p/><a id="task_tree_link" href="">Update task tree</a>
-</details>
 <br/>
 
 <script type="text/javascript">
