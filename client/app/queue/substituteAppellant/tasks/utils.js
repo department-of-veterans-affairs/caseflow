@@ -130,10 +130,6 @@ export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
   return taskInfo.type === 'InformalHearingPresentationTask' && !claimantPoa?.ihp_allowed;
 };
 
-export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
-  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
-};
-
 // We can have a case where a particular task's inclusion depends upon other tasks
 // This happens with org tasks that are normally hidden from case timeline
 // but corresponding user tasks would be shown
