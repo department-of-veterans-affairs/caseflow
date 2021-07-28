@@ -152,7 +152,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_210019) do
     t.text "note"
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
-    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but something like `4107503-2021-05-31` for legacy appeals"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
@@ -918,7 +918,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_210019) do
     t.boolean "one_touch_initiative"
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
-    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but something like `4107503-2021-05-31` for legacy appeals"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
