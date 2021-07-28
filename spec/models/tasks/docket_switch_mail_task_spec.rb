@@ -117,7 +117,7 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".child_task_assignee" do
-    let(:org_task) do 
+    let(:org_task) do
       task_class.create!(
         appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: cotb_team
       )
