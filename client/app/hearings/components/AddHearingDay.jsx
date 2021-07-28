@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { HearingTime } from './modalForms/HearingTime';
 import moment from 'moment-timezone';
 
+import { DocketStartTimes } from './DocketStartTimes';
 import {
   RegionalOfficeDropdown,
   HearingCoordinatorDropdown,
@@ -265,6 +266,14 @@ export const AddHearingDay = ({
             onChange={(value) => props.onAssignHearingRoom(value)}
             {...roomRequiredStyling}
           />
+          {selectedVideo &&
+            <DocketStartTimes
+              setSlotCount={setSlotCount}
+              setHearingStartTime={setHearingStartTime}
+              hearingStartTime={hearingStartTime}
+              roTimezone={selectedRegionalOffice?.timezone || 'America/New_York'}
+            />
+          }
           {(selectedVideo || selectedVirtual) && (
             <RegionalOfficeDropdown
               label="Regional Office (RO)"

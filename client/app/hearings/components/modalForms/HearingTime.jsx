@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -8,8 +8,9 @@ import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
 import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO_OPTIONS';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
-import { hearingTimeOptsWithZone } from '../../utils';
+import { hearingTimeOptsWithZone, shortZoneName } from '../../utils';
 import { verticalAlign } from '../details/style';
+import { ReadOnly } from '../details/ReadOnly';
 
 export const getAssignHearingTime = (time, day) => {
   return {
@@ -55,6 +56,7 @@ export const HearingTime = ({
   label,
   vertical,
   hideLabel,
+  hearingStartTime
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const isOther = _.isUndefined(
@@ -70,6 +72,32 @@ export const HearingTime = ({
 
   // Determine the radio button alignment
   const align = vertical ? verticalAlign : {};
+
+  useEffect(() => {
+    if (hearingStartTime) {
+      onChange(moment(hearingStartTime).tz(localZone, true).
+        format('hh:mm'));
+    }
+  }, []);
+
+  if (hearingStartTime) {
+    const zoneName = shortZoneName(localZone);
+    const dateTime = moment(hearingStartTime).tz(localZone, true);
+    let displayTime = `${dateTime.format('h:mm A')} ${zoneName}`;
+
+    if (localZone !== 'America/New_York') {
+      displayTime =
+        `${displayTime} / ${moment(dateTime).tz('America/New_York').
+          format('h:mm A')} Eastern`;
+    }
+
+    return (
+      <ReadOnly
+        label="Hearing Time"
+        text={displayTime}
+      />
+    );
+  }
 
   return (
     <React.Fragment>
@@ -126,4 +154,5 @@ HearingTime.propTypes = {
   label: PropTypes.string,
   localZone: PropTypes.string,
   hideLabel: PropTypes.bool,
+  hearingStartTime: PropTypes.string
 };

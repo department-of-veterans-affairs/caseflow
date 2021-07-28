@@ -53,6 +53,7 @@ export const ScheduleVeteranForm = ({
   const unscheduledNotes = hearing?.notes;
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
+  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
   const getOriginalRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
@@ -182,6 +183,7 @@ export const ScheduleVeteranForm = ({
                     <HearingTime
                       regionalOffice={ro}
                       errorMessage={errors?.scheduledTimeString}
+                      hearingStartTime={hearingDayIsVideo ? hearing.hearingDay?.beginsAt : null}
                       vertical
                       label="Hearing Time"
                       enableZone
