@@ -30,6 +30,7 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   let(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
@@ -57,7 +58,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
   describe "attorney recommend docket switch" do
     let!(:docket_switch_mail_task) do
-      create(:docket_switch_mail_task, appeal: appeal, parent: root_task, assigned_to: cotb_attorney)
+      create(:docket_switch_mail_task, appeal: appeal, parent: distribution_task, assigned_to: cotb_attorney)
     end
     let!(:judge_assign_task) { create(:ama_judge_assign_task, assigned_to: judge, parent: root_task) }
     let!(:other_judges) do
@@ -86,7 +87,6 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       # The previously assigned judge should be selected
       expect(page).to have_content(judge_assign_task.assigned_to.display_name)
-
       click_button(text: "Submit")
 
       # Return back to user's queue
@@ -100,7 +100,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
-      expect(judge_task.parent.type).to eq RootTask.name
+      expect(judge_task.parent.type).to eq DistributionTask.name
 
       # Switch to judge to verify instructions
       User.authenticate!(user: judge)
@@ -119,7 +119,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       create(
         :docket_switch_ruling_task,
         appeal: appeal,
-        parent: root_task,
+        parent: distribution_task,
         assigned_to: judge,
         instructions: ["**Summary:** Test\n\n**Draft letter:** [View link](http://example.com)"],
         assigned_by: cotb_attorney
