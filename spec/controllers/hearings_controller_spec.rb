@@ -254,6 +254,7 @@ RSpec.describe HearingsController, type: :controller do
         let(:virtual_hearing_params) do
           {
             appellant_email: "new_veteran_email@caseflow.gov",
+            representative_email: "new_rep_email@caseflow.gov",
             representative_tz: timezone
           }
         end

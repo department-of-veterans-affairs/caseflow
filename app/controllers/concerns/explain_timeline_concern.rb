@@ -56,7 +56,7 @@ module ExplainTimelineConcern
     exported_records(Task)
       .select { |record| PHASES_TASK_TYPES.include?(record["type"]) }
       .map do |record|
-      [TimelineSpanData.new(Task, record, group: "phase"),
+      [TimelineSpanData.new(Task, record, group: "phases"),
        create_background_task(record)]
     end.flatten
   end

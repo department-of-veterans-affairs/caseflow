@@ -33,8 +33,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       capture_exception(error: error, extra: { appeal_id: appeal.id })
       increment_task_count("error", appeal.id)
     end
-
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(start_time, error)
   end

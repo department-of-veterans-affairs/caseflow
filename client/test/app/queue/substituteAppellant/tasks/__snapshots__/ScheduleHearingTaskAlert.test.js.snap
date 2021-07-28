@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScheduleHearingTaskAlert renders correctly 1`] = `
+<div>
+  <div
+    class="usa-alert usa-alert-info usa-alert-slim"
+    role="alert"
+  >
+    <div
+      class="usa-alert-body"
+    >
+      <div
+        class="usa-alert-text"
+      >
+        <div
+          data-css-r3kuda=""
+        >
+          When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
