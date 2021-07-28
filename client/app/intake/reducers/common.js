@@ -174,7 +174,7 @@ export const commonStateFromServerIntake = (serverIntake) => {
       $set: serverIntake.receipt_date
     },
     filedByVaGov: {
-      $set: serverIntake.filed_by_va_gov
+      $set: serverIntake.filedByVaGov
     },
     veteranIsNotClaimant: {
       $set: serverIntake.veteranIsNotClaimant
