@@ -226,3 +226,27 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
 
   return getAmaTasks(taskTypes);
 };
+
+export const extraTasksForTaskForm = () => {
+  const taskTypes = [
+    ...sampleTasksForEvidenceSubmissionDocket(),
+    {
+      type: 'ScheduleHearingTask',
+      label: 'Schedule hearing',
+    },
+    {
+      type: 'AssignHearingDispositionTask',
+      label: 'Assign hearing disposition',
+    },
+    {
+      type: 'ChangeHearingDispositionTask',
+      label: 'Change hearing disposition',
+    },
+    {
+      type: 'TranscriptionTask',
+      label: 'Transcription task',
+    },
+  ];
+
+  return getAmaTasks(taskTypes);
+};
