@@ -302,11 +302,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         end
 
         scenario "displays disabled virtual hearing link when changing emails" do
-          virtual_hearing.update(
-            appellant_email_sent: false,
-            representative_email_sent: false,
-            judge_email_sent: false
-          )
+          virtual_hearing.hearing.appellant_recipient.update!(email_sent: false)
+          virtual_hearing.hearing.representative_recipient.update!(email_sent: false)
+          virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
           visit "hearings/" + hearing.external_id.to_s + "/details"
           hearing.reload
           check_virtual_hearings_links(virtual_hearing, true)
@@ -465,7 +463,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
         expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-        click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+        click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON, wait: 5)
 
         expect(page).to have_content("Representative email does not appear to be a valid e-mail address")
       end

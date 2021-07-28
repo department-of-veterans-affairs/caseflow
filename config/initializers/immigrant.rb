@@ -28,6 +28,7 @@ Immigrant.ignore_keys = [
 
   # A job will check for orphaned records for these polymorphic associations:
   { from_table: "sent_hearing_email_events", column: "hearing_id" },
+  { from_table: "hearing_email_recipients", column: "hearing_id" },
   { from_table: "special_issue_lists", column: "appeal_id" },
   { from_table: "tasks", column: "appeal_id" },
   { from_table: "vbms_uploaded_documents", column: "appeal_id" },

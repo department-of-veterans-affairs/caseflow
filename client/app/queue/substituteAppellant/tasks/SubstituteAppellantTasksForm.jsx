@@ -4,7 +4,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ReactMarkdown from 'react-markdown';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
@@ -17,6 +16,8 @@ import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
 import { disabledTasksBasedOnSelections } from 'app/queue/substituteAppellant/tasks/utils';
+import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
+import { taskTypesSelected } from './utils';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -52,6 +53,12 @@ export const SubstituteAppellantTasksForm = ({
   [tasks, selectedTaskIds]
   );
 
+  const shouldShowScheduleHearingTaskAlert = useMemo(() => {
+    return taskTypesSelected({ tasks, selectedTaskIds }).includes('ScheduleHearingTask');
+  },
+  [tasks, selectedTaskIds]
+  );
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,6 +78,7 @@ export const SubstituteAppellantTasksForm = ({
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
             <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
+            {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
             <TaskSelectionTable tasks={adjustedTasks} />
           </div>
         </AppSegment>
