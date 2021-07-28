@@ -15,9 +15,8 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
-import { disabledTasksBasedOnSelections } from 'app/queue/substituteAppellant/tasks/utils';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
-import { taskTypesSelected } from './utils';
+import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
