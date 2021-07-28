@@ -67,7 +67,7 @@ describe DocketSwitchMailTask, :postgres do
   describe ".create_from_params" do
     before { FeatureToggle.enable!(:docket_switch) }
     after { FeatureToggle.disable!(:docket_switch) }
-    
+
     let(:params) { { appeal: root_task.appeal, parent_id: distribution_task.id, instructions: "foo bar" } }
 
     subject { DocketSwitchMailTask.create_from_params(params, user) }
@@ -117,7 +117,11 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".child_task_assignee" do
-    let(:org_task) { task_class.create!(appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: cotb_team) }
+    let(:org_task) do 
+      task_class.create!(
+        appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: cotb_team
+      )
+    end
     let(:parent) { distribution_task }
     let(:params) { { parent_id: parent.id } }
 
