@@ -85,7 +85,7 @@ function decorateTimelineItems(items){
 var groups = new vis.DataSet();
 function groupEventItems(items){
   groups.add({
-      id: 'phase',
+      id: 'phases',
       content: 'phases',
       className: 'group_phase',
       order: 0,
