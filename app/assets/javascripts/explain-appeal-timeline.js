@@ -1,12 +1,17 @@
-//= require vis-timeline/dist/vis-timeline-graph2d.min.js
-// Example timeline visualizations: https://visjs.github.io/vis-timeline/examples/timeline/
+//= require moment/min/moment.min.js
+//= require vis-data/peer/umd/vis-data.min.js
+//= require vis-timeline/peer/umd/vis-timeline-graph2d.min.js
+// See https://visjs.github.io/vis-timeline/examples/timeline/peer-build.html
 
 /**
  * Support code for app/views/explain/show.html.erb,
  * associated with app/controllers/explain_controller.rb.
- * Also see accompanying app/assets/stylesheets/explain_appeal.css.
+ * Also see accompanying app/assets/stylesheets/explain_appeal_timeline.css.
  * These are added to the application in config/initializers/assets.rb.
  */
+
+//================== Timeline visualization ========================
+// Example timeline visualizations: https://visjs.github.io/vis-timeline/examples/timeline/
 
 const items = new vis.DataSet();
 
@@ -16,8 +21,8 @@ function addTimeline(elementId, timeline_data){
   const startDates = items.get({fields: ['start']}).map((str)=> new Date(str.start));
   const endDates = items.get({fields: ['end']}).map((str)=> new Date(str.end));
   const millisInAMonth = 1000*60*60*24*30 // an approximate month in milliseconds
+  // https://visjs.github.io/vis-timeline/docs/timeline/#Configuration_Options
   const timeline_options = {
-    width: '95%',
     // maxHeight: 800,
     horizontalScroll: true,
     verticalScroll: true,
@@ -26,7 +31,9 @@ function addTimeline(elementId, timeline_data){
     zoomMin: 1000 * 60 * 60, // 1 hour in milliseconds
     orientation: {axis: 'both'},  // show time axis on both the top and bottom
     stack: true,
-    zoomKey: 'ctrlKey',
+    zoomFriction: 15,
+    preferZoom: true,
+    zoomMin: 1000,
     order: (a, b) => b.record.id - a.record.id,
     tooltip: {
       followMouse: true
@@ -47,6 +54,7 @@ const itemDecoration = {
   }
 };
 
+// TODO: Move this into common location?
 const formatJson = (obj) => {
   return JSON.stringify(obj, null, ' ').
     replace('{\n', '').
@@ -76,7 +84,7 @@ function decorateTimelineItems(items){
 var groups = new vis.DataSet();
 function groupEventItems(items){
   groups.add({
-      id: 'phase',
+      id: 'phases',
       content: 'phases',
       className: 'group_phase',
       order: 0,
@@ -102,6 +110,6 @@ function groupEventItems(items){
   return groups;
 }
 
-function toggleTimelineEventGroup(checkbox, group_id){
-  groups.update({id: group_id, visible: checkbox.checked});
+function toggleTimelineEventGroup(checkbox){
+  groups.update({id: checkbox.value, visible: checkbox.checked});
 }
