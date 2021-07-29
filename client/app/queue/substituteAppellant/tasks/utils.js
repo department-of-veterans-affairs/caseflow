@@ -68,43 +68,33 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
   return isDescendant(tasksById, distributionTask, task, { id: 'taskId' });
 };
 
-export const scheduleHearingTaskDisableTypes = [
-  'AssignHearingDispositionTask',
-  'ChangeHearingDispositionTask',
-  'EvidenceSubmissionWindowTask',
-  'TranscriptionTask'
-];
-
-export const evidenceSubmissionWindowDisableTypes = [
-  'ScheduleHearingTask',
-  'AssignHearingDispositionTask',
-  'ChangeHearingDispositionTask'
-];
-
-export const transcriptionTaskDisableTypes = [
-  'ScheduleHearingTask',
-  'AssignHearingDispositionTask',
-  'ChangeHearingDispositionTask'
-];
-
 export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
   return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
 };
 
 export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
-  // This is not efficient; it'll make multiple passes through each array.
-  // Realistically it's a small set, so get it working first and we can tweak later.
-  // We _currently_ don't need to handle multiple selections because the latter two types
-  // disable the same things. But this code can be improved.
-  if (selectedTaskTypes.includes('ScheduleHearingTask')) {
-    return scheduleHearingTaskDisableTypes.includes(taskType);
-  } else if (selectedTaskTypes.includes('EvidenceSubmissionWindowTask')) {
-    return evidenceSubmissionWindowDisableTypes.includes(taskType);
-  } else if (selectedTaskTypes.includes('TranscriptionTask')) {
-    return transcriptionTaskDisableTypes.includes(taskType);
-  } else {
-    return false;
-  }
+  const disablingTaskMap = {
+    ScheduleHearingTask: [
+      'AssignHearingDispositionTask',
+      'ChangeHearingDispositionTask',
+      'EvidenceSubmissionWindowTask',
+      'TranscriptionTask',
+    ],
+    EvidenceSubmissionWindowTask: [
+      'ScheduleHearingTask',
+      'AssignHearingDispositionTask',
+      'ChangeHearingDispositionTask',
+    ],
+    TranscriptionTask: [
+      'ScheduleHearingTask',
+      'AssignHearingDispositionTask',
+      'ChangeHearingDispositionTask',
+    ],
+  };
+
+  return Object.entries(disablingTaskMap).some(([selectionType, toDisable]) => {
+    return selectedTaskTypes.includes(selectionType) && toDisable.includes(taskType);
+  });
 };
 
 // The following governs what should always be programmatically disabled from selection
