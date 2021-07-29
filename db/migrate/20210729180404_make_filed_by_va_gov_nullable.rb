@@ -1,4 +1,4 @@
-class MakeFiledByVaGovNullable < ActiveRecord::Migration[5.2]
+class MakeFiledByVaGovNullable < Caseflow::Migration
   def up
     safety_assured do
       change_column :appeals, :filed_by_va_gov, :boolean, null: true, default: nil
