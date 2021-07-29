@@ -239,8 +239,8 @@ describe "SanitizedJsonExporter/Importer" do
       it "sets a new array with new values" do
         expect(sje.instance_variable_get("@configuration")).to receive(:obfuscate_sentence)
           .and_call_original.at_least(:once)
+        expect(Faker::Lorem).to receive(:sentence).exactly(2).times
         subject
-        expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
     end
   end
