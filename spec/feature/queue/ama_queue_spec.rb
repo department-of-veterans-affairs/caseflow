@@ -482,6 +482,10 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
         expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
@@ -556,7 +560,10 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page.has_no_content?("Select special issues")).to eq(true)
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -603,7 +610,10 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page.has_no_content?("Select special issues")).to eq(true)
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
 
@@ -674,7 +684,10 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page.has_no_content?("Select special issues")).to eq(true)
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -778,7 +791,10 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page.has_no_content?("Select special issues")).to eq(true)
+          if !find("#no_special_issues", visible: false).checked?
+            find("label", text: "No Special Issues").click
+          end
+          click_on "Continue"
 
           expect(page).to have_content("Add decisions")
 
@@ -815,6 +831,7 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content("Submit Draft Decision for Review")
           # these now should be preserved the next time the attorney checks out
           fill_in "Document ID:", with: valid_document_id
+          sleep 1
           expect(page).to have_content(judge_user.full_name, wait: 10)
           fill_in "notes", with: "all done"
           click_on "Continue"
