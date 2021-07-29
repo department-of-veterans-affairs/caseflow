@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_124530) do
+ActiveRecord::Schema.define(version: 2021_07_29_130353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -148,6 +148,7 @@ ActiveRecord::Schema.define(version: 2021_07_29_124530) do
     t.index ["issue_deleted_at"], name: "index_decision_issues_on_issue_deleted_at"
     t.index ["issue_updated_at"], name: "index_decision_issues_on_issue_updated_at"
     t.index ["participant_id"], name: "index_decision_issues_on_participant_id"
+    t.index ["rating_issue_reference_id"], name: "index_decision_issues_on_rating_issue_reference_id"
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
