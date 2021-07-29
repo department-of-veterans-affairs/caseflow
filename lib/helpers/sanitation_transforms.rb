@@ -120,16 +120,12 @@ module SanitizationTransforms
   def obfuscate_sentence(field_name, field_value, obj_class: nil)
     case field_name
     when "instructions", "description", "decision_text", "notes", "comment", /_text$/, /_notes$/, /_description$/
-      # Preserve the approximate length
-      word_count = field_value.split.count
-      Faker::Lorem.sentence(random_words_to_add: word_count)
+      field_value.empty? ? "" : Faker::Lorem.sentence
     when "military_service"
       branch = %w[ARMY AF NAVY M CG].sample
       discharge = ["Honorable", "Under Honorable Conditions"].sample
-      start_date = Faker::Date.between(from: "1965-01-01", to: 10.years.ago)
-      end_date = start_date + rand(1..10).years + rand(6).months + rand(15).days
-      date_format = "%m/%d/%Y"
-      "#{branch} #{start_date.strftime(date_format)} - #{end_date.strftime(date_format)}, #{discharge}"
+      start_date, end_date = random_start_and_end_dates
+      "#{branch} #{start_date} - #{end_date}, #{discharge}"
     when "summary"
       <<~HTML
         <p><strong>Contentions</strong>&nbsp;</p>
@@ -143,6 +139,13 @@ module SanitizationTransforms
   end
 
   private
+
+  def random_start_and_end_dates
+    start_date = Faker::Date.between(from: "1965-01-01", to: 10.years.ago)
+    end_date = start_date + rand(1..10).years + rand(6).months + rand(15).days
+    date_format = "%m/%d/%Y"
+    [start_date.strftime(date_format), end_date.strftime(date_format)]
+  end
 
   def gen_invalid_ssn(fake_ssn_prefix)
     fake_ssn_prefix + Faker::Number.number(digits: 9 - fake_ssn_prefix.length).to_s
