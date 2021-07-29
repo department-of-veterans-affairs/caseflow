@@ -4,10 +4,10 @@ import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
-import { extraTasksForTaskForm } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = extraTasksForTaskForm();
+const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
 const poaType = 'Attorney';
 
 const filteredEvidenceSubmissionTasks = prepTaskDataForUi(

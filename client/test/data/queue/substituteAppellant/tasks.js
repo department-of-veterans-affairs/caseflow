@@ -227,25 +227,21 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
   return getAmaTasks(taskTypes);
 };
 
-export const extraTasksForTaskForm = () => {
+// This is an improbable combination of tasks, used to demonstrate functionality
+// in SubstituteAppellantTasksFormWithEverything.
+export const myriadTasksForTaskForm = () => {
   const taskTypes = [
-    ...sampleTasksForEvidenceSubmissionDocket(),
-    {
-      type: 'ScheduleHearingTask',
-      label: 'Schedule hearing',
-    },
-    {
-      type: 'AssignHearingDispositionTask',
-      label: 'Assign hearing disposition',
-    },
-    {
-      type: 'ChangeHearingDispositionTask',
-      label: 'Change hearing disposition',
-    },
-    {
-      type: 'TranscriptionTask',
-      label: 'Transcription task',
-    },
+    RootTask,
+    { DistributionTask },
+    { type: 'EvidenceSubmissionWindowTask', label: 'Evidence Submission Window Task' },
+    { type: 'JudgeAssignTask', label: 'Assign' },
+    { type: 'JudgeDecisionReviewTask', label: 'Review' },
+    { type: 'AttorneyTask', label: 'Draft decision' },
+    { type: 'BvaDispatchTask', label: 'Board Dispatch' },
+    { type: 'ScheduleHearingTask', label: 'Schedule hearing' },
+    { type: 'AssignHearingDispositionTask', label: 'Assign hearing disposition' },
+    { type: 'ChangeHearingDispositionTask', label: 'Change hearing disposition' },
+    { type: 'TranscriptionTask', label: 'Transcription task' },
   ];
 
   return getAmaTasks(taskTypes);
