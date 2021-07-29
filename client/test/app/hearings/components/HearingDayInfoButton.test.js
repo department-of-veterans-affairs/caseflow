@@ -16,7 +16,7 @@ describe('HearingDayInfoButton', () => {
         judgeFirstName: 'Jonas',
         judgeLastName: 'Jerengal',
         room: '14',
-        requestType: 'R',
+        requestType: 'V',
         readableRequestType: 'video',
         hearings: {
           hearing_1: {},
@@ -65,5 +65,13 @@ describe('HearingDayInfoButton', () => {
     expect(setSelectedValue).toHaveBeenCalledTimes(0);
     await userEvent.click(button);
     expect(setSelectedValue).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the Docket readable request type when Docket is type Virtual', () => {
+    props.requestType = 'R';
+
+    const { container } = render(<HearingDayInfoButton {...props} />);
+
+    expect(container).toMatchSnapshot();
   });
 });
