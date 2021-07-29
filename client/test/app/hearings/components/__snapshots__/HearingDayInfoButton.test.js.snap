@@ -29,7 +29,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
               data-tip="true"
               tabindex="-1"
             >
-              Video · VLJ Jerengal, Jonas
+              Virtual · VLJ Jerengal, Jonas
             </span>
             <span
               data-css-ftxb8z=""

@@ -16,6 +16,7 @@ describe('HearingDayInfoButton', () => {
         judgeFirstName: 'Jonas',
         judgeLastName: 'Jerengal',
         room: '14',
+        requestType: 'R',
         readableRequestType: 'video',
         hearings: {
           hearing_1: {},
