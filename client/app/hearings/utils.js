@@ -726,20 +726,6 @@ export const formatHearingType = (hearingType) => {
   return hearingType;
 };
 
-export const docketReadableRequestType = (docket) => {
-  switch (docket.requestType) {
-  case 'R':
-    return VIRTUAL_HEARING_LABEL;
-  case 'V':
-    return VIDEO_HEARING_LABEL;
-  case 'T':
-    return TRAVEL_BOARD_HEARING_LABEL;
-  case 'C':
-    return CENTRAL_OFFICE_HEARING_LABEL;
-
-  default: return '';
-  }
-};
 // Given a hearing day, return the judges last, first or ''
 export const vljFullnameOrEmptyString = (hearingDay) => {
   const first = hearingDay?.judgeFirstName;
