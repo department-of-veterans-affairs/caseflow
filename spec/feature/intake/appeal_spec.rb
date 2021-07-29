@@ -183,6 +183,10 @@ feature "Appeal Intake", :all_dbs do
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
