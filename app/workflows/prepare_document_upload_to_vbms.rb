@@ -6,10 +6,11 @@ class PrepareDocumentUploadToVbms
   validates :appeal, :file, presence: true
   validate :valid_document_type
 
-  def initialize(params)
+  def initialize(params, user)
     @params = params.slice(:appeal_id, :document_type, :file)
     @document_type = @params[:document_type]
     @file = @params[:file]
+    @user = user
   end
 
   def call
@@ -17,7 +18,7 @@ class PrepareDocumentUploadToVbms
     if success
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
-        UploadDocumentToVbmsJob.perform_later(document_id: document.id)
+        UploadDocumentToVbmsJob.perform_later(document_id: document.id, initiator_css_id: user.css_id)
       end
     end
 
@@ -26,7 +27,7 @@ class PrepareDocumentUploadToVbms
 
   private
 
-  attr_reader :document_type, :file, :params, :success
+  attr_reader :document_type, :file, :params, :success, :user
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
