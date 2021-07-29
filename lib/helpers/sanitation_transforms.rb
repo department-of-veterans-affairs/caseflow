@@ -120,8 +120,9 @@ module SanitizationTransforms
   def obfuscate_sentence(field_name, field_value, obj_class: nil)
     case field_name
     when "instructions", "description", "decision_text", "notes", "comment", /_text$/, /_notes$/, /_description$/
-      # puts "obfuscate_sentence: #{field_name} = #{field_value}"
-      field_value.split.map { |word| word[0..1] }.join(" ")
+      # Preserve the approximate length
+      word_count = field_value.split.count
+      Faker::Lorem.sentence(random_words_to_add: word_count)
     when "military_service"
       branch = %w[ARMY AF NAVY M CG].sample
       discharge = ["Honorable", "Under Honorable Conditions"].sample
