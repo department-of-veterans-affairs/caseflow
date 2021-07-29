@@ -9,7 +9,12 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import {
+  VIDEO_HEARING_LABEL,
+  CENTRAL_OFFICE_HEARING_LABEL,
+  TRAVEL_BOARD_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL
+} from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -721,6 +726,20 @@ export const formatHearingType = (hearingType) => {
   return hearingType;
 };
 
+export const docketReadableRequestType = (docket) => {
+  switch (docket.requestType) {
+  case 'R':
+    return VIRTUAL_HEARING_LABEL;
+  case 'V':
+    return VIDEO_HEARING_LABEL;
+  case 'T':
+    return TRAVEL_BOARD_HEARING_LABEL;
+  case 'C':
+    return CENTRAL_OFFICE_HEARING_LABEL;
+
+  default: return '';
+  }
+};
 // Given a hearing day, return the judges last, first or ''
 export const vljFullnameOrEmptyString = (hearingDay) => {
   const first = hearingDay?.judgeFirstName;
