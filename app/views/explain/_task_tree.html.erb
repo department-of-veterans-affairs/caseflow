@@ -1,0 +1,53 @@
+<h3>Task tree</h3>
+
+<span id="treeefields">
+  <%
+    taskFields={}
+    remainingFields = available_fields
+    remainingFields -= (taskFields[:time_fields] = remainingFields.select{|f| f.end_with?("_at", "_DATE", "_TIME")})
+    remainingFields -= (taskFields[:assign_fields] = remainingFields.select{|f| f.start_with?("assigned_", "ASGN_")})
+    taskFields[:remaining_fields] = remainingFields
+  %>
+  <% taskFields.each do |name, field_names| %>
+    <div class="dropdown">
+      <button class="dropbtn"><%=name.to_s.titleize%></button>
+      <div class="dropdown-content">
+        <% field_names.sort.each do |field_name| %>
+          <% if treee_fields.include?(field_name.to_sym) %>
+            <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()">
+          <% else %>
+            <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()">
+          <% end %>
+          <label for="<%=field_name%>"><%=field_name%></label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</span>
+<a id="task_tree_link" href="">Update task tree</a>
+<br/>
+
+<code style="color: green">
+  Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+  <% if legacy_appeal? %>
+    <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
+    <br/>la.location_history.map(&:summary)
+  <% end %>
+</code>
+<pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
+
+<a class="resourceLink" target="_blank" rel="noopener noreferrer"
+   href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render">
+   Task Tree Render</a>
+<br/>
+
+<script type="text/javascript">
+  // Handle Task Tree field checkboxes
+  function updateTaskTreeLink(){
+    const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.id);
+    // To-do: include other query params in the newUrl
+    const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
+    document.querySelector('#task_tree_link').setAttribute("href", newUrl);
+  }
+  updateTaskTreeLink();
+</script>
