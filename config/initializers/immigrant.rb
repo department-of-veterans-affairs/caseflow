@@ -7,19 +7,8 @@ Immigrant.ignore_keys = [
   # Add FK to legacy_appeals
   { from_table: "worksheet_issues", column: "appeal_id" },
 
-  # Seems to alway refer to AMA appeals - add FK to appeals table
-  { from_table: "board_grant_effectuations", column: "appeal_id" },
-  # Add FKs if appropriate
-  { from_table: "board_grant_effectuations", column: "decision_document_id" },
-  { from_table: "board_grant_effectuations", column: "end_product_establishment_id" },
-  { from_table: "board_grant_effectuations", column: "granted_decision_issue_id" },
-
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
-
-  # Add FK to users table
-  { from_table: "attorney_case_reviews", column: "attorney_id" },
-  { from_table: "attorney_case_reviews", column: "reviewing_judge_id" },
 
   # Investigate these next and add foreign key if possible.
   { from_table: "advance_on_docket_motions", column: "person_id" },
@@ -35,6 +24,7 @@ Immigrant.ignore_keys = [
 
   # A job will check for orphaned records for these polymorphic associations:
   { from_table: "sent_hearing_email_events", column: "hearing_id" },
+  { from_table: "hearing_email_recipients", column: "hearing_id" },
   { from_table: "special_issue_lists", column: "appeal_id" },
   { from_table: "tasks", column: "appeal_id" },
   { from_table: "vbms_uploaded_documents", column: "appeal_id" },
@@ -42,6 +32,10 @@ Immigrant.ignore_keys = [
 
   # Refers to the tasks table for AMA appeals, but something like `4107503-2021-05-31` for legacy appeals
   # Search for `review_class.complete(params)` in our code to see where task_id is set.
+  # Possible solution: Create new column for VACOLS task ID, copy VACOLS non-integer strings to new column,
+  # update the code to read and assign VACOLS strings to new column, 
+  # delete the VACOLS string from `task_id` column, convert `task_id` to a `bigint` column,
+  # and then add the FK for `task_id`.
   { from_table: "judge_case_reviews", column: "task_id" },
   { from_table: "attorney_case_reviews", column: "task_id" },
 

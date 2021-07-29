@@ -84,6 +84,7 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f app/assets/javascripts/*webpack*
 	rm -rf public/assets
 	rm -rf tmp/capybara
+	rm -f log/logstasher.log
 
 realclean: clean ## TODO
 	rm -rf client/node_modules

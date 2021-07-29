@@ -17,6 +17,7 @@
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Types",
+  "CASE_LIST_TABLE_OFFICE_COLUMN_TITLE": "Office",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
   "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting",
   "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
@@ -109,6 +110,8 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
   "CASE_DETAILS_UNRECOGNIZED_POA": "This POA is not listed in VBMS. To update this information, please submit an admin action to the VLJ Support team.",
+  "CASE_DETAILS_UNRECOGNIZED_APPELLANT": "This appellant is not listed in VBMS. To update this information, please edit directly in Caseflow.",
+  "CASE_DETAILS_UNRECOGNIZED_ATTORNEY_APPELLANT": "This appellant data comes from VBMS. To edit this information, please submit an action to the VLJ Support team.",
   "CASE_DETAILS_NO_POA": "VA Form 21-22 was not received at Intake. To add the appellant's POA, please submit an admin action to the VLJ Support team.",
   "CASE_DETAILS_VETERAN_ADDRESS_SOURCE": "Veteran information comes from VBMS. To update the veteran's information, please send a request to the VLJ support staff.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
@@ -122,6 +125,8 @@
   "CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION": "To retrieve the latest POA information, please click the \"Refresh POA\" button.",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
+  "CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE": "Information Accuracy and Visibility Update",
+  "CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE": "In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.",
   "FNOD_SOURCE": "VBMS",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
@@ -138,6 +143,10 @@
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
   "CASE_DETAILS_CAVC_FEDERAL_CIRCUIT": "Appealed to Federal Circuit",
   "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
+
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE": "You have successfully updated %(appellantName)s's information",
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE": "If you need to make further changes, select 'Edit information' in the About the Appellant section.",
+  "EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE": "Unable to edit appellant.",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
@@ -240,6 +249,8 @@
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
+  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGESS_TAB_TITLE": "In Progress Tasks",
+  "ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
@@ -790,7 +801,7 @@
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
-
+  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.",
   "SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",

@@ -258,7 +258,7 @@ describe('ScheduleVeteran', () => {
           errors: [
             {
               code: 1002,
-              message: 'Validation Error: Appellant email malformed',
+              message: 'Validation Error: Email Address Validation Failed: Appellant email malformed',
             },
           ],
         },

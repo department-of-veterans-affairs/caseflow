@@ -33,64 +33,35 @@ class VirtualHearingRepository
       ama_ready + legacy_ready.flatten
     end
 
-    # Get all virtual hearings that *might* need to have a reminder email sent.
-    #
-    # @note The logic to determine whether or not a reminder email needs to be sent is
-    #   complex enough that it's not worth putting in an SQL query for maintainability reasons.
-    #   This method will find all active virtual hearings that are occurring within the next 7
-    #   days.
-    def maybe_ready_for_reminder_email
-      ama_ready = joins_hearing_and_hearing_day(Hearing)
-        .not_cancelled
-        .where(
-          "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
-          non_active_hearing_dispositions: [:postponed, :cancelled]
-        )
-        .where(scheduled_within_seven_days)
-
-      legacy_ready = []
-
-      # VACOLS can support a max of 1000 at a time which is the in_batches default
-      joins_hearing_and_hearing_day(LegacyHearing).not_cancelled.where(scheduled_within_seven_days).in_batches do |vhs|
-        vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
-        # the subset of hearings that are postponed or cancelled in VACOLS
-        # default to [""] if empty so the NOT IN clause in the query below will work
-        selected_vacols_ids = vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
-        legacy_ready << vhs
-          .where(
-            "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
-            postponed_or_cancelled_vacols_ids: selected_vacols_ids
-          ).to_a
-      end
-
-      ama_ready + legacy_ready.flatten
-    end
-
     def cancelled_with_pending_emails
       VirtualHearing
         .cancelled
+        .joins(
+          joins_with_hearing_email_recipients
+        )
         .where(pending_appellant_or_rep_emails)
+        .distinct
+    end
+
+    def joins_with_hearing_email_recipients
+      "INNER JOIN hearing_email_recipients ON hearing_email_recipients.hearing_id = virtual_hearings.hearing_id" \
+        " AND hearing_email_recipients.hearing_type = virtual_hearings.hearing_type"
     end
 
     def with_pending_conference_or_emails
       VirtualHearing
+        .joins(
+          joins_with_hearing_email_recipients
+        )
         .where(<<-SQL)
           (
-            virtual_hearings.conference_id IS null
-            AND virtual_hearings.host_hearing_link IS null
-            AND virtual_hearings.guest_hearing_link IS null
-            OR (
-              #{pending_appellant_or_rep_emails}
-              OR (
-                virtual_hearings.judge_email IS NOT null
-                AND NOT virtual_hearings.judge_email_sent
-              )
-            )
+            #{pending_conference}
+            OR
+            #{pending_emails}
           )
         SQL
+        .distinct
     end
-
-    private
 
     # Returns virtual hearings joined with either the legacy hearing or hearings table,
     # and joined with the hearing day table.
@@ -120,26 +91,39 @@ class VirtualHearingRepository
       ).where(hearing_pkseq: vacols_ids).pluck(:hearing_pkseq).map(&:to_s) || []
     end
 
-    def pending_appellant_or_rep_emails
+    private
+
+    def pending_conference
       <<-SQL
-        NOT virtual_hearings.appellant_email_sent
+        virtual_hearings.conference_id IS null
+        AND virtual_hearings.host_hearing_link IS null
+        AND virtual_hearings.guest_hearing_link IS null
+      SQL
+    end
+
+    def pending_emails
+      <<-SQL
+        #{pending_appellant_or_rep_emails}
         OR (
-          virtual_hearings.representative_email IS NOT null
-          AND NOT virtual_hearings.representative_email_sent
+          hearing_email_recipients.type = 'JudgeHearingEmailRecipient'
+          AND hearing_email_recipients.email_address IS NOT NULL
+          AND NOT hearing_email_recipients.email_sent
         )
       SQL
     end
 
-    # Returns a where clause that can be used to find all hearings that occur within
-    # a given timeframe (in days).
-    #
-    # @note Requires a join with the `hearing_days` table.
-    def scheduled_within_seven_days
+    def pending_appellant_or_rep_emails
       <<-SQL
-        DATE_PART(
-        'day',
-        hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
-        ) BETWEEN 1 AND 7
+        (
+          hearing_email_recipients.type = 'AppellantHearingEmailRecipient'
+          AND hearing_email_recipients.email_address IS NOT NULL
+          AND NOT hearing_email_recipients.email_sent
+        )
+        OR (
+          hearing_email_recipients.type = 'RepresentativeHearingEmailRecipient'
+          AND hearing_email_recipients.email_address IS NOT NULL
+          AND NOT hearing_email_recipients.email_sent
+        )
       SQL
     end
   end
