@@ -105,7 +105,7 @@ decision_issues,issue_deleted_at,datetime,,,,,x,decision_issues.deleted_at
 decision_issues,issue_updated_at,datetime,,,,,x,decision_issues.updated_at
 decision_issues,participant_id,integer (8) ∗,x,,,,x,decision_issues.participant_id
 decision_issues,percent_number,string,,,,,,percent_number from RatingIssue (prcntNo from Rating Profile)
-decision_issues,rating_issue_reference_id,integer (8),,,,,,decision_issues.rating_issue_reference_id
+decision_issues,rating_issue_reference_id,integer (8),,,,,x,decision_issues.rating_issue_reference_id
 decision_issues,rating_profile_date,datetime,,,,,,decision_issues.rating_profile_date
 decision_issues,rating_promulgation_date,datetime,,,,,,decision_issues.rating_promulgation_date
 decision_issues,subject_text,text,,,,,,subject_text from RatingIssue (subjctTxt from Rating Profile)
