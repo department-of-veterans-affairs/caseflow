@@ -100,8 +100,7 @@ export const SPREADSHEET_TYPES = {
   JudgeSchedulePeriod: {
     value: 'JudgeSchedulePeriod',
     shortDisplay: 'Judge',
-    display: 'Judge non-availability',
-    template: '/JudgeAssignmentTemplate.xlsx'
+    display: 'Judge assignment',
   }
 };
 
@@ -145,4 +144,4 @@ export const REQUEST_TYPE_OPTIONS = [
 export const ENDPOINT_NAMES = {
   HEARINGS_SCHEDULE: 'hearings-schedule',
   UPCOMING_HEARING_DAYS: 'upcoming-hearing-days'
-}
+};
