@@ -14,7 +14,8 @@ class ETLBuilderJob < CaseflowJob
   # Raising an exception triggers a retry through shoryuken.
   # Don't retry via normal shoryuken since this job runs multiple times daily; just log the error.
   rescue StandardError => error
-    log_error(error, extra: { checker: klass })
+    log_error(error)
+    klass = self.class.to_s
     slack_msg = "Error running #{klass}."
     slack_msg += " See Sentry event #{Raven.last_event_id}" if Raven.last_event_id.present?
     slack_service.send_notification(slack_msg, klass)
