@@ -14,7 +14,7 @@ class PreDocketTask < Task
       )
 
       # This may need to change, depending how this model is built out
-      AssessDocumentationTask.create!(appeal: appeal)
+      AssessDocumentationTask.create!(appeal: appeal, assigned_to: Bva.singleton)
 
       pre_docket_task
     end
