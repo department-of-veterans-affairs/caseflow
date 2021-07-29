@@ -50,7 +50,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Installing the version of bundler that corresponds to the Gemfile.lock
 # Rake 13.0.1 is already installed, so we're uninstalling it and letting bundler install rake later.
-RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i $(gem env gempath | awk -F: '{print $2}') rake
+RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i /usr/local/lib/ruby/gems/2.7.0 rake
 RUN bundle install && \
     cd client && \
     yarn install && \
