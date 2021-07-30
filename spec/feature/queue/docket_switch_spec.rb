@@ -16,6 +16,14 @@ RSpec.feature "Docket Switch", :all_dbs do
     create(:appeal, receipt_date: orig_receipt_date)
   end
 
+  let(:appeal_with_unrecognized_appellant) do
+    create(
+      :appeal,
+      has_unrecognized_appellant: true,
+      veteran_is_not_claimant: true
+    )
+  end
+
   let!(:request_issues) do
     3.times do |index|
       create(
@@ -29,7 +37,21 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
+  let!(:ua_request_issues) do
+    3.times do |index|
+      create(
+        :request_issue,
+        :rating,
+        decision_review: appeal_with_unrecognized_appellant,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: 10.days.ago,
+        contested_issue_description: "PTSD denied #{(index + 65).chr}"
+      )
+    end
+  end
+
   let(:root_task) { create(:root_task, appeal: appeal) }
+  let(:ua_root_task) { create(:root_task, appeal: appeal_with_unrecognized_appellant) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
@@ -612,6 +634,111 @@ RSpec.feature "Docket Switch", :all_dbs do
         appeal: docket_switch.new_docket_stream
       )
       expect(new_completed_task).to_not be_nil
+    end
+  end
+  describe "Docket switch with unrecognized appellant" do
+    before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
+    after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
+    let!(:docket_switch_granted_task) do
+      create(
+        :docket_switch_granted_task,
+        appeal: appeal_with_unrecognized_appellant,
+        # parent: root_task,
+        assigned_to: cotb_attorney,
+        assigned_by: judge
+      )
+    end
+
+    let(:colocated_user) do
+      create(:user).tap { |user| Colocated.singleton.add_user(user) }
+    end
+    let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:existing_admin_action1) do
+      create(
+        :ama_colocated_task,
+        :ihp,
+        appeal: appeal_with_unrecognized_appellant,
+        parent: ua_root_task,
+        assigned_to: colocated_user
+      )
+    end
+    let!(:existing_admin_action2) do
+      create(
+        :ama_colocated_task,
+        :foia,
+        appeal: appeal_with_unrecognized_appellant,
+        parent: ua_root_task,
+        assigned_to: colocated_user
+      )
+    end
+
+    let(:receipt_date) { Time.zone.today - 5.days }
+    let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
+    let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
+
+    let(:old_task_type) { "Evidence Submission" }
+    let(:new_task_type) { "Direct Review" }
+    it "allows attorney to complete the docket switch grant" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
+
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal_with_unrecognized_appellant.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
+
+      expect(find_field(
+        "What is the Receipt Date of the docket switch request?"
+      ).value).to have_content(receipt_date.to_s)
+      # select full grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant all issues").click
+      end
+
+      expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+
+      click_button(text: "Continue")
+
+      # Takes user to add task page
+      expect(page).to have_content("Switch Docket: Add/Remove Tasks")
+      expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      expect(page).to have_content("Confirm removing task")
+      expect(page).to have_content("IHP")
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+
+      click_button(text: "Continue")
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
+
+      click_button(text: "Confirm docket switch")
+
+      # Return back to user's queue
+      expect(page).to have_content("Edit Information")
+
+      # Edit UA info
+      click_on "Edit Information"
+      fill_in "First name", with: "Updated First Name"
+      click_on "Save"
+
+      # Confirm editing UA info worked
+      expect(page).to have_content("Name: Updated First Name Smith")
     end
   end
 end
