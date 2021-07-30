@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketStartTimes Matches snapshot with default props 1`] = `
+<div>
+  <fieldset
+    class="usa-fieldset-inputs cf-form-radio "
+  >
+    <legend
+      class=""
+    >
+      <strong>
+        <span>
+          Available Times
+           
+        </span>
+      </strong>
+    </legend>
+    <div
+      class="cf-form-radio-options"
+    >
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_"
+          name="docketStartTimes"
+          type="radio"
+          value=""
+        />
+        <label
+          class=""
+          for="docketStartTimes_"
+        >
+          Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_8:30"
+          name="docketStartTimes"
+          type="radio"
+          value="8:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_8:30"
+        >
+          Half-Day AM (5 slots at 8:30 AM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_12:30"
+          name="docketStartTimes"
+          type="radio"
+          value="12:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_12:30"
+        >
+          Half-Day PM (5 slots at 12:30 PM Eastern)
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+`;
+
+exports[`DocketStartTimes Matches snapshot with default props 2`] = `
+<div>
+  <fieldset
+    class="usa-fieldset-inputs cf-form-radio "
+  >
+    <legend
+      class=""
+    >
+      <strong>
+        <span>
+          Available Times
+           
+        </span>
+      </strong>
+    </legend>
+    <div
+      class="cf-form-radio-options"
+    >
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_"
+          name="docketStartTimes"
+          type="radio"
+          value=""
+        />
+        <label
+          class=""
+          for="docketStartTimes_"
+        >
+          Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_8:30"
+          name="docketStartTimes"
+          type="radio"
+          value="8:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_8:30"
+        >
+          Half-Day AM (5 slots at 8:30 AM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="docketStartTimes_12:30"
+          name="docketStartTimes"
+          type="radio"
+          value="12:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_12:30"
+        >
+          Half-Day PM (5 slots at 12:30 PM Eastern)
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+`;

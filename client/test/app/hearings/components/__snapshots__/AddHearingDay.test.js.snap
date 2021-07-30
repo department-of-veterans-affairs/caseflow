@@ -685,15 +685,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  checked=""
-                  id="docketStartTimes_null"
+                  id="docketStartTimes_"
                   name="docketStartTimes"
                   type="radio"
                   value=""
                 />
                 <label
                   class=""
-                  for="docketStartTimes_null"
+                  for="docketStartTimes_"
                 >
                   Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
                 </label>
@@ -1293,15 +1292,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                checked=""
-                id="docketStartTimes_null"
+                id="docketStartTimes_"
                 name="docketStartTimes"
                 type="radio"
                 value=""
               />
               <label
                 class=""
-                for="docketStartTimes_null"
+                for="docketStartTimes_"
               >
                 Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
               </label>
