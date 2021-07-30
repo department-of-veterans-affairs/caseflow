@@ -22,14 +22,15 @@ exports[`DocketStartTimes Matches snapshot with default props 1`] = `
         class="cf-form-radio-option"
       >
         <input
-          id="docketStartTimes_"
+          checked=""
+          id="docketStartTimes_default"
           name="docketStartTimes"
           type="radio"
-          value=""
+          value="default"
         />
         <label
           class=""
-          for="docketStartTimes_"
+          for="docketStartTimes_default"
         >
           Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
         </label>
@@ -93,14 +94,15 @@ exports[`DocketStartTimes Matches snapshot with default props 2`] = `
         class="cf-form-radio-option"
       >
         <input
-          id="docketStartTimes_"
+          checked=""
+          id="docketStartTimes_default"
           name="docketStartTimes"
           type="radio"
-          value=""
+          value="default"
         />
         <label
           class=""
-          for="docketStartTimes_"
+          for="docketStartTimes_default"
         >
           Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)
         </label>

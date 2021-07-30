@@ -11,7 +11,7 @@ export const DocketStartTimes = ({
   setHearingStartTime,
   roTimezone
 }) => {
-  const fullDayAmPm = '';
+  const fullDayAmPm = 'default';
   const halfDayAm = '8:30';
   const halfDayPm = '12:30';
 
@@ -57,7 +57,7 @@ export const DocketStartTimes = ({
       setHearingStartTime(value);
     }
 
-    setSlotCount(startTimesSlotCount[value] ?? null);
+    setSlotCount(startTimesSlotCount[value]);
   };
 
   return (
@@ -67,7 +67,7 @@ export const DocketStartTimes = ({
       strongLabel
       options={options()}
       onChange={(value) => onChange(value)}
-      value={hearingStartTime}
+      value={hearingStartTime ?? fullDayAmPm }
     />
   );
 };
