@@ -29,16 +29,17 @@ export const TaskSelectionTable = ({ tasks }) => {
     const { taskIds: ids } = getValues();
 
     const wasJustChecked = !ids?.includes(changedId);
-    const toBeDisabledIds = wasJustChecked ? disabledTasksBasedOnSelections({ tasks: tasks.filter((task) => task.type !== 'DistributionTask'), selectedTaskIds: [...ids, changedId] }).filter((task) => task.disabled).map((task) => task.taskId) : [];
+    const nonDistributionTasks = tasks.filter((task) => task.type !== 'DistributionTask');
+    // eslint-disable-next-line max-len
+    const toDisable = disabledTasksBasedOnSelections({ tasks: nonDistributionTasks, selectedTaskIds: [...ids, changedId] });
+    const toBeDisabledIds = wasJustChecked ? toDisable.filter((task) => task.disabled).
+      map((task) => task.taskId) : [];
 
     // if changedId is already in array of selected Ids, filter it out;
     // otherwise, return array with it included
-    const newIds = !wasJustChecked ?
+    return !wasJustChecked ?
       ids?.filter((id) => id !== changedId) :
       [...(ids.filter((id) => !toBeDisabledIds.includes(id)) ?? []), changedId];
-
-    // this will get set as new value for taskIds by react hook form
-    return newIds;
   };
 
   // We use this to set `defaultChecked` for the task checkboxes

@@ -232,7 +232,7 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
 export const myriadTasksForTaskForm = () => {
   const taskTypes = [
     RootTask,
-    { DistributionTask },
+    { ...DistributionTask, parentId: 1 },
     { type: 'EvidenceSubmissionWindowTask', label: 'Evidence Submission Window Task' },
     { type: 'JudgeAssignTask', label: 'Assign' },
     { type: 'JudgeDecisionReviewTask', label: 'Review' },
