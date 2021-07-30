@@ -116,7 +116,7 @@ const formFieldMapping = (props) => {
     />,
     'filed-by-va-gov': <RadioField
       name="filed-by-va-gov"
-      label={<span><b>Was this form submitted through VA.gov?</b>
+      label={<span><b>Was this form submitted through VA.gov? </b>
         (Indicated by a stamp at the top right corner of the form)</span>}
       vertical
       options={BOOLEAN_RADIO_OPTIONS}
