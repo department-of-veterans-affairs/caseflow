@@ -11,22 +11,23 @@ export const DocketStartTimes = ({
   setHearingStartTime,
   roTimezone
 }) => {
-  const fullDayAmPm = null;
+  const fullDayAmPm = '';
   const halfDayAm = '8:30';
   const halfDayPm = '12:30';
 
   const options = () => {
+    const timezone = roTimezone ?? 'America/New_York';
     const amTimeInEastern =
-      moment(moment.tz(halfDayAm, 'h:mm A', roTimezone)).tz('America/New_York').
+      moment(moment.tz(halfDayAm, 'h:mm A', timezone)).tz('America/New_York').
         format('h:mm A');
     const pmTimeInEastern =
-      moment(moment.tz(halfDayPm, 'h:mm A', roTimezone)).tz('America/New_York').
+      moment(moment.tz(halfDayPm, 'h:mm A', timezone)).tz('America/New_York').
         format('h:mm A');
 
-    const zoneName = shortZoneName(roTimezone);
+    const zoneName = shortZoneName(timezone);
     const fullDayAmPmLabel = `Full-Day AM & PM (10 slots at ${halfDayAm} AM & ${halfDayPm} PM ${zoneName})`;
-    let halfDayAmLabel = `Half-Day AM (5 slots at ${halfDayAm} AM ${name} / ${amTimeInEastern} Eastern)`;
-    let halfDayPmLabel = `Half-Day PM (5 slots at ${halfDayPm} PM ${name} / ${pmTimeInEastern} Eastern)`;
+    let halfDayAmLabel = `Half-Day AM (5 slots at ${halfDayAm} AM ${zoneName} / ${amTimeInEastern} Eastern)`;
+    let halfDayPmLabel = `Half-Day PM (5 slots at ${halfDayPm} PM ${zoneName} / ${pmTimeInEastern} Eastern)`;
 
     if (zoneName === 'Eastern') {
       halfDayAmLabel = `Half-Day AM (5 slots at ${amTimeInEastern} ${zoneName})`;

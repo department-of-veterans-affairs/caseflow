@@ -299,7 +299,7 @@ export const shortZoneName = (name) => {
   const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
   const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
 
-  return zoneName.split('Time')[0]?.trim();
+  return zoneName?.split('Time')[0]?.trim();
 }
 
 /**

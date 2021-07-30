@@ -271,7 +271,7 @@ export const AddHearingDay = ({
               setSlotCount={setSlotCount}
               setHearingStartTime={setHearingStartTime}
               hearingStartTime={hearingStartTime}
-              roTimezone={selectedRegionalOffice?.timezone || 'America/New_York'}
+              roTimezone={selectedRegionalOffice?.timezone}
             />
           }
           {(selectedVideo || selectedVirtual) && (
