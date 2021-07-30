@@ -60,6 +60,10 @@ class Hearings::SendEmail
     case type
     when "confirmation"
       HearingMailer.confirmation(**args)
+    when "convert_to_virtual_confirmation"
+      HearingMailer.convert_to_virtual_confirmation(**args)
+    when "convert_to_not_virtual_confirmation"
+      HearingMailer.convert_to_not_virtual_confirmation(**args)
     when "cancellation"
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"
