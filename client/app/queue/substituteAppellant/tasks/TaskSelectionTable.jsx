@@ -7,6 +7,7 @@ import { capitalize } from 'lodash';
 import Checkbox from 'app/components/Checkbox';
 import format from 'date-fns/format';
 import { parseISO } from 'date-fns';
+import { disabledTasksBasedOnSelections } from './utils';
 
 const tableStyles = css({});
 const centerCheckboxPadding = css({ paddingTop: 'inherit' });
@@ -27,11 +28,14 @@ export const TaskSelectionTable = ({ tasks }) => {
   const handleCheck = (changedId) => {
     const { taskIds: ids } = getValues();
 
+    const wasJustChecked = !ids?.includes(changedId);
+    const toBeDisabledIds = wasJustChecked ? disabledTasksBasedOnSelections({ tasks: tasks.filter((task) => task.type !== 'DistributionTask'), selectedTaskIds: [...ids, changedId] }).filter((task) => task.disabled).map((task) => task.taskId) : [];
+
     // if changedId is already in array of selected Ids, filter it out;
     // otherwise, return array with it included
-    const newIds = ids?.includes(changedId) ?
+    const newIds = !wasJustChecked ?
       ids?.filter((id) => id !== changedId) :
-      [...(ids ?? []), changedId];
+      [...(ids.filter((id) => !toBeDisabledIds.includes(id)) ?? []), changedId];
 
     // this will get set as new value for taskIds by react hook form
     return newIds;
@@ -66,7 +70,7 @@ export const TaskSelectionTable = ({ tasks }) => {
                   <td {...centerCheckboxPadding}>
                     <Checkbox
                       onChange={() => onChange(handleCheck(task.taskId))}
-                      defaultValue={selectedTaskIds?.includes(task.taskId)}
+                      value={selectedTaskIds?.includes(task.taskId)}
                       name={`taskIds[${task.taskId}]`}
                       disabled={task.disabled}
                       label={<>&nbsp;<span className="usa-sr-only">Select {task.label}</span></>}
