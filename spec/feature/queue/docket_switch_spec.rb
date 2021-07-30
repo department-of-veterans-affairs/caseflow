@@ -636,7 +636,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(new_completed_task).to_not be_nil
     end
   end
-  describe "Docket switch with unrecognized appellant" do
+  fdescribe "Docket switch with unrecognized appellant" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
     let!(:docket_switch_granted_task) do
@@ -686,7 +686,9 @@ RSpec.feature "Docket Switch", :all_dbs do
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
 
-      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal_with_unrecognized_appellant.claimant.name))
+      expect(page).to have_content(
+        format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal_with_unrecognized_appellant.claimant.name)
+      )
       expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
       fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
 
@@ -722,10 +724,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       click_button(COPY::MODAL_CONFIRM_BUTTON)
 
       click_button(text: "Continue")
-      # Should now be on confirmation page
-      expect(page).to have_current_path(
-        "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
-      )
 
       click_button(text: "Confirm docket switch")
 
