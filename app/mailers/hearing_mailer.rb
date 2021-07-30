@@ -36,6 +36,9 @@ class HearingMailer < ActionMailer::Base
   end
 
   def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
+    # Guard to prevent conversion to virtual emails from sending to the judge
+    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
