@@ -103,13 +103,19 @@ class AddIssuesPage extends React.Component {
     return (formType === 'higher_level_review' || formType === 'supplemental_claim') && editPage;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  requestIssuesWithoutDecisionDates(intakeData) {
+    return intakeData.requestIssues?.some((issue) => !issue.ratingIssueReferenceId &&
+     !issue.isUnidentified && !issue.approx_decision_date);
+  }
+
   willRedirect(intakeData, hasClearedEp) {
     const { formType, processedAt, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
 
     return (
-      !formType || (this.editingClaimReview() && !processedAt) || intakeData.isOutcoded ||
-      (hasClearedEp && !correctClaimReviews)
+      !formType || (this.editingClaimReview() && !processedAt) ||
+       intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -201,8 +207,12 @@ class AddIssuesPage extends React.Component {
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
-
     }
+
+    if (this.requestIssuesWithoutDecisionDates(intakeData)) {
+      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
+    }
+
     const requestStatus = intakeData.requestStatus;
     const requestState =
       requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
