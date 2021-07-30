@@ -636,7 +636,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(new_completed_task).to_not be_nil
     end
   end
-  fdescribe "Docket switch with unrecognized appellant" do
+  describe "Docket switch with unrecognized appellant" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
     let!(:docket_switch_granted_task) do
