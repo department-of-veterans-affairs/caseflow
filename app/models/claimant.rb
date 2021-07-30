@@ -52,7 +52,7 @@ class Claimant < CaseflowRecord
       payee_code: payee_code,
       type: type
     )
-    unrecognized_appellant.copy_with_details if unrecognized_appellant
+    unrecognized_appellant.copy_with_details(updated_claimant: claimant) if unrecognized_appellant
     Person.find_or_create_by_participant_id(participant_id)
   end
 
