@@ -76,7 +76,6 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
-  // Arguably, this test is heavily duplicative of disabledTasksBasedOnSelections
   describe('shouldDisableBasedOnTaskType', () => {
     describe('when a ScheduleVeteranTask is selected', () => {
       const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
@@ -101,54 +100,6 @@ describe('utility functions for task manipulation', () => {
         expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
       });
     });
-
-    describe('when an EvidenceSubmissionWindow task is selected', () => {
-      const selectedTaskTypes = ['EvidenceSubmissionWindowTask'];
-
-      const shouldDisables = [
-        'ScheduleHearingTask',
-        'AssignHearingDispositionTask',
-        'ChangeHearingDispositionTask'
-      ];
-
-      const shouldNotDisables = [
-        'EvidenceSubmissionWindowTask',
-        'TranscriptionTask'
-      ];
-
-      // This block is the same for each of the three; there's an opportunity to refactor further!
-      it.each(shouldDisables)('should disable task type %s', (taskType) => {
-        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
-      });
-
-      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
-        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
-      });
-    });
-
-    describe('when a TranscriptionTask is selected', () => {
-      const selectedTaskTypes = ['TranscriptionTask'];
-
-      const shouldDisables = [
-        'ScheduleHearingTask',
-        'AssignHearingDispositionTask',
-        'ChangeHearingDispositionTask'
-      ];
-
-      const shouldNotDisables = [
-        'TranscriptionTask',
-        'EvidenceSubmissionWindowTask'
-      ];
-
-      // This block is the same for each of the three; there's an opportunity to refactor further!
-      it.each(shouldDisables)('should disable task type %s', (taskType) => {
-        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
-      });
-
-      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
-        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
-      });
-    });
   });
 
   describe('disabledTasksBasedOnSelections', () => {
@@ -160,40 +111,8 @@ describe('utility functions for task manipulation', () => {
       { taskId: 5, type: 'TranscriptionTask' }
     ];
 
-    describe('when ScheduleHearingTask is selected', () => {
-      const selectedTaskIds = [2];
-
-      it('disables the appropriate types', () => {
-        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: true }),
-            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: false }),
-            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
-            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
-            expect.objectContaining({ type: 'TranscriptionTask', disabled: true })
-          ])
-        );
-      });
-    });
-
     describe('when EvidenceSubmissionWindowTask is selected', () => {
       const selectedTaskIds = [1];
-
-      it('disables the appropriate types', () => {
-        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
-            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
-            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
-            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
-            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
-          ])
-        );
-      });
-    });
-
-    describe('when TranscriptionTask is selected', () => {
-      const selectedTaskIds = [5];
 
       it('disables the appropriate types', () => {
         expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
