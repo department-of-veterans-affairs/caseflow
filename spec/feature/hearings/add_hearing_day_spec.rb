@@ -158,7 +158,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Please make sure you select a Regional Office")
     end
 
-    context "When adding a full or half day dockets", focus: true do
+    context "When adding a full or half day dockets" do
       shared_examples "adding full or half day dockets" do
         scenario "fill out form and submit successfully" do
           visit "hearings/schedule"
