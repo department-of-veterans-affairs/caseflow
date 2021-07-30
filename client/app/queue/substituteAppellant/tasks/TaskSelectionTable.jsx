@@ -37,9 +37,9 @@ export const TaskSelectionTable = ({ tasks }) => {
 
     // if changedId is already in array of selected Ids, filter it out;
     // otherwise, return array with it included
-    return !wasJustChecked ?
-      ids?.filter((id) => id !== changedId) :
-      [...(ids.filter((id) => !toBeDisabledIds.includes(id)) ?? []), changedId];
+    return wasJustChecked ?
+      [...(ids.filter((id) => !toBeDisabledIds.includes(id)) ?? []), changedId] :
+      ids?.filter((id) => id !== changedId);
   };
 
   // We use this to set `defaultChecked` for the task checkboxes
