@@ -51,6 +51,7 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
+  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date'
 };
 
 export const INTAKE_STATES = {
@@ -206,12 +207,12 @@ export const REVIEW_DATA_FIELDS = {
 
 export const GENERIC_FORM_ERRORS = {
   blank: 'Please select an option.'
-}
+};
 
 export const RECEIPT_DATE_ERRORS = {
   invalid: 'Please enter a valid receipt date.',
   in_future: 'Receipt date cannot be in the future.'
-}
+};
 
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',
