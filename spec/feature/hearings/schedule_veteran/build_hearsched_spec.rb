@@ -395,7 +395,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           )
           expect(page).to have_content("Hearing Time")
           if first_slot_time.nil?
-            expect(find('.cf-form-radio-option', text: "8:30")).not_to eq(nil)
+            expect(find(".cf-form-radio-option", text: "8:30")).not_to eq(nil)
             select_hearing_time("12:30")
           else
             expect(page).not_to have_selector(".cf-form-radio-option")
