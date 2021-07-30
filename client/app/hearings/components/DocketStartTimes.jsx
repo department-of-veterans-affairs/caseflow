@@ -67,7 +67,7 @@ export const DocketStartTimes = ({
       strongLabel
       options={options()}
       onChange={(value) => onChange(value)}
-      value={hearingStartTime ?? fullDayAmPm }
+      value={hearingStartTime ?? fullDayAmPm}
     />
   );
 };
