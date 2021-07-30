@@ -35,6 +35,18 @@ class HearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: confirmation_subject)
   end
 
+  def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
+    @recipient = email_recipient
+    @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing.hearing
+    @link = link
+    @test_link = virtual_hearing&.test_link(email_recipient.title)
+
+    attachments[calendar_invite_name] = confirmation_calendar_invite
+
+    mail(to: recipient.email, subject: confirmation_subject)
+  end
+
   def updated_time_confirmation(email_recipient:, virtual_hearing: nil)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing

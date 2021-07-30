@@ -51,6 +51,7 @@ namespace :emails do
       recipients.each do |recipient|
         [
           :confirmation,
+          :convert_to_virtual_confirmation,
           :updated_time_confirmation,
           :cancellation,
           :reminder
