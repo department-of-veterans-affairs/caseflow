@@ -266,14 +266,6 @@ export const AddHearingDay = ({
             onChange={(value) => props.onAssignHearingRoom(value)}
             {...roomRequiredStyling}
           />
-          {selectedVideo &&
-            <DocketStartTimes
-              setSlotCount={setSlotCount}
-              setHearingStartTime={setHearingStartTime}
-              hearingStartTime={hearingStartTime}
-              roTimezone={selectedRegionalOffice?.timezone}
-            />
-          }
           {(selectedVideo || selectedVirtual) && (
             <RegionalOfficeDropdown
               label="Regional Office (RO)"
@@ -283,6 +275,14 @@ export const AddHearingDay = ({
               value={selectedRegionalOffice?.key}
             />
           )}
+          {selectedVideo &&
+            <DocketStartTimes
+              setSlotCount={setSlotCount}
+              setHearingStartTime={setHearingStartTime}
+              hearingStartTime={hearingStartTime}
+              roTimezone={selectedRegionalOffice?.timezone}
+            />
+          }
           {selectedRequestType !== null && (
             <React.Fragment>
               <JudgeDropdown

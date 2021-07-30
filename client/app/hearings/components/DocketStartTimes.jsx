@@ -12,7 +12,7 @@ export const DocketStartTimes = ({
   roTimezone
 }) => {
   const fullDayAmPm = 'default';
-  const halfDayAm = '8:30';
+  const halfDayAm = '08:30';
   const halfDayPm = '12:30';
 
   const options = () => {
@@ -25,8 +25,11 @@ export const DocketStartTimes = ({
         format('h:mm A');
 
     const zoneName = shortZoneName(timezone);
-    const fullDayAmPmLabel = `Full-Day AM & PM (10 slots at ${halfDayAm} AM & ${halfDayPm} PM ${zoneName})`;
-    let halfDayAmLabel = `Half-Day AM (5 slots at ${halfDayAm} AM ${zoneName} / ${amTimeInEastern} Eastern)`;
+    // remove leading zero from 08:30 for display
+    const amTime = halfDayAm.slice(1);
+
+    const fullDayAmPmLabel = `Full-Day AM & PM (10 slots at ${amTime} AM & ${halfDayPm} PM ${zoneName})`;
+    let halfDayAmLabel = `Half-Day AM (5 slots at ${amTime} AM ${zoneName} / ${amTimeInEastern} Eastern)`;
     let halfDayPmLabel = `Half-Day PM (5 slots at ${halfDayPm} PM ${zoneName} / ${pmTimeInEastern} Eastern)`;
 
     if (zoneName === 'Eastern') {
