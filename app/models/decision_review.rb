@@ -138,10 +138,9 @@ class DecisionReview < CaseflowRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimant!(participant_id:, payee_code:, type:, unrecognized_appellant:)
+  def create_claimant!(source_claimant:)
     remove_claimants!
-    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code,
-      type: type, unrecognized_appellant: unrecognized_appellant)
+    claimants.create_without_intake!(source_claimant: source_claimant)
   end
 
   def remove_claimants!
@@ -153,12 +152,7 @@ class DecisionReview < CaseflowRecord
     # maintain the same ordering as used in the claimant method below so that claimant returns the correct one
     source_claimants.order(:id).each_with_index do |claimant, index|
       if index == 0
-        create_claimant!(
-          participant_id: claimant.participant_id,
-          payee_code: claimant.payee_code,
-          type: claimant.type,
-          unrecognized_appellant: claimant.unrecognized_appellant
-        )
+        create_claimant!(source_claimant: claimant)
       else
         # Since create_claimant! removes all claimants, don't call it again
         claimants.create_without_intake!(
