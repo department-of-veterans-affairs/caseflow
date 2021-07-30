@@ -20,6 +20,7 @@ import { AppellantSection } from 'app/hearings/components/VirtualHearings/Appell
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
+import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -239,7 +240,6 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   })
 
-
   test('RO dropdown includes Virtual Hearings as option is type is selected as Virtual', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
@@ -257,6 +257,39 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(RegionalOfficeDropdown)
       .prop('excludeVirtualHearingsOption')).toEqual(false);
+    expect(scheduleVeteran).toMatchSnapshot();
+  })
+
+  test('Displays ReadOnly hearing time when video is selected', () => {
+    const hearing = {
+      ...defaultHearing,
+      regionalOffice: defaultHearing.regionalOfficeKey,
+      hearingDay: {
+        hearingId: 1,
+        readableRequestType: 'Video',
+        beginsAt: '2021-07-29T08:30:00-04:00',
+        timezone: 'America/Los_Angeles'
+      }
+    }
+    const scheduleVeteran = mount(
+      <ScheduleVeteranForm
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={amaAppeal}
+        hearing={hearing}
+        virtual={false}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+      }
+    );
+
+    expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
+    expect(scheduleVeteran.find(HearingTime).find(ReadOnly)).toHaveLength(1);
+    expect(
+      scheduleVeteran.find(HearingTime).find(ReadOnly).prop('text')
+    ).toEqual('8:30 AM Pacific / 11:30 AM Eastern');
     expect(scheduleVeteran).toMatchSnapshot();
   })
 });
