@@ -50,6 +50,21 @@ class HearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: confirmation_subject)
   end
 
+  def convert_to_not_virtual_confirmation(email_recipient:, virtual_hearing: nil)
+    # Guard to prevent conversion to virtual emails from sending to the judge
+    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+
+    @recipient = email_recipient
+    @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing.hearing
+    @link = link
+    @test_link = virtual_hearing&.test_link(email_recipient.title)
+
+    attachments[calendar_invite_name] = confirmation_calendar_invite
+
+    mail(to: recipient.email, subject: confirmation_subject)
+  end
+
   def updated_time_confirmation(email_recipient:, virtual_hearing: nil)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
