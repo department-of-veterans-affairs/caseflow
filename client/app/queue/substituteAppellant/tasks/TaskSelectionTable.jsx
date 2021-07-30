@@ -27,13 +27,12 @@ export const TaskSelectionTable = ({ tasks }) => {
   // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
   const handleCheck = (changedId) => {
     const { taskIds: ids } = getValues();
-
     const wasJustChecked = !ids?.includes(changedId);
     const nonDistributionTasks = tasks.filter((task) => task.type !== 'DistributionTask');
     // eslint-disable-next-line max-len
     const toDisable = disabledTasksBasedOnSelections({ tasks: nonDistributionTasks, selectedTaskIds: [...ids, changedId] });
     const toBeDisabledIds = wasJustChecked ? toDisable.filter((task) => task.disabled).
-      map((task) => task.taskId) : [];
+      map((task) => parseInt(task.taskId, 10)) : [];
 
     // if changedId is already in array of selected Ids, filter it out;
     // otherwise, return array with it included
