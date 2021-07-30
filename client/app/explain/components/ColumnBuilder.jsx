@@ -1,4 +1,5 @@
 import * as React from 'react';
+import ReactDOM from 'react-dom';
 import Link from '../../components/Link';
 import { css } from 'glamor';
 
@@ -115,34 +116,55 @@ export const relevantDataColumn = (column) => {
   };
 };
 
-export const detailsColumn = (column, handleModalOpen) => {
-  const linkStyling = css({
-    cursor: 'pointer',
-  });
+const linkToDetailsPane = (formattedData, handleModalOpen, data, count) => {
+  const showInPane = function () {
+    const sidePanel = window.document.getElementById('side_panel');
+    const detailsPane = window.document.getElementById('details_pane_section');
 
+    if (!detailsPane || !sidePanel || detailsPane.style.display === 'none' || sidePanel.style.display === 'none') {
+      // Update React state with new data
+      handleModalOpen(data);
+    } else {
+      // Add React component to non-React parent element.
+      // Ensure that the React component is not moved or removed from its parent element outside of React.
+      // Otherwise warnings are emitted in the browser console.
+      const detailsContentPane = window.document.getElementById('details_content_for_react');
+
+      ReactDOM.render(formattedData, detailsContentPane);
+    }
+  };
+
+  return <div id="detailPaneLink"><Link onClick={showInPane}>{count} attributes</Link></div>;
+};
+
+const inlineDetail = (formattedData) => <div>
+  <details className="jsonDetails">
+    <summary>details</summary>
+    { formattedData }
+  </details>
+</div>;
+
+const linkStyling = css({
+  cursor: 'pointer',
+});
+
+export const detailsColumn = (column, handleModalOpen) => {
   return {
     header: column.header,
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => {
-      let count = 0;
+      const eventProperties = rowData[column.name];
+      const count = eventProperties ? Object.keys(eventProperties).length : 0;
 
-      for (let prop in rowData[column.name]) {
-        if (Object.hasOwnProperty.call(rowData[column.name], prop)) {
-          count += 1;
-        }
-      }
       if (count > 0) {
-        const onClick = () => handleModalOpen(rowData[column.name]);
-        const expandableDetail = <details className="jsonDetails"><summary>(details)</summary>
-          <pre>{ formatJson(rowData[column.name]) }</pre>
-        </details>;
+        const formattedData = <pre id={`formattedEventData_${rowData.object_id}`} className="event_detail">
+          { formatJson(eventProperties) }
+        </pre>;
 
         return <span {...linkStyling}>
-          <Link onClick={onClick}>
-            {count}
-          </Link>
-          {expandableDetail}
+          {linkToDetailsPane(formattedData, handleModalOpen, eventProperties, count)}
+          {inlineDetail(formattedData)}
         </span>;
       }
     }

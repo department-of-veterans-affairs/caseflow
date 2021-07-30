@@ -156,6 +156,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                   >
                     <input
                       aria-label="taskIds[2]"
+                      disabled=""
                       id="taskIds[2]"
                       name="taskIds[2]"
                       type="checkbox"
@@ -649,6 +650,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                     <input
                       aria-label="taskIds[2]"
                       checked=""
+                      disabled=""
                       id="taskIds[2]"
                       name="taskIds[2]"
                       type="checkbox"

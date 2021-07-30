@@ -9,7 +9,7 @@ import {
   shouldDisable,
   shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks,
+  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
 } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
@@ -72,6 +72,58 @@ describe('utility functions for task manipulation', () => {
         const nonDt = { type: taskType };
 
         expect(shouldDisable(nonDt)).toBe(false);
+      });
+    });
+  });
+
+  describe('shouldDisableBasedOnTaskType', () => {
+    describe('when a ScheduleVeteranTask is selected', () => {
+      const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
+
+      const shouldDisables = [
+        'AssignHearingDispositionTask',
+        'ChangeHearingDispositionTask',
+        'EvidenceSubmissionWindowTask',
+        'TranscriptionTask'
+      ];
+
+      const shouldNotDisables = [
+        'ScheduleHearingTask',
+        'ExampleTask'
+      ];
+
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+  });
+
+  describe('disabledTasksBasedOnSelections', () => {
+    const tasks = [
+      { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
+      { taskId: 2, type: 'ScheduleHearingTask' },
+      { taskId: 3, type: 'AssignHearingDispositionTask' },
+      { taskId: 4, type: 'ChangeHearingDispositionTask' },
+      { taskId: 5, type: 'TranscriptionTask' }
+    ];
+
+    describe('when EvidenceSubmissionWindowTask is selected', () => {
+      const selectedTaskIds = [1];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
+            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
+          ])
+        );
       });
     });
   });
