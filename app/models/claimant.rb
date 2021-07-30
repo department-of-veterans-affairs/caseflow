@@ -46,13 +46,12 @@ class Claimant < CaseflowRecord
 
   delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
 
-  def self.create_without_intake!(participant_id:, payee_code:, type:, unrecognized_appellant: nil)
-    claimant = create!(
+  def self.create_without_intake!(participant_id:, payee_code:, type:)
+    create!(
       participant_id: participant_id,
       payee_code: payee_code,
       type: type
     )
-    unrecognized_appellant&.copy_with_details(updated_claimant: claimant)
     Person.find_or_create_by_participant_id(participant_id)
   end
 
