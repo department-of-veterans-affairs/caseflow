@@ -2,6 +2,7 @@
 
 class Hearings::SchedulePeriodsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
+  include HearingsConcerns::JudgeAssignment
 
   before_action :verify_build_hearing_schedule_access
 
@@ -34,9 +35,15 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
     S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
-    schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
-                                                                          file_name: file_name))
-    render json: { id: schedule_period.id }
+    create_params = schedule_period_params.merge(user_id: current_user.id, file_name: file_name)
+
+    if params["schedule_period"]["type"] == "JudgeSchedulePeriod"
+      hearing_days = assign_vljs_to_hearing_days(create_params)
+      render json: { hearing_days: hearing_days }
+    else
+      schedule_period = SchedulePeriod.create!(create_params)
+      render json: { id: schedule_period.id }
+    end
   rescue StandardError => error
     render(
       json: {
@@ -51,7 +58,11 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
 
   # Route to finalize and confirm a hearing schedule
   def update
-    if schedule_period.can_be_finalized?
+    if params[:schedule_period_id] == "confirm_judge_assignments"
+      hearing_days = params["schedule_period"]
+      confirm_assignments(hearing_days)
+      render json: { success: true }
+    elsif schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
       render json: { id: schedule_period.id }
     else

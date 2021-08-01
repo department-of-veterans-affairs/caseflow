@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import ReviewAssignments from '../components/ReviewAssignments';
+import { ReviewAssignments } from '../components/ReviewAssignments';
 import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
@@ -31,7 +31,10 @@ export class ReviewAssignmentsContainer extends React.Component {
   loadSchedulePeriod = () => {
     return ApiUtil.get(`/hearings/schedule_periods/${this.props.match.params.schedulePeriodId}`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
-      const schedulePeriod = resp.schedulePeriod;
+      const schedulePeriod = {
+        ...resp.schedulePeriod,
+        hearingDays: Object.values(resp.schedulePeriod.hearingDays)
+      };
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);
     }, (error) => {
