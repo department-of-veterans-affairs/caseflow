@@ -61,12 +61,13 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     errors = []
     @spreadsheet_data.each do |data|
       judge = User.css_ids_by_vlj_ids(data[:vlj_id])
-      first_name_match = judge[data[:vlj_id]][:first_name].casecmp(data[:name].split(", ")[1].strip.downcase).zero?
-      last_name_match = judge[data[:vlj_id]][:last_name].casecmp(data[:name].split(", ")[0].strip.downcase).zero?
-      next if first_name_match && last_name_match
+      next if judge.empty?
 
       first_name = judge[data[:vlj_id]][:last_name]
       last_name = judge[data[:vlj_id]][:first_name]
+
+      next if first_name.casecmp(data[:name].split(", ")[1].strip.downcase).zero? &&
+              last_name.casecmp(data[:name].split(", ")[0].strip.downcase).zero?
 
       errors << "VLJ ID: #{data[:vlj_id]} expected name #{first_name}, #{last_name} but received name #{data[:name]}"
     end
