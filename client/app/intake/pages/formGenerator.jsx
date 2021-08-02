@@ -126,7 +126,7 @@ const formFieldMapping = (props) => {
       errorMessage={props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message}
       // eslint-disable-next-line no-undefined
       value={props.filedByVaGov === null || props.filedByVaGov === undefined ?
-        null : props.filedByVaGov.toString()}
+        'false' : props.filedByVaGov.toString()}
       inputRef={props.register}
     />,
     'opt-in-election': <Fragment>

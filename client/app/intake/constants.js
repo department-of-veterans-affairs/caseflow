@@ -180,7 +180,7 @@ export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
-    filed_by_va_gov: { key: 'filedByVaGov', required: true },
+    filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
     unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },
