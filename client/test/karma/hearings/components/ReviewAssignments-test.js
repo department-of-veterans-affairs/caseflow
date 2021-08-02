@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import ReviewAssignments from '../../../../app/hearings/components/ReviewAssignments';
+import { ReviewAssignments } from '../../../../app/hearings/components/ReviewAssignments';
 
 describe('ReviewAssignments', () => {
   it('renders the RO/CO alert', () => {
