@@ -595,6 +595,7 @@ describe "SanitizedJsonExporter/Importer" do
 
         cavc_appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
       end
+      let!(:bva_org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, Bva.singleton) } }
 
       let!(:sje) do
         # simulates "Assign to person", which creates child task
@@ -609,17 +610,21 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 1
         expect(Claimant.count).to eq 2
         expect(Organization.count).to eq 8
-        expect(User.count).to eq 6
+        expect(User.count).to eq 7
         expect(DecisionDocument.count).to eq 1
         expect(Task.count).to eq 16
         expect(TaskTimer.count).to eq 2
+
+        # Include organization admins in export even if the admins are not referenced.
+        # Expect exported user records to include the sanitized bva_org_admin.css_id
+        expect(sje.records_hash["users"].pluck("css_id")).to include sje.value_mapping[bva_org_admin.css_id]
 
         subject
         record_counts = {
           "appeals" => 2,
           "veterans" => 1,
           "claimants" => 2,
-          "users" => 6,
+          "users" => 7,
           "organizations" => 0,
           "organizations_users" => 0,
           "decision_documents" => 1,
@@ -633,7 +638,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(sji.imported_records.transform_values(&:count)).to include record_counts
         reused_record_counts = {
           "organizations" => 4,
-          "organizations_users" => 3,
+          "organizations_users" => 4,
           "people" => 1
         }
         expect(sji.reused_records.transform_values(&:count)).to eq reused_record_counts
@@ -642,7 +647,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 12
+        expect(User.count).to eq 14
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 
