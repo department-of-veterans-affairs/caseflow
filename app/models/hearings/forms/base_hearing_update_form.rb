@@ -106,19 +106,16 @@ class BaseHearingUpdateForm
   end
 
   # This is an existing hearing that is being converted to virtual if:
+  # - There is no virtual hearing
+  # - This hearing exists with a request type that is not virtual ("R")
   def conversion_to_virtual?
-    # There is no virtual hearing currently
-    # The hearing wasn't created just now with a type of 'V
-    # The request will create the virtual hearing
-    false # TODO
+    hearing.request_type != "R" && !hearing.virtual?
   end
 
   # This is an existing hearing that is being converted to be not virtual if:
   def conversion_to_not_virtual?
-    # There is a virtual hearing currently
-    # The hearing wasn't created just now with a type other than virtual
-    # The request will delete the virtual hearing
-    false # TODO
+    # TODO I don't think this distinguishes between conversion and other actions
+    virtual_hearing_cancelled?
   end
 
   def only_time_updated_or_timezone_updated?
