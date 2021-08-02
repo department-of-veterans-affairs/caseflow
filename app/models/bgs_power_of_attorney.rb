@@ -85,8 +85,24 @@ class BgsPowerOfAttorney < CaseflowRecord
           find_or_create_by_file_number(veteran_file_number)
         rescue ActiveRecord::RecordInvalid
           # not found in BGS
+          update_vacols_correspondent_ssn(veteran_file_number)
         end
       end
+    end
+  end
+
+  def update_vacols_correspondent_ssn(veteran_file_number)
+    la = LegacyAppeal.fetch_appeals_by_file_number(veteran_file_number)
+
+    la.each do |appeal|
+      next if appeal.spina_bifida
+
+      p = Person.find_or_create_by_participant_id(appeal.veteran.relationships.first.participant_id)
+      next unless appeal.claimant_participant_id == p.participant_id
+      next if appeal.case_record.correspondent.ssn == p.ssn
+
+      appeal.case_record.correspondent.update!(ssn: p.ssn)
+      find_or_create_by_claimant_participant_id(p.participant_id)
     end
   end
 
