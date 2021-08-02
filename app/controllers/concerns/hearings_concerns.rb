@@ -41,6 +41,9 @@ module HearingsConcerns
 
       validate_spreadsheet = HearingSchedule::ValidateJudgeSpreadsheet.new(spreadsheet_data)
       errors = validate_spreadsheet.validate
+      if errors.count > 0
+        errors.each { |error| fail error }
+      end
 
       hearing_days = HearingDay.where(id: spreadsheet_data.judge_assignments.pluck(:hearing_day_id))
 
@@ -57,13 +60,10 @@ module HearingsConcerns
       ActiveRecord::Base.transaction do
         begin
           hearing_days.each do |day|
-            # last_name = day["judge_name"].split(",").first
-            # first_name = day["judge_name"].split(",").last
             hearing_day = HearingDay.find(day["hearing_day_id"])
             hearing_day.update(judge_id: day["judge_id"])
           end
-        rescue StandardError => error
-          byebug
+        rescue StandardError
           raise ActiveRecord::Rollback
         end
       end

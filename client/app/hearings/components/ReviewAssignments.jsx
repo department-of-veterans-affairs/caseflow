@@ -18,7 +18,7 @@ const tableStyling = css({
   border: '1px solid #dadbdc',
 });
 
-export const AssignmentAlert = ({ type, onClickConfirmAssignments, onClickGoBack }) => {
+export const AssignmentAlert = ({ type, onClickConfirmAssignments, onClickGoBack, loading }) => {
   const title =
     type === SPREADSHEET_TYPES.RoSchedulePeriod.value ?
       COPY.HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO :
@@ -42,9 +42,9 @@ export const AssignmentAlert = ({ type, onClickConfirmAssignments, onClickGoBack
             Go back
           </Link>
           <Button
+            loading={loading}
             name="confirmAssignments"
             button="primary"
-            willNeverBeLoading
             onClick={onClickConfirmAssignments}
           >
             Confirm assignments
@@ -57,6 +57,13 @@ export const AssignmentAlert = ({ type, onClickConfirmAssignments, onClickGoBack
 
 AssignmentAlert.defaultProps = {
   onClickGoBack: noop
+};
+
+AssignmentAlert.propTypes = {
+  type: PropTypes.string,
+  loading: PropTypes.bool,
+  onClickConfirmAssignments: PropTypes.func,
+  onClickGoBack: PropTypes.func,
 };
 
 export const AssignmentError = ({ spErrorDetails }) => {
@@ -94,6 +101,10 @@ export const AssignmentError = ({ spErrorDetails }) => {
   return <StatusMessage type="alert" title={title} messageText={message} />;
 };
 
+AssignmentError.propTypes = {
+  spErrorDetails: PropTypes.object,
+};
+
 export const AssignmentsModal = ({
   onClick,
   onClickCloseModal,
@@ -122,7 +133,14 @@ export const AssignmentsModal = ({
   </div>
 );
 
+AssignmentsModal.propTypes = {
+  schedulePeriod: PropTypes.object,
+  onClick: PropTypes.func,
+  onClickCloseModal: PropTypes.func,
+};
+
 export const ReviewAssignments = ({
+  assigningJudges,
   schedulePeriod,
   displayConfirmationModal,
   onClickCloseModal,
@@ -201,6 +219,7 @@ export const ReviewAssignments = ({
         />
       )}
       <AssignmentAlert
+        loading={assigningJudges}
         onClickGoBack={onClickGoBack}
         type={schedulePeriod.type}
         onClickConfirmAssignments={onClickConfirmAssignments}
@@ -223,6 +242,7 @@ ReviewAssignments.defaultProps = {
 ReviewAssignments.propTypes = {
   schedulePeriod: PropTypes.object,
   schedulePeriodError: PropTypes.bool,
+  assigningJudges: PropTypes.bool,
   displayConfirmationModal: PropTypes.bool,
   onClickConfirmAssignments: PropTypes.func,
   onClickCloseModal: PropTypes.func,

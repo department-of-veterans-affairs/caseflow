@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
@@ -19,11 +19,18 @@ import {
   updateJudgeUploadFormErrors,
   unsetUploadErrors
 } from '../actions/hearingScheduleActions';
+
+import { onReceiveAlerts } from '../../components/common/actions';
+import COPY from '../../../COPY';
+
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 import { ReviewAssignments } from '../components/ReviewAssignments';
 
 export const BuildScheduleUploadContainer = (props) => {
   const [assignments, setAssignments] = useState(false);
+  const [assigningJudges, setAssigningJudges] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     return () => props.unsetUploadErrors();
@@ -87,6 +94,8 @@ export const BuildScheduleUploadContainer = (props) => {
   };
 
   const confirmJudgeAssignments = () => {
+    setAssigningJudges(true);
+
     const data = assignments.map((assignment) => ({
       hearing_day_id: assignment.id,
       judge_name: assignment.judgeName,
@@ -95,6 +104,14 @@ export const BuildScheduleUploadContainer = (props) => {
 
     ApiUtil.patch('/hearings/schedule_periods/confirm_judge_assignments', { data: { schedule_period: data } }).
       then(() => {
+        setAssigningJudges(false);
+
+        dispatch(onReceiveAlerts([{
+          type: 'success',
+          title: COPY.HEARING_SCHEDULE_SUCCESSFULLY_ASSIGNED_JUDGES,
+          timestamp: Date.now()
+        }]));
+
         props.history.push('/schedule');
       }).
       catch((error) => {
@@ -145,6 +162,7 @@ export const BuildScheduleUploadContainer = (props) => {
 
   return assignments ? (
     <ReviewAssignments
+      assigningJudges={assigningJudges}
       onClickConfirmAssignments={confirmJudgeAssignments}
       onClickGoBack={() => setAssignments(false)}
       schedulePeriod={{

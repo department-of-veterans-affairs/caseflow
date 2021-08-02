@@ -300,8 +300,6 @@ class ListSchedule extends React.Component {
     const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
-    console.log(hearingScheduleRows);
-
     return (
       <React.Fragment>
         <div {...clearfix}>
