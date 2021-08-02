@@ -18,7 +18,7 @@ describe('ReviewAssignments', () => {
   it('renders the modal if displayConfirmationModal is true', () => {
     const wrapper = mount(
       <MemoryRouter>
-        <ReviewAssignments displayConfirmationModal schedulePeriod={{ type: 'JudgeSchedulePeriod' }} />
+        <ReviewAssignments displayConfirmationModal schedulePeriod={{ type: 'RoSchedulePeriod' }} />
       </MemoryRouter>
     );
 
