@@ -5,6 +5,33 @@ describe ETLBuilderJob, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  context "when error occurs" do
+    subject { job.perform_now }
+    let(:job) { described_class.new }
+    let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+
+    before do
+      allow(job).to receive(:sweep_etl) { fail StandardError, "oops!" }
+
+      allow(SlackService).to receive(:new).and_return(slack_service)
+      allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+
+      allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      allow(Raven).to receive(:last_event_id) { @raven_called && "sentry_12345" }
+    end
+
+    it "sends alert to Sentry and Slack" do
+      subject
+
+      expect(slack_service).to have_received(:send_notification).with(
+        "Error running ETLBuilderJob. See Sentry event sentry_12345",
+        "ETLBuilderJob",
+        "#appeals-data-workgroup"
+      )
+      expect(@raven_called).to eq(true)
+    end
+  end
+
   describe "perform" do
     before do
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
