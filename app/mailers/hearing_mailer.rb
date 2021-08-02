@@ -156,6 +156,7 @@ class HearingMailer < ActionMailer::Base
       "Your Board hearing will now be a virtual hearing"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Confirmation: #{appellant_name}'s Board hearing is now a virtual hearing"
+    end
   end
 
   def not_virtual_conversion_confirmation_subject
@@ -164,6 +165,7 @@ class HearingMailer < ActionMailer::Base
       "Your Board hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}>"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "#{appellant_name}’s hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}"
+    end
   end
 
   def link
