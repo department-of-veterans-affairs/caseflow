@@ -1,0 +1,136 @@
+<!-- Adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_draggable -->
+
+<style>
+  /* Side panel */
+  #side_panel {
+    background-color: #f1f1f1;
+    text-align: center;
+    border: 1px solid #d3d3d3;
+
+    /* Make it float above other elements */
+    position: fixed;
+    z-index: 9;
+
+    /* Make it resizable */
+    resize: both;
+    overflow: auto;
+  }
+
+  #side_panel_header {
+    cursor: move;
+    z-index: 10;
+    display: flex;
+    justify-content: flex-start;
+    padding: 5px;
+    background-color: #2196F3;
+    color: #fff;
+  }
+  #close_side_panel_btn {
+    position: absolute;
+    right: 4px;
+    margin: 0px;
+    font-size: 0.8em;
+  }
+
+  #side_panel_checkbox_row {
+    display: flex;
+    justify-content: flex-start;
+    border: 1px solid darkgray;
+    font-size: 0.9em;
+  }
+  #side_panel_checkbox_row label {
+    margin: 4px;
+  }
+</style>
+
+<div id="side_panel" style="display:none">
+  <div id="side_panel_header">
+    Floating Panel
+    <button id="close_side_panel_btn" class="menuBtn" onclick="closeSidePanel()">&#10006;</button>
+  </div>
+
+  <% sectionIds = %w[details_pane legend_pane] %>
+  <div id="side_panel_checkbox_row">
+    <% sectionIds.each do |sectionId| %>
+      <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox"
+             onclick="toggleSection(this, 'side_panel')">
+      <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize.split.first%></label>
+    <% end %>
+  </div>
+
+  <div id="side_panel_message"></div>
+
+  <% sectionIds.each do |sectionId|  %>
+    <div id="<%=sectionId%>_section" style="display:none">
+      <%= render sectionId %>
+      <hr/>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  function closeSidePanel() {
+    const chkbox = document.getElementById("side_panel_chkbox");
+    if(chkbox.checked){
+      chkbox.checked = false;
+      chkbox.onclick();
+    }
+  }
+  
+  function showDetailsPane(){
+    const chkbox = document.getElementById("details_pane_chkbox");
+    if(!chkbox.checked){
+      chkbox.checked = true;
+      chkbox.onclick();
+    }
+  }
+
+  // const sidePanelSectionBtns = document.querySelectorAll('#side_panel_checkbox_row input')
+  // sidePanelSectionBtns.forEach((btn) => btn.disabled = true);
+</script>
+
+<script type="text/javascript">
+  makeDraggable(document.getElementById("side_panel"));
+  
+  function makeDraggable(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "_header")) {
+      /* if present, the header is where you move the DIV from:*/
+      document.getElementById(elmnt.id + "_header").onmousedown = dragMouseDown;
+    } else {
+      /* otherwise, move the DIV from anywhere inside the DIV:*/
+      elmnt.onmousedown = dragMouseDown;
+    }
+  
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+  
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+  
+    function closeDragElement() {
+      /* stop moving when mouse button is released:*/
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+  
