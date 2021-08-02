@@ -5,10 +5,10 @@ export const mapAppellantDataToApi = (appellant) => {
   return { unrecognized_appellant: {
       relationship: appellant.relationship,
       unrecognized_party_detail: {
-        party_type: appellant.partyType,
-        name: appellant.partyType == "organization" ? appellant.name : appellant.firstName,
-        middle_name: appellant.middleName,
-        last_name: appellant.lastName,
+        party_type: (appellant.relationship === "other" || appellant.relationship === "attorney") ? appellant.partyType : "individual",
+        name: appellant.partyType === "organization" ? appellant.name : appellant.firstName,
+        middle_name: appellant.middleName || "",
+        last_name: appellant.lastName || "",
         suffix: appellant.suffix,
         address_line_1: appellant.addressLine1,
         address_line_2: appellant.addressLine2,

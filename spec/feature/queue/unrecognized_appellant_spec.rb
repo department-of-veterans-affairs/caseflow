@@ -74,6 +74,9 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_current_path("/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}")
       ua = appeal_with_unrecognized_appellant.claimant.unrecognized_appellant
       expect(ua.name).to eq("Organization 1")
+      expect(ua.middle_name).to eq("")
+      expect(ua.last_name).to eq("")
+
       expect(ua.party_type).to eq("organization")
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
@@ -81,6 +84,19 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_content(format(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE
                                           .tr("(", "{").gsub(")s", "}"), appellantName: ua.name))
       expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE)
+    end
+
+    it "renders error alert when update fails" do
+      allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise("Internal Server Error")
+
+      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      click_on "Edit Information"
+
+      expect(page).to have_content("Edit Appellant Information")
+      expected_current_path = "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}/edit_appellant_information"
+      expect(page).to have_current_path(expected_current_path)
+      find("button", text: "Save").click
+      expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE)
     end
   end
   context "with attorney unrecognized appellant" do

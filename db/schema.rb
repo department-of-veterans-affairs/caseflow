@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_20_130851) do
+ActiveRecord::Schema.define(version: 2021_07_29_180404) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
@@ -152,7 +153,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.text "note"
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
-    t.string "task_id"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
@@ -742,6 +743,18 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
+  create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email_address", comment: "PII. The recipient's email address"
+    t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
+    t.bigint "hearing_id", comment: "Associated hearing"
+    t.string "hearing_type"
+    t.string "timezone", limit: 50, comment: "The recipient's timezone"
+    t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
+    t.datetime "updated_at", null: false
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_issue_notes", force: :cascade do |t|
     t.boolean "allow", default: false
     t.datetime "created_at"
@@ -834,6 +847,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
@@ -906,7 +920,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.boolean "one_touch_initiative"
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
-    t.string "task_id"
+    t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
@@ -1292,6 +1306,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
 
   create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
     t.string "email_address", comment: "Address the email was sent to"
+    t.bigint "email_recipient_id", comment: "Associated HearingEmailRecipient"
     t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.bigint "hearing_id", null: false, comment: "Associated hearing"
@@ -1353,6 +1368,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
     t.datetime "updated_at"
@@ -1650,6 +1666,8 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "attorney_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "attorney_case_reviews", "users", column: "reviewing_judge_id"
   add_foreign_key "board_grant_effectuations", "appeals"
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
@@ -1721,6 +1739,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_130851) do
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"

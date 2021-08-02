@@ -58,9 +58,11 @@ describe VirtualHearings::DeleteConferencesJob do
       end
 
       it "does not send emails if they have already been sent" do
-        virtual_hearing.update(
-          appellant_email_sent: true,
-          representative_email_sent: true
+        virtual_hearing.hearing.appellant_recipient.update!(
+          email_sent: true
+        )
+        virtual_hearing.hearing.representative_recipient.update!(
+          email_sent: true
         )
         expect(Hearings::SendEmail).not_to receive(:new)
         expect(job).not_to receive(:send_cancellation_emails)
