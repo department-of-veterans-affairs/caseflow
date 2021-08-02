@@ -134,4 +134,15 @@ describe OtherClaimant, :postgres do
       expect(subject).to eq("Agent")
     end
   end
+
+  describe "#advanced_on_docket_motion_granted?" do
+    let(:appeal) { claimant.decision_review }
+
+    subject { claimant.advanced_on_docket_motion_granted?(appeal) }
+
+    it "returns whether an AOD has been granted" do
+      AdvanceOnDocketMotion.create_or_update_by_appeal(appeal, {granted: true, reason: "age"})
+      expect(subject).to be_truthy
+    end
+  end
 end
