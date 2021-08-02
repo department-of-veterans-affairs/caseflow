@@ -8,7 +8,7 @@ describe('ReviewAssignments', () => {
   it('renders the RO/CO alert', () => {
     const wrapper = mount(
       <MemoryRouter>
-        <ReviewAssignments schedulePeriod={{ type: 'RoSchedulePeriod' }} />
+        <ReviewAssignments schedulePeriod={{ type: 'RoSchedulePeriod', hearingDays: [] }} />
       </MemoryRouter>
     );
 
@@ -18,7 +18,7 @@ describe('ReviewAssignments', () => {
   it('renders the modal if displayConfirmationModal is true', () => {
     const wrapper = mount(
       <MemoryRouter>
-        <ReviewAssignments displayConfirmationModal schedulePeriod={{ type: 'RoSchedulePeriod' }} />
+        <ReviewAssignments displayConfirmationModal schedulePeriod={{ type: 'RoSchedulePeriod', hearingDays: [] }} />
       </MemoryRouter>
     );
 

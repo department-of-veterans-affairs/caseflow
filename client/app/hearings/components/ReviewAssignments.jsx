@@ -198,7 +198,7 @@ export const ReviewAssignments = ({
     );
   }
 
-  const hearingAssignmentRows = schedulePeriod.hearingDays.map((hearingDay) => ({
+  const hearingAssignmentRows = schedulePeriod?.hearingDays?.map((hearingDay) => ({
     date: formatDateStr(hearingDay.scheduledFor),
     type: REQUEST_TYPE_LABELS[hearingDay.requestType],
     regionalOffice: hearingDay.regionalOffice,
