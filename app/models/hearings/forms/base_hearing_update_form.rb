@@ -112,9 +112,9 @@ class BaseHearingUpdateForm
     hearing.request_type != "R" && !hearing.virtual?
   end
 
-  # This is an existing hearing that is being converted to be not virtual if:
+  # This checks that request_cancelled is being set, that only happens
+  # when converting FROM virtual to the original type
   def conversion_to_not_virtual?
-    # TODO I don't think this distinguishes between conversion and other actions
     virtual_hearing_cancelled?
   end
 
