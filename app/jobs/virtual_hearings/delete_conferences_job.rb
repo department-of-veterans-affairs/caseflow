@@ -32,7 +32,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     Raven.capture_exception(exception: exception, extra: extra)
   end
 
-  def perform
+  def perform(email_type: :cancellation)
     ensure_current_user_is_set
     @exception_list = {} # reset on every perform
 
@@ -41,7 +41,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
 
-      send_cancellation_emails(virtual_hearing)
+      send_cancellation_emails(virtual_hearing, email_type)
     end
 
     count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
@@ -85,10 +85,10 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     Rails.logger.info("Pexip conference id: (#{virtual_hearing.conference_id?})")
   end
 
-  def send_cancellation_emails(virtual_hearing)
+  def send_cancellation_emails(virtual_hearing, email_type)
     return if virtual_hearing.hearing.postponed_or_cancelled_or_scheduled_in_error?
 
-    Hearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+    Hearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type).call
 
     if !virtual_hearing.cancellation_emails_sent?
       fail EmailsFailedToSend # failing so we can log errors

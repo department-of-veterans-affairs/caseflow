@@ -142,9 +142,10 @@ class BaseHearingUpdateForm
 
   def start_async_job
     if start_async_job? && virtual_hearing_cancelled?
-      # TODO get email_type from a function and pass it through
-      # TODO pass (**args) as in CreateConferencesJob
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+      email_type = determine_email_type("delete_virtual_hearing")
+      job_args = { email_type: email_type }
+
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob, job_args)
     elsif start_async_job?
       start_activate_job
     end
@@ -153,7 +154,6 @@ class BaseHearingUpdateForm
   def start_activate_job
     hearing.virtual_hearing.establishment.submit_for_processing!
 
-    # TODO this should move into a function that outputs email_type for all uses
     email_type = determine_email_type("create_virtual_hearing")
 
     job_args = {
@@ -362,18 +362,29 @@ class BaseHearingUpdateForm
     end
   end
 
+  def determine_create_email_type
+    if only_time_updated_or_timezone_updated?
+      "updated_time_confirmation"
+    elsif conversion_to_virtual?
+      "convert_to_virtual_confirmation"
+    else
+      "confirmation"
+    end
+  end
+
+  def determine_delete_email_type
+    if conversion_to_not_virtual?
+      "convert_to_virtual_confirmation"
+    else
+      "cancellation"
+    end
+  end
+
   def determine_email_type(action)
     if action == "create_virtual_hearing"
-      if only_time_updated_or_timezone_updated?
-        "updated_time_confirmation"
-      elsif conversion_to_virtual?
-        "convert_to_virtual_confirmation"
-      else
-        "confirmation"
-      end
-    end
-
-    if action == "delete_virtual_hearing"
+      determine_create_email_type
+    elsif action == "delete_virtual_hearing"
+      determine_delete_email_type
     end
   end
 
