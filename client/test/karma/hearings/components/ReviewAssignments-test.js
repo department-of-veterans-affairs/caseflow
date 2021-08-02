@@ -15,16 +15,6 @@ describe('ReviewAssignments', () => {
     expect(wrapper.text()).to.include('We have assigned your hearings days');
   });
 
-  it('renders the judge alert', () => {
-    const wrapper = mount(
-      <MemoryRouter>
-        <ReviewAssignments schedulePeriod={{ type: 'JudgeSchedulePeriod' }} />
-      </MemoryRouter>
-    );
-
-    expect(wrapper.text()).to.include('We have assigned your judges');
-  });
-
   it('renders the modal if displayConfirmationModal is true', () => {
     const wrapper = mount(
       <MemoryRouter>
