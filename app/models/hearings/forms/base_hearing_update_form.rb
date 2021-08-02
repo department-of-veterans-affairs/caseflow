@@ -267,7 +267,7 @@ class BaseHearingUpdateForm
         email_sent: virtual_hearing_updates&.key?(:judge_email_sent) ? false : true
       }.compact
 
-      hearing.representative_recipient.update!(**update_params) if update_params.any?
+      hearing.judge_recipient.update!(**update_params) if update_params.any?
     end
   end
 
