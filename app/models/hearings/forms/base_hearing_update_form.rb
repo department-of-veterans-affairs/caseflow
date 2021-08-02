@@ -82,7 +82,11 @@ class BaseHearingUpdateForm
   end
 
   def show_virtual_hearing_progress_alerts?
-    [appellant_email_sent_flag, representative_email_sent_flag, judge_email_sent_flag].any?(false)
+    [
+      virtual_hearing_updates[:appellant_email_sent],
+      virtual_hearing_updates[:representative_email_sent],
+      virtual_hearing_updates[:judge_email_sent_flag]
+    ].any?(false)
   end
 
   def should_create_or_update_virtual_hearing?
@@ -226,7 +230,7 @@ class BaseHearingUpdateForm
     update_params = {
       email_address: appellant_email.presence,
       timezone: virtual_hearing_updates[:appellant_tz].presence,
-      email_sent: virtual_hearing_updates[:appellant_email_sent] || true
+      email_sent: virtual_hearing_updates&.key?(:appellant_email_sent) ? false : true
     }.compact
 
     hearing.appellant_recipient.update!(**update_params) if update_params.any?
@@ -243,7 +247,7 @@ class BaseHearingUpdateForm
     if hearing.representative_recipient.present?
       update_params = {
         timezone: virtual_hearing_updates[:representative_tz].presence,
-        email_sent: virtual_hearing_updates[:representative_email_sent] || true
+        email_sent: virtual_hearing_updates&.key?(:representative_email_sent) ? false : true
       }.compact
 
       hearing.representative_recipient.update!(**update_params) if update_params.any?
@@ -260,7 +264,7 @@ class BaseHearingUpdateForm
 
     if hearing.judge_recipient.present?
       update_params = {
-        email_sent: virtual_hearing_updates[:judge_email_sent] || true
+        email_sent: virtual_hearing_updates&.key?(:judge_email_sent) ? false : true
       }.compact
 
       hearing.representative_recipient.update!(**update_params) if update_params.any?
