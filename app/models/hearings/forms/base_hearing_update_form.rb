@@ -105,6 +105,22 @@ class BaseHearingUpdateForm
     )
   end
 
+  # This is an existing hearing that is being converted to virtual if:
+  def conversion_to_virtual?
+    # There is no virtual hearing currently
+    # The hearing wasn't created just now with a type of 'V
+    # The request will create the virtual hearing
+    false # TODO
+  end
+
+  # This is an existing hearing that is being converted to be not virtual if:
+  def conversion_to_not_virtual?
+    # There is a virtual hearing currently
+    # The hearing wasn't created just now with a type other than virtual
+    # The request will delete the virtual hearing
+    false # TODO
+  end
+
   def only_time_updated_or_timezone_updated?
     # Always false if the virtual hearing was just created or if any emails were changed
     if virtual_hearing_created? || virtual_hearing_attributes&.keys&.any? do |attribute|
@@ -126,6 +142,8 @@ class BaseHearingUpdateForm
 
   def start_async_job
     if start_async_job? && virtual_hearing_cancelled?
+      # TODO get email_type from a function and pass it through
+      # TODO pass (**args) as in CreateConferencesJob
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     elsif start_async_job?
       start_activate_job
@@ -135,12 +153,15 @@ class BaseHearingUpdateForm
   def start_activate_job
     hearing.virtual_hearing.establishment.submit_for_processing!
 
+    # TODO this should move into a function that outputs email_type for all uses
+    email_type = determine_email_type("create_virtual_hearing")
+
     job_args = {
       hearing_id: hearing.id,
       hearing_type: hearing.class.name,
       # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
       # Rails 6 supports passing symbols to a job.
-      email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
+      email_type: email_type
     }
 
     perform_later_or_now(VirtualHearings::CreateConferenceJob, job_args)
@@ -338,6 +359,21 @@ class BaseHearingUpdateForm
       "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
       "CHANGED_EMAIL"
+    end
+  end
+
+  def determine_email_type(action)
+    if action == "create_virtual_hearing"
+      if only_time_updated_or_timezone_updated?
+        "updated_time_confirmation"
+      elsif conversion_to_virtual?
+        "convert_to_virtual_confirmation"
+      else
+        "confirmation"
+      end
+    end
+
+    if action == "delete_virtual_hearing"
     end
   end
 
