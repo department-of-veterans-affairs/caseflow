@@ -97,12 +97,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     la.each do |appeal|
       next if appeal.spina_bifida
 
-      p = Person.find_or_create_by_participant_id(appeal.veteran.relationships.first.participant_id)
-      next unless appeal.claimant_participant_id == p.participant_id
-      next if appeal.case_record.correspondent.ssn == p.ssn
+      person = Person.find_or_create_by_participant_id(appeal.veteran.relationships.first.participant_id)
+      next unless appeal.claimant_participant_id == person.participant_id
+      next if appeal.case_record.correspondent.ssn == person.ssn
 
-      appeal.case_record.correspondent.update!(ssn: p.ssn)
-      find_or_create_by_claimant_participant_id(p.participant_id)
+      appeal.case_record.correspondent.update!(ssn: person.ssn)
+      find_or_create_by_claimant_participant_id(person.participant_id)
     end
   end
 
