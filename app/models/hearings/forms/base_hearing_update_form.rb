@@ -226,7 +226,7 @@ class BaseHearingUpdateForm
     update_params = {
       email_address: appellant_email.presence,
       timezone: virtual_hearing_updates[:appellant_tz].presence,
-      email_sent: virtual_hearing_updates[:appellant_email_sent]
+      email_sent: virtual_hearing_updates[:appellant_email_sent] || true
     }.compact
 
     hearing.appellant_recipient.update!(**update_params) if update_params.any?
@@ -243,7 +243,7 @@ class BaseHearingUpdateForm
     if hearing.representative_recipient.present?
       update_params = {
         timezone: virtual_hearing_updates[:representative_tz].presence,
-        email_sent: virtual_hearing_updates[:representative_email_sent]
+        email_sent: virtual_hearing_updates[:representative_email_sent] || true
       }.compact
 
       hearing.representative_recipient.update!(**update_params) if update_params.any?
@@ -258,8 +258,12 @@ class BaseHearingUpdateForm
       )
     end
 
-    if virtual_hearing_updates.key?(:judge_email_sent)
-      hearing.judge_recipient.update!(email_sent: virtual_hearing_updates[:judge_email_sent])
+    if hearing.judge_recipient.present?
+      update_params = {
+        email_sent: virtual_hearing_updates[:judge_email_sent] || true
+      }.compact
+
+      hearing.representative_recipient.update!(**update_params) if update_params.any?
     end
   end
 
