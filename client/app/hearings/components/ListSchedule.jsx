@@ -158,7 +158,7 @@ class ListSchedule extends React.Component {
   }
 
   formatHearingsScheduled = (filledSlots) => {
-    return `${filledSlots}`;
+    return filledSlots;
   }
 
   getHearingScheduleRows = () => {
