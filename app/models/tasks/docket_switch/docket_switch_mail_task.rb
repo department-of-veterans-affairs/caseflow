@@ -25,7 +25,7 @@ class DocketSwitchMailTask < MailTask
     end
 
     def create_from_params(params, user)
-      parent_task = DistributionTask.find_by(appeal_id: params[:appeal].id)
+      parent_task = DistributionTask.open.find_by(appeal_id: params[:appeal].id)
 
       verify_user_can_create!(user, parent_task)
 
