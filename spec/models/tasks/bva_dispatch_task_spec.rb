@@ -52,29 +52,6 @@ describe BvaDispatchTask, :all_dbs do
         expect(subject).to be_nil
       end
     end
-
-    context "when case belongs to an unrecognized appellant" do
-      let(:claimant) { create(:claimant, :with_unrecognized_appellant_detail, type: "OtherClaimant") }
-      let(:appeal) { create(:appeal, claimants: [claimant]) }
-      let(:root_task) { create(:root_task, appeal: appeal) }
-
-      before do
-        BvaDispatch.singleton.add_user(create(:user))
-      end
-
-      it "should raise an error" do
-        expect { subject }.to raise_error(NotImplementedError)
-      end
-
-      context "when allow_unrecognized_appellant_dispatch toggle is enabled" do
-        before { FeatureToggle.enable!(:allow_unrecognized_appellant_dispatch) }
-        after { FeatureToggle.disable!(:allow_unrecognized_appellant_dispatch) }
-
-        it "should not raise an error" do
-          subject
-        end
-      end
-    end
   end
 
   describe ".outcode" do
