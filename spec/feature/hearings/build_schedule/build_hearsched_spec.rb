@@ -123,7 +123,6 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       click_on "Continue"
       expect(page).to have_content("We have assigned your judges", wait: 30)
       expect(SchedulePeriod.count).to eq(1)
-      expect(JudgeNonAvailability.count).to eq(3)
       click_on "Confirm assignments"
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
