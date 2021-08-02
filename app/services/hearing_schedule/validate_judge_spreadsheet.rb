@@ -63,8 +63,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       judge = User.css_ids_by_vlj_ids(data[:vlj_id])
       next if judge.empty?
 
-      first_name = judge[data[:vlj_id]][:last_name]
-      last_name = judge[data[:vlj_id]][:first_name]
+      first_name = judge[data[:vlj_id]][:first_name]
+      last_name = judge[data[:vlj_id]][:last_name]
 
       next if first_name.casecmp(data[:name].split(", ")[1].strip.downcase).zero? &&
               last_name.casecmp(data[:name].split(", ")[0].strip.downcase).zero?
