@@ -10,7 +10,7 @@ class HearingMailer < ActionMailer::Base
 
   def cancellation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if recipient_is_judge?
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
@@ -37,7 +37,7 @@ class HearingMailer < ActionMailer::Base
 
   def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if recipient_is_judge?
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
@@ -52,7 +52,7 @@ class HearingMailer < ActionMailer::Base
 
   def convert_to_not_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if recipient_is_judge?
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
@@ -81,7 +81,7 @@ class HearingMailer < ActionMailer::Base
 
   def reminder(email_recipient:, virtual_hearing: nil, hearing: nil)
     # Guard to prevent reminder emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if recipient_is_judge?
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
@@ -172,5 +172,9 @@ class HearingMailer < ActionMailer::Base
     return virtual_hearing.host_link if recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
     virtual_hearing.guest_link
+  end
+
+  def recipient_is_judge?(email_recipient)
+    email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
   end
 end
