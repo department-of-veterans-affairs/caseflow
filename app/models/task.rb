@@ -566,19 +566,13 @@ class Task < CaseflowRecord
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
     self.skip_check_for_only_open_task_of_type = true
     replacement = dup.tap do |task|
-      begin
-        ActiveRecord::Base.transaction do
-          task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-          task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-          task.instructions = flattened_instructions(reassign_params)
-          task.status = Constants.TASK_STATUSES.assigned
+      ActiveRecord::Base.transaction do
+        task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+        task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+        task.instructions = flattened_instructions(reassign_params)
+        task.status = Constants.TASK_STATUSES.assigned
 
-          task.save!
-        end
-      # The ensure block guarantees that the variable skip_check_for_only_open_task_of_type is reset,
-      # even if an error occurs during reassignment
-      ensure
-        self.skip_check_for_only_open_task_of_type = nil
+        task.save!
       end
     end
 

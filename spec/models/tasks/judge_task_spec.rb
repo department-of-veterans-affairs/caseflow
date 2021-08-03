@@ -55,7 +55,6 @@ describe JudgeTask, :all_dbs do
       context "when a judge decision review task is reassigned successfully" do
         it "should not violate the only_open_task_of_type validation" do
           expect { subject }.to_not raise_error
-          expect(task.skip_check_for_only_open_task_of_type).to be_nil
         end
       end
 
@@ -67,11 +66,6 @@ describe JudgeTask, :all_dbs do
             instructions: "instructions"
           }
         end
-
-        it "sets the local variable of skip_check_for_only_open_task_of_type to nil" do
-          expect { subject }.to raise_error ActiveRecord::RecordNotFound
-          expect(task.skip_check_for_only_open_task_of_type).to be_nil
-        end
       end
     end
 
@@ -80,7 +74,6 @@ describe JudgeTask, :all_dbs do
       context "when a judge assign task is reassigned successfully" do
         it "should not violate the only_open_task_of_type validation" do
           expect { subject }.to_not raise_error
-          expect(task.skip_check_for_only_open_task_of_type).to be_nil
         end
       end
 
@@ -91,11 +84,6 @@ describe JudgeTask, :all_dbs do
             assigned_to_type: new_assignee.class.name,
             instructions: "instructions"
           }
-        end
-
-        it "sets the thread local variable of skip_only_open_task_of_type to nil" do
-          expect { subject }.to raise_error ActiveRecord::RecordNotFound
-          expect(task.skip_check_for_only_open_task_of_type).to be_nil
         end
       end
     end
