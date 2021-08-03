@@ -85,7 +85,7 @@ class BaseHearingUpdateForm
     [
       virtual_hearing_updates[:appellant_email_sent],
       virtual_hearing_updates[:representative_email_sent],
-      virtual_hearing_updates[:judge_email_sent_flag]
+      virtual_hearing_updates[:judge_email_sent]
     ].any?(false)
   end
 
