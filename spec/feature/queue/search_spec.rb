@@ -8,6 +8,7 @@ feature "Search", :all_dbs do
   let(:invalid_docket_number) { "invaliddocket-number" }
   let(:veteran_with_no_appeals) { create(:veteran) }
   let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
+  let!(:substitute_appeal) { create(:appellant_substitution) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -490,9 +491,9 @@ feature "Search", :all_dbs do
 
       let(:user) { create(:user) }
 
-      def perform_search
+      def perform_search(docket_number = appeal.docket_number)
         visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.docket_number
+        fill_in "searchBarEmptyList", with: docket_number
         click_on "Search"
       end
 
@@ -502,6 +503,13 @@ feature "Search", :all_dbs do
         it "displays a helpful error message on same page" do
           perform_search
           expect(page).to have_content("You do not have access to this claims file number")
+        end
+
+        context "when user represents substitute appellant" do
+          it "does not short-circuit to the helpful error message" do
+            perform_search(substitute_appeal)
+            expect(page).not_to have_content("You do not have access to this claims file number")
+          end
         end
       end
 
