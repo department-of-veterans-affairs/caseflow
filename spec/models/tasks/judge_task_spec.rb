@@ -57,16 +57,6 @@ describe JudgeTask, :all_dbs do
           expect { subject }.to_not raise_error
         end
       end
-
-      context "when a judge decision review task throws an error during attempted reassignment" do
-        let(:params) do
-          {
-            assigned_to_id: nil,
-            assigned_to_type: new_assignee.class.name,
-            instructions: "instructions"
-          }
-        end
-      end
     end
 
     context "when the task is a judge assign task" do
@@ -74,16 +64,6 @@ describe JudgeTask, :all_dbs do
       context "when a judge assign task is reassigned successfully" do
         it "should not violate the only_open_task_of_type validation" do
           expect { subject }.to_not raise_error
-        end
-      end
-
-      context "when a judge assign task throws an error during attempted reassignment" do
-        let(:params) do
-          {
-            assigned_to_id: nil,
-            assigned_to_type: new_assignee.class.name,
-            instructions: "instructions"
-          }
         end
       end
     end
