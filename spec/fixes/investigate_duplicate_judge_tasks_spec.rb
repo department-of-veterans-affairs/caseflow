@@ -24,6 +24,7 @@ feature "duplicate JudgeAssignTask investigation" do
     scenario "Caseflow creates multiple JudgeDecisionReview and JudgeAssign tasks" do
       # open a window and visit case details page, window A
       visit "/queue/appeals/#{appeal.uuid}"
+      appeal.reload.treee
 
       # open a second window and visit case details page, window B
       second_window = open_new_window
@@ -37,6 +38,7 @@ feature "duplicate JudgeAssignTask investigation" do
       click_dropdown(prompt: "Select a user", text: judge_user.full_name)
       fill_in "taskInstructions", with: "reassign this task! teamwork makes the dreamwork!"
       click_on "Submit"
+      appeal.reload.treee
 
       expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, judge_user.full_name)
       expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
@@ -49,23 +51,25 @@ feature "duplicate JudgeAssignTask investigation" do
         click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
         fill_in "taskInstructions", with: "assign to attorney"
         click_on "Submit"
+        appeal.reload.treee
 
         expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, attorney_user.full_name)
 
         visit "/queue/appeals/#{appeal.uuid}"
         # Complete JudgeAssignTask to create an invalid number of AttorneyTasks
-        # TODO - figure out how to select an option from the second dropdown
-        # below correctly selects the second task action dropdown
-        find("#currently-active-tasks > div:nth-child(4) > table > tbody > tr:nth-child(3) > td.taskContainerStyling.taskActionsContainerStyling > div > div > div > div > div > div").click
-        # below - could not successfully select the "assign to attorney" dropdown because there were two dropdowns with this option
-        click_dropdown(text: "Assign to attorney")
-        # click_dropdown(prompt: "Select a user", text: attorney_user_second.full_name)
-        # fill_in "taskInstructions", with: "mimic incorrect flow"
-        # click_on "Submit"
+        # select the second task action dropdown
+        assign_task_row = find("table[summary='layout table'] tr:nth-child(3)")
+        # select the "assign to attorney" dropdown because there were two dropdowns with this option
+        click_dropdown({text: "Assign to attorney"}, assign_task_row)
+        click_dropdown(prompt: "Select a user", text: "Other")
+        click_dropdown(prompt: "Select a user", text: attorney_user_second.full_name)
+        fill_in "taskInstructions", with: "mimic incorrect flow"
+        click_on "Submit"
+        appeal.reload.treee
 
         # below will fail before fix is made
         # app currently allows the invalid flow of a JudgeAssignTask going from cancelled to complete
-        expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
+        expect(Task.find(first_judge_assign_task_id).status).to eq("completed")
       end
 
       visit "/queue/appeals/#{appeal.uuid}"
