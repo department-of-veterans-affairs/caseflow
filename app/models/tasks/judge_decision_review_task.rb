@@ -10,7 +10,7 @@
 
 class JudgeDecisionReviewTask < JudgeTask
   validate :only_open_task_of_type, on: :create,
-                                            unless: :skip_check_for_only_open_task_of_type?
+                                    unless: :skip_check_for_only_open_task_of_type
 
   def additional_available_actions(user)
     return [] unless assigned_to == user

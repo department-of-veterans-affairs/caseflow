@@ -8,7 +8,7 @@
 
 class AttorneyTask < Task
   validate :only_open_task_of_type, on: :create,
-                                    unless: :skip_check_for_only_open_task_of_type?
+                                    unless: :skip_check_for_only_open_task_of_type
 
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
