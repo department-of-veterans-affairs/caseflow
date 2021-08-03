@@ -101,7 +101,7 @@ RSpec.describe HearingsController, type: :controller do
       end
     end
 
-    context "when updating an existing hearing to a virtual hearing", focus: true do
+    context "when updating an existing hearing to a virtual hearing" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
       let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain, judge: judge) }
       let(:virtual_hearing_params) { {} }
