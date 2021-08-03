@@ -275,7 +275,11 @@ class Issue
     # if there are more levels and codes there is the chance that issue description
     # this shouldn't happen, but suspect this is happening and adding the log message.
     if issue_description.is_a?(Hash)
-      Raven.capture_message("legacy appeal #{id} has an issue description that is a hash")
+      msg = "legacy appeal #{id} has an issue description that is a hash. "\
+          "This usually indicates a problem with the underlying data in VACOLS. Reach out to Jed via the dsva-vacols "\
+          "repo to determine if updating VACOLS data resolves the problem. For a prior example, see this ticket: "\
+          "https://github.com/department-of-veterans-affairs/dsva-vacols/issues/211"
+      Raven.capture_message(msg)
       return ""
     end
 
