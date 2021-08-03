@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+##
+# BaseHearingUpdateForm accepts params from HearingUpdateForm (AMA Hearings) and LegacyHearingUpdateForm.
+# It's responsible for deciding how Caseflow should act on those updates. Actions that BaseHearingUpdateForm
+# can trigger include:
+# - Update/Create to Hearing/LegacyHearing
+# - Update/Create/Delete VirtualHearing (VirtualHearings::*)
+# - Update/Create/Delete EmailRecipient(s)
+# - Send/resend emails to EmailRecipient(s)
+# - Display alert banners on the form used to change the hearing (change_type)
+##
 class BaseHearingUpdateForm
   include ActiveModel::Model
   include RunAsyncable
