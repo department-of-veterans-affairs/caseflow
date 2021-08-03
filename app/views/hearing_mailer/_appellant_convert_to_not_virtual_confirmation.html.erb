@@ -14,15 +14,17 @@
 
 <% content_for :location do %>
   <%= render "hearing_mailer/sections/location" %>
-<% end %><<>>
+<% end %>
 
-<b>What should I expect on the day of my hearing?</b>
-<p>
-  All visitors to VA facilities should bring a photo ID and check in with security 30 minutes prior to the scheduled hearing and report to the front desk. You will be subject to security screening, including the inspection of personal belongings. Masks may be required to enter VA facilities. It is against the law to bring firearms or any other dangerous weapons into a federal facility.
-</p>
-<p>
-  Hearings are scheduled in morning and afternoon shifts. The judge will hold each hearing as soon as possible; however, you should be prepared to wait. The approximate time for each hearing is 30 minutes.
-</p>
+<% content_for :how_to_join do %>
+  <b>What should I expect on the day of my hearing?</b>
+  <p>
+    All visitors to VA facilities should bring a photo ID and check in with security 30 minutes prior to the scheduled hearing and report to the front desk. You will be subject to security screening, including the inspection of personal belongings. Masks may be required to enter VA facilities. It is against the law to bring firearms or any other dangerous weapons into a federal facility.
+  </p>
+  <p>
+    Hearings are scheduled in morning and afternoon shifts. The judge will hold each hearing as soon as possible; however, you should be prepared to wait. The approximate time for each hearing is 30 minutes.
+  </p>
+<% end %>
 
 <%= content_for :signature do %>
   <p>
@@ -31,4 +33,3 @@
   </p>
 <% end %>
 
-<%= render "hearing_mailer/sections/internal_use" %>
