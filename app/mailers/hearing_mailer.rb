@@ -47,7 +47,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: conversion_confirmation_subject)
+    mail(to: recipient.email, subject: virtual_conversion_confirmation_subject)
   end
 
   def convert_to_not_virtual_confirmation(email_recipient:, virtual_hearing: nil)
