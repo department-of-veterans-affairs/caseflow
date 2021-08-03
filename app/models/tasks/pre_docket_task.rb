@@ -9,11 +9,10 @@ class PreDocketTask < Task
     def create_pre_docket_task!(appeal)
       pre_docket_task = create!(
         appeal: appeal,
-        status: "on_hold",
         assigned_to: Bva.singleton
       )
 
-      pre_docket_task
+      pre_docket_task.put_on_hold_due_to_new_child_task
     end
   end
 end
