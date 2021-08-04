@@ -327,6 +327,10 @@ class Appeal < DecisionReview
     court_remand?
   end
 
+  def predocket?
+    request_issues.active.any?{|ri| ri.benefit_type == "vha"}
+  end
+
   alias cavc? cavc
 
   def cavc_remand
