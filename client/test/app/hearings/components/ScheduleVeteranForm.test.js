@@ -21,6 +21,7 @@ import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/R
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
+import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -260,7 +261,7 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   })
 
-  test('Displays ReadOnly hearing time when video is selected', () => {
+  test('Displays ReadOnlyHearingTimeWithZone when video is selected and beginsAt exists', () => {
     const hearing = {
       ...defaultHearing,
       regionalOffice: defaultHearing.regionalOfficeKey,
@@ -285,11 +286,41 @@ describe('ScheduleVeteranForm', () => {
       }
     );
 
-    expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
-    expect(scheduleVeteran.find(HearingTime).find(ReadOnly)).toHaveLength(1);
+    expect(scheduleVeteran.find(HearingTime)).toHaveLength(0);
+    expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(1);
     expect(
-      scheduleVeteran.find(HearingTime).find(ReadOnly).prop('text')
+      scheduleVeteran.find(ReadOnlyHearingTimeWithZone).find(ReadOnly).prop('text')
     ).toEqual('8:30 AM Pacific / 11:30 AM Eastern');
+    expect(scheduleVeteran).toMatchSnapshot();
+  })
+
+  test('Displays HearingTime when video is selected and beginsAt does not exist', () => {
+    const hearing = {
+      ...defaultHearing,
+      regionalOffice: defaultHearing.regionalOfficeKey,
+      hearingDay: {
+        hearingId: 1,
+        readableRequestType: 'Video',
+        beginsAt: null,
+        timezone: 'America/Los_Angeles'
+      }
+    }
+    const scheduleVeteran = mount(
+      <ScheduleVeteranForm
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={amaAppeal}
+        hearing={hearing}
+        virtual={false}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+      }
+    );
+
+    expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
+    expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(0);
     expect(scheduleVeteran).toMatchSnapshot();
   })
 });
