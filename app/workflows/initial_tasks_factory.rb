@@ -55,6 +55,13 @@ class InitialTasksFactory
         distribution_task.ready_for_distribution! if vso_tasks.empty?
       end
     end
+
+    appeal.tasks.each do |task|
+      if task.assigned_to.type == "Bva"
+        create_pre_docket_task
+        break
+      end
+    end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -66,6 +73,10 @@ class InitialTasksFactory
   def create_ihp_task
     # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
+  end
+
+  def create_pre_dockety_task
+    PreDocketTasksFactory.new(distribution_task).create_pre_docket_task!
   end
 
   def create_selected_tasks
