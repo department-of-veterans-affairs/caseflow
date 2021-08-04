@@ -53,11 +53,11 @@ class DecisionDocument < CaseflowRecord
 
     attempted!
     upload_to_vbms!
+    create_board_grant_effectuations!
 
     if appeal.is_a?(Appeal)
       fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
 
-      create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
     end
