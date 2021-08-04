@@ -99,6 +99,7 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE)
     end
   end
+
   context "with attorney unrecognized appellant" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }

@@ -92,8 +92,8 @@ AddressForm.propTypes = {
 
 const CityState = styled.div`
   display: grid;
-  grid-gap: 10px;
-  grid-template-columns: 300px 150px;
+  grid-gap: 15px;
+  grid-template-columns: 300px 1fr;
   margin-bottom: 1em;
   margin-top: -0.75em;
   align-items: center;
@@ -105,7 +105,7 @@ const CityState = styled.div`
 const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: 140px 310px;
+  grid-template-columns: 140px 1fr;
   margin-bottom: -0.75em;
 `;
 
