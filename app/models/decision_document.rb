@@ -58,6 +58,8 @@ class DecisionDocument < CaseflowRecord
     if appeal.is_a?(Appeal)
       fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
 
+      # We do not want to process Board Grant Effectuations or create remand supplemental claims for appeals with unrecognized appellants because claim establishment
+      # in VBMS will fail due to the lack of a recognized claimant participant ID
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
     end
