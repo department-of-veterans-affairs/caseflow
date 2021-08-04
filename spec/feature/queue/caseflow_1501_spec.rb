@@ -7,12 +7,45 @@ def wait_for_page_render
 end
 
 # This is a gross workaround
-def appeal
-  return @appeal if @appeal
-  SanitizedJsonImporter.from_file(
-    "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
-    verbosity: 0).import
-  @appeal = Appeal.find_by_uuid("b5eba21a-9baf-41a3-ac1c-08470c2b79c4")
+# def appeal
+#   return @appeal if @appeal
+#   SanitizedJsonImporter.from_file(
+#     "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
+#     verbosity: 0).import
+#   @appeal = Appeal.find_by_uuid("b5eba21a-9baf-41a3-ac1c-08470c2b79c4")
+# end
+
+# I think I'm trying to optimize test performance too much at the expense of reasonable code.
+# Let's prove to myself that I'm overcomplicating this.
+def with_timer(name, &block)
+  start_time = Time.now.to_f
+  out = yield
+  end_time = Time.now.to_f
+  puts "Finished #{name} in #{end_time - start_time} seconds"
+  out
+end
+
+def select_task_ids_in_ui(task_ids)
+  with_timer("click stuff") do
+    visit "/queue"
+    visit "/queue/appeals/#{appeal.uuid}"
+    wait_for_page_render
+    # binding.pry
+
+    click_on "+ Add Substitute"
+
+    fill_in("substitutionDate", with: "01/01/2021")
+    find("label", text: "Bob Vance, Spouse").click
+    click_on "Continue"
+
+    # Select "Evidence or argument" (2001578851 is the task ID)
+    task_ids.each do |task_id|
+      find("div", class: "checkbox-wrapper-taskIds[#{task_id}]").find("label").click
+    end
+    click_on "Continue"
+    click_on "Confirm"
+    wait_for_page_render
+  end
 end
 
 #                                                         ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -48,20 +81,9 @@ end
 #                                                         └────────────────────────────────────────────────────────────────────────────────────────┘
 
 RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
-  before do
-    Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
-  end
 
   describe "Substitute Appellant appeal creation" do
-    after do
-      # This is probably not really needed, but let's be good stewards anyway:
-      FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
-      FeatureToggle.disable!(:hearings_substitution_death_dismissal)
-    end
-
-    # I had to cram all this in one go or nothing worked right.
-    # This is still fairly gross.
-    before(:all) do
+    before do
       FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
       FeatureToggle.enable!(:hearings_substitution_death_dismissal)
 
@@ -69,34 +91,36 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
       ClerkOfTheBoard.singleton.add_user(cob_user)
       OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton)
       User.authenticate!(user: cob_user)
+    end
 
-      #puts appeal.treee
-
-      # You shouldn't have to visit /queue here, but if you hit the appeal directly right
-      # off the bat it won't load. ¯\_(ツ)_/¯
-      visit "/queue"
-      visit "/queue/appeals/#{appeal.uuid}"
-      wait_for_page_render
-      # binding.pry
-
-      click_on "+ Add Substitute"
-
-      fill_in("substitutionDate", with: "01/01/2021")
-      find("label", text: "Bob Vance, Spouse").click
-      click_on "Continue"
-
-      # Select "Evidence or argument" (2001578851 is the task ID)
-      find("div", class: "checkbox-wrapper-taskIds[2001578851]").find("label").click
-      click_on "Continue"
-      click_on "Confirm"
-      wait_for_page_render
+    after do
+      # This is probably not really needed, but let's be good stewards anyway:
+      FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
+      FeatureToggle.disable!(:hearings_substitution_death_dismissal)
     end
 
     context "with just EvidenceOrArgumentMailTask selected" do
-      #let!(:appeal) { Appeal.find_by_uuid("b5eba21a-9baf-41a3-ac1c-08470c2b79c4") }
+      let!(:appeal) do
+        with_timer("SJI") do
+          sji = SanitizedJsonImporter.from_file(
+            "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
+            verbosity: 0)
+          sji.import
+          sji.imported_records[Appeal.table_name].first
+        end
+      end
+
+      before do
+        # EvidenceOrArgumentMailTask
+        select_task_ids_in_ui([2001578851])
+      end
 
       it "preserves the docket number" do
         expect(page).to have_content(appeal.stream_docket_number)
+      end
+
+      it "shows a success banner" do
+        expect(page).to have_content("You have successfully added a substitute appellant")
       end
 
       it "preserves AOD" do
@@ -138,11 +162,36 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
         # TODO
       end
 
-      it "shows a success banner" do
+    end
+
+    context "with an EvidenceSubmissionWindowTask selected" do
+      let!(:appeal) do
+        with_timer("SJI") do
+          sji = SanitizedJsonImporter.from_file(
+            "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
+            verbosity: 0)
+          sji.import
+          sji.imported_records[Appeal.table_name].first
+        end
+      end
+
+      before do
+        # EvidenceSubmissionWindowTask
+        select_task_ids_in_ui([2001233994])
+      end
+
+      it "show a success message" do
         expect(page).to have_content("You have successfully added a substitute appellant")
       end
 
+      it "has a reasonable task tree" do
+        new_appeal = Appeal.find(1)
+        puts new_appeal.treee
+      end
     end
 
+    context "with a ScheduleHearingTask selected" do
+      # TODO
+    end
   end
 end
