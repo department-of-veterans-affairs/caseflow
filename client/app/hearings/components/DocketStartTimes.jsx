@@ -14,9 +14,14 @@ export const DocketStartTimes = ({
   const fullDayAmPm = 'default';
   const halfDayAm = '08:30';
   const halfDayPm = '12:30';
+  const fullDaySlots = 10;
+  const halfDaySlots = fullDaySlots / 2;
+  const timezone = roTimezone ?? 'America/New_York';
 
-  const options = () => {
-    const timezone = roTimezone ?? 'America/New_York';
+  const formatTimeStrings = () => {
+    // remove leading zero from 08:30 for display
+    const amTime = halfDayAm.slice(1);
+
     const amTimeInEastern =
       moment(moment.tz(halfDayAm, 'h:mm A', timezone)).tz('America/New_York').
         format('h:mm A');
@@ -24,18 +29,34 @@ export const DocketStartTimes = ({
       moment(moment.tz(halfDayPm, 'h:mm A', timezone)).tz('America/New_York').
         format('h:mm A');
 
-    const zoneName = shortZoneName(timezone);
-    // remove leading zero from 08:30 for display
-    const amTime = halfDayAm.slice(1);
+    return { amTime, amTimeInEastern, pmTimeInEastern };
+  };
 
-    const fullDayAmPmLabel = `Full-Day AM & PM (10 slots at ${amTime} AM & ${halfDayPm} PM ${zoneName})`;
-    let halfDayAmLabel = `Half-Day AM (5 slots at ${amTime} AM ${zoneName} / ${amTimeInEastern} Eastern)`;
-    let halfDayPmLabel = `Half-Day PM (5 slots at ${halfDayPm} PM ${zoneName} / ${pmTimeInEastern} Eastern)`;
+  const formatTimeLabels = (amTime, amTimeInEastern, pmTimeInEastern) => {
+    const zoneName = shortZoneName(timezone);
+
+    const fullDayAmPmLabel =
+      `Full-Day AM & PM (${fullDaySlots} slots at ${amTime} AM & ${halfDayPm} PM ${zoneName})`;
+    let halfDayAmLabel =
+      `Half-Day AM (${halfDaySlots} slots at ${amTime} AM ${zoneName} / ${amTimeInEastern} Eastern)`;
+    let halfDayPmLabel =
+      `Half-Day PM (${halfDaySlots} slots at ${halfDayPm} PM ${zoneName} / ${pmTimeInEastern} Eastern)`;
 
     if (zoneName === 'Eastern') {
-      halfDayAmLabel = `Half-Day AM (5 slots at ${amTimeInEastern} ${zoneName})`;
-      halfDayPmLabel = `Half-Day PM (5 slots at ${pmTimeInEastern} ${zoneName})`;
+      halfDayAmLabel =
+        `Half-Day AM (${halfDaySlots} slots at ${amTimeInEastern} ${zoneName})`;
+      halfDayPmLabel =
+        `Half-Day PM (${halfDaySlots} slots at ${pmTimeInEastern} ${zoneName})`;
     }
+
+    return { fullDayAmPmLabel, halfDayAmLabel, halfDayPmLabel };
+  };
+
+  const options = () => {
+    const { amTime, amTimeInEastern, pmTimeInEastern } = formatTimeStrings();
+    const { fullDayAmPmLabel, halfDayAmLabel, halfDayPmLabel } = formatTimeLabels(
+      amTime, amTimeInEastern, pmTimeInEastern
+    );
 
     return [
       { displayText: fullDayAmPmLabel,
@@ -48,9 +69,9 @@ export const DocketStartTimes = ({
   };
 
   const startTimesSlotCount = {
-    [fullDayAmPm]: 10,
-    [halfDayAm]: 5,
-    [halfDayPm]: 5
+    [fullDayAmPm]: fullDaySlots,
+    [halfDayAm]: halfDaySlots,
+    [halfDayPm]: halfDaySlots
   };
 
   const onChange = (value) => {
