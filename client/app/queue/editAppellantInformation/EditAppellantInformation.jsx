@@ -72,8 +72,6 @@ const EditAppellantInformation = ({ appealId }) => {
   const editAppellantHeader = 'Edit Appellant Information';
   const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
-  console.log(isValid)
-  console.log(errors)
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
