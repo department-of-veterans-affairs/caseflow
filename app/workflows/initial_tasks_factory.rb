@@ -16,9 +16,13 @@ class InitialTasksFactory
   end
 
   def create_root_and_sub_tasks!
-    create_vso_tracking_tasks
-    ActiveRecord::Base.transaction do
-      create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+    if @appeal.request_issues.active.any?{|ri| ri.benefit_type == "vha"}
+      create_pre_docket_task
+    else
+      create_vso_tracking_tasks
+      ActiveRecord::Base.transaction do
+        create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+      end
     end
   end
 
@@ -55,13 +59,6 @@ class InitialTasksFactory
         distribution_task.ready_for_distribution! if vso_tasks.empty?
       end
     end
-
-    @appeal.tasks.each do |task|
-      if task.assigned_to.type == "Bva"
-        create_pre_docket_task
-        break
-      end
-    end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -75,8 +72,8 @@ class InitialTasksFactory
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def create_pre_dockety_task
-    PreDocketTasksFactory.new(distribution_task).create_pre_docket_task!
+  def create_pre_docket_task
+    PreDocketTasksFactory.new(@root_task).create_pre_docket_task!
   end
 
   def create_selected_tasks
