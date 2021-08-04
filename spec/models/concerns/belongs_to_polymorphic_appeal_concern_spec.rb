@@ -11,10 +11,10 @@ describe BelongsToPolymorphicAppealConcern do
   let(:record) { RecordBelongingToPolymorphicAppeal.new }
 
   context "DecisionDocument" do
-    let(:record) do create(:decision_document, appeal: appeal) end
+    let(:record) { create(:decision_document, appeal: appeal) }
 
     it "works" do
-      di=record.ama_appeal.decision_issues.first
+      di = record.ama_appeal.decision_issues.first
       pp record.ama_decision_issues
       expect(record.ama_decision_issues.count).to eq 2
       expect(record.ama_decision_issues).to eq record.ama_appeal.decision_issues
@@ -22,7 +22,6 @@ describe BelongsToPolymorphicAppealConcern do
       expect(di.ama_decision_documents.count).to eq 1
       expect(di.ama_decision_documents).to eq di.ama_appeal.decision_documents
       expect(DecisionDocument.ama.includes(:ama_decision_issues).pluck("decision_issues.id")).to match_array [1, 2]
-      binding.pry
     end
 
     context "legacy appeal" do
@@ -32,7 +31,6 @@ describe BelongsToPolymorphicAppealConcern do
       let!(:leg_decision_document) do
         create(:decision_document, appeal: leg_appeal)
       end
-    
     end
   end
 end
