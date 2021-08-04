@@ -56,7 +56,7 @@ class InitialTasksFactory
       end
     end
 
-    appeal.tasks.each do |task|
+    @appeal.tasks.each do |task|
       if task.assigned_to.type == "Bva"
         create_pre_docket_task
         break
