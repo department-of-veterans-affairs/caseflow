@@ -328,7 +328,7 @@ class Appeal < DecisionReview
   end
 
   def predocket?
-    request_issues.active.any?{|ri| ri.benefit_type == "vha"}
+    request_issues.active.any? { |ri| ri.benefit_type == "vha" }
   end
 
   alias cavc? cavc
