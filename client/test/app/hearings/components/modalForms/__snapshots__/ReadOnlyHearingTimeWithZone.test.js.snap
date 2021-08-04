@@ -3,7 +3,7 @@
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 1`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-29T08:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -41,7 +41,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 2`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-29T08:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -79,7 +79,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 3`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-29T08:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -117,7 +117,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 4`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-29T08:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -155,7 +155,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 5`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-29T08:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -193,7 +193,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 6`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-30T12:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -231,7 +231,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 7`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-30T12:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -269,7 +269,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 8`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-30T12:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -307,7 +307,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 9`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-30T12:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -345,7 +345,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 10`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime="2021-07-30T12:30:00-04:00"
-  onChange={
+  onRender={
     [MockFunction] {
       "calls": Array [
         Array [
@@ -383,7 +383,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 11`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime={null}
-  onChange={[MockFunction]}
+  onRender={[MockFunction]}
   timezone="America/New_York"
 />
 `;
@@ -391,7 +391,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 12`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime={null}
-  onChange={[MockFunction]}
+  onRender={[MockFunction]}
   timezone="America/Los_Angeles"
 />
 `;
@@ -399,7 +399,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 13`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime={null}
-  onChange={[MockFunction]}
+  onRender={[MockFunction]}
   timezone="America/Denver"
 />
 `;
@@ -407,7 +407,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 14`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime={null}
-  onChange={[MockFunction]}
+  onRender={[MockFunction]}
   timezone="America/Chicago"
 />
 `;
@@ -415,7 +415,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 15`] = `
 <ReadOnlyHearingTimeWithZone
   hearingStartTime={null}
-  onChange={[MockFunction]}
+  onRender={[MockFunction]}
   timezone="America/Indiana/Indianapolis"
 />
 `;

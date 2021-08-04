@@ -29,7 +29,7 @@ describe('ReadOnlyHearingTimeWithZone', () => {
           <ReadOnlyHearingTimeWithZone
             hearingStartTime={hearingStartTime}
             timezone={timezone}
-            onChange={jest.fn()}
+            onRender={jest.fn()}
           />
         );
         const zoneName = shortZoneName(timezone);
