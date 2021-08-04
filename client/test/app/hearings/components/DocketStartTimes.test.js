@@ -36,7 +36,7 @@ describe('DocketStartTimes', () => {
     expect(results).toHaveNoViolations();
   });
 
-  describe('Displays radio buttons according to RO timezone', async () => {
+  describe('Displays radio buttons according to RO timezone', () => {
     const timezones = [
       'America/New_York',
       'America/Los_Angeles',
@@ -48,20 +48,19 @@ describe('DocketStartTimes', () => {
 
     timezones.forEach((timezone) => {
       test(`for timezone (${timezone})`, () => {
-        const { container } = renderComponent({
-          roTimezone: timezone
-        })
+        renderComponent({ roTimezone: timezone });
         expect(screen.getByText('Available Times')).toBeInTheDocument();
 
         const zoneName = shortZoneName(timezone);
 
         if (zoneName === 'Eastern') {
-          const a = 'Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)'
-          const b = `Half-Day AM (5 slots at 8:30 AM Eastern)`
-          const c = `Half-Day PM (5 slots at 12:30 PM Eastern)`
-          expect(screen.getByText(a)).toBeInTheDocument();
-          expect(screen.getByText(b)).toBeInTheDocument();
-          expect(screen.getByText(c)).toBeInTheDocument();
+          const fullDayLabel = 'Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)';
+          const halfDayAmLabel = 'Half-Day AM (5 slots at 8:30 AM Eastern)';
+          const halfDayPmLabel = 'Half-Day PM (5 slots at 12:30 PM Eastern)';
+
+          expect(screen.getByText(fullDayLabel)).toBeInTheDocument();
+          expect(screen.getByText(halfDayAmLabel)).toBeInTheDocument();
+          expect(screen.getByText(halfDayPmLabel)).toBeInTheDocument()
         } else {
           const amTimeInEastern =
             moment(moment.tz('08:30', 'h:mm A', timezone)).tz('America/New_York').
@@ -69,12 +68,13 @@ describe('DocketStartTimes', () => {
           const pmTimeInEastern =
             moment(moment.tz('12:30', 'h:mm A', timezone)).tz('America/New_York').
               format('h:mm A');
-          const a = `Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM ${zoneName})`
-          const b = `Half-Day AM (5 slots at 8:30 AM ${zoneName} / ${amTimeInEastern} Eastern)`
-          const c = `Half-Day PM (5 slots at 12:30 PM ${zoneName} / ${pmTimeInEastern} Eastern)`
-          expect(screen.getByText(a)).toBeInTheDocument();
-          expect(screen.getByText(b)).toBeInTheDocument();
-          expect(screen.getByText(c)).toBeInTheDocument();
+          const fullDayLabel = `Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM ${zoneName})`;
+          const halfDayAmLabel = `Half-Day AM (5 slots at 8:30 AM ${zoneName} / ${amTimeInEastern} Eastern)`;
+          const halfDayPmLabel = `Half-Day PM (5 slots at 12:30 PM ${zoneName} / ${pmTimeInEastern} Eastern)`;
+
+          expect(screen.getByText(fullDayLabel)).toBeInTheDocument();
+          expect(screen.getByText(halfDayAmLabel)).toBeInTheDocument();
+          expect(screen.getByText(halfDayPmLabel)).toBeInTheDocument();
         }
       })
     })

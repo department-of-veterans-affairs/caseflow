@@ -87,8 +87,9 @@ describe('HearingTime', () => {
       '2021-07-29T08:30:00-04:00',
       '2021-07-30T12:30:00-04:00',
       null
-    ]
-    hearingStartTimes.forEach((hearingStartTime) => {
+    ];
+
+    hearingStartTimes.forEach((hearingStartTime) => 
       const timezones = [
         'America/New_York',
         'America/Los_Angeles',
@@ -107,7 +108,7 @@ describe('HearingTime', () => {
         );
         const zoneName = shortZoneName(timezone);
         expect(form).toMatchSnapshot();
-        if (hearingStartTime == null) {
+        if (hearingStartTime === null) {
           expect(form.exists('SearchableDropdown')).toBe(true);
           expect(form.exists('ReadOnly')).toBe(false);
         } else {
