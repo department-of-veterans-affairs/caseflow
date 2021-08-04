@@ -102,34 +102,61 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
   end
 
   context "Build Judge Hearing Schedule" do
-    before do
-      create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
-      create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
+    let!(:judge_stuart) do
+      create(:user, full_name: "Stuart Huels").tap do |user|
+        create(:staff, :judge_role, user: user, sattyid: "860")
+      end
+    end
+    let!(:judge_doris) do
+      create(:user, full_name: "Doris Lamphere").tap do |user|
+        create(:staff, :judge_role, user: user, sattyid: "861")
+      end
+    end
+
+    let!(:hearing_days) do
       create(:hearing_day,
              request_type: HearingDay::REQUEST_TYPES[:central],
+             judge: judge_doris,
              scheduled_for: Date.new(2018, 4, 2))
       create(:hearing_day,
              request_type: HearingDay::REQUEST_TYPES[:central],
+             judge: judge_stuart,
              scheduled_for: Date.new(2018, 4, 20))
     end
 
-    scenario "Judge assignment process" do
-      # visit "hearings/schedule/build"
-      # click_on "Upload files"
-      # find("label", text: "Judge assignments").click
-      # attach_file("judge_file_upload", Rails.root + "spec/support/validJudgeSpreadsheet.xlsx", visible: false)
-      # fill_in "startDate", with: "04012018"
-      # fill_in "endDate", with: "04302018"
-      # click_on "Continue"
-      # expect(page).to have_content("We have assigned your judges", wait: 30)
-      # expect(SchedulePeriod.count).to eq(1)
-      # click_on "Confirm assignments"
-      # click_on "Confirm upload"
-      # expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
-      # expect(page).to have_content("You have successfully assigned judges to hearings", wait: 30)
-      # hearing_days = HearingDayRange.new(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).load_days
-      # vlj_ids_count = hearing_days.pluck(:judge_id).compact.count
-      # expect(vlj_ids_count).to eq(2)
+    scenario "Successful Judge assignment process" do
+      visit "hearings/schedule/build"
+      click_on "Upload files"
+      find("label", text: "Judge assignment").click
+      attach_file("judge_file_upload", Rails.root + "spec/support/validJudgeSpreadsheet.xlsx", visible: false)
+      click_on "Continue"
+
+      expect(page).to have_content("We have assigned your judges", wait: 30)
+      expect(find("tbody").find_all("tr").length).to eq(2)
+
+      find("tbody").find_all("tr").each do |row|
+        judge_first_name = judge_stuart.full_name.split(" ")[0]
+        judge_last_name = judge_stuart.full_name.split(" ")[1]
+        expect(row).to have_content("#{judge_last_name}, #{judge_first_name}")
+      end
+
+      click_on "Confirm assignments"
+      expect(page).to have_content("Loading", wait: 30)
+      expect(page).to have_content("Successfully assigned judges to the provided hearing days", wait: 30)
+
+      HearingDay.all.each do |hearing_day|
+        expect(hearing_day.reload.judge).to eq(judge_stuart)
+      end
+    end
+
+    scenario "Invalid Judge assignment process" do
+      visit "hearings/schedule/build"
+      click_on "Upload files"
+      find("label", text: "Judge assignment").click
+      attach_file("judge_file_upload", Rails.root + "spec/support/judgeNameIdMismatch.xlsx", visible: false)
+      click_on "Continue"
+
+      expect(page).to have_content("These judges are not in the database: [\"861\", \"860\"]", wait: 30)
     end
   end
 end

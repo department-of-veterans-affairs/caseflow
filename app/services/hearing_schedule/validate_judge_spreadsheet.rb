@@ -7,9 +7,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   WRONG_DATE_FORMAT_ERROR = "These dates are in the wrong format: "
 
   class JudgeTemplateNotFollowed < StandardError; end
-  class JudgeDatesNotUnique < StandardError; end
   class JudgeNotInDatabase < StandardError; end
-  class JudgeIdMismatchedName < StandardError; end
 
   def initialize(spreadsheet)
     @errors = []
@@ -48,47 +46,15 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
   end
 
-  def filter_nonunique_judges
-    HearingSchedule::UniquenessValidators.new(@spreadsheet_data).duplicate_rows.pluck(:vlj_id).uniq
-  end
-
   def filter_judges_not_in_db
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck(:vlj_id).uniq)
     @spreadsheet_data.reject { |row| judge_in_vacols?(vacols_judges, row[:name], row[:vlj_id]) }.pluck(:vlj_id).compact
   end
 
-  def filter_mismatched_judge_ids
-    errors = []
-    @spreadsheet_data.each do |data|
-      judge = User.css_ids_by_vlj_ids(data[:vlj_id])
-      next if judge.empty?
-
-      first_name = judge[data[:vlj_id]][:first_name]
-      last_name = judge[data[:vlj_id]][:last_name]
-
-      next if first_name.casecmp(data[:name].split(", ")[1].strip.downcase).zero? &&
-              last_name.casecmp(data[:name].split(", ")[0].strip.downcase).zero?
-
-      errors << "VLJ ID: #{data[:vlj_id]} expected name #{first_name}, #{last_name} but received name #{data[:name]}"
-    end
-    errors
-  end
-
   def validate_judge_assignments
-    nonunique_judges = filter_nonunique_judges
-    if nonunique_judges.count > 0
-      @errors << JudgeDatesNotUnique.new("These judges have duplicate dates: " + nonunique_judges.to_s)
-    end
-
     judges_not_in_db = filter_judges_not_in_db
     if judges_not_in_db.count > 0
       @errors << JudgeNotInDatabase.new("These judges are not in the database: " + judges_not_in_db.to_s)
-    end
-
-    judge_names_not_matching_ids = filter_mismatched_judge_ids
-    if judge_names_not_matching_ids.count > 0
-      message = "These judge names do not match the IDs provided: " + judge_names_not_matching_ids.to_s
-      @errors << JudgeIdMismatchedName.new(message)
     end
   end
 

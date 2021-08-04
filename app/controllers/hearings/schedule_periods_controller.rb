@@ -37,13 +37,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
     create_params = schedule_period_params.merge(user_id: current_user.id, file_name: file_name)
 
-    if params["schedule_period"]["type"] == "JudgeSchedulePeriod"
-      hearing_days = assign_vljs_to_hearing_days(create_params)
-      render json: { hearing_days: hearing_days }
-    else
-      schedule_period = SchedulePeriod.create!(create_params)
-      render json: { id: schedule_period.id }
-    end
+    assign_hearing_days_or_create_schedule_period(create_params)
   rescue StandardError => error
     render(
       json: {
@@ -90,6 +84,16 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
   end
 
   private
+
+  def assign_hearing_days_or_create_schedule_period(create_params)
+    if params["schedule_period"]["type"] == "JudgeSchedulePeriod"
+      hearing_days = assign_vljs_to_hearing_days(create_params)
+      render json: { hearing_days: hearing_days }
+    else
+      schedule_period = SchedulePeriod.create!(create_params)
+      render json: { id: schedule_period.id }
+    end
+  end
 
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :start_date, :end_date)

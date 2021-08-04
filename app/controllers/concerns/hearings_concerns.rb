@@ -61,7 +61,8 @@ module HearingsConcerns
         begin
           hearing_days.each do |day|
             hearing_day = HearingDay.find(day["hearing_day_id"])
-            hearing_day.update(judge_id: day["judge_id"])
+            judge = User.find_by_css_id(User.css_ids_by_vlj_ids(day["judge_id"])[day["judge_id"].to_s][:css_id])
+            hearing_day.update!(judge: judge)
           end
         rescue StandardError
           raise ActiveRecord::Rollback
