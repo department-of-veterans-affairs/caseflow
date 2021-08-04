@@ -16,13 +16,10 @@ class InitialTasksFactory
   end
 
   def create_root_and_sub_tasks!
-    if @appeal.request_issues.active.any?{|ri| ri.benefit_type == "vha"}
-      create_pre_docket_task
-    else
-      create_vso_tracking_tasks
-      ActiveRecord::Base.transaction do
-        create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
-      end
+    create_vso_tracking_tasks
+    ActiveRecord::Base.transaction do
+      create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+      create_pre_docket_task if @appeal.request_issues.active.any?{|ri| ri.benefit_type == "vha"}
     end
   end
 
