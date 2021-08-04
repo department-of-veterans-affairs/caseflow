@@ -19,7 +19,7 @@ class InitialTasksFactory
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
-      create_pre_docket_task if @appeal.predocket?
+      create_pre_docket_tasks if @appeal.predocket?
     end
   end
 
@@ -69,7 +69,7 @@ class InitialTasksFactory
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def create_pre_docket_task
+  def create_pre_docket_tasks
     PreDocketTasksFactory.new(@root_task).create_pre_docket_task!
   end
 
