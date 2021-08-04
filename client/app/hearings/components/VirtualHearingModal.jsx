@@ -85,6 +85,8 @@ export const ReadOnlyEmails = ({
 
   // Determine whether ti display a divider
   const showDivider = virtualHearing.representativeEmail && (repEdited || appellantEdited || showAllEmails);
+  const scheduledTimeString = moment(hearing.scheduledFor).tz('America/New_York').
+    format('hh:mm');
 
   return (
     <div {...virtualHearingModalStyles}>
@@ -93,7 +95,7 @@ export const ReadOnlyEmails = ({
           <ReadOnly
             spacing={15}
             label={`${appellantTitle} Hearing Time`}
-            text={zoneName(hearing.scheduledTimeString, virtualHearing.appellantTz)}
+            text={zoneName(scheduledTimeString, virtualHearing.appellantTz)}
           />
           <ReadOnly
             spacing={15}
@@ -109,7 +111,7 @@ export const ReadOnlyEmails = ({
           <ReadOnly
             spacing={15}
             label="POA/Representative Hearing Time"
-            text={zoneName(hearing.scheduledTimeString, virtualHearing.representativeTz)}
+            text={zoneName(scheduledTimeString, virtualHearing.representativeTz)}
           />
           <ReadOnly
             spacing={15}
@@ -126,7 +128,7 @@ ReadOnlyEmails.propTypes = {
   hearing: PropTypes.shape({
     appellantIsNotVeteran: PropTypes.bool,
     readableRequestType: PropTypes.string,
-    scheduledTimeString: PropTypes.string,
+    scheduledFor: PropTypes.string
   }),
   virtualHearing: PropTypes.shape({
     representativeTz: PropTypes.string,
