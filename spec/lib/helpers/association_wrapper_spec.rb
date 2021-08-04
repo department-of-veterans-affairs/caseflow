@@ -3,8 +3,8 @@
 require "helpers/association_wrapper.rb"
 
 describe "AssocationWrapper" do
+  subject { AssocationWrapper.new(target_class) }
   describe "#fieldnames and #select_associations}" do
-    subject { AssocationWrapper.new(target_class) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns those with specific foreign_type" do
@@ -72,6 +72,33 @@ describe "AssocationWrapper" do
           # has_one declared in Task
           [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
         ]
+      end
+    end
+    describe "#polymorphic" do
+      subject { AssocationWrapper.new(target_class).belongs_to.polymorphic }
+      context "for DecisionDocument class" do
+        let(:target_class) { DecisionDocument }
+        it "returns those with polymorphic belongs_to associations" do
+          assocs = subject.associated_with_type(Appeal).select_associations
+          expect(assocs.length).to eq 1
+          assoc = assocs.first
+          expect(assoc.name).to eq :appeal
+          expect(assoc.class_name).to eq "Appeal"
+          expect(assoc.foreign_type).to eq "appeal_type"
+          expect(assoc.foreign_key).to eq "appeal_id"
+        end
+      end
+      context "for DecisionDocument class" do
+        let(:target_class) { DecisionIssue }
+        it "returns those with polymorphic belongs_to associations" do
+          assocs = subject.associated_with_type(DecisionReview).select_associations
+          expect(assocs.length).to eq 1
+          assoc = assocs.first
+          expect(assoc.name).to eq :decision_review
+          expect(assoc.class_name).to eq "DecisionReview"
+          expect(assoc.foreign_type).to eq "decision_review_type"
+          expect(assoc.foreign_key).to eq "decision_review_id"
+        end
       end
     end
   end

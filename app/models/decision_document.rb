@@ -2,6 +2,7 @@
 
 class DecisionDocument < CaseflowRecord
   include Asyncable
+  include BelongsToPolymorphicAppealConcern
   include UploadableDocument
   include HasAppealUpdatedSince
 
@@ -9,6 +10,8 @@ class DecisionDocument < CaseflowRecord
   class NotYetSubmitted < StandardError; end
 
   belongs_to :appeal, polymorphic: true
+  associated_appeal_class(Appeal)
+
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
 
@@ -26,6 +29,13 @@ class DecisionDocument < CaseflowRecord
 
   def source
     "BVA"
+  end
+
+  has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
+           through: :ama_appeal, source: :decision_issues
+  def decision_issues
+    ama_decision_issues if appeal_type == "Appeal"
+    # LegacyAppeals do not have decision_issue records
   end
 
   # We have to always download the file from s3 to make sure it exists locally
