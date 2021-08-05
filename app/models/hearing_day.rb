@@ -198,7 +198,7 @@ class HearingDay < CaseflowRecord
   end
 
   def judge_css_id
-    judge ? judge.css_id : nil
+    judge&.css_id
   end
 
   private
