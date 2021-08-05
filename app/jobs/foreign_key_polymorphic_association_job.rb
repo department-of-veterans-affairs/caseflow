@@ -10,6 +10,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     # Claimant => { association_id_column: :decision_review_id,
     #               association_type_column: :decision_review_type,
     #               association_method: :decision_review },
+    # TODO: add other `belongs_to .* polymorphic = true`
     HearingEmailRecipient => { association_id_column: :hearing_id,
                                association_type_column: :hearing_type,
                                association_method: :hearing },
@@ -35,6 +36,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     end
   end
 
+  # TODO: refactor
   def find_orphaned_records(klass)
     association_id_column = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_id_column]
     association_method = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_method]
