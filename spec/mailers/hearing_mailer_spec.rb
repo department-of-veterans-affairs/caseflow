@@ -123,7 +123,7 @@ describe HearingMailer do
   end
 
   shared_context "cancellation_email" do
-    subject { HearingMailer.cancellation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.convert_from_virtual_confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "confirmation_email" do

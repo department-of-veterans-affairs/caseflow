@@ -33,7 +33,7 @@ describe VirtualHearings::DeleteConferencesJob do
           virtual_hearing: virtual_hearing,
           type: :cancellation
         ).and_call_original
-        expect(job).to receive(:send_cancellation_emails).with(virtual_hearing).and_call_original
+        expect(job).to receive(:send_cancellation_emails).with(virtual_hearing, :convert_from_virtual_confirmation).and_call_original
 
         subject
         virtual_hearing.reload
