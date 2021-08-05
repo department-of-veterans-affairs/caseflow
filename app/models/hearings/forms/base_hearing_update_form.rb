@@ -359,29 +359,17 @@ class BaseHearingUpdateForm
     end
   end
 
-  def determine_create_email_type
-    if only_time_updated_or_timezone_updated?
-      "updated_time_confirmation"
-    elsif converting_to_virtual?
-      "convert_to_virtual_confirmation"
-    else
-      "confirmation"
-    end
-  end
-
-  def determine_delete_email_type
-    if converting_from_virtual?
-      "convert_from_virtual_confirmation"
-    else
-      "cancellation"
-    end
-  end
-
   def determine_email_type(action)
     if action == "create_virtual_hearing"
-      determine_create_email_type
+      if only_time_updated_or_timezone_updated?
+        "updated_time_confirmation"
+      elsif converting_to_virtual?
+        "convert_to_virtual_confirmation"
+      else
+        "confirmation"
+      end
     elsif action == "delete_virtual_hearing"
-      determine_delete_email_type
+      "cancellation"
     end
   end
 

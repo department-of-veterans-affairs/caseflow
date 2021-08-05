@@ -8,20 +8,6 @@ class HearingMailer < ActionMailer::Base
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
 
-  def cancellation(email_recipient:, virtual_hearing: nil)
-    # Guard to prevent cancellation emails from sending to the judge
-    return if recipient_is_judge?(email_recipient)
-    @recipient = email_recipient
-    @virtual_hearing = virtual_hearing
-
-    attachments[calendar_invite_name] = cancellation_calendar_invite
-
-    mail(
-      to: recipient.email,
-      subject: "Your Board hearing location has changed – Do Not Reply"
-    )
-  end
-
   def confirmation(email_recipient:, virtual_hearing: nil)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
@@ -37,6 +23,7 @@ class HearingMailer < ActionMailer::Base
   def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
     return if recipient_is_judge?(email_recipient)
+
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
@@ -48,9 +35,12 @@ class HearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: convert_to_virtual_confirmation_subject)
   end
 
+  # This used to be called 'cancellation' because we cancel the VirtualHearing to
+  # convert a hearing from virtual->video/central
   def convert_from_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
     return if recipient_is_judge?(email_recipient)
+
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
