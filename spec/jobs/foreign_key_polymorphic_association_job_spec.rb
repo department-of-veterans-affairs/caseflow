@@ -12,7 +12,6 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   let(:appeal) { create(:appeal) }
   let!(:sil) { SpecialIssueList.create(appeal: appeal) }
-  # let(:task) { create(:distribution_task) }
 
   context "_id is nil regardless of existence of associated record" do
     before do
@@ -62,10 +61,23 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
       message = "Found SpecialIssueList orphaned record: [#{sil.id}]"
       expect(slack_service).to have_received(:send_notification).with(message).once
-      # binding.pry
     end
 
-    context "multiple classes where _id exists but the associated record doesn't" do
+    context "check for N+1 query problem" do
+      # TODO: use SqlTracker
+      it "sends alert" do
+        expect(Appeal.count).to eq 0
+
+        ActiveRecord::Base.logger = Logger.new(STDOUT)
+        # ActiveRecord::Base.logger.level = :info
+        subject
+
+        message = "Found SpecialIssueList orphaned record: [#{sil.id}]"
+        expect(slack_service).to have_received(:send_notification).with(message).once
+      end
+    end
+
+    context "records for multiple classes where _id exists but the associated record doesn't" do
       let(:document_params) do
         {
           appeal_id: appeal.id,
