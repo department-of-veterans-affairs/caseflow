@@ -15,7 +15,7 @@ export const ReadOnlyHearingTimeWithZone = ({
       onRender(moment(hearingStartTime).tz(timezone).
         format('hh:mm'));
     }
-  }, []);
+  }, [hearingStartTime]);
 
   if (!hearingStartTime) {
     return null;
