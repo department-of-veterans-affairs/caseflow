@@ -6,7 +6,7 @@ class HearingSchedule::GetSpreadsheetData
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
   HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = 4
-  JUDGE_NON_AVAILABILITY_HEADER_COLUMNS = 1
+  JUDGE_ASSIGNMENT_HEADER_ROWS = 1
 
   def initialize(spreadsheet)
     @spreadsheet = spreadsheet
