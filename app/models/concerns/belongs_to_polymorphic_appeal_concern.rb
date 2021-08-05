@@ -19,7 +19,7 @@ module BelongsToPolymorphicAppealConcern
       add_method_for_polymorphic_association("LegacyAppeal", association)
 
       if associated_class == DecisionReview
-        add_method_for_polymorphic_association("SupplementalClaim", association)
+        # add_method_for_polymorphic_association("SupplementalClaim", association)
         # This breaks things: add_method_for_polymorphic_association("HigherLevelReview", association)
       end
     end
