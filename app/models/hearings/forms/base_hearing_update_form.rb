@@ -109,12 +109,12 @@ class BaseHearingUpdateForm
   # - There is no virtual hearing
   # - This hearing exists with a request type that is not virtual ("R")
   def converting_to_virtual?
-    hearing.request_type != "R" && !hearing.virtual?
+    hearing.request_type != Constants::HEARING_REQUEST_TYPES["virtual"] && !hearing.virtual?
   end
 
   # This checks that request_cancelled is being set, that only happens
   # when converting FROM virtual to the original type
-  def conversion_to_not_virtual?
+  def converting_from_virtual?
     virtual_hearing_cancelled?
   end
 
@@ -370,8 +370,8 @@ class BaseHearingUpdateForm
   end
 
   def determine_delete_email_type
-    if conversion_to_not_virtual?
-      "convert_to_virtual_confirmation"
+    if converting_from_virtual?
+      "convert_from_virtual_confirmation"
     else
       "cancellation"
     end
