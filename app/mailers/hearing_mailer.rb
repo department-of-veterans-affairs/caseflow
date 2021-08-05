@@ -45,7 +45,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: virtual_conversion_confirmation_subject)
+    mail(to: recipient.email, subject: convert_to_virtual_confirmation_subject)
   end
 
   def convert_from_virtual_confirmation(email_recipient:, virtual_hearing: nil)
@@ -59,7 +59,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: not_virtual_conversion_confirmation_subject)
+    mail(to: recipient.email, subject: convert_from_virtual_confirmation_subject)
   end
 
   def updated_time_confirmation(email_recipient:, virtual_hearing: nil)
@@ -147,7 +147,7 @@ class HearingMailer < ActionMailer::Base
     end
   end
 
-  def virtual_conversion_confirmation_subject
+  def convert_to_virtual_confirmation_subject
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing will now be a virtual hearing"
@@ -156,7 +156,7 @@ class HearingMailer < ActionMailer::Base
     end
   end
 
-  def not_virtual_conversion_confirmation_subject
+  def convert_from_virtual_confirmation_subject
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}>"

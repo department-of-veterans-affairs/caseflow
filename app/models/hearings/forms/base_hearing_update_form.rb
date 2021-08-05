@@ -108,7 +108,7 @@ class BaseHearingUpdateForm
   # This is an existing hearing that is being converted to virtual if:
   # - There is no virtual hearing
   # - This hearing exists with a request type that is not virtual ("R")
-  def conversion_to_virtual?
+  def converting_to_virtual?
     hearing.request_type != "R" && !hearing.virtual?
   end
 
@@ -362,7 +362,7 @@ class BaseHearingUpdateForm
   def determine_create_email_type
     if only_time_updated_or_timezone_updated?
       "updated_time_confirmation"
-    elsif conversion_to_virtual?
+    elsif converting_to_virtual?
       "convert_to_virtual_confirmation"
     else
       "confirmation"
