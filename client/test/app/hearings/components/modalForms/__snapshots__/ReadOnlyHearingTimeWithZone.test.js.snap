@@ -45,7 +45,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
     [MockFunction] {
       "calls": Array [
         Array [
-          "08:30",
+          "05:30",
         ],
       ],
       "results": Array [
@@ -60,7 +60,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="8:30 AM Pacific / 11:30 AM Eastern"
+    text="5:30 AM Pacific / 8:30 AM Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -69,7 +69,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        8:30 AM Pacific / 11:30 AM Eastern
+        5:30 AM Pacific / 8:30 AM Eastern
       </pre>
     </div>
   </ReadOnly>

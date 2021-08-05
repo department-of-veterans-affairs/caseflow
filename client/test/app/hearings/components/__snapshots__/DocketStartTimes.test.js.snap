@@ -39,6 +39,22 @@ exports[`DocketStartTimes Matches snapshot with default props 1`] = `
         class="cf-form-radio-option"
       >
         <input
+          id="docketStartTimes_04:30"
+          name="docketStartTimes"
+          type="radio"
+          value="04:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_04:30"
+        >
+          Half-Day AM (5 slots at 4:30 AM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
           id="docketStartTimes_08:30"
           name="docketStartTimes"
           type="radio"
@@ -48,23 +64,7 @@ exports[`DocketStartTimes Matches snapshot with default props 1`] = `
           class=""
           for="docketStartTimes_08:30"
         >
-          Half-Day AM (5 slots at 8:30 AM Eastern)
-        </label>
-      </div>
-      <div
-        class="cf-form-radio-option"
-      >
-        <input
-          id="docketStartTimes_12:30"
-          name="docketStartTimes"
-          type="radio"
-          value="12:30"
-        />
-        <label
-          class=""
-          for="docketStartTimes_12:30"
-        >
-          Half-Day PM (5 slots at 12:30 PM Eastern)
+          Half-Day PM (5 slots at 8:30 AM Eastern)
         </label>
       </div>
     </div>
@@ -111,6 +111,22 @@ exports[`DocketStartTimes Matches snapshot with default props 2`] = `
         class="cf-form-radio-option"
       >
         <input
+          id="docketStartTimes_04:30"
+          name="docketStartTimes"
+          type="radio"
+          value="04:30"
+        />
+        <label
+          class=""
+          for="docketStartTimes_04:30"
+        >
+          Half-Day AM (5 slots at 4:30 AM Eastern)
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
           id="docketStartTimes_08:30"
           name="docketStartTimes"
           type="radio"
@@ -120,23 +136,7 @@ exports[`DocketStartTimes Matches snapshot with default props 2`] = `
           class=""
           for="docketStartTimes_08:30"
         >
-          Half-Day AM (5 slots at 8:30 AM Eastern)
-        </label>
-      </div>
-      <div
-        class="cf-form-radio-option"
-      >
-        <input
-          id="docketStartTimes_12:30"
-          name="docketStartTimes"
-          type="radio"
-          value="12:30"
-        />
-        <label
-          class=""
-          for="docketStartTimes_12:30"
-        >
-          Half-Day PM (5 slots at 12:30 PM Eastern)
+          Half-Day PM (5 slots at 8:30 AM Eastern)
         </label>
       </div>
     </div>
