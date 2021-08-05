@@ -19,7 +19,7 @@ import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
+import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -104,9 +104,9 @@ class AddIssuesPage extends React.Component {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  requestIssuesWithoutDecisionDates(intakeData) {
-    return !intakeData.requestIssues.every((issue) => issue.rating_issue_reference_id ||
-      issue.is_unidentified || issue.approx_decision_date);
+  requestIssuesWithoutDecisionDates(requestIssues) {
+    return !requestIssues.every((issue) => issue.ratingIssueReferenceId ||
+      issue.isUnidentified || issue.decisionDate);
   }
 
   willRedirect(intakeData, hasClearedEp) {
@@ -204,12 +204,13 @@ class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
+    const requestIssues = formatRequestIssues(intakeData.requestIssues, intakeData.contestableIssues);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
     }
 
-    if (this.requestIssuesWithoutDecisionDates(intakeData)) {
+    if (this.requestIssuesWithoutDecisionDates(requestIssues)) {
       return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
 
