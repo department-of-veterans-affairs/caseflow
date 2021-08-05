@@ -499,9 +499,9 @@ feature "Search", :all_dbs do
 
       context "when user is VSO employee" do
         let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
-        let!(:appeal_sub) {
+        let!(:appeal_sub) do
           create(:appellant_substitution, substitute_participant_id: 999, poa_participant_id: 99)
-        }
+        end
         let(:substitute_appeal) { appeal_sub.target_appeal }
         let!(:other_appeal_sub) { create(:appellant_substitution) }
         let(:other_substitute_appeal) { other_appeal_sub.target_appeal }

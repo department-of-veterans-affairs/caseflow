@@ -108,7 +108,8 @@ class CaseSearchResultsBase
   def vso_employee_has_access
     return unless current_user_is_vso_employee?
 
-    errors.add(:workflow, prohibited_error) if veterans_user_can_access.empty? &&
+    errors.add(:workflow, prohibited_error) if
+      veterans_user_can_access.empty? &&
       veterans.any? &&
       additional_appeals_user_can_access.empty?
     @status = :forbidden
