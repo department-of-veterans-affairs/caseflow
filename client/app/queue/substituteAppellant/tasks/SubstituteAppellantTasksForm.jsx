@@ -16,7 +16,7 @@ import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
-import { taskTypesSelected } from './utils';
+import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -47,6 +47,11 @@ export const SubstituteAppellantTasksForm = ({
   const { handleSubmit, watch } = methods;
   const selectedTaskIds = watch('taskIds');
 
+  const adjustedTasks = useMemo(() =>
+    disabledTasksBasedOnSelections({ tasks, selectedTaskIds }),
+  [tasks, selectedTaskIds]
+  );
+
   const shouldShowScheduleHearingTaskAlert = useMemo(() => {
     return taskTypesSelected({ tasks, selectedTaskIds }).includes('ScheduleHearingTask');
   },
@@ -73,7 +78,7 @@ export const SubstituteAppellantTasksForm = ({
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
             <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
             {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-            <TaskSelectionTable tasks={tasks} />
+            <TaskSelectionTable tasks={adjustedTasks} />
           </div>
         </AppSegment>
         <div className="controls cf-app-segment">

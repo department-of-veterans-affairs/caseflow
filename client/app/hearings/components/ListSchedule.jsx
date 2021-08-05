@@ -161,8 +161,8 @@ class ListSchedule extends React.Component {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
   }
 
-  formatHearingsScheduled = (filledSlots, totalSlots) => {
-    return `${filledSlots} of ${totalSlots}`;
+  formatHearingsScheduled = (filledSlots) => {
+    return filledSlots;
   }
 
   getHearingScheduleRows = () => {
@@ -178,7 +178,7 @@ class ListSchedule extends React.Component {
         judgeId: hearingDay.judgeId,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
         ...this.props.user.userCanViewAndDownloadHearingScheduledColumn &&
-          { hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots, hearingDay.totalSlots) }
+          { hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots) }
       }));
   };
 

@@ -58,6 +58,7 @@ appeals,establishment_error,string,,,,,,The error message if attempting to estab
 appeals,establishment_last_submitted_at,datetime,,,,,,Timestamp for when the the job is eligible to run (can be reset to restart the job).
 appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establishment has succeeded in processing.
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
+appeals,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
 appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
@@ -111,7 +112,7 @@ attorney_case_reviews,id,integer PK,x,x,,,,
 attorney_case_reviews,note,text,,,,,,
 attorney_case_reviews,overtime,boolean,,,,,,
 attorney_case_reviews,reviewing_judge_id,integer FK,,,x,,,
-attorney_case_reviews,task_id,string ∗ FK,x,,x,,x,
+attorney_case_reviews,task_id,string ∗ FK,x,,x,,x,"Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
 attorney_case_reviews,untimely_evidence,boolean,,,,,,
 attorney_case_reviews,updated_at,datetime ∗,x,,,,x,
 attorney_case_reviews,work_product,string ∗,x,,,,,
@@ -649,6 +650,7 @@ higher_level_reviews,establishment_error,string,,,,,,The error captured for the 
 higher_level_reviews,establishment_last_submitted_at,datetime,,,,,,Timestamp for the latest attempt at establishing the End Products for the Decision Review.
 higher_level_reviews,establishment_processed_at,datetime,,,,,,Timestamp for when the End Product Establishments for the Decision Review successfully finished processing.
 higher_level_reviews,establishment_submitted_at,datetime,,,,,,Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.
+higher_level_reviews,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 higher_level_reviews,id,integer (8) PK,x,x,,,,
 higher_level_reviews,informal_conference,boolean,,,,,,Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS.
 higher_level_reviews,legacy_opt_in_approved,boolean,,,,,,"Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
@@ -704,7 +706,7 @@ judge_case_reviews,location,string ∗,x,,,,,
 judge_case_reviews,one_touch_initiative,boolean,,,,,,
 judge_case_reviews,positive_feedback,text,,,,,,
 judge_case_reviews,quality,string ∗,x,,,,,
-judge_case_reviews,task_id,string ∗ FK,x,,x,,,
+judge_case_reviews,task_id,string ∗ FK,x,,x,,,"Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
@@ -1049,6 +1051,7 @@ supplemental_claims,establishment_error,string,,,,,,The error captured for the m
 supplemental_claims,establishment_last_submitted_at,datetime,,,,,,Timestamp for the latest attempt at establishing the End Products for the Decision Review.
 supplemental_claims,establishment_processed_at,datetime,,,,,,Timestamp for when the End Product Establishments for the Decision Review successfully finished processing.
 supplemental_claims,establishment_submitted_at,datetime,,,,,,Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.
+supplemental_claims,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 supplemental_claims,id,integer (8) PK,x,x,,,,
 supplemental_claims,legacy_opt_in_approved,boolean,,,,,,"Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
 supplemental_claims,receipt_date,date ∗,x,,,,,The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews.
@@ -1194,7 +1197,7 @@ veterans,updated_at,datetime,,,,,x,
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
-virtual_hearings,appellant_email,string ∗,x,,,,,Appellant's email address
+virtual_hearings,appellant_email,string,,,,,,Appellant's email address
 virtual_hearings,appellant_email_sent,boolean ∗,x,,,,,Determines whether or not a notification email was sent to the appellant
 virtual_hearings,appellant_reminder_sent_at,datetime,,,,,,The datetime the last reminder email was sent to the appellant.
 virtual_hearings,appellant_tz,string (50),,,,,,Stores appellant timezone
