@@ -6,81 +6,41 @@ def wait_for_page_render
   find("div", id: "caseTitleDetailsSubheader")
 end
 
-# This is a gross workaround
-# def appeal
-#   return @appeal if @appeal
-#   SanitizedJsonImporter.from_file(
-#     "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
-#     verbosity: 0).import
-#   @appeal = Appeal.find_by_uuid("b5eba21a-9baf-41a3-ac1c-08470c2b79c4")
-# end
-
-# I think I'm trying to optimize test performance too much at the expense of reasonable code.
-# Let's prove to myself that I'm overcomplicating this.
-def with_timer(name, &block)
-  start_time = Time.now.to_f
-  out = yield
-  end_time = Time.now.to_f
-  puts "Finished #{name} in #{end_time - start_time} seconds"
-  out
-end
-
 def select_task_ids_in_ui(task_ids)
-  with_timer("click stuff") do
-    visit "/queue"
-    visit "/queue/appeals/#{appeal.uuid}"
-    wait_for_page_render
-    # binding.pry
+  visit "/queue"
+  visit "/queue/appeals/#{appeal.uuid}"
+  wait_for_page_render
 
-    click_on "+ Add Substitute"
+  click_on "+ Add Substitute"
 
-    fill_in("substitutionDate", with: "01/01/2021")
-    find("label", text: "Bob Vance, Spouse").click
-    click_on "Continue"
+  fill_in("substitutionDate", with: "01/01/2021")
+  find("label", text: "Bob Vance, Spouse").click
+  click_on "Continue"
 
-    # Select "Evidence or argument" (2001578851 is the task ID)
-    task_ids.each do |task_id|
-      find("div", class: "checkbox-wrapper-taskIds[#{task_id}]").find("label").click
-    end
-    click_on "Continue"
-    click_on "Confirm"
-    wait_for_page_render
+  # Uncomment this if you wish to use demo specific selections in the browser
+  # binding.pry
+  # appeal.treee
+
+  task_ids.each do |task_id|
+    find("div", class: "checkbox-wrapper-taskIds[#{task_id}]").find("label").click
   end
+  click_on "Continue"
+  click_on "Confirm"
+  wait_for_page_render
 end
 
-#                                                         ┌────────────────────────────────────────────────────────────────────────────────────────┐
-# Appeal 2000061110 (H 200103-61110 Original) ─────────── │ ID         │ STATUS    │ ASGN_BY      │ ASGN_TO            │ UPDATED_AT                │
-# └── RootTask                                            │ 2000758351 │ completed │              │ Bva                │ 2021-02-04 07:12:27 -0500 │
-#     ├── TrackVeteranTask                                │ 2000758352 │ completed │              │ PrivateBar         │ 2021-02-04 07:12:27 -0500 │
-#     ├── DistributionTask                                │ 2000758353 │ completed │              │ Bva                │ 2021-02-01 07:09:14 -0500 │
-#     │   ├── HearingTask                                 │ 2000758354 │ completed │              │ Bva                │ 2021-01-30 19:30:30 -0500 │
-#     │   │   ├── ScheduleHearingTask                     │ 2000758355 │ completed │              │ Bva                │ 2020-10-01 12:01:04 -0400 │
-#     │   │   │   └── HearingAdminActionVerifyAddressTask │ 2001143838 │ cancelled │              │ HearingsManagement │ 2020-09-16 20:36:59 -0400 │
-#     │   │   └── AssignHearingDispositionTask            │ 2001178199 │ completed │              │ Bva                │ 2021-01-30 19:30:30 -0500 │
-#     │   │       ├── TranscriptionTask                   │ 2001233993 │ completed │              │ TranscriptionTeam  │ 2020-12-22 09:20:00 -0500 │
-#     │   │       └── EvidenceSubmissionWindowTask        │ 2001233994 │ completed │              │ MailTeam           │ 2021-01-30 19:30:30 -0500 │
-#     │   │           └── EvidenceSubmissionWindowTask    │ 2001255555 │ cancelled │ MBUTLERBVAI  │ BAKERBVAW          │ 2020-11-17 11:31:25 -0500 │
-#     │   ├── HearingRelatedMailTask                      │ 2000786274 │ completed │              │ MailTeam           │ 2020-07-08 10:34:32 -0400 │
-#     │   │   └── HearingRelatedMailTask                  │ 2000786275 │ completed │ MCWILJVACO   │ HearingAdmin       │ 2020-07-08 10:34:32 -0400 │
-#     │   └── HearingRelatedMailTask                      │ 2001298868 │ completed │              │ MailTeam           │ 2020-12-10 09:58:33 -0500 │
-#     │       └── HearingRelatedMailTask                  │ 2001298869 │ completed │ MURRELLBVAC  │ HearingAdmin       │ 2020-12-10 09:58:33 -0500 │
-#     ├── JudgeAssignTask                                 │ 2001429904 │ completed │              │ ELEZEBVAV          │ 2021-02-01 08:17:22 -0500 │
-#     ├── JudgeDecisionReviewTask                         │ 2001430264 │ completed │ HSMITHBVAT   │ ELEZEBVAV          │ 2021-02-02 12:59:59 -0500 │
-#     │   └── AttorneyTask                                │ 2001430265 │ completed │ ELEZEBVAV    │ HSMITHBVAT         │ 2021-02-02 09:58:20 -0500 │
-#     ├── BvaDispatchTask                                 │ 2001435755 │ completed │              │ BvaDispatch        │ 2021-02-04 07:12:26 -0500 │
-#     │   └── BvaDispatchTask                             │ 2001435756 │ completed │              │ MILLEK2VACO        │ 2021-02-04 07:12:26 -0500 │
-#     ├── EvidenceOrArgumentMailTask                      │ 2001578850 │ completed │              │ MailTeam           │ 2021-03-24 13:15:02 -0400 │
-#     │   └── EvidenceOrArgumentMailTask                  │ 2001578851 │ completed │ CULVEDVACO   │ Colocated          │ 2021-03-24 13:15:02 -0400 │
-#     │       ├── EvidenceOrArgumentMailTask              │ 2001578852 │ cancelled │ CULVEDVACO   │ WIGGIGVACO         │ 2021-03-24 13:07:44 -0400 │
-#     │       └── EvidenceOrArgumentMailTask              │ 2001580304 │ completed │ BOOKEKVACO   │ BOOKEKVACO         │ 2021-03-24 13:15:02 -0400 │
-#     └── EvidenceOrArgumentMailTask                      │ 2001805324 │ on_hold   │              │ MailTeam           │ 2021-06-28 12:38:07 -0400 │
-#         └── EvidenceOrArgumentMailTask                  │ 2001805325 │ on_hold   │ BARNAMCL     │ Colocated          │ 2021-06-28 12:38:07 -0400 │
-#             └── EvidenceOrArgumentMailTask              │ 2001805326 │ on_hold   │ BARNAMCL     │ DJOHNSONBVAA       │ 2021-06-28 13:40:57 -0400 │
-#                 └── EvidenceOrArgumentMailTask          │ 2001805531 │ on_hold   │ DJOHNSONBVAA │ PrivacyTeam        │ 2021-07-01 19:49:48 -0400 │
-#                     └── EvidenceOrArgumentMailTask      │ 2001816737 │ assigned  │ RETANBVAJ    │ TranscriptionTeam  │ 2021-07-01 19:49:48 -0400 │
-#                                                         └────────────────────────────────────────────────────────────────────────────────────────┘
+TASKS = {
+  distribution: 2000758353,
+  schedule_hearing: 2000758355,
+  assign_hearing_disposition: 2001178199,
+  address_verify: 2001143838,
+  transcription: 2001233993,
+  evidence_submission_window: 2001233994,
+  evidence_or_argument_mail: 2001578851
+}
 
-RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
+note = "This test is only used to aid manual testing/demonstration."
+RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: note do
 
   describe "Substitute Appellant appeal creation" do
     before do
@@ -94,25 +54,26 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
     end
 
     after do
-      # This is probably not really needed, but let's be good stewards anyway:
       FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
       FeatureToggle.disable!(:hearings_substitution_death_dismissal)
     end
 
-    context "with just EvidenceOrArgumentMailTask selected" do
-      let!(:appeal) do
-        with_timer("SJI") do
-          sji = SanitizedJsonImporter.from_file(
-            "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
-            verbosity: 0)
-          sji.import
-          sji.imported_records[Appeal.table_name].first
-        end
-      end
+    let!(:appeal) do
+      sji = SanitizedJsonImporter.from_file(
+        "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
+        verbosity: 0)
+      sji.import
+      sji.imported_records[Appeal.table_name].first
+    end
 
+    let(:new_appeal) do
+      appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
+      appellant_substitution.target_appeal
+    end
+
+    context "with just EvidenceOrArgumentMailTask selected" do
       before do
-        # EvidenceOrArgumentMailTask
-        select_task_ids_in_ui([2001578851])
+        select_task_ids_in_ui([TASKS[:evidence_or_argument_mail]])
       end
 
       it "preserves the docket number" do
@@ -123,75 +84,97 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :all_dbs do
         expect(page).to have_content("You have successfully added a substitute appellant")
       end
 
-      it "preserves AOD" do
-        # TODO
-        # I'm not sure it would, since it's partly based on the veteran
-      end
-
-      it "preserves appeal status" do
-        # TODO
-      end
-
-      it "tries with different types of selected tasks" do
-        # TODO
-        # This is (important) complexity for tomorrow.
-      end
-
       it "creates the selected tasks" do
-        new_appeal = Appeal.find(1)
-        # puts new_appeal.treee
-
-        # It creates the Distribution Task and EvidenceOrArgumentMailTask
-        expect(DistributionTask.where(appeal_id: new_appeal.id).count).to eq(1)
-        expect(DistributionTask.find_by(appeal_id: new_appeal.id).status).to eq("assigned")
+        expect(DistributionTask.where(appeal_id: new_appeal.id).count).to eq 1
+        expect(DistributionTask.find_by(appeal_id: new_appeal.id).status).to eq "assigned"
 
         eamts = EvidenceOrArgumentMailTask.where(appeal_id: new_appeal.id)
-        expect(eamts.count).to eq(3) # I mean this is kind of weird
-        expect(eamts.map(&:status).uniq.sort).to eq(%w(assigned on_hold))
-      end
 
-      it "all typical parent tasks are created or are in existence for the user-selected task" do
-        # TODO
+        # This is faithfully recreating the series of them in the UI
+        expect(eamts.count).to eq 3
+        expect(eamts.map(&:status).uniq.sort).to eq %w(assigned on_hold)
       end
-
-      it "verify tasks from source appeal are displayed in the case timeline" do
-        # TODO
-      end
-
-      it "the granted substitution date is added to the about the appellant section" do
-        # TODO
-      end
-
     end
 
     context "with an EvidenceSubmissionWindowTask selected" do
-      let!(:appeal) do
-        with_timer("SJI") do
-          sji = SanitizedJsonImporter.from_file(
-            "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
-            verbosity: 0)
-          sji.import
-          sji.imported_records[Appeal.table_name].first
-        end
-      end
-
       before do
-        # EvidenceSubmissionWindowTask
-        select_task_ids_in_ui([2001233994])
+        select_task_ids_in_ui([TASKS[:evidence_submission_window]])
       end
 
       it "show a success message" do
         expect(page).to have_content("You have successfully added a substitute appellant")
       end
 
-      it "has a reasonable task tree" do
-        new_appeal = Appeal.find(1)
-        puts new_appeal.treee
+      it "prints the generated task tree" do
+        new_appeal.treee
       end
     end
 
     context "with a ScheduleHearingTask selected" do
-      # TODO
+      before do
+        select_task_ids_in_ui([TASKS[:schedule_hearing]])
+      end
+
+      it "prints a task tree" do
+        new_appeal.treee
+      end
+    end
+
+    context "with a HearingAdminActionVerifyAddressTask selected" do
+      before do
+        select_task_ids_in_ui([TASKS[:address_verify]])
+      end
+
+      it "creates a proper task tree" do
+        new_appeal.treee
+
+        sht = ScheduleHearingTask.find_by(appeal_id: new_appeal.id)
+        expect(sht.status).to eq "on_hold"
+
+        haavat = HearingAdminActionVerifyAddressTask.find_by(appeal_id: new_appeal.id)
+        expect(haavat.status).to eq "assigned"
+        expect(haavat.assigned_to.type).to eq "HearingsManagement"
+      end
+    end
+
+    context "with an AssignHearingDispositionTask selected" do
+      before do
+        select_task_ids_in_ui([TASKS[:assign_hearing_disposition]])
+      end
+
+      it "prints a task tree" do
+        new_appeal.treee
+      end
+    end
+
+    context "with a TranscriptionTask selected" do
+      before do
+        select_task_ids_in_ui([TASKS[:transcription]])
+      end
+
+      it "prints a task tree" do
+        new_appeal.treee
+      end
+    end
+
+    context "with EvidenceSubmissionWindow and Transcription selected" do
+      before do
+        select_task_ids_in_ui([TASKS[:evidence_submission_window], TASKS[:transcription]])
+      end
+
+      it "prints a task tree" do
+        new_appeal.treee
+      end
+    end
+
+    context "with Verify Address and Schedule Hearing selected" do
+      before do
+        select_task_ids_in_ui([TASKS[:address_verify], TASKS[:schedule_hearing]])
+      end
+
+      it "prints a task tree" do
+        new_appeal.treee
+      end
     end
   end
 end
