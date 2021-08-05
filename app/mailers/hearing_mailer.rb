@@ -50,7 +50,7 @@ class HearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: virtual_conversion_confirmation_subject)
   end
 
-  def convert_to_not_virtual_confirmation(email_recipient:, virtual_hearing: nil)
+  def convert_from_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
     return if recipient_is_judge?
 

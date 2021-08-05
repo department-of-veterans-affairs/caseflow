@@ -52,7 +52,7 @@ namespace :emails do
         [
           :confirmation,
           :convert_to_virtual_confirmation,
-          :convert_to_not_virtual_confirmation,
+          :convert_from_virtual_confirmation,
           :updated_time_confirmation,
           :cancellation,
           :reminder
