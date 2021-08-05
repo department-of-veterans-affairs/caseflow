@@ -105,8 +105,8 @@ class AddIssuesPage extends React.Component {
 
   // eslint-disable-next-line class-methods-use-this
   requestIssuesWithoutDecisionDates(intakeData) {
-    return intakeData.requestIssues?.some((issue) => !issue.ratingIssueReferenceId &&
-     !issue.isUnidentified && !issue.approx_decision_date);
+    return !intakeData.requestIssues.every((issue) => issue.rating_issue_reference_id ||
+      issue.is_unidentified || issue.approx_decision_date);
   }
 
   willRedirect(intakeData, hasClearedEp) {
