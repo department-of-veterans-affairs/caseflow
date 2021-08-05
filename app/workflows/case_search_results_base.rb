@@ -42,12 +42,14 @@ class CaseSearchResultsBase
     []
   end
 
-  # Users may also view appeals with substitute appellants whom they represent.
-  # That relationship is part of search in implementing classes, so we use this to add
-  # these appeals back into results because the user is not on the veteran's poa.
-  def appeals_user_can_access
+  # Users may also view appeals with appellants whom they represent.
+  # We use this to add these appeals back into results when the user is not on the veteran's poa.
+  def additional_appeals_user_can_access
     appeals.filter do |appeal|
-      appeal.veteran_is_not_claimant
+      appeal.veteran_is_not_claimant &&
+        user.organizations.any? do |uo|
+          appeal.representatives.include?(uo)
+        end
     end
   end
 
@@ -108,7 +110,7 @@ class CaseSearchResultsBase
 
     errors.add(:workflow, prohibited_error) if veterans_user_can_access.empty? &&
       veterans.any? &&
-      appeals_user_can_access.empty?
+      additional_appeals_user_can_access.empty?
     @status = :forbidden
   end
 
