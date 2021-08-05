@@ -41,6 +41,12 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "DOB_INVALID": {
+    "AGE_MIN": "Appellant must be at least 14 years of age.",
+    "AGE_MAX": "Appellant cannot be older than 118 years of age.",
+    "FUTURE": "Appellant date of birth cannot be in future."
+  },
+
   "NULL_FILTER_LABEL": "<<blank>>",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
