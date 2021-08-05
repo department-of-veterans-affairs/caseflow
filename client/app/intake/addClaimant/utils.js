@@ -11,6 +11,16 @@ const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
 };
 
+const validateDOB = (date, age = null) => {
+  const cutoff = new Date();
+
+  if (!isNaN(age)) {
+    cutoff.setFullYear(cutoff.getFullYear() - age);
+  }
+
+  return age === 118 ? date > cutoff : date < cutoff;
+};
+
 export const schema = yup.object().shape({
   relationship: yup.string().required(),
   partyType: yup.string().when(['listedAttorney', 'relationship'], {
@@ -26,6 +36,10 @@ export const schema = yup.object().shape({
   middleName: yup.string(),
   lastName: yup.string(),
   suffix: yup.string(),
+  dateOfBirth: yup.date().
+    test('not future', 'FUTURE', (date) => validateDOB(date)).
+    test('age', 'AGE_MIN', (date) => validateDOB(date, 14)).
+    test('age', 'AGE_MAX', (date) => validateDOB(date, 118)),
   name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
@@ -57,7 +71,7 @@ export const schema = yup.object().shape({
   emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
   poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
-    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm, 
+    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
     then: yup.string().required(),
   }),
   listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
