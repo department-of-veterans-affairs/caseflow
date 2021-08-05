@@ -74,6 +74,10 @@ export class IntakeEditFrame extends React.PureComponent {
     return 'This appeal has been outcoded and the issues are no longer editable.';
   };
 
+  displayDecisionDateMessage = () => {
+    return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
+  }
+
   render() {
     const { veteran, formType } = this.props.serverIntake;
 
@@ -119,6 +123,19 @@ export class IntakeEditFrame extends React.PureComponent {
                         <Message
                           title="Review not editable"
                           displayMessage={this.displayNotEditableMessage}
+                        />
+                      );
+                    }}
+                  />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE}
+                    title="Edit Claim Issues | Caseflow Intake"
+                    component={() => {
+                      return (
+                        <Message
+                          title="Review not editable"
+                          displayMessage={this.displayDecisionDateMessage}
                         />
                       );
                     }}
