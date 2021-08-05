@@ -42,8 +42,7 @@ describe('DocketStartTimes', () => {
       'America/Los_Angeles',
       'America/Denver',
       'America/Chicago',
-      'America/Indiana/Indianapolis',
-      null
+      'America/Indiana/Indianapolis'
     ];
 
     timezones.forEach((timezone) => {

@@ -418,14 +418,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
 
         context "first slot time is '08:30'" do
-          let(:first_slot_time) { "08:30" }
+          let(:first_slot_time) { "10:30" }
           let(:expected_time) { first_slot_time }
           let(:readonly_time_text) { "8:30 AM Mountain / 10:30 AM Eastern" }
           include_examples "hearing time display"
         end
 
         context "first slot time is '12:30'" do
-          let(:first_slot_time) { "12:30" }
+          let(:first_slot_time) { "02:30" }
           let(:expected_time) { first_slot_time }
           let(:readonly_time_text) { "12:30 PM Mountain / 2:30 PM Eastern" }
           include_examples "hearing time display"

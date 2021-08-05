@@ -2,12 +2,12 @@
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 1`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-29T08:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "08:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -22,7 +22,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="8:30 AM Eastern"
+    text="Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -31,7 +31,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        8:30 AM Eastern
+        Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -40,12 +40,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 2`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-29T08:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "05:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -60,7 +60,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="5:30 AM Pacific / 8:30 AM Eastern"
+    text="Invalid date Pacific / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -69,7 +69,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        5:30 AM Pacific / 8:30 AM Eastern
+        Invalid date Pacific / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -78,12 +78,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 3`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-29T08:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "08:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -98,7 +98,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="8:30 AM Mountain / 10:30 AM Eastern"
+    text="Invalid date Mountain / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -107,7 +107,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        8:30 AM Mountain / 10:30 AM Eastern
+        Invalid date Mountain / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -116,12 +116,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 4`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-29T08:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "08:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -136,7 +136,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="8:30 AM Central / 9:30 AM Eastern"
+    text="Invalid date Central / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -145,7 +145,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        8:30 AM Central / 9:30 AM Eastern
+        Invalid date Central / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -154,12 +154,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 5`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-29T08:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "08:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -174,7 +174,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="8:30 AM Indiana (East) / 8:30 AM Eastern"
+    text="Invalid date Indiana (East) / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -183,7 +183,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        8:30 AM Indiana (East) / 8:30 AM Eastern
+        Invalid date Indiana (East) / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -192,12 +192,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 6`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-30T12:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "12:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -212,7 +212,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="12:30 PM Eastern"
+    text="Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -221,7 +221,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        12:30 PM Eastern
+        Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -230,12 +230,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 7`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-30T12:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "12:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -250,7 +250,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="12:30 PM Pacific / 3:30 PM Eastern"
+    text="Invalid date Pacific / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -259,7 +259,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        12:30 PM Pacific / 3:30 PM Eastern
+        Invalid date Pacific / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -268,12 +268,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 8`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-30T12:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "12:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -288,7 +288,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="12:30 PM Mountain / 2:30 PM Eastern"
+    text="Invalid date Mountain / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -297,7 +297,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        12:30 PM Mountain / 2:30 PM Eastern
+        Invalid date Mountain / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -306,12 +306,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 9`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-30T12:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "12:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -326,7 +326,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="12:30 PM Central / 1:30 PM Eastern"
+    text="Invalid date Central / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -335,7 +335,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        12:30 PM Central / 1:30 PM Eastern
+        Invalid date Central / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -344,12 +344,12 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 10`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime="2021-07-30T12:30:00-04:00"
+  hearingStartTime="Invalid date"
   onRender={
     [MockFunction] {
       "calls": Array [
         Array [
-          "12:30",
+          "Invalid date",
         ],
       ],
       "results": Array [
@@ -364,7 +364,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="12:30 PM Indiana (East) / 12:30 PM Eastern"
+    text="Invalid date Indiana (East) / Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -373,7 +373,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        12:30 PM Indiana (East) / 12:30 PM Eastern
+        Invalid date Indiana (East) / Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -382,40 +382,190 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 11`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime={null}
-  onRender={[MockFunction]}
+  hearingStartTime="Invalid date"
+  onRender={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "Invalid date",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
   timezone="America/New_York"
-/>
+>
+  <ReadOnly
+    label="Hearing Time"
+    text="Invalid date Eastern"
+  >
+    <div
+      data-css-1a5irm0=""
+    >
+      <strong>
+        Hearing Time
+      </strong>
+      <pre>
+        Invalid date Eastern
+      </pre>
+    </div>
+  </ReadOnly>
+</ReadOnlyHearingTimeWithZone>
 `;
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 12`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime={null}
-  onRender={[MockFunction]}
+  hearingStartTime="Invalid date"
+  onRender={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "Invalid date",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
   timezone="America/Los_Angeles"
-/>
+>
+  <ReadOnly
+    label="Hearing Time"
+    text="Invalid date Pacific / Invalid date Eastern"
+  >
+    <div
+      data-css-1a5irm0=""
+    >
+      <strong>
+        Hearing Time
+      </strong>
+      <pre>
+        Invalid date Pacific / Invalid date Eastern
+      </pre>
+    </div>
+  </ReadOnly>
+</ReadOnlyHearingTimeWithZone>
 `;
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 13`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime={null}
-  onRender={[MockFunction]}
+  hearingStartTime="Invalid date"
+  onRender={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "Invalid date",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
   timezone="America/Denver"
-/>
+>
+  <ReadOnly
+    label="Hearing Time"
+    text="Invalid date Mountain / Invalid date Eastern"
+  >
+    <div
+      data-css-1a5irm0=""
+    >
+      <strong>
+        Hearing Time
+      </strong>
+      <pre>
+        Invalid date Mountain / Invalid date Eastern
+      </pre>
+    </div>
+  </ReadOnly>
+</ReadOnlyHearingTimeWithZone>
 `;
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 14`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime={null}
-  onRender={[MockFunction]}
+  hearingStartTime="Invalid date"
+  onRender={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "Invalid date",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
   timezone="America/Chicago"
-/>
+>
+  <ReadOnly
+    label="Hearing Time"
+    text="Invalid date Central / Invalid date Eastern"
+  >
+    <div
+      data-css-1a5irm0=""
+    >
+      <strong>
+        Hearing Time
+      </strong>
+      <pre>
+        Invalid date Central / Invalid date Eastern
+      </pre>
+    </div>
+  </ReadOnly>
+</ReadOnlyHearingTimeWithZone>
 `;
 
 exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 15`] = `
 <ReadOnlyHearingTimeWithZone
-  hearingStartTime={null}
-  onRender={[MockFunction]}
+  hearingStartTime="Invalid date"
+  onRender={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "Invalid date",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
   timezone="America/Indiana/Indianapolis"
-/>
+>
+  <ReadOnly
+    label="Hearing Time"
+    text="Invalid date Indiana (East) / Invalid date Eastern"
+  >
+    <div
+      data-css-1a5irm0=""
+    >
+      <strong>
+        Hearing Time
+      </strong>
+      <pre>
+        Invalid date Indiana (East) / Invalid date Eastern
+      </pre>
+    </div>
+  </ReadOnly>
+</ReadOnlyHearingTimeWithZone>
 `;

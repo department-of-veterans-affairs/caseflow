@@ -9,13 +9,13 @@ import { shortZoneName } from 'app/hearings/utils';
 describe('ReadOnlyHearingTimeWithZone', () => {
   // Ignore warnings about SearchableDropdown
   test('Displays readonly time when hearingStartTime prop has value', () => {
-    const hearingStartTimes = [
-      '2021-07-29T08:30:00-04:00',
-      '2021-07-30T12:30:00-04:00',
+    const startTimes = [
+      '08:30',
+      '12:30',
       null
     ];
 
-    hearingStartTimes.forEach((hearingStartTime) => {
+    startTimes.forEach((startTime) => {
       const timezones = [
         'America/New_York',
         'America/Los_Angeles',
@@ -25,9 +25,10 @@ describe('ReadOnlyHearingTimeWithZone', () => {
       ];
 
       timezones.forEach((timezone) => {
+        const hearingStartTime = moment(startTime).tz(timezone).format('HH:mm')
         const form = mount(
           <ReadOnlyHearingTimeWithZone
-            hearingStartTime={hearingStartTime}
+            hearingStartTime={hearingStartTime ?? null}
             timezone={timezone}
             onRender={jest.fn()}
           />
