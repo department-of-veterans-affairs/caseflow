@@ -73,8 +73,6 @@ class AppellantSubstitution < CaseflowRecord
       # It may be better to copy specific attributes, than duplicate everything.
       request_issue.dup.tap do |request_issue_copy|
         request_issue_copy.decision_review = target_appeal
-        # Do not copy decisions for new appeal
-        request_issue_copy.decision_date = nil
         request_issue_copy.save!
       end
     end
