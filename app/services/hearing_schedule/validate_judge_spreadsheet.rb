@@ -21,7 +21,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def judge_css_matches_name?(name, css_id)
+  def judge_css_id_matches_name?(name, css_id)
     return if name.nil?
 
     user = User.find_by_css_id(css_id)
