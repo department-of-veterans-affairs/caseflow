@@ -71,6 +71,7 @@ class CaseHearingsDetail extends React.PureComponent {
       </React.Fragment>
     }];
 
+    // TODO:SELF, look at consolidating logic for !userIsVsoEmployee
     if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
@@ -83,6 +84,10 @@ class CaseHearingsDetail extends React.PureComponent {
               {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
             </Link>
           </Tooltip>
+        },
+        {
+          label: 'Judge',
+          value: hearing.heldBy
         }
       );
     }
