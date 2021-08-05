@@ -18,6 +18,8 @@ const validateDOB = (date, age = null) => {
     cutoff.setFullYear(cutoff.getFullYear() - age);
   }
 
+  /* if age is 118 (max), assert chosen date isn't greater than max.
+    if age is 14/future, assert chosen date is before min/future */
   return age === 118 ? date > cutoff : date < cutoff;
 };
 
