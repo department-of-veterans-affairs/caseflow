@@ -10,8 +10,7 @@ class HearingMailer < ActionMailer::Base
 
   def cancellation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
-    return if recipient_is_judge?
-
+    return if recipient_is_judge?(email_recipient)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
 
@@ -37,8 +36,7 @@ class HearingMailer < ActionMailer::Base
 
   def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
-    return if recipient_is_judge?
-
+    return if recipient_is_judge?(email_recipient)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
@@ -52,8 +50,7 @@ class HearingMailer < ActionMailer::Base
 
   def convert_from_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
-    return if recipient_is_judge?
-
+    return if recipient_is_judge?(email_recipient)
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
@@ -81,7 +78,7 @@ class HearingMailer < ActionMailer::Base
 
   def reminder(email_recipient:, virtual_hearing: nil, hearing: nil)
     # Guard to prevent reminder emails from sending to the judge
-    return if recipient_is_judge?
+    return if recipient_is_judge?(email_recipient)
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
