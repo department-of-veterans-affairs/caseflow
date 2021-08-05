@@ -29,19 +29,20 @@ def select_task_ids_in_ui(task_ids)
   wait_for_page_render
 end
 
+# Since the appeal is imported from JSON, the IDs here are always the below values.
+# Give them friendly names for easier access
 TASKS = {
-  distribution: 2000758353,
-  schedule_hearing: 2000758355,
-  assign_hearing_disposition: 2001178199,
-  address_verify: 2001143838,
-  transcription: 2001233993,
-  evidence_submission_window: 2001233994,
-  evidence_or_argument_mail: 2001578851
-}
+  distribution: 2_000_758_353,
+  schedule_hearing: 2_000_758_355,
+  assign_hearing_disposition: 2_001_178_199,
+  address_verify: 2_001_143_838,
+  transcription: 2_001_233_993,
+  evidence_submission_window: 2_001_233_994,
+  evidence_or_argument_mail: 2_001_578_851
+}.freeze
 
 note = "This test is only used to aid manual testing/demonstration."
 RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: note do
-
   describe "Substitute Appellant appeal creation" do
     before do
       FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
@@ -61,7 +62,8 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: no
     let!(:appeal) do
       sji = SanitizedJsonImporter.from_file(
         "db/seeds/sanitized_json/b5eba21a-9baf-41a3-ac1c-08470c2b79c4.json",
-        verbosity: 0)
+        verbosity: 0
+      )
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
@@ -92,7 +94,7 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: no
 
         # This is faithfully recreating the series of them in the UI
         expect(eamts.count).to eq 3
-        expect(eamts.map(&:status).uniq.sort).to eq %w(assigned on_hold)
+        expect(eamts.map(&:status).uniq.sort).to eq %w[assigned on_hold]
       end
     end
 
