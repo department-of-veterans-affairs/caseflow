@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_27_210019) do
+ActiveRecord::Schema.define(version: 2021_07_29_180404) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_210019) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
-    t.boolean "filed_by_va_gov", default: false, null: false, comment: "Indicates whether or not this form came from VA.gov"
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
@@ -847,7 +847,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_210019) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
-    t.boolean "filed_by_va_gov", default: false, null: false, comment: "Indicates whether or not this form came from VA.gov"
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
@@ -1368,7 +1368,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_210019) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
-    t.boolean "filed_by_va_gov", default: false, null: false, comment: "Indicates whether or not this form came from VA.gov"
+    t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
     t.datetime "updated_at"
