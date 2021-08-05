@@ -5,7 +5,6 @@ import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-too
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
-import COPY from '../../COPY';
 import PropTypes from 'prop-types';
 
 export const Error403 = (props) => {

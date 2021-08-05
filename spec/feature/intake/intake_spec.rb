@@ -168,7 +168,7 @@ feature "Intake", :all_dbs do
       expect(page).to have_content(COPY::INCIDENT_FLASH_ERROR_START)
     end
 
-    fcontext "Veteran has too high of a sensitivity level for user" do
+    context "Veteran has too high of a sensitivity level for user" do
       before do
         Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
       end

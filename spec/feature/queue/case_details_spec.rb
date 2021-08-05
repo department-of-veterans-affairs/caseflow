@@ -2141,6 +2141,16 @@ RSpec.feature "Case details", :all_dbs do
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+    let(:veteran) { create(:veteran) }
+    let(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: veteran.file_number) }
+    let(:user) { create(:user) }
+
+    before do
+      User.authenticate!(user: user)
+      Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+      Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
+    end
 
     context "when the current user does not have high enough BGS sensitivity level" do
       before do
@@ -2207,24 +2217,16 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-  #   context "when the current user does not have high enough sensitivity level" do
-  #     context "when case is a claim review" do
-  #       before do
-  #         let(:higher_level_review)
-  #         Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
-
-  #         it "renders 403 error page" do
-  #           visit "/higher_level_review/#{higher_level_review.veteran_file_number}/edit"
-  #           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
-  #           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
-  #         end
-  #       end
-  #     end
-
-  #     context "when case is an appeal" do
-  #     end
-  #   end
-  # end
+    context "when the current user does not have sensitivity level for Veteran file" do
+      context "when case is higher level review" do
+        it "renders 403 error page" do
+          visit "/higher_level_reviews/{#{higher_level_review.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
+        end
+      end
+    end
+  end
 
   describe "POA/VSO restricted visibility" do
     let(:appeal) { create(:appeal) }
