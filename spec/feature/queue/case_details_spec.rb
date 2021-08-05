@@ -2206,7 +2206,25 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
     end
-  end
+
+  #   context "when the current user does not have high enough sensitivity level" do
+  #     context "when case is a claim review" do
+  #       before do
+  #         let(:higher_level_review)
+  #         Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+
+  #         it "renders 403 error page" do
+  #           visit "/higher_level_review/#{higher_level_review.veteran_file_number}/edit"
+  #           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+  #           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
+  #         end
+  #       end
+  #     end
+
+  #     context "when case is an appeal" do
+  #     end
+  #   end
+  # end
 
   describe "POA/VSO restricted visibility" do
     let(:appeal) { create(:appeal) }

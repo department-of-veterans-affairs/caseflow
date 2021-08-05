@@ -168,7 +168,7 @@ feature "Intake", :all_dbs do
       expect(page).to have_content(COPY::INCIDENT_FLASH_ERROR_START)
     end
 
-    context "Veteran has too high of a sensitivity level for user" do
+    fcontext "Veteran has too high of a sensitivity level for user" do
       before do
         Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
       end
@@ -179,7 +179,6 @@ feature "Intake", :all_dbs do
         safe_click ".cf-submit.usa-button"
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
-
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("You don't have permission to view this Veteran's information")
       end

@@ -11,6 +11,14 @@ class ClaimReviewController < ApplicationController
   }.freeze
 
   def edit
+    # if !veteran.accessible?
+      return render "errors/403",
+                    layout: "application",
+                    status: :forbidden,
+                    locals: {
+                      error_title: "#{COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE}",
+                      error_detail: "#{COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL}" }
+    # end
     claim_review.validate_prior_to_edit
   rescue ActiveRecord::RecordNotFound => error
     raise error # re-throw so base controller handles it.

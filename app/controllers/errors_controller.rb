@@ -5,7 +5,7 @@ class ErrorsController < ApplicationController
 
   def show
     status_code = params[:status_code]
-    template_name = (status_code == "404") ? "errors/404" : "errors/500"
+    template_name = "errors/#{status_code}"
     render template: template_name, status: status_code, formats: :html
   end
 
