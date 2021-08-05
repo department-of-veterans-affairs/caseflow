@@ -104,7 +104,9 @@ class AddIssuesPage extends React.Component {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  requestIssuesWithoutDecisionDates(requestIssues) {
+  requestIssuesWithoutDecisionDates(intakeData) {
+    const requestIssues = formatRequestIssues(intakeData.requestIssues, intakeData.contestableIssues);
+
     return !requestIssues.every((issue) => issue.ratingIssueReferenceId ||
       issue.isUnidentified || issue.decisionDate);
   }
@@ -204,13 +206,12 @@ class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
-    const requestIssues = formatRequestIssues(intakeData.requestIssues, intakeData.contestableIssues);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
     }
 
-    if (this.requestIssuesWithoutDecisionDates(requestIssues)) {
+    if (intakeData && this.requestIssuesWithoutDecisionDates(intakeData)) {
       return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
 
