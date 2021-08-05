@@ -25,12 +25,17 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     return if name.nil?
 
     user = User.find_by_css_id(css_id)
+    return if user.nil?
 
+    # we get the name in the format "Last, First"
     split_name = name.split(", ")
-    full_name = "#{split_name[1]} #{split_name[0]}"
+    full_name = "#{split_name.last} #{split_name.first}"
 
-    # Last Name, First Name
-    user.present? && user.full_name.casecmp?(full_name)
+    # reverse the process in HearingDay.judge_first_name/judge_last_name
+    judge_split_name = user.full_name.split(" ")
+    judge_full_name = "#{judge_split_name.first} #{judge_split_name.last}"
+
+    judge_full_name.casecmp?(full_name)
   end
 
   def filter_judges_not_in_db
