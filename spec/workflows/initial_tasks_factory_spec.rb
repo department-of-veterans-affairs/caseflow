@@ -339,14 +339,14 @@ describe InitialTasksFactory, :postgres do
     end
 
     context "PreDocket Appeals" do
-        let!(:request_issue) do
-          create(
-            :request_issue,
-            decision_review: appeal,
-            benefit_type: "vha",
-            contested_issue_description: "PreDocket Issue"
-          )
-        end
+      let!(:request_issue) do
+        create(
+          :request_issue,
+          decision_review: appeal,
+          benefit_type: "vha",
+          contested_issue_description: "PreDocket Issue"
+        )
+      end
       subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
       it "creates a PreDocket Appeal in an on_hold status" do
         expect(PreDocketTask.all.count).to eq 0
