@@ -66,8 +66,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks both cases and assigns them to an attorney" do
         scroll_to(".usa-table-borderless")
-        check judge_task_one.id.to_s, allow_label_click: true
-        check judge_task_two.id.to_s, allow_label_click: true
+        page.find(:css, "input[name='#{judge_task_one.id}']", visible: false).execute_script("this.click()")
+        page.find(:css, "input[name='#{judge_task_two.id}']", visible: false).execute_script("this.click()")
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
@@ -86,7 +86,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks one case and assigns it to another attorney" do
         scroll_to(".usa-table-borderless")
-        check attorney_one.tasks.first.id.to_s, allow_label_click: true
+        page.find(:css, "input[name='#{attorney_one.tasks.first.id}']", visible: false).execute_script("this.click()")
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_two.full_name)
@@ -223,8 +223,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks both cases and assigns them to an attorney" do
         scroll_to(".usa-table-borderless")
-        check judge_task_one.id.to_s, allow_label_click: true
-        check judge_task_two.id.to_s, allow_label_click: true
+        page.find(:css, "input[name='#{judge_task_one.id}']", visible: false).execute_script("this.click()")
+        page.find(:css, "input[name='#{judge_task_two.id}']", visible: false).execute_script("this.click()")
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
