@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import * as Constants from '../constants';
 import { fetchAttorneys, formatAddress } from './utils';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, DOB_INVALID, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
@@ -55,8 +55,10 @@ export const ClaimantForm = ({
 }) => {
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue, errors } = methods;
-
+  const [selectedDOB, setSelectedDOB] = useState(null);
   const emailValidationError = errors ?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
+  const dobValidationError = errors ?.dateOfBirth && DOB_INVALID[errors.dateOfBirth.message];
+
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
@@ -84,11 +86,15 @@ export const ClaimantForm = ({
     }
   }, [watchRelationship]);
 
+  const onDOBChange = (option) => {
+    setSelectedDOB(option);
+  };
+
   return (
     <>
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
       <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
           name="relationship"
@@ -102,6 +108,7 @@ export const ClaimantForm = ({
                 onChange(valObj.value);
               }}
               strongLabel
+              styling={{ minWidth: '26em' }}
             />
           )}
         />
@@ -190,11 +197,17 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              <DateSelector
-                name="dateOfBirth"
-                label="Date of Birth"
-                type="date"
-              />
+              { partyType !== 'organization' &&
+                <DateSelector
+                  inputRef={register}
+                  name="dateOfBirth"
+                  label={<b>Date of Birth</b>}
+                  type="date"
+                  value={selectedDOB}
+                  onChange={onDOBChange}
+                  validationError={dobValidationError}
+                />
+              }
             </SuffixDOB>
           </>
         )}
@@ -240,7 +253,7 @@ export const ClaimantForm = ({
             strongLabel
           />
         )}
-      </form>
+      </Form>
     </>
   );
 };
@@ -257,7 +270,7 @@ ClaimantForm.propTypes = {
 
 const Form = styled.form`
   display: grid;
-  grid-template-columns: fit-content(50%);
+  grid-template-columns: fit-content(60%);
 `;
 
 const FieldDiv = styled.div`
