@@ -3,43 +3,37 @@
 RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
-  let!(:judge_stuart) do
-    create(:user, full_name: "Stuart Huels").tap do |user|
-      create(:staff, :judge_role, user: user, sattyid: "860")
-    end
-  end
-  let!(:judge_doris) do
-    create(:user, full_name: "Doris Lamphere").tap do |user|
-      create(:staff, :judge_role, user: user, sattyid: "861")
-    end
-  end
+  let!(:judge_stuart) { create(:user, full_name: "Stuart Huels", css_id: "BVAHUELS") }
+  let!(:judge_doris) { create(:user, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
 
-  let!(:hearing_days) do
-    create(:hearing_day,
-           request_type: HearingDay::REQUEST_TYPES[:video],
-           scheduled_for: Date.new(2018, 5, 1),
-           judge: judge_doris,
-           regional_office: "RO13")
-    create(:hearing_day,
-           request_type: HearingDay::REQUEST_TYPES[:video],
-           scheduled_for: Date.new(2018, 5, 8),
-           judge: judge_doris,
-           regional_office: "RO13")
-    create(:hearing_day,
-           request_type: HearingDay::REQUEST_TYPES[:video],
-           scheduled_for: Date.new(2018, 5, 15),
-           judge: judge_stuart,
-           regional_office: "RO13")
-    create(:hearing_day,
-           request_type: HearingDay::REQUEST_TYPES[:video],
-           scheduled_for: Date.new(2018, 5, 22),
-           judge: judge_stuart,
-           regional_office: "RO13")
-    create(:hearing_day,
-           request_type: HearingDay::REQUEST_TYPES[:video],
-           scheduled_for: Date.new(2018, 5, 29),
-           judge: judge_doris,
-           regional_office: "RO13")
+  shared_context "hearing_days" do
+    let!(:hearing_days) do
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
+             judge: judge_doris,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 8),
+             judge: judge_doris,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 15),
+             judge: judge_stuart,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
+             judge: judge_stuart,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 29),
+             judge: judge_doris,
+             regional_office: "RO13")
+    end
   end
 
   context "index" do
@@ -120,21 +114,24 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       expect(error["details"]).to include template_error
     end
 
-    it "stages hearing days for judge assignment" do
-      base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
-      post :create, params: {
-        schedule_period: {
-          type: "JudgeSchedulePeriod",
-          file_name: "fakeFileName.xlsx",
-          file: base64_header + Base64.encode64(File.open("spec/support/validJudgeSpreadsheet.xlsx").read)
+    context "judge assignment" do
+      include_context "hearing_days"
+      it "stages hearing days for judge assignment" do
+        base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+        post :create, params: {
+          schedule_period: {
+            type: "JudgeSchedulePeriod",
+            file_name: "fakeFileName.xlsx",
+            file: base64_header + Base64.encode64(File.open("spec/support/validJudgeSpreadsheet.xlsx").read)
+          }
         }
-      }
 
-      expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)
-      expect(response_body["hearing_days"].count).to eq 3
-      response_body["hearing_days"].each do |hearing_day|
-        expect(HearingDay.find(hearing_day["id"]).judge_id).not_to eq hearing_day["judge_id"]
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["hearing_days"].count).to eq 3
+        response_body["hearing_days"].each do |hearing_day|
+          expect(HearingDay.find(hearing_day["id"]).judge_css_id).not_to eq hearing_day["judge_css_id"]
+        end
       end
     end
 
@@ -144,14 +141,14 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
         schedule_period: {
           type: "JudgeSchedulePeriod",
           file_name: "fakeFileName.xlsx",
-          file: base64_header + Base64.encode64(File.open("spec/support/judgeNameIdMismatch.xlsx").read)
+          file: base64_header + Base64.encode64(File.open("spec/support/judgeNotInDb.xlsx").read)
         }
       }
 
       expect(response.status).to eq 400
       response_body = JSON.parse(response.body)
       expect(response_body["errors"][0]["title"]).to eq HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase.to_s
-      expect(response_body["errors"][0]["details"]).to eq "These judges are not in the database: [\"861\", \"860\"]"
+      expect(response_body["errors"][0]["details"]).to eq "These judges are not in the database: [\"456\"]"
     end
   end
 
@@ -169,7 +166,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       @controller = Hearings::HearingDayController.new
       get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
       expect(response).to be_successful
-      expect(JSON.parse(response.body)["hearings"].size).to eq(975)
+      expect(JSON.parse(response.body)["hearings"].size).to eq(970)
     end
 
     it "persist twice and second request should return an error" do
@@ -188,11 +185,17 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
   end
 
   context "assign judges to hearing days" do
+    before do
+      ActiveRecord::Base.connection.reset_pk_sequence!("hearing_days")
+    end
+
+    include_context "hearing_days"
+
     it "update judge assignments for a list of hearing day ids" do
       spreadsheet = Roo::Spreadsheet.open("spec/support/validJudgeSpreadsheet.xlsx", extension: :xlsx)
       spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
       judge_assignments = spreadsheet_data.judge_assignments.map do |assignment|
-        assignment[:judge_id] = assignment[:vlj_id]
+        assignment[:judge_css_id] = assignment[:judge_css_id]
         assignment
       end
 
@@ -205,8 +208,8 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       expect(response_body["success"]).to eq true
       judge_assignments.each do |assignment|
         hearing_day = HearingDay.find(assignment[:hearing_day_id])
-        judge = User.css_ids_by_vlj_ids(assignment[:judge_id])
-        expect(hearing_day.judge.css_id).to eq judge[assignment[:judge_id]][:css_id]
+        judge = User.find_by_css_id(assignment[:judge_css_id])
+        expect(hearing_day.judge.css_id).to eq judge.css_id
         expect(hearing_day.updated_by_id).to eq user.id
       end
     end

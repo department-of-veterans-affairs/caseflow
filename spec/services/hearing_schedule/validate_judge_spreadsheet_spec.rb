@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
-  before do
-    create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
-    create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
-  end
+  let!(:judge_stuart) { create(:user, full_name: "Stuart Huels", css_id: "BVAHUELS") }
+  let!(:judge_doris) { create(:user, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
 
   context "when the judge is not in the db" do
     subject do

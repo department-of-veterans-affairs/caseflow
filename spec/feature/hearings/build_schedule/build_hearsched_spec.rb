@@ -102,16 +102,8 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
   end
 
   context "Build Judge Hearing Schedule" do
-    let!(:judge_stuart) do
-      create(:user, full_name: "Stuart Huels").tap do |user|
-        create(:staff, :judge_role, user: user, sattyid: "860")
-      end
-    end
-    let!(:judge_doris) do
-      create(:user, full_name: "Doris Lamphere").tap do |user|
-        create(:staff, :judge_role, user: user, sattyid: "861")
-      end
-    end
+    let!(:judge_stuart) { create(:user, full_name: "Stuart Huels", css_id: "BVAHUELS") }
+    let!(:judge_doris) { create(:user, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
 
     let!(:hearing_days) do
       create(:hearing_day,
@@ -153,10 +145,10 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       visit "hearings/schedule/build"
       click_on "Upload files"
       find("label", text: "Judge assignment").click
-      attach_file("judge_file_upload", Rails.root + "spec/support/judgeNameIdMismatch.xlsx", visible: false)
+      attach_file("judge_file_upload", Rails.root + "spec/support/judgeNotInDb.xlsx", visible: false)
       click_on "Continue"
 
-      expect(page).to have_content("These judges are not in the database: [\"861\", \"860\"]", wait: 30)
+      expect(page).to have_content("These judges are not in the database: [\"456\"]", wait: 30)
     end
   end
 end

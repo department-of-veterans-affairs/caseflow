@@ -50,7 +50,7 @@ module HearingsConcerns
       hearing_days.map do |hearing_day|
         data = spreadsheet_data.judge_assignments.find { |day| day[:hearing_day_id] == hearing_day.id }
         result = hearing_day.to_hash
-        result[:judge_css_id] = data[:judge_css_id].to_i
+        result[:judge_css_id] = data[:judge_css_id]
         result[:judge_name] = data[:name]
         result
       end
@@ -60,8 +60,8 @@ module HearingsConcerns
       ActiveRecord::Base.transaction do
         begin
           hearing_days.each do |day|
-            hearing_day = HearingDay.find(day["hearing_day_id"])
-            hearing_day.update(judge: User.find_by_css_id(day["judge_css_id"]))
+            hearing_day = HearingDay.find(day["hearing_day_id"].to_i)
+            hearing_day.update(judge: User.find_by_css_id(day["judge_id"]))
           end
         rescue StandardError
           raise ActiveRecord::Rollback
