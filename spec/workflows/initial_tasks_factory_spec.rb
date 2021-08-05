@@ -337,5 +337,27 @@ describe InitialTasksFactory, :postgres do
         include_examples "creates mandate hold task if needed"
       end
     end
+
+    context "PreDocket Appeals" do
+        let!(:request_issue) do
+          create(
+            :request_issue,
+            decision_review: appeal,
+            benefit_type: "vha",
+            contested_issue_description: "PreDocket Issue"
+          )
+        end
+      subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+      it "creates a PreDocket Appeal in an on_hold status" do
+        expect(PreDocketTask.all.count).to eq 0
+
+        subject
+
+        expect(PreDocketTask.all.count).to eq 1
+        expect(PreDocketTask.first.appeal).to eq appeal
+        expect(PreDocketTask.first.assigned_to).to eq Bva.singleton
+        expect(PreDocketTask.first.status).to eq Constants.TASK_STATUSES.on_hold
+      end
+    end
   end
 end

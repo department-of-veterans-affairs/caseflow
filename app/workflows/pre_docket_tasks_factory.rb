@@ -7,7 +7,7 @@ class PreDocketTasksFactory
 
   def create_pre_docket_task!
     appeal = @parent.appeal
-    pre_docket_task = create!(
+    pre_docket_task = PreDocketTask.create!(
       appeal: appeal,
       assigned_to: Bva.singleton
     )
