@@ -25,7 +25,7 @@ class HearingSchedule::GetSpreadsheetData
   end
 
   def judge_assignments
-    dates = judge_non_availability_sheet.column(1).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
+    hearing_day_ids = judge_non_availability_sheet.column(1).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     css_ids = judge_non_availability_sheet.column(6).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     names = judge_non_availability_sheet.column(7).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
 
