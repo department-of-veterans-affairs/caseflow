@@ -12,7 +12,7 @@ export const ReadOnlyHearingTimeWithZone = ({
 }) => {
   useEffect(() => {
     if (hearingStartTime) {
-      onRender(moment(hearingStartTime).tz(timezone, true).
+      onRender(moment(hearingStartTime).tz(timezone).
         format('hh:mm'));
     }
   }, []);
@@ -22,7 +22,7 @@ export const ReadOnlyHearingTimeWithZone = ({
   }
 
   const zoneName = shortZoneName(timezone);
-  const dateTime = moment(hearingStartTime).tz(timezone, true);
+  const dateTime = moment(hearingStartTime).tz(timezone);
   let displayTime = `${dateTime.format('h:mm A')} ${zoneName}`;
 
   if (zoneName !== 'Eastern') {
