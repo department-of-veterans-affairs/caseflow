@@ -29,7 +29,7 @@ class HearingSchedule::GetSpreadsheetData
     css_ids = judge_non_availability_sheet.column(6).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     names = judge_non_availability_sheet.column(7).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
 
-    names.zip(css_ids, dates).map do |row|
+    names.zip(css_ids, hearing_day_ids).map do |row|
       { name: row[0]&.strip, judge_css_id: row[1]&.to_s&.strip, hearing_day_id: row[2] }
     end
   end
