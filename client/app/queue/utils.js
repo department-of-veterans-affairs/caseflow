@@ -58,7 +58,7 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   return {
     appealId,
     hearing: {
-      heldBy: hearing.held_by,
+      heldBy: hearing.held_by && hearing.held_by,
       viewedByJudge: hearing.viewed_by_judge,
       date: hearing.date,
       type: hearing.type,
@@ -304,7 +304,7 @@ export const prepareAppealIssuesForStore = (appeal) => {
 
 export const prepareAppealHearingsForStore = (appeal) =>
   appeal.attributes.hearings.map((hearing) => ({
-    heldBy: hearing.held_by,
+    heldBy: hearing.held_by && hearing.held_by,
     viewedByJudge: hearing.viewed_by_judge,
     date: hearing.date,
     type: hearing.type,

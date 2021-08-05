@@ -91,10 +91,6 @@ class CaseHearingsDetail extends React.PureComponent {
       {
         label: 'Date',
         value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-      },
-      {
-        label: 'Judge',
-        value: hearing.heldBy
       }
     );
 
