@@ -15,8 +15,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   context "_id is nil regardless of existence of associated record" do
     before do
-      sil.update_column(:appeal_id, nil)
-      sil.update_column(:appeal_type, nil)
+      sil.update_attribute(:appeal_id, nil)
+      sil.update_attribute(:appeal_type, nil)
       appeal.destroy! if [true, false].sample
     end
     it "does not send alert" do
@@ -35,7 +35,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   context "_id is nil but _type is non-nil" do
     before do
-      sil.update_column(:appeal_id, nil)
+      sil.update_attribute(:appeal_id, nil)
       appeal.destroy! if [true, false].sample
     end
     it "sends alert" do
@@ -106,7 +106,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     let(:claimant) { appeal.claimant }
     context "associated Person exists" do
       it "does not send alert" do
-        expect(claimant.person).not_to eq nil
+        expect(claimant.reload_person).not_to eq nil
         expect(Person.find_by_participant_id(claimant.participant_id)).not_to eq nil
         subject
         expect(slack_service).not_to have_received(:send_notification)
@@ -116,15 +116,14 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       before do
         claimant.person.destroy!
       end
-      # it "sends alert" do
-      #   expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
-      #   binding.pry
+      it "sends alert" do
+        expect(claimant.reload_person).to eq nil
+        expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
+        subject
 
-      #   subject
-
-      #   message = "Found SpecialIssueList record with nil appeal_id but non-nil appeal_type: [#{sil.id}]"
-      #   expect(slack_service).to have_received(:send_notification).with(message).once
-      # end
+        message = "Found Claimant orphaned record: [#{claimant.id}]"
+        expect(slack_service).to have_received(:send_notification).with(message).once
+      end
     end
   end
 end
