@@ -72,8 +72,8 @@ const exportHeaders = [
     key: 'regionalOffice' },
   { label: 'Room',
     key: 'room' },
-  { label: 'VLJ ID',
-    key: 'judgeId' },
+  { label: 'CSS ID',
+    key: 'judgeCssId' },
   { label: 'VLJ',
     key: 'vlj' }
 ];
@@ -175,7 +175,7 @@ class ListSchedule extends React.Component {
         readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
-        judgeId: hearingDay.judgeId,
+        judgeCssId: hearingDay.judgeCssId,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
         ...this.props.user.userCanViewAndDownloadHearingScheduledColumn &&
           { hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots) }
