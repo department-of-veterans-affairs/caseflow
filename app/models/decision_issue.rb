@@ -19,9 +19,8 @@ class DecisionIssue < CaseflowRecord
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
 
-  belongs_to :decision_review, polymorphic: true
   # provides ama_appeal and legacy_appeal
-  associate_with_appeal_class(DecisionReview)
+  associate_with_appeal_class(:decision_review)
   has_many :ama_decision_documents, -> { includes(:ama_decision_issues).references(:decision_issues) },
            through: :ama_appeal, source: :decision_documents
 

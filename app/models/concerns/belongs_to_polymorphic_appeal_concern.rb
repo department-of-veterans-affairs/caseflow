@@ -6,10 +6,17 @@ module BelongsToPolymorphicAppealConcern
   extend ActiveSupport::Concern
 
   class_methods do
+    Association = Struct.new(:foreign_type, :foreign_key)
     # call this after `belongs_to ..., polymorphic: true`
-    def associate_with_appeal_class(associated_class)
-      association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
-        .select_associations.first
+    def associate_with_appeal_class(associated_class_sym)
+      # associated_class_name = associated_class.to_s.underscore
+      associated_class_name = associated_class_sym.to_s
+      belongs_to associated_class_name.to_sym, polymorphic: true
+
+      association = Association.new(associated_class_name + "_type", associated_class_name + "_id")
+
+      # association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
+      #   .select_associations.first
 
       appeal_type_column = association.foreign_type
       scope :ama, -> { where(appeal_type_column => "Appeal") }
@@ -18,9 +25,9 @@ module BelongsToPolymorphicAppealConcern
       add_method_for_polymorphic_association("Appeal", association)
       add_method_for_polymorphic_association("LegacyAppeal", association)
 
-      if associated_class == DecisionReview
-        # add_method_for_polymorphic_association("SupplementalClaim", association)
-        # This breaks things: add_method_for_polymorphic_association("HigherLevelReview", association)
+      if associated_class_sym == :decision_review
+        add_method_for_polymorphic_association("SupplementalClaim", association)
+        add_method_for_polymorphic_association("HigherLevelReview", association)
       end
     end
 
