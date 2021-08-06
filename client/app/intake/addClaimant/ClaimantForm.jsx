@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import * as Constants from '../constants';
 import { fetchAttorneys, formatAddress } from './utils';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION, DOB_INVALID, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
@@ -55,10 +55,8 @@ export const ClaimantForm = ({
 }) => {
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue, errors } = methods;
-  const [selectedDOB, setSelectedDOB] = useState(null);
-  const emailValidationError = errors ?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
-  const dobValidationError = errors ?.dateOfBirth && DOB_INVALID[errors.dateOfBirth.message];
-
+  const emailValidationError = errors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
+  const dobValidationError = errors?.dateOfBirth && errors.dateOfBirth.message;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
@@ -86,10 +84,6 @@ export const ClaimantForm = ({
     }
   }, [watchRelationship]);
 
-  const onDOBChange = (option) => {
-    setSelectedDOB(option);
-  };
-
   return (
     <>
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
@@ -108,7 +102,7 @@ export const ClaimantForm = ({
                 onChange(valObj.value);
               }}
               strongLabel
-              styling={{ minWidth: '26em' }}
+              styling={{ minWidth: '30em' }}
             />
           )}
         />
@@ -119,39 +113,35 @@ export const ClaimantForm = ({
             name="listedAttorney"
             defaultValue={null}
             render={({ onChange, ...rest }) => (
-              <FieldDiv>
-                <SearchableDropdown
-                  {...rest}
-                  label="Claimant's name"
-                  filterOption={filterOption}
-                  async={asyncFn}
-                  defaultOptions
-                  debounce={250}
-                  strongLabel
-                  isClearable
-                  onChange={(valObj) => {
-                    onChange(valObj);
-                    setValue('listedAttorney', valObj);
-                  }}
-                  placeholder="Type to search..."
-                />
-              </FieldDiv>
+              <SearchableDropdown
+                {...rest}
+                label="Claimant's name"
+                filterOption={filterOption}
+                async={asyncFn}
+                defaultOptions
+                debounce={250}
+                strongLabel
+                isClearable
+                onChange={(valObj) => {
+                  onChange(valObj);
+                  setValue('listedAttorney', valObj);
+                }}
+                placeholder="Type to search..."
+              />
             )}
           />
         )}
 
         {listedAttorney && watchListedAttorney?.address && (
           <div>
-            <ClaimantAddress>
-              <strong>Claimant's address</strong>
-            </ClaimantAddress>
+            <strong>Claimant's address</strong>
             <br />
             <Address address={watchListedAttorney?.address} />
           </div>
         )}
 
         {showPartyType && (
-          <RadioField
+          <PartyType
             name="partyType"
             label="Is the claimant an organization or individual?"
             inputRef={register}
@@ -163,34 +153,28 @@ export const ClaimantForm = ({
         <br />
         {partyType === 'individual' && (
           <>
-            <FieldDiv>
-              <TextField
-                name="firstName"
-                label="First name"
-                inputRef={register}
-                strongLabel
-              />
-            </FieldDiv>
-            <FieldDiv>
-              <TextField
-                name="middleName"
-                label="Middle name/initial"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </FieldDiv>
-            <FieldDiv>
-              <TextField
-                name="lastName"
-                label="Last name"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </FieldDiv>
+            <FormField
+              name="firstName"
+              label="First name"
+              inputRef={register}
+              strongLabel
+            />
+            <FormField
+              name="middleName"
+              label="Middle name/initial"
+              inputRef={register}
+              optional
+              strongLabel
+            />
+            <FormField
+              name="lastName"
+              label="Last name"
+              inputRef={register}
+              optional
+              strongLabel
+            />
             <SuffixDOB>
-              <TextField
+              <FormField
                 name="suffix"
                 label="Suffix"
                 inputRef={register}
@@ -203,8 +187,6 @@ export const ClaimantForm = ({
                   name="dateOfBirth"
                   label={<b>Date of Birth</b>}
                   type="date"
-                  value={selectedDOB}
-                  onChange={onDOBChange}
                   validationError={dobValidationError}
                 />
               }
@@ -212,7 +194,7 @@ export const ClaimantForm = ({
           </>
         )}
         {partyType === 'organization' && (
-          <TextField
+          <FormField
             name="name"
             label="Organization name"
             inputRef={register}
@@ -222,18 +204,16 @@ export const ClaimantForm = ({
         {partyType && (
           <>
             <AddressForm {...methods} />
-            <FieldDiv>
-              <TextField
-                validationError={emailValidationError}
-                name="emailAddress"
-                label="Claimant email"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </FieldDiv>
+            <FormField
+              validationError={emailValidationError}
+              name="emailAddress"
+              label="Claimant email"
+              inputRef={register}
+              optional
+              strongLabel
+            />
             <PhoneNumber>
-              <TextField
+              <FormField
                 name="phoneNumber"
                 label="Phone number"
                 inputRef={register}
@@ -269,25 +249,27 @@ ClaimantForm.propTypes = {
 };
 
 const Form = styled.form`
+  align-items: end;
   display: grid;
   grid-template-columns: fit-content(60%);
 `;
 
-const FieldDiv = styled.div`
-  margin-bottom: 1.5em;
-`;
-
-const SuffixDOB = styled.div`
-  display: grid;
-  grid-gap: 17px;
-  grid-template-columns: 8em 1fr;
+const FormField = styled(TextField)`
+  max-width: 51rem;
+  margin-bottom: 1em;
 `;
 
 const PhoneNumber = styled.div`
   width: 240px;
-  margin-bottom: 1.5em;
+  margin-bottom: 2em;
 `;
 
-const ClaimantAddress = styled.div`
-  margin-top: 1.5em;
+const PartyType = styled(RadioField)`
+  margin-top: 2em;
+`;
+
+const SuffixDOB = styled.div`
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: 8em 1fr;
 `;
