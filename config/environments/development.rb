@@ -8,6 +8,9 @@ Rails.application.configure do
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
+  SqlTracker::Config.enabled = false
+
   # workaround https://groups.google.com/forum/#!topic/rubyonrails-security/IsQKvDqZdKw
   config.secret_key_base = SecureRandom.hex(64)
 
