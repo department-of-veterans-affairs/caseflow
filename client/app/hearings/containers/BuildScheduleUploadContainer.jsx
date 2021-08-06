@@ -99,7 +99,7 @@ export const BuildScheduleUploadContainer = (props) => {
     const data = assignments.map((assignment) => ({
       hearing_day_id: assignment.id,
       judge_name: assignment.judgeName,
-      judge_id: assignment.judgeId,
+      judge_css_id: assignment.judgeCssId,
     }));
 
     ApiUtil.patch('/hearings/schedule_periods/confirm_judge_assignments', { data: { schedule_period: data } }).
