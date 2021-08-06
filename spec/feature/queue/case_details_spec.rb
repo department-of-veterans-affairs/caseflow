@@ -2144,7 +2144,7 @@ RSpec.feature "Case details", :all_dbs do
     let(:veteran) { create(:veteran) }
     let(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
     let(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: veteran.file_number) }
-    let(:user) { create(:user) }
+    let(:user) { create(:intake_user) }
 
     before do
       User.authenticate!(user: user)
@@ -2221,6 +2221,14 @@ RSpec.feature "Case details", :all_dbs do
       context "when case is higher level review" do
         it "renders 403 error page" do
           visit "/higher_level_reviews/{#{higher_level_review.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
+        end
+      end
+
+      context "when case is supplemental claim" do
+        it "renders 403 error page" do
+          visit "/supplemental_claims/{#{supplemental_claim.uuid}/edit"
           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
         end
