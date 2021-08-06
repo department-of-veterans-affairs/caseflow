@@ -31,7 +31,7 @@ describe VirtualHearings::DeleteConferencesJob do
       it "updates the appropriate fields", :aggregate_failures do
         expect(Hearings::SendEmail).to receive(:new).with(
           virtual_hearing: virtual_hearing,
-          type: :cancellation
+          type: :convert_from_virtual_confirmation
         ).and_call_original
         expect(job).to receive(:send_cancellation_emails).with(virtual_hearing, :convert_from_virtual_confirmation).and_call_original
 

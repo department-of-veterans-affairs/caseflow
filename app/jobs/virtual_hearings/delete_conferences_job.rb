@@ -32,7 +32,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     Raven.capture_exception(exception: exception, extra: extra)
   end
 
-  def perform(email_type: :cancellation)
+  def perform(email_type: :convert_from_virtual_confirmation)
     ensure_current_user_is_set
     @exception_list = {} # reset on every perform
 
