@@ -18,7 +18,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
     end
   end
 
-  context "when judge non-availaility dates valid" do
+  context "when spreadsheet data is valid" do
     subject do
       HearingSchedule::ValidateJudgeSpreadsheet.new(
         HearingSchedule::GetSpreadsheetData.new(
