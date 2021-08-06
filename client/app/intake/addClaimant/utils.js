@@ -3,28 +3,21 @@ import PropTypes from 'prop-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import moment from 'moment';
 import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
 
 import { DOB_INVALID_ERRS } from 'app/../COPY';
 
-const { AGE_MIN_ERR, AGE_MAX_ERR, FUTURE_ERR } = DOB_INVALID_ERRS;
+const { AGE_MIN_ERR, AGE_MAX_ERR } = DOB_INVALID_ERRS;
 
 const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
 };
 
-const validateDOB = (date, age = null) => {
-  const cutoff = new Date();
-
-  if (!isNaN(age)) {
-    cutoff.setFullYear(cutoff.getFullYear() - age);
-  }
-
-  /* if age is 118 (max), assert chosen date isn't greater than max.
-    if age is 14, assert chosen date is before min */
-  return age === 118 ? date > cutoff : date < cutoff;
+const yearsFromToday = (age) => {
+  return moment().subtract(age, 'year');
 };
 
 export const schema = yup.object().shape({
@@ -43,9 +36,8 @@ export const schema = yup.object().shape({
   lastName: yup.string(),
   suffix: yup.string(),
   dateOfBirth: yup.date().
-    max(new Date(), FUTURE_ERR).
-    test('age', AGE_MIN_ERR, (date) => validateDOB(date, 14)).
-    test('age', AGE_MAX_ERR, (date) => validateDOB(date, 118)),
+    max(yearsFromToday(14), AGE_MIN_ERR).
+    min(yearsFromToday(118), AGE_MAX_ERR),
   name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
