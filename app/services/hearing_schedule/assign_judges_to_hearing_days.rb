@@ -34,8 +34,15 @@ class HearingSchedule::AssignJudgesToHearingDays
       ActiveRecord::Base.transaction do
         begin
           hearing_days.each do |day|
-            hearing_day = ::HearingDay.find(day["hearing_day_id"])
-            hearing_day.update(judge: User.find_by_css_id(day["judge_css_id"]))
+            hearing_day_id = day["hearing_day_id"]
+            judge_css_id = day["judge_css_id"]
+            next if hearing_day_id.blank? || judge_css_id.blank?
+
+            hearing_day = ::HearingDay.find(hearing_day_id)
+            judge_user = User.find_by_css_id(judge_css_id)
+            next if hearing_day.blank? || judge_user.blank?
+
+            hearing_day.update(judge: judge_user)
           end
         rescue StandardError
           raise ActiveRecord::Rollback
