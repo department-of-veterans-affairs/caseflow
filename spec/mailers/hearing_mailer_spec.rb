@@ -574,7 +574,7 @@ describe HearingMailer do
         include_context "convert_to_virtual_confirmation_email"
 
         it "sends an email to the appellant" do
-          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 0
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
       end
 
