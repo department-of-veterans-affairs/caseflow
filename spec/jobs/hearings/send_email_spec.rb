@@ -92,7 +92,7 @@ describe Hearings::SendEmail do
       end
 
       context "a cancellation email" do
-        let(:email_type) { :convert_from_virtual_confirmation}
+        let(:email_type) { :convert_from_virtual_confirmation }
 
         it "calls HearingMailer.cancellation for everyone but the judge", :aggregate_failures do
           # YES for veteran and representative

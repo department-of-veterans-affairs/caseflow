@@ -51,6 +51,7 @@ class Hearings::SendEmail
     false
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def email_for_recipient(recipient_info)
     args = {
       email_recipient: recipient_info,
@@ -76,6 +77,7 @@ class Hearings::SendEmail
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   # :nocov:
   def external_message_id(msg)
@@ -158,6 +160,7 @@ class Hearings::SendEmail
 
     type
   end
+
   # :nocov:
   def create_sent_hearing_email_event(recipient_info, external_id)
     # The "appellant" title is used in the email and is consistent whether or not the

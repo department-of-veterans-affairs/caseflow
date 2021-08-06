@@ -359,6 +359,7 @@ class BaseHearingUpdateForm
     end
   end
 
+  # :reek:ControlParameter
   def determine_email_type(action)
     if action == "create_virtual_hearing"
       if only_time_updated_or_timezone_updated?
