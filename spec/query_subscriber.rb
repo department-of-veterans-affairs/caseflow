@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# Alternative to the `SqlTracker` gem.
+# Used in RSpec tests to check efficiency of queries.
+
 class QuerySubscriber
   attr_reader :queries
 
@@ -11,7 +15,6 @@ class QuerySubscriber
     ActiveSupport::Notifications.subscribed(method(:call), "sql.active_record") do
       yield
     end
-    @queries
   end
 
   def call(_name, _started, _finished, _unique_id, payload)

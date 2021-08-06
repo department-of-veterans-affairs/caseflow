@@ -20,9 +20,8 @@ class DecisionDocument < CaseflowRecord
 
   delegate :veteran, to: :appeal
 
-  # belongs_to :appeal, polymorphic: true
-  # provides ama_appeal and legacy_appeal
-  associate_with_appeal_class(:appeal)
+  # Sets up belongs_to association with :decision_review and provides `ama_appeal` used by `has_many` call
+  associate_with_polymorphic(:appeal)
   has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
            through: :ama_appeal, source: :decision_issues
 

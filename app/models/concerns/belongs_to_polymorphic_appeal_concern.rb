@@ -6,26 +6,22 @@ module BelongsToPolymorphicAppealConcern
   extend ActiveSupport::Concern
 
   class_methods do
-    Association = Struct.new(:foreign_type, :foreign_key)
-    # call this after `belongs_to ..., polymorphic: true`
-    def associate_with_appeal_class(associated_class_sym)
-      # associated_class_name = associated_class.to_s.underscore
-      associated_class_name = associated_class_sym.to_s
-      belongs_to associated_class_name.to_sym, polymorphic: true
+    def associate_with_polymorphic(associated_class_symbol)
+      # Define polymorphic association before calling AssocationWrapper
+      belongs_to associated_class_symbol, polymorphic: true
 
-      association = Association.new(associated_class_name + "_type", associated_class_name + "_id")
+      associated_class = associated_class_symbol.to_s.classify.constantize
+      association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
+        .select_associations.first
 
-      # association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
-      #   .select_associations.first
-
-      appeal_type_column = association.foreign_type
-      scope :ama, -> { where(appeal_type_column => "Appeal") }
-      scope :legacy, -> { where(appeal_type_column => "LegacyAppeal") }
+      type_column = association.foreign_type
+      scope :ama, -> { where(type_column => "Appeal") }
+      scope :legacy, -> { where(type_column => "LegacyAppeal") }
 
       add_method_for_polymorphic_association("Appeal", association)
       add_method_for_polymorphic_association("LegacyAppeal", association)
 
-      if associated_class_sym == :decision_review
+      if associated_class_symbol == :decision_review
         add_method_for_polymorphic_association("SupplementalClaim", association)
         add_method_for_polymorphic_association("HigherLevelReview", association)
       end
@@ -43,14 +39,15 @@ module BelongsToPolymorphicAppealConcern
     #
     # For type_name = "SupplementalClaim", the method_name will be supplemental_claim.
     def add_method_for_polymorphic_association(type_name, association)
+      # Use `:ama_appeal` instead of `:appeal`
+      # because `.appeal` is already defined by `belongs_to associated_class_symbol, polymorphic: true` above
       method_name = (type_name == "Appeal") ? :ama_appeal : type_name.underscore.to_sym
+
       type_column = association.foreign_type
       id_column = association.foreign_key
-      # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different.
+      # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different
       self_table_name = table_name
 
-      # pp "#{self_table_name} #{method_name}"
-      # binding.pry if type_name == "HigherLevelReview"
       belongs_to method_name, -> { includes(self_table_name).where(self_table_name => { type_column => type_name }) },
                  class_name: type_name, foreign_key: id_column.to_s, optional: true
 

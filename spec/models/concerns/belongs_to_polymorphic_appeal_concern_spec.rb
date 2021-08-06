@@ -42,7 +42,7 @@ describe BelongsToPolymorphicAppealConcern do
         end
 
         it "queries efficiently" do
-          queries = query_subscriber.track do
+          query_subscriber.track do
             # To query for columns in both tables, must query using SQL (#2) or use pluck_to_hash (#3)
             query = DecisionDocument.ama.includes(:ama_decision_issues)
               .references(:decision_issues).references(:decision_documents)
@@ -64,7 +64,7 @@ describe BelongsToPolymorphicAppealConcern do
           end
 
           # 1 efficient SELECT query for each trial above
-          expect(queries.count).to eq 3
+          expect(query_subscriber.queries.count).to eq 3
           expect(query_subscriber.select_queries.size).to eq 3
         end
       end

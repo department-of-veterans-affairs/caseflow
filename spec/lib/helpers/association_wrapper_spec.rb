@@ -88,7 +88,7 @@ describe "AssocationWrapper" do
           expect(assoc.foreign_key).to eq "appeal_id"
         end
       end
-      context "for DecisionDocument class" do
+      context "for DecisionIssue class" do
         let(:target_class) { DecisionIssue }
         it "returns those with polymorphic belongs_to associations" do
           assocs = subject.associated_with_type(DecisionReview).select_associations
