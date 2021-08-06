@@ -4,7 +4,6 @@ require "query_subscriber"
 
 describe BelongsToPolymorphicAppealConcern do
   let!(:decision_doc) { create(:decision_document, appeal: create(:appeal, :with_decision_issue)) }
-  # TODO: add decis issues to leg appeal
   let!(:legacy_decision_doc) { create(:decision_document, appeal: create(:legacy_appeal)) }
 
   context "concern is included in DecisionDocument" do
@@ -69,9 +68,6 @@ describe BelongsToPolymorphicAppealConcern do
           expect(query_subscriber.select_queries.size).to eq 3
         end
       end
-    end
-
-    context "legacy appeal" do
     end
   end
 end
