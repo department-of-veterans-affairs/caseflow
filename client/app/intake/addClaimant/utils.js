@@ -7,6 +7,10 @@ import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
 
+import { DOB_INVALID_ERRS } from 'app/../COPY';
+
+const { AGE_MIN_ERR, AGE_MAX_ERR, FUTURE_ERR } = DOB_INVALID_ERRS;
+
 const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
 };
@@ -19,7 +23,7 @@ const validateDOB = (date, age = null) => {
   }
 
   /* if age is 118 (max), assert chosen date isn't greater than max.
-    if age is 14/future, assert chosen date is before min/future */
+    if age is 14, assert chosen date is before min */
   return age === 118 ? date > cutoff : date < cutoff;
 };
 
@@ -39,9 +43,9 @@ export const schema = yup.object().shape({
   lastName: yup.string(),
   suffix: yup.string(),
   dateOfBirth: yup.date().
-    test('not future', 'FUTURE', (date) => validateDOB(date)).
-    test('age', 'AGE_MIN', (date) => validateDOB(date, 14)).
-    test('age', 'AGE_MAX', (date) => validateDOB(date, 118)),
+    max(new Date(), FUTURE_ERR).
+    test('age', AGE_MIN_ERR, (date) => validateDOB(date, 14)).
+    test('age', AGE_MAX_ERR, (date) => validateDOB(date, 118)),
   name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
