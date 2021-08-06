@@ -11,7 +11,7 @@ import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import StatusMessage from '../../components/StatusMessage';
 import { formatDateStr } from '../../util/DateUtil';
-import { SPREADSHEET_TYPES, REQUEST_TYPE_LABELS } from '../constants';
+import { SPREADSHEET_TYPES } from '../constants';
 
 const tableStyling = css({
   '& > thead > tr > th': { backgroundColor: '#f1f1f1' },
