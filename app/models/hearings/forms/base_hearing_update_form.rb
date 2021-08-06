@@ -370,7 +370,7 @@ class BaseHearingUpdateForm
         "confirmation"
       end
     elsif action == "delete_virtual_hearing"
-      "cancellation"
+      "convert_from_virtual_confirmation"
     end
   end
 
