@@ -148,7 +148,8 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       attach_file("judge_file_upload", Rails.root + "spec/support/judgeNotInDb.xlsx", visible: false)
       click_on "Continue"
 
-      expect(page).to have_content("These judges are not in the database: [\"456\"]", wait: 30)
+      error_message = "These judges are not in the database: [[\"456\", \"Huels, Stuart\"]]"
+      expect(page).to have_content(error_message, wait: 30)
     end
   end
 end

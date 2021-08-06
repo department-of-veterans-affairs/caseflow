@@ -148,8 +148,10 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
 
       expect(response.status).to eq 400
       response_body = JSON.parse(response.body)
-      expect(response_body["errors"][0]["title"]).to eq HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase.to_s
-      expect(response_body["errors"][0]["details"]).to eq "These judges are not in the database: [\"456\"]"
+      error_title = HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase.to_s
+      expect(response_body["errors"][0]["title"]).to eq error_title
+      error_message = "These judges are not in the database: [[\"456\", \"Huels, Stuart\"]]"
+      expect(response_body["errors"][0]["details"]).to eq error_message
     end
   end
 
