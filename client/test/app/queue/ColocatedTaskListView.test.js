@@ -175,7 +175,7 @@ describe('ColocatedTaskListView', () => {
       const task1 = taskOnHold().attributes;
 
       // Switch to the appropriate tab
-      userEvent.click(screen.getByRole('tab', { name: /on hold/i }));
+      await userEvent.click(screen.getByRole('tab', { name: /on hold/i }));
 
       // Wait for new content to appear
       await waitFor(() => {
@@ -209,7 +209,7 @@ describe('ColocatedTaskListView', () => {
       const task2 = noOnHoldDurationTask().attributes;
 
       // Switch to the appropriate tab
-      userEvent.click(screen.getByRole('tab', { name: /on hold/i }));
+      await userEvent.click(screen.getByRole('tab', { name: /on hold/i }));
 
       // Wait for new content to appear
       await waitFor(() => {
