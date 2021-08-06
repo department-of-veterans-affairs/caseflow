@@ -188,6 +188,10 @@ class HearingDay < CaseflowRecord
     judge ? judge.full_name.split(" ").last : nil
   end
 
+  def judge_css_id
+    judge&.css_id
+  end
+
   private
 
   def assign_created_by_user
