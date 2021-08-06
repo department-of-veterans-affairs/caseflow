@@ -147,6 +147,17 @@ class Hearings::SendEmail
     true
   end
 
+  def sent_email_type(type)
+    if type.ends_with?("reminder")
+      return "reminder"
+    elsif type == "convert_to_virtual_confirmation"
+      return "confirmation"
+    elsif type == "convert_from_virtual_confirmation"
+      return "cancellation"
+    end
+
+    type
+  end
   # :nocov:
   def create_sent_hearing_email_event(recipient_info, external_id)
     # The "appellant" title is used in the email and is consistent whether or not the
@@ -158,7 +169,7 @@ class Hearings::SendEmail
 
     ::SentHearingEmailEvent.create!(
       hearing: hearing,
-      email_type: type.ends_with?("reminder") ? "reminder" : type,
+      email_type: sent_email_type(type),
       email_address: recipient_info.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient_info.title.downcase,
