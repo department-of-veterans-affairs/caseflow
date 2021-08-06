@@ -23,7 +23,7 @@ class HearingMailer < ActionMailer::Base
   def convert_to_virtual_confirmation(email_recipient:, virtual_hearing: nil)
     # Guard to prevent conversion to virtual emails from sending to the judge
     # :reek:RepeatedConditionals
-    return if recipient_is_judge?(email_recipient)
+    return confirmation(email_recipient) if recipient_is_judge?(email_recipient)
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
