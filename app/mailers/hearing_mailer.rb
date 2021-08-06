@@ -73,6 +73,7 @@ class HearingMailer < ActionMailer::Base
   attr_reader :recipient, :virtual_hearing
 
   def cancellation_subject
+    # :reek:RepeatedConditionals
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}"
@@ -118,6 +119,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def confirmation_subject
+    # :reek:RepeatedConditionals
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
