@@ -2,7 +2,6 @@
 
 class Hearings::SchedulePeriodsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
-  include HearingsConcerns::JudgeAssignment
 
   before_action :verify_build_hearing_schedule_access
 
@@ -54,7 +53,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
   def update
     if params[:schedule_period_id] == "confirm_judge_assignments"
       hearing_days = params["schedule_period"]
-      confirm_assignments(hearing_days)
+      HearingSchedule::AssignJudgesToHearingDays.confirm_assignments(hearing_days)
       render json: { success: true }
     elsif schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
@@ -87,50 +86,12 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
 
   def assign_hearing_days_or_create_schedule_period(create_params)
     if params["schedule_period"]["type"] == "JudgeSchedulePeriod"
-      hearing_days = assign_vljs_to_hearing_days(create_params)
+      spreadsheet_data = HearingSchedule::AssignJudgesToHearingDays.load_spreadsheet_data(create_params["file_name"])
+      hearing_days = HearingSchedule::AssignJudgesToHearingDays.stage_assignments(spreadsheet_data)
       render json: { hearing_days: hearing_days }
     else
       schedule_period = SchedulePeriod.create!(create_params)
       render json: { id: schedule_period.id }
-    end
-  end
-
-  def assign_vljs_to_hearing_days(assignments)
-    file_name = assignments["file_name"]
-    spreadsheet_location = File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)
-    s3_file_location = SchedulePeriod::S3_SUB_BUCKET + "/" + file_name
-
-    S3Service.fetch_file(s3_file_location, spreadsheet_location)
-    spreadsheet = Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)
-    spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
-
-    validate_spreadsheet = HearingSchedule::ValidateJudgeSpreadsheet.new(spreadsheet_data)
-    errors = validate_spreadsheet.validate
-    if errors.count > 0
-      errors.each { |error| fail error }
-    end
-
-    hearing_days = HearingDay.where(id: spreadsheet_data.judge_assignments.pluck(:hearing_day_id))
-
-    hearing_days.map do |hearing_day|
-      data = spreadsheet_data.judge_assignments.find { |day| day[:hearing_day_id] == hearing_day.id }
-      result = hearing_day.to_hash
-      result[:judge_css_id] = data[:judge_css_id].to_i
-      result[:judge_name] = data[:name]
-      result
-    end
-  end
-
-  def confirm_assignments(hearing_days)
-    ActiveRecord::Base.transaction do
-      begin
-        hearing_days.each do |day|
-          hearing_day = HearingDay.find(day["hearing_day_id"])
-          hearing_day.update(judge: User.find_by_css_id(day["judge_css_id"]))
-        end
-      rescue StandardError
-        raise ActiveRecord::Rollback
-      end
     end
   end
 
