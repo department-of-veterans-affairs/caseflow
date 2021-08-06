@@ -61,7 +61,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
   describe "attorney recommend docket switch" do
     let!(:docket_switch_mail_task) do
-      create(:docket_switch_mail_task, appeal: distributed_appeal, parent: distribution_task, assigned_to: cotb_attorney)
+      create(:docket_switch_mail_task, appeal: appeal, parent: root_task, assigned_to: cotb_attorney)
     end
     let!(:judge_assign_task) { create(:ama_judge_assign_task, assigned_to: judge, parent: root_task) }
     let!(:other_judges) do
@@ -104,7 +104,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
-      expect(judge_task.parent.type).to eq DistributionTask.name
+      expect(judge_task.parent.type).to eq RootTask.name
 
       # Switch to judge to verify instructions
       User.authenticate!(user: judge)
@@ -123,7 +123,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       create(
         :docket_switch_ruling_task,
         appeal: appeal,
-        parent: distribution_task,
+        parent: root_task,
         assigned_to: judge,
         instructions: ["**Summary:** Test\n\n**Draft letter:** [View link](http://example.com)"],
         assigned_by: cotb_attorney
