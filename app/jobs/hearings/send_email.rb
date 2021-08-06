@@ -51,7 +51,6 @@ class Hearings::SendEmail
     false
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def email_for_recipient(recipient_info)
     args = {
       email_recipient: recipient_info,
@@ -65,10 +64,6 @@ class Hearings::SendEmail
       HearingMailer.convert_to_virtual_confirmation(**args)
     when "convert_from_virtual_confirmation"
       HearingMailer.convert_from_virtual_confirmation(**args)
-    # This is possibly unnesecary, but leaving it in for now to catch any edge cases
-    # in theory all 'cancellation's should now be 'convert_from_virtual_confirmation'
-    when "cancellation"
-      HearingMailer.convert_from_virtual_confirmation(**args)
     when "updated_time_confirmation"
       HearingMailer.updated_time_confirmation(**args)
     when "appellant_reminder", "representative_reminder"
@@ -77,7 +72,6 @@ class Hearings::SendEmail
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # :nocov:
   def external_message_id(msg)
