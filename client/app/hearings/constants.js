@@ -153,3 +153,12 @@ export const ENDPOINT_NAMES = {
   HEARINGS_SCHEDULE: 'hearings-schedule',
   UPCOMING_HEARING_DAYS: 'upcoming-hearing-days'
 };
+
+/* eslint-disable id-length */
+export const REQUEST_TYPE_LABELS = {
+  R: 'Virtual',
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */
