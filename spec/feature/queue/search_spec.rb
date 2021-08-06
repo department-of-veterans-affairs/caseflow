@@ -482,14 +482,18 @@ feature "Search", :all_dbs do
     end
 
     context "when BGS can_access? is false" do
+      let!(:appeal_sub) do
+        create(:appellant_substitution, substitute_participant_id: 999, poa_participant_id: 99)
+      end
+      let(:substitute_appeal) { appeal_sub.target_appeal }
+      let!(:other_appeal_sub) { create(:appellant_substitution) }
+      let(:other_substitute_appeal) { other_appeal_sub.target_appeal }
       before do
         Fakes::BGSService.new.bust_can_access_cache(user, appeal.veteran_file_number)
         Fakes::BGSService.inaccessible_appeal_vbms_ids =
           [appeal.veteran_file_number, substitute_appeal.veteran_file_number]
         User.authenticate!(user: user)
       end
-
-      let(:user) { create(:user) }
 
       def perform_search(docket_number = appeal.docket_number)
         visit "/search"
@@ -499,13 +503,6 @@ feature "Search", :all_dbs do
 
       context "when user is VSO employee" do
         let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
-        let!(:appeal_sub) do
-          create(:appellant_substitution, substitute_participant_id: 999, poa_participant_id: 99)
-        end
-        let(:substitute_appeal) { appeal_sub.target_appeal }
-        let!(:other_appeal_sub) { create(:appellant_substitution) }
-        let(:other_substitute_appeal) { other_appeal_sub.target_appeal }
-
         it "displays a helpful error message on same page" do
           perform_search
           expect(page).to have_content("You do not have access to this claims file number")
