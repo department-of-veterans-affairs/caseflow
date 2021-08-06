@@ -1292,6 +1292,7 @@ components:
         - Beneficiary Travel | Mileage
         - Beneficiary Travel | Common Carrier
         - Beneficiary Travel | Special Mode
+        - Caregiver
         - Eligibility for Fee Basis Care
         - Indebtedness | Validity of Debt
         - Indebtedness | Waiver
