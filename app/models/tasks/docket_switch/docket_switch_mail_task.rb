@@ -24,13 +24,25 @@ class DocketSwitchMailTask < MailTask
       COPY::DOCKET_SWITCH_MAIL_TASK_LABEL
     end
 
+    def blocking?
+      true
+    end
+
+    def parent_if_blocking_task(parent_task)
+      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+        return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
+      end
+
+      parent_task
+    end
+
     def create_from_params(params, user)
-      parent_task = DistributionTask.open.find_by(appeal_id: params[:appeal].id)
+      parent_task = Task.find(params[:parent_id])
 
       verify_user_can_create!(user, parent_task)
 
       transaction do
-        if parent_task.is_a?(DistributionTask)
+        if parent_task.is_a?(RootTask)
           # Create a task assigned to the mail team with a child task so we can track how that child was created.
           parent_task = create!(
             appeal: parent_task.appeal,
@@ -50,7 +62,8 @@ class DocketSwitchMailTask < MailTask
     end
 
     def allow_creation?(user:, appeal:)
-      ClerkOfTheBoard.singleton.user_has_access?(user) && !appeal.outcoded?
+      # binding.pry
+      ClerkOfTheBoard.singleton.user_has_access?(user) && !appeal&.outcoded?
     end
 
     # This differs from the default behavior of `MailTask`

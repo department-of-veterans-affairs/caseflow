@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from 'app/queue/QueueActions';
 
-import { appealWithDetailSelector, distributionTasksForAppeal } from '../../selectors';
+import { appealWithDetailSelector, distributionTasksForAppeal, rootTasksForAppeal } from '../../selectors';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
@@ -44,6 +44,7 @@ export const RecommendDocketSwitchContainer = () => {
   const dispatch = useDispatch();
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
   const distributionTask = useSelector((state) => distributionTasksForAppeal(state, { appealId }))[0];
 
   const judges = useSelector((state) => state.queue.judges);
@@ -55,7 +56,6 @@ export const RecommendDocketSwitchContainer = () => {
       })),
     [judges]
   );
-
   // We want to default the judge selection to the VLJ currently assigned to the case, if exists
   const defaultJudgeId = useMemo(() => {
     // eslint-disable-next-line no-undefined
@@ -67,7 +67,7 @@ export const RecommendDocketSwitchContainer = () => {
 
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
-      parent_id: distributionTask.taskId,
+      parent_id: appeal.distributedToJudge ? rootTask.taskId : distributionTask.taskId,
       type: 'DocketSwitchRulingTask',
       external_id: appeal.externalId,
       instructions,
