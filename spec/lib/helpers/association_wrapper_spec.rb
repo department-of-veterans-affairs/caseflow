@@ -24,7 +24,7 @@ describe "AssocationWrapper" do
                  [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
                  [:task_timers, "TaskTimer", nil, nil, nil],
                  [:cached_appeal, "CachedAppeal", nil, nil, nil],
-                 [:ama_appeal, "Appeal", "Appeal", nil, nil], 
+                 [:ama_appeal, "Appeal", "Appeal", nil, nil],
                  [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil]
                ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
