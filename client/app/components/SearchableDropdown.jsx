@@ -5,6 +5,7 @@ import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 import _, { isPlainObject, isNull, kebabCase } from 'lodash';
 import classNames from 'classnames';
+import styled from 'styled-components';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
 
@@ -211,9 +212,9 @@ export class SearchableDropdown extends React.Component {
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
         <div className={dropdownClasses} {...dropdownStyling}>
-          <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
+          <Label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-          </label>
+          </Label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
@@ -406,5 +407,10 @@ SearchableDropdown.defaultProps = {
   filterOptions: undefined,
 };
 /* eslint-enable no-undefined */
+
+const Label = styled.label`
+  margin-top: 0.65em;
+  margin-bottom: 0.65em;
+`;
 
 export default SearchableDropdown;
