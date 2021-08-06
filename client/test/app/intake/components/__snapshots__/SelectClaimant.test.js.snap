@@ -7,7 +7,7 @@ exports[`SelectClaimant with default value props renders correctly 1`] = `
     style="margin-top: 10px;"
   >
     <fieldset
-      class="usa-fieldset-inputs cf-form-radio "
+      class="usa-fieldset-inputs"
     >
       <legend
         class=""
@@ -67,7 +67,7 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
     style="margin-top: 10px;"
   >
     <fieldset
-      class="usa-fieldset-inputs cf-form-radio "
+      class="usa-fieldset-inputs"
     >
       <legend
         class=""
@@ -119,7 +119,7 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
     </fieldset>
     <div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -203,7 +203,7 @@ exports[`SelectClaimant with formType renders correctly 1`] = `
     style="margin-top: 10px;"
   >
     <fieldset
-      class="usa-fieldset-inputs cf-form-radio "
+      class="usa-fieldset-inputs"
     >
       <legend
         class=""

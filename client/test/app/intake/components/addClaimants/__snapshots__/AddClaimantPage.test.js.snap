@@ -79,15 +79,18 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
       <p>
         You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.
       </p>
-      <form>
+      <form
+        class="sc-jSgupP doEqrB"
+      >
         <div
           class=""
         >
           <div
             class="cf-form-dropdown dropdown-relationship"
+            data-css-18osu17=""
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="relationship"
               id="relationship-label"
             >

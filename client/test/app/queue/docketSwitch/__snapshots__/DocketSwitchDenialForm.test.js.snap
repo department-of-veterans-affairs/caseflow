@@ -19,9 +19,10 @@ exports[`DocketSwitchDenialForm renders correctly 1`] = `
         Add the date and add any context for the denial of this switch.
       </div>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="receiptDate"
         >
           <strong>

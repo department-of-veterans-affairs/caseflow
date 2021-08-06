@@ -402,9 +402,10 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               value={null}
                             >
                               <div
-                                className="cf-form-textinput   "
+                                className="cf-form-textinput"
                               >
                                 <label
+                                  data-css-1v3njqr=""
                                   htmlFor="judgement-date"
                                 >
                                   <strong>
@@ -466,9 +467,10 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               value={null}
                             >
                               <div
-                                className="cf-form-textinput   "
+                                className="cf-form-textinput"
                               >
                                 <label
+                                  data-css-1v3njqr=""
                                   htmlFor="mandate-date"
                                 >
                                   <strong>
@@ -1023,9 +1025,10 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               value="03/27/2020"
                             >
                               <div
-                                className="cf-form-textinput   "
+                                className="cf-form-textinput"
                               >
                                 <label
+                                  data-css-1v3njqr=""
                                   htmlFor="judgement-date"
                                 >
                                   <strong>
@@ -1087,9 +1090,10 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               value="03/31/2019"
                             >
                               <div
-                                className="cf-form-textinput   "
+                                className="cf-form-textinput"
                               >
                                 <label
+                                  data-css-1v3njqr=""
                                   htmlFor="mandate-date"
                                 >
                                   <strong>

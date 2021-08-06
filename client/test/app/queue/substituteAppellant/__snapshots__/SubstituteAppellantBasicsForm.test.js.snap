@@ -18,9 +18,10 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
         </div>
       </section>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="substitutionDate"
         >
           <strong>
@@ -40,7 +41,7 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -135,9 +136,10 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
         </div>
       </section>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="substitutionDate"
         >
           <strong>
@@ -157,7 +159,7 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""

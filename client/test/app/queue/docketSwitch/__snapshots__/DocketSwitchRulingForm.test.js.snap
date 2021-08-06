@@ -78,7 +78,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
         data-css-1sbm5ab=""
       />
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -176,7 +176,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
             class="cf-form-dropdown dropdown-attorney"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="attorney"
               id="attorney-label"
             >

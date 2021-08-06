@@ -309,9 +309,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   value={null}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="docket-number"
                     >
                       <strong>
@@ -367,7 +368,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   value="1"
                 >
                   <fieldset
-                    className="usa-fieldset-inputs cf-form-radio-inline "
+                    className="usa-fieldset-inputs"
                   >
                     <legend
                       className=""
@@ -534,22 +535,28 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     <div
                       className="cf-form-dropdown dropdown-judge-dropdown"
                     >
-                      <label
+                      <styled.label
                         className="question-label"
                         htmlFor="judge-dropdown"
                         id="judge-dropdown-label"
                       >
-                        <strong>
-                          <FormLabel
-                            label="What is the CAVC judge's name?"
-                            name="What is the CAVC judge's name?"
-                          >
-                            <span>
-                              What is the CAVC judge's name?
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
+                        <label
+                          className="sc-bdfBwQ QKPFy question-label"
+                          htmlFor="judge-dropdown"
+                          id="judge-dropdown-label"
+                        >
+                          <strong>
+                            <FormLabel
+                              label="What is the CAVC judge's name?"
+                              name="What is the CAVC judge's name?"
+                            >
+                              <span>
+                                What is the CAVC judge's name?
+                              </span>
+                            </FormLabel>
+                          </strong>
+                        </label>
+                      </styled.label>
                       <div
                         className="cf-select"
                       >
@@ -3610,7 +3617,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   vertical={true}
                 >
                   <fieldset
-                    className="usa-fieldset-inputs cf-form-radio "
+                    className="usa-fieldset-inputs"
                     data-css-1m3edv2=""
                   >
                     <legend
@@ -3681,7 +3688,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   vertical={true}
                 >
                   <fieldset
-                    className="usa-fieldset-inputs cf-form-radio "
+                    className="usa-fieldset-inputs"
                     data-css-1m3edv2=""
                   >
                     <legend
@@ -3769,9 +3776,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     value={null}
                   >
                     <div
-                      className="cf-form-textinput   "
+                      className="cf-form-textinput"
                     >
                       <label
+                        data-css-1v3njqr=""
                         htmlFor="decision-date"
                       >
                         <strong>

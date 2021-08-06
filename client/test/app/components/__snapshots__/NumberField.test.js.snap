@@ -6,9 +6,10 @@ exports[`NumberField renders correctly 1`] = `
     class="cf-form-int-input"
   >
     <div
-      class="cf-form-textinput   "
+      class="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         for="number-things"
       >
         <span>

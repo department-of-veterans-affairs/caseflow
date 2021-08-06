@@ -17,9 +17,10 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="hearing-day-date   "
+            class="hearing-day-date"
           >
             <label
+              data-css-1v3njqr=""
               for="hearingDate"
             >
               <span>
@@ -45,7 +46,7 @@ Object {
               class="cf-form-dropdown dropdown-requestType"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="request-type"
                 id="request-type-label"
               >
@@ -224,9 +225,10 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="hearing-day-date   "
+          class="hearing-day-date"
         >
           <label
+            data-css-1v3njqr=""
             for="hearingDate"
           >
             <span>
@@ -252,7 +254,7 @@ Object {
             class="cf-form-dropdown dropdown-requestType"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="request-type"
               id="request-type-label"
             >
@@ -488,9 +490,10 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="hearing-day-date   "
+            class="hearing-day-date"
           >
             <label
+              data-css-1v3njqr=""
               for="hearingDate"
             >
               <span>
@@ -516,7 +519,7 @@ Object {
               class="cf-form-dropdown dropdown-requestType"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="request-type"
                 id="request-type-label"
               >
@@ -672,7 +675,7 @@ Object {
               class="cf-form-dropdown dropdown-regionalOffice"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="regional-office"
                 id="regional-office-label"
               >
@@ -770,7 +773,7 @@ Object {
               class="cf-form-dropdown dropdown-vlj"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="vlj"
                 id="vlj-label"
               >
@@ -871,7 +874,7 @@ Object {
               class="cf-form-dropdown dropdown-coordinator"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="coordinator"
                 id="coordinator-label"
               >
@@ -1029,9 +1032,10 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="hearing-day-date   "
+          class="hearing-day-date"
         >
           <label
+            data-css-1v3njqr=""
             for="hearingDate"
           >
             <span>
@@ -1057,7 +1061,7 @@ Object {
             class="cf-form-dropdown dropdown-requestType"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="request-type"
               id="request-type-label"
             >
@@ -1213,7 +1217,7 @@ Object {
             class="cf-form-dropdown dropdown-regionalOffice"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="regional-office"
               id="regional-office-label"
             >
@@ -1311,7 +1315,7 @@ Object {
             class="cf-form-dropdown dropdown-vlj"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="vlj"
               id="vlj-label"
             >
@@ -1412,7 +1416,7 @@ Object {
             class="cf-form-dropdown dropdown-coordinator"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="coordinator"
               id="coordinator-label"
             >
@@ -1627,9 +1631,10 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="hearing-day-date   "
+            class="hearing-day-date"
           >
             <label
+              data-css-1v3njqr=""
               for="hearingDate"
             >
               <span>
@@ -1655,7 +1660,7 @@ Object {
               class="cf-form-dropdown dropdown-requestType"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="request-type"
                 id="request-type-label"
               >
@@ -1808,7 +1813,7 @@ Object {
               class="cf-form-dropdown dropdown-regionalOffice"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="regional-office"
                 id="regional-office-label"
               >
@@ -1906,7 +1911,7 @@ Object {
               class="cf-form-dropdown dropdown-vlj"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="vlj"
                 id="vlj-label"
               >
@@ -2007,7 +2012,7 @@ Object {
               class="cf-form-dropdown dropdown-coordinator"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="coordinator"
                 id="coordinator-label"
               >
@@ -2165,9 +2170,10 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="hearing-day-date   "
+          class="hearing-day-date"
         >
           <label
+            data-css-1v3njqr=""
             for="hearingDate"
           >
             <span>
@@ -2193,7 +2199,7 @@ Object {
             class="cf-form-dropdown dropdown-requestType"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="request-type"
               id="request-type-label"
             >
@@ -2346,7 +2352,7 @@ Object {
             class="cf-form-dropdown dropdown-regionalOffice"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="regional-office"
               id="regional-office-label"
             >
@@ -2444,7 +2450,7 @@ Object {
             class="cf-form-dropdown dropdown-vlj"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="vlj"
               id="vlj-label"
             >
@@ -2545,7 +2551,7 @@ Object {
             class="cf-form-dropdown dropdown-coordinator"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="coordinator"
               id="coordinator-label"
             >
@@ -2757,9 +2763,10 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
         Add a Hearing Day
       </h1>
       <div
-        class="hearing-day-date   "
+        class="hearing-day-date"
       >
         <label
+          data-css-1v3njqr=""
           for="hearingDate"
         >
           <span>
@@ -2785,7 +2792,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
           class="cf-form-dropdown dropdown-requestType"
         >
           <label
-            class="question-label"
+            class="sc-bdfBwQ QKPFy question-label"
             for="request-type"
             id="request-type-label"
           >

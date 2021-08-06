@@ -130,7 +130,7 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                 strongLabel={true}
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio-inline "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""

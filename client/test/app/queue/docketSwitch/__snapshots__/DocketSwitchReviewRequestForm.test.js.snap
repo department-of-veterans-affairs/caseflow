@@ -19,9 +19,10 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
         Add the information based on how you are proceeding with this docket switch and the claimant's form.
       </div>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="receiptDate"
         >
           <strong>
@@ -41,7 +42,7 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -96,7 +97,7 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
         </div>
       </fieldset>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -211,9 +212,10 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
         Add the information based on how you are proceeding with this docket switch and the claimant's form.
       </div>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="receiptDate"
         >
           <strong>
@@ -233,7 +235,7 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -329,7 +331,7 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
         </div>
       </fieldset>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -444,9 +446,10 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
         Add the information based on how you are proceeding with this docket switch and the claimant's form.
       </div>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="receiptDate"
         >
           <strong>
@@ -466,7 +469,7 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""

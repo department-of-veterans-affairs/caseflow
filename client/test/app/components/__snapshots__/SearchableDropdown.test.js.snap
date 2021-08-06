@@ -9,7 +9,7 @@ exports[`SearchableDropdown renders correctly 1`] = `
       class="cf-form-dropdown dropdown-menuTest"
     >
       <label
-        class="question-label"
+        class="sc-bdfBwQ QKPFy question-label"
         for="menu-test"
         id="menu-test-label"
       >

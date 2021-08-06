@@ -63,9 +63,10 @@ exports[`EditNodDateModal renders correctly 1`] = `
               </div>
               <form>
                 <div
-                  class="cf-form-textinput   "
+                  class="cf-form-textinput"
                 >
                   <label
+                    data-css-1v3njqr=""
                     for="nodDate"
                   >
                     <strong>
@@ -91,7 +92,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
                     class="cf-form-dropdown dropdown-reason"
                   >
                     <label
-                      class="question-label"
+                      class="sc-bdfBwQ QKPFy question-label"
                       for="reason"
                       id="reason-label"
                     >

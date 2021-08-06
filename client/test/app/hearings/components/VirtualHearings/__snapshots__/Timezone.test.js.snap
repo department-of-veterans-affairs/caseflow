@@ -820,21 +820,27 @@ exports[`Timezone Can set timezone 1`] = `
         className="cf-form-dropdown dropdown-tz"
         data-css-1gh7024=""
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="tz"
           id="tz-label"
         >
-          <strong>
-            <FormLabel
-              name="tz"
-            >
-              <span>
-                tz
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="tz"
+            id="tz-label"
+          >
+            <strong>
+              <FormLabel
+                name="tz"
+              >
+                <span>
+                  tz
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -16900,21 +16906,27 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="timezone"
           id="timezone-label"
         >
-          <strong>
-            <FormLabel
-              name="Timezone"
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="timezone"
+            id="timezone-label"
+          >
+            <strong>
+              <FormLabel
+                name="Timezone"
+              >
+                <span>
+                  Timezone
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -32925,22 +32937,28 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="timezone"
           id="timezone-label"
         >
-          <strong>
-            <FormLabel
-              name="Timezone"
-              required={false}
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="timezone"
+            id="timezone-label"
+          >
+            <strong>
+              <FormLabel
+                name="Timezone"
+                required={false}
+              >
+                <span>
+                  Timezone
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -47128,21 +47146,27 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="timezone"
           id="timezone-label"
         >
-          <strong>
-            <FormLabel
-              name="Timezone"
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="timezone"
+            id="timezone-label"
+          >
+            <strong>
+              <FormLabel
+                name="Timezone"
+              >
+                <span>
+                  Timezone
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -63946,27 +63970,33 @@ exports[`Timezone Respects required prop 1`] = `
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="timezone"
           id="timezone-label"
         >
-          <strong>
-            <FormLabel
-              name="Timezone"
-              required={true}
-            >
-              <span>
-                Timezone
-                <span
-                  className="cf-required"
-                >
-                  Required
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="timezone"
+            id="timezone-label"
+          >
+            <strong>
+              <FormLabel
+                name="Timezone"
+                required={true}
+              >
+                <span>
+                  Timezone
+                  <span
+                    className="cf-required"
+                  >
+                    Required
+                  </span>
                 </span>
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >

@@ -66,22 +66,28 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
       <div
         className="cf-form-dropdown dropdown-hearingType"
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="hearing-type"
           id="hearing-type-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Type"
-              name="Hearing Type"
-            >
-              <span>
-                Hearing Type
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="hearing-type"
+            id="hearing-type-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Type"
+                name="Hearing Type"
+              >
+                <span>
+                  Hearing Type
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -1727,22 +1733,28 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
       <div
         className="cf-form-dropdown dropdown-hearingType"
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="hearing-type"
           id="hearing-type-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Type"
-              name="Hearing Type"
-            >
-              <span>
-                Hearing Type
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="hearing-type"
+            id="hearing-type-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Type"
+                name="Hearing Type"
+              >
+                <span>
+                  Hearing Type
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -3421,22 +3433,28 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       <div
         className="cf-form-dropdown dropdown-hearingType"
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="hearing-type"
           id="hearing-type-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Type"
-              name="Hearing Type"
-            >
-              <span>
-                Hearing Type
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="hearing-type"
+            id="hearing-type-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Type"
+                name="Hearing Type"
+              >
+                <span>
+                  Hearing Type
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -5130,22 +5148,28 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       <div
         className="cf-form-dropdown dropdown-hearingType"
       >
-        <label
+        <styled.label
           className="question-label"
           htmlFor="hearing-type"
           id="hearing-type-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Type"
-              name="Hearing Type"
-            >
-              <span>
-                Hearing Type
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label"
+            htmlFor="hearing-type"
+            id="hearing-type-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Type"
+                name="Hearing Type"
+              >
+                <span>
+                  Hearing Type
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >

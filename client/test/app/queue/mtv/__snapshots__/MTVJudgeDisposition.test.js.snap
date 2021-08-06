@@ -64,7 +64,7 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
         class="cf-help-divider"
       />
       <fieldset
-        class="mtv-disposition-selection cf-form-radio "
+        class="mtv-disposition-selection"
       >
         <legend
           class=""
@@ -304,7 +304,7 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
         class="cf-help-divider"
       />
       <fieldset
-        class="mtv-disposition-selection cf-form-radio "
+        class="mtv-disposition-selection"
       >
         <legend
           class=""
@@ -425,9 +425,10 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
         </div>
       </div>
       <div
-        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+        class="mtv-review-hyperlink cf-margin-bottom-2rem"
       >
         <label
+          data-css-1v3njqr=""
           for="hyperlink"
         >
           <strong>
@@ -568,7 +569,7 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
         class="cf-help-divider"
       />
       <fieldset
-        class="mtv-disposition-selection cf-form-radio "
+        class="mtv-disposition-selection"
       >
         <legend
           class=""
@@ -689,9 +690,10 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
         </div>
       </div>
       <div
-        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+        class="mtv-review-hyperlink cf-margin-bottom-2rem"
       >
         <label
+          data-css-1v3njqr=""
           for="hyperlink"
         >
           <strong>
@@ -832,7 +834,7 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
         class="cf-help-divider"
       />
       <fieldset
-        class="mtv-disposition-selection cf-form-radio "
+        class="mtv-disposition-selection"
       >
         <legend
           class=""
@@ -953,7 +955,7 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
         </div>
       </div>
       <fieldset
-        class="mtv-vacate-type cf-form-radio "
+        class="mtv-vacate-type"
       >
         <legend
           class=""
@@ -1054,7 +1056,7 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
           data-css-33yksw=""
         >
           <label
-            class="question-label"
+            class="sc-bdfBwQ QKPFy question-label"
             for="attorney"
             id="attorney-label"
           >
@@ -1242,7 +1244,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
         class="cf-help-divider"
       />
       <fieldset
-        class="mtv-disposition-selection cf-form-radio "
+        class="mtv-disposition-selection"
       >
         <legend
           class=""
@@ -1404,7 +1406,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
         </div>
       </div>
       <fieldset
-        class="mtv-vacate-type cf-form-radio "
+        class="mtv-vacate-type"
       >
         <legend
           class=""
@@ -1505,7 +1507,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           data-css-33yksw=""
         >
           <label
-            class="question-label"
+            class="sc-bdfBwQ QKPFy question-label"
             for="attorney"
             id="attorney-label"
           >

@@ -2341,9 +2341,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
     value="Bob.Smith@test.com"
   >
     <div
-      className="cf-form-textinput  usa-input-error "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="appellant-email"
       >
         <strong>
@@ -2395,9 +2396,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
     value="tom.brady@caseflow.gov"
   >
     <div
-      className="cf-form-textinput   "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="representative-email"
       >
         <strong>
@@ -2741,9 +2743,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
     value="Bob.Smith@test.com"
   >
     <div
-      className="cf-form-textinput   "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="appellant-email"
       >
         <strong>
@@ -2790,9 +2793,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
     value="tom.brady@caseflow.gov"
   >
     <div
-      className="cf-form-textinput   "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="representative-email"
       >
         <strong>
@@ -3178,9 +3182,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
     value="Bob.Smith@test.com"
   >
     <div
-      className="cf-form-textinput   "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="appellant-email"
       >
         <strong>
@@ -3228,9 +3233,10 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
     value="tom.brady@caseflow.gov"
   >
     <div
-      className="cf-form-textinput  usa-input-error "
+      className="cf-form-textinput"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="representative-email"
       >
         <strong>
@@ -6371,9 +6377,10 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     value="Bob.Smith@test.com"
                   >
                     <div
-                      className="cf-form-textinput   "
+                      className="cf-form-textinput"
                     >
                       <label
+                        data-css-1v3njqr=""
                         htmlFor="appellant-email"
                       >
                         <strong>
@@ -6423,9 +6430,10 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     value="tom.brady@caseflow.gov"
                   >
                     <div
-                      className="cf-form-textinput   "
+                      className="cf-form-textinput"
                     >
                       <label
+                        data-css-1v3njqr=""
                         htmlFor="representative-email"
                       >
                         <strong>

@@ -84,7 +84,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
           Representative
         </h2>
         <div
-          class="sc-eCssSg jjCqxh"
+          class="sc-jSgupP eqqcyQ"
         >
           <div
             class=""
@@ -93,7 +93,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
               class="cf-form-dropdown dropdown-listedAttorney"
             >
               <label
-                class="question-label"
+                class="sc-bdfBwQ QKPFy question-label"
                 for="listed-attorney"
                 id="listed-attorney-label"
               >

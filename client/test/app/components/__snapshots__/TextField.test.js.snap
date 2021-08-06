@@ -3,9 +3,10 @@
 exports[`TextField renders correctly 1`] = `
 <div>
   <div
-    class="cf-form-textinput   "
+    class="cf-form-textinput"
   >
     <label
+      data-css-1v3njqr=""
       for="field1"
     >
       <span>

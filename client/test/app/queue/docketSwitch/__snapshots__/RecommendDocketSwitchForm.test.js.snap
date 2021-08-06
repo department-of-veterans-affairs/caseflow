@@ -37,7 +37,7 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
         />
       </div>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -87,7 +87,7 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
         </div>
       </fieldset>
       <fieldset
-        class="usa-fieldset-inputs cf-form-radio "
+        class="usa-fieldset-inputs"
       >
         <legend
           class=""
@@ -158,9 +158,10 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
         </div>
       </fieldset>
       <div
-        class="cf-form-textinput   "
+        class="cf-form-textinput"
       >
         <label
+          data-css-1v3njqr=""
           for="hyperlink"
         >
           <strong>
@@ -187,7 +188,7 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
             class="cf-form-dropdown dropdown-judge"
           >
             <label
-              class="question-label"
+              class="sc-bdfBwQ QKPFy question-label"
               for="judge"
               id="judge-label"
             >

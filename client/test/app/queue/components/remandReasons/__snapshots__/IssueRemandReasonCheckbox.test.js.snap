@@ -27,7 +27,7 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
     </div>
   </div>
   <fieldset
-    class="usa-fieldset-inputs cf-form-radio "
+    class="usa-fieldset-inputs"
     data-css-10hr1g7=""
   >
     <legend

@@ -3,9 +3,10 @@
 exports[`DateSelector renders correctly 1`] = `
 <div>
   <div
-    class="cf-form-textinput   "
+    class="cf-form-textinput"
   >
     <label
+      data-css-1v3njqr=""
       for="date1"
     >
       <span>

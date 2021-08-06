@@ -221,7 +221,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                 value="other"
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""
@@ -705,22 +705,28 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                 <div
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
                 >
-                  <label
+                  <styled.label
                     className="question-label usa-sr-only"
                     htmlFor="optional-hearing-time-0"
                     id="optional-hearing-time-0-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Time"
-                        name="Hearing Time"
-                      >
-                        <span>
-                          Hearing Time
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label usa-sr-only"
+                      htmlFor="optional-hearing-time-0"
+                      id="optional-hearing-time-0-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Time"
+                          name="Hearing Time"
+                        >
+                          <span>
+                            Hearing Time
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -10203,22 +10209,28 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                 <div
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="optional-hearing-time-0"
                     id="optional-hearing-time-0-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Time"
-                        name="Hearing Time"
-                      >
-                        <span>
-                          Hearing Time
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="optional-hearing-time-0"
+                      id="optional-hearing-time-0-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Time"
+                          name="Hearing Time"
+                        >
+                          <span>
+                            Hearing Time
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -19645,28 +19657,34 @@ SAN FRANCISCO, CA 94103
                       className="cf-form-dropdown dropdown-appellantTz"
                       data-css-1gh7024=""
                     >
-                      <label
+                      <styled.label
                         className="question-label"
                         htmlFor="appellant-tz"
                         id="appellant-tz-label"
                       >
-                        <strong>
-                          <FormLabel
-                            label="Veteran Timezone"
-                            name="Veteran Timezone"
-                            required={true}
-                          >
-                            <span>
-                              Veteran Timezone
-                              <span
-                                className="cf-required"
-                              >
-                                Required
+                        <label
+                          className="sc-bdfBwQ QKPFy question-label"
+                          htmlFor="appellant-tz"
+                          id="appellant-tz-label"
+                        >
+                          <strong>
+                            <FormLabel
+                              label="Veteran Timezone"
+                              name="Veteran Timezone"
+                              required={true}
+                            >
+                              <span>
+                                Veteran Timezone
+                                <span
+                                  className="cf-required"
+                                >
+                                  Required
+                                </span>
                               </span>
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
+                            </FormLabel>
+                          </strong>
+                        </label>
+                      </styled.label>
                       <div
                         className="cf-select"
                       >
@@ -34985,9 +35003,10 @@ SAN FRANCISCO, CA 94103
                   value="Bob.Smith@test.com"
                 >
                   <div
-                    className="cf-form-textinput cf-inline-field   "
+                    className="cf-form-textinput cf-inline-field"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="Veteran Email"
                     >
                       <strong>
@@ -36019,28 +36038,34 @@ SAN FRANCISCO, CA 94103
                       className="cf-form-dropdown dropdown-representativeTz"
                       data-css-1gh7024=""
                     >
-                      <label
+                      <styled.label
                         className="question-label"
                         htmlFor="representative-tz"
                         id="representative-tz-label"
                       >
-                        <strong>
-                          <FormLabel
-                            label="POA/Representative Timezone"
-                            name="POA/Representative Timezone"
-                            required={true}
-                          >
-                            <span>
-                              POA/Representative Timezone
-                              <span
-                                className="cf-required"
-                              >
-                                Required
+                        <label
+                          className="sc-bdfBwQ QKPFy question-label"
+                          htmlFor="representative-tz"
+                          id="representative-tz-label"
+                        >
+                          <strong>
+                            <FormLabel
+                              label="POA/Representative Timezone"
+                              name="POA/Representative Timezone"
+                              required={true}
+                            >
+                              <span>
+                                POA/Representative Timezone
+                                <span
+                                  className="cf-required"
+                                >
+                                  Required
+                                </span>
                               </span>
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
+                            </FormLabel>
+                          </strong>
+                        </label>
+                      </styled.label>
                       <div
                         className="cf-select"
                       >
@@ -51357,9 +51382,10 @@ SAN FRANCISCO, CA 94103
                   value="tom.brady@caseflow.gov"
                 >
                   <div
-                    className="cf-form-textinput cf-inline-field   "
+                    className="cf-form-textinput cf-inline-field"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="POA/Representative Email"
                     >
                       <strong>
@@ -51453,22 +51479,28 @@ SAN FRANCISCO, CA 94103
                     <div
                       className="cf-form-dropdown dropdown-judgeDropdown"
                     >
-                      <label
+                      <styled.label
                         className="question-label"
                         htmlFor="judge-dropdown"
                         id="judge-dropdown-label"
                       >
-                        <strong>
-                          <FormLabel
-                            label="VLJ"
-                            name="VLJ"
-                          >
-                            <span>
-                              VLJ
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
+                        <label
+                          className="sc-bdfBwQ QKPFy question-label"
+                          htmlFor="judge-dropdown"
+                          id="judge-dropdown-label"
+                        >
+                          <strong>
+                            <FormLabel
+                              label="VLJ"
+                              name="VLJ"
+                            >
+                              <span>
+                                VLJ
+                              </span>
+                            </FormLabel>
+                          </strong>
+                        </label>
+                      </styled.label>
                       <div
                         className="cf-select"
                       >

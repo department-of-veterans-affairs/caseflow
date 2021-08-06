@@ -32,9 +32,10 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
     value="123@gmail.com"
   >
     <div
-      className="cf-form-textinput cf-inline-field   "
+      className="cf-form-textinput cf-inline-field"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="Appellant Email"
       >
         <strong>
@@ -122,9 +123,10 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
     value="123@gmail.com"
   >
     <div
-      className="cf-form-textinput cf-inline-field   "
+      className="cf-form-textinput cf-inline-field"
     >
       <label
+        data-css-1v3njqr=""
         htmlFor="Appellant Email"
       >
         <strong>

@@ -9,9 +9,10 @@ Object {
         style="display: inline-block;"
       >
         <div
-          class="page-progress-indicator-input   "
+          class="page-progress-indicator-input"
         >
           <label
+            data-css-1v3njqr=""
             for="page-progress-indicator-input"
           >
             <span>
@@ -35,9 +36,10 @@ Object {
       style="display: inline-block;"
     >
       <div
-        class="page-progress-indicator-input   "
+        class="page-progress-indicator-input"
       >
         <label
+          data-css-1v3njqr=""
           for="page-progress-indicator-input"
         >
           <span>

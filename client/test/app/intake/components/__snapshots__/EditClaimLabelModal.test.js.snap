@@ -68,7 +68,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                 class="cf-form-dropdown dropdown-select-claim-label"
               >
                 <label
-                  class="question-label"
+                  class="sc-bdfBwQ QKPFy question-label"
                   for="select-claim-label"
                   id="select-claim-label-label"
                 >

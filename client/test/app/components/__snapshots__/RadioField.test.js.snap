@@ -3,7 +3,7 @@
 exports[`RadioField renders correctly 1`] = `
 <div>
   <fieldset
-    class="usa-fieldset-inputs cf-form-radio "
+    class="usa-fieldset-inputs"
   >
     <legend
       class=""

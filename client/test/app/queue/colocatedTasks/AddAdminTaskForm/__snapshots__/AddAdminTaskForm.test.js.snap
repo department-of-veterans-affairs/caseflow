@@ -12,7 +12,7 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
         class="cf-form-dropdown dropdown-newTasks[0].type"
       >
         <label
-          class="question-label"
+          class="sc-bdfBwQ QKPFy question-label"
           for="new-tasks-0-type"
           id="new-tasks-0-type-label"
         >

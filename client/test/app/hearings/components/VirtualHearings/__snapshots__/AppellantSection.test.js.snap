@@ -214,9 +214,10 @@ SAN FRANCISCO, CA 94103
             value="Bob.Smith@test.com"
           >
             <div
-              className="cf-form-textinput cf-inline-field   "
+              className="cf-form-textinput cf-inline-field"
             >
               <label
+                data-css-1v3njqr=""
                 htmlFor="Appellant Email"
               >
                 <strong>
@@ -1683,28 +1684,34 @@ SAN FRANCISCO, CA 94103
                 className="cf-form-dropdown dropdown-appellantTz"
                 data-css-1gh7024=""
               >
-                <label
+                <styled.label
                   className="question-label"
                   htmlFor="appellant-tz"
                   id="appellant-tz-label"
                 >
-                  <strong>
-                    <FormLabel
-                      label="Veteran Timezone"
-                      name="Veteran Timezone"
-                      required={true}
-                    >
-                      <span>
-                        Veteran Timezone
-                        <span
-                          className="cf-required"
-                        >
-                          Required
+                  <label
+                    className="sc-bdfBwQ QKPFy question-label"
+                    htmlFor="appellant-tz"
+                    id="appellant-tz-label"
+                  >
+                    <strong>
+                      <FormLabel
+                        label="Veteran Timezone"
+                        name="Veteran Timezone"
+                        required={true}
+                      >
+                        <span>
+                          Veteran Timezone
+                          <span
+                            className="cf-required"
+                          >
+                            Required
+                          </span>
                         </span>
-                      </span>
-                    </FormLabel>
-                  </strong>
-                </label>
+                      </FormLabel>
+                    </strong>
+                  </label>
+                </styled.label>
                 <div
                   className="cf-select"
                 >
@@ -17005,9 +17012,10 @@ SAN FRANCISCO, CA 94103
             value="Bob.Smith@test.com"
           >
             <div
-              className="cf-form-textinput cf-inline-field   "
+              className="cf-form-textinput cf-inline-field"
             >
               <label
+                data-css-1v3njqr=""
                 htmlFor="Veteran Email"
               >
                 <strong>
@@ -17463,9 +17471,10 @@ SAN FRANCISCO, CA 94103
             value="Bob.Smith@test.com"
           >
             <div
-              className="cf-form-textinput cf-inline-field   "
+              className="cf-form-textinput cf-inline-field"
             >
               <label
+                data-css-1v3njqr=""
                 htmlFor="Veteran Email"
               >
                 <strong>

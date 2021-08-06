@@ -43,7 +43,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       value="other"
     >
       <fieldset
-        className="usa-fieldset-inputs cf-form-radio "
+        className="usa-fieldset-inputs"
       >
         <legend
           className=""
@@ -527,22 +527,28 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       <div
         className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
-        <label
+        <styled.label
           className="question-label usa-sr-only"
           htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Time"
-              name="Hearing Time"
-            >
-              <span>
-                Hearing Time
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label usa-sr-only"
+            htmlFor="optional-hearing-time-0"
+            id="optional-hearing-time-0-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Time"
+                name="Hearing Time"
+              >
+                <span>
+                  Hearing Time
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -8993,7 +8999,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
       value="12:30"
     >
       <fieldset
-        className="usa-fieldset-inputs cf-form-radio "
+        className="usa-fieldset-inputs"
       >
         <legend
           className=""
@@ -9118,7 +9124,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       value="other"
     >
       <fieldset
-        className="usa-fieldset-inputs cf-form-radio "
+        className="usa-fieldset-inputs"
       >
         <legend
           className=""
@@ -9602,22 +9608,28 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       <div
         className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
-        <label
+        <styled.label
           className="question-label usa-sr-only"
           htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Time"
-              name="Hearing Time"
-            >
-              <span>
-                Hearing Time
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label usa-sr-only"
+            htmlFor="optional-hearing-time-0"
+            id="optional-hearing-time-0-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Time"
+                name="Hearing Time"
+              >
+                <span>
+                  Hearing Time
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -18067,7 +18079,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       value="other"
     >
       <fieldset
-        className="usa-fieldset-inputs cf-form-radio "
+        className="usa-fieldset-inputs"
       >
         <legend
           className=""
@@ -18550,22 +18562,28 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       <div
         className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
-        <label
+        <styled.label
           className="question-label usa-sr-only"
           htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Time"
-              name="Hearing Time"
-            >
-              <span>
-                Hearing Time
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label usa-sr-only"
+            htmlFor="optional-hearing-time-0"
+            id="optional-hearing-time-0-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Time"
+                name="Hearing Time"
+              >
+                <span>
+                  Hearing Time
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >
@@ -26969,7 +26987,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       value="other"
     >
       <fieldset
-        className="usa-fieldset-inputs cf-form-radio "
+        className="usa-fieldset-inputs"
       >
         <legend
           className=""
@@ -27452,22 +27470,28 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       <div
         className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
-        <label
+        <styled.label
           className="question-label usa-sr-only"
           htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
-          <strong>
-            <FormLabel
-              label="Hearing Time"
-              name="Hearing Time"
-            >
-              <span>
-                Hearing Time
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+          <label
+            className="sc-bdfBwQ QKPFy question-label usa-sr-only"
+            htmlFor="optional-hearing-time-0"
+            id="optional-hearing-time-0-label"
+          >
+            <strong>
+              <FormLabel
+                label="Hearing Time"
+                name="Hearing Time"
+              >
+                <span>
+                  Hearing Time
+                </span>
+              </FormLabel>
+            </strong>
+          </label>
+        </styled.label>
         <div
           className="cf-select"
         >

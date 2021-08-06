@@ -134,22 +134,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   <div
                     className="cf-form-dropdown dropdown-judgeDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="judge-dropdown"
                       id="judge-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="VLJ"
-                          name="VLJ"
-                        >
-                          <span>
-                            VLJ
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="VLJ"
+                            name="VLJ"
+                          >
+                            <span>
+                              VLJ
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -1644,22 +1650,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   <div
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="hearing-coordinator-dropdown"
                       id="hearing-coordinator-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Hearing Coordinator"
-                          name="Hearing Coordinator"
-                        >
-                          <span>
-                            Hearing Coordinator
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="hearing-coordinator-dropdown"
+                        id="hearing-coordinator-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Hearing Coordinator"
+                            name="Hearing Coordinator"
+                          >
+                            <span>
+                              Hearing Coordinator
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -3261,22 +3273,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 <div
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-room-dropdown"
                     id="hearing-room-dropdown-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Room"
-                        name="Hearing Room"
-                      >
-                        <span>
-                          Hearing Room
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-room-dropdown"
+                      id="hearing-room-dropdown-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Room"
+                          name="Hearing Room"
+                        >
+                          <span>
+                            Hearing Room
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -7156,9 +7174,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 useAriaLabel={false}
               >
                 <div
-                  className="cf-form-textinput   "
+                  className="cf-form-textinput"
                 >
                   <label
+                    data-css-1v3njqr=""
                     htmlFor="taskNumber"
                   >
                     <strong>
@@ -7221,22 +7240,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   <div
                     className="cf-form-dropdown dropdown-transcriber"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="transcriber"
                       id="transcriber-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcriber"
-                          name="Transcriber"
-                        >
-                          <span>
-                            Transcriber
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="transcriber"
+                        id="transcriber-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcriber"
+                            name="Transcriber"
+                          >
+                            <span>
+                              Transcriber
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -9000,9 +9025,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
@@ -9059,9 +9085,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
@@ -9118,9 +9145,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
@@ -9205,22 +9233,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   <div
                     className="cf-form-dropdown dropdown-problemType"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="problem-type"
                       id="problem-type-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcription Problem Type"
-                          name="Transcription Problem Type"
-                        >
-                          <span>
-                            Transcription Problem Type
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="problem-type"
+                        id="problem-type-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcription Problem Type"
+                            name="Transcription Problem Type"
+                          >
+                            <span>
+                              Transcription Problem Type
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -11053,9 +11087,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
@@ -11126,7 +11161,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 value=""
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""
@@ -11382,9 +11417,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="copySentDate"
                     >
                       <strong>
@@ -11570,22 +11606,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   <div
                     className="cf-form-dropdown dropdown-judgeDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="judge-dropdown"
                       id="judge-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="VLJ"
-                          name="VLJ"
-                        >
-                          <span>
-                            VLJ
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="VLJ"
+                            name="VLJ"
+                          >
+                            <span>
+                              VLJ
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -13080,22 +13122,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   <div
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="hearing-coordinator-dropdown"
                       id="hearing-coordinator-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Hearing Coordinator"
-                          name="Hearing Coordinator"
-                        >
-                          <span>
-                            Hearing Coordinator
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="hearing-coordinator-dropdown"
+                        id="hearing-coordinator-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Hearing Coordinator"
+                            name="Hearing Coordinator"
+                          >
+                            <span>
+                              Hearing Coordinator
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -14697,22 +14745,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 <div
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-room-dropdown"
                     id="hearing-room-dropdown-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Room"
-                        name="Hearing Room"
-                      >
-                        <span>
-                          Hearing Room
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-room-dropdown"
+                      id="hearing-room-dropdown-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Room"
+                          name="Hearing Room"
+                        >
+                          <span>
+                            Hearing Room
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -18613,9 +18667,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 useAriaLabel={false}
               >
                 <div
-                  className="cf-form-textinput   "
+                  className="cf-form-textinput"
                 >
                   <label
+                    data-css-1v3njqr=""
                     htmlFor="taskNumber"
                   >
                     <strong>
@@ -18678,22 +18733,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   <div
                     className="cf-form-dropdown dropdown-transcriber"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="transcriber"
                       id="transcriber-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcriber"
-                          name="Transcriber"
-                        >
-                          <span>
-                            Transcriber
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="transcriber"
+                        id="transcriber-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcriber"
+                            name="Transcriber"
+                          >
+                            <span>
+                              Transcriber
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -20457,9 +20518,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
@@ -20516,9 +20578,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
@@ -20575,9 +20638,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
@@ -20662,22 +20726,28 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   <div
                     className="cf-form-dropdown dropdown-problemType"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="problem-type"
                       id="problem-type-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcription Problem Type"
-                          name="Transcription Problem Type"
-                        >
-                          <span>
-                            Transcription Problem Type
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="problem-type"
+                        id="problem-type-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcription Problem Type"
+                            name="Transcription Problem Type"
+                          >
+                            <span>
+                              Transcription Problem Type
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -22510,9 +22580,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
@@ -22583,7 +22654,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 value=""
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""
@@ -22849,9 +22920,10 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="copySentDate"
                     >
                       <strong>
@@ -23037,22 +23109,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-judgeDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="judge-dropdown"
                       id="judge-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="VLJ"
-                          name="VLJ"
-                        >
-                          <span>
-                            VLJ
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="VLJ"
+                            name="VLJ"
+                          >
+                            <span>
+                              VLJ
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -24547,22 +24625,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="hearing-coordinator-dropdown"
                       id="hearing-coordinator-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Hearing Coordinator"
-                          name="Hearing Coordinator"
-                        >
-                          <span>
-                            Hearing Coordinator
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="hearing-coordinator-dropdown"
+                        id="hearing-coordinator-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Hearing Coordinator"
+                            name="Hearing Coordinator"
+                          >
+                            <span>
+                              Hearing Coordinator
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -26164,22 +26248,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 <div
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-room-dropdown"
                     id="hearing-room-dropdown-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Room"
-                        name="Hearing Room"
-                      >
-                        <span>
-                          Hearing Room
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-room-dropdown"
+                      id="hearing-room-dropdown-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Room"
+                          name="Hearing Room"
+                        >
+                          <span>
+                            Hearing Room
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -29808,22 +29898,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-type"
                     id="hearing-type-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Type"
-                        name="Hearing Type"
-                      >
-                        <span>
-                          Hearing Type
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-type"
+                      id="hearing-type-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Type"
+                          name="Hearing Type"
+                        >
+                          <span>
+                            Hearing Type
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -31703,9 +31799,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 useAriaLabel={false}
               >
                 <div
-                  className="cf-form-textinput   "
+                  className="cf-form-textinput"
                 >
                   <label
+                    data-css-1v3njqr=""
                     htmlFor="taskNumber"
                   >
                     <strong>
@@ -31768,22 +31865,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-transcriber"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="transcriber"
                       id="transcriber-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcriber"
-                          name="Transcriber"
-                        >
-                          <span>
-                            Transcriber
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="transcriber"
+                        id="transcriber-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcriber"
+                            name="Transcriber"
+                          >
+                            <span>
+                              Transcriber
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -33547,9 +33650,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
@@ -33606,9 +33710,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
@@ -33665,9 +33770,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
@@ -33752,22 +33858,28 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-problemType"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="problem-type"
                       id="problem-type-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcription Problem Type"
-                          name="Transcription Problem Type"
-                        >
-                          <span>
-                            Transcription Problem Type
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="problem-type"
+                        id="problem-type-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcription Problem Type"
+                            name="Transcription Problem Type"
+                          >
+                            <span>
+                              Transcription Problem Type
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -35600,9 +35712,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
@@ -35673,7 +35786,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 value=""
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""
@@ -35939,9 +36052,10 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="copySentDate"
                     >
                       <strong>
@@ -36128,22 +36242,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-judgeDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="judge-dropdown"
                       id="judge-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="VLJ"
-                          name="VLJ"
-                        >
-                          <span>
-                            VLJ
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="VLJ"
+                            name="VLJ"
+                          >
+                            <span>
+                              VLJ
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -37638,22 +37758,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="hearing-coordinator-dropdown"
                       id="hearing-coordinator-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Hearing Coordinator"
-                          name="Hearing Coordinator"
-                        >
-                          <span>
-                            Hearing Coordinator
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="hearing-coordinator-dropdown"
+                        id="hearing-coordinator-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Hearing Coordinator"
+                            name="Hearing Coordinator"
+                          >
+                            <span>
+                              Hearing Coordinator
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -39255,22 +39381,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 <div
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-room-dropdown"
                     id="hearing-room-dropdown-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Room"
-                        name="Hearing Room"
-                      >
-                        <span>
-                          Hearing Room
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-room-dropdown"
+                      id="hearing-room-dropdown-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Room"
+                          name="Hearing Room"
+                        >
+                          <span>
+                            Hearing Room
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -42899,22 +43031,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-type"
                     id="hearing-type-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Type"
-                        name="Hearing Type"
-                      >
-                        <span>
-                          Hearing Type
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-type"
+                      id="hearing-type-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Type"
+                          name="Hearing Type"
+                        >
+                          <span>
+                            Hearing Type
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -44794,9 +44932,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 useAriaLabel={false}
               >
                 <div
-                  className="cf-form-textinput   "
+                  className="cf-form-textinput"
                 >
                   <label
+                    data-css-1v3njqr=""
                     htmlFor="taskNumber"
                   >
                     <strong>
@@ -44859,22 +44998,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-transcriber"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="transcriber"
                       id="transcriber-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcriber"
-                          name="Transcriber"
-                        >
-                          <span>
-                            Transcriber
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="transcriber"
+                        id="transcriber-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcriber"
+                            name="Transcriber"
+                          >
+                            <span>
+                              Transcriber
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -46638,9 +46783,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
@@ -46697,9 +46843,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
@@ -46756,9 +46903,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
@@ -46843,22 +46991,28 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-problemType"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="problem-type"
                       id="problem-type-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Transcription Problem Type"
-                          name="Transcription Problem Type"
-                        >
-                          <span>
-                            Transcription Problem Type
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="problem-type"
+                        id="problem-type-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Transcription Problem Type"
+                            name="Transcription Problem Type"
+                          >
+                            <span>
+                              Transcription Problem Type
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -48691,9 +48845,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
@@ -48764,7 +48919,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 value=""
               >
                 <fieldset
-                  className="usa-fieldset-inputs cf-form-radio "
+                  className="usa-fieldset-inputs"
                 >
                   <legend
                     className=""
@@ -49030,9 +49185,10 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   useAriaLabel={false}
                 >
                   <div
-                    className="cf-form-textinput   "
+                    className="cf-form-textinput"
                   >
                     <label
+                      data-css-1v3njqr=""
                       htmlFor="copySentDate"
                     >
                       <strong>
@@ -49219,22 +49375,28 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-judgeDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="judge-dropdown"
                       id="judge-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="VLJ"
-                          name="VLJ"
-                        >
-                          <span>
-                            VLJ
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="VLJ"
+                            name="VLJ"
+                          >
+                            <span>
+                              VLJ
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -50729,22 +50891,28 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   <div
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
-                    <label
+                    <styled.label
                       className="question-label"
                       htmlFor="hearing-coordinator-dropdown"
                       id="hearing-coordinator-dropdown-label"
                     >
-                      <strong>
-                        <FormLabel
-                          label="Hearing Coordinator"
-                          name="Hearing Coordinator"
-                        >
-                          <span>
-                            Hearing Coordinator
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
+                      <label
+                        className="sc-bdfBwQ QKPFy question-label"
+                        htmlFor="hearing-coordinator-dropdown"
+                        id="hearing-coordinator-dropdown-label"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Hearing Coordinator"
+                            name="Hearing Coordinator"
+                          >
+                            <span>
+                              Hearing Coordinator
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                    </styled.label>
                     <div
                       className="cf-select"
                     >
@@ -52346,22 +52514,28 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 <div
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-room-dropdown"
                     id="hearing-room-dropdown-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Room"
-                        name="Hearing Room"
-                      >
-                        <span>
-                          Hearing Room
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-room-dropdown"
+                      id="hearing-room-dropdown-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Room"
+                          name="Hearing Room"
+                        >
+                          <span>
+                            Hearing Room
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >
@@ -55990,22 +56164,28 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
                 >
-                  <label
+                  <styled.label
                     className="question-label"
                     htmlFor="hearing-type"
                     id="hearing-type-label"
                   >
-                    <strong>
-                      <FormLabel
-                        label="Hearing Type"
-                        name="Hearing Type"
-                      >
-                        <span>
-                          Hearing Type
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
+                    <label
+                      className="sc-bdfBwQ QKPFy question-label"
+                      htmlFor="hearing-type"
+                      id="hearing-type-label"
+                    >
+                      <strong>
+                        <FormLabel
+                          label="Hearing Type"
+                          name="Hearing Type"
+                        >
+                          <span>
+                            Hearing Type
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                  </styled.label>
                   <div
                     className="cf-select"
                   >

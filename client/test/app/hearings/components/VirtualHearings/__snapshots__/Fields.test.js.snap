@@ -842,28 +842,34 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               className="cf-form-dropdown dropdown-appellantTz"
               data-css-1gh7024=""
             >
-              <label
+              <styled.label
                 className="question-label"
                 htmlFor="appellant-tz"
                 id="appellant-tz-label"
               >
-                <strong>
-                  <FormLabel
-                    label="Veteran Timezone"
-                    name="Veteran Timezone"
-                    required={true}
-                  >
-                    <span>
-                      Veteran Timezone
-                      <span
-                        className="cf-required"
-                      >
-                        Required
+                <label
+                  className="sc-bdfBwQ QKPFy question-label"
+                  htmlFor="appellant-tz"
+                  id="appellant-tz-label"
+                >
+                  <strong>
+                    <FormLabel
+                      label="Veteran Timezone"
+                      name="Veteran Timezone"
+                      required={true}
+                    >
+                      <span>
+                        Veteran Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
+                    </FormLabel>
+                  </strong>
+                </label>
+              </styled.label>
               <div
                 className="cf-select"
               >
@@ -16157,9 +16163,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           value="Bob.Smith@test.com"
         >
           <div
-            className="cf-form-textinput cf-inline-field   "
+            className="cf-form-textinput cf-inline-field"
           >
             <label
+              data-css-1v3njqr=""
               htmlFor="Veteran Email"
             >
               <strong>
@@ -17026,28 +17033,34 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               className="cf-form-dropdown dropdown-representativeTz"
               data-css-1gh7024=""
             >
-              <label
+              <styled.label
                 className="question-label"
                 htmlFor="representative-tz"
                 id="representative-tz-label"
               >
-                <strong>
-                  <FormLabel
-                    label="POA/Representative Timezone"
-                    name="POA/Representative Timezone"
-                    required={true}
-                  >
-                    <span>
-                      POA/Representative Timezone
-                      <span
-                        className="cf-required"
-                      >
-                        Required
+                <label
+                  className="sc-bdfBwQ QKPFy question-label"
+                  htmlFor="representative-tz"
+                  id="representative-tz-label"
+                >
+                  <strong>
+                    <FormLabel
+                      label="POA/Representative Timezone"
+                      name="POA/Representative Timezone"
+                      required={true}
+                    >
+                      <span>
+                        POA/Representative Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
+                    </FormLabel>
+                  </strong>
+                </label>
+              </styled.label>
               <div
                 className="cf-select"
               >
@@ -32341,9 +32354,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           value="tom.brady@caseflow.gov"
         >
           <div
-            className="cf-form-textinput cf-inline-field   "
+            className="cf-form-textinput cf-inline-field"
           >
             <label
+              data-css-1v3njqr=""
               htmlFor="POA/Representative Email"
             >
               <strong>
@@ -33229,28 +33243,34 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               className="cf-form-dropdown dropdown-appellantTz"
               data-css-1gh7024=""
             >
-              <label
+              <styled.label
                 className="question-label"
                 htmlFor="appellant-tz"
                 id="appellant-tz-label"
               >
-                <strong>
-                  <FormLabel
-                    label="Veteran Timezone"
-                    name="Veteran Timezone"
-                    required={true}
-                  >
-                    <span>
-                      Veteran Timezone
-                      <span
-                        className="cf-required"
-                      >
-                        Required
+                <label
+                  className="sc-bdfBwQ QKPFy question-label"
+                  htmlFor="appellant-tz"
+                  id="appellant-tz-label"
+                >
+                  <strong>
+                    <FormLabel
+                      label="Veteran Timezone"
+                      name="Veteran Timezone"
+                      required={true}
+                    >
+                      <span>
+                        Veteran Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
+                    </FormLabel>
+                  </strong>
+                </label>
+              </styled.label>
               <div
                 className="cf-select"
               >
@@ -48544,9 +48564,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           value="Bob.Smith@test.com"
         >
           <div
-            className="cf-form-textinput cf-inline-field   "
+            className="cf-form-textinput cf-inline-field"
           >
             <label
+              data-css-1v3njqr=""
               htmlFor="Veteran Email"
             >
               <strong>
@@ -49413,28 +49434,34 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               className="cf-form-dropdown dropdown-representativeTz"
               data-css-1gh7024=""
             >
-              <label
+              <styled.label
                 className="question-label"
                 htmlFor="representative-tz"
                 id="representative-tz-label"
               >
-                <strong>
-                  <FormLabel
-                    label="POA/Representative Timezone"
-                    name="POA/Representative Timezone"
-                    required={true}
-                  >
-                    <span>
-                      POA/Representative Timezone
-                      <span
-                        className="cf-required"
-                      >
-                        Required
+                <label
+                  className="sc-bdfBwQ QKPFy question-label"
+                  htmlFor="representative-tz"
+                  id="representative-tz-label"
+                >
+                  <strong>
+                    <FormLabel
+                      label="POA/Representative Timezone"
+                      name="POA/Representative Timezone"
+                      required={true}
+                    >
+                      <span>
+                        POA/Representative Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
+                    </FormLabel>
+                  </strong>
+                </label>
+              </styled.label>
               <div
                 className="cf-select"
               >
@@ -64728,9 +64755,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           value="tom.brady@caseflow.gov"
         >
           <div
-            className="cf-form-textinput cf-inline-field   "
+            className="cf-form-textinput cf-inline-field"
           >
             <label
+              data-css-1v3njqr=""
               htmlFor="POA/Representative Email"
             >
               <strong>
