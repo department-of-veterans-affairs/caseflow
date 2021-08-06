@@ -2,7 +2,6 @@
 
 class Hearings::SchedulePeriodsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
-  include HearingsConcerns::JudgeAssignment
 
   before_action :verify_build_hearing_schedule_access
 
