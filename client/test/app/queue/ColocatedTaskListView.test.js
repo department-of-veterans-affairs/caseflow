@@ -111,8 +111,7 @@ describe('ColocatedTaskListView', () => {
       const [
         hearings,
         caseDetails,
-        columnTasks,
-        types,
+        columnTasks, types,
         docketNumber,
         numberDaysOnHold,
         documents,
@@ -144,9 +143,9 @@ describe('ColocatedTaskListView', () => {
         )
       );
 
-      // expect(
-      //   within(documents).getByText(/Loading number of docs/i)
-      // ).toBeInTheDocument();
+      expect(
+        within(documents).getByText(/View docs/i)
+      ).toBeInTheDocument();
     });
 
     it('shows the correct info for the completed hold task', async () => {
@@ -290,9 +289,9 @@ describe('ColocatedTaskListView', () => {
         )
       );
 
-      // expect(
-      //   within(documents).getByText(/Loading number of docs/i)
-      // ).toBeInTheDocument();
+      expect(
+        within(documents).getByText(/View docs/i)
+      ).toBeInTheDocument();
     });
 
     it('shows the correct info for the on-hold task with no duration', async () => {
