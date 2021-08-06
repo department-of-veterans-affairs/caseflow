@@ -3,7 +3,7 @@
 require "query_subscriber"
 
 describe BelongsToPolymorphicAppealConcern do
-  let!(:decision_doc) { create(:decision_document, appeal: create(:appeal, :with_decision_issue)) }
+  let!(:decision_doc) { create(:decision_document, appeal: create(:appeal, :with_decision_issue, :at_bva_dispatch)) }
   let!(:legacy_decision_doc) { create(:decision_document, appeal: create(:legacy_appeal)) }
 
   context "concern is included in DecisionDocument" do
@@ -67,6 +67,52 @@ describe BelongsToPolymorphicAppealConcern do
           expect(query_subscriber.queries.count).to eq 3
           expect(query_subscriber.select_queries.size).to eq 3
         end
+      end
+    end
+  end
+
+  context "concern is included in Task" do
+    let(:task) { decision_doc.appeal.tasks.sample }
+
+    before { Colocated.singleton.add_user(create(:user)) }
+    let!(:legacy_task) { create(:colocated_task, appeal: legacy_decision_doc.appeal) }
+
+    it "`ama_appeal` returns the AMA appeal" do
+      expect(task.ama_appeal).to eq decision_doc.appeal
+    end
+
+    it "`legacy_appeal` returns the legacy appeal" do
+      expect(legacy_task.legacy_appeal).to eq legacy_decision_doc.appeal
+    end
+
+    it "scope `ama` returns AMA-associated Tasks" do
+      expect(Task.ama).to match_array Task.where(appeal_type: "Appeal")
+    end
+
+    it "scope `legacy` returns legacy-associated Tasks" do
+      expect(Task.legacy).to match_array Task.where(appeal_type: "LegacyAppeal")
+    end
+
+    context "when querying for appeal data for all Tasks" do
+      let(:query_subscriber) { QuerySubscriber.new }
+      before { 4.times { create(:appeal, :with_decision_issue, :at_bva_dispatch) } }
+
+      it "queries efficiently" do
+        appeal_uuids = Appeal.pluck(:uuid)
+        legacy_appeal_vacols_ids = LegacyAppeal.pluck(:vacols_id)
+
+        query_subscriber.track do
+          # Addresses 'Cannot eagerly load the polymorphic association' error
+          # when trying to call `Task.includes(:appeal).pluck("appeals.docket_type")`
+          expect(Task.ama.includes(:ama_appeal).pluck("appeals.uuid").uniq)
+            .to match_array appeal_uuids
+          expect(Task.legacy.includes(:legacy_appeal).pluck("legacy_appeals.vacols_id").uniq)
+            .to match_array legacy_appeal_vacols_ids
+        end
+
+        # 1 efficient SELECT query for each trial above
+        expect(query_subscriber.queries.count).to eq 2
+        expect(query_subscriber.select_queries.size).to eq 2
       end
     end
   end
