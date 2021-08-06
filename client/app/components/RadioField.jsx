@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
+import { isArray } from 'lodash';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
@@ -50,7 +51,9 @@ export const RadioField = (props) => {
     options,
   ]);
 
-  const radioClass = className.
+  let radioClass = isArray(className) ? className.join(' ') : className;
+
+  radioClass.
     concat(isVertical ? 'cf-form-radio' : 'cf-form-radio-inline').
     concat(errorMessage ? 'usa-input-error' : '');
 
@@ -69,7 +72,7 @@ export const RadioField = (props) => {
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   return (
-    <fieldset className={radioClass.join(' ')} {...styling}>
+    <fieldset className={radioClass} {...styling}>
       <legend className={labelClass}>
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
@@ -117,7 +120,10 @@ RadioField.defaultProps = {
 
 RadioField.propTypes = {
   id: PropTypes.string,
-  className: PropTypes.arrayOf(PropTypes.string),
+  className: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.string
+  ]),
   required: PropTypes.bool,
 
   /**
