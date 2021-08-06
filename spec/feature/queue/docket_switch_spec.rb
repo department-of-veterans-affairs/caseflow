@@ -63,7 +63,6 @@ RSpec.feature "Docket Switch", :all_dbs do
     let!(:docket_switch_mail_task) do
       create(:docket_switch_mail_task, appeal: distributed_appeal, parent: distribution_task, assigned_to: cotb_attorney)
     end
-
     let!(:judge_assign_task) { create(:ama_judge_assign_task, assigned_to: judge, parent: root_task) }
     let!(:other_judges) do
       create_list(:user, 3, :with_vacols_judge_record)
@@ -130,56 +129,56 @@ RSpec.feature "Docket Switch", :all_dbs do
         assigned_by: cotb_attorney
       )
     end
-
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }
 
     # Checks granted, partially_granted, and denied dispositions
     Constants::DOCKET_SWITCH_DISPOSITIONS.each_key do |disposition|
-    context "given disposition #{disposition}" do
-      it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
-        User.authenticate!(user: judge)
-        visit "/queue/appeals/#{appeal.uuid}"
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label).click
+      context "given disposition #{disposition}" do
+        it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
+          User.authenticate!(user: judge)
+          visit "/queue/appeals/#{appeal.uuid}"
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label).click
 
-        expect(page).to have_content(format(COPY::DOCKET_SWITCH_RULING_TITLE, appeal.claimant.name))
+          expect(page).to have_content(format(COPY::DOCKET_SWITCH_RULING_TITLE, appeal.claimant.name))
 
-        # Fill out form
-        fill_in("context", with: context)
-        find("label[for=disposition_#{disposition}]").click
+          # Fill out form
+          fill_in("context", with: context)
+          find("label[for=disposition_#{disposition}]").click
 
-        # The previously assigned COTB attorney should be selected
-        expect(page).to have_content(cotb_attorney.full_name)
-        expect(page).to_not have_content(cotb_non_attorney.full_name)
-        click_button(text: "Submit")
+          # The previously assigned COTB attorney should be selected
+          expect(page).to have_content(cotb_attorney.full_name)
+          expect(page).to_not have_content(cotb_non_attorney.full_name)
+          click_button(text: "Submit")
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
-        # Success banner
-        disposition_type = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["dispositionType"]
-        expect(page).to have_content(
-          format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
-        )
+          # Return back to user's queue
+          expect(page).to have_current_path("/queue")
+          # Success banner
+          disposition_type = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["dispositionType"]
+          expect(page).to have_content(
+            format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
+          )
 
-        task_type = "DocketSwitch#{disposition_type}Task".constantize
-        next_task = task_type.find_by(assigned_to: cotb_attorney)
-        expect(next_task).to_not be_nil
-        expect(next_task.parent).to be_a(task_type)
-        expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
+          task_type = "DocketSwitch#{disposition_type}Task".constantize
+          next_task = task_type.find_by(assigned_to: cotb_attorney)
+          expect(next_task).to_not be_nil
+          expect(next_task.parent).to be_a(task_type)
+          expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
 
-        # Ensure judge task is now on hold
-        expect(docket_switch_ruling_task.reload).to have_attributes(status: Constants.TASK_STATUSES.on_hold)
+          # Ensure judge task is now on hold
+          expect(docket_switch_ruling_task.reload).to have_attributes(status: Constants.TASK_STATUSES.on_hold)
 
-        # Check that task got created and shows instructions on Case Details
-        User.authenticate!(user: cotb_attorney)
-        visit "/queue/appeals/#{appeal.uuid}"
-        first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
+          # Check that task got created and shows instructions on Case Details
+          User.authenticate!(user: cotb_attorney)
+          visit "/queue/appeals/#{appeal.uuid}"
+          first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
-        expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
-        expect(page).to have_content "Signed ruling letter: View link"
-        expect(page).to have_content(context)
+          expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
+          expect(page).to have_content "Signed ruling letter: View link"
+          expect(page).to have_content(context)
+        end
       end
     end
   end
