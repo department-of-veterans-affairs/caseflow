@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import { FormLabel } from './FormLabel';
+import { isArray } from 'lodash';
 
 const labelTextStyling = css({
   marginTop: '0.65em',
@@ -40,10 +41,12 @@ export const TextField = (props) => {
     inputRef,
   } = props;
 
-  const textInputClass = className.
+  let textInputClass = isArray(className) ? className.join(' ') : className;
+
+  textInputClass.
     concat(invisible ? ' cf-invisible' : '').
-    concat(errorMessage ? 'usa-input-error' : '').
-    concat(dateErrorMessage ? 'cf-date-error' : '');
+    concat(errorMessage ? ' usa-input-error' : '').
+    concat(dateErrorMessage ? ' cf-date-error' : '');
 
   const labelContents = (
     <FormLabel
@@ -61,12 +64,12 @@ export const TextField = (props) => {
   const adjustedVal = useMemo(() => typeof value === 'object' && !value ? '' : value);
 
   return (
-    <div className={textInputClass.join(' ')}>
+    <div className={textInputClass}>
       {dateErrorMessage && (
         <span className="usa-input-error-message">{dateErrorMessage}</span>
       )}
       {label !== false && (
-        <label htmlFor={name}>
+        <label htmlFor={name} {...labelTextStyling}>
           {strongLabel ? <strong>{labelContents}</strong> : labelContents}
         </label>
       )}
@@ -124,7 +127,7 @@ TextField.propTypes = {
    */
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   errorMessage: PropTypes.string,
-  className: PropTypes.arrayOf(PropTypes.string),
+  className: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.string]),
   inputStyling: PropTypes.object,
 
   /**
