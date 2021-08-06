@@ -246,6 +246,19 @@ FactoryBot.define do
       end
     end
 
+    trait :with_evidence_submission_window_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_deceased_veteran do
+      after(:create) do |appeal, _evaluator|
+        appeal.veteran.update!(date_of_death: 1.month.ago)
+      end
+    end
+
     trait :with_ihp_task do
       after(:create) do |appeal, _evaluator|
         org = Organization.find_by(type: "Vso")
