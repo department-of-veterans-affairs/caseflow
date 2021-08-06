@@ -73,7 +73,7 @@ describe "AssocationWrapper" do
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
           # belongs_to created dynamically by BelongsToPolymorphicAppealConcern
           [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
-          [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil]
+          [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],

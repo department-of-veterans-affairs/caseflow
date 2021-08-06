@@ -103,7 +103,8 @@ describe BelongsToPolymorphicAppealConcern do
 
         query_subscriber.track do
           # Addresses 'Cannot eagerly load the polymorphic association' error
-          # when trying to call `Task.includes(:appeal).pluck("appeals.docket_type")`
+          # when trying to call `Task.includes(:appeal).pluck("appeals.docket_type")` or even
+          # `Task.includes(:appeal).references(:appeals).where(tasks: {appeal_type: "Appeal"}).pluck("appeals.uuid")`
           expect(Task.ama.includes(:ama_appeal).pluck("appeals.uuid").uniq)
             .to match_array appeal_uuids
           expect(Task.legacy.includes(:legacy_appeal).pluck("legacy_appeals.vacols_id").uniq)
