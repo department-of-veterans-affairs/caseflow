@@ -4,34 +4,24 @@
   </p>
 
   <p>
-    The location has changed for your Client's hearing with the Board of Veterans' Appeals. You will arrive at <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.name %> and the Veterans Law Judge will meet with you via video conference.
+    Your client's hearing with a Veterans Law Judge of the Board of Veterans’ Appeals has changed format. Instead of a virtual tele-hearing, you will go in person to <%= @hearing&.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
   </p>
 
-  <h3>
-    <%= formatted_appellant_name(@virtual_hearing.hearing.appeal) %>
-  </h3>
+  <h3><%= @hearing.appeal.appellant_or_veteran_name %></h3>
   <p>
     <a href="<%= caseflow_url(@virtual_hearing.hearing.appeal) %>">
       View the case details
     </a> (Note: You must be logged in to the VA network to access case details.)
   </p>
 <% end %>
-
 <%= content_for :date_time do %>
   <%= render "hearing_mailer/sections/date_time" %>
-
-  <h3>
-    Location
-  </h3>
-  <p>
-    <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.name %><br/>
-    <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.full_address %><br/>
-  </p>
 <% end %>
-
+<% content_for :location do %>
+    <%= render "hearing_mailer/sections/location" %>
+<% end %>
 <%= content_for :signature do %>
   <p>
-    Sincerely,<br/>
-    The Board of Veterans' Appeals
+    Sincerely,<br/>The Board of Veterans' Appeals
   </p>
 <% end %>
