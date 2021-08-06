@@ -39,7 +39,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def filter_judges_not_in_db
-    @spreadsheet_data.reject { |row| judge_css_id_matches_name?(row[:name], row[:css_id]) }.pluck(:css_id).compact
+    @spreadsheet_data.reject do |row|
+      judge_css_id_matches_name?(row[:name], row[:judge_css_id])
+    end.pluck(:judge_css_id, :name).compact
   end
 
   def validate_judge_assignments
