@@ -242,7 +242,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-jSgupP gGfCIZ"
+      class="sc-jSgupP fVzfOf"
     >
       <div
         class="cf-form-textinput   "
@@ -266,6 +266,28 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
           id="suffix"
           name="suffix"
           type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="dateOfBirth"
+        >
+          <span>
+            <b>
+              Date of Birth
+            </b>
+          </span>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="dateOfBirth"
+          max="9999-12-31"
+          name="dateOfBirth"
+          placeholder="mm/dd/yyyy"
+          type="date"
           value=""
         />
       </div>

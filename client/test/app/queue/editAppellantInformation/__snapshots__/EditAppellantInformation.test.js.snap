@@ -83,6 +83,17 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     value=""
                   />,
                 },
+                "dateOfBirth": Object {
+                  "ref": <input
+                    class="cf-form-textinput"
+                    id="dateOfBirth"
+                    max="9999-12-31"
+                    name="dateOfBirth"
+                    placeholder="mm/dd/yyyy"
+                    type="date"
+                    value=""
+                  />,
+                },
                 "emailAddress": Object {
                   "ref": <input
                     class="cf-form-textinput"
@@ -361,6 +372,17 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               id="country"
                               name="country"
                               type="text"
+                              value=""
+                            />,
+                          },
+                          "dateOfBirth": Object {
+                            "ref": <input
+                              class="cf-form-textinput"
+                              id="dateOfBirth"
+                              max="9999-12-31"
+                              name="dateOfBirth"
+                              placeholder="mm/dd/yyyy"
+                              type="date"
                               value=""
                             />,
                           },
@@ -2534,7 +2556,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 </styled.div>
                 <styled.div>
                   <div
-                    className="sc-jSgupP gGfCIZ"
+                    className="sc-jSgupP fVzfOf"
                   >
                     <TextField
                       className={
@@ -2588,6 +2610,76 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         />
                       </div>
                     </TextField>
+                    <DateSelector
+                      inputRef={[Function]}
+                      label={
+                        <b>
+                          Date of Birth
+                        </b>
+                      }
+                      name="dateOfBirth"
+                      type="date"
+                    >
+                      <TextField
+                        className={
+                          Array [
+                            "cf-form-textinput",
+                          ]
+                        }
+                        inputRef={[Function]}
+                        label={
+                          <b>
+                            Date of Birth
+                          </b>
+                        }
+                        max="9999-12-31"
+                        name="dateOfBirth"
+                        onChange={[Function]}
+                        optional={false}
+                        placeholder="mm/dd/yyyy"
+                        required={false}
+                        type="date"
+                        useAriaLabel={false}
+                      >
+                        <div
+                          className="cf-form-textinput   "
+                        >
+                          <label
+                            htmlFor="dateOfBirth"
+                          >
+                            <FormLabel
+                              label={
+                                <b>
+                                  Date of Birth
+                                </b>
+                              }
+                              name="dateOfBirth"
+                              optional={false}
+                              required={false}
+                            >
+                              <span>
+                                <b>
+                                  Date of Birth
+                                </b>
+                              </span>
+                            </FormLabel>
+                          </label>
+                          <input
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
+                            id="dateOfBirth"
+                            max="9999-12-31"
+                            name="dateOfBirth"
+                            onChange={[Function]}
+                            placeholder="mm/dd/yyyy"
+                            type="date"
+                          />
+                        </div>
+                      </TextField>
+                    </DateSelector>
                   </div>
                 </styled.div>
                 <AddressForm
@@ -2661,6 +2753,17 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               id="country"
                               name="country"
                               type="text"
+                              value=""
+                            />,
+                          },
+                          "dateOfBirth": Object {
+                            "ref": <input
+                              class="cf-form-textinput"
+                              id="dateOfBirth"
+                              max="9999-12-31"
+                              name="dateOfBirth"
+                              placeholder="mm/dd/yyyy"
+                              type="date"
                               value=""
                             />,
                           },
@@ -3082,6 +3185,17 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                     id="country"
                                     name="country"
                                     type="text"
+                                    value=""
+                                  />,
+                                },
+                                "dateOfBirth": Object {
+                                  "ref": <input
+                                    class="cf-form-textinput"
+                                    id="dateOfBirth"
+                                    max="9999-12-31"
+                                    name="dateOfBirth"
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
                                     value=""
                                   />,
                                 },
