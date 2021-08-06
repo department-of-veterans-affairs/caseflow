@@ -7,7 +7,7 @@ module BelongsToPolymorphicAppealConcern
 
   class_methods do
     # call this after `belongs_to ..., polymorphic: true`
-    def associated_appeal_class(associated_class)
+    def associate_with_appeal_class(associated_class)
       association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
         .select_associations.first
 

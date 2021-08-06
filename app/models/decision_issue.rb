@@ -20,13 +20,13 @@ class DecisionIssue < CaseflowRecord
   has_many :remand_reasons, dependent: :destroy
 
   belongs_to :decision_review, polymorphic: true
-  associated_appeal_class(DecisionReview)
+  # provides ama_appeal and legacy_appeal
+  associate_with_appeal_class(DecisionReview)
+  has_many :ama_decision_documents, -> { includes(:ama_decision_issues).references(:decision_issues) },
+           through: :ama_appeal, source: :decision_documents
 
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
-
-  has_many :ama_decision_documents, -> { includes(:ama_decision_issues).references(:decision_issues) },
-           through: :ama_appeal, source: :decision_documents
 
   # NOTE: These are the string identifiers for remand dispositions returned from VBMS.
   #       The characters and encoding are precise so don't change these unless you
