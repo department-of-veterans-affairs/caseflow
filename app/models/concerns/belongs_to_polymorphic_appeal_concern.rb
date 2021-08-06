@@ -2,11 +2,39 @@
 
 require "helpers/association_wrapper.rb"
 
+##
+# This concern dynamically defines the following when `belongs_to_polymorphic_appeal :appeal` is called:
+#   belongs_to :appeal, polymorphic: true
+#
+#   scope :ama, -> { where(type_column => "Appeal") }
+#   scope :legacy, -> { where(type_column => "LegacyAppeal") }
+#   belongs_to :ama_appeal,
+#      -> { includes('appeals').where('appeals' => {'appeal_type' => "Appeal"}) },
+#      class_name: "Appeal", foreign_key: 'appeal_id', optional: true
+#   belongs_to :legacy_appeal,
+#      -> { includes('legacy_appeals').where('legacy_appeals' => {'appeal_type' => "LegacyAppeal"}) },
+#      class_name: "LegacyAppeal", foreign_key: 'appeal_id', optional: true
+#
+#   def ama_appeal
+#     super() if self.send(type_column) == "Appeal"
+#   end
+#   def legacy_appeal
+#     super() if self.send(type_column) == "LegacyAppeal"
+#   end
+#
+# When calling `belongs_to_polymorphic_appeal :decision_review`, it defines similar associations to HLR and SC.
+#
+# These associations enable, for example, `has_many ama_decision_issues through: :ama_appeal`, which provide
+# 1. easy access to decision_issues through a polymorphic association and
+# 2. efficient queries when joining with other tables
+# See RSpec for examples.
+
 module BelongsToPolymorphicAppealConcern
   extend ActiveSupport::Concern
 
   class_methods do
-    def associate_with_polymorphic(associated_class_symbol)
+    # Since we can't pass an argument to a concern, call this method instead
+    def belongs_to_polymorphic_appeal(associated_class_symbol)
       # Define polymorphic association before calling AssocationWrapper
       belongs_to associated_class_symbol, polymorphic: true
 
@@ -48,7 +76,8 @@ module BelongsToPolymorphicAppealConcern
       # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different
       self_table_name = table_name
 
-      belongs_to method_name, -> { includes(self_table_name).where(self_table_name => { type_column => type_name }) },
+      belongs_to method_name,
+                 -> { includes(self_table_name).where(self_table_name => { type_column => type_name }) },
                  class_name: type_name, foreign_key: id_column.to_s, optional: true
 
       define_method method_name do
