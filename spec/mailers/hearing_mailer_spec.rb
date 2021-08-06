@@ -128,6 +128,12 @@ describe HearingMailer do
     end
   end
 
+  shared_context "convert_to_virtual_confirmation_email" do
+    subject do
+      HearingMailer.convert_to_virtual_confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
+    end
+  end
+
   shared_context "confirmation_email" do
     subject { HearingMailer.confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
   end
@@ -353,6 +359,14 @@ describe HearingMailer do
         end
       end
 
+      describe "#convert_to_virtual_confirmation" do
+        include_context "convert_to_virtual_confirmation_email"
+
+        it "doesnt send an email to the judge" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 0
+        end
+      end
+
       describe "#confirmation" do
         include_context "confirmation_email"
 
@@ -553,6 +567,14 @@ describe HearingMailer do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
+        end
+      end
+
+      describe "#convert_to_virtual_confirmation" do
+        include_context "convert_to_virtual_confirmation_email"
+
+        it "sends an email to the appellant" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 0
         end
       end
 
@@ -1097,6 +1119,14 @@ describe HearingMailer do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
+        end
+      end
+
+      describe "#convert_to_virtual_confirmation" do
+        include_context "convert_to_virtual_confirmation_email"
+
+        it "sends an email to the appellant" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
       end
 
