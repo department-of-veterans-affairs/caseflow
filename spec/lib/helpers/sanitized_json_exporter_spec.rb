@@ -214,7 +214,8 @@ describe "SanitizedJsonExporter/Importer" do
         CavcRemand => %w[source_appeal_id remand_appeal_id],
         DecisionDocument => ["appeal_id"],
         DecisionIssue => ["decision_review_id"],
-        Hearing => ["appeal_id"]
+        Hearing => ["appeal_id"],
+        Task => %w[appeal_id]
       }
       expect(configuration.reassociate_fields["Appeal"]).to match_array reassociate_fields_for_appeal
 
