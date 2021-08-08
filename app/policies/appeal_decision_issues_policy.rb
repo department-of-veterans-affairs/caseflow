@@ -20,7 +20,13 @@ class AppealDecisionIssuesPolicy
     if @user.vso_employee?
       visible_issues = @appeal.decision_issues.select do |issue|
         # VSO users should not be able to see decision issues until the issue decision date
-        Time.now.utc > issue.caseflow_decision_date
+        begin
+          Time.now.utc > (issue.approx_decision_date || DateTime::Infinity.new)
+        rescue ArgumentError => error
+          raise unless error.message == "comparison of Time with nil failed"
+
+          false
+        end
       end
       visible_issues.map do |issue|
         # VSO users should not be able to see decision issues' descriptions, regardless of the issue decision date

@@ -5,6 +5,7 @@ FactoryBot.define do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    filed_by_va_gov { false }
     sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
@@ -245,6 +246,19 @@ FactoryBot.define do
       end
     end
 
+    trait :with_evidence_submission_window_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_deceased_veteran do
+      after(:create) do |appeal, _evaluator|
+        appeal.veteran.update!(date_of_death: 1.month.ago)
+      end
+    end
+
     trait :with_ihp_task do
       after(:create) do |appeal, _evaluator|
         org = Organization.find_by(type: "Vso")
@@ -478,6 +492,44 @@ FactoryBot.define do
                                                         description: description,
                                                         decision_date: 2.months.from_now)
       end
+    end
+
+    trait :decision_issue_with_no_decision_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: nil)
+      end
+    end
+  end
+
+  trait :decision_issue_with_no_end_product_last_action_date do
+    description = "Service connection for pain disorder"
+    notes = "Pain disorder notes"
+    after(:create) do |appeal, evaluator|
+      request_issue = create(:request_issue,
+                             :rating,
+                             decision_review: appeal,
+                             veteran_participant_id: appeal.veteran.participant_id,
+                             contested_issue_description: description,
+                             notes: notes)
+      decision_issue = create(:decision_issue,
+                              :rating,
+                              decision_review: appeal,
+                              disposition: evaluator.disposition,
+                              description: "Issue description",
+                              decision_text: "Decision text",
+                              caseflow_decision_date: nil,
+                              rating_promulgation_date: nil)
+      request_issue.decision_issues << decision_issue
     end
   end
 end

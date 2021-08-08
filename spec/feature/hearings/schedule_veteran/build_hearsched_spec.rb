@@ -69,12 +69,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     shared_context "video_hearing" do |virtual_day = false|
       request_type = virtual_day ? HearingDay::REQUEST_TYPES[:virtual] : HearingDay::REQUEST_TYPES[:video]
+      let(:first_slot_time) { nil }
       let!(:hearing_day) do
         create(
           :hearing_day,
           request_type: request_type,
           scheduled_for: Time.zone.today + 60.days,
-          regional_office: "RO39"
+          regional_office: "RO39",
+          first_slot_time: first_slot_time
         )
       end
       let!(:staff) { create(:staff, stafkey: "RO39", stc2: 2, stc3: 3, stc4: 4) }
@@ -379,6 +381,54 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             ".usa-alert-error",
             text: "Mapping service is temporarily unavailable. Please try again later."
           )
+        end
+      end
+
+      shared_examples "hearing time display" do
+        scenario "Hearing time displays as expected" do
+          cache_appeals
+          navigate_to_schedule_veteran
+          click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+          click_dropdown(
+            text: format_hearing_day(hearing_day, room_label),
+            name: "hearingDate"
+          )
+          expect(page).to have_content("Hearing Time")
+          if first_slot_time.nil?
+            expect(find(".cf-form-radio-option", text: "8:30")).not_to eq(nil)
+            select_hearing_time("12:30")
+          else
+            expect(page).not_to have_selector(".cf-form-radio-option")
+            expect(page).to have_content(readonly_time_text)
+          end
+
+          click_button("Schedule", exact: true)
+          expect(page).to have_content("You have successfully assigned")
+
+          new_hearing = hearing_day.reload.open_hearings.first
+          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%I:%M")
+          expect(scheduled_time).to eq(expected_time)
+        end
+      end
+
+      context "Hearing time field based first slot time" do
+        context "first slot time is null" do
+          let(:expected_time) { "12:30" }
+          include_examples "hearing time display"
+        end
+
+        context "first slot time is '08:30'" do
+          let(:first_slot_time) { "10:30" }
+          let(:expected_time) { "08:30" }
+          let(:readonly_time_text) { "8:30 AM Mountain / 10:30 AM Eastern" }
+          include_examples "hearing time display"
+        end
+
+        context "first slot time is '12:30'" do
+          let(:first_slot_time) { "14:30" }
+          let(:expected_time) { "12:30" }
+          let(:readonly_time_text) { "12:30 PM Mountain / 2:30 PM Eastern" }
+          include_examples "hearing time display"
         end
       end
     end
@@ -952,25 +1002,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         it_behaves_like "change from Video hearing"
 
         it_behaves_like "withdraw a hearing"
-      end
-
-      context "with schedule direct to video/virtual feature disabled" do
-        # Ensure the feature flag is disabled before testing
-        before do
-          FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
-        end
-
-        it_behaves_like "scheduling a central hearing"
-
-        it_behaves_like "scheduling a video hearing"
-
-        it_behaves_like "scheduling an AMA hearing"
-
-        it_behaves_like "scheduling a Legacy hearing"
-
-        it_behaves_like "an appeal with a full hearing day"
-
-        it_behaves_like "an appeal where there is an open hearing"
       end
     end
 
