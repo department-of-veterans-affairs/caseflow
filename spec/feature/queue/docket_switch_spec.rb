@@ -15,9 +15,6 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:appeal) do
     create(:appeal, receipt_date: orig_receipt_date)
   end
-  let(:distributed_appeal) do
-    create(:appeal, :completed_distribution_task, receipt_date: orig_receipt_date)
-  end
 
   let(:appeal_with_unrecognized_appellant) do
     create(
@@ -54,7 +51,6 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let!(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
   let(:ua_root_task) { create(:root_task, appeal: appeal_with_unrecognized_appellant) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -111,7 +107,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       fill_in("hyperlink", with: hyperlink)
 
       # The previously assigned judge should be selected
-      binding.pry
       expect(page).to have_content(judge_assign_task.assigned_to.display_name)
 
       click_button(text: "Submit")
