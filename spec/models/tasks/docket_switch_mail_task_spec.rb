@@ -25,7 +25,7 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".available_actions" do
-    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: distribution_task.id, assigned_to: user) }
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: user) }
 
     subject { mail_task.available_actions(user) }
 
