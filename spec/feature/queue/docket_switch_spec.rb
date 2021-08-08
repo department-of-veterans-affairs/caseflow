@@ -123,7 +123,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
-      expect(judge_task.parent.type).to eq DistributionTask.name
+      expect(judge_task.parent.type).to eq RootTask.name
 
       # Switch to judge to verify instructions
       User.authenticate!(user: judge)
