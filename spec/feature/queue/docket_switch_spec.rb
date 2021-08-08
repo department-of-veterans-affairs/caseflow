@@ -51,6 +51,7 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   let(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
   let(:ua_root_task) { create(:root_task, appeal: appeal_with_unrecognized_appellant) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
