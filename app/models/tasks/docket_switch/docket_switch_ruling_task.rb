@@ -21,7 +21,7 @@ class DocketSwitchRulingTask < JudgeTask
     end
 
     def verify_user_can_create!(user, parent)
-      parent.is_a?(RootTask) || parent.is_a?(DistributionTask) ? true : super(user, parent)
+      (parent.is_a?(RootTask) || parent.is_a?(DistributionTask)) ? true : super(user, parent)
     end
   end
 end

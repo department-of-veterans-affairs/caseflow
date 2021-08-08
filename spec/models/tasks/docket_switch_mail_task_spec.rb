@@ -4,7 +4,7 @@ describe DocketSwitchMailTask, :postgres do
   let(:user) { create(:user) }
   let(:cotb_team) { ClerkOfTheBoard.singleton }
   let(:root_task) { create(:root_task) }
-  let(:distribution_task) { create(:distribution_task, appeal: root_task.appeal, parent: root_task) }
+  let!(:distribution_task) { create(:distribution_task, appeal: root_task.appeal, parent: root_task) }
   let(:task_class) { DocketSwitchMailTask }
 
   let(:task_actions) do
@@ -68,7 +68,7 @@ describe DocketSwitchMailTask, :postgres do
     before { FeatureToggle.enable!(:docket_switch) }
     after { FeatureToggle.disable!(:docket_switch) }
 
-    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task.id, instructions: "foo bar" } }
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task.id, instructions: "foo bar" } }
 
     subject { DocketSwitchMailTask.create_from_params(params, user) }
 
@@ -77,6 +77,7 @@ describe DocketSwitchMailTask, :postgres do
     it "creates both org task and user task" do
       expect(DocketSwitchMailTask.all.size).to eq(0)
       subject
+      # binding.pry
       expect(DocketSwitchMailTask.assigned_to_any_org).to exist
       expect(DocketSwitchMailTask.assigned_to_any_user).to exist
     end
