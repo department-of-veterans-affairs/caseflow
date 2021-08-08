@@ -172,6 +172,7 @@ class Task < CaseflowRecord
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
+
       params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]

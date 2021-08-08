@@ -56,6 +56,7 @@ export const RecommendDocketSwitchContainer = () => {
       })),
     [judges]
   );
+
   // We want to default the judge selection to the VLJ currently assigned to the case, if exists
   const defaultJudgeId = useMemo(() => {
     // eslint-disable-next-line no-undefined

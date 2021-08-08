@@ -62,7 +62,6 @@ class DocketSwitchMailTask < MailTask
     end
 
     def allow_creation?(user:, appeal:)
-      # binding.pry
       ClerkOfTheBoard.singleton.user_has_access?(user) && !appeal&.outcoded?
     end
 

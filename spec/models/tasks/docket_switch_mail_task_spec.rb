@@ -77,7 +77,6 @@ describe DocketSwitchMailTask, :postgres do
     it "creates both org task and user task" do
       expect(DocketSwitchMailTask.all.size).to eq(0)
       subject
-      # binding.pry
       expect(DocketSwitchMailTask.assigned_to_any_org).to exist
       expect(DocketSwitchMailTask.assigned_to_any_user).to exist
     end
