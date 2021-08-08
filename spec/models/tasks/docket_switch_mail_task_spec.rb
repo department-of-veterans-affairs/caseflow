@@ -2,10 +2,12 @@
 
 describe DocketSwitchMailTask, :postgres do
   let(:user) { create(:user) }
+  let(:judge) { create(:user, :judge) }
   let(:cotb_team) { ClerkOfTheBoard.singleton }
   let(:root_task) { create(:root_task) }
-  let!(:distribution_task) { create(:distribution_task, appeal: root_task.appeal, parent: root_task) }
   let(:task_class) { DocketSwitchMailTask }
+  let(:distribution_task) { create(:distribution_task, :completed, appeal: appeal) }
+  let(:appeal) { create(:appeal)}
 
   let(:task_actions) do
     [
@@ -68,17 +70,44 @@ describe DocketSwitchMailTask, :postgres do
     before { FeatureToggle.enable!(:docket_switch) }
     after { FeatureToggle.disable!(:docket_switch) }
 
-    let(:params) { { appeal: root_task.appeal, parent_id: root_task.id, instructions: "foo bar" } }
+    context "appeal has been distributed to a VLJ" do
+      let(:root_task_on_distributed_appeal) { create(:root_task, appeal: appeal)}
+      let!(:judge_assign_task) do
+        create(:ama_judge_assign_task,
+             assigned_to: judge,
+             assigned_at: Time.zone.yesterday,
+             appeal: appeal,
+             parent: root_task_on_distributed_appeal)
+      end
+      let(:params) { { appeal: appeal, parent_id: root_task_on_distributed_appeal.id, instructions: "foo bar" } }
+      subject { DocketSwitchMailTask.create_from_params(params, user) }
 
-    subject { DocketSwitchMailTask.create_from_params(params, user) }
+      before { RequestStore[:current_user] = user }
 
-    before { RequestStore[:current_user] = user }
+      it "creates both org task and user task as children of the RootTask" do
+        expect(DocketSwitchMailTask.all.size).to eq(0)
+        subject
+        expect(DocketSwitchMailTask.assigned_to_any_org).to exist
+        expect(DocketSwitchMailTask.assigned_to_any_user).to exist
+        expect(subject.parent.parent.type).to eq RootTask.name
+      end
+    end
 
-    it "creates both org task and user task" do
-      expect(DocketSwitchMailTask.all.size).to eq(0)
-      subject
-      expect(DocketSwitchMailTask.assigned_to_any_org).to exist
-      expect(DocketSwitchMailTask.assigned_to_any_user).to exist
+    context "appeal has not been distributed to a VLJ" do
+      let!(:distribution_task) { create(:distribution_task, :assigned, appeal: root_task.appeal) }
+      let(:params) { { appeal: root_task.appeal, parent_id: root_task.id, instructions: "foo bar" } }
+
+      subject { DocketSwitchMailTask.create_from_params(params, user) }
+
+      before { RequestStore[:current_user] = user }
+
+      it "creates both org task and user task as children of the DistributionTask" do
+        expect(DocketSwitchMailTask.all.size).to eq(0)
+        subject
+        expect(DocketSwitchMailTask.assigned_to_any_org).to exist
+        expect(DocketSwitchMailTask.assigned_to_any_user).to exist
+        expect(subject.parent.parent.type).to eq DistributionTask.name
+      end
     end
   end
 
