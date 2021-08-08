@@ -152,11 +152,12 @@ class DecisionReview < CaseflowRecord
     # maintain the same ordering as used in the claimant method below so that claimant returns the correct one
     source_claimants.order(:id).each_with_index do |claimant, index|
       if index == 0
-        create_claimant!(
+        new_claimant = create_claimant!(
           participant_id: claimant.participant_id,
           payee_code: claimant.payee_code,
           type: claimant.type
         )
+        claimant.unrecognized_appellant&.copy_with_details(updated_claimant: new_claimant)
       else
         # Since create_claimant! removes all claimants, don't call it again
         claimants.create_without_intake!(
@@ -409,7 +410,11 @@ class DecisionReview < CaseflowRecord
     veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
-  rescue PromulgatedRating::BackfilledRatingError, PromulgatedRating::LockedRatingError => error
+  rescue PromulgatedRating::BackfilledRatingError
+    # Ignore PromulgatedRating::BackfilledRatingErrors since they are a regular occurrence and we don't need to take
+    # any action when we see them.
+    []
+  rescue PromulgatedRating::LockedRatingError => error
     Raven.capture_exception(error)
     []
   end

@@ -134,7 +134,9 @@
     "url-loader": "^1.0.1",
     "uswds": "^1.6.4",
     "uuid": "^3.0.1",
-    "vis-timeline": "^7.4.6",
+    "vis-data": "^7.1.2",
+    "vis-network": "^9.0.4",
+    "vis-timeline": "^7.4.9",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "yup": "^0.32.9"
