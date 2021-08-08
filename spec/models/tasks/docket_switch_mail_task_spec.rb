@@ -74,11 +74,10 @@ describe DocketSwitchMailTask, :postgres do
       let(:root_task_on_distributed_appeal) { create(:root_task, appeal: appeal) }
       let!(:judge_assign_task) do
         create(:ama_judge_assign_task,
-          assigned_to: judge,
-          assigned_at: Time.zone.yesterday,
-          appeal: appeal,
-          parent: root_task_on_distributed_appeal
-        )
+               assigned_to: judge,
+               assigned_at: Time.zone.yesterday,
+               appeal: appeal,
+               parent: root_task_on_distributed_appeal)
       end
       let(:params) { { appeal: appeal, parent_id: root_task_on_distributed_appeal.id, instructions: "foo bar" } }
       subject { DocketSwitchMailTask.create_from_params(params, user) }
