@@ -70,6 +70,7 @@ class Fakes::BGSService
       end_product_store.clear!
       rating_store.clear!
       veteran_store.clear!
+      representative_store.clear!
       power_of_attorney_store.clear!
       self.manage_claimant_letter_v2_requests = nil
       self.generate_tracked_items_requests = nil
@@ -77,6 +78,10 @@ class Fakes::BGSService
 
     def end_product_store
       @end_product_store ||= Fakes::EndProductStore.new
+    end
+
+    def representative_store
+      @representative_store ||= Fakes::RepresentativeStore.new
     end
 
     def power_of_attorney_store
@@ -93,7 +98,7 @@ class Fakes::BGSService
 
     delegate :store_end_product_record, to: :end_product_store
     delegate :store_veteran_record, to: :veteran_store
-    delegate :store_power_of_attorney_record, to: :power_of_attorney_store
+    delegate :store_power_of_attorney_record, :get_power_of_attorney_record_by_file_number, to: :power_of_attorney_store
     delegate :store_rating_record, to: :rating_store
     delegate :store_rating_profile_record, to: :rating_store
 
@@ -223,16 +228,7 @@ class Fakes::BGSService
       suspence_record: nil }
   end
   # rubocop:enable Metrics/ParameterLists
-  # rubocop:enable Metrics/MethodLength
 
-  def fetch_veteran_info(vbms_id)
-    # BGS throws a ShareError if the veteran has too high sensitivity
-    fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)
-
-    get_veteran_record(vbms_id)
-  end
-
-  # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
     veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
@@ -332,9 +328,7 @@ class Fakes::BGSService
   def fetch_poa_by_file_number(file_number)
     return {} if file_number == "no-such-file-number"
 
-    record = get_power_of_attorney_record(file_number)
-    record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= default_power_of_attorney_record
+    record = get_power_of_attorney_record_by_file_number(file_number)
 
     get_claimant_poa_from_bgs_poa(record)
   end
@@ -354,6 +348,8 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     return {} if participant_ids == ["no-such-pid"]
+
+    record = get_power_of_attorney_records_by_participant_ids(participant_ids)
 
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
