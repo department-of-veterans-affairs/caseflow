@@ -23,40 +23,32 @@ class ETL::DecisionIssue < ETL::Record
         binding.pry unless judge_tasks == original.tasks.where(type: :JudgeDecisionReviewTask)
       end
 
-      atty_tasks = original.tasks.where(type: :AttorneyTask).where.not(status: :cancelled)
-      fail "what to do with multiple atty_tasks? #{atty_tasks.pluck :id}" if atty_tasks.count > 1
+      atty_tasks = original.tasks.where(type: :AttorneyTask).where.not(status: :cancelled).assigned_to_any_user
+      fail "Multiple atty_tasks -- choosing the latest: #{atty_tasks.pluck :id}" if atty_tasks.count > 1
 
-      atty_task = atty_tasks.first
+      judge_tasks = original.tasks.where(type: :JudgeDecisionReviewTask).where.not(status: :cancelled).assigned_to_any_user
+      fail "Multiple judge_tasks -- choosing the latest: #{judge_tasks.pluck :id}" if judge_tasks.count > 1
 
-      judge_tasks = original.tasks.where(type: :JudgeDecisionReviewTask).where.not(status: :cancelled)
-      fail "what to do with multiple judge_tasks? #{judge_tasks.pluck :id}" if judge_tasks.count > 1
-
-      judge_task = judge_tasks.first
-
+      judge_task = judge_tasks.order(:updated_at).last
       if judge_task
         target.judge_user_id = judge_task.assigned_to.id
         target.judge_css_id = judge_task.assigned_to.css_id
       end
+      atty_task = atty_tasks.order(:updated_at).last
       if atty_task
         target.attorney_user_id = atty_task.assigned_to.id
         target.attorney_css_id = atty_task.assigned_to.css_id
       end
 
       docs = original.ama_decision_documents
-      fail "what to do with multiple dec docs? #{docs.pluck :id}" if docs.count > 1
+      fail "Multiple ama_decision_documents -- choosing the latest: #{docs.pluck :id}" if docs.count > 1
 
-      doc = docs.first
+      doc = docs.order(:updated_at).last
       if doc
-        pp [doc.citation_number, appeal.stream_docket_number, doc.decision_date,
-            atty_tasks.map { |t| [t.assigned_to.id, t.assigned_to.css_id] },
-            judge_tasks.map { |t| [t.assigned_to.id, t.assigned_to.css_id] },
-            original.disposition, original.benefit_type, original.description, original.diagnostic_code]
-        # binding.pry
-
         target.decision_doc_id = doc.id
         target.doc_citation_number = doc.citation_number
         target.doc_decision_date = doc.decision_date
-        end
+      end
 
       target
     end
