@@ -5,9 +5,10 @@
 # about their hearing.
 
 class Hearings::ReminderService
-  def initialize(hearing, last_sent_reminder)
+  def initialize(hearing, last_sent_reminder, created_at)
     @hearing = hearing
     @last_sent_reminder = last_sent_reminder
+    @created_at = created_at
   end
 
   def should_send_reminder_email?
@@ -68,7 +69,7 @@ class Hearings::ReminderService
   # If the virtual hearing was scheduled within a reminder period, we skip sending the reminder for that period
   # because the confirmation will have redundant information.
   def days_between_hearing_and_created_at
-    (virtual_hearing.hearing.scheduled_for - virtual_hearing.created_at) / 1.day
+    (hearing.scheduled_for - @created_at) / 1.day
   end
 
   def days_until_hearing
