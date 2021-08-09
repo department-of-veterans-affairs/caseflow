@@ -38,4 +38,11 @@ class DocketSwitchAbstractAttorneyTask < AttorneyTask
       ]
     end
   end
+
+  private
+
+  def only_open_task_of_type
+    # This overrides the validation inherited from the parent class, AttorneyTask,
+    # to allow the docket switch flow to remain functional
+  end
 end
