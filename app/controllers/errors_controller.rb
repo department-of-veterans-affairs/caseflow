@@ -6,7 +6,7 @@ class ErrorsController < ApplicationController
   def show
     status_code = params[:status_code]
     template_name = "errors/#{status_code}"
-    render template: template_name, status: status_code, formats: :html
+    render template: template_name, status: status_code
   end
 
   # Override current_user method to prevent unnecessary DB connections & requests

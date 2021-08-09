@@ -2142,8 +2142,17 @@ RSpec.feature "Case details", :all_dbs do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
     let(:veteran) { create(:veteran) }
-    let(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
-    let(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: veteran.file_number) }
+    let(:higher_level_review) do
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+
+    let(:supplemental_claim) do
+      create(:supplemental_claim,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
     let(:user) { create(:intake_user) }
 
     before do
@@ -2220,17 +2229,17 @@ RSpec.feature "Case details", :all_dbs do
     context "when the current user does not have sensitivity level for Veteran file" do
       context "when case is higher level review" do
         it "renders 403 error page" do
-          visit "/higher_level_reviews/{#{higher_level_review.uuid}/edit"
+          visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
-          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
         end
       end
 
       context "when case is supplemental claim" do
         it "renders 403 error page" do
-          visit "/supplemental_claims/{#{supplemental_claim.uuid}/edit"
+          visit "/supplemental_claims/#{supplemental_claim.uuid}/edit"
           expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
-          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
         end
       end
     end
