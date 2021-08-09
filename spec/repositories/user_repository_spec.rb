@@ -77,6 +77,54 @@ describe UserRepository, :all_dbs do
     end
   end
 
+  context ".css_ids_by_vlj_ids" do
+    let(:sattyid) { "9876" }
+    let(:first_name) { "Leocadia" }
+    let(:last_name) { "Jarecki" }
+    let!(:staff) do
+      create(
+        :staff,
+        svlj: "J",
+        sdomainid: css_id,
+        sactive: "A",
+        sattyid: sattyid,
+        snamef: first_name,
+        snamel: last_name
+      )
+    end
+
+    it "returns the expected results" do
+      result = described_class.css_ids_by_vlj_ids(sattyid)
+      expect(result.keys.length).to eq 1
+      expect(result.keys.first).to eq sattyid
+
+      record = result[sattyid]
+      expect(record[:css_id]).to eq css_id
+      expect(record[:first_name]).to eq first_name
+      expect(record[:last_name]).to eq last_name
+    end
+
+    context "more than one record" do
+      let(:css_id2) { "TESTX" }
+      let(:sattyid2) { "8765" }
+      let!(:staff2) do
+        create(
+          :staff,
+          svlj: "J",
+          sdomainid: css_id2,
+          sactive: "A",
+          sattyid: sattyid2
+        )
+      end
+
+      it "returns the expected results" do
+        result = described_class.css_ids_by_vlj_ids([sattyid, sattyid2])
+        expect(result.keys.length).to eq 2
+        expect(result.keys).to match_array [sattyid, sattyid2]
+      end
+    end
+  end
+
   context "fail_if_no_access_to_task!" do
     subject { UserRepository.fail_if_no_access_to_task!(css_id, "4321") }
 

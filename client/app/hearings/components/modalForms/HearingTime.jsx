@@ -54,7 +54,7 @@ export const HearingTime = ({
   disableRadioOptions,
   label,
   vertical,
-  hideLabel,
+  hideLabel
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const isOther = _.isUndefined(
@@ -125,5 +125,5 @@ HearingTime.propTypes = {
   value: PropTypes.string,
   label: PropTypes.string,
   localZone: PropTypes.string,
-  hideLabel: PropTypes.bool,
+  hideLabel: PropTypes.bool
 };
