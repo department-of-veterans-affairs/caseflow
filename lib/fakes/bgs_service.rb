@@ -64,35 +64,23 @@ class Fakes::BGSService
       []
     end
 
-    def power_of_attorney_records
-      {
-        "111225555" =>
-          {
-            file_number: "111225555",
-            power_of_attorney:
-              {
-                legacy_poa_cd: "3QQ",
-                nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-                org_type_nm: "POA Attorney",
-                ptcpnt_id: "ERROR-ID"
-              },
-            ptcpnt_id: "600085545"
-          }
-      }
-    end
-
     def clean!
       self.ssn_not_found = false
       self.inaccessible_appeal_vbms_ids = []
       end_product_store.clear!
       rating_store.clear!
       veteran_store.clear!
+      power_of_attorney_store.clear!
       self.manage_claimant_letter_v2_requests = nil
       self.generate_tracked_items_requests = nil
     end
 
     def end_product_store
       @end_product_store ||= Fakes::EndProductStore.new
+    end
+
+    def power_of_attorney_store
+      @power_of_attorney_store ||= Fakes::PowerOfAttorneyStore.new
     end
 
     def veteran_store
@@ -105,6 +93,7 @@ class Fakes::BGSService
 
     delegate :store_end_product_record, to: :end_product_store
     delegate :store_veteran_record, to: :veteran_store
+    delegate :store_power_of_attorney_record, to: :power_of_attorney_store
     delegate :store_rating_record, to: :rating_store
     delegate :store_rating_profile_record, to: :rating_store
 
@@ -333,11 +322,17 @@ class Fakes::BGSService
     self.class.can_access_cache_key(user, vbms_id)
   end
 
-  # TODO: add more test cases
+  def fetch_veteran_info(vbms_id)
+    # BGS throws a ShareError if the veteran has too high sensitivity
+    fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)
+
+    get_veteran_record(vbms_id)
+  end
+
   def fetch_poa_by_file_number(file_number)
     return {} if file_number == "no-such-file-number"
 
-    record = (self.class.power_of_attorney_records || {})[file_number]
+    record = get_power_of_attorney_record(file_number)
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
 
@@ -697,55 +692,6 @@ class Fakes::BGSService
 
   def current_user
     RequestStore[:current_user]
-  end
-
-  def default_power_of_attorney_record
-    {
-      file_number: "633792224",
-      power_of_attorney:
-        {
-          legacy_poa_cd: "3QQ",
-          nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-          org_type_nm: "POA Attorney",
-          ptcpnt_id: "600153863"
-        },
-      ptcpnt_id: "600085544"
-    }
-  end
-
-  def default_vso_power_of_attorney_record
-    {
-      file_number: "216979849",
-      power_of_attorney:
-        {
-          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
-          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
-          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
-          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
-        },
-      ptcpnt_id: "600085544"
-    }
-  end
-
-  def default_vsos_by_participant_id
-    [
-      {
-        power_of_attorney: {
-          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
-          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
-          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
-          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
-        }
-      },
-      {
-        power_of_attorney: {
-          legacy_poa_cd: Fakes::BGSServicePOA::PARALYZED_VETERANS_LEGACY_POA_CD,
-          nm: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
-          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
-          ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
-        }
-      }
-    ]
   end
 
   # rubocop:disable Metrics/MethodLength
