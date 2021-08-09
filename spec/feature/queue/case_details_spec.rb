@@ -1241,11 +1241,9 @@ RSpec.feature "Case details", :all_dbs do
       it "should sort tasks and nod date updates properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
-        # binding.pry
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
-        # fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
         expect(second_row_with_date).to have_content("02/01/2019")
         expect(third_row_with_date).to have_content("01/05/2019")
