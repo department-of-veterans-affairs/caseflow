@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
-  let!(:decision_issue) { create(:decision_issue) }
+  # let!(:decision_issue) { create(:decision_issue) }
+  let!(:appeal_without_dec_doc) { create(:appeal, :with_decision_issue) }
+  let!(:decision_doc) { create(:decision_document, appeal: create(:appeal, :with_decision_issue, :at_bva_dispatch)) }
+  let!(:legacy_decision_doc) { create(:decision_document, appeal: create(:legacy_appeal)) }
+  let!(:decision_issue) { decision_doc.appeal.decision_issues.first }
+
   let(:etl_build) { ETL::Build.create }
 
   describe "#call" do
@@ -13,7 +18,7 @@ describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
 
         subject
 
-        expect(ETL::DecisionIssue.count).to eq(1)
+        expect(ETL::DecisionIssue.count).to eq(4)
 
         # stringify datetimes to ignore milliseconds
         expect(ETL::DecisionIssue.first.issue_created_at.to_s).to eq(decision_issue.created_at.to_s)

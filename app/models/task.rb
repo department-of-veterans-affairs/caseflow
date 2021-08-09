@@ -23,6 +23,7 @@ class Task < CaseflowRecord
 
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal
+  # has_many :decision_issues, through: :ama_appeal
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
