@@ -76,6 +76,13 @@ export const setBenefitType = (benefitType) => ({
   }
 });
 
+export const setFiledByVaGov = (filedByVaGov) => ({
+  type: ACTIONS.SET_FILED_BY_VA_GOV,
+  payload: {
+    filedByVaGov
+  }
+})
+
 export const setLegacyOptInApproved = (legacyOptInApproved) => ({
   type: ACTIONS.SET_LEGACY_OPT_IN_APPROVED,
   payload: {

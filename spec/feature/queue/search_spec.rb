@@ -482,26 +482,44 @@ feature "Search", :all_dbs do
     end
 
     context "when BGS can_access? is false" do
+      let!(:appeal_sub) do
+        create(:appellant_substitution, substitute_participant_id: 999, poa_participant_id: 99)
+      end
+      let(:substitute_appeal) { appeal_sub.target_appeal }
+      let!(:other_appeal_sub) { create(:appellant_substitution) }
+      let(:other_substitute_appeal) { other_appeal_sub.target_appeal }
       before do
         Fakes::BGSService.new.bust_can_access_cache(user, appeal.veteran_file_number)
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        Fakes::BGSService.inaccessible_appeal_vbms_ids =
+          [appeal.veteran_file_number, substitute_appeal.veteran_file_number]
         User.authenticate!(user: user)
       end
 
-      let(:user) { create(:user) }
-
-      def perform_search
+      def perform_search(docket_number = appeal.docket_number)
         visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.docket_number
+        fill_in "searchBarEmptyList", with: docket_number
         click_on "Search"
       end
 
       context "when user is VSO employee" do
         let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
-
         it "displays a helpful error message on same page" do
           perform_search
           expect(page).to have_content("You do not have access to this claims file number")
+        end
+
+        context "when user represents substitute appellant" do
+          it "does not short-circuit to the helpful error message" do
+            perform_search(other_substitute_appeal.docket_number)
+            expect(page).not_to have_content("You do not have access to this claims file number")
+          end
+        end
+
+        context "when user is a vso, appeal is a substitute, but user's org does not represent appellant" do
+          it "emits the helpful error message" do
+            perform_search(substitute_appeal.docket_number)
+            expect(page).to have_content("You do not have access to this claims file number")
+          end
         end
       end
 

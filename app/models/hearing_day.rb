@@ -42,7 +42,7 @@ class HearingDay < CaseflowRecord
   SLOTS_BY_REQUEST_TYPE = {
     REQUEST_TYPES[:virtual] => { default: 8, maximum: 12 },
     REQUEST_TYPES[:central] => { default: 10, maximum: 10 },
-    REQUEST_TYPES[:video] => { default: 12, maximum: 12 }
+    REQUEST_TYPES[:video] => { default: 10, maximum: 10 }
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
@@ -175,18 +175,9 @@ class HearingDay < CaseflowRecord
   # - Date: from the scheduled_for column for this hearing_day
   def begins_at
     # If 'first_slot_time' column has a value, use that
-    unless first_slot_time.nil?
-      return combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
+    if first_slot_time.present?
+      combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
     end
-
-    # if no value in db and central, 09:00
-    return combine_time_and_date("09:00", "America/New_York", scheduled_for) if central_office?
-
-    # if no value in db and virtual, 08:30
-    return combine_time_and_date("08:30", "America/New_York", scheduled_for) if virtual?
-
-    # if no value in db and video (not central or virtual): first_slot_time is 08:30
-    combine_time_and_date("08:30", RegionalOffice.find!(regional_office).timezone, scheduled_for)
   end
 
   def judge_first_name
@@ -195,6 +186,10 @@ class HearingDay < CaseflowRecord
 
   def judge_last_name
     judge ? judge.full_name.split(" ").last : nil
+  end
+
+  def judge_css_id
+    judge&.css_id
   end
 
   private
