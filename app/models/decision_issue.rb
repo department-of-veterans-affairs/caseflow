@@ -30,10 +30,6 @@ class DecisionIssue < CaseflowRecord
   # has_many :attorney_tasks2, -> { includes(:decision_issues).references(:decision_issues).joins("LEFT JOIN decision_issues ON tasks.appeal_id=decision_issues.decision_review_id AND tasks.appeal_type=decision_issues.decision_review_type AND tasks.type = 'AttorneyTask'") },
   #          source: :tasks, class_name: "Task", foreign_key: :appeal_id
 
-  def tasks
-    Task.where(appeal_id: decision_review_id, appeal_type: decision_review_type)
-  end
-
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 

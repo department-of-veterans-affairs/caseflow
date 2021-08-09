@@ -15,6 +15,14 @@ describe BelongsToPolymorphicAppealConcern do
       expect(legacy_decision_doc.legacy_appeal).to eq legacy_decision_doc.appeal
     end
 
+    it "`tasks` returns the AMA appeal's tasks" do
+      expect(decision_doc.tasks).to match_array decision_doc.appeal.tasks
+    end
+
+    it "`tasks` returns the legacy appeal's tasks" do
+      expect(legacy_decision_doc.tasks).to match_array legacy_decision_doc.appeal.tasks
+    end
+
     it "scope `ama` returns AMA-associated DecisionDocuments" do
       expect(DecisionDocument.ama.first).to eq decision_doc
     end
@@ -83,6 +91,14 @@ describe BelongsToPolymorphicAppealConcern do
 
     it "`legacy_appeal` returns the legacy appeal" do
       expect(legacy_task.legacy_appeal).to eq legacy_decision_doc.appeal
+    end
+
+    it "`tasks` returns the AMA appeal's tasks" do
+      expect(task.tasks).to match_array decision_doc.appeal.tasks
+    end
+
+    it "`tasks` returns the legacy appeal's tasks" do
+      expect(legacy_task.tasks).to match_array legacy_decision_doc.appeal.tasks
     end
 
     it "scope `ama` returns AMA-associated Tasks" do

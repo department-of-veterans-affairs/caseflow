@@ -84,6 +84,11 @@ module BelongsToPolymorphicAppealConcern
         # `super()` will call the method created by the `belongs_to` above
         super() if send(type_column) == type_name
       end
+
+      # Access tasks without querying through appeal
+      define_method :tasks do
+        Task.where(appeal_id: send(id_column), appeal_type: send(type_column))
+      end
     end
   end
 end
