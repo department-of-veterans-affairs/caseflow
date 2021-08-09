@@ -2,6 +2,7 @@
 
 class JudgeTeam < Organization
   scope :pushed_priority_cases_allowed, -> { active.where(accepts_priority_pushed_cases: true) }
+  scope :ama_only, -> { pushed_priority_cases_allowed.where(ama_only: false) }
 
   class << self
     def for_judge(user)

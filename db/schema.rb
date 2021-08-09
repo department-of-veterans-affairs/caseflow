@@ -1,3 +1,4 @@
+# coding: utf-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_12_182219) do
+ActiveRecord::Schema.define(version: 2021_08_09_173845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1065,6 +1066,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
 
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
+    t.boolean "ama_only", default: false
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
@@ -1510,6 +1512,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
+    t.string "participant_id"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
