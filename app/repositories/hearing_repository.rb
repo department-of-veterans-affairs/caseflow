@@ -147,8 +147,8 @@ class HearingRepository
               postponed_or_cancelled_vacols_ids: selected_vacols_ids
             ).to_a
         end
-
-      ama_ready + legacy_ready.flatten
+      # Return the hearings associated with each virtual hearing
+      (ama_ready + legacy_ready.flatten).map(&:hearing)
     end
 
     private
