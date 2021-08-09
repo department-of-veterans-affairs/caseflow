@@ -13,7 +13,7 @@ class ETL::Build < ETL::Record
 
   has_many :etl_build_tables, class_name: "ETL::BuildTable", foreign_key: "etl_build_id"
 
-  attribute :started_at, default: -> { Time.zone.now }
+  attribute :started_at, :datetime, default: -> { Time.zone.now }
   attribute :status, default: -> { :running }
 
   def tables

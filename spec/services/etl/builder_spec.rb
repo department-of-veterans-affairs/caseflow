@@ -35,9 +35,8 @@ describe ETL::Builder, :etl, :all_dbs do
         expect(builder.last_built).to be_nil
 
         build = builder.full
-
         # use .to_s comparison since Rails.cache does not store .milliseconds
-        expect(builder.last_built.to_s).to eq(first_build_time.to_s)
+        expect(builder.last_built).to be_within(1.second).of(first_build_time)
         expect(build.built).to eq(95)
         expect(build.build_for("appeals").rows_inserted).to eq(14)
 
