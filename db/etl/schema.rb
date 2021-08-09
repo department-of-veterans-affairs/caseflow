@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_809_020_705) do
+ActiveRecord::Schema.define(version: 2021_08_09_020705) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -122,7 +121,8 @@ ActiveRecord::Schema.define(version: 20_210_809_020_705) do
 
   create_table "decision_issues", comment: "Copy of decision_issues", force: :cascade do |t|
     t.string "attorney_css_id", comment: "CSS_ID of associated attorney"
-    t.string "attorney_user_id", comment: "Id of associated attorney user"
+    t.bigint "attorney_task_id", comment: "Id of associated attorney task"
+    t.bigint "attorney_user_id", comment: "Id of associated attorney user"
     t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
     t.date "caseflow_decision_date", comment: "decision_issues.caseflow_decision_date"
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
@@ -134,14 +134,16 @@ ActiveRecord::Schema.define(version: 20_210_809_020_705) do
     t.string "diagnostic_code", limit: 20, comment: "decision_issues.diagnostic_code"
     t.string "disposition", limit: 50, comment: "decision_issues.disposition"
     t.string "doc_citation_number", comment: "Citation number of associated decision document"
-    t.string "doc_decision_date", comment: "Decision date of associated decision document"
+    t.datetime "doc_decision_date", comment: "Decision date of associated decision document"
+    t.datetime "doc_uploaded_to_vbms_at", comment: "Date when associated decision document was uploaded to VBMS"
     t.bigint "docket_number", comment: "Docket number of associated appeal"
     t.date "end_product_last_action_date", comment: "decision_issues.end_product_last_action_date"
     t.datetime "issue_created_at", comment: "decision_issues.created_at"
     t.datetime "issue_deleted_at", comment: "decision_issues.deleted_at"
     t.datetime "issue_updated_at", comment: "decision_issues.updated_at"
     t.string "judge_css_id", comment: "CSS_ID of associated judge"
-    t.string "judge_user_id", comment: "Id of associated judge user"
+    t.bigint "judge_task_id", comment: "Id of associated judge task"
+    t.bigint "judge_user_id", comment: "Id of associated judge user"
     t.bigint "participant_id", null: false, comment: "decision_issues.participant_id"
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.bigint "rating_issue_reference_id", comment: "decision_issues.rating_issue_reference_id"

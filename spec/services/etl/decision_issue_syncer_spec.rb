@@ -16,7 +16,7 @@ describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
 
         subject
         # For testing
-        # ETL::DecisionIssueSyncer.new(since: true, etl_build: ETL::Build.create).call
+        # ETL::DecisionIssueSyncer.new(since: nil, etl_build: ETL::Build.create).call
         # binding.pry
         expect(ETL::DecisionIssue.count).to eq(4)
 

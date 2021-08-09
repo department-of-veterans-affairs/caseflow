@@ -31,11 +31,13 @@ class ETL::DecisionIssue < ETL::Record
 
       judge_task = judge_tasks.order(:updated_at).last
       if judge_task
+        target.judge_task_id = judge_task.id
         target.judge_user_id = judge_task.assigned_to.id
         target.judge_css_id = judge_task.assigned_to.css_id
       end
       atty_task = atty_tasks.order(:updated_at).last
       if atty_task
+        target.attorney_task_id = judge_task.id
         target.attorney_user_id = atty_task.assigned_to.id
         target.attorney_css_id = atty_task.assigned_to.css_id
       end
@@ -48,6 +50,8 @@ class ETL::DecisionIssue < ETL::Record
         target.decision_doc_id = doc.id
         target.doc_citation_number = doc.citation_number
         target.doc_decision_date = doc.decision_date
+        # target.doc_processed_at = doc.processed_at
+        target.doc_uploaded_to_vbms_at = doc.uploaded_to_vbms_at
       end
 
       target
