@@ -4,7 +4,7 @@
   </p>
 
   <p>
-    Your hearing with a Veterans Law Judge of the Board of Veterans’ Appeals has changed format. Instead of a virtual tele-hearing, you will go in person to <%= @hearing&.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
+    Your hearing with a Veterans Law Judge of the Board of Veterans’ Appeals has changed format. Instead of a virtual tele-hearing, you will go in person to <%= @hearing&.hearing_location_or_regional_office&.name %> and the Judge will meet with you <%= @hearing.request_type == 'V' ? "via video conference" : "in person" %>.
   </p>
 <% end %>
 <%= content_for :date_time do %>
