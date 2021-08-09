@@ -73,6 +73,7 @@ gem "tzinfo"
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "ziptz"
+gem 'rails_select_on_includes', '~> 5.2.1'
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

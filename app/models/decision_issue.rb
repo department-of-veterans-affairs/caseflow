@@ -23,6 +23,10 @@ class DecisionIssue < CaseflowRecord
   belongs_to_polymorphic_appeal :decision_review
   has_many :ama_decision_documents, -> { includes(:ama_decision_issues).references(:decision_issues) },
            through: :ama_appeal, source: :decision_documents
+  has_many :attorney_tasks, -> { includes(:decision_issues).references(:decision_issues).where(type: "AttorneyTask") },
+           through: :ama_appeal, source: :tasks
+  has_many :judge_review_tasks, -> { includes(:decision_issues).references(:decision_issues).where(type: "JudgeDecisionReviewTask") },
+           through: :ama_appeal, source: :tasks
 
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"

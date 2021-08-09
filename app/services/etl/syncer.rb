@@ -19,6 +19,8 @@ class ETL::Syncer
   end
 
   def initialize(since: nil, etl_build:)
+    # if @orig_since==nil, a full ETL is done (non-incremental)
+    # if @orig_since==true, `since` is calculated
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
   end
@@ -42,6 +44,7 @@ class ETL::Syncer
       target_class.transaction do
         possible = originals.length
         saved = 0
+        binding.pry
         originals.reject { |original| filter?(original) }.each do |original|
           target = target_class.sync_with_original(original)
           next unless target

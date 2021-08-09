@@ -11,7 +11,8 @@ class ETL::DecisionIssue < ETL::Record
       target.issue_created_at = original.created_at
       target.issue_updated_at = original.updated_at
       target.issue_deleted_at = original.deleted_at
-
+binding.pry
+    # pp hash_result.map{|r| r["attorney_ids"].split(',').uniq.map{|id| user_cache(id).css_id}}
       target
     end
   end

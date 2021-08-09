@@ -34,10 +34,12 @@ class AppealsUpdatedSinceQuery
   end
 
   def build_query
+    # Query for updated Appeal records or Appeals where association has been updated
     Appeal.established.where("appeals.updated_at >= ?", since_date)
       .or(Appeal.established.where("appeals.id IN (#{clauses_union})"))
   end
 
+  # Query that selects appeal ids of Appeal associations that have been updated
   def clauses_union
     updated_since_for_appeals_relations.map(&:arel).map(&:to_sql).join("\n UNION ")
   end
