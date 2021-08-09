@@ -146,6 +146,10 @@ export const rootTasksForAppeal = createSelector(
   [actionableTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.type === 'RootTask')
 );
 
+export const distributionTasksForAppeal = createSelector(
+  [getAllTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.type === 'DistributionTask')
+);
+
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => _.orderBy(_.filter(completeTasksSelector(tasks), (task) =>
