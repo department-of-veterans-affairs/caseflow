@@ -237,7 +237,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(page).to have_content("Looks like this appeal already has an open JudgeDecisionReviewTask and this action cannot be completed.")
         # rubocop:enable Layout/LineLength
 
-
         visit "/queue/#{judge_one.user.css_id}/assign"
         expect(page).to have_content("#{attorney_one.full_name} (0)")
         case_rows = page.find_all("tr[id^='table-row-']")
