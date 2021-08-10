@@ -1512,7 +1512,6 @@ ActiveRecord::Schema.define(version: 2021_08_09_173845) do
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
-    t.string "participant_id"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
