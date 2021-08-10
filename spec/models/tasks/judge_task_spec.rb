@@ -52,8 +52,8 @@ describe JudgeTask, :all_dbs do
 
     context "when the task is a judge decision review task" do
       let(:task) { create(:ama_judge_decision_review_task, parent: root_task) }
-      context "when a judge decision review task is reassigned successfully" do
-        it "should not violate the only_open_task_of_type validation" do
+      context "when the judge decision review task is reassigned successfully" do
+        it "does not violate the only_open_task_of_type validation" do
           expect { subject }.to_not raise_error
         end
       end
@@ -61,7 +61,7 @@ describe JudgeTask, :all_dbs do
 
     context "when the task is a judge assign task" do
       let(:task) { create(:ama_judge_assign_task, parent: root_task) }
-      context "when a judge assign task is reassigned successfully" do
+      context "when the judge assign task is reassigned successfully" do
         it "should not violate the only_open_task_of_type validation" do
           expect { subject }.to_not raise_error
         end

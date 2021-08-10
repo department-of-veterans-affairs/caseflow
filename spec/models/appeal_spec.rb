@@ -252,13 +252,11 @@ describe Appeal, :all_dbs do
     let(:appeal) { create(:appeal) }
     let!(:task1) { create(:ama_attorney_task, appeal: appeal) }
     let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
-
-    before do
+    let!(:attorney_case_review2) do
       task1.update!(status: Constants.TASK_STATUSES.completed)
       if appeal.tasks.open.of_type("JudgeDecisionReviewTask").any?
-        appeal.tasks.open.of_type("JudgeDecisionReviewTask")[0].update!(status: Constants.TASK_STATUSES.completed)
+        appeal.tasks.open.find_by(type: "JudgeDecisionReviewTask").completed!
       end
-      appeal.reload
       task2 = create(:ama_attorney_task, appeal: appeal)
       create(:attorney_case_review, task: task2, created_at: 1.day.ago)
     end
@@ -266,7 +264,7 @@ describe Appeal, :all_dbs do
     subject { appeal.latest_attorney_case_review }
 
     it "returns the latest record" do
-      expect(subject).to_not eq attorney_case_review1
+      expect(subject).to eq attorney_case_review2
     end
   end
 
