@@ -42,13 +42,26 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     association_method = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_method]
 
     # TODO: Change/optimize this query to address claimant.person not returning nil after person.destroy!
-    orphan_records = klass.unscoped.includes(association_method).where.not(association_id_column => nil)
-      .select { |rec| rec.send(association_method).nil? }
-    if orphan_records.any?
-      slack_service.send_notification("Found #{klass.name} orphaned record: #{orphan_records.map(&:id)}")
+    puts "Checking #{klass}"
+    #  Claimant.includes(:person).where.not(participant_id: nil).where(people: { id: nil }).count
+    # binding.pry
+    association_type_column = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_type_column]
+    if association_type_column
+      orphan_records = klass.unscoped.includes(association_method).where.not(association_id_column => nil)
+        # .where(association_method.to_s.classify.constantize.table_name => { id: nil })
+        .select { |rec| rec.send(association_method).nil? }
+      if orphan_records.any?
+        slack_service.send_notification("Found #{klass.name} orphaned record: #{orphan_records.map(&:id)}")
+      end
+    else
+      orphan_records = klass.unscoped.includes(association_method).where.not(association_id_column => nil)
+        .where(association_method.to_s.classify.constantize.table_name => { id: nil })
+        # .select { |rec| rec.send(association_method).nil? }
+      if orphan_records.any?
+        slack_service.send_notification("Found #{klass.name} orphaned record: #{orphan_records.map(&:id)}")
+      end
     end
 
-    association_type_column = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_type_column]
     if association_type_column
       unusual_records = klass.unscoped.includes(association_method).where(association_id_column => nil)
         .where.not(association_type_column => nil)

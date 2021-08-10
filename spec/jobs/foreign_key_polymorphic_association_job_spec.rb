@@ -104,6 +104,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   context "when checking Claimant.participant_id foreign key" do
     let(:claimant) { appeal.claimant }
+    # before { 2.times { create(:claimant) } }
     context "associated Person exists" do
       it "does not send alert" do
         expect(claimant.reload_person).not_to eq nil
@@ -117,9 +118,12 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         claimant.person.destroy!
       end
       it "sends alert" do
+        ActiveRecord::Base.logger = Logger.new(STDOUT)
         expect(claimant.reload_person).to eq nil
         expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
+        expect(Person.count).to eq 0
         subject
+        # binding.pry
 
         message = "Found Claimant orphaned record: [#{claimant.id}]"
         expect(slack_service).to have_received(:send_notification).with(message).once
