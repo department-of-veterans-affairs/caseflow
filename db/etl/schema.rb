@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_130353) do
+ActiveRecord::Schema.define(version: 2021_08_09_173845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -328,6 +328,7 @@ ActiveRecord::Schema.define(version: 2021_07_29_130353) do
 
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
+    t.boolean "ama_only", default: false
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
