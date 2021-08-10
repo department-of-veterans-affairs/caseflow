@@ -6,6 +6,7 @@ class Hearings::SendEmail
   attr_reader :virtual_hearing, :type
 
   def initialize(virtual_hearing:, type:, hearing: nil)
+    # TODO: remove this, we should only use 'hearing' now
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing || hearing
     @type = type.to_s
@@ -18,6 +19,7 @@ class Hearings::SendEmail
     # already been sent too.
     return if send_reminder
 
+    # TODO: Change all instances of 'virtual_hearing' to use 'hearing' instead
     if !virtual_hearing.appellant_email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
@@ -33,7 +35,6 @@ class Hearings::SendEmail
 
   private
 
-  delegate :hearing, to: :virtual_hearing
   delegate :appeal, to: :hearing
   delegate :appellant_recipient, :representative_recipient, :judge_recipient, to: :hearing
   delegate :veteran, to: :appeal
