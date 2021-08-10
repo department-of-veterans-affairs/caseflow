@@ -4,7 +4,6 @@ class ErrorsController < ApplicationController
   skip_before_action :verify_authentication
 
   def show
-    status_code = params[:status_code]
     template_name = "errors/#{status_code}"
     render template: template_name, status: status_code
   end
@@ -13,5 +12,9 @@ class ErrorsController < ApplicationController
   # on the error page
   def current_user
     nil
+  end
+
+  def status_code
+    params[:status_code]
   end
 end
