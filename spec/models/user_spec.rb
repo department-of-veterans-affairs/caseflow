@@ -148,6 +148,7 @@ describe User, :all_dbs do
         "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
+        "participant_id" => "781162",
         "name" => "Tom Brady",
         "status" => Constants.USER_STATUSES.active,
         "status_updated_at" => nil
