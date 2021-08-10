@@ -178,8 +178,8 @@ describe HearingRepository, :all_dbs do
       context "within 7 days" do
         let(:hearing_date) { Time.zone.now + 7.days }
 
-        it "returns the virtual hearing" do
-          expect(subject).to eq([virtual_hearing])
+        it "returns the hearing" do
+          expect(subject).to eq([hearing])
         end
       end
 
