@@ -36,7 +36,6 @@ export const schema = yup.object().shape({
   suffix: yup.string(),
   dateOfBirth: yup.date().
     nullable().
-    default(null).
     max(yearsFromToday(14), AGE_MIN_ERR).
     min(yearsFromToday(118), AGE_MAX_ERR),
   name: yup.string().when('partyType', {
@@ -102,7 +101,7 @@ export const defaultFormValues = {
 };
 
 export const useClaimantForm = ({ defaultValues = {} } = {}, hidePOAForm = false, hideListedAttorney = false) => {
-  debugger;
+
   const methods = useForm({
     resolver: yupResolver(schema),
     context: { hidePOAForm, hideListedAttorney },
