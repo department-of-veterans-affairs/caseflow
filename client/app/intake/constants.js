@@ -106,6 +106,8 @@ export const ACTIONS = {
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
   SET_RECEIPT_DATE_ERROR: 'SET_RECEIPT_DATE_ERROR',
+  SET_FILED_BY_VA_GOV: 'SET_FILED_BY_VA_GOV',
+  SET_FILED_BY_VA_GOV_ERROR: 'SET_FILED_BY_VA_GOV_ERROR',
   SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
@@ -178,6 +180,7 @@ export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
+    filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
     unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },

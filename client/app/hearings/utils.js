@@ -291,6 +291,18 @@ export const zoneName = (time, name, format) => {
 };
 
 /**
+ * Method to get short zone label from like 'Eastern' or 'Pacific'
+ * @param {string} name -- Name of the zone, defaults to 'America/New_York'
+ * @returns {string} -- The short label of the timezone
+ */
+export const shortZoneName = (name) => {
+  const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
+  const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
+
+  return zoneName?.split('Time')[0]?.trim();
+}
+
+/**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */

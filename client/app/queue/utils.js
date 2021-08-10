@@ -375,6 +375,7 @@ export const prepareAppealForStore = (appeals) => {
       docketNumber: appeal.attributes.docket_number,
       assignedAttorney: appeal.attributes.assigned_attorney,
       assignedJudge: appeal.attributes.assigned_judge,
+      distributedToJudge: appeal.attributes.distributed_to_a_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
