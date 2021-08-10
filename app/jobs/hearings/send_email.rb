@@ -5,8 +5,9 @@ class Hearings::SendEmail
 
   attr_reader :virtual_hearing, :type
 
-  def initialize(virtual_hearing:, type:)
+  def initialize(virtual_hearing:, type:, hearing: nil)
     @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing.hearing || hearing
     @type = type.to_s
   end
 
@@ -54,7 +55,8 @@ class Hearings::SendEmail
   def email_for_recipient(recipient_info)
     args = {
       email_recipient: recipient_info,
-      virtual_hearing: virtual_hearing
+      virtual_hearing: virtual_hearing,
+      hearing: hearing
     }
 
     case type
