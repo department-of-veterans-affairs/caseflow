@@ -356,6 +356,7 @@ describe InitialTasksFactory, :postgres do
         expect(PreDocketTask.all.count).to eq 1
         expect(PreDocketTask.first.appeal).to eq appeal
         expect(PreDocketTask.first.assigned_to).to eq BvaIntake.singleton
+        expect(PreDocketTask.first.parent.is_a?(RootTask)).to eq true
         expect(PreDocketTask.first.status).to eq Constants.TASK_STATUSES.on_hold
       end
     end
