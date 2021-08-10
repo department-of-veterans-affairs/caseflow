@@ -65,6 +65,8 @@ class WorkQueue::AppealSerializer
 
   attribute :assigned_to_location
 
+  attribute :distributed_to_a_judge, &:distributed_to_a_judge?
+
   attribute :completed_hearing_on_previous_appeal? do
     false
   end

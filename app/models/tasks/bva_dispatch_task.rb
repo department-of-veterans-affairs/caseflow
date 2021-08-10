@@ -5,8 +5,6 @@
 # This indicates that an appeal is decided and the appellant is about to be notified of the decision.
 
 class BvaDispatchTask < Task
-  before_create :prevent_dispatch_task_creation_for_unrecognized_appellants
-
   def available_actions(user)
     return [] unless user
 
@@ -45,14 +43,6 @@ class BvaDispatchTask < Task
       elsif appeal.is_a?(LegacyAppeal)
         LegacyAppealDispatch.new(appeal: appeal, params: params).call
       end
-    end
-  end
-
-  private
-
-  def prevent_dispatch_task_creation_for_unrecognized_appellants
-    unless FeatureToggle.enabled?(:allow_unrecognized_appellant_dispatch)
-      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
     end
   end
 end

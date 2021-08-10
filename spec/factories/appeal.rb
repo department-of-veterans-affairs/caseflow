@@ -5,6 +5,7 @@ FactoryBot.define do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    filed_by_va_gov { false }
     sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
