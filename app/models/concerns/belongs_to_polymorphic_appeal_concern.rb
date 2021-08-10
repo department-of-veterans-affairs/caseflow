@@ -3,16 +3,18 @@
 require "helpers/association_wrapper.rb"
 
 ##
-# This concern dynamically defines the following when `belongs_to_polymorphic_appeal :appeal` is called:
+# This concern dynamically defines the following when `belongs_to_polymorphic_appeal :appeal` is called,
+# where `base_table_name` is the table name of the model that is including this concern:
+
 #   belongs_to :appeal, polymorphic: true
 #
 #   scope :ama, -> { where(type_column => "Appeal") }
 #   scope :legacy, -> { where(type_column => "LegacyAppeal") }
 #   belongs_to :ama_appeal,
-#      -> { includes('appeals').where('appeals' => {'appeal_type' => "Appeal"}) },
+#      -> { includes(base_table_name).where(base_table_name => {'appeal_type' => "Appeal"}) },
 #      class_name: "Appeal", foreign_key: 'appeal_id', optional: true
 #   belongs_to :legacy_appeal,
-#      -> { includes('legacy_appeals').where('legacy_appeals' => {'appeal_type' => "LegacyAppeal"}) },
+#      -> { includes(base_table_name).where(base_table_name => {'appeal_type' => "LegacyAppeal"}) },
 #      class_name: "LegacyAppeal", foreign_key: 'appeal_id', optional: true
 #
 #   def ama_appeal
