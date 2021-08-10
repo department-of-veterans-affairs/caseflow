@@ -161,10 +161,7 @@ export const CaseDetailsView = (props) => {
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
   const editPOAInformation =
-    props.featureToggles.edit_unrecognized_appellant
-
-  const editAppellantInformationPoa =
-    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant_poa;
+    props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -188,8 +185,7 @@ export const CaseDetailsView = (props) => {
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
-  console.log(appeal)
-  console.log("APPEAL")
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
