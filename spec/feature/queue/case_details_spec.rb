@@ -2155,12 +2155,6 @@ RSpec.feature "Case details", :all_dbs do
     end
     let(:user) { create(:intake_user) }
 
-    before do
-      User.authenticate!(user: user)
-      Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
-      Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
-    end
-
     context "when the current user does not have high enough BGS sensitivity level" do
       before do
         allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
@@ -2227,6 +2221,12 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "when the current user does not have sensitivity level for Veteran file" do
+      before do
+        User.authenticate!(user: user)
+        Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+        Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
+      end
+
       context "when case is higher level review" do
         it "renders 403 error page" do
           visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
