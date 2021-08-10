@@ -94,7 +94,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_date_of_birth do |object|
-    object.claimant.is_a?(OtherClaimant) ? object.claimant&.date_of_birth : nil
+    object.claimant&.date_of_birth
   end
 
   attribute :appellant_address do |object|
