@@ -277,8 +277,13 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
         >
           <span>
             <b>
-              Date of Birth
+              Date of birth
             </b>
+            <span
+              class="cf-optional"
+            >
+              Optional
+            </span>
           </span>
         </label>
         <input
