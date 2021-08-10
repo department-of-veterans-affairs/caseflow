@@ -15,6 +15,6 @@ class ErrorsController < ApplicationController
   end
 
   def status_code
-    params[:status_code]
+    %w[403 404].include?(params[:status_code]) ? params[:status_code] : "500"
   end
 end
