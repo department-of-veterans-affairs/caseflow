@@ -53,9 +53,9 @@ class DecisionDocument < CaseflowRecord
 
     attempted!
     upload_to_vbms!
-    create_board_grant_effectuations! if appeal.is_a?(Appeal)
 
     if appeal.is_a?(Appeal)
+      create_board_grant_effectuations!
       fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
 
       # We do not want to process Board Grant Effectuations or create remand supplemental claims
