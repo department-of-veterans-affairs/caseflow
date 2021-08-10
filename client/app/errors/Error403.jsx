@@ -39,7 +39,7 @@ export const Error403 = (props) => {
 
 Error403.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
-  buildDate: PropTypes.string,
-  errorTitle: PropTypes.string,
-  errorDetail: PropTypes.string,
+  buildDate: PropTypes.string.isRequired,
+  errorTitle: PropTypes.string.isRequired,
+  errorDetail: PropTypes.string.isRequired,
 };
