@@ -83,7 +83,7 @@ export const CaseDetailsView = (props) => {
   );
 
   const updatePOALink =
-        appeal?.powerOfAttorney?.representative_name ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+        appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -162,6 +162,9 @@ export const CaseDetailsView = (props) => {
 
   const editPOAInformation =
     props.featureToggles.edit_unrecognized_appellant
+
+  const editAppellantInformationPoa =
+    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -258,7 +261,7 @@ export const CaseDetailsView = (props) => {
               editPOAInformation && (
                 <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
                   <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
-                    {appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK}
+                    {updatePOALink}
                   </Link>
                 </span>
               )
