@@ -70,7 +70,7 @@ class InitialTasksFactory
   end
 
   def create_pre_docket_tasks
-    PreDocketTasksFactory.new(@root_task).create_pre_docket_task!
+    PreDocketTasksFactory.new(@appeal).create_pre_docket_task!
   end
 
   def create_selected_tasks

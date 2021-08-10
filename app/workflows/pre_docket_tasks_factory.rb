@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 class PreDocketTasksFactory
-  def initialize(parent)
-    @parent = parent
+  def initialize(appeal)
+    @appeal = appeal
   end
 
   def create_pre_docket_task!
-    appeal = @parent.appeal
     pre_docket_task = PreDocketTask.create!(
-      appeal: appeal,
+      appeal: @appeal,
       assigned_to: BvaIntake.singleton,
-      parent: appeal.root_task
+      parent: @appeal.root_task
     )
     pre_docket_task.put_on_hold_due_to_new_child_task
   end
