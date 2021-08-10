@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import moment from 'moment';
+import { sub } from 'date-fns';
 import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
@@ -16,7 +16,7 @@ const additionalFieldsRequired = (partyType, relationship) => {
 };
 
 const yearsFromToday = (age) => {
-  return moment().subtract(age, 'year');
+  return sub(new Date(), { years: age });
 };
 
 export const schema = yup.object().shape({
