@@ -198,7 +198,7 @@ export const ClaimantForm = ({
                     valueAsDate: true
                   })}
                   name="dateOfBirth"
-                  label={<b>Date of Birth</b>}
+                  label={<b>Date of birth</b>}
                   type="date"
                   validationError={dobValidationError}
                 />
