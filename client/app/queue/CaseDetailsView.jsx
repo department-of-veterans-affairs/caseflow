@@ -82,8 +82,8 @@ export const CaseDetailsView = (props) => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const attorneyNameLink =
-        appeal?.powerOfAttorney ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+  const updatePOALink =
+        appeal?.powerOfAttorney?.representative_name ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -160,6 +160,9 @@ export const CaseDetailsView = (props) => {
   const editAppellantInformation =
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
+  const editPOAInformation =
+    props.featureToggles.edit_unrecognized_appellant
+
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
 
@@ -182,7 +185,8 @@ export const CaseDetailsView = (props) => {
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
-
+  console.log(appeal)
+  console.log("APPEAL")
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -251,10 +255,10 @@ export const CaseDetailsView = (props) => {
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
             additionalHeaderContent={
-              editAppellantInformation && (
+              editPOAInformation && (
                 <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
-                  <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
-                    {attorneyNameLink}
+                  <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
+                    {appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK}
                   </Link>
                 </span>
               )

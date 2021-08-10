@@ -119,6 +119,10 @@ class WorkQueue::AppealSerializer
     appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
+  attribute :has_poa do |appeal|
+    appeal.claimant&.power_of_attorney
+  end
+
   attribute :cavc_remand do |object|
     if object.cavc_remand
       WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
