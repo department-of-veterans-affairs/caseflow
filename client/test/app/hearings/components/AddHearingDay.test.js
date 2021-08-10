@@ -183,6 +183,14 @@ describe('AddHearingDay', () => {
     expect(addHearingDay.component).toMatchSnapshot();
   });
 
+  test('Displays Docket Start Times fields when docket type is Video', async () => {
+    // Render the DocketStartTimes component with a Video request type
+    setup({ requestType: REQUEST_TYPE_OPTIONS[0], selectedRegionalOffice: ro });
+    const docketStartTimes = screen.getByText('Available Times');
+
+    expect(docketStartTimes).not.toBeUndefined();
+  });
+
   test('Can Cancel the form', async () => {
     // Render the address component with a Virtual request type
     const addHearingDay = setup();

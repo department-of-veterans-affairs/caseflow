@@ -15,6 +15,7 @@ import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
+import { ReadOnlyHearingTimeWithZone } from './modalForms/ReadOnlyHearingTimeWithZone';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
@@ -53,6 +54,7 @@ export const ScheduleVeteranForm = ({
   const unscheduledNotes = hearing?.notes;
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
+  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
   const getOriginalRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
@@ -81,6 +83,33 @@ export const ScheduleVeteranForm = ({
         ...hearing?.virtualHearing,
         ...virtualHearing,
       })
+  };
+
+  const getHearingTime = () => {
+    const onTimeChange =
+      (scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString);
+
+    if (hearingDayIsVideo && hearing.hearingDay?.beginsAt) {
+      return (
+        <ReadOnlyHearingTimeWithZone
+          hearingStartTime={hearing.hearingDay?.beginsAt}
+          timezone={hearing?.hearingDay?.timezone}
+          onRender={onTimeChange}
+        />
+      );
+    }
+
+    return <HearingTime
+      regionalOffice={ro}
+      errorMessage={errors?.scheduledTimeString}
+      vertical
+      label="Hearing Time"
+      enableZone
+      localZone={hearing?.hearingDay?.timezone}
+      onChange={onTimeChange}
+      value={hearing.scheduledTimeString}
+    />;
+
   };
 
   return (
@@ -178,20 +207,7 @@ export const ScheduleVeteranForm = ({
                       hearing={hearing}
                       roTimezone={hearing?.hearingDay?.timezone}
                     />
-                  ) : (
-                    <HearingTime
-                      regionalOffice={ro}
-                      errorMessage={errors?.scheduledTimeString}
-                      vertical
-                      label="Hearing Time"
-                      enableZone
-                      localZone={hearing?.hearingDay?.timezone}
-                      onChange={(scheduledTimeString) =>
-                        props.onChange('scheduledTimeString', scheduledTimeString)
-                      }
-                      value={hearing.scheduledTimeString}
-                    />
-                  )}
+                  ) : getHearingTime()}
                 </div>
               )}
 
