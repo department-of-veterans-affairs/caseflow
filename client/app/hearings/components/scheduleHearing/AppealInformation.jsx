@@ -4,6 +4,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { ReadOnly } from '../details/ReadOnly';
+import { AddressLine } from '../details/Address';
 import { renderAppealType } from '../../../queue/utils';
 import { formatDateStr } from '../../../util/DateUtil';
 
@@ -45,21 +46,26 @@ AppealStreamDetails.propTypes = {
   isAdvancedOnDocket: PropTypes.bool,
 };
 
-export const AppealInformation = ({ appeal }) => {
+export const AppealInformation = ({ appeal, appellantTitle, hearing }) => {
   /* eslint-disable camelcase */
-  const poaLabel = appeal?.powerOfAttorney?.representative_name ?
+  const poaText = appeal?.powerOfAttorney?.representative_name ?
     appeal?.powerOfAttorney?.representative_name :
     'No representative';
   /* eslint-enable camelcase */
+  const appellantName = appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName;
+  const poaLabel = appeal?.powerOfAttorney.representative_type === 'Other' ? 'Power Of Attorney' : appeal?.powerOfAttorney.representative_type;
 
   return (
     <div className="schedule-veteran-appeals-info">
-      <h2>Appeal Information</h2>
-      <ReadOnly
-        spacing={0}
-        label={`${appeal?.appellantIsNotVeteran ? 'Appellant' : 'Veteran'} Name`}
-        text={appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName}
+      <h2>{appellantName}</h2>
+      <AddressLine
+        spacing={5}
+        addressLine1={appeal?.appellantAddress?.address_line_1}
+        addressState={appeal?.appellantAddress?.state}
+        addressCity={appeal?.appellantAddress?.city}
+        addressZip={appeal?.appellantAddress?.zip}
       />
+      <ReadOnly spacing={15} label="Relation to Veteran" text={appeal?.appellantRelationship} />
       <ReadOnly spacing={15} label="Issues" text={appeal?.issueCount} />
       <ReadOnly
         className="schedule-veteran-appeals-info-stream"
@@ -82,10 +88,13 @@ export const AppealInformation = ({ appeal }) => {
           </React.Fragment>
         }
       />
-      <ReadOnly
-        spacing={15}
-        label="Power of Attorney"
-        text={poaLabel}
+      <AddressLine
+        label={poaLabel}
+        name={poaText}
+        addressLine1={hearing?.representativeAddress?.addressLine1}
+        addressState={hearing?.representativeAddress?.state}
+        addressCity={hearing?.representativeAddress?.city}
+        addressZip={hearing?.representativeAddress?.zip}
       />
       {appeal?.veteranDateOfDeath && (
         <ReadOnly
@@ -100,4 +109,6 @@ export const AppealInformation = ({ appeal }) => {
 
 AppealInformation.propTypes = {
   appeal: PropTypes.object,
+  appellantTitle: PropTypes.string,
+  hearing: PropTypes.object
 };
