@@ -193,7 +193,10 @@ export const ClaimantForm = ({
               />
               { partyType !== 'organization' &&
                 <DateSelector
-                  inputRef={register}
+                  optional
+                  inputRef={register({
+                    valueAsDate: true
+                  })}
                   name="dateOfBirth"
                   label={<b>Date of Birth</b>}
                   type="date"
