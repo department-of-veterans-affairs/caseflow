@@ -20,13 +20,7 @@ import { resetSuccessMessages,
 import ApiUtil from '../../util/ApiUtil';
 import { clearAppealDetails } from '../QueueActions';
 
-const getDefaultValues = (appeal, POA = false) => {
-  return(
-    POA ? mapPOADataFromApi(appeal) : mapAppellantDataFromApi(appeal)
-  )
-}
-
-const EditPOAInformation = ({ appealId, POA }) => {
+const EditPOAInformation = ({ appealId }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
   const appeal = useSelector((state) =>
@@ -37,14 +31,14 @@ const EditPOAInformation = ({ appealId, POA }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
-  const defaultValues = getDefaultValues(appeal, POA);
+  const defaultValues = mapPOADataFromApi(appeal);
 
-  const methods = useClaimantForm({ defaultValues }, true, true, POA);
+  const methods = useClaimantForm({ defaultValues }, true, true);
   const [loading, setLoading] = useState(false);
   const [editFailure, setEditFailure] = useState(false);
 
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
     handleSubmit,
   } = methods;
 
@@ -76,10 +70,7 @@ const EditPOAInformation = ({ appealId, POA }) => {
       setLoading(false);
     });
   };
-
-  const editAppellantHeader = 'Edit Appellant Information';
   const editPOAHeader = defaultValues.firstName ? "Edit Appellant's POA Information" : "Update Appellant's POA";
-  const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
   const editPOADescription = defaultValues.firstName ? editAppellantDescription : COPY.UPDATE_POA_PAGE_DESCRIPTION;
 
   return <div>
@@ -97,18 +88,17 @@ const EditPOAInformation = ({ appealId, POA }) => {
           />
         }
         <EditClaimantForm
-          editAppellantHeader={POA ? editPOAHeader : editAppellantHeader}
-          editAppellantDescription={POA ? editPOADescription : editAppellantDescription}
+          editAppellantHeader={editPOAHeader}
+          editAppellantDescription={editPOADescription}
           hidePOAForm
-          hideListedAttorney={!POA}
-          POA={POA}
+          POA={true}
         />
       </AppSegment>
       <Button
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
-        disabled={!isValid || (!POA && !isValid && !isEmpty(errors))}
+        disabled={!isValid}
         name="Save"
       >
         Save
