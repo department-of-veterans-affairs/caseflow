@@ -10,7 +10,6 @@ import { ClaimantForm } from 'app/intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts } from './testUtils';
 import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
-import moment from 'moment';
 
 const FormWrapper = ({ children, defaultValues }) => {
   const methods = useClaimantForm({ defaultValues });
