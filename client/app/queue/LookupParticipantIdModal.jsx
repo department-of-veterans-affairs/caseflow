@@ -70,13 +70,13 @@ class LookupParticipantIdModal extends React.Component {
     });
 
     try {
-      const { res } = await ApiUtil.get(url);
+      const res = await ApiUtil.get(url);
 
       this.setState({
         representedOrganizations: res.body.represented_organizations,
         alert: 'success'
       });
-    } catch ({ response }) {
+    } catch (response) {
       const error = response?.body?.errors?.[0];
 
       this.setState({
