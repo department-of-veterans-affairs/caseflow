@@ -22,7 +22,6 @@ class Claimant < CaseflowRecord
            :advanced_on_docket_based_on_age?,
            :advanced_on_docket_motion_granted?,
            :name,
-           :suffix,
            :first_name,
            :last_name,
            :middle_name,
@@ -46,6 +45,10 @@ class Claimant < CaseflowRecord
            allow_nil: true
 
   delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
+
+  def suffix
+    person.name_suffix
+  end
 
   def self.create_without_intake!(participant_id:, payee_code:, type:)
     claimant = create!(
