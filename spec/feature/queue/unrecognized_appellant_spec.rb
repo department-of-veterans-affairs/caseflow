@@ -131,9 +131,8 @@ feature "Unrecognized appellants", :postgres do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant_poa) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant_poa) }
 
-    it "should not show the listed attorney name dropdown on the edit screen" do
+    it "should show the edit information button if there's a POA already" do
       visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
-      binding.pry
       expect(page).to have_content("Edit Information")
     end
   end
