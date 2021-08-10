@@ -20,7 +20,13 @@ import { resetSuccessMessages,
 import ApiUtil from '../../util/ApiUtil';
 import { clearAppealDetails } from '../QueueActions';
 
-const EditAppellantInformation = ({ appealId, POA }) => {
+const getDefaultValues = (appeal, POA = false) => {
+  return(
+    POA ? mapPOADataFromApi(appeal) : mapAppellantDataFromApi(appeal)
+  )
+}
+
+const EditPOAInformation = ({ appealId, POA }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
   const appeal = useSelector((state) =>
@@ -31,7 +37,7 @@ const EditAppellantInformation = ({ appealId, POA }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
-  const defaultValues = mapAppellantDataFromApi(appeal);
+  const defaultValues = getDefaultValues(appeal, POA);
 
   const methods = useClaimantForm({ defaultValues }, true, true, POA);
   const [loading, setLoading] = useState(false);
@@ -48,7 +54,7 @@ const EditAppellantInformation = ({ appealId, POA }) => {
 
     setLoading(true);
 
-    ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: updatePayload }).then((response) => {
+    ApiUtil.patch(`/power_of_attorney/${appellantId}`, { data: updatePayload }).then((response) => {
       const appellantName = response.body.unrecognized_party_detail.name;
 
       const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
@@ -118,8 +124,8 @@ const EditAppellantInformation = ({ appealId, POA }) => {
   </div>;
 };
 
-EditAppellantInformation.propTypes = {
+EditPOAInformation.propTypes = {
   appealId: PropTypes.string
 };
 
-export default connect()(EditAppellantInformation);
+export default connect()(EditPOAInformation);

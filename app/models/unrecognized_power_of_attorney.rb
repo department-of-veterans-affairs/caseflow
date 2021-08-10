@@ -11,6 +11,7 @@ class UnrecognizedPowerOfAttorney
   attr_reader :unrecognized_party_detail
 
   alias representative_name name
+  alias representative_last_name last_name
   alias representative_address address
   alias representative_email_address email_address
 
