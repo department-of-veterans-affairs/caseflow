@@ -15,8 +15,8 @@ const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
 };
 
-const yearsFromToday = (age) => {
-  return sub(new Date(), { years: age });
+const yearsFromToday = (years) => {
+  return sub(new Date(), { years });
 };
 
 export const schema = yup.object().shape({
