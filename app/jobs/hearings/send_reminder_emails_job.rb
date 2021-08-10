@@ -27,7 +27,7 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
         .call
     end
 
-    if hearing.virtual_hearing.representative_email.present? && should_send_representative_reminder?(hearing)
+    if should_send_representative_reminder?(hearing)
       Hearings::SendEmail
         .new(virtual_hearing: hearing.virtual_hearing, type: :representative_reminder)
         .call
@@ -35,6 +35,8 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   end
 
   def should_send_appellant_reminder?(hearing)
+    return false if hearing.virtual_hearing.appellant_email.blank?
+
     created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
     Hearings::ReminderService
       .new(
@@ -45,6 +47,8 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   end
 
   def should_send_representative_reminder?(hearing)
+    return false if hearing.virtual_hearing.representative_email.blank?
+
     created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
     Hearings::ReminderService
       .new(
