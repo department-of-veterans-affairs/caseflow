@@ -76,9 +76,9 @@ class HearingMailer < ActionMailer::Base
     # :reek:RepeatedConditionals
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
-      "Your Board hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}"
+      "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name}"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "#{appellant_name}’s hearing will be held at #{@hearing&.hearing_location_or_regional_office&.name}"
+      "#{appellant_name}’s hearing will be held at #{@hearing.hearing_location_or_regional_office.name}"
     end
   end
 
