@@ -21,7 +21,7 @@ describe Hearings::ReminderService do
 
   context ".should_send_reminder_email?" do
     subject do
-      described_class.new(virtual_hearing, last_sent_reminder).should_send_reminder_email?
+      described_class.new(hearing, last_sent_reminder, created_at).should_send_reminder_email?
     end
 
     context "hearing date is 7 days out" do
