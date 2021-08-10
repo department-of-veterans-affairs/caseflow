@@ -4,23 +4,24 @@
   </p>
 
   <p>
-    The location has changed for your hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
-    You will arrive at <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
+    Your hearing with a Veterans Law Judge of the Board of Veterans’ Appeals has changed format. Instead of a virtual tele-hearing, you will go in person to <%= @hearing&.hearing_location_or_regional_office&.name %> and the Judge will meet with you <%= @hearing.request_type == 'V' ? "via video conference" : "in person" %>.
   </p>
 <% end %>
-
 <%= content_for :date_time do %>
   <%= render "hearing_mailer/sections/date_time" %>
-
-  <h3>
-    Location
-  </h3>
+<% end %>
+<% content_for :location do %>
+  <%= render "hearing_mailer/sections/location" %>
+<% end %>
+<% content_for :how_to_join do %>
+  <b>What should I expect on the day of my hearing?</b>
   <p>
-    <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.name %><br/>
-    <%= @virtual_hearing.hearing.hearing_location_or_regional_office&.full_address %><br/>
+    All visitors to VA facilities should bring a photo ID and check in with security 30 minutes prior to the scheduled hearing and report to the front desk. You will be subject to security screening, including the inspection of personal belongings. Masks may be required to enter VA facilities. It is against the law to bring firearms or any other dangerous weapons into a federal facility.
+  </p>
+  <p>
+    Hearings are scheduled in morning and afternoon shifts. The judge will hold each hearing as soon as possible; however, you should be prepared to wait. The approximate time for each hearing is 30 minutes.
   </p>
 <% end %>
-
 <%= content_for :signature do %>
   <p>
     Sincerely,<br/>
