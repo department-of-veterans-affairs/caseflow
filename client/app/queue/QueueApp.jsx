@@ -499,6 +499,14 @@ class QueueApp extends React.PureComponent {
     />
   )
 
+  routedEditPOAInformation = (props) => (
+    <EditAppellantInformation
+      appealId={props.match.params.appealId}
+      POA
+      {...props.match.params}
+    />
+  )
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -699,6 +707,13 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_appellant_information"
               title="Edit Appellant Information | Caseflow"
               render={this.routedEditAppellantInformation}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/edit_poa_information"
+              title="Edit POA Information | Caseflow"
+              render={this.routedEditPOAInformation}
             />
 
             <PageRoute

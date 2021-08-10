@@ -81,13 +81,13 @@ export const ClaimantForm = ({
       setValue('listedAttorney', null);
     }
   }, [watchRelationship]);
-
+  console.log(methods.getValues())
   return (
     <>
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
       <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+        {!props.POA && <Controller
           control={control}
           name="relationship"
           defaultValue={null}
@@ -102,7 +102,7 @@ export const ClaimantForm = ({
               strongLabel
             />
           )}
-        />
+        />}
         <br />
         {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
@@ -113,7 +113,7 @@ export const ClaimantForm = ({
               <FieldDiv>
                 <SearchableDropdown
                   {...rest}
-                  label="Claimant's name"
+                  label={`${props.POA ? 'Representative' : 'Claimant'}'s name`}
                   filterOption={filterOption}
                   async={asyncFn}
                   defaultOptions

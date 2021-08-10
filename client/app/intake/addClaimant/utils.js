@@ -12,7 +12,10 @@ const additionalFieldsRequired = (partyType, relationship) => {
 };
 
 export const schema = yup.object().shape({
-  relationship: yup.string().required(),
+  relationship: yup.string().when(['$hideListedAttorney'], {
+    is: (hideListedAttorney) => !hideListedAttorney,
+    then: yup.string().required(),
+  }),
   partyType: yup.string().when(['listedAttorney', 'relationship'], {
     is: (listedAttorney, relationship) =>
       listedAttorney?.value === 'not_listed' || relationship === 'other',

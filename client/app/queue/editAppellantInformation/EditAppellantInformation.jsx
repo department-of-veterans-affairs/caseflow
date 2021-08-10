@@ -13,14 +13,20 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
-import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
+import { mapAppellantDataFromApi, mapAppellantDataToApi, mapPOADataFromApi } from './utils';
 import { resetSuccessMessages,
   showSuccessMessage,
 } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import { clearAppealDetails } from '../QueueActions';
 
-const EditAppellantInformation = ({ appealId }) => {
+const getDefaultValues = (appeal, POA = false) => {
+  return(
+    POA ? mapPOADataFromApi(appeal) : mapAppellantDataFromApi(appeal)
+  )
+}
+
+const EditAppellantInformation = ({ appealId, POA }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
   const appeal = useSelector((state) =>
@@ -31,7 +37,9 @@ const EditAppellantInformation = ({ appealId }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
+  const defaultValues = getDefaultValues(appeal, POA);
+
+  const methods = useClaimantForm({ defaultValues }, true, true);
   const [loading, setLoading] = useState(false);
   const [editFailure, setEditFailure] = useState(false);
 
@@ -40,38 +48,44 @@ const EditAppellantInformation = ({ appealId }) => {
     handleSubmit,
   } = methods;
 
+  const updateEndpoint = POA ? `power_of_attorney` : 'unrecognized_appellants'
+
   const handleUpdate = (formData) => {
-    const appellantId = appeal.unrecognizedAppellantId;
-    const appellantPayload = mapAppellantDataToApi(formData);
+    console.log(formData);
+    // const appellantId = appeal.unrecognizedAppellantId;
+    // const updatePayload = mapAppellantDataToApi(formData);
 
-    setLoading(true);
+    // setLoading(true);
 
-    ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload }).then((response) => {
-      const appellantName = response.body.unrecognized_party_detail.name;
+    // ApiUtil.patch(`/${updateEndpoint}/${appellantId}`, { data: updatePayload }).then((response) => {
+    //   const appellantName = response.body.unrecognized_party_detail.name;
 
-      const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
-      const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
+    //   const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
+    //   const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
 
-      const successMessage = {
-        title,
-        detail,
-      };
+    //   const successMessage = {
+    //     title,
+    //     detail,
+    //   };
 
-      dispatch(clearAppealDetails(appealId));
-      dispatch(showSuccessMessage(successMessage));
-      push(`/queue/appeals/${appealId}`);
-    },
-    // eslint-disable-next-line no-unused-vars
-    (error) => {
-      // eslint-disable-next-line no-console
-      setEditFailure(true);
-      setLoading(false);
-    });
+    //   dispatch(clearAppealDetails(appealId));
+    //   dispatch(showSuccessMessage(successMessage));
+    //   push(`/queue/appeals/${appealId}`);
+    // },
+    // // eslint-disable-next-line no-unused-vars
+    // (error) => {
+    //   // eslint-disable-next-line no-console
+    //   setEditFailure(true);
+    //   setLoading(false);
+    // });
   };
 
   const editAppellantHeader = 'Edit Appellant Information';
+  const editPOAHeader = defaultValues.firstName ? "Edit Appellant's POA Information" : "Update Appellant's POA";
   const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
+  const editPOADescription = defaultValues.firstName ? editAppellantDescription : COPY.UPDATE_POA_PAGE_DESCRIPTION;
 
+  console.log(errors);
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
@@ -87,17 +101,18 @@ const EditAppellantInformation = ({ appealId }) => {
           />
         }
         <EditClaimantForm
-          editAppellantHeader={editAppellantHeader}
-          editAppellantDescription={editAppellantDescription}
+          editAppellantHeader={POA ? editPOAHeader : editAppellantHeader}
+          editAppellantDescription={POA ? editPOADescription : editAppellantDescription}
           hidePOAForm
-          hideListedAttorney
+          hideListedAttorney={!POA}
+          POA={POA}
         />
       </AppSegment>
       <Button
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
-        disabled={!isValid && !isEmpty(errors)}
+        // disabled={!isValid && !isEmpty(errors)}
         name="Save"
       >
         Save

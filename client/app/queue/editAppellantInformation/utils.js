@@ -47,3 +47,10 @@ export const mapAppellantDataFromApi = (appeal) => {
     }
   };
 };
+
+export const mapPOADataFromApi = (appeal) => {
+  console.log(appeal);
+  return {
+    relationship: 'attorney'
+  }
+}

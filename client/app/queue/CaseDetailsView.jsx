@@ -246,6 +246,15 @@ export const CaseDetailsView = (props) => {
           <PowerOfAttorneyDetail
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
+            additionalHeaderContent={
+              editAppellantInformation && (
+                <span className="cf-push-right">
+                  <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
+                    {"edit"}
+                  </Link>
+                </span>
+              )
+            }
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
