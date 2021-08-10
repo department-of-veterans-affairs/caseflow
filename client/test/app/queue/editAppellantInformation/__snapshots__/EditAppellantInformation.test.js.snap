@@ -20,6 +20,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "addressLine3": "APT 2",
                 "city": "SAN FRANCISCO",
                 "country": "USA",
+                "dateOfBirth": null,
                 "emailAddress": undefined,
                 "firstName": undefined,
                 "lastName": undefined,
@@ -30,6 +31,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "name": "Abellona Valtas",
                 "partyType": undefined,
                 "phoneNumber": undefined,
+                "poaForm": null,
                 "relationship": "spouse",
                 "state": "CA",
                 "suffix": undefined,
@@ -93,6 +95,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     type="date"
                     value=""
                   />,
+                  "valueAsDate": true,
                 },
                 "emailAddress": Object {
                   "ref": <input
@@ -172,7 +175,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
               },
             },
             "fieldsWithValidationRef": Object {
-              "current": Object {},
+              "current": Object {
+                "dateOfBirth": true,
+              },
             },
             "formState": Object {
               "dirtyFields": Object {},
@@ -312,6 +317,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "addressLine3": "APT 2",
                           "city": "SAN FRANCISCO",
                           "country": "USA",
+                          "dateOfBirth": null,
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
@@ -322,6 +328,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
+                          "poaForm": null,
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -385,6 +392,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="date"
                               value=""
                             />,
+                            "valueAsDate": true,
                           },
                           "emailAddress": Object {
                             "ref": <input
@@ -464,7 +472,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         },
                       },
                       "fieldsWithValidationRef": Object {
-                        "current": Object {},
+                        "current": Object {
+                          "dateOfBirth": true,
+                        },
                       },
                       "formState": Object {
                         "dirtyFields": Object {},
@@ -2614,10 +2624,11 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                       inputRef={[Function]}
                       label={
                         <b>
-                          Date of Birth
+                          Date of birth
                         </b>
                       }
                       name="dateOfBirth"
+                      optional={true}
                       type="date"
                     >
                       <TextField
@@ -2629,13 +2640,13 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         inputRef={[Function]}
                         label={
                           <b>
-                            Date of Birth
+                            Date of birth
                           </b>
                         }
                         max="9999-12-31"
                         name="dateOfBirth"
                         onChange={[Function]}
-                        optional={false}
+                        optional={true}
                         placeholder="mm/dd/yyyy"
                         required={false}
                         type="date"
@@ -2650,17 +2661,22 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                             <FormLabel
                               label={
                                 <b>
-                                  Date of Birth
+                                  Date of birth
                                 </b>
                               }
                               name="dateOfBirth"
-                              optional={false}
+                              optional={true}
                               required={false}
                             >
                               <span>
                                 <b>
-                                  Date of Birth
+                                  Date of birth
                                 </b>
+                                <span
+                                  className="cf-optional"
+                                >
+                                  Optional
+                                </span>
                               </span>
                             </FormLabel>
                           </label>
@@ -2693,6 +2709,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "addressLine3": "APT 2",
                           "city": "SAN FRANCISCO",
                           "country": "USA",
+                          "dateOfBirth": null,
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
@@ -2703,6 +2720,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
+                          "poaForm": null,
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -2766,6 +2784,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="date"
                               value=""
                             />,
+                            "valueAsDate": true,
                           },
                           "emailAddress": Object {
                             "ref": <input
@@ -2845,7 +2864,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         },
                       },
                       "fieldsWithValidationRef": Object {
-                        "current": Object {},
+                        "current": Object {
+                          "dateOfBirth": true,
+                        },
                       },
                       "formState": Object {
                         "dirtyFields": Object {},
@@ -3125,6 +3146,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "addressLine3": "APT 2",
                                 "city": "SAN FRANCISCO",
                                 "country": "USA",
+                                "dateOfBirth": null,
                                 "emailAddress": undefined,
                                 "firstName": undefined,
                                 "lastName": undefined,
@@ -3135,6 +3157,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "name": "Abellona Valtas",
                                 "partyType": undefined,
                                 "phoneNumber": undefined,
+                                "poaForm": null,
                                 "relationship": "spouse",
                                 "state": "CA",
                                 "suffix": undefined,
@@ -3198,6 +3221,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                     type="date"
                                     value=""
                                   />,
+                                  "valueAsDate": true,
                                 },
                                 "emailAddress": Object {
                                   "ref": <input
@@ -3277,7 +3301,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               },
                             },
                             "fieldsWithValidationRef": Object {
-                              "current": Object {},
+                              "current": Object {
+                                "dateOfBirth": true,
+                              },
                             },
                             "formState": Object {
                               "dirtyFields": Object {},
