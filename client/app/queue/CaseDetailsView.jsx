@@ -81,6 +81,10 @@ export const CaseDetailsView = (props) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const attorneyNameLink =
+        appeal?.powerOfAttorney ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -246,6 +250,15 @@ export const CaseDetailsView = (props) => {
           <PowerOfAttorneyDetail
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
+            additionalHeaderContent={
+              editAppellantInformation && (
+                <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
+                  <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
+                    {attorneyNameLink}
+                  </Link>
+                </span>
+              )
+            }
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
@@ -328,7 +341,7 @@ const mapDispatchToProps = (dispatch) =>
       resetSuccessMessages,
       transitionAlert,
       stopPollingHearing,
-      setHearingDay,
+      setHearingDay
     },
     dispatch
   );
