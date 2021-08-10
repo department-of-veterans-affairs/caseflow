@@ -82,9 +82,6 @@ export const CaseDetailsView = (props) => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const attorneyNameLink =
-        appeal?.powerOfAttorney ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
-
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -159,6 +156,12 @@ export const CaseDetailsView = (props) => {
 
   const editAppellantInformation =
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+
+  const editAppellantInformationPoa =
+    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant_poa;
+
+  const attorneyNameLink =
+        appeal?.powerOfAttorney ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -251,7 +254,7 @@ export const CaseDetailsView = (props) => {
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
             additionalHeaderContent={
-              editAppellantInformation && (
+              editAppellantInformationPoa && (
                 <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
                   <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
                     {attorneyNameLink}
