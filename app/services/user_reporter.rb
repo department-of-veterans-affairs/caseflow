@@ -64,7 +64,6 @@ class UserReporter
       EndProductEstablishment, EstablishClaim,
       HigherLevelReviewIntake,
       Intake,
-      JudgeSchedulePeriod,
       LegacyHearing,
       OrganizationsUser,
       RampElectionIntake, RampElectionRollback, RampRefilingIntake, RequestIssuesUpdate,

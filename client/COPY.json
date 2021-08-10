@@ -375,6 +375,7 @@
   "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
   "HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL": "Start Date:",
   "HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL": "End Date:",
+  "HEARING_SCHEDULE_SUCCESSFULLY_ASSIGNED_JUDGES": "Successfully assigned judges to the provided hearing days",
 
   "ASSIGN_WIDGET_OTHER": "Other",
   "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
