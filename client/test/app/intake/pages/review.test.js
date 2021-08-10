@@ -19,7 +19,8 @@ const validReviewAppealData = {
   'docket-type': 'docket',
   'docket-type': 'type',
   'legacy-opt-in': 'true',
-  'different-claimant-option': 'false'
+  'different-claimant-option': 'false',
+  'filed-by-va-gov': 'false'
 } 
 
 describe('schema', () => {
