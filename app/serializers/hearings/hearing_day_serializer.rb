@@ -10,6 +10,7 @@ class HearingDaySerializer
   attribute :id
   attribute :judge_first_name
   attribute :judge_id
+  attribute :judge_css_id
   attribute :judge_last_name
   attribute :lock
   attribute :notes

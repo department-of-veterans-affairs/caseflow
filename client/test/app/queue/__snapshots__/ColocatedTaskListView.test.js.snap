@@ -2034,11 +2034,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>
@@ -2233,11 +2229,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>

@@ -21,7 +21,9 @@ class DocketSwitchRulingTask < JudgeTask
     end
 
     def verify_user_can_create!(user, parent)
-      parent.is_a?(RootTask) ? true : super(user, parent)
+      # If appeal has been distributed, the ruling task will created as a child of the RootTask.
+      # If appeal has not been distributed, switching dockets will block distribution.
+      (parent.is_a?(RootTask) || parent.is_a?(DistributionTask)) ? true : super(user, parent)
     end
   end
 end
