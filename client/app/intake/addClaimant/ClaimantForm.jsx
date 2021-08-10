@@ -60,7 +60,6 @@ export const ClaimantForm = ({
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
-
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
@@ -76,11 +75,11 @@ export const ClaimantForm = ({
     [onAttorneySearch]
   );
 
-  useEffect(() => {
-    if (watchRelationship !== 'attorney') {
-      setValue('listedAttorney', null);
-    }
-  }, [watchRelationship]);
+  // useEffect(() => {
+  //   if (watchRelationship !== 'attorney') {
+  //     setValue('listedAttorney', null);
+  //   }
+  // }, [watchRelationship]);
   console.log(methods.getValues())
   return (
     <>

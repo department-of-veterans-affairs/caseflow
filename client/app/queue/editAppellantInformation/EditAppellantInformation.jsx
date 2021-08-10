@@ -39,7 +39,7 @@ const EditAppellantInformation = ({ appealId, POA }) => {
 
   const defaultValues = getDefaultValues(appeal, POA);
 
-  const methods = useClaimantForm({ defaultValues }, true, true);
+  const methods = useClaimantForm({ defaultValues }, true, true, POA);
   const [loading, setLoading] = useState(false);
   const [editFailure, setEditFailure] = useState(false);
 
@@ -51,33 +51,32 @@ const EditAppellantInformation = ({ appealId, POA }) => {
   const updateEndpoint = POA ? `power_of_attorney` : 'unrecognized_appellants'
 
   const handleUpdate = (formData) => {
-    console.log(formData);
-    // const appellantId = appeal.unrecognizedAppellantId;
-    // const updatePayload = mapAppellantDataToApi(formData);
+    const appellantId = appeal.unrecognizedAppellantId;
+    const updatePayload = mapAppellantDataToApi(formData);
 
-    // setLoading(true);
+    setLoading(true);
 
-    // ApiUtil.patch(`/${updateEndpoint}/${appellantId}`, { data: updatePayload }).then((response) => {
-    //   const appellantName = response.body.unrecognized_party_detail.name;
+    ApiUtil.patch(`/${updateEndpoint}/${appellantId}`, { data: updatePayload }).then((response) => {
+      const appellantName = response.body.unrecognized_party_detail.name;
 
-    //   const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
-    //   const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
+      const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
+      const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
 
-    //   const successMessage = {
-    //     title,
-    //     detail,
-    //   };
+      const successMessage = {
+        title,
+        detail,
+      };
 
-    //   dispatch(clearAppealDetails(appealId));
-    //   dispatch(showSuccessMessage(successMessage));
-    //   push(`/queue/appeals/${appealId}`);
-    // },
-    // // eslint-disable-next-line no-unused-vars
-    // (error) => {
-    //   // eslint-disable-next-line no-console
-    //   setEditFailure(true);
-    //   setLoading(false);
-    // });
+      dispatch(clearAppealDetails(appealId));
+      dispatch(showSuccessMessage(successMessage));
+      push(`/queue/appeals/${appealId}`);
+    },
+    // eslint-disable-next-line no-unused-vars
+    (error) => {
+      // eslint-disable-next-line no-console
+      setEditFailure(true);
+      setLoading(false);
+    });
   };
 
   const editAppellantHeader = 'Edit Appellant Information';
@@ -85,7 +84,6 @@ const EditAppellantInformation = ({ appealId, POA }) => {
   const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
   const editPOADescription = defaultValues.firstName ? editAppellantDescription : COPY.UPDATE_POA_PAGE_DESCRIPTION;
 
-  console.log(errors);
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
@@ -112,7 +110,7 @@ const EditAppellantInformation = ({ appealId, POA }) => {
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
-        // disabled={!isValid && !isEmpty(errors)}
+        disabled={!isValid || (!POA && !isValid && !isEmpty(errors))}
         name="Save"
       >
         Save
