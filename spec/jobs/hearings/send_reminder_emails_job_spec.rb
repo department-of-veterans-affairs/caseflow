@@ -45,9 +45,9 @@ describe Hearings::SendReminderEmailsJob do
         expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
         subject
-        virtual_hearing.reload
-        expect(virtual_hearing.appellant_reminder_sent_at).not_to be_nil
-        expect(virtual_hearing.representative_reminder_sent_at).not_to be_nil
+        hearing.reload
+        expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+        expect(hearing.representative_recipient&.reminder_sent_at).not_to be_nil
       end
 
       it "creates sent email events", :aggregate_failures do
@@ -74,9 +74,9 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
-          virtual_hearing.reload
-          expect(virtual_hearing.appellant_reminder_sent_at).not_to be_nil
-          expect(virtual_hearing.representative_reminder_sent_at).to(
+          hearing.reload
+          expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+          expect(hearing.representative_recipient&.reminder_sent_at).to(
             be_within(1.second).of(representative_reminder_sent_at)
           )
         end
@@ -98,11 +98,11 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
-          virtual_hearing.reload
-          expect(virtual_hearing.appellant_reminder_sent_at).to(
+          hearing.reload
+          expect(hearing.appellant_recipient&.reminder_sent_at).to(
             be_within(1.second).of(appellant_reminder_sent_at)
           )
-          expect(virtual_hearing.representative_reminder_sent_at).not_to be_nil
+          expect(hearing.representative_recipient&.reminder_sent_at).not_to be_nil
         end
       end
 
@@ -113,9 +113,9 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
-          virtual_hearing.reload
-          expect(virtual_hearing.appellant_reminder_sent_at).not_to be_nil
-          expect(virtual_hearing.representative_reminder_sent_at).to be_nil
+          hearing.reload
+          expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+          expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
         end
       end
 
@@ -124,20 +124,20 @@ describe Hearings::SendReminderEmailsJob do
 
         subject # First Send
 
-        virtual_hearing.reload
-        expect(virtual_hearing.appellant_reminder_sent_at).not_to be_nil
-        expect(virtual_hearing.representative_reminder_sent_at).not_to be_nil
+        hearing.reload
+        expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+        expect(hearing.representative_recipient&.reminder_sent_at).not_to be_nil
 
-        appellant_reminder_sent_at = virtual_hearing.appellant_reminder_sent_at
-        representative_reminder_sent_at = virtual_hearing.representative_reminder_sent_at
+        appellant_reminder_sent_at = hearing.appellant_recipient&.reminder_sent_at
+        representative_reminder_sent_at = hearing.representative_recipient&.reminder_sent_at
 
         Timecop.travel(Time.zone.now + 10.hours)
 
         Hearings::SendReminderEmailsJob.new.perform # Second Send (subject is memoized)
 
-        virtual_hearing.reload
-        expect(virtual_hearing.appellant_reminder_sent_at).to eq(appellant_reminder_sent_at)
-        expect(virtual_hearing.representative_reminder_sent_at).to eq(representative_reminder_sent_at)
+        hearing.reload
+        expect(hearing.appellant_recipient&.reminder_sent_at).to eq(appellant_reminder_sent_at)
+        expect(hearing.representative_recipient&.reminder_sent_at).to eq(representative_reminder_sent_at)
       end
     end
 
@@ -170,13 +170,13 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
           subject
-          virtual_hearing.reload
+          hearing.reload
           # Expect appellant_reminder_sent_at and representative_reminder_sent_at to change
           # from the value we setup because the emails were sent.
-          expect(virtual_hearing.appellant_reminder_sent_at).not_to(
+          expect(hearing.appellant_recipient&.reminder_sent_at).not_to(
             be_within(1.second).of(representative_reminder_sent_at)
           )
-          expect(virtual_hearing.representative_reminder_sent_at).not_to(
+          expect(hearing.representative_recipient&.reminder_sent_at).not_to(
             be_within(1.second).of(representative_reminder_sent_at)
           )
         end
@@ -191,7 +191,6 @@ describe Hearings::SendReminderEmailsJob do
       let(:hearing_date) { Time.zone.now + 10.hours } #  Nov 5, 2020 12:00 ET + 10 hours
 
       context "sent reminder emails 2 days out" do
-
         let(:appellant_reminder_sent_at) { hearing_date - 2.days }
         let!(:appellant_reminder) do
           create(
@@ -217,13 +216,13 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).not_to receive(:reminder)
 
           subject
-          virtual_hearing.reload
+          hearing.reload
           # Expect appellant_reminder_sent_at and representative_reminder_sent_at to remain
           # the same as the times we setup because the emails weren't sent.
-          expect(virtual_hearing.appellant_reminder_sent_at).to(
+          expect(hearing.appellant_recipient&.reminder_sent_at).to(
             be_within(1.second).of(appellant_reminder_sent_at)
           )
-          expect(virtual_hearing.representative_reminder_sent_at).to(
+          expect(hearing.representative_recipient&.reminder_sent_at).to(
             be_within(1.second).of(representative_reminder_sent_at)
           )
         end
