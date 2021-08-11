@@ -35,7 +35,6 @@ class Hearings::SendEmail
 
   private
 
-  delegate :hearing, to: :virtual_hearing
   delegate :appeal, to: :hearing
   delegate :appellant_recipient, :representative_recipient, :judge_recipient, to: :hearing
   delegate :veteran, to: :appeal
