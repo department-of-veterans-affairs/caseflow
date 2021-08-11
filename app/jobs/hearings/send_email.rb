@@ -35,6 +35,7 @@ class Hearings::SendEmail
 
   private
 
+  delegate :hearing, to: :virtual_hearing
   delegate :appeal, to: :hearing
   delegate :appellant_recipient, :representative_recipient, :judge_recipient, to: :hearing
   delegate :veteran, to: :appeal
@@ -57,7 +58,7 @@ class Hearings::SendEmail
     args = {
       email_recipient: recipient_info,
       virtual_hearing: virtual_hearing,
-      hearing: hearing
+      hearing: @hearing
     }
 
     case type
@@ -150,11 +151,11 @@ class Hearings::SendEmail
     # veteran is or isn't the appellant, but the email event can be more specific.
     recipient_is_veteran = (
       recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
-      !appeal.appellant_is_not_veteran
+      !@hearing.appeal.appellant_is_not_veteran
     )
 
     ::SentHearingEmailEvent.create!(
-      hearing: hearing,
+      hearing: @hearing,
       email_type: type.ends_with?("reminder") ? "reminder" : type,
       email_address: recipient_info.email,
       external_message_id: external_id,
@@ -169,7 +170,7 @@ class Hearings::SendEmail
 
   def judge_recipient_info
     EmailRecipientInfo.new(
-      name: hearing.judge&.full_name,
+      name: @hearing.judge&.full_name,
       title: HearingEmailRecipient::RECIPIENT_TITLES[:judge],
       hearing_email_recipient: judge_recipient
     )
@@ -177,7 +178,7 @@ class Hearings::SendEmail
 
   def representative_recipient_info
     EmailRecipientInfo.new(
-      name: appeal.representative_name,
+      name: @hearing.appeal.representative_name,
       title: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
       hearing_email_recipient: representative_recipient
     )
@@ -196,13 +197,13 @@ class Hearings::SendEmail
   end
 
   def appellant_recipient_info
-    recipient_name = if appeal.appellant_is_not_veteran
-                       appeal.appellant_name
+    recipient_name = if @hearing.appeal.appellant_is_not_veteran
+                       @hearing.appeal.appellant_name
                      elsif veteran.present?
                        validate_veteran_deceased
                        validate_veteran_name
 
-                       appeal.veteran_full_name
+                       @hearing.appeal.veteran_full_name
                      else
                        "Appellant"
                      end
