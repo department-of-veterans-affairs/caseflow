@@ -81,6 +81,10 @@ export const CaseDetailsView = (props) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const updatePOALink =
+        appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -155,6 +159,9 @@ export const CaseDetailsView = (props) => {
 
   const editAppellantInformation =
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+
+  const editPOAInformation =
+    props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -247,10 +254,10 @@ export const CaseDetailsView = (props) => {
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
             additionalHeaderContent={
-              editAppellantInformation && (
-                <span className="cf-push-right">
+              editPOAInformation && (
+                <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
                   <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
-                    {"edit"}
+                    {updatePOALink}
                   </Link>
                 </span>
               )
@@ -337,7 +344,7 @@ const mapDispatchToProps = (dispatch) =>
       resetSuccessMessages,
       transitionAlert,
       stopPollingHearing,
-      setHearingDay,
+      setHearingDay
     },
     dispatch
   );
