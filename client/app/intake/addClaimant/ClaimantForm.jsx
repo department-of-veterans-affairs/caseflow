@@ -133,7 +133,7 @@ export const ClaimantForm = ({
         {listedAttorney && watchListedAttorney?.address && (
           <div>
             <ClaimantAddress>
-              <strong>Claimant's address</strong>
+              <strong>{props.POA ? 'Representative' : 'Claimant'}'s address</strong>
             </ClaimantAddress>
             <br />
             <Address address={watchListedAttorney?.address} />
@@ -143,7 +143,7 @@ export const ClaimantForm = ({
         {showPartyType && (
           <RadioField
             name="partyType"
-            label="Is the claimant an organization or individual?"
+            label={`Is the ${props.POA ? 'representative' : 'claimant'} an organization or individual?`}
             inputRef={register}
             strongLabel
             vertical
