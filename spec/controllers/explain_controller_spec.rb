@@ -69,6 +69,7 @@ describe ExplainController, :all_dbs, type: :controller do
           BoardProductOwners.singleton.add_user(current_user)
         end
         it "allows access" do
+          expect(BoardProductOwners.singleton.can_receive_task?(nil)).to eq false
           subject
           expect(response.response_code).to eq 200
           json_body = JSON.parse(response.body)
@@ -81,6 +82,7 @@ describe ExplainController, :all_dbs, type: :controller do
           CaseflowSupport.singleton.add_user(current_user)
         end
         it "allows access" do
+          expect(CaseflowSupport.singleton.can_receive_task?(nil)).to eq false
           subject
           expect(response.response_code).to eq 200
           json_body = JSON.parse(response.body)
