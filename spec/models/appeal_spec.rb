@@ -932,7 +932,7 @@ describe Appeal, :all_dbs do
       end
 
       it "should know the right assigned attorney with a cancelled task" do
-        task.cancelled!
+        task2.cancelled!
         expect(subject).to eq attorney
       end
     end
