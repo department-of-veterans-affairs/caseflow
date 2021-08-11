@@ -6,7 +6,7 @@ feature "duplicate JudgeAssignTask investigation" do
   end
 
   # Ticket: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/212#
-  # Target state: JudgeAssignTask should not change status from cancelled to completed
+  # Desired Target state: JudgeAssignTask should not change status from cancelled to completed
   describe "Judge reassigns JudgeAssignTask in first tab and completes the same task in second tab" do
     let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
@@ -74,7 +74,7 @@ feature "duplicate JudgeAssignTask investigation" do
         expect(page).to have_content(appeal.veteran.first_name, wait: 30)
         appeal.reload.treee
 
-        # app currently allows the invalid flow of a JudgeAssignTask going from cancelled to completed
+        # BUG: app currently allows the invalid flow of a JudgeAssignTask going from cancelled to completed
         expect(Task.find(first_judge_assign_task_id).status).to eq("completed")
       end
 
