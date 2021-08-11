@@ -10,7 +10,7 @@ class ExplainController < ApplicationController
   include ExplainNetworkConcern
 
   def show
-    return render_access_error unless allow_access
+    return render_access_error unless access_allowed
 
     no_cache
 
@@ -28,7 +28,7 @@ class ExplainController < ApplicationController
 
   private
 
-  def allow_access
+  def access_allowed
     current_user.admin? ||
       BoardProductOwners.singleton.user_has_access?(current_user) ||
       CaseflowSupport.singleton.user_has_access?(current_user)
