@@ -55,7 +55,6 @@ class Appeal < DecisionReview
 
   delegate :power_of_attorney, to: :claimant
   delegate :representative_name,
-           :representative_last_name,
            :representative_type,
            :representative_address,
            :representative_email_address,

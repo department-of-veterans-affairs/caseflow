@@ -13,7 +13,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
-import { mapAppellantDataFromApi, mapAppellantDataToApi, mapPOADataFromApi } from './utils';
+import { mapAppellantDataToApi, mapPOADataFromApi } from './utils';
 import { resetSuccessMessages,
   showSuccessMessage,
 } from '../uiReducer/uiActions';
@@ -63,9 +63,7 @@ const EditPOAInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    // eslint-disable-next-line no-unused-vars
-    (error) => {
-      // eslint-disable-next-line no-console
+    (_error) => {
       setEditFailure(true);
       setLoading(false);
     });

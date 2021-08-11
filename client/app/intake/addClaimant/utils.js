@@ -64,7 +64,7 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
-    is: (relationship, hideListedAttorney, POA) => (relationship === 'attorney' && !hideListedAttorney),
+    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
 });

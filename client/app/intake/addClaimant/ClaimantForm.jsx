@@ -75,12 +75,11 @@ export const ClaimantForm = ({
     [onAttorneySearch]
   );
 
-  // useEffect(() => {
-  //   if (watchRelationship !== 'attorney') {
-  //     setValue('listedAttorney', null);
-  //   }
-  // }, [watchRelationship]);
-  console.log(methods.getValues())
+  useEffect(() => {
+    if (watchRelationship !== 'attorney') {
+      setValue('listedAttorney', null);
+    }
+  }, [watchRelationship]);
   return (
     <>
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
