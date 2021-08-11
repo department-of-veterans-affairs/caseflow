@@ -155,7 +155,7 @@ feature "Unrecognized appellants", :postgres do
 
       fill_in("Representative's name", with: "Not Listed").send_keys :enter
       click_dropdown({ index: 0 }, find(".dropdown-listedAttorney"))
-      
+
       within_fieldset("Is the representative an organization or individual?") do
         find("label", text: "Individual", match: :prefer_exact).click
       end
