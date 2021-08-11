@@ -4,7 +4,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
-import { sprintf } from 'sprintf-js';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
@@ -13,11 +12,8 @@ import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapPOADataToApi, mapPOADataFromApi } from './utils';
-import { resetSuccessMessages,
-  showSuccessMessage,
-} from '../uiReducer/uiActions';
+import { resetSuccessMessages } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
-import { clearAppealDetails } from '../QueueActions';
 
 const EditPOAInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -47,19 +43,7 @@ const EditPOAInformation = ({ appealId }) => {
 
     setLoading(true);
 
-    ApiUtil.patch(`/power_of_attorney/${appellantId}`, { data: updatePayload }).then((response) => {
-      const appellantName = response.body.unrecognized_party_detail.name;
-
-      const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
-      const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
-
-      const successMessage = {
-        title,
-        detail,
-      };
-
-      dispatch(clearAppealDetails(appealId));
-      dispatch(showSuccessMessage(successMessage));
+    ApiUtil.patch(`/power_of_attorney/${appellantId}`, { data: updatePayload }).then(() => {
       push(`/queue/appeals/${appealId}`);
     },
     () => {
