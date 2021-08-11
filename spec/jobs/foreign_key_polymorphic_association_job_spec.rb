@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "query_subscriber"
+
 describe ForeignKeyPolymorphicAssociationJob, :postgres do
   subject { described_class.perform_now }
 
@@ -12,6 +14,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   let(:appeal) { create(:appeal) }
   let!(:sil) { SpecialIssueList.create(appeal: appeal) }
+  let(:legacy_appeal) { create(:legacy_appeal) }
+  let!(:leg_sil) { SpecialIssueList.create(appeal: legacy_appeal) }
 
   context "_id is nil regardless of existence of associated record" do
     before do
@@ -57,6 +61,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     it "sends alert" do
       expect(Appeal.count).to eq 0
 
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
       subject
 
       message = "Found SpecialIssueList orphaned record: [#{sil.id}]"
@@ -64,13 +69,21 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     end
 
     context "check for N+1 query problem" do
-      # TODO: use SqlTracker
+      # TODO: use QuerySubscriber
+      let(:query_subscriber) { QuerySubscriber.new }
+      before {   2.times { SpecialIssueList.create(appeal: create(:appeal)) }    }
       it "sends alert" do
-        expect(Appeal.count).to eq 0
+        expect(Appeal.count).to eq 2
 
-        ActiveRecord::Base.logger = Logger.new(STDOUT)
-        # ActiveRecord::Base.logger.level = :info
-        subject
+        query_subscriber.track do
+          ActiveRecord::Base.logger = Logger.new(STDOUT)
+          # ActiveRecord::Base.logger.level = :info
+          subject
+        end
+
+        # 1 SELECT for orphan_records + 1 SELECT for unusual_records
+        # binding.pry
+        expect(query_subscriber.select_queries(/"special_issue_lists"/).size).to eq 2
 
         message = "Found SpecialIssueList orphaned record: [#{sil.id}]"
         expect(slack_service).to have_received(:send_notification).with(message).once
@@ -118,7 +131,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         claimant.person.destroy!
       end
       it "sends alert" do
-        ActiveRecord::Base.logger = Logger.new(STDOUT)
+        # ActiveRecord::Base.logger = Logger.new(STDOUT)
         expect(claimant.reload_person).to eq nil
         expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
         expect(Person.count).to eq 0
