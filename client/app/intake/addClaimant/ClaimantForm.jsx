@@ -80,6 +80,7 @@ export const ClaimantForm = ({
       setValue('listedAttorney', null);
     }
   }, [watchRelationship]);
+
   return (
     <>
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
@@ -243,7 +244,8 @@ ClaimantForm.propTypes = {
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
-  hideListedAttorney: PropTypes.bool
+  hideListedAttorney: PropTypes.bool,
+  POA: PropTypes.bool
 };
 
 const FieldDiv = styled.div`

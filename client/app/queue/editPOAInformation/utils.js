@@ -4,3 +4,8 @@ export const mapPOADataFromApi = (appeal) => {
     relationship: 'attorney'
   }
 }
+
+export const mapPOADataToApi = (_appeal) => {
+  return {
+  }
+}

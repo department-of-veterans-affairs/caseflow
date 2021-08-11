@@ -5,7 +5,6 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 import { sprintf } from 'sprintf-js';
-import { isEmpty } from 'lodash';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
@@ -13,7 +12,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
-import { mapAppellantDataToApi, mapPOADataFromApi } from './utils';
+import { mapPOADataToApi, mapPOADataFromApi } from './utils';
 import { resetSuccessMessages,
   showSuccessMessage,
 } from '../uiReducer/uiActions';
@@ -44,7 +43,7 @@ const EditPOAInformation = ({ appealId }) => {
 
   const handleUpdate = (formData) => {
     const appellantId = appeal.unrecognizedAppellantId;
-    const updatePayload = mapAppellantDataToApi(formData);
+    const updatePayload = mapPOADataToApi(formData);
 
     setLoading(true);
 
@@ -63,13 +62,14 @@ const EditPOAInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    (_error) => {
+    () => {
       setEditFailure(true);
       setLoading(false);
     });
   };
   const editPOAHeader = defaultValues.firstName ? "Edit Appellant's POA Information" : "Update Appellant's POA";
-  const editPOADescription = defaultValues.firstName ? editAppellantDescription : COPY.UPDATE_POA_PAGE_DESCRIPTION;
+  const editPOADescription = defaultValues.firstName ?
+    COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION : COPY.UPDATE_POA_PAGE_DESCRIPTION;
 
   return <div>
     <FormProvider {...methods}>
@@ -89,7 +89,7 @@ const EditPOAInformation = ({ appealId }) => {
           editAppellantHeader={editPOAHeader}
           editAppellantDescription={editPOADescription}
           hidePOAForm
-          POA={true}
+          POA
         />
       </AppSegment>
       <Button
