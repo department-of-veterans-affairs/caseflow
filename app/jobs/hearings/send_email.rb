@@ -6,8 +6,6 @@ class Hearings::SendEmail
   attr_reader :hearing, :virtual_hearing, :type
 
   def initialize(virtual_hearing:, type:, hearing: nil)
-    # TODO: remove this, we should only use 'hearing' now
-    @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing || hearing
     @type = type.to_s
   end
@@ -19,8 +17,10 @@ class Hearings::SendEmail
     # already been sent too.
     return if send_reminder
 
-    # TODO: Change all instances of 'virtual_hearing' to use 'hearing' instead
-    if !virtual_hearing.appellant_email_sent
+    # Unless this is a reminder, still require a virtual hearing for all emails
+    return if !hearing.virtual?
+
+    if !hearing.appellant_recipient.email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
 
@@ -28,7 +28,7 @@ class Hearings::SendEmail
       judge_recipient.update!(email_sent: send_email(judge_recipient_info))
     end
 
-    if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
+    if hearing.representative_recipient.email_address.present? && !hearing.representative_recipient.email_sent
       representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
@@ -45,7 +45,7 @@ class Hearings::SendEmail
     end
 
     if type == "representative_reminder" &&
-       !virtual_hearing.representative_email.nil? &&
+       hearing.representative_recipient.email_address.present? &&
        send_email(representative_recipient_info)
       return true
     end
@@ -56,7 +56,7 @@ class Hearings::SendEmail
   def email_for_recipient(recipient_info)
     args = {
       email_recipient: recipient_info,
-      virtual_hearing: virtual_hearing
+      virtual_hearing: hearing.virtual_hearing
     }
 
     case type
@@ -90,7 +90,7 @@ class Hearings::SendEmail
       )
 
       Rails.logger.info(
-        "[Virtual Hearing: #{virtual_hearing.id}] " \
+        "[Hearing: #{hearing.id}] " \
         "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
 
@@ -159,7 +159,7 @@ class Hearings::SendEmail
       email_address: recipient_info.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient_info.title.downcase,
-      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by,
+      sent_by: type.ends_with?("reminder") ? User.system_user : hearing.virtual_hearing.updated_by,
       email_recipient: recipient_info.hearing_email_recipient
     )
   rescue StandardError => error
@@ -215,8 +215,8 @@ class Hearings::SendEmail
   end
 
   def should_judge_receive_email?
-    !virtual_hearing.judge_email.nil? &&
-      !virtual_hearing.judge_email_sent &&
+    hearing.judge_recipient&.email_address.present? &&
+      !hearing.judge_recipient&.email_sent &&
       %w[confirmation updated_time_confirmation].include?(type)
   end
 end
