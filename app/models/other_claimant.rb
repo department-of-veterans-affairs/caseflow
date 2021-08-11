@@ -14,16 +14,20 @@ class OtherClaimant < Claimant
            to: :unrecognized_appellant,
            allow_nil: true
 
-  NIL_ATTRIBUTES = [ # not applicable without CorpDB record
-    :date_of_birth,
-    :advanced_on_docket?,
-    :advanced_on_docket_based_on_age?,
-    :advanced_on_docket_motion_granted?
-  ].freeze
-  NIL_ATTRIBUTES.each do |attribute|
-    define_method attribute do |*_args|
-      nil
-    end
+  def date_of_birth
+    nil
+  end
+
+  def advanced_on_docket?(appeal)
+    advanced_on_docket_motion_granted?(appeal)
+  end
+
+  def advanced_on_docket_based_on_age?
+    false
+  end
+
+  def advanced_on_docket_motion_granted?(appeal)
+    AdvanceOnDocketMotion.granted.for_appeal(appeal).any?
   end
 
   def relationship

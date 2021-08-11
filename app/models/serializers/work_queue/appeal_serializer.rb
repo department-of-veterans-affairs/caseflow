@@ -65,6 +65,8 @@ class WorkQueue::AppealSerializer
 
   attribute :assigned_to_location
 
+  attribute :distributed_to_a_judge, &:distributed_to_a_judge?
+
   attribute :completed_hearing_on_previous_appeal? do
     false
   end
@@ -117,6 +119,10 @@ class WorkQueue::AppealSerializer
 
   attribute :unrecognized_appellant_id do |appeal|
     appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+  end
+
+  attribute :has_poa do |appeal|
+    appeal.claimant&.power_of_attorney
   end
 
   attribute :cavc_remand do |object|

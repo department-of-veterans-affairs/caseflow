@@ -24,7 +24,6 @@ class CacheManager
       "EstablishClaim-*-cached-*",
       "LegacyAppeal-*-cached-*",
       "LegacyHearing-*-cached-*",
-      "JudgeSchedulePeriod-*-cached-*",
       "SchedulePeriod-*-cached-*",
       "RoSchedulePeriod-*-cached-*",
       "RampElectionIntake-*-cached-*",
