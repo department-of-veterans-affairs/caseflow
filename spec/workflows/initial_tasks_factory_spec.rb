@@ -347,6 +347,8 @@ describe InitialTasksFactory, :postgres do
           contested_issue_description: "PreDocket Issue"
         )
       end
+      before { FeatureToggle.enable!(:vha_predocket_appeals) }
+      after { FeatureToggle.disable!(:vha_predocket_appeals) }
       subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
       it "creates a PreDocket Appeal in an on_hold status" do
         expect(PreDocketTask.all.count).to eq 0
