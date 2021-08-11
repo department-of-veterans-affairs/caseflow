@@ -327,7 +327,7 @@ class Appeal < DecisionReview
     court_remand?
   end
 
-  def predocket?
+  def vha_has_issues?
     request_issues.active.any? { |ri| ri.benefit_type == "vha" }
   end
 
