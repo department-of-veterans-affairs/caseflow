@@ -41,6 +41,11 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "DOB_INVALID_ERRS": {
+    "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
+    "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
+  },
+
   "NULL_FILTER_LABEL": "<<blank>>",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
@@ -209,6 +214,7 @@
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
   "EDIT_APPELLANT_INFORMATION_LINK": "Edit Information",
+  "UP_DATE_POA_LINK": "Update POA",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
