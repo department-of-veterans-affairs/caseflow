@@ -405,6 +405,7 @@ export const prepareAppealForStore = (appeals) => {
       appellantMiddleName: appeal.attributes.appellant_middle_name,
       appellantLastName: appeal.attributes.appellant_last_name,
       appellantSuffix: appeal.attributes.appellant_suffix,
+      appellantDateOfBirth: appeal.attributes.appellant_date_of_birth,
       appellantAddress: appeal.attributes.appellant_address,
       appellantEmailAddress: appeal.attributes.appellant_email_address,
       appellantPhoneNumber: appeal.attributes.appellant_phone_number,
