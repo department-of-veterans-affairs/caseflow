@@ -920,9 +920,8 @@ describe Appeal, :all_dbs do
         create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney,
                                    appeal: appeal, created_at: 1.day.ago)
       end
-
-      before do
-        task.update!(status: Constants.TASK_STATUSES.completed)
+      let!(:task2) do
+        task.completed!
         create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2, appeal: appeal)
       end
 
