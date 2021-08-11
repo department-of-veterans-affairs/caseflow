@@ -14,12 +14,13 @@ class HearingMailer < ActionMailer::Base
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing&.hearing
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
     mail(
       to: recipient.email,
-      subject: "Your Board hearing location has changed – Do Not Reply"
+      subject: cancellation_subject
     )
   end
 
@@ -71,6 +72,16 @@ class HearingMailer < ActionMailer::Base
 
   attr_reader :recipient, :virtual_hearing
 
+  def cancellation_subject
+    # :reek:RepeatedConditionals
+    case recipient.title
+    when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
+      "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+    when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+      "#{appellant_name}’s hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+    end
+  end
+
   def confirmation_calendar_invite
     Hearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
   end
@@ -108,6 +119,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def confirmation_subject
+    # :reek:RepeatedConditionals
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
