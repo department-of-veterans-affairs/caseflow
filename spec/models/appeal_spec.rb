@@ -932,7 +932,7 @@ describe Appeal, :all_dbs do
       end
 
       it "should know the right assigned attorney with a cancelled task" do
-        appeal.tasks.open.of_type("AttorneyTask").last.update!(status: Constants.TASK_STATUSES.cancelled)
+        task.cancelled!
         expect(subject).to eq attorney
       end
     end
