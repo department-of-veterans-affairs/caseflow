@@ -18,7 +18,9 @@ class Hearings::SendEmail
     return if send_reminder
 
     # Unless this is a reminder, still require a virtual hearing for all emails
-    return if !hearing.virtual?
+    # checking 'hearing.virtual?' doesnt work because some emails are 'cancellation's
+    # which means the virtual hearing has been cancelled and hearing.virtual? == false
+    return if !hearing.virtual_hearing
 
     if !hearing.appellant_recipient.email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
