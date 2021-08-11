@@ -79,21 +79,14 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
       # Implementing query with NOT EXIST conveys the intent (and is also fast according to `EXPLAIN`).
       # Unfortunately, there's not a clean Rails way to call NOT EXISTS --
       # see https://stackoverflow.com/questions/13496375/rails-associations-not-exists-better-way
-      # Using OUTER JOIN with a where-NULL clause is just as fast and easier to implement in Rails.
+      # Using OUTER JOIN with a where-NULL clause is just as fast and easier to implement in Rails:
+
+      # Left join with the table for each polymorphic type
       joins_query = POLYMORPHIC_TYPES[association_method].map do |includes_name, poly_class|
         klass.unscoped.includes(includes_name).where.not(association_id_column => nil)
           .where(poly_class.arel_table[:id].eq(nil))
       end.reduce(:merge)
-      # if association_method == :appeal
-      #   orphan_records_ama = klass.unscoped.includes(:ama_appeal)
-      #     .where(Appeal.arel_table[:id].eq(nil))
-      #   orphan_records_legacy = klass.unscoped.includes(:legacy_appeal)
-      #     .where(LegacyAppeal.arel_table[:id].eq(nil))
-      #   orphan_records = orphan_records_ama.merge(orphan_records_legacy).where.not(association_id_column => nil)
-      # else
-      #   fail "Unhandled association_method: #{association_method}"
-      # end
-      # binding.pry
+      # only check for records where the _id column is not nil
       joins_query.where.not(association_id_column => nil)
     else
       klass.unscoped.select(:id, association_id_column, association_type_column)

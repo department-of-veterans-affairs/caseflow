@@ -61,7 +61,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     it "sends alert" do
       expect(Appeal.count).to eq 0
 
-      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      # ActiveRecord::Base.logger = Logger.new(STDOUT)
       subject
 
       message = "Found SpecialIssueList orphaned record: [#{sil.id}]"
@@ -76,7 +76,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         expect(Appeal.count).to eq 2
 
         query_subscriber.track do
-          ActiveRecord::Base.logger = Logger.new(STDOUT)
+          # ActiveRecord::Base.logger = Logger.new(STDOUT)
           # ActiveRecord::Base.logger.level = :info
           subject
         end
