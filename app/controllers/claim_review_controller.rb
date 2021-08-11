@@ -11,7 +11,7 @@ class ClaimReviewController < ApplicationController
   }.freeze
 
   def edit
-    if !claim_review.veteran.accessible?
+    unless claim_review.veteran.accessible?
       return render "errors/403",
                     layout: "application",
                     status: :forbidden,
