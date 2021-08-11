@@ -56,7 +56,7 @@ class Hearings::SendEmail
   def email_for_recipient(recipient_info)
     args = {
       email_recipient: recipient_info,
-      virtual_hearing: virtual_hearing,
+      virtual_hearing: virtual_hearing
     }
 
     case type
