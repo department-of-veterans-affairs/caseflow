@@ -321,15 +321,15 @@ describe Docket, :all_dbs do
     let!(:second_distribution_task) do
       create(:distribution_task, appeal: buggy_appeal, status: Constants.TASK_STATUSES.assigned)
     end
-    let(:appeal_second) do
+    let!(:appeal_second) do
       create(:appeal,
-             :assigned_to_judge,
+             :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review,
              associated_judge: judge_user)
     end
-    let(:appeal_third) do
+    let!(:appeal_third) do
       create(:appeal,
-             :assigned_to_judge,
+             :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review,
              associated_judge: judge_user)
     end
@@ -341,12 +341,12 @@ describe Docket, :all_dbs do
     end
 
     it "distributes appeals that occur after the appeal with the bug" do
-      tasks = subject
+      expect(distribution.distributed_cases.length).to eq(1)
+      result = subject
 
-      expect(tasks.length).to eq(2)
-      expect(tasks.first.class).to eq(DistributedCase)
-      expect(tasks.last.class).to eq(DistributedCase)
-      expect(distribution.distributed_cases.length).to eq(2)
+      expect(distribution.distributed_cases.length).to eq(3)
+      expect(result[1].class).to eq(DistributedCase)
+      expect(result[2].class).to eq(DistributedCase)
     end
   end
 

@@ -59,17 +59,18 @@ class Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
-    Distribution.transaction do
-      appeals = appeals(priority: priority, ready: true).limit(limit)
-
-      tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-
-      tasks.map do |task|
+    appeals = appeals(priority: priority, ready: true).limit(limit)
+    tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
+    tasks.map do |task|
+      begin
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
+      rescue ActiveRecord::RecordNotUnique => error
+        Rails.logger.info(error)
+        Rails.logger.info("do some sort of interactive prompt to alert judge to error - TBA!")
       end
     end
   end
