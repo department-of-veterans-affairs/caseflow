@@ -36,16 +36,22 @@ class CreateEtlJudgeCaseReview < Caseflow::Migration
       t.text "positive_feedback", default: [], array: true
       t.string "quality"
 
-      t.string "task_id", comment: "judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
-      t.index ["task_id"]
+      t.string "original_task_id", comment: "judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
+      t.index ["original_task_id"]
+      t.string "actual_task_id", comment: "Substring from judge_case_reviews.task_id referring to the tasks table for AMA Appeals"
+      t.index ["actual_task_id"]
+      t.string "vacols_id", comment: "Substring from judge_case_reviews.task_id for Legacy Appeals"
+      t.index ["vacols_id"]
+
       t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
       t.index ["appeal_id"]
       t.string "appeal_type", null: false, comment: "tasks.appeal_type"
       t.index ["appeal_type"]
-      t.string "vacols_id", comment: "Substring judge_case_reviews.task_id for Legacy Appeals"
-      t.index ["vacols_id"]
     end
-    add_foreign_key :judge_case_reviews, "users", column: "judge_id", validate: false
-    add_foreign_key :judge_case_reviews, "users", column: "attorney_id", validate: false
+
+    # Do not add foreign keys because they rely on the order in which the *Syncers run
+    # and because associated records cannot be easily deleted by ETL::Sweeper.
+    # add_foreign_key :judge_case_reviews, "users", column: "judge_id", validate: false
+    # add_foreign_key :judge_case_reviews, "users", column: "attorney_id", validate: false
   end
 end

@@ -364,6 +364,7 @@ ActiveRecord::Schema.define(version: 2021_08_10_115459) do
   end
 
   create_table "judge_case_reviews", force: :cascade do |t|
+    t.string "actual_task_id", comment: "Substring from judge_case_reviews.task_id referring to the tasks table for AMA Appeals"
     t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
     t.string "appeal_type", null: false, comment: "tasks.appeal_type"
     t.text "areas_for_improvement", default: [], array: true
@@ -381,23 +382,24 @@ ActiveRecord::Schema.define(version: 2021_08_10_115459) do
     t.string "judge_sattyid", limit: 20, comment: "users.sattyid"
     t.string "location"
     t.boolean "one_touch_initiative"
+    t.string "original_task_id", comment: "judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
     t.datetime "review_created_at", null: false, comment: "judge_case_reviews.created_at"
     t.bigint "review_id", null: false, comment: "judge_case_reviews.id"
     t.datetime "review_updated_at", null: false, comment: "judge_case_reviews.updated_at"
-    t.string "task_id", comment: "judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
-    t.string "vacols_id", comment: "Substring judge_case_reviews.task_id for Legacy Appeals"
+    t.string "vacols_id", comment: "Substring from judge_case_reviews.task_id for Legacy Appeals"
+    t.index ["actual_task_id"], name: "index_judge_case_reviews_on_actual_task_id"
     t.index ["appeal_id"], name: "index_judge_case_reviews_on_appeal_id"
     t.index ["appeal_type"], name: "index_judge_case_reviews_on_appeal_type"
     t.index ["attorney_id"], name: "index_judge_case_reviews_on_attorney_id"
     t.index ["created_at"], name: "index_judge_case_reviews_on_created_at"
     t.index ["judge_id"], name: "index_judge_case_reviews_on_judge_id"
+    t.index ["original_task_id"], name: "index_judge_case_reviews_on_original_task_id"
     t.index ["review_created_at"], name: "index_judge_case_reviews_on_review_created_at"
     t.index ["review_id"], name: "index_judge_case_reviews_on_review_id"
     t.index ["review_updated_at"], name: "index_judge_case_reviews_on_review_updated_at"
-    t.index ["task_id"], name: "index_judge_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
     t.index ["vacols_id"], name: "index_judge_case_reviews_on_vacols_id"
   end
@@ -530,12 +532,4 @@ ActiveRecord::Schema.define(version: 2021_08_10_115459) do
     t.index ["user_id"], name: "index_users_on_user_id"
   end
 
-  add_foreign_key "decision_documents", "attorney_case_reviews", column: "attorney_case_reviews_id"
-  add_foreign_key "decision_documents", "judge_case_reviews", column: "judge_case_reviews_id"
-  add_foreign_key "decision_documents", "tasks", column: "attorney_task_id"
-  add_foreign_key "decision_documents", "tasks", column: "judge_task_id"
-  add_foreign_key "decision_documents", "users", column: "attorney_user_id"
-  add_foreign_key "decision_documents", "users", column: "judge_user_id"
-  add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
-  add_foreign_key "judge_case_reviews", "users", column: "judge_id"
 end

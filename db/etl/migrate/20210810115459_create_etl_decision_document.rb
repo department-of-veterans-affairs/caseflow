@@ -33,9 +33,9 @@ class CreateEtlDecisionDocument < Caseflow::Migration
       # Now for columns to associate with other tables
       t.string "docket_number", comment: "from appeals.stream_docket_number"
 
-      t.references :judge_case_reviews, null: false, index: true, foreign_key: true,
+      t.references :judge_case_reviews, null: false, index: true, foreign_key: false,
                                         comment: "References associated judge_case_review record"
-      t.references :attorney_case_reviews, null: false, index: true, foreign_key: true,
+      t.references :attorney_case_reviews, null: false, index: true, foreign_key: false,
                                            comment: "References associated attorney_case_review record"
 
       t.bigint "judge_task_id", comment: "Id of associated judge task"
@@ -48,10 +48,11 @@ class CreateEtlDecisionDocument < Caseflow::Migration
       t.index ["attorney_user_id"]
     end
 
-    add_foreign_key :decision_documents, "tasks", column: "judge_task_id", validate: false
-    add_foreign_key :decision_documents, "tasks", column: "attorney_task_id", validate: false
-
-    add_foreign_key :decision_documents, "users", column: "judge_user_id", validate: false
-    add_foreign_key :decision_documents, "users", column: "attorney_user_id", validate: false
+    # Do not add foreign keys because they rely on the order in which the *Syncers run
+    # and because associated records cannot be easily deleted by ETL::Sweeper.
+    # add_foreign_key :decision_documents, "tasks", column: "judge_task_id", validate: false
+    # add_foreign_key :decision_documents, "tasks", column: "attorney_task_id", validate: false
+    # add_foreign_key :decision_documents, "users", column: "judge_user_id", validate: false
+    # add_foreign_key :decision_documents, "users", column: "attorney_user_id", validate: false
   end
 end
