@@ -15,7 +15,7 @@ import { ReadOnly } from '../details/ReadOnly';
 
 export const AppellantSection = ({
   hearing,
-  virtualHearing,
+  emailRecipients,
   errors,
   type,
   readOnly,
@@ -37,7 +37,7 @@ export const AppellantSection = ({
     (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
 
   // determine whether to show a missing email underneath readonly email
-  const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
+  const showMissingAlert = readOnly && showMissingEmailAlert && !emailRecipients?.appellantEmail;
 
   // Set the grid column width to respect fullWidth prop
   const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
@@ -84,8 +84,8 @@ export const AppellantSection = ({
             <Timezone
               required={virtual}
               optional={!virtual}
-              value={virtualHearing?.appellantTz}
-              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
+              value={emailRecipients?.appellantTz}
+              onChange={(appellantTz) => update('emailRecipients', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}
               label={`${appellantTitle} Timezone`}
@@ -107,7 +107,7 @@ export const AppellantSection = ({
             readOnly={readOnly}
             label={`${appellantTitle} Email`}
             emailType="appellantEmail"
-            email={virtualHearing?.appellantEmail}
+            email={emailRecipients?.appellantEmail}
             error={errors?.appellantEmail}
             type={type}
             update={update}
@@ -133,7 +133,7 @@ AppellantSection.defaultProps = {
 
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
-  virtualHearing: PropTypes.object,
+  emailRecipients: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,

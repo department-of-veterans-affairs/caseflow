@@ -40,6 +40,13 @@ class HearingSerializer
   attribute :disposition_editable
   attribute :docket_name
   attribute :docket_number
+  attribute :email_recipients do |object|
+    {
+      judge: object.judge_recipient,
+      representative: object.representative_recipient,
+      appellant: object.appellant_recipient
+    }
+  end
   attribute :evidence_window_waived
   attribute :external_id
   attribute :hearing_day_id

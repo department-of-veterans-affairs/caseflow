@@ -168,6 +168,8 @@ class ScheduleHearingTask < Task
       if task_values[:virtual_hearing_attributes].present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService
           .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
+      elsif task_values[:email_recipients].present?
+        create_email_recipients(hearing, task_values[:email_recipients])
       end
 
       # Create and assign the hearing now that it has been scheduled
@@ -223,5 +225,23 @@ class ScheduleHearingTask < Task
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
+  end
+
+  def create_email_recipients(hearing, recipient)
+    if recipient["appellant_email"].present?
+      AppellantHearingEmailRecipient.create!(
+        hearing: hearing,
+        email_address: recipient["appellant_email"],
+        timezone: recipient["appellant_tz"]
+      )
+    end
+
+    if recipient["representative_email"].present?
+      RepresentativeHearingEmailRecipient.create!(
+        hearing: hearing,
+        email_address: recipient["appellant_email"],
+        timezone: recipient["appellant_tz"]
+      )
+    end
   end
 end

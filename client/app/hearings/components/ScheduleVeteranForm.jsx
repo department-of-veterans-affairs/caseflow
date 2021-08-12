@@ -79,13 +79,13 @@ export const ScheduleVeteranForm = ({
     userCanCollectVideoCentralEmails,
     showDivider: false,
     schedulingToVirtual: virtual,
-    virtualHearing: hearing?.virtualHearing,
+    emailRecipients: hearing?.emailRecipients,
     type: HEARING_CONVERSION_TYPES[0],
     showTimezoneField: true,
-    update: (_, virtualHearing) =>
-      props.onChange('virtualHearing', {
-        ...hearing?.virtualHearing,
-        ...virtualHearing,
+    update: (_, emailRecipients) =>
+      props.onChange('emailRecipients', {
+        ...hearing?.emailRecipients,
+        ...emailRecipients,
       })
   };
 
@@ -135,7 +135,7 @@ export const ScheduleVeteranForm = ({
             enableFullPageConversion
             update={convertToVirtual}
             originalRequestType={getOriginalRequestType()}
-            virtualHearing={hearing?.virtualHearing}
+            virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
         <div className="cf-help-divider usa-width-one-whole" />

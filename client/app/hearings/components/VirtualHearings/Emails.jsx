@@ -38,7 +38,7 @@ export const VirtualHearingEmail = ({
           }),
         ]}
         onChange={(newEmail) =>
-          update('virtualHearing', {
+          update('emailRecipients', {
             [emailType]: isEmpty(newEmail) ? null : newEmail,
           })
         }
