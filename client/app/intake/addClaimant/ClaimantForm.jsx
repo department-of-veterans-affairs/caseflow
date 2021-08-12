@@ -51,6 +51,7 @@ const filterOption = () => true;
 export const ClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
+  dateOfBirthFieldToggle = true,
   ...props
 }) => {
   const methods = useFormContext();
@@ -190,7 +191,7 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              { partyType !== 'organization' &&
+              { dateOfBirthFieldToggle &&
                 <DateSelector
                   optional
                   inputRef={register({
@@ -256,6 +257,7 @@ ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  dateOfBirthFieldToggle: PropTypes.bool,
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
