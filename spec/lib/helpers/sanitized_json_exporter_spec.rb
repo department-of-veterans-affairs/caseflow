@@ -212,6 +212,7 @@ describe "SanitizedJsonExporter/Importer" do
 
       reassociate_fields_for_appeal = {
         CavcRemand => %w[source_appeal_id remand_appeal_id],
+        Claimant => ["decision_review_id"],
         DecisionDocument => ["appeal_id"],
         DecisionIssue => ["decision_review_id"],
         Hearing => ["appeal_id"],
