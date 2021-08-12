@@ -3,7 +3,6 @@
 # transformed JudgeCaseReview model, with denormalized User attributes
 
 class ETL::JudgeCaseReview < ETL::Record
-
   belongs_to :actual_task, primary_key: :task_id, class_name: "ETL::Task"
 
   class << self
@@ -22,7 +21,7 @@ class ETL::JudgeCaseReview < ETL::Record
         :location,
         :one_touch_initiative,
         :positive_feedback,
-        :quality,
+        :quality
       ]
     end
 

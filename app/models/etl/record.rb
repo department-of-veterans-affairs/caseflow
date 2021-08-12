@@ -34,7 +34,7 @@ class ETL::Record < ApplicationRecord
       return if expected == actual
 
       # TODO: log to Slack instead of fail
-      fail "#{self.name}: Expected #{attribute} to equal #{expected} but got #{actual}"
+      fail "#{name}: Expected #{attribute} to equal #{expected} but got #{actual}"
     end
 
     private
