@@ -325,8 +325,8 @@ Rails.application.routes.draw do
 
   get "feedback" => "application#feedback"
 
-  %w( 404 500 ).each do |code|
-    get code, :to => "errors#show", :status_code => code
+  %w[403 404 500].each do |code|
+    get code, to: "errors#show", status_code: code
   end
 
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
