@@ -48,7 +48,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
       subject
 
-      message = "Found SpecialIssueList record with nil appeal_id but non-nil appeal_type: [#{sil.id}]"
+      message = /Found unusual records for SpecialIssueList:.*\[#{sil.id}, "Appeal", nil\]/m
       expect(slack_service).to have_received(:send_notification).with(message).once
     end
   end
@@ -61,30 +61,30 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     it "sends alert" do
       expect(Appeal.count).to eq 0
 
-      # ActiveRecord::Base.logger = Logger.new(STDOUT)
       subject
 
-      message = /Found SpecialIssueList orphaned record:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
+      message = /Found orphaned records for SpecialIssueList:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
       expect(slack_service).to have_received(:send_notification).with(message).once
     end
 
     context "check for N+1 query problem" do
-      # TODO: use QuerySubscriber
       let(:query_subscriber) { QuerySubscriber.new }
-      before {   2.times { SpecialIssueList.create(appeal: create(:appeal)) }    }
+      before { 2.times { SpecialIssueList.create(appeal: create(:appeal)) } }
       it "sends alert" do
         expect(Appeal.count).to eq 2
 
         query_subscriber.track do
+          # show SQL queries so they can be tested manually in dbconsole or Metabase
+          original_logger = ActiveRecord::Base.logger
           ActiveRecord::Base.logger = Logger.new(STDOUT)
           subject
+          ActiveRecord::Base.logger = original_logger
         end
 
         # 1 SELECT for orphan_records + 1 SELECT for unusual_records
-        # binding.pry
         expect(query_subscriber.select_queries(/"special_issue_lists"/).size).to eq 2
 
-        message = /Found SpecialIssueList orphaned record:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
+        message = /Found orphaned records for SpecialIssueList:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
         expect(slack_service).to have_received(:send_notification).with(message).once
       end
     end
@@ -108,7 +108,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
         subject
 
-        message = /Found .* orphaned record/
+        message = /Found orphaned record/
         expect(slack_service).to have_received(:send_notification).with(message).twice
       end
     end
@@ -130,13 +130,12 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         claimant.person.destroy!
       end
       it "sends alert" do
-        # ActiveRecord::Base.logger = Logger.new(STDOUT)
         expect(claimant.reload_person).to eq nil
         expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
         expect(Person.count).to eq 0
         subject
 
-        message = /Found Claimant orphaned record:.*\[#{claimant.id}, "-", "#{claimant.participant_id}"\]/m
+        message = /Found orphaned records for Claimant:.*\[#{claimant.id}, "-", "#{claimant.participant_id}"\]/m
         expect(slack_service).to have_received(:send_notification).with(message).once
       end
     end
