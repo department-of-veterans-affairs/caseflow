@@ -147,5 +147,6 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     end
   end
 
-  # WillD TODO: Expand existing tests and add more tests for some of the other classes in CLASSES_WITH_POLYMORPH_ASSOC, i.e., those related to hearings
+  # WillD TODO: Expand existing tests and add more tests for some of the other classes in
+  # CLASSES_WITH_POLYMORPH_ASSOC, i.e., those related to hearings
 end
