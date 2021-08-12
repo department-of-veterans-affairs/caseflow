@@ -41,6 +41,11 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "DOB_INVALID_ERRS": {
+    "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
+    "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
+  },
+
   "NULL_FILTER_LABEL": "<<blank>>",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
@@ -128,6 +133,8 @@
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE": "Information Accuracy and Visibility Update",
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE": "In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.",
   "FNOD_SOURCE": "VBMS",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_TITLE": "Permission Issue",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL": "It looks like you don't have the necessary level of access to view this information. Please alert your manager if you need access to this information.",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
