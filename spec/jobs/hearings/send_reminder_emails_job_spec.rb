@@ -72,11 +72,15 @@ describe Hearings::SendReminderEmailsJob do
           let(:representative_email) { nil }
 
           it "sends reminder email to the appellant only", :aggregate_failures do
-            expect(HearingMailer).to receive(:reminder).once.and_call_original
+            # There's no way to have a nil email_address for a non-virtual hearing HearingEmailRecipient
+            # since we added a validation to that model.
+            if hearing.virtual?
+              expect(HearingMailer).to receive(:reminder).once.and_call_original
 
-            subject
-            expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
-            expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
+              subject
+              expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+              expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
+            end
           end
         end
 
