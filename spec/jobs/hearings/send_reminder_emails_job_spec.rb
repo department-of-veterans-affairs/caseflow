@@ -269,23 +269,34 @@ describe Hearings::SendReminderEmailsJob do
           created_at: Time.zone.now - 14.days
         )
       end
-      HearingEmailRecipient.create!(
-        type: "AppellantHearingEmailRecipient",
-        email_address: "appellant@test.gov",
-        timezone: "America/New_York"
-      )
-      HearingEmailRecipient.create!(
-        type: "RepresentativeHearingEmailRecipient",
-        email_address: "appellant@test.gov",
-        timezone: "America/Los_Angeles"
-      )
+      let(:appellant_recipient) do
+        create(
+          :hearing_email_recipient,
+          :appellant_hearing_email_recipient,
+          hearing: hearing,
+          timezone: "America/New_York"
+        )
+      end
+      let(:representative_recipient) do
+        create(
+          :hearing_email_recipient,
+          :representative_hearing_email_recipient,
+          hearing: hearing,
+          timezone: "America/Los_Angeles"
+        )
+      end
 
-      subject { Hearings::SendReminderEmailsJob.new.perform }
+      subject do
+        # Without this reload, the hearing_email_recipients are not present on hearing
+        hearing.reload
+        Hearings::SendReminderEmailsJob.new.perform
+      end
+
       # TODO: This mock gets around the fact that :maybe_ready_for_reminder_email doesn't yet return
       # any hearings without a virtual hearing
-      before do
-        allow(HearingRepository).to receive(:maybe_ready_for_reminder_email).and_return([hearing])
-      end
+      #before do
+      #  allow(HearingRepository).to receive(:maybe_ready_for_reminder_email).and_return([hearing])
+      #end
       include_examples "send reminder emails"
     end
   end
