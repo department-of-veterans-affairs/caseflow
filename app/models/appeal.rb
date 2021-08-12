@@ -202,6 +202,10 @@ class Appeal < DecisionReview
     tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
+  def judge_case_reviews
+    tasks.includes(:judge_case_reviews).flat_map(&:judge_case_reviews)
+  end
+
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
@@ -214,8 +218,12 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
+  def latest_judge_case_review
+    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
+  end
+
   def reviewing_judge_name
-    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""
   end
 

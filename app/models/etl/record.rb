@@ -30,6 +30,13 @@ class ETL::Record < ApplicationRecord
       primary_key
     end
 
+    def check_equal(attribute, expected, actual)
+      return if expected == actual
+
+      # TODO: log to Slack instead of fail
+      fail "#{self.name}: Expected #{attribute} to equal #{expected} but got #{actual}"
+    end
+
     private
 
     def org_cache(org_id)

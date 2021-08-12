@@ -33,18 +33,15 @@ class CreateEtlDecisionDocument < Caseflow::Migration
       # Now for columns to associate with other tables
       t.string "docket_number", comment: "from appeals.stream_docket_number"
 
-      t.references :judge_case_reviews, null: false, index: true, foreign_key: false,
+      t.references :judge_case_review, null: false, index: true, foreign_key: false,
                                         comment: "References associated judge_case_review record"
-      t.references :attorney_case_reviews, null: false, index: true, foreign_key: false,
+      t.references :attorney_case_review, null: false, index: true, foreign_key: false,
                                            comment: "References associated attorney_case_review record"
 
-      t.bigint "judge_task_id", comment: "Id of associated judge task"
-      t.bigint "attorney_task_id", comment: "Id of associated attorney task"
-
-      t.bigint "judge_user_id", comment: "Id of associated judge user"
+      t.bigint "judge_user_id", comment: "Id of the judge user on the associated judge_case_review"
       t.index ["judge_user_id"]
 
-      t.bigint "attorney_user_id", comment: "Id of associated attorney user"
+      t.bigint "attorney_user_id", comment: "Id of the attorney user on the associated judge_case_review"
       t.index ["attorney_user_id"]
     end
 
