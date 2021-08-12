@@ -584,7 +584,7 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   def find_all_relationships(participant_id:)
-    if %w[444444444, 555555555].include?(participant_id)
+    if %w[444444444 555555555].include?(participant_id)
       nil
     else
       [
