@@ -104,8 +104,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     nil_type_query = klass.unscoped.where.not(config[:id_column] => nil).where(config[:type_column] => nil)
 
     # https://stackoverflow.com/questions/6686920/activerecord-query-union
-    klass_id_column = "#{klass.table_name}.id"
-    sub_query = [nil_id_query, nil_type_query].map { |query| query.select(klass_id_column).to_sql }.join(" UNION ")
-    klass.unscoped.where("#{klass_id_column} IN (#{sub_query})")
+    sub_query = [nil_id_query, nil_type_query].map { |query| query.select(:id).to_sql }.join(" UNION ")
+    klass.unscoped.where(
+      Arel::Nodes::In.new(
+        klass.arel_table[:id],
+        Arel::Nodes::SqlLiteral.new(sub_query)
+      )
+    )
   end
 end
