@@ -64,7 +64,6 @@ export const ClaimantForm = ({
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
-
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
@@ -91,7 +90,7 @@ export const ClaimantForm = ({
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
       <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+        {!props.POA && <Controller
           control={control}
           name="relationship"
           defaultValue={null}
@@ -106,7 +105,7 @@ export const ClaimantForm = ({
               strongLabel
             />
           )}
-        />
+        />}
         <br />
         {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
@@ -117,7 +116,7 @@ export const ClaimantForm = ({
               <FieldDiv>
                 <SearchableDropdown
                   {...rest}
-                  label="Claimant's name"
+                  label={`${props.POA ? 'Representative' : 'Claimant'}'s name`}
                   filterOption={filterOption}
                   async={asyncFn}
                   defaultOptions
@@ -138,7 +137,7 @@ export const ClaimantForm = ({
         {listedAttorney && watchListedAttorney?.address && (
           <div>
             <ClaimantAddress>
-              <strong>Claimant's address</strong>
+              <strong>{props.POA ? 'Representative' : 'Claimant'}'s address</strong>
             </ClaimantAddress>
             <br />
             <Address address={watchListedAttorney?.address} />
@@ -148,7 +147,7 @@ export const ClaimantForm = ({
         {showPartyType && (
           <RadioField
             name="partyType"
-            label="Is the claimant an organization or individual?"
+            label={`Is the ${props.POA ? 'representative' : 'claimant'} an organization or individual?`}
             inputRef={register}
             strongLabel
             vertical
@@ -262,7 +261,8 @@ ClaimantForm.propTypes = {
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
-  hideListedAttorney: PropTypes.bool
+  hideListedAttorney: PropTypes.bool,
+  POA: PropTypes.bool
 };
 
 const FieldDiv = styled.div`
