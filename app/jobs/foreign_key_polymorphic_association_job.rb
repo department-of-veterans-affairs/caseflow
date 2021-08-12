@@ -11,12 +11,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     #               association_type_column: :decision_review_type,
     #               association_method: :decision_review },
     # TODO: add other `belongs_to .* polymorphic = true`
-    # HearingEmailRecipient => { association_id_column: :hearing_id,
-    #                            association_type_column: :hearing_type,
-    #                            association_method: :hearing },
-    # SentHearingEmailEvent => { association_id_column: :hearing_id,
-    #                            association_type_column: :hearing_type,
-    #                            association_method: :hearing },
+    HearingEmailRecipient => { association_id_column: :hearing_id,
+                               association_type_column: :hearing_type,
+                               association_method: :hearing },
+    SentHearingEmailEvent => { association_id_column: :hearing_id,
+                               association_type_column: :hearing_type,
+                               association_method: :hearing },
     SpecialIssueList => { association_id_column: :appeal_id,
                           association_type_column: :appeal_type,
                           association_method: :appeal },
@@ -43,14 +43,20 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     association_method = CLASSES_WITH_POLYMORPH_ASSOC[klass][:association_method]
 
     puts "Checking #{klass}"
-    orphaned_ids = orphan_records(klass).pluck(:id)
+    orphaned_ids = orphan_records(klass).pluck(:id, association_type_column || "'-'", association_id_column)
     if orphaned_ids.any?
-      slack_service.send_notification("Found #{klass.name} orphaned record: #{orphaned_ids}")
+      message = <<~MSG
+        Found #{klass.name} orphaned record:
+          (id, #{association_type_column}, #{association_id_column})
+          #{orphaned_ids.map(&:to_s).join('\n')}
+      MSG
+      puts message
+      slack_service.send_notification(message)
     end
 
     if association_type_column
       puts "unusual_records"
-      unusual_records = klass.unscoped.select(:id, association_id_column, association_type_column)
+      unusual_records = klass.unscoped # TODO needed?: .select(:id, association_id_column, association_type_column)
         .includes(association_method).where(association_id_column => nil)
         .where.not(association_type_column => nil)
         .select { |rec| rec.send(association_method).nil? }
@@ -82,14 +88,13 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
       # Using OUTER JOIN with a where-NULL clause is just as fast and easier to implement in Rails:
 
       # Left join with the table for each polymorphic type
-      joins_query = POLYMORPHIC_TYPES[association_method].map do |includes_name, poly_class|
-        klass.unscoped.includes(includes_name).where.not(association_id_column => nil)
-          .where(poly_class.arel_table[:id].eq(nil))
+      merged_query = POLYMORPHIC_TYPES[association_method].map do |includes_name, poly_class|
+        klass.unscoped.includes(includes_name).where(poly_class.arel_table[:id].eq(nil))
       end.reduce(:merge)
       # only check for records where the _id column is not nil
-      joins_query.where.not(association_id_column => nil)
+      merged_query.where.not(association_id_column => nil)
     else
-      klass.unscoped.select(:id, association_id_column, association_type_column)
+      klass.unscoped #TODO needed?: .select(:id, association_id_column, association_type_column)
         .includes(association_method).where.not(association_id_column => nil)
         .where(association_method.to_s.classify.constantize.table_name => { id: nil })
     end
