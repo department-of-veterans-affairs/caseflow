@@ -97,7 +97,13 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   end
 
   def unusual_records(klass, config)
-    klass.unscoped.where(config[:id_column] => nil).where.not(config[:type_column] => nil)
-    # TODO: OR klass.unscoped.where.not(config[:id_column] => nil).where(config[:type_column] => nil)
+    case1 = klass.unscoped.where(config[:id_column] => nil).where.not(config[:type_column] => nil)
+    # WillD TODO: add a test for case2
+    case2 = klass.unscoped.where.not(config[:id_column] => nil).where(config[:type_column] => nil)
+
+    # https://stackoverflow.com/questions/6686920/activerecord-query-union
+    klass_id_column = "#{klass.table_name}.id"
+    sub_query = [case1, case2].map { |s| s.select(klass_id_column).to_sql }.join(" UNION ")
+    klass.unscoped.where("#{klass_id_column} IN (#{sub_query})")
   end
 end
