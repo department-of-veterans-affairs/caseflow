@@ -10,7 +10,6 @@ describe Hearings::SendReminderEmailsJob do
           expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
           subject
-          hearing.reload
           expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
           expect(hearing.representative_recipient&.reminder_sent_at).not_to be_nil
         end
@@ -39,7 +38,6 @@ describe Hearings::SendReminderEmailsJob do
             expect(HearingMailer).to receive(:reminder).once.and_call_original
 
             subject
-            hearing.reload
             expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
             expect(hearing.representative_recipient&.reminder_sent_at).to(
               be_within(1.second).of(representative_reminder_sent_at)
@@ -63,7 +61,6 @@ describe Hearings::SendReminderEmailsJob do
             expect(HearingMailer).to receive(:reminder).once.and_call_original
 
             subject
-            hearing.reload
             expect(hearing.appellant_recipient&.reminder_sent_at).to(
               be_within(1.second).of(appellant_reminder_sent_at)
             )
@@ -78,7 +75,6 @@ describe Hearings::SendReminderEmailsJob do
             expect(HearingMailer).to receive(:reminder).once.and_call_original
 
             subject
-            hearing.reload
             expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
             expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
           end
@@ -100,7 +96,6 @@ describe Hearings::SendReminderEmailsJob do
 
           Hearings::SendReminderEmailsJob.new.perform # Second Send (subject is memoized)
 
-          hearing.reload
           expect(hearing.appellant_recipient&.reminder_sent_at).to eq(appellant_reminder_sent_at)
           expect(hearing.representative_recipient&.reminder_sent_at).to eq(representative_reminder_sent_at)
         end
@@ -286,17 +281,16 @@ describe Hearings::SendReminderEmailsJob do
         )
       end
 
-      subject do
-        # Without this reload, the hearing_email_recipients are not present on hearing
-        hearing.reload
-        Hearings::SendReminderEmailsJob.new.perform
-      end
+      subject { Hearings::SendReminderEmailsJob.new.perform }
 
       # TODO: This mock gets around the fact that :maybe_ready_for_reminder_email doesn't yet return
       # any hearings without a virtual hearing
-      #before do
-      #  allow(HearingRepository).to receive(:maybe_ready_for_reminder_email).and_return([hearing])
-      #end
+      before do
+        # TODO: If you don't call these things before running tests the db object never gets created.
+        appellant_recipient
+        representative_recipient
+        allow(HearingRepository).to receive(:maybe_ready_for_reminder_email).and_return([hearing])
+      end
       include_examples "send reminder emails"
     end
   end
