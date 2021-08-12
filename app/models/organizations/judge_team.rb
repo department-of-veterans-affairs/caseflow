@@ -39,6 +39,6 @@ class JudgeTeam < Organization
   end
 
   def serialize
-    super.merge(name: judge.full_name.titleize)
+    super.merge(name: judge&.full_name&.titleize)
   end
 end
