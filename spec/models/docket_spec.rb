@@ -296,6 +296,60 @@ describe Docket, :all_dbs do
     end
   end
 
+  context "an appeal throws a RecordNotUniqueError on the case_id field" do
+    subject { DirectReviewDocket.new.distribute_appeals(distribution, limit: 3) }
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+    let!(:buggy_appeal) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:buggy_distributed_case) do
+      DistributedCase.create!(
+        distribution: distribution,
+        ready_at: 6.months.ago,
+        docket: buggy_appeal.docket_type,
+        priority: false,
+        case_id: buggy_appeal.uuid,
+        task: buggy_appeal.tasks.of_type("DistributionTask").first
+      )
+    end
+    let!(:second_distribution_task) do
+      create(:distribution_task, appeal: buggy_appeal, status: Constants.TASK_STATUSES.assigned)
+    end
+    let(:appeal_second) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let(:appeal_third) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+
+    before do
+      judge_assign_task = JudgeAssignTask.find_by(appeal_id: buggy_appeal.id)
+      judge_assign_task.cancelled!
+      second_distribution_task.assigned!
+    end
+
+    it "distributes appeals that occur after the appeal with the bug" do
+      tasks = subject
+
+      expect(tasks.length).to eq(2)
+      expect(tasks.first.class).to eq(DistributedCase)
+      expect(tasks.last.class).to eq(DistributedCase)
+      expect(distribution.distributed_cases.length).to eq(2)
+    end
+  end
+
   context "distribute_appeals" do
     let!(:appeals) do
       (1..10).map do
