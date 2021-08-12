@@ -54,6 +54,7 @@ export const ScheduleVeteran = ({
   scheduledHearingsList,
   ...props
 }) => {
+
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
@@ -255,7 +256,7 @@ export const ScheduleVeteran = ({
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailOrTzErrors = hearing?.virtualHearing && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
 
-      if (emailOrTzErrors) {
+      if (emailOrTzErrors && virtual) {
         document.getElementById('email-section').scrollIntoView();
 
         return setErrors({
@@ -391,6 +392,7 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            userCanCollectVideoCentralEmails={props.userCanCollectVideoCentralEmails}
             scheduledHearingsList={scheduledHearingsList}
             fetchingHearings={fetchingHearings}
             userCanViewTimeSlots={userCanViewTimeSlots}
@@ -483,6 +485,7 @@ ScheduleVeteran.propTypes = {
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
   userCanViewTimeSlots: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   allHearingTasks: PropTypes.array
 };
 
