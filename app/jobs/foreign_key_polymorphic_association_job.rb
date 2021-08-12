@@ -3,6 +3,7 @@
 class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
       { id_column: :participant_id,
@@ -32,12 +33,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   def perform
     CLASSES_WITH_POLYMORPH_ASSOC.map do |klass, configs|
       configs.each do |config|
-        find_orphaned_records(klass, config)
+        find_bad_records(klass, config)
       end
     end
   end
 
-  def find_orphaned_records(klass, config)
+  def find_bad_records(klass, config)
     puts "Checking #{klass}"
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("'-'"), config[:id_column]]
     orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
@@ -62,7 +63,6 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
 
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:
   #   name used for `includes` => the associated ActiveRecord class
-  # TODO: use reflection on ama_appeal to get class or tablename
   POLYMORPHIC_TYPES = {
     appeal: { ama_appeal: Appeal, legacy_appeal: LegacyAppeal },
     hearing: { ama_hearing: Hearing, legacy_hearing: LegacyHearing },

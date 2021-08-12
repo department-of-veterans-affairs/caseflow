@@ -81,6 +81,7 @@ group :production, :staging, :ssh_forwarding, :development, :test do
 end
 
 group :test, :development, :demo do
+  gem "anbt-sql-formatter"
   # Security scanners
   gem "brakeman"
   gem "bullet"
