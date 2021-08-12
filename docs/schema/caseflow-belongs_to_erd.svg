@@ -273,30 +273,8 @@
 <polygon fill="black" stroke="black" points="1418.06,-1761.89 1428.58,-1763.18 1421.16,-1755.62 1418.06,-1761.89"/>
 <text text-anchor="middle" x="1198.51" y="-1712.8" font-family="Times,serif" font-size="14.00">remand_appeal</text>
 </g>
-<!-- Organization -->
-<g id="node19" class="node">
-<title>Organization</title>
-<ellipse fill="#d9d9ff" stroke="black" cx="1792.99" cy="-745" rx="56.59" ry="18"/>
-<text text-anchor="middle" x="1792.99" y="-741.3" font-family="Times,serif" font-size="14.00">Organization</text>
-</g>
-<!-- OrganizationsUser -->
-<g id="node20" class="node">
-<title>OrganizationsUser</title>
-<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1513.75,-629 1394.75,-629 1394.75,-625 1390.75,-625 1390.75,-621 1394.75,-621 1394.75,-599 1390.75,-599 1390.75,-595 1394.75,-595 1394.75,-591 1513.75,-591 1513.75,-629"/>
-<polyline fill="none" stroke="#aaaaaa" points="1394.75,-625 1398.75,-625 1398.75,-621 1394.75,-621 "/>
-<polyline fill="none" stroke="#aaaaaa" points="1394.75,-599 1398.75,-599 1398.75,-595 1394.75,-595 "/>
-<text text-anchor="middle" x="1454.25" y="-613.8" font-family="Times,serif" font-size="14.00">OrganizationsUser</text>
-<text text-anchor="middle" x="1454.25" y="-598.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
-</g>
-<!-- OrganizationsUser&#45;&gt;Organization -->
-<g id="edge14" class="edge">
-<title>OrganizationsUser&#45;&gt;Organization</title>
-<path fill="none" stroke="black" d="M1514,-616.97C1540.9,-621.25 1572.87,-627.92 1600.49,-638 1660.27,-659.82 1723.6,-698.75 1760.37,-723.15"/>
-<polygon fill="black" stroke="black" points="1758.44,-726.06 1768.69,-728.72 1762.33,-720.25 1758.44,-726.06"/>
-<text text-anchor="middle" x="1662.99" y="-694.8" font-family="Times,serif" font-size="14.00">organization</text>
-</g>
 <!-- RequestIssue -->
-<g id="node21" class="node">
+<g id="node19" class="node">
 <title>RequestIssue</title>
 <polygon fill="#ffa500" stroke="#0000ff" points="903.12,-359.5 903.12,-420.5 1046.12,-420.5 1046.12,-359.5 903.12,-359.5"/>
 <text text-anchor="middle" x="974.62" y="-405.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RequestIssue</text>
@@ -347,7 +325,7 @@
 <text text-anchor="middle" x="1198.51" y="-478.8" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
 </g>
 <!-- RequestDecisionIssue -->
-<g id="node22" class="node">
+<g id="node20" class="node">
 <title>RequestDecisionIssue</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="610.12,-350 474.12,-350 474.12,-346 470.12,-346 470.12,-342 474.12,-342 474.12,-322 470.12,-322 470.12,-318 474.12,-318 474.12,-314 610.12,-314 610.12,-350"/>
 <polyline fill="none" stroke="#aaaaaa" points="474.12,-346 478.12,-346 478.12,-342 474.12,-342 "/>
@@ -355,18 +333,40 @@
 <text text-anchor="middle" x="542.12" y="-328.3" font-family="Times,serif" font-size="14.00">RequestDecisionIssue</text>
 </g>
 <!-- RequestDecisionIssue&#45;&gt;DecisionIssue -->
-<g id="edge16" class="edge">
+<g id="edge15" class="edge">
 <title>RequestDecisionIssue&#45;&gt;DecisionIssue</title>
 <path fill="none" stroke="black" d="M610.17,-318.03C674.1,-305.46 773.24,-287.95 860.23,-281 961.59,-272.9 987.63,-273.25 1089.01,-281 1199.37,-289.43 1326.9,-312.04 1398.01,-325.82"/>
 <polygon fill="black" stroke="black" points="1397.59,-329.3 1408.08,-327.78 1398.93,-322.43 1397.59,-329.3"/>
 <text text-anchor="middle" x="974.62" y="-284.8" font-family="Times,serif" font-size="14.00">decision_issue</text>
 </g>
 <!-- RequestDecisionIssue&#45;&gt;RequestIssue -->
-<g id="edge15" class="edge">
+<g id="edge14" class="edge">
 <title>RequestDecisionIssue&#45;&gt;RequestIssue</title>
 <path fill="none" stroke="black" d="M610.3,-340.05C670.96,-347.44 762.65,-358.89 842.23,-370 858.6,-372.29 876.1,-374.86 892.81,-377.38"/>
 <polygon fill="black" stroke="black" points="892.68,-380.9 903.09,-378.94 893.73,-373.98 892.68,-380.9"/>
 <text text-anchor="middle" x="751.73" y="-373.8" font-family="Times,serif" font-size="14.00">request_issue</text>
+</g>
+<!-- Organization -->
+<g id="node21" class="node">
+<title>Organization</title>
+<ellipse fill="#d9d9ff" stroke="black" cx="1792.99" cy="-745" rx="56.59" ry="18"/>
+<text text-anchor="middle" x="1792.99" y="-741.3" font-family="Times,serif" font-size="14.00">Organization</text>
+</g>
+<!-- OrganizationsUser -->
+<g id="node22" class="node">
+<title>OrganizationsUser</title>
+<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1513.75,-629 1394.75,-629 1394.75,-625 1390.75,-625 1390.75,-621 1394.75,-621 1394.75,-599 1390.75,-599 1390.75,-595 1394.75,-595 1394.75,-591 1513.75,-591 1513.75,-629"/>
+<polyline fill="none" stroke="#aaaaaa" points="1394.75,-625 1398.75,-625 1398.75,-621 1394.75,-621 "/>
+<polyline fill="none" stroke="#aaaaaa" points="1394.75,-599 1398.75,-599 1398.75,-595 1394.75,-595 "/>
+<text text-anchor="middle" x="1454.25" y="-613.8" font-family="Times,serif" font-size="14.00">OrganizationsUser</text>
+<text text-anchor="middle" x="1454.25" y="-598.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
+</g>
+<!-- OrganizationsUser&#45;&gt;Organization -->
+<g id="edge16" class="edge">
+<title>OrganizationsUser&#45;&gt;Organization</title>
+<path fill="none" stroke="black" d="M1514,-616.97C1540.9,-621.25 1572.87,-627.92 1600.49,-638 1660.27,-659.82 1723.6,-698.75 1760.37,-723.15"/>
+<polygon fill="black" stroke="black" points="1758.44,-726.06 1768.69,-728.72 1762.33,-720.25 1758.44,-726.06"/>
+<text text-anchor="middle" x="1662.99" y="-694.8" font-family="Times,serif" font-size="14.00">organization</text>
 </g>
 <!-- source_type -->
 <g id="node53" class="node">

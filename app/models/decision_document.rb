@@ -8,7 +8,6 @@ class DecisionDocument < CaseflowRecord
   class NoFileError < StandardError; end
   class NotYetSubmitted < StandardError; end
 
-  belongs_to :appeal, polymorphic: true
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
 
@@ -19,6 +18,17 @@ class DecisionDocument < CaseflowRecord
   S3_SUB_BUCKET = "decisions"
 
   delegate :veteran, to: :appeal
+
+  include BelongsToPolymorphicAppealConcern
+  # Sets up belongs_to association with :appeal and provides `ama_appeal` used by `has_many` call
+  belongs_to_polymorphic_appeal :appeal
+  has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
+           through: :ama_appeal, source: :decision_issues
+
+  def decision_issues
+    ama_decision_issues if appeal_type == "Appeal"
+    # LegacyAppeals do not have decision_issue records
+  end
 
   def document_type
     "BVA Decision"
