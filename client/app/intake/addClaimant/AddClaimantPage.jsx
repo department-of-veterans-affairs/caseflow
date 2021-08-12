@@ -117,7 +117,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           onBack={handleBack}
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}
-          dateOfBirthField={featureToggles.dateOfBirthField}
+          dateOfBirthFieldToggle={featureToggles?.dateOfBirthField}
         />
         {confirmModal && (
           <AddClaimantConfirmationModal
