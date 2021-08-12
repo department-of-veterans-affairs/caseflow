@@ -5,8 +5,8 @@ class Hearings::SendEmail
 
   attr_reader :hearing, :virtual_hearing, :type
 
-  def initialize(virtual_hearing:, type:, hearing: nil)
-    @hearing = virtual_hearing.hearing || hearing
+  def initialize(virtual_hearing: nil, type:, hearing: nil)
+    @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
   end
 

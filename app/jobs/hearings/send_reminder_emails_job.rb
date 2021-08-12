@@ -23,13 +23,13 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   def send_reminder_emails(hearing)
     if should_send_appellant_reminder?(hearing)
       Hearings::SendEmail
-        .new(virtual_hearing: hearing.virtual_hearing, type: :appellant_reminder)
+        .new(hearing: hearing, type: :appellant_reminder)
         .call
     end
 
     if should_send_representative_reminder?(hearing)
       Hearings::SendEmail
-        .new(virtual_hearing: hearing.virtual_hearing, type: :representative_reminder)
+        .new(hearing: hearing, type: :representative_reminder)
         .call
     end
   end
