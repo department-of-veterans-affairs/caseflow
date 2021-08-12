@@ -141,7 +141,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         expect(Person.count).to eq 0
         subject
 
-        message = /Found orphaned records for Claimant:.*\[#{claimant.id}, "-", "#{claimant.participant_id}"\]/m
+        message = /Found orphaned records for Claimant:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
         expect(slack_service).to have_received(:send_notification).with(message).once
       end
     end
