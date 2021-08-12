@@ -191,7 +191,7 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              { partyType !== 'organization' &&
+              { props.dateOfBirthField &&
                 <DateSelector
                   optional
                   inputRef={register({
@@ -257,6 +257,7 @@ ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  dateOfBirthField: PropTypes.bool,
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
