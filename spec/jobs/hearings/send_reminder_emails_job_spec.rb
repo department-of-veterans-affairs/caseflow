@@ -287,13 +287,10 @@ describe Hearings::SendReminderEmailsJob do
 
       subject { Hearings::SendReminderEmailsJob.new.perform }
 
-      # TODO: This mock gets around the fact that :maybe_ready_for_reminder_email doesn't yet return
-      # any hearings without a virtual hearing
       before do
-        # TODO: If you don't call these things before running tests the db object never gets created.
+        # If you don't call these before running tests the db object never gets created.
         appellant_recipient
         representative_recipient
-        allow(HearingRepository).to receive(:maybe_ready_for_reminder_email).and_return([hearing])
       end
       include_examples "send reminder emails"
     end
