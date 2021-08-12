@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateEtlDecisionDocument < Caseflow::Migration
   def change
     create_table :decision_documents do |t|
@@ -23,29 +25,33 @@ class CreateEtlDecisionDocument < Caseflow::Migration
       t.references :appeal, polymorphic: true, null: false, comment: "Associated appeal"
 
       t.string "citation_number", null: false, comment: "Unique identifier for decision document"
-      t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+      t.index ["citation_number"], unique: true
       t.date "decision_date", null: false
       t.index ["decision_date"]
       t.string "redacted_document_location", null: false
 
       # Now for columns to associate with other tables
+      t.string "docket_number", comment: "from appeals.stream_docket_number"
+
       t.references :judge_case_reviews, null: false, index: true, foreign_key: true,
-        comment: "References associated judge_case_review record"
+                                        comment: "References associated judge_case_review record"
       t.references :attorney_case_reviews, null: false, index: true, foreign_key: true,
-        comment: "References associated attorney_case_review record"
+                                           comment: "References associated attorney_case_review record"
 
       t.bigint "judge_task_id", comment: "Id of associated judge task"
-      add_foreign_key :decision_documents, "tasks", column: "judge_task_id"
       t.bigint "attorney_task_id", comment: "Id of associated attorney task"
-      add_foreign_key :decision_documents, "tasks", column: "attorney_task_id"
 
       t.bigint "judge_user_id", comment: "Id of associated judge user"
       t.index ["judge_user_id"]
-      add_foreign_key :decision_documents, "users", column: "judge_user_id"
 
       t.bigint "attorney_user_id", comment: "Id of associated attorney user"
       t.index ["attorney_user_id"]
-      add_foreign_key :decision_documents, "users", column: "attorney_user_id"
     end
+
+    add_foreign_key :decision_documents, "tasks", column: "judge_task_id", validate: false
+    add_foreign_key :decision_documents, "tasks", column: "attorney_task_id", validate: false
+
+    add_foreign_key :decision_documents, "users", column: "judge_user_id", validate: false
+    add_foreign_key :decision_documents, "users", column: "attorney_user_id", validate: false
   end
 end

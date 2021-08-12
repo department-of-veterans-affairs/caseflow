@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_130353) do
+ActiveRecord::Schema.define(version: 2021_08_10_115459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,43 @@ ActiveRecord::Schema.define(version: 2021_07_29_130353) do
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
     t.index ["vacols_id"], name: "index_attorney_case_reviews_on_vacols_id"
+  end
+
+  create_table "decision_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Associated appeal"
+    t.string "appeal_type", null: false
+    t.datetime "attempted_at", comment: "When the job ran"
+    t.bigint "attorney_case_reviews_id", null: false, comment: "References associated attorney_case_review record"
+    t.bigint "attorney_task_id", comment: "Id of associated attorney task"
+    t.bigint "attorney_user_id", comment: "Id of associated attorney user"
+    t.datetime "canceled_at", comment: "Timestamp when the job was abandoned"
+    t.string "citation_number", null: false, comment: "Unique identifier for decision document"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.date "decision_date", null: false
+    t.datetime "decision_document_created_at", comment: "decision_documents.created_at"
+    t.datetime "decision_document_updated_at", comment: "decision_documents.updated_at"
+    t.string "docket_number", comment: "from appeals.stream_docket_number"
+    t.string "error", comment: "Message captured from a failed attempt"
+    t.bigint "judge_case_reviews_id", null: false, comment: "References associated judge_case_review record"
+    t.bigint "judge_task_id", comment: "Id of associated judge task"
+    t.bigint "judge_user_id", comment: "Id of associated judge user"
+    t.datetime "last_submitted_at", comment: "When the job is eligible to run (can be reset to restart the job)"
+    t.datetime "processed_at", comment: "When the job has concluded"
+    t.string "redacted_document_location", null: false
+    t.datetime "submitted_at", comment: "When the job first became eligible to run"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "uploaded_to_vbms_at", comment: "When document was successfully uploaded to VBMS"
+    t.index ["appeal_type", "appeal_id"], name: "index_decision_documents_on_appeal_type_and_appeal_id"
+    t.index ["attorney_case_reviews_id"], name: "index_decision_documents_on_attorney_case_reviews_id"
+    t.index ["attorney_user_id"], name: "index_decision_documents_on_attorney_user_id"
+    t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+    t.index ["created_at"], name: "index_decision_documents_on_created_at"
+    t.index ["decision_date"], name: "index_decision_documents_on_decision_date"
+    t.index ["decision_document_created_at"], name: "index_decision_documents_on_decision_document_created_at"
+    t.index ["decision_document_updated_at"], name: "index_decision_documents_on_decision_document_updated_at"
+    t.index ["judge_case_reviews_id"], name: "index_decision_documents_on_judge_case_reviews_id"
+    t.index ["judge_user_id"], name: "index_decision_documents_on_judge_user_id"
+    t.index ["updated_at"], name: "index_decision_documents_on_updated_at"
   end
 
   create_table "decision_issues", comment: "Copy of decision_issues", force: :cascade do |t|
@@ -326,6 +363,45 @@ ActiveRecord::Schema.define(version: 2021_07_29_130353) do
     t.index ["vacols_id"], name: "index_hearings_on_vacols_id"
   end
 
+  create_table "judge_case_reviews", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
+    t.string "appeal_type", null: false, comment: "tasks.appeal_type"
+    t.text "areas_for_improvement", default: [], array: true
+    t.string "attorney_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "attorney_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.bigint "attorney_id", null: false, comment: "judge_case_reviews.attorney_id; references users table"
+    t.string "attorney_sattyid", limit: 20, comment: "users.sattyid"
+    t.text "comment", comment: "from judge"
+    t.string "complexity"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.text "factors_not_considered", default: [], array: true
+    t.string "judge_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "judge_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.integer "judge_id", comment: "judge_case_reviews.judge_id; references users table"
+    t.string "judge_sattyid", limit: 20, comment: "users.sattyid"
+    t.string "location"
+    t.boolean "one_touch_initiative"
+    t.text "positive_feedback", default: [], array: true
+    t.string "quality"
+    t.datetime "review_created_at", null: false, comment: "judge_case_reviews.created_at"
+    t.bigint "review_id", null: false, comment: "judge_case_reviews.id"
+    t.datetime "review_updated_at", null: false, comment: "judge_case_reviews.updated_at"
+    t.string "task_id", comment: "judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.string "vacols_id", comment: "Substring judge_case_reviews.task_id for Legacy Appeals"
+    t.index ["appeal_id"], name: "index_judge_case_reviews_on_appeal_id"
+    t.index ["appeal_type"], name: "index_judge_case_reviews_on_appeal_type"
+    t.index ["attorney_id"], name: "index_judge_case_reviews_on_attorney_id"
+    t.index ["created_at"], name: "index_judge_case_reviews_on_created_at"
+    t.index ["judge_id"], name: "index_judge_case_reviews_on_judge_id"
+    t.index ["review_created_at"], name: "index_judge_case_reviews_on_review_created_at"
+    t.index ["review_id"], name: "index_judge_case_reviews_on_review_id"
+    t.index ["review_updated_at"], name: "index_judge_case_reviews_on_review_updated_at"
+    t.index ["task_id"], name: "index_judge_case_reviews_on_task_id"
+    t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
+    t.index ["vacols_id"], name: "index_judge_case_reviews_on_vacols_id"
+  end
+
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.datetime "created_at"
@@ -454,4 +530,12 @@ ActiveRecord::Schema.define(version: 2021_07_29_130353) do
     t.index ["user_id"], name: "index_users_on_user_id"
   end
 
+  add_foreign_key "decision_documents", "attorney_case_reviews", column: "attorney_case_reviews_id"
+  add_foreign_key "decision_documents", "judge_case_reviews", column: "judge_case_reviews_id"
+  add_foreign_key "decision_documents", "tasks", column: "attorney_task_id"
+  add_foreign_key "decision_documents", "tasks", column: "judge_task_id"
+  add_foreign_key "decision_documents", "users", column: "attorney_user_id"
+  add_foreign_key "decision_documents", "users", column: "judge_user_id"
+  add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "judge_case_reviews", "users", column: "judge_id"
 end
