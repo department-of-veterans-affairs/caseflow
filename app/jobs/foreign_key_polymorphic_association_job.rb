@@ -51,13 +51,13 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     end
   end
 
+  # :reek:LongParameterList
   def send_alert(heading, klass, config, record_ids)
     message = <<~MSG
       #{heading} for #{klass.name}:
         (id, #{config[:type_column]}, #{config[:id_column]})
         #{record_ids.map(&:to_s).join('\n')}
     MSG
-    puts message
     slack_service.send_notification(message)
   end
 

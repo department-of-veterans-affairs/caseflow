@@ -70,10 +70,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
     context "check for N+1 query problem" do
       let(:query_subscriber) { QuerySubscriber.new }
-      let(:formatter) do
-        rule = AnbtSql::Rule.new
-        formatter = AnbtSql::Formatter.new(rule)
-      end
+      let(:formatter) { AnbtSql::Formatter.new(AnbtSql::Rule.new) }
       before { 2.times { SpecialIssueList.create(appeal: create(:appeal)) } }
 
       it "sends alert" do
@@ -85,10 +82,10 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
         # There should be no more than 2 queries per CLASSES_WITH_POLYMORPH_ASSOC configuration
         application_queries = query_subscriber.select_queries.reject { |query| query.include?("pg_attribute") }
-        polymorphic_assoc_configs = ForeignKeyPolymorphicAssociationJob::CLASSES_WITH_POLYMORPH_ASSOC.values.flatten.size
-        expect(application_queries.size).to be < 2 * polymorphic_assoc_configs
+        polymorphic_assoc_configs = ForeignKeyPolymorphicAssociationJob::CLASSES_WITH_POLYMORPH_ASSOC.values.flatten
+        expect(application_queries.size).to be < 2 * polymorphic_assoc_configs.size
         # print SQL queries so they can be tested manually in dbconsole or Metabase
-        application_queries.each{ |query| puts formatter.format(query.dup) }
+        application_queries.each { |query| puts formatter.format(query.dup) }
 
         # 1 SELECT for orphan_records + 1 SELECT for unusual_records
         expect(query_subscriber.select_queries(/"special_issue_lists"/).size).to eq 2
