@@ -29,7 +29,7 @@ RSpec.describe QueueController, :all_dbs, type: :controller do
       after { User.unauthenticate! }
 
       it "loads the page as normal" do
-        get(:index, params: { vacols_id: appeal.uuid[0..7] })
+        get(:index, params: { external_id: appeal.uuid[0..7] })
         expect(response.status).to eq 302
         expect(response.headers['Location']).to eq "http://test.host/queue/appeals/#{appeal.uuid}"
       end

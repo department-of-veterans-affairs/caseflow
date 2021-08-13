@@ -29,8 +29,8 @@ class QueueController < ApplicationController
 
   # Allow accessing an AMA appeal with only the first 8 characters if it is unique
   def redirect_short_uuids
-    if params[:vacols_id] =~ /^\h{8}$/
-      appeal = Appeal.find_by_uuid_prefix(params[:vacols_id])
+    if params[:external_id] =~ /^\h{8}$/
+      appeal = Appeal.find_by_uuid_prefix(params[:external_id])
       redirect_to("/queue/appeals/#{appeal.uuid}") if appeal
     end
   end

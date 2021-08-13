@@ -253,9 +253,9 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/appeals/:vacols_id', to: 'queue#index'
-    get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
-    get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
+    get '/appeals/:external_id', to: 'queue#index'
+    get '/appeals/:external_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
+    get '/appeals/:external_id/*all', to: redirect('/queue/appeals/%{external_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
