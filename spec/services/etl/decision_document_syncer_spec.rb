@@ -33,23 +33,22 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
 
         # stringify datetimes to ignore milliseconds
         # expect(ETL::DecisionDocument.first.decision_document_created_at.to_s).to eq(decision_document.created_at.to_s)
-        expect(ETL::DecisionDocument.first.decision_document_created_at).to
-          be_within(1.second).of(decision_document.created_at)
+        expect(ETL::DecisionDocument.first.decision_document_created_at)
+          .to be_within(1.second).of(decision_document.created_at)
       end
     end
 
-    context "associated with ETL::DecisionIssue" do
+    context "when associated with other ETL tables" do
+      let(:connection) { ETL::Record.connection }
       before do
         ETL::UserSyncer.new(etl_build: etl_build).call
         ETL::DecisionIssueSyncer.new(etl_build: etl_build).call
         ETL::AttorneyCaseReviewSyncer.new(etl_build: etl_build).call
       end
-      it "" do
+      it "enables SQL joins" do
         subject
         expect(ETL::DecisionDocument.count).to eq(1)
         expect(ETL::DecisionIssue.count).to eq(2)
-
-        conn = ETL::Record.connection
 
         # Paul Saindon's DecisionDocument query
         query = <<~SQL
@@ -74,8 +73,8 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
           LEFT JOIN users AS atty
             ON atty.id = docs.attorney_user_id
         SQL
-        result = conn.exec_query(query).to_a
-        pp result
+        result = connection.exec_query(query).to_a
+        expect(result.size).to eq ETL::DecisionDocument.count * ETL::DecisionIssue.count
 
         # Paul Saindon's D.O.C. query 1
         query = <<~SQL
@@ -111,8 +110,10 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
             atty.sattyid, atty.full_name,
             atty_cr.overtime
         SQL
-        result = conn.exec_query(query).to_a
-        pp result
+        result = connection.exec_query(query).to_a
+        expect(result.size).to eq 1
+        expect(result.first["ard_issues"]).to eq ETL::DecisionIssue.count
+        expect(result.first["other_issues"]).to eq 0
       end
     end
   end

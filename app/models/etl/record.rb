@@ -38,6 +38,7 @@ class ETL::Record < ApplicationRecord
       @slack_service ||= SlackService.new(url: slack_url)
     end
 
+    # :reek:LongParameterList
     def check_equal(record_id, attribute, expected, actual)
       return if expected == actual
 

@@ -19,7 +19,7 @@ class ETL::DecisionDocument < ETL::Record
 
       target.judge_user_id = judge_case_review.judge.id
       check_equal(original.id, "reviewing_judge_name",
-        original.appeal.reviewing_judge_name, judge_case_review.judge.full_name)
+                  original.appeal.reviewing_judge_name, judge_case_review.judge.full_name)
       target.attorney_user_id = judge_case_review.attorney.id
 
       target
