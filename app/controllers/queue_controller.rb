@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class QueueController < ApplicationController
-  before_action :react_routed, :check_queue_out_of_service, :verify_access
+  before_action :react_routed, :check_queue_out_of_service, :verify_access, :redirect_short_uuids
   skip_before_action :deny_vso_access
 
   def set_application
@@ -25,5 +25,13 @@ class QueueController < ApplicationController
       redirect_to "/search"
     end
     nil
+  end
+
+  # Allow accessing an AMA appeal with only the first 8 characters if it is unique
+  def redirect_short_uuids
+    if params[:vacols_id] =~ /^\h{8}$/
+      appeal = Appeal.find_by_uuid_prefix(params[:vacols_id])
+      redirect_to("/queue/appeals/#{appeal.uuid}") if appeal
+    end
   end
 end

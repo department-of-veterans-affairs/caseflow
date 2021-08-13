@@ -19,4 +19,20 @@ RSpec.describe QueueController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "redirect_short_uuids before_action" do
+    context "with first 8 characters of a uuid" do
+      let(:appeal) { create(:appeal) }
+      let(:user) { create(:user) }
+
+      before { User.authenticate!(user: user) }
+      after { User.unauthenticate! }
+
+      it "loads the page as normal" do
+        get(:index, params: { vacols_id: appeal.uuid[0..7] })
+        expect(response.status).to eq 302
+        expect(response.headers['Location']).to eq "http://test.host/queue/appeals/#{appeal.uuid}"
+      end
+    end
+  end
 end

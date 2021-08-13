@@ -1280,4 +1280,36 @@ describe Appeal, :all_dbs do
       end
     end
   end
+
+  describe ".find_by_uuid_prefix" do
+    subject { Appeal.find_by_uuid_prefix(prefix) }
+
+    context "with the first 8 characters of an unambiguous UUID" do
+      let(:appeal) { create(:appeal) }
+      let(:prefix) { appeal.uuid[0..7] }
+
+      it "finds the appeal" do
+        expect(subject).to eq appeal
+      end
+    end
+
+    context "with something which is not 8 hex characters" do
+      let(:prefix) { "qwertyui" }
+
+      it "returns nothing" do
+        expect(subject).to eq nil
+      end
+    end
+
+    context "when two appeals start with the same 8 characters" do
+      let!(:appeal) { create(:appeal) }
+      let(:prefix) { appeal.uuid[0..7] }
+
+      let!(:appeal2) { create(:appeal, uuid: "#{prefix}-65fb-4422-bee4-fe7553fdf5c3") }
+
+      it "returns nil" do
+        expect(subject).to eq nil
+      end
+    end
+  end
 end

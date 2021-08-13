@@ -553,6 +553,14 @@ class Appeal < DecisionReview
     appellant&.relationship
   end
 
+  # Allow looking up a UUID by the first 8 characters (for when you're entering it manually)
+  def self.find_by_uuid_prefix(partial_uuid)
+    if partial_uuid =~ /^\h{8}$/
+      appeals = Appeal.where("uuid::text LIKE '#{partial_uuid}%'")
+      return appeals.first if appeals.count == 1
+    end
+  end
+
   private
 
   def business_lines_needing_assignment
