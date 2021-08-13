@@ -23,6 +23,15 @@ feature "Unrecognized appellants", :postgres do
     )
   end
 
+  let(:appeal_with_no_poa) do
+    appeal = create(
+      :appeal,
+      has_unrecognized_appellant: true
+    )
+    appeal.claimant.unrecognized_appellant.update(unrecognized_power_of_attorney_id: nil)
+    appeal
+  end
+
   let!(:user) do
     create(:user, full_name: "Test User")
   end
@@ -132,8 +141,31 @@ feature "Unrecognized appellants", :postgres do
     after { FeatureToggle.disable!(:edit_unrecognized_appellant_poa) }
 
     it "should show the edit information button if there's a POA already" do
-      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
       expect(page).to have_content("Edit Information")
+    end
+    it "should show the update POA button if there's no POA" do
+      visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+      expect(page).to have_content("Update POA")
+
+      click_on "Update POA"
+      expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")
+      expect(page).to have_content("Update Appellant's POA")
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in("Representative's name", with: "Not Listed").send_keys :enter
+      click_dropdown({ index: 0 }, find(".dropdown-listedAttorney"))
+
+      within_fieldset("Is the representative an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      fill_in("First name", with: "FirstName")
+      fill_in("Street address 1", with: "Address1")
+      fill_in("City", with: "City")
+      fill_in("State", with: "CA").send_keys :enter
+      fill_in("Country", with: "Country")
+
+      expect(page).to have_button("Save", disabled: false)
     end
   end
 end
