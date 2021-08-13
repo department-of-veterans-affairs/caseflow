@@ -6,7 +6,7 @@ class HearingSchedule::GetSpreadsheetData
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
   HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = 4
-  JUDGE_NON_AVAILABILITY_HEADER_COLUMNS = 7
+  JUDGE_ASSIGNMENT_HEADER_ROWS = 1
 
   def initialize(spreadsheet)
     @spreadsheet = spreadsheet
@@ -16,23 +16,22 @@ class HearingSchedule::GetSpreadsheetData
     @spreadsheet.sheet(JUDGE_NON_AVAILABILITY_SHEET)
   end
 
-  def judge_non_availability_template
+  def judge_assignment_template
     {
-      title: judge_non_availability_sheet.column(1)[0],
-      headers: judge_non_availability_sheet.row(2).uniq,
-      empty_column: judge_non_availability_sheet.column(5).uniq
+      id: judge_non_availability_sheet.column(1)[0],
+      cssId: judge_non_availability_sheet.column(6)[0],
+      vlj: judge_non_availability_sheet.column(7)[0]
     }
   end
 
-  def judge_non_availability_data
-    non_availability_dates = []
-    names = judge_non_availability_sheet.column(2).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    vlj_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    dates = judge_non_availability_sheet.column(4).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    names.zip(vlj_ids, dates).each do |row|
-      non_availability_dates.push("name" => row[0].strip, "vlj_id" => row[1].to_s.strip, "date" => row[2])
+  def judge_assignments
+    hearing_day_ids = judge_non_availability_sheet.column(1).drop(JUDGE_ASSIGNMENT_HEADER_ROWS)
+    css_ids = judge_non_availability_sheet.column(6).drop(JUDGE_ASSIGNMENT_HEADER_ROWS)
+    names = judge_non_availability_sheet.column(7).drop(JUDGE_ASSIGNMENT_HEADER_ROWS)
+
+    names.zip(css_ids, hearing_day_ids).map do |row|
+      { name: row[0]&.strip, judge_css_id: row[1]&.strip, hearing_day_id: row[2] }
     end
-    non_availability_dates
   end
 
   def ro_non_availability_sheet

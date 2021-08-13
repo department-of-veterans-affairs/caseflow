@@ -15,6 +15,14 @@ const fileUploadStyling = css({
   marginTop: '40px'
 });
 
+const judgeUploadStyle = css({
+  '& label': {
+    cursor: 'pointer',
+    paddingLeft: 0,
+    marginLeft: 0
+  },
+});
+
 const inlineFormStyling = css({
   '> div': {
     ' & .cf-inline-form': {
@@ -89,19 +97,7 @@ export default class BuildScheduleUpload extends React.Component {
         {this.props.uploadJudgeFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
-          <div {...inlineFormStyling}>
-            <BasicDateRangeSelector
-              startDateName="startDate"
-              startDateValue={this.props.judgeStartDate}
-              startDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
-              endDateName="endDate"
-              endDateValue={this.props.judgeEndDate}
-              endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
-              onStartDateChange={this.props.onJudgeStartDateChange}
-              onEndDateChange={this.props.onJudgeEndDateChange}
-            />
-          </div>
-          <div {...fileUploadStyling} >
+          <div {...judgeUploadStyle}>
             <FileUpload
               preUploadText="Select a file for upload"
               postUploadText="Choose a different file"

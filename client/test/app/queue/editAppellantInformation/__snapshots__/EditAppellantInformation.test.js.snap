@@ -20,6 +20,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "addressLine3": "APT 2",
                 "city": "SAN FRANCISCO",
                 "country": "USA",
+                "dateOfBirth": undefined,
                 "emailAddress": undefined,
                 "firstName": undefined,
                 "lastName": undefined,
@@ -30,6 +31,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "name": "Abellona Valtas",
                 "partyType": undefined,
                 "phoneNumber": undefined,
+                "poaForm": null,
                 "relationship": "spouse",
                 "state": "CA",
                 "suffix": undefined,
@@ -82,6 +84,18 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     type="text"
                     value=""
                   />,
+                },
+                "dateOfBirth": Object {
+                  "ref": <input
+                    class="cf-form-textinput"
+                    id="dateOfBirth"
+                    max="9999-12-31"
+                    name="dateOfBirth"
+                    placeholder="mm/dd/yyyy"
+                    type="date"
+                    value=""
+                  />,
+                  "valueAsDate": true,
                 },
                 "emailAddress": Object {
                   "ref": <input
@@ -161,7 +175,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
               },
             },
             "fieldsWithValidationRef": Object {
-              "current": Object {},
+              "current": Object {
+                "dateOfBirth": true,
+              },
             },
             "formState": Object {
               "dirtyFields": Object {},
@@ -301,6 +317,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "addressLine3": "APT 2",
                           "city": "SAN FRANCISCO",
                           "country": "USA",
+                          "dateOfBirth": undefined,
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
@@ -311,6 +328,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
+                          "poaForm": null,
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -363,6 +381,18 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
+                          },
+                          "dateOfBirth": Object {
+                            "ref": <input
+                              class="cf-form-textinput"
+                              id="dateOfBirth"
+                              max="9999-12-31"
+                              name="dateOfBirth"
+                              placeholder="mm/dd/yyyy"
+                              type="date"
+                              value=""
+                            />,
+                            "valueAsDate": true,
                           },
                           "emailAddress": Object {
                             "ref": <input
@@ -442,7 +472,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         },
                       },
                       "fieldsWithValidationRef": Object {
-                        "current": Object {},
+                        "current": Object {
+                          "dateOfBirth": true,
+                        },
                       },
                       "formState": Object {
                         "dirtyFields": Object {},
@@ -2534,7 +2566,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 </styled.div>
                 <styled.div>
                   <div
-                    className="sc-jSgupP gGfCIZ"
+                    className="sc-jSgupP fVzfOf"
                   >
                     <TextField
                       className={
@@ -2588,6 +2620,82 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         />
                       </div>
                     </TextField>
+                    <DateSelector
+                      inputRef={[Function]}
+                      label={
+                        <b>
+                          Date of birth
+                        </b>
+                      }
+                      name="dateOfBirth"
+                      optional={true}
+                      type="date"
+                    >
+                      <TextField
+                        className={
+                          Array [
+                            "cf-form-textinput",
+                          ]
+                        }
+                        inputRef={[Function]}
+                        label={
+                          <b>
+                            Date of birth
+                          </b>
+                        }
+                        max="9999-12-31"
+                        name="dateOfBirth"
+                        onChange={[Function]}
+                        optional={true}
+                        placeholder="mm/dd/yyyy"
+                        required={false}
+                        type="date"
+                        useAriaLabel={false}
+                      >
+                        <div
+                          className="cf-form-textinput   "
+                        >
+                          <label
+                            htmlFor="dateOfBirth"
+                          >
+                            <FormLabel
+                              label={
+                                <b>
+                                  Date of birth
+                                </b>
+                              }
+                              name="dateOfBirth"
+                              optional={true}
+                              required={false}
+                            >
+                              <span>
+                                <b>
+                                  Date of birth
+                                </b>
+                                <span
+                                  className="cf-optional"
+                                >
+                                  Optional
+                                </span>
+                              </span>
+                            </FormLabel>
+                          </label>
+                          <input
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
+                            id="dateOfBirth"
+                            max="9999-12-31"
+                            name="dateOfBirth"
+                            onChange={[Function]}
+                            placeholder="mm/dd/yyyy"
+                            type="date"
+                          />
+                        </div>
+                      </TextField>
+                    </DateSelector>
                   </div>
                 </styled.div>
                 <AddressForm
@@ -2601,6 +2709,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "addressLine3": "APT 2",
                           "city": "SAN FRANCISCO",
                           "country": "USA",
+                          "dateOfBirth": undefined,
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
@@ -2611,6 +2720,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
+                          "poaForm": null,
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -2663,6 +2773,18 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
+                          },
+                          "dateOfBirth": Object {
+                            "ref": <input
+                              class="cf-form-textinput"
+                              id="dateOfBirth"
+                              max="9999-12-31"
+                              name="dateOfBirth"
+                              placeholder="mm/dd/yyyy"
+                              type="date"
+                              value=""
+                            />,
+                            "valueAsDate": true,
                           },
                           "emailAddress": Object {
                             "ref": <input
@@ -2742,7 +2864,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         },
                       },
                       "fieldsWithValidationRef": Object {
-                        "current": Object {},
+                        "current": Object {
+                          "dateOfBirth": true,
+                        },
                       },
                       "formState": Object {
                         "dirtyFields": Object {},
@@ -3022,6 +3146,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "addressLine3": "APT 2",
                                 "city": "SAN FRANCISCO",
                                 "country": "USA",
+                                "dateOfBirth": undefined,
                                 "emailAddress": undefined,
                                 "firstName": undefined,
                                 "lastName": undefined,
@@ -3032,6 +3157,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "name": "Abellona Valtas",
                                 "partyType": undefined,
                                 "phoneNumber": undefined,
+                                "poaForm": null,
                                 "relationship": "spouse",
                                 "state": "CA",
                                 "suffix": undefined,
@@ -3084,6 +3210,18 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                     type="text"
                                     value=""
                                   />,
+                                },
+                                "dateOfBirth": Object {
+                                  "ref": <input
+                                    class="cf-form-textinput"
+                                    id="dateOfBirth"
+                                    max="9999-12-31"
+                                    name="dateOfBirth"
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
+                                    value=""
+                                  />,
+                                  "valueAsDate": true,
                                 },
                                 "emailAddress": Object {
                                   "ref": <input
@@ -3163,7 +3301,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               },
                             },
                             "fieldsWithValidationRef": Object {
-                              "current": Object {},
+                              "current": Object {
+                                "dateOfBirth": true,
+                              },
                             },
                             "formState": Object {
                               "dirtyFields": Object {},
