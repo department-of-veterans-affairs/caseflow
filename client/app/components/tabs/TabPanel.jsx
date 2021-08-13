@@ -12,6 +12,7 @@ const propTypes = {
   children: PropTypes.node.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   fullWidth: PropTypes.bool,
+  tabPanelTabIndex: PropTypes.number
 };
 
 export const TabPanel = ({
@@ -19,6 +20,7 @@ export const TabPanel = ({
   className = '',
   children,
   value,
+  tabPanelTabIndex
 }) => {
   const ctx = useContext(TabContext);
   const active = ctx.value === value.toString();
@@ -42,7 +44,7 @@ export const TabPanel = ({
       id={`${ctx.idPrefix}-tabpanel-${value}`}
       aria-hidden={!active}
       className={classNames}
-      tabIndex={active ? 0 : -1}
+      tabIndex={tabPanelTabIndex || 0}
     >
       {contents}
     </Component>
