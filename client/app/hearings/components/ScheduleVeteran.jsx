@@ -133,15 +133,18 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    props.onChangeFormData(
-      'assignHearing',
-      {
-        emailRecipients: {
-          appellantTz: appeal?.appellantTz,
-          representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
+    if (!hearing?.emailRecipients?.appellantTz || !hearing.emailRecipients?.representativeTz) {
+      props.onChangeFormData(
+        'assignHearing',
+        {
+          emailRecipients: {
+            ...hearing.emailRecipients,
+            appellantTz: appeal?.appellantTz,
+            representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
+          }
         }
-      }
-    );
+      );
+    }
 
     if (props.params?.action && props.params?.disposition) {
       props.setScheduledHearing({

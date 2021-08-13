@@ -228,13 +228,11 @@ export const ScheduleVeteranForm = ({
               <AppellantSection
                 {...sectionProps}
                 virtual={virtual}
-                showTimezoneField={userCanCollectVideoCentralEmails || virtual}
                 fullWidth
               />
               <RepresentativeSection
                 {...sectionProps}
                 virtual={virtual}
-                showTimezoneField={userCanCollectVideoCentralEmails || virtual}
                 fullWidth
               />
             </div>

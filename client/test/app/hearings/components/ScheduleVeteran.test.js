@@ -56,6 +56,7 @@ const setScheduledHearingMock = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
 
 const scheduleVeteranProps = {
+  userCanCollectVideoCentralEmails: true,
   showSuccessMessage: jest.fn(),
   onChangeFormData: changeSpy,
   appeals: appealsData,
@@ -496,7 +497,10 @@ describe('ScheduleVeteran', () => {
             description: 'Update Task',
             values: {
               ...scheduleHearingDetails.apiFormattedValues,
-              email_recipients: null,
+              email_recipients: {
+                appellant_tz: 'America/New_York',
+                representative_tz: 'America/New_York',
+              },
               virtual_hearing_attributes: false,
               override_full_hearing_day_validation: false,
             },

@@ -114,7 +114,8 @@ export const appealData = {
     ...veteranInfo
   },
   readableHearingRequestType: 'Video',
-  readableOriginalHearingRequestType: 'Video'
+  readableOriginalHearingRequestType: 'Video',
+  appellantTz: 'America/New_York'
 };
 
 export const amaAppeal = {
