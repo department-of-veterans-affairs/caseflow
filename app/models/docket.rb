@@ -70,7 +70,7 @@ class Docket
                                                task: task)
       rescue ActiveRecord::RecordNotUnique => error
         Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
+        Raven.capture_exception(error, extra: { appeal_type: task.appeal.type, appeal_id: task.appeal.id })
       end
     end
   end
