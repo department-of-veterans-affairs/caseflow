@@ -78,7 +78,7 @@ export const AppellantSection = ({
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
+      {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails || virtual) && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames(columnWidthClass)} >
             <Timezone

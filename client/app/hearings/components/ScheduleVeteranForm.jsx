@@ -68,7 +68,7 @@ export const ScheduleVeteranForm = ({
     }
 
     // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
+    return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
 
   // Set the section props
@@ -228,13 +228,13 @@ export const ScheduleVeteranForm = ({
               <AppellantSection
                 {...sectionProps}
                 virtual={virtual}
-                showTimezoneField={userCanCollectVideoCentralEmails}
+                showTimezoneField={userCanCollectVideoCentralEmails || virtual}
                 fullWidth
               />
               <RepresentativeSection
                 {...sectionProps}
                 virtual={virtual}
-                showTimezoneField={userCanCollectVideoCentralEmails}
+                showTimezoneField={userCanCollectVideoCentralEmails || virtual}
                 fullWidth
               />
             </div>

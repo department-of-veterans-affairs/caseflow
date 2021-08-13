@@ -133,18 +133,15 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
-      props.onChangeFormData(
-        'assignHearing',
-        {
-          emailRecipients: {
-            status: 'pending',
-            appellantTz: appeal?.appellantTz,
-            representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
-          }
+    props.onChangeFormData(
+      'assignHearing',
+      {
+        emailRecipients: {
+          appellantTz: appeal?.appellantTz,
+          representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
         }
-      );
-    }
+      }
+    );
 
     if (props.params?.action && props.params?.disposition) {
       props.setScheduledHearing({
