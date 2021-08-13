@@ -63,14 +63,15 @@ class Docket
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
       begin
-        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+        appeal = task.appeal
+        distribution.distributed_cases.create!(case_id: appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
+                                               ready_at: appeal.ready_for_distribution_at,
                                                task: task)
       rescue ActiveRecord::RecordNotUnique => error
         Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-        Raven.capture_exception(error, extra: { appeal_type: task.appeal.type, appeal_id: task.appeal.id })
+        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
       end
     end
   end
