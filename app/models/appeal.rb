@@ -202,10 +202,6 @@ class Appeal < DecisionReview
     tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
-  def judge_case_reviews
-    tasks.includes(:judge_case_reviews).flat_map(&:judge_case_reviews)
-  end
-
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end

@@ -31,8 +31,6 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
 
         expect(ETL::DecisionDocument.count).to eq(1)
 
-        # stringify datetimes to ignore milliseconds
-        # expect(ETL::DecisionDocument.first.decision_document_created_at.to_s).to eq(decision_document.created_at.to_s)
         expect(ETL::DecisionDocument.first.decision_document_created_at)
           .to be_within(1.second).of(decision_document.created_at)
       end
