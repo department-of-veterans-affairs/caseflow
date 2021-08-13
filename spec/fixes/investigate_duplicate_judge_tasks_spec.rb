@@ -41,7 +41,6 @@ feature "duplicate JudgeAssignTask investigation" do
       end
 
       # in window A, reassign the JudgeAssignTask to another judge
-      binding.pry
       first_judge_assign_task_id = appeal.tasks.select { |task| task.type == "JudgeAssignTask" }[0].id
       click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
       click_dropdown(prompt: "Select a user", text: judge_user_second.full_name)
@@ -50,7 +49,6 @@ feature "duplicate JudgeAssignTask investigation" do
       expect(page).to have_content(appeal.veteran.first_name, wait: 30)
       appeal.reload.treee
 
-      binding.pry
       expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, judge_user_second.full_name)
       expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
       visit "/queue/appeals/#{uuid}"
