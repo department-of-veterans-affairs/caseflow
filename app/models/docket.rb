@@ -69,8 +69,8 @@ class Docket
                                                ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
       rescue ActiveRecord::RecordNotUnique => error
-        Rails.logger.info(error)
-        Rails.logger.info("do some sort of interactive prompt to alert judge to error - TBA!")
+        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
       end
     end
   end
