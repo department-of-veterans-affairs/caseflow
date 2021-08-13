@@ -25,7 +25,6 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       appeal.destroy! if [true, false].sample
     end
     it "does not send alert" do
-      binding.pry
       expect(Appeal.count).to eq(0).or eq(1)
       subject
       expect(slack_service).not_to have_received(:send_notification)
