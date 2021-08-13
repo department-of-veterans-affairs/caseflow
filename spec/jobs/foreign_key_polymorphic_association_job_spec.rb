@@ -14,7 +14,9 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
   end
 
   let(:appeal) { create(:appeal) }
+  let(:hearing) { create(:hearing) }
   let!(:sil) { SpecialIssueList.create(appeal: appeal) }
+  let!(:her) { HearingEmailRecipient.create(hearing: hearing) }
   let(:legacy_appeal) { create(:legacy_appeal) }
   let!(:leg_sil) { SpecialIssueList.create(appeal: legacy_appeal) }
 
@@ -50,6 +52,21 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       subject
 
       message = /Found unusual records for SpecialIssueList:.*\[#{sil.id}, "Appeal", nil\]/m
+      expect(slack_service).to have_received(:send_notification).with(message).once
+    end
+  end
+
+  context "_id is non-nil but _type is nil" do
+    before do
+      her.update_attribute(:hearing_type, nil)
+    end
+    it "sends alert" do
+      expect(Hearing.count).to eq(1)
+      expect(her.hearing_type).to eq nil
+
+      subject
+
+      message = /Found unusual records for HearingEmailRecipient:.*\[#{her.id}, nil, #{hearing.id}\]/m
       expect(slack_service).to have_received(:send_notification).with(message).once
     end
   end

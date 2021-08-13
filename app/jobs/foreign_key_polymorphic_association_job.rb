@@ -100,7 +100,6 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
 
   def unusual_records(klass, config)
     nil_id_query = klass.unscoped.where(config[:id_column] => nil).where.not(config[:type_column] => nil)
-    # WillD TODO: add a test for nil_type_query scenario
     nil_type_query = klass.unscoped.where.not(config[:id_column] => nil).where(config[:type_column] => nil)
 
     # https://stackoverflow.com/questions/6686920/activerecord-query-union
