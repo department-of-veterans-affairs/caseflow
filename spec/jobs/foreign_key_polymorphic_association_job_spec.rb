@@ -14,9 +14,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
   end
 
   let(:appeal) { create(:appeal) }
-  let(:hearing) { create(:hearing) }
   let!(:sil) { SpecialIssueList.create(appeal: appeal) }
-  let!(:her) { HearingEmailRecipient.create(hearing: hearing) }
   let(:legacy_appeal) { create(:legacy_appeal) }
   let!(:leg_sil) { SpecialIssueList.create(appeal: legacy_appeal) }
 
@@ -27,6 +25,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       appeal.destroy! if [true, false].sample
     end
     it "does not send alert" do
+      binding.pry
       expect(Appeal.count).to eq(0).or eq(1)
       subject
       expect(slack_service).not_to have_received(:send_notification)
@@ -57,6 +56,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
   end
 
   context "_id is non-nil but _type is nil" do
+    let(:hearing) { create(:hearing) }
+    let!(:her) { HearingEmailRecipient.create(hearing: hearing) }
     before do
       her.update_attribute(:hearing_type, nil)
     end
