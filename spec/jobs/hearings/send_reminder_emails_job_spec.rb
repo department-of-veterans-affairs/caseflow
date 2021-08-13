@@ -213,11 +213,12 @@ describe Hearings::SendReminderEmailsJob do
 
     shared_examples "reminder emails logged but not sent" do
       context "hearing date is 7 days out" do
-        let(:hearing_date) { Time.zone.now + 6.days } # at most 7 days out
+        let(:hearing_date) { Time.zone.now + 6.days }
+        let(:type) { "7 day" }
 
         it "logs, but doesnt send reminder emails", :aggregate_failures do
           expect(HearingMailer).not_to receive(:reminder)
-          expect(Rails.logger).to receive(:info).twice.with(/Send 7 day reminder emails: /)
+          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
 
           subject
           expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
@@ -225,7 +226,7 @@ describe Hearings::SendReminderEmailsJob do
         end
 
         it "logs, but doesnt create sent email events", :aggregate_failures do
-          expect(Rails.logger).to receive(:info).twice.with(/Send 7 day reminder emails: /)
+          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
           subject
 
           expect(SentHearingEmailEvent.count).to eq(0)
@@ -246,7 +247,7 @@ describe Hearings::SendReminderEmailsJob do
 
           it "logs, but doesnt send reminder email for the appellant", :aggregate_failures do
             expect(HearingMailer).not_to receive(:reminder)
-            expect(Rails.logger).to receive(:info).once.with(/Send 7 day reminder emails: /)
+            expect(Rails.logger).to receive(:info).once.with(/Send #{type} reminder emails: /)
 
             subject
             expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
@@ -270,7 +271,7 @@ describe Hearings::SendReminderEmailsJob do
 
           it "logs, but doesnt send reminder email for the representative", :aggregate_failures do
             expect(HearingMailer).not_to receive(:reminder)
-            expect(Rails.logger).to receive(:info).once.with(/Send 7 day reminder emails: /)
+            expect(Rails.logger).to receive(:info).once.with(/Send #{type} reminder emails: /)
 
             subject
             expect(hearing.appellant_recipient&.reminder_sent_at).to(
@@ -366,6 +367,8 @@ describe Hearings::SendReminderEmailsJob do
       # When we start sending the emails for video/central hearings:
       # - Use this instead: include_examples "send reminder emails"
       # - Delete the "reminder emails logged but not sent" shared_examples
+      # - Delete the "logs but doesn't send for type" shared_examples
+
       include_examples "reminder emails logged but not sent"
     end
   end
