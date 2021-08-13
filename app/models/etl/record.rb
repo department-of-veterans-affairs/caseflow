@@ -43,7 +43,7 @@ class ETL::Record < ApplicationRecord
       return if expected == actual
 
       msg = "#{name} #{record_id}: Expected #{attribute} to equal #{expected} but got #{actual}"
-      slack_service.send_notification(msg, self.name, "#appeals-data-workgroup")
+      slack_service.send_notification(msg, name, "#appeals-data-workgroup")
     end
 
     private

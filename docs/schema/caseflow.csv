@@ -299,19 +299,19 @@ claims_folder_searches,user_id,integer FK,,,x,,x,
 decision_documents,,,,,,,,
 decision_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
 decision_documents,appeal_type,string,,,,,,
-decision_documents,attempted_at,datetime,,,,,,
+decision_documents,attempted_at,datetime,,,,,,When the job ran
 decision_documents,canceled_at,datetime,,,,,,Timestamp when job was abandoned
-decision_documents,citation_number,string ∗,x,,,,x,
+decision_documents,citation_number,string ∗,x,,,,x,Unique identifier for decision document
 decision_documents,created_at,datetime ∗,x,,,,,
 decision_documents,decision_date,date ∗,x,,,,,
-decision_documents,error,string,,,,,,
+decision_documents,error,string,,,,,,Message captured from a failed attempt
 decision_documents,id,integer (8) PK,x,x,,,,
-decision_documents,last_submitted_at,datetime,,,,,,
-decision_documents,processed_at,datetime,,,,,,
+decision_documents,last_submitted_at,datetime,,,,,,When the job is eligible to run (can be reset to restart the job)
+decision_documents,processed_at,datetime,,,,,,When the job has concluded
 decision_documents,redacted_document_location,string ∗,x,,,,,
-decision_documents,submitted_at,datetime,,,,,,
+decision_documents,submitted_at,datetime,,,,,,When the job first became eligible to run
 decision_documents,updated_at,datetime ∗,x,,,,x,
-decision_documents,uploaded_to_vbms_at,datetime,,,,,,
+decision_documents,uploaded_to_vbms_at,datetime,,,,,,When document was successfully uploaded to VBMS
 decision_issues,,,,,,,,Issues that represent a decision made on a decision review.
 decision_issues,benefit_type,string,,,,,,"Classification of the benefit being decided on. Maps 1 to 1 to VA lines of business, and typically used to know which line of business the decision correlates to."
 decision_issues,caseflow_decision_date,date,,,,,,"This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
