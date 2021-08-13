@@ -457,7 +457,7 @@ class Fakes::BGSService
       }
     else
       claimant = Array.wrap(find_all_relationships(participant_id: participant_id)).find do |rel|
-        rel.dig(:ptcpnt_id) == participant_id 
+        rel.dig(:ptcpnt_id) == participant_id
       end
 
       {
