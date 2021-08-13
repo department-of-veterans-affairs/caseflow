@@ -14,12 +14,12 @@ class Hearings::ReminderService
   def should_send_reminder_email?
     return false if days_until_hearing <= 0
 
-    # This stops emails from going out for any video/central hearings until
+    # This stops reminder emails from going out for any video/central hearings until
     # we to enable that. Because it still calls 'which_type_of_reminder_to_send'
     # we will log the email to be sent.
     #
     # Also, because hearing.virtual? will return false for any 'cancelled' virtual
-    # hearings, this prevents emails for cancelled virtual hearings.
+    # hearings, this prevents reminder emails for cancelled virtual hearings.
     which_type_of_reminder_to_send && hearing.virtual?
   end
 

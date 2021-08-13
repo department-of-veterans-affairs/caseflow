@@ -20,6 +20,8 @@ class Hearings::SendEmail
     # Unless this is a reminder, still require a virtual hearing for all emails
     # checking 'hearing.virtual?' doesnt work because some emails are 'cancellation's
     # which means the virtual hearing has been cancelled and hearing.virtual? == false
+    # This is likely unnessecary, because we only pass virtual_hearings from all places
+    # other than send_reminder_emails_job
     return if !hearing.virtual_hearing
 
     if !hearing.appellant_recipient.email_sent
