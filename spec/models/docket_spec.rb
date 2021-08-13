@@ -298,8 +298,8 @@ describe Docket, :all_dbs do
 
   context "an appeal throws a RecordNotUniqueError on the case_id field" do
     subject { DirectReviewDocket.new.distribute_appeals(distribution, limit: 3) }
-    let(:judge_user) { create(:user) }
-    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:distribution) { Distribution.create!(judge: judge_user) }
 
     let!(:buggy_appeal) do
