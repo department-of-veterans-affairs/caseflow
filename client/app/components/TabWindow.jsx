@@ -21,7 +21,7 @@ const TabWindow = ({
   name = 'main',
   onChange,
   tabs = [],
-  tabPanelTabIndex = false
+  tabPanelTabIndex = null
 }) => {
   const tabContent = (tab) => (
     <span>
@@ -75,7 +75,7 @@ TabWindow.propTypes = {
     })
   ),
   defaultPage: PropTypes.number,
-  tabPanelTabIndex: PropTypes.bool
+  tabPanelTabIndex: PropTypes.number
 };
 
 TabWindow.defaultProps = {

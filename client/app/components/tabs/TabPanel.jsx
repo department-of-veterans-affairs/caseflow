@@ -12,7 +12,7 @@ const propTypes = {
   children: PropTypes.node.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   fullWidth: PropTypes.bool,
-  tabPanelTabIndex: PropTypes.bool
+  tabPanelTabIndex: PropTypes.number
 };
 
 export const TabPanel = ({
@@ -38,12 +38,8 @@ export const TabPanel = ({
     }
   }, [active, ctx.mountOnEnter, ctx.unmountOnExit, children]);
 
-  const tabIndexVal = () => {
-    if (tabPanelTabIndex) {
-      // prop passed from TestUsers -- this TabIndex val accounts for JAWs accessibility quirk
-      return -1;
-    }
-
+  const tabActive = () => {
+    // note: tabPanelTabIndex is passed from TestUsers -- this val accounts for JAWs accessibility quirk
     return active ? 0 : -1;
   };
 
@@ -53,7 +49,7 @@ export const TabPanel = ({
       id={`${ctx.idPrefix}-tabpanel-${value}`}
       aria-hidden={!active}
       className={classNames}
-      tabIndex={tabIndexVal}
+      tabIndex={tabPanelTabIndex || tabActive}
     >
       {contents}
     </Component>

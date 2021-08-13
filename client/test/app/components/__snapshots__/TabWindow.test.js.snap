@@ -24,7 +24,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
-    tabPanelTabIndex={false}
+    tabPanelTabIndex={null}
     unmountOnExit={true}
   >
     <TabContainer
@@ -108,7 +108,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
             <TabPanel
               fullWidth={true}
               key="0"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={0}
             >
               <div
@@ -124,7 +124,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
             <TabPanel
               fullWidth={true}
               key="1"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={1}
             >
               <div
@@ -167,7 +167,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
     fullWidth={false}
     idPrefix="main"
     mountOnEnter={true}
-    tabPanelTabIndex={false}
+    tabPanelTabIndex={null}
     unmountOnExit={true}
   >
     <TabContainer
@@ -251,7 +251,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
             <TabPanel
               fullWidth={false}
               key="0"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={0}
             >
               <div
@@ -267,7 +267,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
             <TabPanel
               fullWidth={false}
               key="1"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={1}
             >
               <div
@@ -292,7 +292,7 @@ exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
   fullWidth={false}
   idPrefix="main"
   mountOnEnter={true}
-  tabPanelTabIndex={false}
+  tabPanelTabIndex={null}
   unmountOnExit={true}
 />
 `;
@@ -321,7 +321,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
-    tabPanelTabIndex={false}
+    tabPanelTabIndex={null}
     unmountOnExit={true}
   >
     <TabContainer
@@ -405,7 +405,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
             <TabPanel
               fullWidth={true}
               key="0"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={0}
             >
               <div
@@ -421,7 +421,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
             <TabPanel
               fullWidth={true}
               key="1"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={1}
             >
               <div
@@ -464,7 +464,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
-    tabPanelTabIndex={false}
+    tabPanelTabIndex={null}
     unmountOnExit={true}
   >
     <TabContainer
@@ -548,7 +548,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
             <TabPanel
               fullWidth={true}
               key="0"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={0}
             >
               <div
@@ -562,7 +562,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
             <TabPanel
               fullWidth={true}
               key="1"
-              tabPanelTabIndex={false}
+              tabPanelTabIndex={null}
               value={1}
             >
               <div

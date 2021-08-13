@@ -46,7 +46,7 @@ const propTypes = {
   unmountOnExit: PropTypes.bool,
 
   onChange: PropTypes.func,
-  tabPanelTabIndex: PropTypes.bool
+  tabPanelTabIndex: PropTypes.number
 };
 
 export const Tabs = ({
