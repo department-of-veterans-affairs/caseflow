@@ -10,7 +10,7 @@ module HasUnrecognizedPartyDetail
   included do
     delegate :name, :first_name, :middle_name, :last_name, :suffix,
              :address, :address_line_1, :address_line_2, :address_line_3,
-             :city, :state, :zip, :country,
+             :city, :state, :zip, :country, :date_of_birth,
              :phone_number, :email_address, :party_type,
              to: :unrecognized_party_detail,
              allow_nil: true

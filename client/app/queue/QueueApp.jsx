@@ -97,6 +97,7 @@ import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionReq
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
+import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -505,6 +506,13 @@ class QueueApp extends React.PureComponent {
     />
   )
 
+  routedEditPOAInformation = (props) => (
+    <EditPOAInformation
+      appealId={props.match.params.appealId}
+      {...props.match.params}
+    />
+  )
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -705,6 +713,13 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_appellant_information"
               title="Edit Appellant Information | Caseflow"
               render={this.routedEditAppellantInformation}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/edit_poa_information"
+              title="Edit POA Information | Caseflow"
+              render={this.routedEditPOAInformation}
             />
 
             <PageRoute

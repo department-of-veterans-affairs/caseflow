@@ -290,7 +290,7 @@
 <text text-anchor="middle" x="2494.9" y="-612.17" font-family="Times,serif" font-size="14.00">AttorneyClaimant</text>
 </g>
 <!-- Claimant&#45;&gt;AttorneyClaimant -->
-<g id="edge153" class="edge">
+<g id="edge155" class="edge">
 <title>Claimant&#45;&gt;AttorneyClaimant</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2215.43,-689.54C2278.49,-672.86 2373.03,-647.85 2434.1,-631.69"/>
 <polygon fill="#000099" stroke="#000099" points="2435.2,-635.02 2443.97,-629.08 2433.41,-628.25 2435.2,-635.02"/>
@@ -302,7 +302,7 @@
 <text text-anchor="middle" x="2494.9" y="-721.17" font-family="Times,serif" font-size="14.00" fill="#000099">BgsRelatedClaimant</text>
 </g>
 <!-- Claimant&#45;&gt;BgsRelatedClaimant -->
-<g id="edge154" class="edge">
+<g id="edge156" class="edge">
 <title>Claimant&#45;&gt;BgsRelatedClaimant</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2215.43,-710.3C2273.84,-713.35 2359.27,-717.83 2420.08,-721.01"/>
 <polygon fill="#000099" stroke="#000099" points="2420.21,-724.52 2430.38,-721.55 2420.58,-717.53 2420.21,-724.52"/>
@@ -314,7 +314,7 @@
 <text text-anchor="middle" x="2494.9" y="-666.17" font-family="Times,serif" font-size="14.00">OtherClaimant</text>
 </g>
 <!-- Claimant&#45;&gt;OtherClaimant -->
-<g id="edge155" class="edge">
+<g id="edge157" class="edge">
 <title>Claimant&#45;&gt;OtherClaimant</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2215.43,-699.82C2275.41,-693.37 2363.87,-683.86 2424.92,-677.29"/>
 <polygon fill="#000099" stroke="#000099" points="2425.66,-680.73 2435.23,-676.18 2424.91,-673.77 2425.66,-680.73"/>
@@ -345,8 +345,105 @@
 <polygon fill="black" stroke="black" points="2103.58,-1602.92 2113.44,-1599.03 2103.31,-1595.92 2103.58,-1602.92"/>
 <text text-anchor="middle" x="1893.19" y="-1408.67" font-family="Times,serif" font-size="14.00">remand_appeal</text>
 </g>
-<!-- Organization -->
+<!-- RequestIssue -->
 <g id="node19" class="node">
+<title>RequestIssue</title>
+<polygon fill="#ffa500" stroke="#000099" points="1597.8,-539.37 1597.8,-600.37 1740.8,-600.37 1740.8,-539.37 1597.8,-539.37"/>
+<text text-anchor="middle" x="1669.3" y="-585.17" font-family="Times,serif" font-size="14.00" fill="#000099">RequestIssue</text>
+<polyline fill="none" stroke="#000099" points="1597.8,-577.37 1740.8,-577.37 "/>
+<text text-anchor="middle" x="1669.3" y="-562.17" font-family="Times,serif" font-size="14.00" fill="#000099">RatingRequestIssue,</text>
+<text text-anchor="middle" x="1669.3" y="-547.17" font-family="Times,serif" font-size="14.00" fill="#000099">NonratingRequestIssue</text>
+</g>
+<!-- RequestIssue&#45;&gt;DecisionIssue -->
+<g id="edge21" class="edge">
+<title>RequestIssue&#45;&gt;DecisionIssue</title>
+<path fill="none" stroke="black" d="M1740.98,-554.56C1756.34,-548.75 1771.59,-540.77 1783.69,-529.87 1797.56,-517.36 1787.12,-503.57 1801.69,-491.87 1873.13,-434.48 1913.27,-465.95 2002.69,-445.87 2032.39,-439.2 2065.55,-431.88 2092.68,-425.93"/>
+<polygon fill="black" stroke="black" points="2093.74,-429.28 2102.76,-423.72 2092.24,-422.44 2093.74,-429.28"/>
+<text text-anchor="middle" x="1893.19" y="-495.67" font-family="Times,serif" font-size="14.00">contested_decision_issue</text>
+</g>
+<!-- RequestIssue&#45;&gt;decision_review_type -->
+<g id="edge17" class="edge">
+<title>RequestIssue&#45;&gt;decision_review_type</title>
+<path fill="none" stroke="black" d="M1740.82,-557.24C1760.51,-553.79 1781.92,-550.11 1801.69,-546.87 1842.28,-540.21 1952.16,-544.06 1984.69,-518.87 2000.74,-506.44 1986.45,-489.07 2002.69,-476.87 2055.05,-437.54 2230.64,-452.05 2295.16,-440.87 2343.18,-432.55 2355.56,-431.15 2402.16,-416.87 2407.27,-415.3 2412.5,-413.58 2417.75,-411.77"/>
+<polygon fill="black" stroke="black" points="2418.93,-415.06 2427.18,-408.42 2416.59,-408.47 2418.93,-415.06"/>
+<text text-anchor="middle" x="2148.92" y="-480.67" font-family="Times,serif" font-size="14.00">decision_review</text>
+</g>
+<!-- RequestIssue&#45;&gt;RequestIssue -->
+<g id="edge19" class="edge">
+<title>RequestIssue&#45;&gt;RequestIssue</title>
+<path fill="none" stroke="black" d="M1648.48,-600.5C1648.48,-610.7 1655.42,-618.87 1669.3,-618.87 1678.18,-618.87 1684.23,-615.52 1687.42,-610.43"/>
+<polygon fill="black" stroke="black" points="1690.87,-611.06 1690.11,-600.5 1684.12,-609.23 1690.87,-611.06"/>
+<text text-anchor="middle" x="1669.3" y="-622.67" font-family="Times,serif" font-size="14.00">correction_request_issue</text>
+</g>
+<!-- RequestIssue&#45;&gt;RequestIssue -->
+<g id="edge20" class="edge">
+<title>RequestIssue&#45;&gt;RequestIssue</title>
+<path fill="none" stroke="black" d="M1630.44,-600.54C1621.44,-619.2 1634.39,-636.87 1669.3,-636.87 1697.93,-636.87 1711.79,-624.98 1710.88,-610.41"/>
+<polygon fill="black" stroke="black" points="1714.19,-609.24 1708.15,-600.54 1707.44,-611.11 1714.19,-609.24"/>
+<text text-anchor="middle" x="1669.3" y="-640.67" font-family="Times,serif" font-size="14.00">ineligible_due_to</text>
+</g>
+<!-- EndProductEstablishment -->
+<g id="node23" class="node">
+<title>EndProductEstablishment</title>
+<ellipse fill="none" stroke="black" cx="2148.92" cy="-527.87" rx="111.95" ry="26.74"/>
+<text text-anchor="middle" x="2148.92" y="-531.67" font-family="Times,serif" font-size="14.00">EndProductEstablishment</text>
+<text text-anchor="middle" x="2148.92" y="-516.67" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
+</g>
+<!-- RequestIssue&#45;&gt;EndProductEstablishment -->
+<g id="edge18" class="edge">
+<title>RequestIssue&#45;&gt;EndProductEstablishment</title>
+<path fill="none" stroke="black" d="M1740.87,-564.34C1804.6,-559.28 1900.96,-551.44 1984.69,-543.87 2001.16,-542.38 2018.57,-540.74 2035.63,-539.1"/>
+<polygon fill="black" stroke="black" points="2036.01,-542.58 2045.63,-538.14 2035.34,-535.61 2036.01,-542.58"/>
+<text text-anchor="middle" x="1893.19" y="-563.67" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
+</g>
+<!-- NonratingRequestIssue -->
+<g id="node142" class="node">
+<title>NonratingRequestIssue</title>
+<ellipse fill="#ffa500" stroke="black" cx="2148.92" cy="-1086.87" rx="92.88" ry="18"/>
+<text text-anchor="middle" x="2148.92" y="-1083.17" font-family="Times,serif" font-size="14.00">NonratingRequestIssue</text>
+</g>
+<!-- RequestIssue&#45;&gt;NonratingRequestIssue -->
+<g id="edge161" class="edge">
+<title>RequestIssue&#45;&gt;NonratingRequestIssue</title>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1704.51,-600.44C1727.4,-621.22 1757.92,-649.62 1783.69,-675.87 1792.06,-684.41 1791.16,-690.19 1801.69,-695.87 1874.09,-734.95 1929.43,-662.9 1984.69,-723.87 2034.9,-779.28 1953.37,-1003.67 2002.69,-1059.87 2014.07,-1072.84 2029.5,-1080.86 2046.07,-1085.63"/>
+<polygon fill="#000099" stroke="#000099" points="2045.39,-1089.07 2055.94,-1088.08 2047.07,-1082.27 2045.39,-1089.07"/>
+</g>
+<!-- RatingRequestIssue -->
+<g id="node143" class="node">
+<title>RatingRequestIssue</title>
+<ellipse fill="#ffa500" stroke="black" cx="2148.92" cy="-1194.87" rx="80.69" ry="18"/>
+<text text-anchor="middle" x="2148.92" y="-1191.17" font-family="Times,serif" font-size="14.00">RatingRequestIssue</text>
+</g>
+<!-- RequestIssue&#45;&gt;RatingRequestIssue -->
+<g id="edge162" class="edge">
+<title>RequestIssue&#45;&gt;RatingRequestIssue</title>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1711.02,-600.39C1734.76,-619.86 1763.83,-646.84 1783.69,-675.87 1795.84,-693.65 1784.82,-707.48 1801.69,-720.87 1866.12,-772.03 1929.76,-687.61 1984.69,-748.87 2015.79,-783.56 1972.14,-1132.68 2002.69,-1167.87 2017.12,-1184.5 2038.21,-1193.01 2059.86,-1196.98"/>
+<polygon fill="#000099" stroke="#000099" points="2059.42,-1200.45 2069.83,-1198.49 2060.47,-1193.53 2059.42,-1200.45"/>
+</g>
+<!-- RequestDecisionIssue -->
+<g id="node20" class="node">
+<title>RequestDecisionIssue</title>
+<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1311.86,-545.87 1175.86,-545.87 1175.86,-541.87 1171.86,-541.87 1171.86,-537.87 1175.86,-537.87 1175.86,-517.87 1171.86,-517.87 1171.86,-513.87 1175.86,-513.87 1175.86,-509.87 1311.86,-509.87 1311.86,-545.87"/>
+<polyline fill="none" stroke="#aaaaaa" points="1175.86,-541.87 1179.86,-541.87 1179.86,-537.87 1175.86,-537.87 "/>
+<polyline fill="none" stroke="#aaaaaa" points="1175.86,-517.87 1179.86,-517.87 1179.86,-513.87 1175.86,-513.87 "/>
+<text text-anchor="middle" x="1243.86" y="-524.17" font-family="Times,serif" font-size="14.00">RequestDecisionIssue</text>
+</g>
+<!-- RequestDecisionIssue&#45;&gt;DecisionIssue -->
+<g id="edge15" class="edge">
+<title>RequestDecisionIssue&#45;&gt;DecisionIssue</title>
+<path fill="none" stroke="black" d="M1312.12,-510.61C1374.61,-495.23 1470.45,-473.28 1554.91,-460.87 1751.44,-431.98 1987.42,-419.97 2092.62,-415.78"/>
+<polygon fill="black" stroke="black" points="2092.83,-419.28 2102.68,-415.39 2092.55,-412.28 2092.83,-419.28"/>
+<text text-anchor="middle" x="1669.3" y="-464.67" font-family="Times,serif" font-size="14.00">decision_issue</text>
+</g>
+<!-- RequestDecisionIssue&#45;&gt;RequestIssue -->
+<g id="edge14" class="edge">
+<title>RequestDecisionIssue&#45;&gt;RequestIssue</title>
+<path fill="none" stroke="black" d="M1311.95,-534.53C1386.76,-541.94 1507.71,-553.94 1587.61,-561.87"/>
+<polygon fill="black" stroke="black" points="1587.34,-565.36 1597.63,-562.86 1588.03,-558.39 1587.34,-565.36"/>
+<text text-anchor="middle" x="1446.41" y="-560.67" font-family="Times,serif" font-size="14.00">request_issue</text>
+</g>
+<!-- Organization -->
+<g id="node21" class="node">
 <title>Organization</title>
 <polygon fill="#d9d9ff" stroke="#000099" points="2451.4,-929.87 2451.4,-965.87 2538.4,-965.87 2538.4,-929.87 2451.4,-929.87"/>
 <text text-anchor="middle" x="2494.9" y="-944.17" font-family="Times,serif" font-size="14.00" fill="#000099">Organization</text>
@@ -652,7 +749,7 @@
 <polygon fill="#000099" stroke="#000099" points="2632.92,-1592.68 2643.52,-1592.74 2635.28,-1586.08 2632.92,-1592.68"/>
 </g>
 <!-- OrganizationsUser -->
-<g id="node20" class="node">
+<g id="node22" class="node">
 <title>OrganizationsUser</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="2208.42,-870.87 2089.42,-870.87 2089.42,-866.87 2085.42,-866.87 2085.42,-862.87 2089.42,-862.87 2089.42,-840.87 2085.42,-840.87 2085.42,-836.87 2089.42,-836.87 2089.42,-832.87 2208.42,-832.87 2208.42,-870.87"/>
 <polyline fill="none" stroke="#aaaaaa" points="2089.42,-866.87 2093.42,-866.87 2093.42,-862.87 2089.42,-862.87 "/>
@@ -661,108 +758,11 @@
 <text text-anchor="middle" x="2148.92" y="-840.67" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
 </g>
 <!-- OrganizationsUser&#45;&gt;Organization -->
-<g id="edge14" class="edge">
+<g id="edge16" class="edge">
 <title>OrganizationsUser&#45;&gt;Organization</title>
 <path fill="none" stroke="black" d="M2208.5,-858.46C2260.42,-865.43 2337.77,-878.56 2402.16,-900.87 2420.11,-907.09 2438.95,-916.24 2454.86,-924.81"/>
 <polygon fill="black" stroke="black" points="2453.4,-928.01 2463.85,-929.76 2456.78,-921.87 2453.4,-928.01"/>
 <text text-anchor="middle" x="2357.66" y="-904.67" font-family="Times,serif" font-size="14.00">organization</text>
-</g>
-<!-- RequestIssue -->
-<g id="node21" class="node">
-<title>RequestIssue</title>
-<polygon fill="#ffa500" stroke="#000099" points="1597.8,-539.37 1597.8,-600.37 1740.8,-600.37 1740.8,-539.37 1597.8,-539.37"/>
-<text text-anchor="middle" x="1669.3" y="-585.17" font-family="Times,serif" font-size="14.00" fill="#000099">RequestIssue</text>
-<polyline fill="none" stroke="#000099" points="1597.8,-577.37 1740.8,-577.37 "/>
-<text text-anchor="middle" x="1669.3" y="-562.17" font-family="Times,serif" font-size="14.00" fill="#000099">RatingRequestIssue,</text>
-<text text-anchor="middle" x="1669.3" y="-547.17" font-family="Times,serif" font-size="14.00" fill="#000099">NonratingRequestIssue</text>
-</g>
-<!-- RequestIssue&#45;&gt;DecisionIssue -->
-<g id="edge21" class="edge">
-<title>RequestIssue&#45;&gt;DecisionIssue</title>
-<path fill="none" stroke="black" d="M1740.98,-554.56C1756.34,-548.75 1771.59,-540.77 1783.69,-529.87 1797.56,-517.36 1787.12,-503.57 1801.69,-491.87 1873.13,-434.48 1913.27,-465.95 2002.69,-445.87 2032.39,-439.2 2065.55,-431.88 2092.68,-425.93"/>
-<polygon fill="black" stroke="black" points="2093.74,-429.28 2102.76,-423.72 2092.24,-422.44 2093.74,-429.28"/>
-<text text-anchor="middle" x="1893.19" y="-495.67" font-family="Times,serif" font-size="14.00">contested_decision_issue</text>
-</g>
-<!-- RequestIssue&#45;&gt;decision_review_type -->
-<g id="edge17" class="edge">
-<title>RequestIssue&#45;&gt;decision_review_type</title>
-<path fill="none" stroke="black" d="M1740.82,-557.24C1760.51,-553.79 1781.92,-550.11 1801.69,-546.87 1842.28,-540.21 1952.16,-544.06 1984.69,-518.87 2000.74,-506.44 1986.45,-489.07 2002.69,-476.87 2055.05,-437.54 2230.64,-452.05 2295.16,-440.87 2343.18,-432.55 2355.56,-431.15 2402.16,-416.87 2407.27,-415.3 2412.5,-413.58 2417.75,-411.77"/>
-<polygon fill="black" stroke="black" points="2418.93,-415.06 2427.18,-408.42 2416.59,-408.47 2418.93,-415.06"/>
-<text text-anchor="middle" x="2148.92" y="-480.67" font-family="Times,serif" font-size="14.00">decision_review</text>
-</g>
-<!-- RequestIssue&#45;&gt;RequestIssue -->
-<g id="edge19" class="edge">
-<title>RequestIssue&#45;&gt;RequestIssue</title>
-<path fill="none" stroke="black" d="M1648.48,-600.5C1648.48,-610.7 1655.42,-618.87 1669.3,-618.87 1678.18,-618.87 1684.23,-615.52 1687.42,-610.43"/>
-<polygon fill="black" stroke="black" points="1690.87,-611.06 1690.11,-600.5 1684.12,-609.23 1690.87,-611.06"/>
-<text text-anchor="middle" x="1669.3" y="-622.67" font-family="Times,serif" font-size="14.00">correction_request_issue</text>
-</g>
-<!-- RequestIssue&#45;&gt;RequestIssue -->
-<g id="edge20" class="edge">
-<title>RequestIssue&#45;&gt;RequestIssue</title>
-<path fill="none" stroke="black" d="M1630.44,-600.54C1621.44,-619.2 1634.39,-636.87 1669.3,-636.87 1697.93,-636.87 1711.79,-624.98 1710.88,-610.41"/>
-<polygon fill="black" stroke="black" points="1714.19,-609.24 1708.15,-600.54 1707.44,-611.11 1714.19,-609.24"/>
-<text text-anchor="middle" x="1669.3" y="-640.67" font-family="Times,serif" font-size="14.00">ineligible_due_to</text>
-</g>
-<!-- EndProductEstablishment -->
-<g id="node23" class="node">
-<title>EndProductEstablishment</title>
-<ellipse fill="none" stroke="black" cx="2148.92" cy="-527.87" rx="111.95" ry="26.74"/>
-<text text-anchor="middle" x="2148.92" y="-531.67" font-family="Times,serif" font-size="14.00">EndProductEstablishment</text>
-<text text-anchor="middle" x="2148.92" y="-516.67" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
-</g>
-<!-- RequestIssue&#45;&gt;EndProductEstablishment -->
-<g id="edge18" class="edge">
-<title>RequestIssue&#45;&gt;EndProductEstablishment</title>
-<path fill="none" stroke="black" d="M1740.87,-564.34C1804.6,-559.28 1900.96,-551.44 1984.69,-543.87 2001.16,-542.38 2018.57,-540.74 2035.63,-539.1"/>
-<polygon fill="black" stroke="black" points="2036.01,-542.58 2045.63,-538.14 2035.34,-535.61 2036.01,-542.58"/>
-<text text-anchor="middle" x="1893.19" y="-563.67" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
-</g>
-<!-- NonratingRequestIssue -->
-<g id="node142" class="node">
-<title>NonratingRequestIssue</title>
-<ellipse fill="#ffa500" stroke="black" cx="2148.92" cy="-1086.87" rx="92.88" ry="18"/>
-<text text-anchor="middle" x="2148.92" y="-1083.17" font-family="Times,serif" font-size="14.00">NonratingRequestIssue</text>
-</g>
-<!-- RequestIssue&#45;&gt;NonratingRequestIssue -->
-<g id="edge161" class="edge">
-<title>RequestIssue&#45;&gt;NonratingRequestIssue</title>
-<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1704.51,-600.44C1727.4,-621.22 1757.92,-649.62 1783.69,-675.87 1792.06,-684.41 1791.16,-690.19 1801.69,-695.87 1874.09,-734.95 1929.43,-662.9 1984.69,-723.87 2034.9,-779.28 1953.37,-1003.67 2002.69,-1059.87 2014.07,-1072.84 2029.5,-1080.86 2046.07,-1085.63"/>
-<polygon fill="#000099" stroke="#000099" points="2045.39,-1089.07 2055.94,-1088.08 2047.07,-1082.27 2045.39,-1089.07"/>
-</g>
-<!-- RatingRequestIssue -->
-<g id="node143" class="node">
-<title>RatingRequestIssue</title>
-<ellipse fill="#ffa500" stroke="black" cx="2148.92" cy="-1194.87" rx="80.69" ry="18"/>
-<text text-anchor="middle" x="2148.92" y="-1191.17" font-family="Times,serif" font-size="14.00">RatingRequestIssue</text>
-</g>
-<!-- RequestIssue&#45;&gt;RatingRequestIssue -->
-<g id="edge162" class="edge">
-<title>RequestIssue&#45;&gt;RatingRequestIssue</title>
-<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1711.02,-600.39C1734.76,-619.86 1763.83,-646.84 1783.69,-675.87 1795.84,-693.65 1784.82,-707.48 1801.69,-720.87 1866.12,-772.03 1929.76,-687.61 1984.69,-748.87 2015.79,-783.56 1972.14,-1132.68 2002.69,-1167.87 2017.12,-1184.5 2038.21,-1193.01 2059.86,-1196.98"/>
-<polygon fill="#000099" stroke="#000099" points="2059.42,-1200.45 2069.83,-1198.49 2060.47,-1193.53 2059.42,-1200.45"/>
-</g>
-<!-- RequestDecisionIssue -->
-<g id="node22" class="node">
-<title>RequestDecisionIssue</title>
-<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1311.86,-545.87 1175.86,-545.87 1175.86,-541.87 1171.86,-541.87 1171.86,-537.87 1175.86,-537.87 1175.86,-517.87 1171.86,-517.87 1171.86,-513.87 1175.86,-513.87 1175.86,-509.87 1311.86,-509.87 1311.86,-545.87"/>
-<polyline fill="none" stroke="#aaaaaa" points="1175.86,-541.87 1179.86,-541.87 1179.86,-537.87 1175.86,-537.87 "/>
-<polyline fill="none" stroke="#aaaaaa" points="1175.86,-517.87 1179.86,-517.87 1179.86,-513.87 1175.86,-513.87 "/>
-<text text-anchor="middle" x="1243.86" y="-524.17" font-family="Times,serif" font-size="14.00">RequestDecisionIssue</text>
-</g>
-<!-- RequestDecisionIssue&#45;&gt;DecisionIssue -->
-<g id="edge16" class="edge">
-<title>RequestDecisionIssue&#45;&gt;DecisionIssue</title>
-<path fill="none" stroke="black" d="M1312.12,-510.61C1374.61,-495.23 1470.45,-473.28 1554.91,-460.87 1751.44,-431.98 1987.42,-419.97 2092.62,-415.78"/>
-<polygon fill="black" stroke="black" points="2092.83,-419.28 2102.68,-415.39 2092.55,-412.28 2092.83,-419.28"/>
-<text text-anchor="middle" x="1669.3" y="-464.67" font-family="Times,serif" font-size="14.00">decision_issue</text>
-</g>
-<!-- RequestDecisionIssue&#45;&gt;RequestIssue -->
-<g id="edge15" class="edge">
-<title>RequestDecisionIssue&#45;&gt;RequestIssue</title>
-<path fill="none" stroke="black" d="M1311.95,-534.53C1386.76,-541.94 1507.71,-553.94 1587.61,-561.87"/>
-<polygon fill="black" stroke="black" points="1587.34,-565.36 1597.63,-562.86 1588.03,-558.39 1587.34,-565.36"/>
-<text text-anchor="middle" x="1446.41" y="-560.67" font-family="Times,serif" font-size="14.00">request_issue</text>
 </g>
 <!-- source_type -->
 <g id="node53" class="node">
@@ -2104,25 +2104,25 @@
 <text text-anchor="middle" x="2357.66" y="-2268.67" font-family="Times,serif" font-size="14.00">hearing</text>
 </g>
 <!-- DecisionReview&#45;&gt;Appeal -->
-<g id="edge156" class="edge">
+<g id="edge153" class="edge">
 <title>DecisionReview&#45;&gt;Appeal</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M870.3,-435.4C927.29,-546.09 1070.66,-839.53 1131.82,-1102.87 1137.81,-1128.7 1130.81,-1322.38 1149.82,-1340.87 1216.38,-1405.63 1917.46,-1316.8 1984.69,-1380.87 2014.91,-1409.67 1974.49,-1537.08 2002.69,-1567.87 2027.61,-1595.09 2070.42,-1600.24 2103.12,-1599.53"/>
 <polygon fill="#000099" stroke="#000099" points="2103.5,-1603.02 2113.35,-1599.11 2103.21,-1596.02 2103.5,-1603.02"/>
 </g>
 <!-- DecisionReview&#45;&gt;ClaimReview -->
-<g id="edge157" class="edge">
+<g id="edge154" class="edge">
 <title>DecisionReview&#45;&gt;ClaimReview</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M909.9,-361.64C928.63,-353.18 949.1,-343.78 967.82,-334.87 975.89,-331.03 977.24,-328.43 985.82,-325.87 1045.96,-307.93 1117,-300.63 1169.14,-297.71"/>
 <polygon fill="#000099" stroke="#000099" points="1169.5,-301.2 1179.3,-297.18 1169.13,-294.21 1169.5,-301.2"/>
 </g>
 <!-- ClaimReview&#45;&gt;SupplementalClaim -->
-<g id="edge173" class="edge">
+<g id="edge171" class="edge">
 <title>ClaimReview&#45;&gt;SupplementalClaim</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1308.4,-292.54C1383.79,-287.34 1503.51,-274.69 1536.91,-245.87 1556.38,-229.07 1535.98,-208.29 1554.91,-190.87 1563.2,-183.24 1573.24,-177.65 1583.9,-173.57"/>
 <polygon fill="#000099" stroke="#000099" points="1585.03,-176.89 1593.38,-170.37 1582.79,-170.25 1585.03,-176.89"/>
 </g>
 <!-- ClaimReview&#45;&gt;HigherLevelReview -->
-<g id="edge172" class="edge">
+<g id="edge170" class="edge">
 <title>ClaimReview&#45;&gt;HigherLevelReview</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M1308.62,-294.09C1383.62,-293.28 1502.3,-296.45 1536.91,-322.87 1555.01,-336.7 1537.82,-355.8 1554.91,-370.87 1563.21,-378.2 1573.15,-383.63 1583.65,-387.63"/>
 <polygon fill="#000099" stroke="#000099" points="1582.81,-391.05 1593.41,-390.93 1585.05,-384.41 1582.81,-391.05"/>
@@ -2158,7 +2158,7 @@
 <text text-anchor="middle" x="2719.74" y="-296.17" font-family="Times,serif" font-size="14.00">DependentClaimant</text>
 </g>
 <!-- BgsRelatedClaimant&#45;&gt;DependentClaimant -->
-<g id="edge170" class="edge">
+<g id="edge172" class="edge">
 <title>BgsRelatedClaimant&#45;&gt;DependentClaimant</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2559.58,-706.96C2563.4,-704.08 2566.83,-700.75 2569.65,-696.87 2616.39,-632.65 2548.83,-409.17 2587.65,-339.87 2596.87,-323.4 2612.96,-313.3 2630.78,-307.2"/>
 <polygon fill="#000099" stroke="#000099" points="2632.24,-310.42 2640.82,-304.21 2630.24,-303.71 2632.24,-310.42"/>
@@ -2170,7 +2170,7 @@
 <text text-anchor="middle" x="2719.74" y="-242.17" font-family="Times,serif" font-size="14.00">VeteranClaimant</text>
 </g>
 <!-- BgsRelatedClaimant&#45;&gt;VeteranClaimant -->
-<g id="edge171" class="edge">
+<g id="edge173" class="edge">
 <title>BgsRelatedClaimant&#45;&gt;VeteranClaimant</title>
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2559.58,-706.96C2563.4,-704.09 2566.83,-700.75 2569.65,-696.87 2593.27,-664.39 2580.8,-375.44 2587.65,-335.87 2592.63,-307.05 2585.39,-292.96 2606.65,-272.87 2616.38,-263.67 2628.69,-257.43 2641.56,-253.24"/>
 <polygon fill="#000099" stroke="#000099" points="2642.82,-256.52 2651.48,-250.42 2640.9,-249.79 2642.82,-256.52"/>

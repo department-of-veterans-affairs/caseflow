@@ -925,7 +925,7 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
   const recipientLabel = hearing?.representative ? `${appellantTitle}${poaLabel}` : `${appellantTitle}`;
 
   if (virtual) {
-    return `When you schedule the hearing, the ${recipientLabel} and` +
+    return `When you schedule the hearing, the ${recipientLabel} and ` +
      'Judge will receive an email with connection information for the virtual hearing.';
   }
 
