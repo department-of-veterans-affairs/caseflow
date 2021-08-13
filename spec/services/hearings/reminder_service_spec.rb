@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe Hearings::ReminderService do
-  let(:hearing_day) { build(:hearing_day, scheduled_for: hearing_date) }
-  let(:hearing) { build(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
+  let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+  let(:hearing) { create(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
   let(:virtual_hearing) do
-    build(
+    create(
       :virtual_hearing,
       :initialized,
       status: :active,
@@ -15,6 +15,9 @@ describe Hearings::ReminderService do
 
   before do
     Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+    hearing
+    virtual_hearing
+    hearing.reload
   end
 
   after { Timecop.return }
