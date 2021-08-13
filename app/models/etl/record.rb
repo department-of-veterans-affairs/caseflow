@@ -30,11 +30,19 @@ class ETL::Record < ApplicationRecord
       primary_key
     end
 
-    def check_equal(attribute, expected, actual)
+    def slack_url
+      ENV["SLACK_DISPATCH_ALERT_URL"]
+    end
+
+    def slack_service
+      @slack_service ||= SlackService.new(url: slack_url)
+    end
+
+    def check_equal(record_id, attribute, expected, actual)
       return if expected == actual
 
-      # TODO: log to Slack instead of fail
-      fail "#{name}: Expected #{attribute} to equal #{expected} but got #{actual}"
+      msg = "#{name} #{record_id}: Expected #{attribute} to equal #{expected} but got #{actual}"
+      slack_service.send_notification(msg, self.class.to_s, "#appeals-data-workgroup")
     end
 
     private
