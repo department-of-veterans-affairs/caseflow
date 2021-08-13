@@ -120,9 +120,6 @@ class HearingRepository
     # @note The logic to determine whether or not a reminder email needs to be sent is
     #   complex enough that it's not worth putting in an SQL query for maintainability reasons.
     #   This method will find all hearings that are occurring within the next 7 days.
-
-    # TODO: I removed filtering of cancelled virtual_hearings, where should I reinstate
-    # that filtering?
     def maybe_ready_for_reminder_email
       ama_ready = Hearing
         .joins("INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
