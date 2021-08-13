@@ -2,6 +2,7 @@ import { uniq } from 'lodash';
 
 import {
   automatedTasks,
+  nonAutomatedTasksToHide,
   calculateEvidenceSubmissionEndDate,
   filterTasks,
   prepTaskDataForUi,
@@ -81,8 +82,6 @@ describe('utility functions for task manipulation', () => {
       const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
 
       const shouldDisables = [
-        'AssignHearingDispositionTask',
-        'ChangeHearingDispositionTask',
         'EvidenceSubmissionWindowTask',
         'TranscriptionTask'
       ];
@@ -106,9 +105,7 @@ describe('utility functions for task manipulation', () => {
     const tasks = [
       { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
       { taskId: 2, type: 'ScheduleHearingTask' },
-      { taskId: 3, type: 'AssignHearingDispositionTask' },
-      { taskId: 4, type: 'ChangeHearingDispositionTask' },
-      { taskId: 5, type: 'TranscriptionTask' }
+      { taskId: 3, type: 'TranscriptionTask' }
     ];
 
     describe('when EvidenceSubmissionWindowTask is selected', () => {
@@ -119,8 +116,6 @@ describe('utility functions for task manipulation', () => {
           expect.arrayContaining([
             expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
             expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
-            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
-            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
           ])
         );
@@ -174,6 +169,14 @@ describe('utility functions for task manipulation', () => {
 
     describe('tasks in automatedTasks array', () => {
       it.each(automatedTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in nonAutomatedTasksToHide array', () => {
+      it.each(nonAutomatedTasksToHide)('should hide %s', (type) => {
         const task = { id: 1, type, assignedTo: { isOrganization: false } };
 
         expect(shouldHide(task, null, [])).toBe(true);

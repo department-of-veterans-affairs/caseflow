@@ -15,6 +15,11 @@ export const automatedTasks = [
   'HearingTask'
 ];
 
+export const nonAutomatedTasksToHide = [
+  'AssignHearingDispositionTask',
+  'ChangeHearingDispositionTask',
+];
+
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
 export const isDescendant = (
@@ -75,20 +80,14 @@ export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
 export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   const disablingTaskMap = {
     ScheduleHearingTask: [
-      'AssignHearingDispositionTask',
-      'ChangeHearingDispositionTask',
       'EvidenceSubmissionWindowTask',
       'TranscriptionTask',
     ],
     EvidenceSubmissionWindowTask: [
       'ScheduleHearingTask',
-      'AssignHearingDispositionTask',
-      'ChangeHearingDispositionTask',
     ],
     TranscriptionTask: [
       'ScheduleHearingTask',
-      'AssignHearingDispositionTask',
-      'ChangeHearingDispositionTask',
     ],
   };
 
@@ -134,7 +133,7 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
-  if (automatedTasks.includes(taskInfo.type)) {
+  if (automatedTasks.includes(taskInfo.type) || nonAutomatedTasksToHide.includes(taskInfo.type)) {
     return true;
   }
 
