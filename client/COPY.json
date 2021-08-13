@@ -257,7 +257,7 @@
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
-  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGESS_TAB_TITLE": "In Progress Tasks",
+  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
