@@ -1137,6 +1137,8 @@ components:
         - Drill Pay Adjustments
         - Character of Discharge Determinations
         - Income/Net Worth (Pension)
+        - "Debt - Existence and amount"
+        - "Debt - Waiver"
         - Dependent Child - Adopted
         - Dependent Child - Stepchild
         - Dependent Child - Biological
