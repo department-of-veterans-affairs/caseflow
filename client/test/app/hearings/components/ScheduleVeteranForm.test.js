@@ -100,16 +100,18 @@ describe('ScheduleVeteranForm', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
         virtual
+        userCanCollectVideoCentralEmails
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
         appeal={{
           ...amaAppeal,
+          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
         }}
         hearing={{
           ...defaultHearing,
           regionalOffice: defaultHearing.regionalOfficeKey,
-          virtualHearing: virtualHearing.virtualHearing
+          emailRecipients: virtualHearing.virtualHearing
         }}
       />,
       {
@@ -137,7 +139,7 @@ describe('ScheduleVeteranForm', () => {
       hearing: {
         ...defaultHearing,
         regionalOffice: 'C',
-        virtualHearing: virtualHearing.virtualHearing
+        emailRecipients: virtualHearing.virtualHearing
       }
     });
 
@@ -187,6 +189,7 @@ describe('ScheduleVeteranForm', () => {
     };
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
+        userCanCollectVideoCentralEmails
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
@@ -196,7 +199,7 @@ describe('ScheduleVeteranForm', () => {
           readableHearingRequestType: VIRTUAL_HEARING_LABEL,
         }}
         hearing={hearing}
-        virtual={false}
+        virtual
       />,
       {
         wrappingComponent: queueWrapper,
@@ -221,7 +224,7 @@ describe('ScheduleVeteranForm', () => {
       unscheduledHearingNotes: {
         notes: 'Preloaded notes'
       }
-    })
+    });
 
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
@@ -239,7 +242,7 @@ describe('ScheduleVeteranForm', () => {
 
     expect(scheduleVeteran.find(UnscheduledNotes)).toHaveLength(1);
     expect(scheduleVeteran).toMatchSnapshot();
-  })
+  });
 
   test('RO dropdown includes Virtual Hearings as option is type is selected as Virtual', () => {
     const scheduleVeteran = mount(
@@ -249,17 +252,18 @@ describe('ScheduleVeteranForm', () => {
         onChange={changeSpy}
         appeal={amaAppeal}
         hearing={defaultHearing}
-        virtual={true}
+        virtual
       />,
       {
         wrappingComponent: queueWrapper,
       }
     );
+
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(RegionalOfficeDropdown)
-      .prop('excludeVirtualHearingsOption')).toEqual(false);
+    expect(scheduleVeteran.find(RegionalOfficeDropdown).
+      prop('excludeVirtualHearingsOption')).toEqual(false);
     expect(scheduleVeteran).toMatchSnapshot();
-  })
+  });
 
   test('Displays ReadOnlyHearingTimeWithZone when video is selected and beginsAt exists', () => {
     const hearing = {
@@ -271,7 +275,7 @@ describe('ScheduleVeteranForm', () => {
         beginsAt: '2021-07-29T11:30:00-04:00',
         timezone: 'America/Los_Angeles'
       }
-    }
+    };
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
@@ -289,10 +293,11 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(HearingTime)).toHaveLength(0);
     expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(1);
     expect(
-      scheduleVeteran.find(ReadOnlyHearingTimeWithZone).find(ReadOnly).prop('text')
+      scheduleVeteran.find(ReadOnlyHearingTimeWithZone).find(ReadOnly).
+        prop('text')
     ).toEqual('8:30 AM Pacific / 11:30 AM Eastern');
     expect(scheduleVeteran).toMatchSnapshot();
-  })
+  });
 
   test('Displays HearingTime when video is selected and beginsAt does not exist', () => {
     const hearing = {
@@ -304,7 +309,7 @@ describe('ScheduleVeteranForm', () => {
         beginsAt: null,
         timezone: 'America/Los_Angeles'
       }
-    }
+    };
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
@@ -322,5 +327,5 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
     expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(0);
     expect(scheduleVeteran).toMatchSnapshot();
-  })
+  });
 });

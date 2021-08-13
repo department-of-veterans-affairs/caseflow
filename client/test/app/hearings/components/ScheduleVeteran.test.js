@@ -29,7 +29,7 @@ import ApiUtil from 'app/util/ApiUtil';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
-import { VIDEO_HEARING_LABEL } from 'app/hearings/constants';
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 
 jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
@@ -394,7 +394,8 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
-                virtualHearing: virtualHearing.virtualHearing,
+                requestType: VIRTUAL_HEARING_LABEL,
+                emailRecipients: virtualHearing.virtualHearing,
               },
             },
           },
@@ -419,6 +420,9 @@ describe('ScheduleVeteran', () => {
             values: {
               ...scheduleHearingDetails.apiFormattedValues,
               virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
+                omit(virtualHearing.virtualHearing, ['status'])
+              ),
+              email_recipients: ApiUtil.convertToSnakeCase(
                 omit(virtualHearing.virtualHearing, ['status'])
               ),
               override_full_hearing_day_validation: false,
@@ -492,7 +496,8 @@ describe('ScheduleVeteran', () => {
             description: 'Update Task',
             values: {
               ...scheduleHearingDetails.apiFormattedValues,
-              virtual_hearing_attributes: null,
+              email_recipients: null,
+              virtual_hearing_attributes: false,
               override_full_hearing_day_validation: false,
             },
           },
@@ -583,6 +588,7 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
+                requestType: VIRTUAL_HEARING_LABEL,
                 virtualHearing: virtualHearing.virtualHearing,
               },
             },

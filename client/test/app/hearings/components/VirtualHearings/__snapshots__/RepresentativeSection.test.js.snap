@@ -159,11 +159,12 @@ SAN FRANCISCO, CA 94103
           label="POA/Representative Timezone"
           name="representativeTz"
           onChange={[Function]}
+          optional={true}
           readOnly={false}
-          required={true}
+          required={false}
           roTimezone="America/New_York"
           time="06:00"
-          value="America/Los_Angeles"
+          value={null}
         >
           <SearchableDropdown
             clearOnSelect={false}
@@ -171,6 +172,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="representativeTz"
             onChange={[Function]}
+            optional={true}
             options={
               Array [
                 Object {
@@ -941,7 +943,7 @@ SAN FRANCISCO, CA 94103
             }
             placeholder="Select a timezone"
             readOnly={false}
-            required={true}
+            required={false}
             strongLabel={true}
             styling={
               Object {
@@ -955,7 +957,7 @@ SAN FRANCISCO, CA 94103
                 },
               }
             }
-            value="America/Los_Angeles"
+            value={null}
           >
             <div
               className=""
@@ -973,14 +975,15 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="POA/Representative Timezone"
                       name="POA/Representative Timezone"
-                      required={true}
+                      optional={true}
+                      required={false}
                     >
                       <span>
                         POA/Representative Timezone
                         <span
-                          className="cf-required"
+                          className="cf-optional"
                         >
-                          Required
+                          Optional
                         </span>
                       </span>
                     </FormLabel>
@@ -1787,13 +1790,7 @@ SAN FRANCISCO, CA 94103
                         "input": [Function],
                       }
                     }
-                    value={
-                      Object {
-                        "index": -0,
-                        "label": "Pacific Time (US & Canada) (3:00 AM)",
-                        "value": "America/Los_Angeles",
-                      }
-                    }
+                    value={null}
                   >
                     <Select
                       backspaceRemovesValue={true}
@@ -2620,20 +2617,14 @@ SAN FRANCISCO, CA 94103
                       }
                       tabIndex="0"
                       tabSelectsValue={true}
-                      value={
-                        Object {
-                          "index": -0,
-                          "label": "Pacific Time (US & Canada) (3:00 AM)",
-                          "value": "America/Los_Angeles",
-                        }
-                      }
+                      value={null}
                     >
                       <SelectContainer
                         clearValue={[Function]}
                         cx={[Function]}
                         getStyles={[Function]}
                         getValue={[Function]}
-                        hasValue={true}
+                        hasValue={false}
                         innerProps={
                           Object {
                             "id": undefined,
@@ -4237,11 +4228,7 @@ SAN FRANCISCO, CA 94103
                             },
                             "tabIndex": "0",
                             "tabSelectsValue": true,
-                            "value": Object {
-                              "index": -0,
-                              "label": "Pacific Time (US & Canada) (3:00 AM)",
-                              "value": "America/Los_Angeles",
-                            },
+                            "value": null,
                           }
                         }
                         setValue={[Function]}
@@ -4299,7 +4286,7 @@ SAN FRANCISCO, CA 94103
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={true}
+                              hasValue={false}
                               innerProps={
                                 Object {
                                   "onMouseDown": [Function],
@@ -5905,11 +5892,7 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": Object {
-                                    "index": -0,
-                                    "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                    "value": "America/Los_Angeles",
-                                  },
+                                  "value": null,
                                 }
                               }
                               setValue={[Function]}
@@ -5984,7 +5967,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     isDisabled={false}
                                     isMulti={false}
                                     isRtl={false}
@@ -7581,11 +7564,7 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -0,
-                                          "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                          "value": "America/Los_Angeles",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -7622,7 +7601,7 @@ SAN FRANCISCO, CA 94103
                                     <EmotionCssPropInternal
                                       __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                       __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                      className="cf-select__value-container cf-select__value-container--has-value"
+                                      className="cf-select__value-container"
                                       css={
                                         Object {
                                           "WebkitOverflowScrolling": "touch",
@@ -7638,24 +7617,19 @@ SAN FRANCISCO, CA 94103
                                       }
                                     >
                                       <div
-                                        className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                                        className="cf-select__value-container css-g1d714-ValueContainer"
                                       >
-                                        <SingleValue
+                                        <Placeholder
                                           clearValue={[Function]}
                                           cx={[Function]}
-                                          data={
-                                            Object {
-                                              "index": -0,
-                                              "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                              "value": "America/Los_Angeles",
-                                            }
-                                          }
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
+                                          isFocused={false}
                                           isMulti={false}
                                           isRtl={false}
+                                          key="placeholder"
                                           options={
                                             Array [
                                               Object {
@@ -9249,11 +9223,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -9288,33 +9258,29 @@ SAN FRANCISCO, CA 94103
                                           }
                                         >
                                           <EmotionCssPropInternal
-                                            __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
+                                            __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__single-value"
+                                            className="cf-select__placeholder"
                                             css={
                                               Object {
                                                 "boxSizing": "border-box",
-                                                "color": "hsl(0, 0%, 20%)",
-                                                "label": "singleValue",
+                                                "color": "hsl(0, 0%, 50%)",
+                                                "label": "placeholder",
                                                 "marginLeft": 2,
                                                 "marginRight": 2,
-                                                "maxWidth": "calc(100% - 8px)",
-                                                "overflow": "hidden",
                                                 "position": "absolute",
-                                                "textOverflow": "ellipsis",
                                                 "top": "50%",
                                                 "transform": "translateY(-50%)",
-                                                "whiteSpace": "nowrap",
                                               }
                                             }
                                           >
                                             <div
-                                              className="cf-select__single-value css-1uccc91-singleValue"
+                                              className="cf-select__placeholder css-1wa3eu0-placeholder"
                                             >
-                                              Pacific Time (US & Canada) (3:00 AM)
+                                              Select a timezone
                                             </div>
                                           </EmotionCssPropInternal>
-                                        </SingleValue>
+                                        </Placeholder>
                                         <CustomInput
                                           aria-autocomplete="list"
                                           autoCapitalize="none"
@@ -10153,11 +10119,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           spellCheck="false"
@@ -11037,11 +10999,7 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 "tabIndex": "0",
                                                 "tabSelectsValue": true,
-                                                "value": Object {
-                                                  "index": -0,
-                                                  "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                                  "value": "America/Los_Angeles",
-                                                },
+                                                "value": null,
                                               }
                                             }
                                             spellCheck="false"
@@ -11195,7 +11153,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     isDisabled={false}
                                     isMulti={false}
                                     isRtl={false}
@@ -12792,11 +12750,7 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -0,
-                                          "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                          "value": "America/Los_Angeles",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -12852,7 +12806,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isFocused={false}
                                           isMulti={false}
@@ -14450,11 +14404,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -14514,7 +14464,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           innerProps={
                                             Object {
                                               "aria-hidden": "true",
@@ -16119,11 +16069,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (3:00 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -16232,7 +16178,7 @@ SAN FRANCISCO, CA 94103
                             <input
                               name="representativeTz"
                               type="hidden"
-                              value="America/Los_Angeles"
+                              value=""
                             />
                           </div>
                         </EmotionCssPropInternal>
@@ -16262,9 +16208,9 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <VirtualHearingEmail
-          email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16276,12 +16222,11 @@ SAN FRANCISCO, CA 94103
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16292,11 +16237,16 @@ SAN FRANCISCO, CA 94103
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -16311,7 +16261,6 @@ SAN FRANCISCO, CA 94103
                 name="POA/Representative Email"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16487,16 +16436,16 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <VirtualHearingEmail
-          email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           readOnly={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
             label="POA/Representative Email"
-            text="tom.brady@caseflow.gov"
+            text="None"
           >
             <div
               data-css-1a5irm0=""
@@ -16505,7 +16454,7 @@ SAN FRANCISCO, CA 94103
                 POA/Representative Email
               </strong>
               <pre>
-                tom.brady@caseflow.gov
+                None
               </pre>
             </div>
           </ReadOnly>
@@ -16671,9 +16620,9 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <VirtualHearingEmail
-          email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16685,12 +16634,11 @@ SAN FRANCISCO, CA 94103
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16701,11 +16649,16 @@ SAN FRANCISCO, CA 94103
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -16720,7 +16673,6 @@ SAN FRANCISCO, CA 94103
                 name="POA/Representative Email"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16914,9 +16866,9 @@ exports[`RepresentativeSection Shows Representative name when representative add
         className="usa-width-one-half"
       >
         <VirtualHearingEmail
-          email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16928,12 +16880,11 @@ exports[`RepresentativeSection Shows Representative name when representative add
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16944,11 +16895,16 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -16963,7 +16919,6 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 name="POA/Representative Email"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -17150,9 +17105,9 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         className="usa-width-one-half"
       >
         <VirtualHearingEmail
-          email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17164,12 +17119,11 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -17180,11 +17134,16 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -17199,7 +17158,6 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 name="POA/Representative Email"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>

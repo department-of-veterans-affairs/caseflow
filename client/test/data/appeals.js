@@ -202,6 +202,7 @@ export const scheduleHearingDetails = {
     scheduledTimeString: null,
     hasErrorMessages: false
   },
+  notes: '',
   apiFormattedValues: {
     scheduled_time_string: '08:45',
     hearing_day_id: 36,
@@ -228,4 +229,4 @@ export const amaAppealHearingData = {
   externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
   disposition: null,
   isVirtual: false
-}
+};

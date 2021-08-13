@@ -427,8 +427,8 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     <VirtualHearingEmail
                       emailType="appellantEmail"
                       label="Veteran Email"
+                      optional={true}
                       readOnly={true}
-                      required={true}
                       type="Virtual"
                     >
                       <ReadOnly
@@ -529,6 +529,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     <VirtualHearingEmail
                       emailType="representativeEmail"
                       label="POA/Representative Email"
+                      optional={true}
                       readOnly={true}
                       type="Virtual"
                     >
