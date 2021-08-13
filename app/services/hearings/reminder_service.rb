@@ -16,8 +16,7 @@ class Hearings::ReminderService
 
     # TODO: This stops emails from going out for any video/central hearings until
     # we want them to, it allows the logging to happen though.
-    # which_type_of_reminder_to_send && hearing.virtual?
-    which_type_of_reminder_to_send
+    which_type_of_reminder_to_send && hearing.virtual?
   end
 
   private
