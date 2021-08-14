@@ -555,8 +555,8 @@ class Appeal < DecisionReview
 
   # Allow looking up a UUID by the first 8 characters (for when you're entering it manually)
   def self.find_by_uuid_prefix(partial_uuid)
-    if partial_uuid =~ /^\h{8}$/
-      appeals = Appeal.where("uuid::text LIKE '#{partial_uuid}%'")
+    if partial_uuid.match?(/^\h{8}$/)
+      appeals = Appeal.where("uuid::text LIKE ?", "#{partial_uuid}%")
       return appeals.first if appeals.count == 1
     end
   end

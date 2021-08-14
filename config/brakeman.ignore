@@ -27,7 +27,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/hearings/schedule_periods_controller.rb",
-      "line": 56,
+      "line": 79,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
       "render_path": null,
@@ -96,6 +96,26 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Because it's an API, :null_session is the appropriate CSRF protection"
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "381338fe7e100599ba6a7daa3799704b9ddd6b95bb57277096baaac3514f6569",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/queue_controller.rb",
+      "line": 34,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(\"/queue/appeals/#{Appeal.find_by_uuid_prefix(params[:external_id]).uuid}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "QueueController",
+        "method": "redirect_short_uuids"
+      },
+      "user_input": "Appeal.find_by_uuid_prefix(params[:external_id]).uuid",
+      "confidence": "High",
+      "note": ""
     },
     {
       "warning_type": "SQL Injection",
@@ -240,7 +260,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 216,
+      "line": 233,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -254,6 +274,6 @@
       "note": ""
     }
   ],
-  "updated": "2020-11-03 13:47:15 -0500",
+  "updated": "2021-08-13 20:56:22 -0400",
   "brakeman_version": "4.7.1"
 }
