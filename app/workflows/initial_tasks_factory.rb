@@ -6,7 +6,7 @@
 class InitialTasksFactory
   def initialize(appeal)
     @appeal = appeal
-    @root_task = RootTask.find_or_create_by!(appeal: @appeal)
+    @root_task = RootTask.find_or_create_by!(appeal: appeal)
 
     if @appeal.cavc?
       @cavc_remand = appeal.cavc_remand
