@@ -105,8 +105,10 @@ export default class TestUsers extends React.PureComponent {
       tab.page = <div>
         <ul>
           {Object.keys(app.links).map((name) => {
-            return <li key={name}>
-              <a href={app.links[name]}>{StringUtil.snakeCaseToCapitalized(name)}</a>
+            let readableName = StringUtil.snakeCaseToCapitalized(name);
+
+            return <li key={name} aria-labelledby={name}>
+              <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
             </li>;
           })}
         </ul>
@@ -175,7 +177,9 @@ export default class TestUsers extends React.PureComponent {
                 <br />
                 <h3>App Selector:</h3>
                 <TabWindow
-                  tabs={tabs} />
+                  tabs={tabs}
+                  tabPanelTabIndex={-1}
+                />
                 <p>
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.
