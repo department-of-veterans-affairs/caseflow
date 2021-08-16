@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_180404) do
+ActiveRecord::Schema.define(version: 2021_08_12_182219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -280,6 +280,8 @@ ActiveRecord::Schema.define(version: 2021_07_29_180404) do
     t.string "sdomainid", null: false
     t.string "slogid", null: false
     t.string "smemgrp", limit: 8
+    t.string "snamef", comment: "User's First Name in VACOLS"
+    t.string "snamel", comment: "User's Last Name in VACOLS"
     t.string "stafkey", null: false
     t.string "stitle", limit: 16
     t.string "svlj"
