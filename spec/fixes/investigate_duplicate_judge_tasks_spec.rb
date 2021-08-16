@@ -53,7 +53,7 @@ feature "duplicate JudgeAssignTask investigation" do
       expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
       visit "/queue/appeals/#{uuid}"
 
-      # in window B, complete the JudgeAssignTask
+      # in window B, complete the JudgeAssignTask - should not be able to do this due to fix
       within_window second_window do
         click_dropdown(prompt: "Select an action", text: "Assign to attorney")
         click_dropdown(prompt: "Select a user", text: "Other")
@@ -74,8 +74,11 @@ feature "duplicate JudgeAssignTask investigation" do
         expect(page).to have_content(appeal.veteran.first_name, wait: 30)
         appeal.reload.treee
 
-        # BUG FIX: app should no longer allow the invalid flow of a JudgeAssignTask going from cancelled to completed
-        expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
+        # FUTURE FIX: app should no longer allow the invalid flow of a JudgeAssignTask going from cancelled to completed
+        # expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
+        # Successful Bug Fix: Appeal should now have only one open AttorneyTask
+        open_attorney_tasks = appeal.tasks.select { |task| task.type == "AttorneyTask" && task.open? }
+        expect(open_attorney_tasks.count).to eq(1)
       end
 
       visit "/queue/appeals/#{uuid}"
