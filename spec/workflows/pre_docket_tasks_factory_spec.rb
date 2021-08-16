@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe PreDocketTasksFactory, :postgres do
   context "PreDocket Appeals" do
     let(:appeal) { create(:appeal) }
