@@ -6,7 +6,7 @@
 class InitialTasksFactory
   def initialize(appeal)
     @appeal = appeal
-    @root_task = RootTask.find_or_create_by!(appeal: appeal)
+    @root_task = RootTask.find_or_create_by!(appeal: @appeal)
 
     if @appeal.cavc?
       @cavc_remand = appeal.cavc_remand
@@ -15,7 +15,7 @@ class InitialTasksFactory
     end
   end
 
-  delegate :veteran, to: :appeal
+  delegate :veteran, to: :@appeal
 
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
