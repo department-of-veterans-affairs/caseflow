@@ -69,10 +69,6 @@ class InitialTasksFactory
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def create_pre_docket_tasks
-    PreDocketTasksFactory.new(@appeal).create_pre_docket_task!
-  end
-
   def create_selected_tasks
     # Given a selection of task_ids, select it and all its tree ancestors
     task_ids = @appeal.appellant_substitution.selected_task_ids

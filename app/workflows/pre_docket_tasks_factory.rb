@@ -6,7 +6,7 @@ class PreDocketTasksFactory
     @root_task = RootTask.find_or_create_by!(appeal: appeal)
   end
 
-  def create_pre_docket_task!
+  def call
     pre_docket_task = PreDocketTask.create!(
       appeal: @appeal,
       assigned_to: BvaIntake.singleton,

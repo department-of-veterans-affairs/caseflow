@@ -119,7 +119,8 @@ module IntakeHelpers
     receipt_date: 1.day.ago,
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
-    no_claimant: false
+    no_claimant: false,
+    intake_user: User.authenticate!(roles: ["Mail Intake"])
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
@@ -132,7 +133,7 @@ module IntakeHelpers
 
     intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
-      user: User.authenticate!(roles: ["Mail Intake"]),
+      user: intake_user,
       started_at: 5.minutes.ago,
       detail: appeal
     )
