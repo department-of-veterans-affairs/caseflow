@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
@@ -11,7 +11,7 @@ import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
-import { trim } from 'lodash';
+import { trim, escapeRegExp } from 'lodash';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export default function TestUsers(props) {
@@ -22,12 +22,18 @@ export default function TestUsers(props) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [reseedingError, setReseedingError] = useState(null);
   const [isReseeding, setIsReseeding] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
   const handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
     catch((err) => {
       console.warn(err);
     });
-  const handleUserSelect = ({ value }) => setUserSelect(value);
+
+  const handleInputChange = (value) => setInputValue(value);
+  const handleUserSelect = ({ value }) => {
+    setUserSelect(value);
+  };
+
   const handleUserSwitch = () => {
     setIsSwitching(true);
     ApiUtil.post(`/test/set_user/${userSelect}`).then(() => {
@@ -78,6 +84,35 @@ export default function TestUsers(props) {
     value: user.id,
     label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
   }));
+
+  const filteredUserOptions = useMemo(() => {
+    if (!inputValue) {
+      return userOptions;
+    }
+
+    const matchByStart = [];
+    const matchByInclusion = [];
+
+    const regByInclusion = new RegExp(escapeRegExp(inputValue), 'i');
+    const regByStart = new RegExp(`^${escapeRegExp(inputValue)}`, 'i');
+
+    for (const option of userOptions) {
+      if (regByInclusion.test(option.label)) {
+        if (regByStart.test(option.label)) {
+          matchByStart.push(option);
+        } else {
+          matchByInclusion.push(option);
+        }
+      }
+    }
+
+    return [...matchByStart, ...matchByInclusion];
+  }, [inputValue]);
+
+  const slicedUserOptions = useMemo(
+    () => filteredUserOptions.slice(0, 500),
+    [filteredUserOptions]
+  );
 
   const featureOptions = props.featuresList.map((feature) => ({
     value: feature,
@@ -152,8 +187,11 @@ export default function TestUsers(props) {
                   <SearchableDropdown
                     name="Test user dropdown"
                     hideLabel
-                    options={userOptions} searchable
+                    onInputChange={handleInputChange}
+                    options={slicedUserOptions} searchable
                     onChange={handleUserSelect}
+                    // Disable native filter
+                    filterOption={() => true}
                     value={userSelect} />
                   <Button
                     onClick={handleUserSwitch}
