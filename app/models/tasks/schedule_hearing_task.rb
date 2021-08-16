@@ -239,8 +239,8 @@ class ScheduleHearingTask < Task
     if recipient["representative_email"].present?
       RepresentativeHearingEmailRecipient.create!(
         hearing: hearing,
-        email_address: recipient["appellant_email"],
-        timezone: recipient["appellant_tz"]
+        email_address: recipient["representative_email"],
+        timezone: recipient["representative_tz"]
       )
     end
   end
