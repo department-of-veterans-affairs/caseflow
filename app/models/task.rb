@@ -20,7 +20,10 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
-  belongs_to :appeal, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
+
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id

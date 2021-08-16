@@ -2137,6 +2137,19 @@ RSpec.feature "Case details", :all_dbs do
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+    let(:veteran) { create(:veteran) }
+    let(:higher_level_review) do
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+
+    let(:supplemental_claim) do
+      create(:supplemental_claim,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+    let(:user) { create(:intake_user) }
 
     context "when the current user does not have high enough BGS sensitivity level" do
       before do
@@ -2199,6 +2212,30 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
             expect(page).to have_current_path(case_details_page_path)
           end
+        end
+      end
+    end
+
+    context "when the current user does not have sensitivity level for Veteran file" do
+      before do
+        User.authenticate!(user: user)
+        Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+        Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
+      end
+
+      context "when case is higher level review" do
+        it "renders 403 error page" do
+          visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
+        end
+      end
+
+      context "when case is supplemental claim" do
+        it "renders 403 error page" do
+          visit "/supplemental_claims/#{supplemental_claim.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
         end
       end
     end
