@@ -98,6 +98,8 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
+  attr_accessor :skip_check_for_only_open_task_of_type
+
   ############################################################################################
   ## class methods
   class << self
@@ -565,7 +567,7 @@ class Task < CaseflowRecord
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
-    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
+    @skip_check_for_only_open_task_of_type = true
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
@@ -576,10 +578,8 @@ class Task < CaseflowRecord
 
           task.save!
         end
-      # The ensure block guarantees that the thread-local variable check_for_open_task_type
-      # does not leak outside of this method
       ensure
-        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
+        @skip_check_for_only_open_task_of_type = nil
       end
     end
 
@@ -835,10 +835,6 @@ class Task < CaseflowRecord
     end
 
     true
-  end
-
-  def skip_check_for_only_open_task_of_type?
-    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
   end
 
   def only_open_task_of_type
