@@ -306,6 +306,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -314,7 +315,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               >
                 <ReadOnly
                   label="POA/Representative Email"
-                  text="None"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -323,7 +324,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                       POA/Representative Email
                     </strong>
                     <pre>
-                      None
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>
@@ -587,6 +588,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
                 optional={true}
@@ -595,7 +597,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               >
                 <ReadOnly
                   label="Veteran Email"
-                  text="None"
+                  text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -604,34 +606,11 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                       Veteran Email
                     </strong>
                     <pre>
-                      None
+                      Abellona.Valtas@test.com
                     </pre>
                   </div>
                 </ReadOnly>
               </VirtualHearingEmail>
-              <div>
-                <Alert
-                  fixed={false}
-                  message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-                  scrollOnAlert={false}
-                  type="info"
-                >
-                  <div
-                    className="usa-alert usa-alert-info usa-alert-slim"
-                    role="alert"
-                  >
-                    <div
-                      className="usa-alert-body"
-                    >
-                      <div
-                        className="usa-alert-text"
-                      >
-                        If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                      </div>
-                    </div>
-                  </div>
-                </Alert>
-              </div>
             </div>
           </div>
         </VirtualHearingSection>
@@ -700,6 +679,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -708,7 +688,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               >
                 <ReadOnly
                   label="POA/Representative Email"
-                  text="None"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -717,7 +697,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                       POA/Representative Email
                     </strong>
                     <pre>
-                      None
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>
@@ -981,6 +961,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
                 optional={true}
@@ -989,7 +970,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               >
                 <ReadOnly
                   label="Veteran Email"
-                  text="None"
+                  text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -998,34 +979,11 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                       Veteran Email
                     </strong>
                     <pre>
-                      None
+                      Abellona.Valtas@test.com
                     </pre>
                   </div>
                 </ReadOnly>
               </VirtualHearingEmail>
-              <div>
-                <Alert
-                  fixed={false}
-                  message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-                  scrollOnAlert={false}
-                  type="info"
-                >
-                  <div
-                    className="usa-alert usa-alert-info usa-alert-slim"
-                    role="alert"
-                  >
-                    <div
-                      className="usa-alert-body"
-                    >
-                      <div
-                        className="usa-alert-text"
-                      >
-                        If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                      </div>
-                    </div>
-                  </div>
-                </Alert>
-              </div>
             </div>
           </div>
         </VirtualHearingSection>
@@ -1094,6 +1052,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -1102,7 +1061,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               >
                 <ReadOnly
                   label="POA/Representative Email"
-                  text="None"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -1111,7 +1070,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                       POA/Representative Email
                     </strong>
                     <pre>
-                      None
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>
@@ -1375,6 +1334,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
                 optional={true}
@@ -1383,7 +1343,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               >
                 <ReadOnly
                   label="Veteran Email"
-                  text="None"
+                  text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -1392,34 +1352,11 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                       Veteran Email
                     </strong>
                     <pre>
-                      None
+                      Abellona.Valtas@test.com
                     </pre>
                   </div>
                 </ReadOnly>
               </VirtualHearingEmail>
-              <div>
-                <Alert
-                  fixed={false}
-                  message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-                  scrollOnAlert={false}
-                  type="info"
-                >
-                  <div
-                    className="usa-alert usa-alert-info usa-alert-slim"
-                    role="alert"
-                  >
-                    <div
-                      className="usa-alert-body"
-                    >
-                      <div
-                        className="usa-alert-text"
-                      >
-                        If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                      </div>
-                    </div>
-                  </div>
-                </Alert>
-              </div>
             </div>
           </div>
         </VirtualHearingSection>
@@ -1488,6 +1425,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -1496,7 +1434,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               >
                 <ReadOnly
                   label="POA/Representative Email"
-                  text="None"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -1505,7 +1443,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                       POA/Representative Email
                     </strong>
                     <pre>
-                      None
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>

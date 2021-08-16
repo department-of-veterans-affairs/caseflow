@@ -396,7 +396,7 @@ describe('ScheduleVeteran', () => {
               assignHearing: {
                 ...scheduleHearingDetails,
                 requestType: VIRTUAL_HEARING_LABEL,
-                emailRecipients: virtualHearing.virtualHearing,
+                virtualHearing: virtualHearing.virtualHearing,
               },
             },
           },

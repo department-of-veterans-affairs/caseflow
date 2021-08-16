@@ -111,7 +111,7 @@ describe('ScheduleVeteranForm', () => {
         hearing={{
           ...defaultHearing,
           regionalOffice: defaultHearing.regionalOfficeKey,
-          emailRecipients: virtualHearing.virtualHearing
+          virtualHearing: virtualHearing.virtualHearing
         }}
       />,
       {
@@ -139,7 +139,7 @@ describe('ScheduleVeteranForm', () => {
       hearing: {
         ...defaultHearing,
         regionalOffice: 'C',
-        emailRecipients: virtualHearing.virtualHearing
+        virtualHearing: virtualHearing.virtualHearing
       }
     });
 

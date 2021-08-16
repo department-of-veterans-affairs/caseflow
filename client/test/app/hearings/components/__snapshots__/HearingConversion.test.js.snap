@@ -9340,6 +9340,7 @@ SAN FRANCISCO, CA 94103
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
                 optional={true}
@@ -9366,7 +9367,7 @@ SAN FRANCISCO, CA 94103
               >
                 <ReadOnly
                   label="Veteran Email"
-                  text="None"
+                  text="Bob.Smith@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -9375,7 +9376,7 @@ SAN FRANCISCO, CA 94103
                       Veteran Email
                     </strong>
                     <pre>
-                      None
+                      Bob.Smith@test.com
                     </pre>
                   </div>
                 </ReadOnly>
@@ -9560,6 +9561,7 @@ SAN FRANCISCO, CA 94103
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -9586,7 +9588,7 @@ SAN FRANCISCO, CA 94103
               >
                 <ReadOnly
                   label="POA/Representative Email"
-                  text="None"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -9595,7 +9597,7 @@ SAN FRANCISCO, CA 94103
                       POA/Representative Email
                     </strong>
                     <pre>
-                      None
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>
@@ -18843,7 +18845,7 @@ SAN FRANCISCO, CA 94103
                 readOnly={false}
                 roTimezone="America/New_York"
                 time="03:30"
-                value={null}
+                value="America/Denver"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -19635,7 +19637,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value={null}
+                  value="America/Denver"
                 >
                   <div
                     className=""
@@ -20467,7 +20469,13 @@ SAN FRANCISCO, CA 94103
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -1,
+                              "label": "Mountain Time (US & Canada) (1:30 AM)",
+                              "value": "America/Denver",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -21294,14 +21302,20 @@ SAN FRANCISCO, CA 94103
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -1,
+                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                "value": "America/Denver",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -22905,7 +22919,11 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -1,
+                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                    "value": "America/Denver",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -22963,7 +22981,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -24569,7 +24587,11 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -1,
+                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                          "value": "America/Denver",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -24644,7 +24666,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -26241,7 +26263,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -26278,7 +26304,7 @@ SAN FRANCISCO, CA 94103
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -26294,19 +26320,24 @@ SAN FRANCISCO, CA 94103
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -1,
+                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                    "value": "America/Denver",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -27900,7 +27931,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -27935,29 +27970,33 @@ SAN FRANCISCO, CA 94103
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Mountain Time (US & Canada) (1:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <CustomInput
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -28796,7 +28835,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -29676,7 +29719,11 @@ SAN FRANCISCO, CA 94103
                                                       },
                                                       "tabIndex": "0",
                                                       "tabSelectsValue": true,
-                                                      "value": null,
+                                                      "value": Object {
+                                                        "index": -1,
+                                                        "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                        "value": "America/Denver",
+                                                      },
                                                     }
                                                   }
                                                   spellCheck="false"
@@ -29830,7 +29877,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -31427,7 +31474,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -31483,7 +31534,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -33081,7 +33132,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -33141,7 +33196,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -34746,7 +34801,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -34855,7 +34914,7 @@ SAN FRANCISCO, CA 94103
                                   <input
                                     name="appellantTz"
                                     type="hidden"
-                                    value=""
+                                    value="America/Denver"
                                   />
                                 </div>
                               </EmotionCssPropInternal>
@@ -34886,6 +34945,7 @@ SAN FRANCISCO, CA 94103
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
                 optional={true}
@@ -34923,6 +34983,7 @@ SAN FRANCISCO, CA 94103
                   strongLabel={true}
                   type="text"
                   useAriaLabel={false}
+                  value="Bob.Smith@test.com"
                 >
                   <div
                     className="cf-form-textinput cf-inline-field   "
@@ -34957,6 +35018,7 @@ SAN FRANCISCO, CA 94103
                       name="Veteran Email"
                       onChange={[Function]}
                       type="text"
+                      value="Bob.Smith@test.com"
                     />
                   </div>
                 </TextField>
@@ -35153,12 +35215,12 @@ SAN FRANCISCO, CA 94103
                 label="POA/Representative Timezone"
                 name="representativeTz"
                 onChange={[Function]}
-                optional={true}
+                optional={false}
                 readOnly={false}
-                required={false}
+                required={true}
                 roTimezone="America/New_York"
                 time="03:30"
-                value={null}
+                value="America/Los_Angeles"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -35166,7 +35228,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="representativeTz"
                   onChange={[Function]}
-                  optional={true}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -35937,7 +35999,7 @@ SAN FRANCISCO, CA 94103
                   }
                   placeholder="Select a timezone"
                   readOnly={false}
-                  required={false}
+                  required={true}
                   strongLabel={true}
                   styling={
                     Object {
@@ -35951,7 +36013,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value={null}
+                  value="America/Los_Angeles"
                 >
                   <div
                     className=""
@@ -35969,15 +36031,15 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="POA/Representative Timezone"
                             name="POA/Representative Timezone"
-                            optional={true}
-                            required={false}
+                            optional={false}
+                            required={true}
                           >
                             <span>
                               POA/Representative Timezone
                               <span
-                                className="cf-optional"
+                                className="cf-required"
                               >
-                                Optional
+                                Required
                               </span>
                             </span>
                           </FormLabel>
@@ -36784,7 +36846,13 @@ SAN FRANCISCO, CA 94103
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -0,
+                              "label": "Pacific Time (US & Canada) (12:30 AM)",
+                              "value": "America/Los_Angeles",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -37611,14 +37679,20 @@ SAN FRANCISCO, CA 94103
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -0,
+                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                "value": "America/Los_Angeles",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -39222,7 +39296,11 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -0,
+                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                    "value": "America/Los_Angeles",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -39280,7 +39358,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -40886,7 +40964,11 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -0,
+                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                          "value": "America/Los_Angeles",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -40961,7 +41043,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -42558,7 +42640,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -42595,7 +42681,7 @@ SAN FRANCISCO, CA 94103
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -42611,19 +42697,24 @@ SAN FRANCISCO, CA 94103
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -0,
+                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                    "value": "America/Los_Angeles",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -44217,7 +44308,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -44252,29 +44347,33 @@ SAN FRANCISCO, CA 94103
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Pacific Time (US & Canada) (12:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <CustomInput
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -45113,7 +45212,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -45993,7 +46096,11 @@ SAN FRANCISCO, CA 94103
                                                       },
                                                       "tabIndex": "0",
                                                       "tabSelectsValue": true,
-                                                      "value": null,
+                                                      "value": Object {
+                                                        "index": -0,
+                                                        "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                        "value": "America/Los_Angeles",
+                                                      },
                                                     }
                                                   }
                                                   spellCheck="false"
@@ -46147,7 +46254,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -47744,7 +47851,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -47800,7 +47911,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -49398,7 +49509,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -49458,7 +49573,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -51063,7 +51178,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -51172,7 +51291,7 @@ SAN FRANCISCO, CA 94103
                                   <input
                                     name="representativeTz"
                                     type="hidden"
-                                    value=""
+                                    value="America/Los_Angeles"
                                   />
                                 </div>
                               </EmotionCssPropInternal>
@@ -51202,6 +51321,7 @@ SAN FRANCISCO, CA 94103
               className="usa-width-one-half"
             >
               <VirtualHearingEmail
+                email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
                 optional={true}
@@ -51239,6 +51359,7 @@ SAN FRANCISCO, CA 94103
                   strongLabel={true}
                   type="text"
                   useAriaLabel={false}
+                  value="tom.brady@caseflow.gov"
                 >
                   <div
                     className="cf-form-textinput cf-inline-field   "
@@ -51273,6 +51394,7 @@ SAN FRANCISCO, CA 94103
                       name="POA/Representative Email"
                       onChange={[Function]}
                       type="text"
+                      value="tom.brady@caseflow.gov"
                     />
                   </div>
                 </TextField>
