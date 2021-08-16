@@ -73,31 +73,6 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: no
       appellant_substitution.target_appeal
     end
 
-    context "with just EvidenceOrArgumentMailTask selected" do
-      before do
-        select_task_ids_in_ui([TASKS[:evidence_or_argument_mail]])
-      end
-
-      it "preserves the docket number" do
-        expect(page).to have_content(appeal.stream_docket_number)
-      end
-
-      it "shows a success banner" do
-        expect(page).to have_content("You have successfully added a substitute appellant")
-      end
-
-      it "creates the selected tasks" do
-        expect(DistributionTask.where(appeal_id: new_appeal.id).count).to eq 1
-        expect(DistributionTask.find_by(appeal_id: new_appeal.id).status).to eq "assigned"
-
-        eamts = EvidenceOrArgumentMailTask.where(appeal_id: new_appeal.id)
-
-        # This is faithfully recreating the series of them in the UI
-        expect(eamts.count).to eq 3
-        expect(eamts.map(&:status).uniq.sort).to eq %w[assigned on_hold]
-      end
-    end
-
     context "with an EvidenceSubmissionWindowTask selected" do
       before do
         select_task_ids_in_ui([TASKS[:evidence_submission_window]])
