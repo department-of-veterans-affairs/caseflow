@@ -1111,6 +1111,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
         FeatureToggle.enable!(:collect_video_and_central_emails)
+        FeatureToggle.enable!(:enable_hearing_time_slots)
       end
 
       it_behaves_like "scheduling a central hearing"
