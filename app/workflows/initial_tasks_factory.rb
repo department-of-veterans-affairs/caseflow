@@ -17,6 +17,8 @@ class InitialTasksFactory
 
   delegate :veteran, to: :appeal
 
+  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
+
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
