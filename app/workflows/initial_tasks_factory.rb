@@ -22,7 +22,7 @@ class InitialTasksFactory
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
     end
-    @appeal.maybe_create_translation_task
+    maybe_create_translation_task
   end
 
   private
