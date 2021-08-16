@@ -6,7 +6,7 @@ describe Api::V3::DecisionReviews::LegacyAppealsController, :all_dbs, type: :req
 
   let(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
 
-  let(:vacols_id) { "123456789" }
+  let(:vbms_id) { "123456789S" }
 
   let(:valid_soc_date) { Time.zone.today - 40.days }
 
@@ -15,43 +15,27 @@ describe Api::V3::DecisionReviews::LegacyAppealsController, :all_dbs, type: :req
   let(:invalid_soc_date2) { Time.zone.today - 70.days }
   let(:invalid_ssoc_date) { ama_date - 1.year }
 
-  let!(:eligible_active_case) do
-    create(:case, :status_active, bfcorlid: "#{vacols_id}S", bfdsoc: valid_soc_date)
-  end
+  # CASES
+  let!(:eligible_case) { create(:case, bfcorlid: vbms_id, bfdsoc: valid_soc_date) }
 
-  let!(:ineligible_active_case) do
-    create(:case, :status_active, bfcorlid: "#{vacols_id}S", bfdsoc: invalid_soc_date2)
-  end
+  let!(:eligible_case_2) { create(:case, bfcorlid: vbms_id, bfdsoc: valid_soc_date) }
 
-  let!(:eligible_complete_case) do
-    create(:case, :status_complete, bfcorlid: "#{vacols_id}S", bfdsoc: valid_soc_date)
-  end
+  let!(:ineligible_case) { create(:case, bfcorlid: vbms_id, bfdsoc: invalid_soc_date2) }
 
-  let!(:ineligible_complete_case) do
-    create(:case, :status_complete, bfcorlid: "#{vacols_id}S", bfdsoc: invalid_soc_date, bfssoc1: invalid_ssoc_date)
-  end
+  let!(:ineligible_case_2) { create(:case, bfcorlid: vbms_id, bfdsoc: invalid_soc_date, bfssoc1: invalid_ssoc_date) }
 
-  let!(:eligible_active_legacy_appeal) do
-    create(:legacy_appeal, :with_veteran, vbms_id: "#{vacols_id}S", vacols_case: eligible_active_case)
-  end
+  # LEGACY APPEALS
+  let!(:eligible_appeal) { create(:legacy_appeal, :with_veteran, vbms_id: vbms_id, vacols_case: eligible_case) }
 
-  let!(:eligible_complete_legacy_appeal) do
-    create(:legacy_appeal, vbms_id: "#{vacols_id}S", vacols_case: eligible_complete_case)
-  end
+  let!(:eligible_appeal_2) { create(:legacy_appeal, vbms_id: vbms_id, vacols_case: eligible_case_2) }
 
-  let!(:ineligible_active_legacy_appeal) do
-    create(:legacy_appeal, vbms_id: "#{vacols_id}S", vacols_case: ineligible_active_case)
-  end
+  let!(:ineligible_soc_date_appeal) { create(:legacy_appeal, vbms_id: vbms_id, vacols_case: ineligible_case) }
 
-  let!(:ineligible_complete_legacy_appeal) do
-    create(:legacy_appeal, vbms_id: "#{vacols_id}S", vacols_case: ineligible_complete_case)
-  end
+  let!(:ineligible_ssoc_date_appeal) { create(:legacy_appeal, vbms_id: vbms_id, vacols_case: ineligible_case_2) }
 
-  let(:veteran) { eligible_active_legacy_appeal.veteran }
+  let!(:unrelated_veteran_appeal) { create(:legacy_appeal, vbms_id: "987654321S") }
 
-  let!(:unrelated_legacy_appeal) do
-    create(:legacy_appeal, :with_veteran, vbms_id: "987654321S", vacols_case: create(:case, bfcorlid: "987654321S"))
-  end
+  let(:veteran) { eligible_appeal.veteran }
 
   describe "#index" do
     context "when SSN supplied" do
