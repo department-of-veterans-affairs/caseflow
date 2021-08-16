@@ -96,6 +96,7 @@ group :test, :development, :demo do
   gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
+  gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "pry-byebug", "~> 3.9"

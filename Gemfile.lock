@@ -435,6 +435,9 @@ GEM
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pg (1.1.4)
+    pluck_to_hash (1.0.2)
+      activerecord (>= 4.0.2)
+      activesupport (>= 4.0.2)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -724,6 +727,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pg
+  pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
   puma (~> 5)
@@ -768,4 +772,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.2.19
+   2.2.25
