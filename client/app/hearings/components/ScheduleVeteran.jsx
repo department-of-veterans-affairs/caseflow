@@ -133,7 +133,7 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
+    if (!hearing?.virtualHearing?.appellantTz || !hearing.virtualHearing?.representativeTz) {
       props.onChangeFormData(
         'assignHearing',
         {
