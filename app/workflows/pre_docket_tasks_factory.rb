@@ -15,8 +15,3 @@ class PreDocketTasksFactory
     pre_docket_task.put_on_hold_due_to_new_child_task
   end
 end
-PreDocketTask.create!(
-  appeal: Appeal.last,
-  assigned_to: BvaIntake.singleton,
-  parent: Appeal.last.root_task
-)
