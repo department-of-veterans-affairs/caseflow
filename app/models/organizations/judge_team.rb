@@ -2,7 +2,6 @@
 
 class JudgeTeam < Organization
   scope :pushed_priority_cases_allowed, -> { active.where(accepts_priority_pushed_cases: true) }
-  scope :ama_only, -> { pushed_priority_cases_allowed.where(ama_only: false) }
 
   class << self
     def for_judge(user)
@@ -10,10 +9,10 @@ class JudgeTeam < Organization
       user.administered_judge_teams.detect { |team| team.judge.eql?(user) }
     end
 
-    def create_for_judge(user)
+    def create_for_judge(user, ama_only=false)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true).tap do |org|
+      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true, ama_only: ama_only).tap do |org|
         OrganizationsUser.make_user_admin(user, org)
       end
     end

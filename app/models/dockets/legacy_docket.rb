@@ -73,6 +73,8 @@ class LegacyDocket
   end
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
+    # if judge-team is currently ama-only, don't distribute genpop legacy appeals to them.
+    return [] if JudgeTeam.for_judge(distribution.judge).ama_only && genpop != "not_genpop"
     if priority
       distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
     else

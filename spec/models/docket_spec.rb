@@ -254,6 +254,34 @@ describe Docket, :all_dbs do
           expect(judge_appeals).to include(cavc_appeal)
         end
       end
+
+      context "when the judge-team is ama_only" do
+        subject { LegacyDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
+
+        let!(:judge_user) { create(:user) }
+        let!(:judge_team) { JudgeTeam.for_judge(judge_user) || JudgeTeam.create_for_judge(judge_user, ama_only: true) }
+
+        let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+        let(:nothing) {
+          3.times { create(:case, :aod, :ready_for_distribution, :tied_to_judge, tied_judge: judge_user) }
+        }
+        let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+        it "distributes tied appeals" do
+          subject
+          expect(distribution.distributed_cases.length).to eq(3)
+        end
+
+        it "does not distribute priority legacy appeals" do
+          subject
+          expect(distribution.distributed_cases.length).to eq(0)
+        end
+
+        it "does not distribute non-priority legacy appeals" do
+          subject
+          expect(distribution.distributed_cases.length).to eq(0)
+        end
+      end
     end
 
     describe ".nonpriority_decisions_per_year" do
