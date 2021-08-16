@@ -15,6 +15,8 @@ class InitialTasksFactory
     end
   end
 
+  delegate :veteran, to: :appeal
+
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
@@ -163,5 +165,15 @@ class InitialTasksFactory
     return false if @appeal.veteran.alive?
 
     FeatureToggle.enabled?(:death_dismissal_streamlining)
+  end
+
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 end

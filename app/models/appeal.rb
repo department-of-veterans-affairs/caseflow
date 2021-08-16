@@ -570,17 +570,6 @@ class Appeal < DecisionReview
     save! if has_changes_to_save? # prevent infinite recursion
   end
 
-  def maybe_create_translation_task
-    veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran.validate_address
-    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
-  rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran_state_code
-  ensure
-    distribution_task = tasks.open.find_by(type: DistributionTask.name)
-    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
   def default_docket_number_from_receipt_date
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end

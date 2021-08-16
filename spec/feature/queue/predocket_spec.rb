@@ -37,14 +37,19 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
       appeal = Appeal.last
+
+      visit "/queue/appeals/#{appeal.external_id}"
+
+      expect(page).to have_content("Pre Docket Task")
+
       created_task_types = Set.new(appeal.tasks.map(&:type))
-      pre_docket_tasks = Set.new ["RootTask", "PreDocketTask"]
-      docket_tasks = Set.new [
-        "DistributionTask",
-        "TrackVeteranTask",
-        "InformalHearingPresentationTask",
-        "EvidenceSubmissionWindowTask",
-        "TranslationTask"
+      pre_docket_tasks = Set.new %w[RootTask PreDocketTask]
+      docket_tasks = Set.new %w[
+        DistributionTask
+        TrackVeteranTask
+        InformalHearingPresentationTask
+        EvidenceSubmissionWindowTask
+        TranslationTask
       ]
 
       expect(pre_docket_tasks.subset?(created_task_types)).to be true
