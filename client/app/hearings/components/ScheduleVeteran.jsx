@@ -128,7 +128,7 @@ export const ScheduleVeteran = ({
     setErrors({});
 
     // Remove any erroneous virtual hearing data
-    props.onChangeFormData('assignHearing', { emailRecipients: null });
+    props.onChangeFormData('assignHearing', { virtualHearing: null });
   };
 
   // Reset the state on unmount
@@ -137,7 +137,7 @@ export const ScheduleVeteran = ({
       props.onChangeFormData(
         'assignHearing',
         {
-          emailRecipients: {
+          virtualHearing: {
             status: 'pending',
             appellantTz: appeal?.appellantTz,
             representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
@@ -199,7 +199,7 @@ export const ScheduleVeteran = ({
     //
     // `omit` returns an empty object if `null` is provided as an argument, so the `isNil` check here
     // prevents `omit` from returning an empty object.`
-    const emailRecipients = isNil(hearing.emailRecipients) ? null : omit(hearing.emailRecipients, ['status']);
+    const emailRecipients = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
     const recipients = emailRecipients ? ApiUtil.convertToSnakeCase(emailRecipients) : null;
 
     // Format the shared hearing values
@@ -255,9 +255,9 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || virtual ? null : 'Please select a Regional Office '
       };
 
-      const noAppellantEmail = !hearing.emailRecipients?.appellantEmail;
-      const noAppellantTimezone = !hearing.emailRecipients?.appellantTz;
-      const noRepTimezone = !hearing.emailRecipients?.representativeTz && hearing.emailRecipients?.representativeEmail;
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
+      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailOrTzErrors = virtual && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
 
       if (emailOrTzErrors) {
