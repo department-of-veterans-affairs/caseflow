@@ -4,6 +4,8 @@
 class HearingRepository
   class HearingDayFull < StandardError; end
 
+  REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
+
   class << self
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
@@ -127,12 +129,18 @@ class HearingRepository
           "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
           non_active_hearing_dispositions: [:postponed, :cancelled]
         )
+        .where(
+          "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
+        )
         .where(scheduled_within_seven_days)
 
       legacy_ready = []
       # VACOLS can support a max of 1000 at a time which is the in_batches default
       LegacyHearing
         .joins("INNER JOIN hearing_days ON hearing_days.id = legacy_hearings.hearing_day_id")
+        .where(
+          "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
+        )
         .where(scheduled_within_seven_days).in_batches do |vhs|
         vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
         # the subset of hearings that are postponed or cancelled in VACOLS
@@ -163,6 +171,16 @@ class HearingRepository
         hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
         ) BETWEEN 1 AND 7
       SQL
+    end
+
+    # This exists to exclude hearing_days with the type :travel, while we don't have
+    # many of them, they do exist and we don't want to send reminders for them yet.
+    def hearing_day_types_to_send_reminders_for
+      [
+        REQUEST_TYPES[:virtual],
+        REQUEST_TYPES[:video],
+        REQUEST_TYPES[:central]
+      ]
     end
 
     # Gets the regional office to use when mapping the VACOLS hearing date to
