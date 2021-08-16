@@ -423,9 +423,12 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+      PreDocketTasksFactory.new(self).create_pre_docket_task!
+    else
+      InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    end
     create_business_line_tasks!
-    maybe_create_translation_task
   end
 
   # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch

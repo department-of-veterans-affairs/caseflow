@@ -19,11 +19,8 @@ class InitialTasksFactory
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
-      if @appeal.vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals,
-                                                           user: RequestStore.store[:current_user])
-        create_pre_docket_tasks
-      end
     end
+    @appeal.maybe_create_translation_task
   end
 
   private
