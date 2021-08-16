@@ -79,13 +79,13 @@ export const ScheduleVeteranForm = ({
     userCanCollectVideoCentralEmails,
     showDivider: false,
     schedulingToVirtual: virtual,
-    emailRecipients: hearing?.emailRecipients,
+    virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
     showTimezoneField: true,
-    update: (_, emailRecipients) =>
-      props.onChange('emailRecipients', {
-        ...hearing?.emailRecipients,
-        ...emailRecipients,
+    update: (_, virtualHearing) =>
+      props.onChange('virtualHearing', {
+        ...hearing?.virtualHearing,
+        ...virtualHearing,
       })
   };
 

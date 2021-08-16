@@ -13,7 +13,7 @@ import { marginTop } from '../details/style';
 
 export const RepresentativeSection = ({
   hearing,
-  emailRecipients,
+  virtualHearing,
   errors,
   type,
   readOnly,
@@ -44,12 +44,12 @@ export const RepresentativeSection = ({
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
-            optional={!emailRecipients?.representativeEmail}
+            optional={!virtualHearing?.representativeEmail}
             errorMessage={errors?.representativeTz}
-            required={Boolean(emailRecipients?.representativeEmail)}
-            value={emailRecipients?.representativeTz}
+            required={Boolean(virtualHearing?.representativeEmail)}
+            value={virtualHearing?.representativeTz}
             onChange={(representativeTz) =>
-              update('emailRecipients', { representativeTz })
+              update('virtualHearing', { representativeTz })
             }
             time={hearing.scheduledTimeString}
             roTimezone={hearing?.regionalOfficeTimezone}
@@ -67,7 +67,7 @@ export const RepresentativeSection = ({
           readOnly={readOnly}
           emailType="representativeEmail"
           label="POA/Representative Email"
-          email={emailRecipients?.representativeEmail}
+          email={virtualHearing?.representativeEmail}
           error={errors?.representativeEmail}
           type={type}
           update={update}
@@ -83,7 +83,7 @@ RepresentativeSection.defaultProps = {
 
 RepresentativeSection.propTypes = {
   hearing: PropTypes.object,
-  emailRecipients: PropTypes.object,
+  virtualHearing: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,

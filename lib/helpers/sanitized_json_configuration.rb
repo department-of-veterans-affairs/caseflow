@@ -215,6 +215,8 @@ class SanitizedJsonConfiguration
 
         # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
+
+        class_to_fieldnames_hash.transform_values!(&:uniq)
       end.compact
     end
   end

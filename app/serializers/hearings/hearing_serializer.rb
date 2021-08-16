@@ -42,9 +42,10 @@ class HearingSerializer
   attribute :docket_number
   attribute :email_recipients do |object|
     {
-      judge: object.judge_recipient,
-      representative: object.representative_recipient,
-      appellant: object.appellant_recipient
+      representativeTz: object.representative_recipient&.timezone,
+      representativeEmail: object.representative_recipient&.email_address,
+      appellantTz: object.appellant_recipient&.timezone
+      appellantEmail: object.appellant_recipient&.email_address
     }
   end
   attribute :evidence_window_waived
