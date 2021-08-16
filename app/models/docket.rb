@@ -58,6 +58,7 @@ class Docket
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
+  # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
     appeals = appeals(priority: priority, ready: true).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
