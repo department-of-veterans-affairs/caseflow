@@ -194,8 +194,8 @@ cached_user_attributes,sattyid,string,,,,,,
 cached_user_attributes,sdomainid,string PK,x,x,,,x,
 cached_user_attributes,slogid,string ∗,x,,,,,
 cached_user_attributes,smemgrp,string (8),,,,,,
-cached_user_attributes,snamef,string,,,,,,
-cached_user_attributes,snamel,string,,,,,,
+cached_user_attributes,snamef,string,,,,,,User's First Name in VACOLS
+cached_user_attributes,snamel,string,,,,,,User's Last Name in VACOLS
 cached_user_attributes,stafkey,string ∗,x,,,,,
 cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
