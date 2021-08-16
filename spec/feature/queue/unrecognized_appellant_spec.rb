@@ -136,7 +136,7 @@ feature "Unrecognized appellants", :postgres do
     end
   end
 
-  fcontext "with attorney unrecognized appellant poa" do
+  context "with attorney unrecognized appellant poa" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant_poa) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant_poa) }
 
