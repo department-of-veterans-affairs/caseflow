@@ -340,7 +340,12 @@ class VACOLS::Case < VACOLS::Record
     result = VACOLS::Representative.where(repkey: bfkey)
     return result if result.present?
 
-    VACOLS::Representative.where(repcorkey: bfcorkey)
+    # If there is no representative for this associated with this case, fall back to other representatives who have
+    # represented the appellant in previous cases, but exclude contested claimants.
+    VACOLS::Representative.where(
+      repcorkey: bfcorkey,
+      reptype: VACOLS::Representative::APPELLANT_REPTYPES.values.pluck(:code)
+    )
   end
 
   def previous_active_location

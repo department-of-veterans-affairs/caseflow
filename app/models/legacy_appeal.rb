@@ -387,7 +387,9 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def contested_claim
-    vacols_representatives.any? { |r| r.reptype == "C" }
+    vacols_representatives.any? do |r|
+      VACOLS::Representative::CONTESTED_REPTYPES.values.pluck(:code).include?(r.reptype)
+    end
   end
 
   def claimant
