@@ -286,10 +286,13 @@ describe Hearings::SendReminderEmailsJob do
     context "when there is a virtual hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:ama_disposition) { nil }
+      let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+      let(:hearing_day_ro) { "RO01" }
       let(:hearing_day) do
         create(
           :hearing_day,
-          :virtual,
+          regional_office: hearing_day_ro,
+          request_type: hearing_day_request_type,
           scheduled_for: hearing_date
         )
       end
@@ -319,7 +322,18 @@ describe Hearings::SendReminderEmailsJob do
       end
 
       subject { Hearings::SendReminderEmailsJob.new.perform }
-      include_examples "send reminder emails"
+      context "virtual hearing_day" do
+        include_examples "send reminder emails"
+      end
+      context "video hearing_day" do
+        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        include_examples "send reminder emails"
+      end
+      context "central hearing_day" do
+        let(:hearing_day_ro) { nil }
+        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:central] }
+        include_examples "send reminder emails"
+      end
     end
 
     context "when there is no virtual hearing" do
@@ -340,7 +354,7 @@ describe Hearings::SendReminderEmailsJob do
           created_at: Time.zone.now - 14.days
         )
       end
-      let(:appellant_recipient) do
+      let!(:appellant_recipient) do
         create(
           :hearing_email_recipient,
           :appellant_hearing_email_recipient,
@@ -348,7 +362,7 @@ describe Hearings::SendReminderEmailsJob do
           timezone: "America/New_York"
         )
       end
-      let(:representative_recipient) do
+      let!(:representative_recipient) do
         create(
           :hearing_email_recipient,
           :representative_hearing_email_recipient,
@@ -359,11 +373,6 @@ describe Hearings::SendReminderEmailsJob do
 
       subject { Hearings::SendReminderEmailsJob.new.perform }
 
-      before do
-        # If these aren't called before running tests the db object never gets created.
-        appellant_recipient
-        representative_recipient
-      end
       # When we start sending the emails for video/central hearings:
       # - Use this instead: include_examples "send reminder emails"
       # - Delete the "reminder emails logged but not sent" shared_examples
