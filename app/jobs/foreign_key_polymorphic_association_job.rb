@@ -59,7 +59,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     MSG
     slack_service.send_notification(message)
     # Also send a message to #appeals-data-workgroup
-    slack_service.send_notification(slack_msg, klass, "#appeals-data-workgroup")
+    slack_service.send_notification(message, klass, "#appeals-data-workgroup")
   end
 
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:
