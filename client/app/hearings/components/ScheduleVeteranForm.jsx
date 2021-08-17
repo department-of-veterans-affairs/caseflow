@@ -225,16 +225,8 @@ export const ScheduleVeteranForm = ({
             <div className="usa-width-one-whole" >
               <h2>Email Notifications {!virtual && '(Optional)'}</h2>
               <p>{formatNotificationLabel(hearing, virtual, appellantTitle)}</p>
-              <AppellantSection
-                {...sectionProps}
-                virtual={virtual}
-                fullWidth
-              />
-              <RepresentativeSection
-                {...sectionProps}
-                virtual={virtual}
-                fullWidth
-              />
+              <AppellantSection {...sectionProps} fullWidth />
+              <RepresentativeSection {...sectionProps} fullWidth />
             </div>
           </React.Fragment>
         )}
