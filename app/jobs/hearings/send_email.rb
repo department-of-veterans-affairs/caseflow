@@ -73,8 +73,7 @@ class Hearings::SendEmail
     when "updated_time_confirmation"
       HearingMailer.updated_time_confirmation(**args)
     when "appellant_reminder", "representative_reminder"
-      args[:hearing] = hearing
-      HearingMailer.reminder(**args)
+      HearingMailer.reminder(**args, hearing: hearing)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
