@@ -339,10 +339,13 @@ describe Hearings::SendReminderEmailsJob do
     context "when there is no virtual hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:ama_disposition) { nil }
+      let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day_ro) { "RO01" }
       let(:hearing_day) do
         create(
           :hearing_day,
-          :virtual,
+          request_type: hearing_day_request_type,
+          regional_office: hearing_day_ro,
           scheduled_for: hearing_date
         )
       end
@@ -377,8 +380,15 @@ describe Hearings::SendReminderEmailsJob do
       # - Use this instead: include_examples "send reminder emails"
       # - Delete the "reminder emails logged but not sent" shared_examples
       # - Delete the "logs but doesn't send for type" shared_examples
-
-      include_examples "reminder emails logged but not sent"
+      context "video hearing_day" do
+        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        include_examples "reminder emails logged but not sent"
+      end
+      context "central hearing_day" do
+        let(:hearing_day_ro) { nil }
+        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:central] }
+        include_examples "reminder emails logged but not sent"
+      end
     end
   end
 end
