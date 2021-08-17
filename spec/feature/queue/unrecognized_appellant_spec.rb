@@ -140,11 +140,12 @@ feature "Unrecognized appellants", :postgres do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant_poa) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant_poa) }
 
-    it "should show the edit information button if there's a POA already" do
+    it "should not show the edit information button if there's a POA already" do
       visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
-      expect(page).to have_content("Edit Information")
+      expect(page).not_to have_content("Edit Information")
     end
     it "should show the update POA button if there's no POA" do
+      allow(user).to receive(:vacols_roles).and_return(["colocated"])
       visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
       expect(page).to have_content("Update POA")
 
