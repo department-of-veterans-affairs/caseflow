@@ -15,15 +15,16 @@ class InitialTasksFactory
     end
   end
 
+  delegate :veteran, to: :@appeal
+
+  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
+
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
-      if @appeal.vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals,
-                                                           user: RequestStore.store[:current_user])
-        create_pre_docket_tasks
-      end
     end
+    maybe_create_translation_task
   end
 
   private
@@ -70,10 +71,6 @@ class InitialTasksFactory
   def create_ihp_task
     # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
-  end
-
-  def create_pre_docket_tasks
-    PreDocketTasksFactory.new(@appeal).create_pre_docket_task!
   end
 
   def create_selected_tasks
@@ -170,5 +167,15 @@ class InitialTasksFactory
     return false if @appeal.veteran.alive?
 
     FeatureToggle.enabled?(:death_dismissal_streamlining)
+  end
+
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran&.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 end
