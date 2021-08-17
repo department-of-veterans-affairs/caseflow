@@ -84,7 +84,7 @@ class IntakeRenderer
   # :nocov:
 
   def decision_review_details(decision_review)
-    ["rcvd #{decision_review.receipt_date.to_s}", decision_review.uuid]
+    ["rcvd #{decision_review.receipt_date}", decision_review.uuid]
   end
 
   def decision_review_children(decision_review)
@@ -160,7 +160,7 @@ class IntakeRenderer
       [epe.established_at, "established"],
       [epe.last_synced_at, "last synced: #{epe.synced_status || 'nil'}"]
     ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
   end
 
   def end_product_establishment_context(epe)
@@ -199,7 +199,7 @@ class IntakeRenderer
       child = "ineligible (#{request_issue.ineligible_reason})"
       if request_issue.ineligible_due_to_id.present?
         child = {
-          "#{child}" => ["due to #{label(request_issue.ineligible_due_to)}"]
+          child.to_s => ["due to #{label(request_issue.ineligible_due_to)}"]
         }
       end
       children << child
@@ -220,7 +220,7 @@ class IntakeRenderer
       [request_issue.decision_sync_attempted_at, "decision sync attempted"],
       [request_issue.decision_sync_canceled_at, "decision sync canceled"]
     ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
   end
 
   def request_issue_context(request_issue)
