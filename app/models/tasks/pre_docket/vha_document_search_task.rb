@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
 ##
-# When there is a PreDocket task, it means that an intake needs additional review before the decision review
-# can proceed to being worked. Once the PreDocket task is complete, the review can be docketed (for appeals) or
-# established (for claim reviews). The BVA Intake team may also cancel the review if after additional review, it
-# is not ready to continue to being worked.
+# Task tracking work searching for decision documents related to VHA issues. CAMO coordinates this and can assign
+# to a VHA Program office. When it's complete, they can return it to BVA Intake to recommend docketing or cancellation.
 
 class VhaDocumentSearchTask < Task
-  
+  validates :parent, presence: true
+
+  def available_actions(user)
+    return [] unless user.organizations.include?(assigned_to)
+
+    []
+  end
+
+
+  def self.label
+    COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
+  end
 end
