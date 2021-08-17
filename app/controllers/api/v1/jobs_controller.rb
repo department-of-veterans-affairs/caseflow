@@ -11,6 +11,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
+    "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,
     "etl_builder" => ETLBuilderJob,
     "heartbeat" => HeartbeatTasksJob,
     "incomplete_distributions_job" => IncompleteDistributionsJob,
