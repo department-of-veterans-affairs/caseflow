@@ -57,7 +57,7 @@ export const ScheduleVeteranForm = ({
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
   const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
-  const getOriginalRequestType = () => {
+  const getHearingRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
     ) {
@@ -134,7 +134,7 @@ export const ScheduleVeteranForm = ({
           <HearingTypeDropdown
             enableFullPageConversion
             update={convertToVirtual}
-            originalRequestType={getOriginalRequestType()}
+            originalRequestType={getHearingRequestType()}
             virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
@@ -225,16 +225,8 @@ export const ScheduleVeteranForm = ({
             <div className="usa-width-one-whole" >
               <h2>Email Notifications {!virtual && '(Optional)'}</h2>
               <p>{formatNotificationLabel(hearing, virtual, appellantTitle)}</p>
-              <AppellantSection
-                {...sectionProps}
-                virtual={virtual}
-                fullWidth
-              />
-              <RepresentativeSection
-                {...sectionProps}
-                virtual={virtual}
-                fullWidth
-              />
+              <AppellantSection {...sectionProps} fullWidth />
+              <RepresentativeSection {...sectionProps} fullWidth />
             </div>
           </React.Fragment>
         )}
