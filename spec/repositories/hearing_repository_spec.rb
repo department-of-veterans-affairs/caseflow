@@ -167,10 +167,25 @@ describe HearingRepository, :all_dbs do
         request_type: HearingDay::REQUEST_TYPES[:video]
       )
     end
-    let(:hearing) do
+    let(:central_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: nil,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:central]
+      )
+    end
+    let!(:hearing) do
       create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
     end
     let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: hearing) }
+
+    let!(:video_hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
+    end
+    let!(:central_hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: central_hearing_day, disposition: ama_disposition)
+    end
 
     subject { described_class.maybe_ready_for_reminder_email }
 
@@ -178,8 +193,8 @@ describe HearingRepository, :all_dbs do
       context "within 7 days" do
         let(:hearing_date) { Time.zone.now + 7.days }
 
-        it "returns the hearing" do
-          expect(subject).to eq([hearing])
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
         end
       end
 
