@@ -670,7 +670,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
 
-    fcontext "when veteran file number doesn't match BGS file number" do
+    context "when veteran file number doesn't match BGS file number" do
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { "123123123" }
       end
@@ -682,7 +682,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         task = BvaDispatchTask.find_by(appeal: root_task.appeal, assigned_to: user)
         error_message = "Expected veteran file number to match BGS file number appeal #{root_task.appeal.id}, " \
-                        "user #{user.id}" 
+                        "user #{user.id}"
 
         expect(response_detail).to eq error_message
       end
