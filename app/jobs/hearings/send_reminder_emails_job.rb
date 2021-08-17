@@ -40,9 +40,9 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
     created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
     Hearings::ReminderService
       .new(
-        hearing,
-        hearing.appellant_recipient&.reminder_sent_at,
-        created_at
+        hearing: hearing,
+        last_sent_reminder: hearing.appellant_recipient&.reminder_sent_at,
+        created_at: created_at
       ).should_send_reminder_email?
   end
 
@@ -52,9 +52,9 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
     created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
     Hearings::ReminderService
       .new(
-        hearing,
-        hearing.representative_recipient&.reminder_sent_at,
-        created_at
+        hearing: hearing,
+        last_sent_reminder: hearing.representative_recipient&.reminder_sent_at,
+        created_at: created_at
       ).should_send_reminder_email?
   end
 end

@@ -5,7 +5,7 @@
 # about their hearing.
 
 class Hearings::ReminderService
-  def initialize(hearing, last_sent_reminder, created_at)
+  def initialize(hearing:, last_sent_reminder:, created_at:)
     @hearing = hearing
     @last_sent_reminder = last_sent_reminder
     @created_at = created_at
