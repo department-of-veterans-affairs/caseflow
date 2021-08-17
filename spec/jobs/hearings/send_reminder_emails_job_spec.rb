@@ -322,14 +322,14 @@ describe Hearings::SendReminderEmailsJob do
       end
 
       subject { Hearings::SendReminderEmailsJob.new.perform }
-      context "virtual hearing_day" do
+      context "virtual hearing" do
         include_examples "send reminder emails"
       end
-      context "video hearing_day" do
+      context "video hearing" do
         let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
         include_examples "send reminder emails"
       end
-      context "central hearing_day" do
+      context "central hearing" do
         let(:hearing_day_ro) { nil }
         let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:central] }
         include_examples "send reminder emails"
