@@ -154,7 +154,7 @@ class Hearings::SendEmail
     # veteran is or isn't the appellant, but the email event can be more specific.
     recipient_is_veteran = (
       recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
-      !hearing.appeal.appellant_is_not_veteran
+      !appeal.appellant_is_not_veteran
     )
 
     ::SentHearingEmailEvent.create!(
@@ -181,7 +181,7 @@ class Hearings::SendEmail
 
   def representative_recipient_info
     EmailRecipientInfo.new(
-      name: hearing.appeal.representative_name,
+      name: appeal.representative_name,
       title: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
       hearing_email_recipient: representative_recipient
     )
@@ -200,13 +200,13 @@ class Hearings::SendEmail
   end
 
   def appellant_recipient_info
-    recipient_name = if hearing.appeal.appellant_is_not_veteran
-                       hearing.appeal.appellant_name
+    recipient_name = if appeal.appellant_is_not_veteran
+                       appeal.appellant_name
                      elsif veteran.present?
                        validate_veteran_deceased
                        validate_veteran_name
 
-                       hearing.appeal.veteran_full_name
+                       appeal.veteran_full_name
                      else
                        "Appellant"
                      end
