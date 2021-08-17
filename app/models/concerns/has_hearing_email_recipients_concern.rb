@@ -92,27 +92,25 @@ module HasHearingEmailRecipientsConcern
     end
   end
 
-  ## BEGIN Email Related accessors
   def veteran_email_address
     appellant_email_address
   end
 
   def appellant_email_address
-    appellant_recipient.present? ? appellant_recipient.email_address : appeal.appellant_email_address
+    appellant_recipient&.email_address&.presence || appeal&.appellant_email_address
   end
 
   def appellant_tz
-    appellant_recipient.present? ? appellant_recipient.timezone : appeal.appellant_tz
+    appellant_recipient&.timezone&.presence || appeal&.appellant_tz
   end
 
   def representative_email_address
-    representative_recipient.present? ? representative_recipient.email_address : appeal&.representative_email_address
+    representative_recipient&.email_address&.presence || appeal&.representative_email_address
   end
 
   def representative_tz
-    representative_recipient.present? ? representative_recipient.timezone : appeal&.representative_tz
+    representative_recipient&.timezone&.presence || appeal&.representative_tz
   end
-
 
   private
 
