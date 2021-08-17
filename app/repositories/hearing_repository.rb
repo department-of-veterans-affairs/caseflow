@@ -4,8 +4,6 @@
 class HearingRepository
   class HearingDayFull < StandardError; end
 
-  REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
-
   class << self
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
@@ -177,9 +175,9 @@ class HearingRepository
     # many of them, they do exist and we don't want to send reminders for them yet.
     def hearing_day_types_to_send_reminders_for
       [
-        REQUEST_TYPES[:virtual],
-        REQUEST_TYPES[:video],
-        REQUEST_TYPES[:central]
+        HearingDay::REQUEST_TYPES[:virtual],
+        HearingDay::REQUEST_TYPES[:video],
+        HearingDay::REQUEST_TYPES[:central]
       ]
     end
 
