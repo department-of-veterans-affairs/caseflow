@@ -380,6 +380,7 @@ describe Hearings::SendReminderEmailsJob do
       # - Use this instead: include_examples "send reminder emails"
       # - Delete the "reminder emails logged but not sent" shared_examples
       # - Delete the "logs but doesn't send for type" shared_examples
+      # See reminder_service_spec as well
       context "video hearing_day" do
         let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
         include_examples "reminder emails logged but not sent"
