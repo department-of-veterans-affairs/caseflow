@@ -20,8 +20,9 @@ class Hearings::ReminderService
   def reminder_type
     return if days_until_hearing <= 0
 
+    type_of_reminder = which_type_of_reminder_to_send
     # Only log 60 day reminder type email but do not send
-    return if which_type_of_reminder_to_send == SIXTY_DAY_REMINDER
+    return if type_of_reminder == SIXTY_DAY_REMINDER
 
     # This stops reminder emails from going out for any video/central hearings until
     # we to enable that. Because it still calls 'which_type_of_reminder_to_send'
@@ -29,8 +30,7 @@ class Hearings::ReminderService
     #
     # Because hearing.virtual? will return false for any 'cancelled' virtual
     # hearings, this prevents reminder emails for cancelled virtual hearings.
-    #
-    which_type_of_reminder_to_send && hearing.virtual?
+    type_of_reminder && hearing.virtual?
   end
 
   private

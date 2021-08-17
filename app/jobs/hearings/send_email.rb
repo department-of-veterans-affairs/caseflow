@@ -55,7 +55,7 @@ class Hearings::SendEmail
 
     if type.include?("representative") &&
        type.include?("reminder") &&
-       !hearing.representative_recipient.email_address.nil? &&
+       hearing.representative_recipient.email_address.present? &&
        send_email(representative_recipient_info)
 
       return true
