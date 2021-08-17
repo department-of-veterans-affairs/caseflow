@@ -171,7 +171,7 @@ class InitialTasksFactory
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran.validate_address
+    va_dot_gov_address = veteran&.validate_address
     state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
   rescue Caseflow::Error::VaDotGovAPIError
     state_code = veteran_state_code
