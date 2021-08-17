@@ -80,12 +80,12 @@ export default function TestUsers(props) {
     });
   };
 
-  const userOptions = props.testUsersList.map((user) => ({
-    value: user.id,
-    label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
-  }));
-
   const filteredUserOptions = useMemo(() => {
+    const userOptions = props.testUsersList.map((user) => ({
+      value: user.id,
+      label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
+    }));
+
     if (!inputValue) {
       return userOptions;
     }
