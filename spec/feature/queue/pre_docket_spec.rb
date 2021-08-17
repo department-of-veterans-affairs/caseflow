@@ -51,6 +51,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       created_task_types = Set.new(appeal.tasks.map(&:type))
       pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
+
       docket_tasks = Set.new %w[
         DistributionTask
         TrackVeteranTask
