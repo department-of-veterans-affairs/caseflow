@@ -41,12 +41,19 @@ FactoryBot.define do
     end
 
     trait :judge do
+      with_judge_team
       roles { ["Hearing Prep"] }
     end
 
     trait :with_vacols_judge_record do
       after(:create) do |user|
         create(:staff, :judge_role, user: user)
+      end
+    end
+
+    trait :with_judge_team do
+      after(:create) do |judge|
+        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
       end
     end
 
