@@ -30,6 +30,7 @@ class HearingDay < CaseflowRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
+  has_one :vacols_user, through: :judge
   has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
