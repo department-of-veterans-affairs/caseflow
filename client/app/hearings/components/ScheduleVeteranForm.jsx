@@ -57,7 +57,7 @@ export const ScheduleVeteranForm = ({
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
   const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
-  const getOriginalRequestType = () => {
+  const getHearingRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
     ) {
@@ -134,7 +134,7 @@ export const ScheduleVeteranForm = ({
           <HearingTypeDropdown
             enableFullPageConversion
             update={convertToVirtual}
-            originalRequestType={getOriginalRequestType()}
+            originalRequestType={getHearingRequestType()}
             virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
