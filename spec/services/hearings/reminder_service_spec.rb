@@ -172,7 +172,9 @@ describe Hearings::ReminderService do
   # See: send_reminder_emails_job_spec as well.
   # context "with no virtual hearing" do
   #  let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
-  #  let(:hearing) { create(:hearing, hearing_day: hearing_day, created_at: created_at) } # scheduled_time is always 8:30 AM ET
+  #  let(:hearing) do
+  #    create(:hearing, hearing_day: hearing_day, created_at: created_at) } # scheduled_time is always 8:30 AM ET
+  #  end
   #
   #  before do
   #    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
