@@ -1534,6 +1534,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
+    # To-do: consider removing this index, which is superceded by the
+    # addition of index_vbms_uploaded_documents_on_appeal_type_and_appeal_id
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
     t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
