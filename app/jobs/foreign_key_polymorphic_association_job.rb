@@ -39,13 +39,11 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   end
 
   def find_bad_records(klass, config)
-    puts "Checking #{klass}"
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
     orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
     send_alert("Found orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
     if config[:type_column]
-      puts "unusual_records"
       unusual_record_ids = unusual_records(klass, config).pluck(*select_fields)
       send_alert("Found unusual records", klass, config, unusual_record_ids) if unusual_record_ids.any?
     end
@@ -59,7 +57,6 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
         (id, #{config[:type_column]}, #{config[:id_column]})
         #{record_ids.map(&:to_s).join('\n')}
     MSG
-    puts message
     slack_service.send_notification(message)
   end
 

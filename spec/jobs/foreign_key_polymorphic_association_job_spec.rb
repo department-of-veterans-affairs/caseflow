@@ -139,7 +139,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
   context "when checking Claimant.participant_id foreign key" do
     let(:claimant) { appeal.claimant }
-    # before { 2.times { create(:claimant) } }
+    before { 2.times { create(:appeal) } }
     context "associated Person exists" do
       it "does not send alert" do
         expect(claimant.reload_person).not_to eq nil
@@ -155,7 +155,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       it "sends alert" do
         expect(claimant.reload_person).to eq nil
         expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
-        expect(Person.count).to eq 0
+        expect(Claimant.count).to eq 3
+        expect(Person.count).to eq 2
         subject
 
         message = /Found orphaned records for Claimant:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
@@ -163,7 +164,4 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       end
     end
   end
-
-  # WillD TODO: Expand existing tests and add more tests for some of the other classes in
-  # CLASSES_WITH_POLYMORPH_ASSOC, i.e., those related to hearings
 end
