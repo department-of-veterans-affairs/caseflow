@@ -107,7 +107,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         # 1 SELECT for orphan_records + 1 SELECT for unusual_records
         expect(query_subscriber.select_queries(/"special_issue_lists"/).size).to eq 2
 
-        message = /Found [[:digit:]]+ orphaned records for SpecialIssueList:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
+        heading = "Found [[:digit:]]+ orphaned records for SpecialIssueList"
+        message = /#{heading}:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
         expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
     end
@@ -159,7 +160,8 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         expect(Person.count).to eq 2
         subject
 
-        message = /Found [[:digit:]]+ orphaned records for Claimant:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
+        heading = "Found [[:digit:]]+ orphaned records for Claimant"
+        message = /#{heading}:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
         expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
     end
