@@ -282,8 +282,8 @@ claim_establishments,task_id,integer FK,,,x,,,
 claim_establishments,updated_at,datetime ∗,x,,,,x,
 claimants,,,,,,,,This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews.
 claimants,created_at,datetime,,,,,,
-claimants,decision_review_id,integer (8) FK,,,x,,x,The ID of the decision review the claimant is on.
-claimants,decision_review_type,string,,,,,x,The type of decision review the claimant is on.
+claimants,decision_review_id,integer (8) ∗ FK,x,,x,,x,The ID of the decision review the claimant is on.
+claimants,decision_review_type,string ∗,x,,,,x,The type of decision review the claimant is on.
 claimants,id,integer (8) PK,x,x,,,,
 claimants,notes,text,,,,,,This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant.
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
