@@ -3,8 +3,8 @@
 require "helpers/association_wrapper.rb"
 
 describe "AssocationWrapper" do
+  subject { AssocationWrapper.new(target_class) }
   describe "#fieldnames and #select_associations}" do
-    subject { AssocationWrapper.new(target_class) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns those with specific foreign_type" do
@@ -23,7 +23,9 @@ describe "AssocationWrapper" do
                  [:appeal, "Appeal", nil, true, "appeal_type"],
                  [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
                  [:task_timers, "TaskTimer", nil, nil, nil],
-                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
+                 [:cached_appeal, "CachedAppeal", nil, nil, nil],
+                 [:ama_appeal, "Appeal", "Appeal", nil, nil],
+                 [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil]
                ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
@@ -35,7 +37,9 @@ describe "AssocationWrapper" do
           [:appeal, nil],
           [:attorney_case_reviews, nil],
           [:task_timers, nil],
-          [:cached_appeal, nil]
+          [:cached_appeal, nil],
+          [:ama_appeal, nil],
+          [:legacy_appeal, nil]
         ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
@@ -47,7 +51,9 @@ describe "AssocationWrapper" do
           [:appeal, nil],
           [:attorney_case_reviews, nil],
           [:task_timers, nil],
-          [:cached_appeal, :appeal_id]
+          [:cached_appeal, :appeal_id],
+          [:ama_appeal, "appeal_id"],
+          [:legacy_appeal, "appeal_id"]
         ]
 
         map_foreign_keys = lambda { |assoc|
@@ -65,6 +71,9 @@ describe "AssocationWrapper" do
           [:assigned_by, true, false, "assigned_by_id", "user_id", nil],
           [:cancelled_by, true, false, "cancelled_by_id", "user_id", nil],
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
+          # belongs_to created dynamically by BelongsToPolymorphicAppealConcern
+          [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
+          [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
@@ -72,6 +81,33 @@ describe "AssocationWrapper" do
           # has_one declared in Task
           [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
         ]
+      end
+    end
+    describe "#polymorphic" do
+      subject { AssocationWrapper.new(target_class).belongs_to.polymorphic }
+      context "for DecisionDocument class" do
+        let(:target_class) { DecisionDocument }
+        it "returns those with polymorphic belongs_to associations" do
+          assocs = subject.associated_with_type(Appeal).select_associations
+          expect(assocs.length).to eq 1
+          assoc = assocs.first
+          expect(assoc.name).to eq :appeal
+          expect(assoc.class_name).to eq "Appeal"
+          expect(assoc.foreign_type).to eq "appeal_type"
+          expect(assoc.foreign_key).to eq "appeal_id"
+        end
+      end
+      context "for DecisionIssue class" do
+        let(:target_class) { DecisionIssue }
+        it "returns those with polymorphic belongs_to associations" do
+          assocs = subject.associated_with_type(DecisionReview).select_associations
+          expect(assocs.length).to eq 1
+          assoc = assocs.first
+          expect(assoc.name).to eq :decision_review
+          expect(assoc.class_name).to eq "DecisionReview"
+          expect(assoc.foreign_type).to eq "decision_review_type"
+          expect(assoc.foreign_key).to eq "decision_review_id"
+        end
       end
     end
   end

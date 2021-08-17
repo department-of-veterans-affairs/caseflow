@@ -80,8 +80,16 @@ module ErdRecordAssociations
     klass.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to }
   end
 
+  EXCLUDED_ASSOCIATIONS = [
+    # These are common Rails fields that clutter the visualization
+    :created_by, :updated_by,
+
+    # These associations are created dynamically by BelongsToPolymorphicAppealConcern
+    # and is already indicated in the visualization
+    :ama_appeal, :legacy_appeal, :supplemental_claim, :higher_level_review
+  ].freeze
   def exclude_verbose_associations(associations)
-    associations.reject { |assoc| [:created_by, :updated_by].include?(assoc.name) }
+    associations.reject { |assoc| EXCLUDED_ASSOCIATIONS.include?(assoc.name) }
   end
 
   def target_node_for_association(graph, klass, assoc)

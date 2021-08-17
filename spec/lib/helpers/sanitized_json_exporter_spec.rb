@@ -208,13 +208,17 @@ describe "SanitizedJsonExporter/Importer" do
         AppealIntake => ["detail_id"],
         DecisionDocument => ["appeal_id"]
       }
-      expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+      expect(configuration.reassociate_fields[:type]).to eq reassociate_fields_for_polymorphics
 
       reassociate_fields_for_appeal = {
         CavcRemand => %w[source_appeal_id remand_appeal_id],
-        Hearing => ["appeal_id"]
+        Claimant => ["decision_review_id"],
+        DecisionDocument => ["appeal_id"],
+        DecisionIssue => ["decision_review_id"],
+        Hearing => ["appeal_id"],
+        Task => %w[appeal_id]
       }
-      expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
+      expect(configuration.reassociate_fields["Appeal"]).to match_array reassociate_fields_for_appeal
 
       reassociate_fields_for_user = {
         AppealIntake => ["user_id"],
@@ -227,7 +231,7 @@ describe "SanitizedJsonExporter/Importer" do
         VirtualHearing => %w[updated_by_id created_by_id],
         OrganizationsUser => ["user_id"]
       }
-      expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
+      expect(configuration.reassociate_fields["User"]).to eq reassociate_fields_for_user
     end
   end
 
