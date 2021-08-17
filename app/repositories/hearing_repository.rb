@@ -177,7 +177,7 @@ class HearingRepository
           selected_vacols_ids =
             VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
 
-          legacy_ready << vhs.where(
+          legacy_maybe_ready << vhs.where(
             "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
             postponed_or_cancelled_vacols_ids: selected_vacols_ids
           ).to_a
