@@ -3,5 +3,6 @@
 class SpecialIssueList < CaseflowRecord
   include HasAppealUpdatedSince
 
-  belongs_to :appeal, polymorphic: true
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
 end
