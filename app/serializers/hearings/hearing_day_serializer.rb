@@ -8,10 +8,26 @@ class HearingDaySerializer
   attribute :created_by_id
   attribute :deleted_at
   attribute :id
-  attribute :judge_first_name
+  attribute :judge_first_name do |hearing_day, params|
+    if params[:judges_names].present?
+      params[:judges_names]
+        .fetch(hearing_day.id, {})
+        .fetch(:first_name, "")
+    else
+      hearing_day.judge_first_name
+    end
+  end
   attribute :judge_id
   attribute :judge_css_id
-  attribute :judge_last_name
+  attribute :judge_last_name do |hearing_day, params|
+    if params[:judges_names].present?
+      params[:judges_names]
+        .fetch(hearing_day.id, {})
+        .fetch(:last_name, "")
+    else
+      hearing_day.judge_last_name
+    end
+  end
   attribute :lock
   attribute :notes
   attribute :readable_request_type do |hearing_day, params|
@@ -61,13 +77,15 @@ class HearingDaySerializer
       if FeatureToggle.enabled?(:view_and_download_hearing_scheduled_column, user: current_user)
         HearingDayFilledSlotsQuery.new(hearing_days).call
       end
+    judges_names = HearingDayJudgeNameQuery.new(hearing_days).call
 
     ::HearingDaySerializer.new(
       hearing_days,
       collection: true,
       params: {
         video_hearing_days_request_types: video_hearing_days_request_types,
-        filled_slots_count_for_days: filled_slots_count_for_days
+        filled_slots_count_for_days: filled_slots_count_for_days,
+        judges_names: judges_names
       }
     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
