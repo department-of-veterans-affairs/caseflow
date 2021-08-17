@@ -229,16 +229,16 @@ class ScheduleHearingTask < Task
 
   def create_email_recipients(hearing, recipient)
     if recipient["appellant_email"].present?
-      AppellantHearingEmailRecipient.create!(
-        hearing: hearing,
+      hearing.create_or_update_recipients(
+        type: AppellantHearingEmailRecipient,
         email_address: recipient["appellant_email"],
         timezone: recipient["appellant_tz"]
       )
     end
 
     if recipient["representative_email"].present?
-      RepresentativeHearingEmailRecipient.create!(
-        hearing: hearing,
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
         email_address: recipient["representative_email"],
         timezone: recipient["representative_tz"]
       )
