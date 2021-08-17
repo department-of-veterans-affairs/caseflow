@@ -78,23 +78,25 @@ class IntakeRenderer
     reviews = [Appeal, HigherLevelReview, SupplementalClaim].map do |klass|
       klass.where(veteran_file_number: veteran.file_number)
     end.flatten
-    reviews.sort_by! { |dr| dr.receipt_date || Time.zone.today }
-    reviews.map { |dr| structure(dr) }
+    reviews.sort_by! { |decision_review| decision_review.receipt_date || Time.zone.today }
+    reviews.map { |decision_review| structure(decision_review) }
   end
   # :nocov:
 
-  def decision_review_details(dr)
-    ["rcvd #{dr.receipt_date.to_s}", dr.uuid]
+  def decision_review_details(decision_review)
+    ["rcvd #{decision_review.receipt_date.to_s}", decision_review.uuid]
   end
 
-  def decision_review_children(dr)
+  def decision_review_children(decision_review)
     children = []
-    children << "est. err: #{truncate(dr.establishment_error, 60)}" if dr.establishment_error.present?
-    children << (structure(dr.claimant) || "no claimant")
-    children << (structure(dr.intake) || "no intake")
+    if decision_review.establishment_error.present?
+      children << "est. err: #{truncate(decision_review.establishment_error, 60)}"
+    end
+    children << (structure(decision_review.claimant) || "no claimant")
+    children << (structure(decision_review.intake) || "no intake")
 
-    epes = dr.try(:end_product_establishments)&.to_a
-    other_ris = dr.request_issues.where(end_product_establishment: nil).map { |ri| structure(ri) }
+    epes = decision_review.try(:end_product_establishments)&.to_a
+    other_ris = decision_review.request_issues.where(end_product_establishment: nil).map { |ri| structure(ri) }
     if epes.present?
       children += epes.map { |epe| structure(epe) }
       children << { "other issues:": other_ris } if other_ris.present?
@@ -102,14 +104,14 @@ class IntakeRenderer
       children += other_ris
     end
 
-    children += dr.request_issues_updates.map { |riu| structure(riu) }
-    children += dr.decision_issues.map { |di| structure(di) }
+    children += decision_review.request_issues_updates.map { |riu| structure(riu) }
+    children += decision_review.decision_issues.map { |di| structure(di) }
 
     children
   end
 
-  def decision_review_context(dr)
-    dr.veteran
+  def decision_review_context(decision_review)
+    decision_review.veteran
   end
 
   def claimant_details(claimant)
