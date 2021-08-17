@@ -9345,6 +9345,7 @@ SAN FRANCISCO, CA 94103
                 label="Veteran Email"
                 optional={true}
                 readOnly={true}
+                required={false}
                 type="change_from_virtual"
                 update={
                   [MockFunction] {
@@ -18841,8 +18842,9 @@ SAN FRANCISCO, CA 94103
                 label="Veteran Timezone"
                 name="appellantTz"
                 onChange={[Function]}
-                optional={true}
+                optional={false}
                 readOnly={false}
+                required={true}
                 roTimezone="America/New_York"
                 time="03:30"
                 value="America/Denver"
@@ -18853,7 +18855,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="appellantTz"
                   onChange={[Function]}
-                  optional={true}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -19624,6 +19626,7 @@ SAN FRANCISCO, CA 94103
                   }
                   placeholder="Select a timezone"
                   readOnly={false}
+                  required={true}
                   strongLabel={true}
                   styling={
                     Object {
@@ -19655,14 +19658,15 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="Veteran Timezone"
                             name="Veteran Timezone"
-                            optional={true}
+                            optional={false}
+                            required={true}
                           >
                             <span>
                               Veteran Timezone
                               <span
-                                className="cf-optional"
+                                className="cf-required"
                               >
-                                Optional
+                                Required
                               </span>
                             </span>
                           </FormLabel>
@@ -34948,8 +34952,9 @@ SAN FRANCISCO, CA 94103
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
-                optional={true}
+                optional={false}
                 readOnly={false}
+                required={true}
                 type="change_to_virtual"
                 update={
                   [MockFunction] {
@@ -34978,8 +34983,8 @@ SAN FRANCISCO, CA 94103
                   }
                   name="Veteran Email"
                   onChange={[Function]}
-                  optional={true}
-                  required={false}
+                  optional={false}
+                  required={true}
                   strongLabel={true}
                   type="text"
                   useAriaLabel={false}
@@ -34994,15 +34999,15 @@ SAN FRANCISCO, CA 94103
                       <strong>
                         <FormLabel
                           name="Veteran Email"
-                          optional={true}
-                          required={false}
+                          optional={false}
+                          required={true}
                         >
                           <span>
                             Veteran Email
                             <span
-                              className="cf-optional"
+                              className="cf-required"
                             >
-                              Optional
+                              Required
                             </span>
                           </span>
                         </FormLabel>

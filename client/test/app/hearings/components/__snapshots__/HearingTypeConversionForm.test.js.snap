@@ -195,8 +195,9 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               <VirtualHearingEmail
                 emailType="appellantEmail"
                 label="Veteran Email"
-                optional={true}
+                optional={false}
                 readOnly={true}
+                required={true}
                 type="Virtual"
               >
                 <ReadOnly
@@ -591,8 +592,9 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
-                optional={true}
+                optional={false}
                 readOnly={true}
+                required={true}
                 type="Virtual"
               >
                 <ReadOnly
@@ -964,8 +966,9 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
-                optional={true}
+                optional={false}
                 readOnly={true}
+                required={true}
                 type="Virtual"
               >
                 <ReadOnly
@@ -1337,8 +1340,9 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
-                optional={true}
+                optional={false}
                 readOnly={true}
+                required={true}
                 type="Virtual"
               >
                 <ReadOnly
