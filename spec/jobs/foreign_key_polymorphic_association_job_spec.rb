@@ -50,7 +50,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       subject
 
       message = /Found unusual records for SpecialIssueList:.*\[#{sil.id}, "Appeal", nil\]/m
-      expect(slack_service).to have_received(:send_notification).with(message).once
+      expect(slack_service).to have_received(:send_notification).with(message, any_args).once
     end
   end
 
@@ -67,7 +67,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       subject
 
       message = /Found unusual records for HearingEmailRecipient:.*\[#{her.id}, nil, #{hearing.id}\]/m
-      expect(slack_service).to have_received(:send_notification).with(message).once
+      expect(slack_service).to have_received(:send_notification).with(message, any_args).once
     end
   end
 
@@ -82,7 +82,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
       subject
 
       message = /Found orphaned records for SpecialIssueList:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
-      expect(slack_service).to have_received(:send_notification).with(message).once
+      expect(slack_service).to have_received(:send_notification).with(message, any_args).once
     end
 
     context "check for N+1 query problem" do
@@ -108,7 +108,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         expect(query_subscriber.select_queries(/"special_issue_lists"/).size).to eq 2
 
         message = /Found orphaned records for SpecialIssueList:.*\[#{sil.id}, "Appeal", #{sil.appeal_id}\]/m
-        expect(slack_service).to have_received(:send_notification).with(message).once
+        expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
     end
 
@@ -132,7 +132,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         subject
 
         message = /Found orphaned record/
-        expect(slack_service).to have_received(:send_notification).with(message).twice
+        expect(slack_service).to have_received(:send_notification).with(message, any_args).twice
       end
     end
   end
@@ -160,7 +160,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         subject
 
         message = /Found orphaned records for Claimant:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
-        expect(slack_service).to have_received(:send_notification).with(message).once
+        expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
     end
   end
