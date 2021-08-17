@@ -51,13 +51,44 @@ describe ExplainController, :all_dbs, type: :controller do
     let(:appeal_id) { appeal.uuid }
     subject { get :show, params: { appeal_id: appeal_id }, as: response_format }
 
-    context "when not an System Admin" do
+    context "user is not a System Admin" do
       let(:user_roles) { [] }
-      it "returns valid JSON tree" do
-        subject
-        expect(response.response_code).to eq 403
-        json_body = JSON.parse(response.body)
-        expect(json_body["errors"].first["title"]).to eq "Additional access needed"
+      context "user is not in eligible organization" do
+        before do
+          Bva.singleton.add_user(current_user)
+        end
+        it "returns error message" do
+          subject
+          expect(response.response_code).to eq 403
+          json_body = JSON.parse(response.body)
+          expect(json_body["errors"].first["title"]).to eq "Additional access needed"
+        end
+      end
+      context "user is in the BoardProductOwners organization" do
+        before do
+          BoardProductOwners.singleton.add_user(current_user)
+        end
+        it "allows access" do
+          expect(BoardProductOwners.singleton.can_receive_task?(nil)).to eq false
+          subject
+          expect(response.response_code).to eq 200
+          json_body = JSON.parse(response.body)
+          expect(json_body["errors"]).to eq nil
+          expect(json_body["appeals"].first["uuid"]).to eq appeal.uuid
+        end
+      end
+      context "user is in the CaseflowSupport organization" do
+        before do
+          CaseflowSupport.singleton.add_user(current_user)
+        end
+        it "allows access" do
+          expect(CaseflowSupport.singleton.can_receive_task?(nil)).to eq false
+          subject
+          expect(response.response_code).to eq 200
+          json_body = JSON.parse(response.body)
+          expect(json_body["errors"]).to eq nil
+          expect(json_body["appeals"].first["uuid"]).to eq appeal.uuid
+        end
       end
     end
 

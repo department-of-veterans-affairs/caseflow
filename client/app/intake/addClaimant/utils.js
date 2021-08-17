@@ -20,7 +20,10 @@ const yearsFromToday = (years) => {
 };
 
 export const schema = yup.object().shape({
-  relationship: yup.string().required(),
+  relationship: yup.string().when(['$hideListedAttorney'], {
+    is: (hideListedAttorney) => !hideListedAttorney,
+    then: yup.string().required(),
+  }),
   partyType: yup.string().when(['listedAttorney', 'relationship'], {
     is: (listedAttorney, relationship) =>
       listedAttorney?.value === 'not_listed' || relationship === 'other',
@@ -73,7 +76,7 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
-    is: (relationship, hideListedAttorney) => relationship === 'attorney' && !hideListedAttorney,
+    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
 });

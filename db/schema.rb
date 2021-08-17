@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_180404) do
+ActiveRecord::Schema.define(version: 2021_08_13_122051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -280,6 +280,8 @@ ActiveRecord::Schema.define(version: 2021_07_29_180404) do
     t.string "sdomainid", null: false
     t.string "slogid", null: false
     t.string "smemgrp", limit: 8
+    t.string "snamef", comment: "User's First Name in VACOLS"
+    t.string "snamel", comment: "User's Last Name in VACOLS"
     t.string "stafkey", null: false
     t.string "stitle", limit: 16
     t.string "svlj"
@@ -408,18 +410,18 @@ ActiveRecord::Schema.define(version: 2021_07_29_180404) do
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
-    t.datetime "attempted_at"
+    t.datetime "attempted_at", comment: "When the job ran"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
-    t.string "citation_number", null: false
+    t.string "citation_number", null: false, comment: "Unique identifier for decision document"
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
-    t.string "error"
-    t.datetime "last_submitted_at"
-    t.datetime "processed_at"
+    t.string "error", comment: "Message captured from a failed attempt"
+    t.datetime "last_submitted_at", comment: "When the job is eligible to run (can be reset to restart the job)"
+    t.datetime "processed_at", comment: "When the job has concluded"
     t.string "redacted_document_location", null: false
-    t.datetime "submitted_at"
+    t.datetime "submitted_at", comment: "When the job first became eligible to run"
     t.datetime "updated_at", null: false
-    t.datetime "uploaded_to_vbms_at"
+    t.datetime "uploaded_to_vbms_at", comment: "When document was successfully uploaded to VBMS"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
     t.index ["updated_at"], name: "index_decision_documents_on_updated_at"
@@ -1532,6 +1534,8 @@ ActiveRecord::Schema.define(version: 2021_07_29_180404) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
+    # To-do: consider removing this index, which is superceded by the
+    # addition of index_vbms_uploaded_documents_on_appeal_type_and_appeal_id
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
     t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
