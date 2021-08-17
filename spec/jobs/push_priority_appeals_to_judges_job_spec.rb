@@ -20,8 +20,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:ready_priority_bfkey) { "12345" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
     let!(:judge_with_ready_priority_cases) do
-      create(:user).tap do |judge|
-        create(:staff, :judge_role, user: judge)
+      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
           :case,
           :aod,
@@ -56,8 +55,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let!(:judge_with_ready_nonpriority_cases) do
-      create(:user).tap do |judge|
-        create(:staff, :judge_role, user: judge)
+      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
           :case,
           bfd19: 1.year.ago,
@@ -88,7 +86,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let!(:judge_with_nonready_priority_cases) do
-      create(:user).tap do |judge|
+      create(:user, :judge).tap do |judge|
         create(:staff, :judge_role, user: judge)
         vacols_case = create(
           :case,
@@ -162,7 +160,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
 
-    let(:judges) { create_list(:user, 5, :with_vacols_judge_record) }
+    let(:judges) { create_list(:user, 5, :judge, :with_vacols_judge_record) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
       (1..5).map do |i|
@@ -251,7 +249,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:legacy_priority_case) do
-      judge = create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) }
+      judge = create(:user, :judge, :with_vacols_judge_record)
       create(
         :case,
         :aod,
@@ -283,7 +281,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 2.months.ago)
       most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
       hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-      hearing.update!(judge: create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) })
+      hearing.update!(judge: create(:user, :judge, :with_vacols_judge_record))
       appeal.reload
     end
     let!(:ready_priority_evidence_case) do
@@ -770,8 +768,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
     end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
-    let!(:judge_with_team_and_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
-    let!(:judge_with_team_without_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+    let!(:judge_with_team_and_distributions) { create(:user, :judge) }
+    let!(:judge_with_team_without_distributions) { create(:user, :judge) }
 
     let!(:distributions_for_valid_judge) { 6 }
 
@@ -807,10 +805,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:judge_without_team) { create(:user) }
     let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
     let!(:judge_without_priority_push_team) do
-      create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+      create(:user, :judge).tap { |judge| JudgeTeam.for_judge(judge).update(accepts_priority_pushed_cases: false) }
     end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
-    let!(:judge_with_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+    let!(:judge_with_team) { create(:user, :judge) }
 
     subject { PushPriorityAppealsToJudgesJob.new.eligible_judges }
 
@@ -822,7 +820,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".priority_distributions_this_month_for_all_judges" do
     let(:batch_size) { 20 }
     let!(:judge_with_no_priority_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -833,7 +831,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_no_recent_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -844,7 +842,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_no_completed_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -854,7 +852,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_a_valid_distribution) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -865,7 +863,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_multiple_valid_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
