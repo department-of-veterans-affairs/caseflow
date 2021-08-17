@@ -173,7 +173,7 @@ describe Hearings::ReminderService do
   # context "with no virtual hearing" do
   #  let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
   #  let(:hearing) do
-  #    create(:hearing, hearing_day: hearing_day, created_at: created_at) } # scheduled_time is always 8:30 AM ET
+  #    create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
   #  end
   #
   #  before do
