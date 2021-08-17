@@ -95,21 +95,31 @@ class IntakeRenderer
     children << (structure(decision_review.claimant) || "no claimant")
     children << (structure(decision_review.intake) || "no intake")
 
-    epes = decision_review.try(:end_product_establishments)&.to_a
-    other_ris = decision_review.request_issues.where(end_product_establishment: nil).map do |request_issue|
-      structure(request_issue)
-    end
-    if epes.present?
-      children += epes.map { |epe| structure(epe) }
-      children << { "other issues:": other_ris } if other_ris.present?
-    else
-      children += other_ris
-    end
+    children += decision_review_epes_and_other_request_issues(decision_review)
 
     children += decision_review.request_issues_updates.map { |riu| structure(riu) }
     children += decision_review.decision_issues.map { |decision_issue| structure(decision_issue) }
 
     children
+  end
+
+  def decision_review_epes_and_other_request_issues(decision_review)
+    result = []
+
+    other_ris = decision_review.request_issues.where(end_product_establishment: nil).map do |request_issue|
+      structure(request_issue)
+    end
+
+    epes = decision_review.try(:end_product_establishments)&.to_a
+
+    if epes.present?
+      result += epes.map { |epe| structure(epe) }
+      result << { "other issues:": other_ris } if other_ris.present?
+    else
+      result += other_ris
+    end
+
+    result
   end
 
   def decision_review_context(decision_review)
@@ -182,11 +192,29 @@ class IntakeRenderer
   end
 
   def request_issue_children(request_issue)
-    children = []
-    children << "descr: #{truncate(request_issue.description, 55)}"
+    children = ["descr: #{truncate(request_issue.description, 55)}"]
+
     if request_issue.nonrating?
       children << "#{request_issue.nonrating_issue_category} - #{request_issue.nonrating_issue_description}"
     end
+
+    children += request_issue_contention(request_issue)
+
+    children << "corrected by: #{label(request_issue.correction_request_issue)}" if request_issue.corrected?
+
+    children += request_issue_ineligible_reason(request_issue)
+
+    children += request_issue.decision_issues.map { |decision_issue| label(decision_issue) }
+
+    history = request_issue_history(request_issue)
+    children << { "history:": history } if history.present?
+
+    children
+  end
+
+  def request_issue_contention(request_issue)
+    result = []
+
     if request_issue.contention_reference_id
       contention = "Contention #{request_issue.contention_reference_id}"
       if request_issue.contention_disposition
@@ -194,7 +222,13 @@ class IntakeRenderer
       end
       children << contention
     end
-    children << "corrected by: #{label(request_issue.correction_request_issue)}" if request_issue.corrected?
+
+    result
+  end
+
+  def request_issue_ineligible_reason(request_issue)
+    result = []
+
     if request_issue.ineligible_reason.present?
       child = "ineligible (#{request_issue.ineligible_reason})"
       if request_issue.ineligible_due_to_id.present?
@@ -202,12 +236,10 @@ class IntakeRenderer
           child.to_s => ["due to #{label(request_issue.ineligible_due_to)}"]
         }
       end
-      children << child
+      result << child
     end
-    children += request_issue.decision_issues.map { |decision_issue| label(decision_issue) }
-    history = request_issue_history(request_issue)
-    children << { "history:": history } if history.present?
-    children
+
+    result
   end
 
   def request_issue_history(request_issue)
