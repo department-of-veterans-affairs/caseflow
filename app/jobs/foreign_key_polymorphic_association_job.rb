@@ -57,7 +57,8 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
       (id, #{config[:type_column]}, #{config[:id_column]})
       #{record_ids.map(&:to_s).join("\n")}
     MSG
-    slack_service.send_notification(message, "#{klass.name} orphaned records via #{config[:id_column]}", "#appeals-data-workgroup")
+    slack_service.send_notification(message, "#{klass.name} orphaned records via #{config[:id_column]}",
+                                    "#appeals-data-workgroup")
   end
 
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:
