@@ -66,17 +66,17 @@ class IntakeRenderer
     [label(context), calculate_breadcrumbs(context)].flatten
   end
 
-  def veteran_details(vet)
+  def veteran_details(veteran)
     details = []
-    details += [vet.name, "FN: #{vet.file_number}"] if show_pii
-    details << "PID: #{vet.participant_id}"
+    details += [veteran.name, "FN: #{veteran.file_number}"] if show_pii
+    details << "PID: #{veteran.participant_id}"
     details
   end
 
   # :nocov:
-  def veteran_children(vet)
+  def veteran_children(veteran)
     reviews = [Appeal, HigherLevelReview, SupplementalClaim].map do |klass|
-      klass.where(veteran_file_number: vet.file_number)
+      klass.where(veteran_file_number: veteran.file_number)
     end.flatten
     reviews.sort_by! { |dr| dr.receipt_date || Time.zone.today }
     reviews.map { |dr| structure(dr) }
