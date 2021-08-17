@@ -35,7 +35,9 @@ class Hearings::ReminderService
       "Days until hearing: #{days_until_hearing}, \n" \
       "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, \n" \
       "Days between hearing and created at: #{days_between_hearing_and_created_at}, \n" \
-      "Is hearing scheduled for Monday?: #{hearing.scheduled_for.monday?})"
+      "Is hearing scheduled for Monday?: #{hearing.scheduled_for.monday?})" \
+      "Is it a virtual_hearing?: #{hearing.virtual?}" \
+      "Hearing class and id: #{hearing.class.name}, #{hearing.id}"
     )
   end
 
