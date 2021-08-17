@@ -47,5 +47,18 @@ describe CachedUser, :all_dbs do
         expect(CachedUser.count).to eq(0)
       end
     end
+
+    context "First and Last Name" do
+      it "caches first and last name from VACOLS" do
+        create(:staff, snamef: "Walter", snamel: "White")
+
+        described_class.sync_from_vacols
+
+        cached_user = CachedUser.last
+
+        expect(cached_user.snamef).to eq("Walter")
+        expect(cached_user.snamel).to eq("White")
+      end
+    end
   end
 end

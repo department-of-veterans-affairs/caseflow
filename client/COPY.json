@@ -41,6 +41,11 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "DOB_INVALID_ERRS": {
+    "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
+    "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
+  },
+
   "NULL_FILTER_LABEL": "<<blank>>",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
@@ -128,6 +133,8 @@
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE": "Information Accuracy and Visibility Update",
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE": "In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.",
   "FNOD_SOURCE": "VBMS",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_TITLE": "Permission Issue",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL": "It looks like you don't have the necessary level of access to view this information. Please alert your manager if you need access to this information.",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -209,6 +216,7 @@
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
   "EDIT_APPELLANT_INFORMATION_LINK": "Edit Information",
+  "UP_DATE_POA_LINK": "Update POA",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
@@ -846,6 +854,7 @@
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "ADD_CLAIMANT_POA_PAGE_DESCRIPTION": "Add the claimant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
   "EDIT_CLAIMANT_PAGE_DESCRIPTION": "Make any necessary changes to the information and click \"save\" to confirm your changes.",
+  "UPDATE_POA_PAGE_DESCRIPTION": "Add the appellant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
