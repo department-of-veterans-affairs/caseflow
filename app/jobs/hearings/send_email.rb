@@ -46,13 +46,18 @@ class Hearings::SendEmail
   delegate :veteran, to: :appeal
 
   def send_reminder
-    if type == "appellant_reminder" && send_email(appellant_recipient_info)
+    if type.include?("appellant") &&
+       type.include?("reminder") &&
+       send_email(appellant_recipient_info)
+
       return true
     end
 
-    if type == "representative_reminder" &&
-       hearing.representative_recipient.email_address.present? &&
+    if type.include?("representative") &&
+       type.include?("reminder") &&
+       !hearing.representative_recipient.email_address.nil? &&
        send_email(representative_recipient_info)
+
       return true
     end
 
@@ -65,6 +70,10 @@ class Hearings::SendEmail
       virtual_hearing: hearing.virtual_hearing
     }
 
+    if type.include?("reminder")
+      return HearingMailer.reminder(**args, type: type, hearing: hearing)
+    end
+
     case type
     when "confirmation"
       HearingMailer.confirmation(**args)
@@ -72,8 +81,6 @@ class Hearings::SendEmail
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       HearingMailer.updated_time_confirmation(**args)
-    when "appellant_reminder", "representative_reminder"
-      HearingMailer.reminder(**args, hearing: hearing)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end

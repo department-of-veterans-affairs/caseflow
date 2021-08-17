@@ -74,14 +74,10 @@ namespace :emails do
     end
 
     desc "creates reminder emails for hearings mailer"
-    task :reminder, [:request_type] => :environment do |_task, args|
+    task :reminder, [:request_type, :reminder_type] => :environment do |_task, args|
       include FactoryBot::Syntax::Methods
       args.with_defaults(request_type: :virtual)
-
-      hearing = build(
-        :hearing,
-        virtual_hearing: build(:virtual_hearing, :initialized)
-      )
+      args.with_defaults(reminder_type: Hearings::ReminderService::TWO_DAY_REMINDER)
 
       if args.request_type.to_sym == :video
         hearing_day = build(
@@ -108,6 +104,17 @@ namespace :emails do
         hearing = build(
           :hearing,
           hearing_day: hearing_day
+        )
+      elsif args.request_type.to_sym == :virtual
+        hearing = build(
+          :hearing,
+          judge: User.last,
+          adding_user: User.last
+        )
+        virtual_hearing = build(
+          :virtual_hearing,
+          :initialized,
+          hearing: hearing
         )
       end
 
@@ -150,9 +157,10 @@ namespace :emails do
       recipients.each do |recipient|
         email = HearingMailer.send(
           :reminder,
+          type: "#{recipient.title.downcase}_#{args.reminder_type.to_sym}",
           hearing: (args.request_type != :virtual) ? hearing : nil,
           email_recipient: recipient,
-          virtual_hearing: hearing.virtual_hearing
+          virtual_hearing: virtual_hearing
         )
         email_body = email.html_part&.decoded || email.body
         email_subject = email.subject
