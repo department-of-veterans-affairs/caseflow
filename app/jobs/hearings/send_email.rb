@@ -10,6 +10,7 @@ class Hearings::SendEmail
     @type = type.to_s
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def call
     # Assumption: Reminders and confirmation/cancellation/change emails are sent
     # separately, so this will return early if any reminder emails are sent. If
@@ -36,6 +37,7 @@ class Hearings::SendEmail
       representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 
