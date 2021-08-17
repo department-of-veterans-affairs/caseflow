@@ -26,6 +26,7 @@ detectors:
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - HearingRenderer
+      - Hearings::SendEmail#initialize
       - LegacyDocket#distribute_appeals
       - SanitizedJsonDifference
       - SanitizedJsonConfiguration
