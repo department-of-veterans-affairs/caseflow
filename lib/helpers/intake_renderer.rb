@@ -107,7 +107,7 @@ class IntakeRenderer
     end
 
     children += decision_review.request_issues_updates.map { |riu| structure(riu) }
-    children += decision_review.decision_issues.map { |di| structure(di) }
+    children += decision_review.decision_issues.map { |decision_issue| structure(decision_issue) }
 
     children
   end
@@ -204,7 +204,7 @@ class IntakeRenderer
       end
       children << child
     end
-    children += request_issue.decision_issues.map { |di| label(di) }
+    children += request_issue.decision_issues.map { |decision_issue| label(decision_issue) }
     history = request_issue_history(request_issue)
     children << { "history:": history } if history.present?
     children
@@ -243,16 +243,17 @@ class IntakeRenderer
     riu.review
   end
 
-  def decision_issue_details(di)
-    [di.disposition]
+  def decision_issue_details(decision_issue)
+    [decision_issue.disposition]
   end
 
-  def decision_issue_children(di)
-    ["descr: #{truncate(di.description, 60)}"] + di.request_issues.map { |request_issue| label(request_issue) }
+  def decision_issue_children(decision_issue)
+    labels = decision_issue.request_issues.map { |request_issue| label(request_issue) }
+    ["descr: #{truncate(decision_issue.description, 60)}"] + labels
   end
 
-  def decision_issue_context(di)
-    di.decision_review
+  def decision_issue_context(decision_issue)
+    decision_issue.decision_review
   end
 
   def user_details(user)
