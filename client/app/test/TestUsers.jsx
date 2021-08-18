@@ -129,10 +129,10 @@ export default function TestUsers(props) {
     tab.page = <div>
       <ul>
         {Object.keys(app.links).map((name) => {
-            let readableName = StringUtil.snakeCaseToCapitalized(name);
+          let readableName = StringUtil.snakeCaseToCapitalized(name);
 
-            return <li key={name} aria-labelledby={name}>
-              <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
+          return <li key={name} aria-labelledby={name}>
+            <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
           </li>;
         })}
       </ul>
