@@ -23,7 +23,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
   describe "#call" do
     subject { described_class.new(etl_build: etl_build).call }
 
-    context "one decision document" do
+    context "a decision document for each appeal type" do
       # For Legacy appeal
       let(:legacy_appeal) { create(:legacy_appeal) }
       let!(:legacy_decision_document) { create(:decision_document, appeal: legacy_appeal) }
@@ -49,7 +49,6 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
         expect(ETL::DecisionDocument.count).to eq(0)
 
         subject
-        binding.pry
         expect(ETL::DecisionDocument.count).to eq(2)
 
         expect(ETL::DecisionDocument.first.decision_document_created_at)
