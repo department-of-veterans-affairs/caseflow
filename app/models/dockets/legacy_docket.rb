@@ -48,6 +48,25 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
+  def really_distribute(distribution, style, genpop: "any")
+    if style == "push"
+      return false if JudgeTeam.for_judge(distribution.judge).ama_only_push && genpop != "not_genpop"
+    else
+      return false if JudgeTeam.for_judge(distribution.judge).ama_only_request && genpop != "not_genpop"
+    end
+  end
+
+  def distribute_appeals(distribution, style, priority: false, genpop: "any", limit: 1)
+    return [] unless really_distribute(distribution, style, genpop)
+    if priority
+      distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
+    else
+      distribute_nonpriority_appeals(distribution, genpop: genpop, limit: limit)
+    end
+  end
+
+  private
+
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
@@ -71,16 +90,6 @@ class LegacyDocket
       dist_case
     end.compact
   end
-
-  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
-    if priority
-      distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
-    else
-      distribute_nonpriority_appeals(distribution, genpop: genpop, limit: limit)
-    end
-  end
-
-  private
 
   def save_dist_case(dist_case, record, judge)
     if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
