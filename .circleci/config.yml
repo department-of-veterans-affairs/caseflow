@@ -293,11 +293,10 @@ jobs:
 
       - install_node_dependencies
 
-      # 2021-08-13: Temporarily stop running Danger until we can resolve email verification issue.
-      # - run:
-      #     name: Danger
-      #     command: |
-      #       ~/project/ci-bin/capture-log "bundle exec danger"
+      - run:
+          name: Danger
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec danger"
 
       - run:
           name: Lint
