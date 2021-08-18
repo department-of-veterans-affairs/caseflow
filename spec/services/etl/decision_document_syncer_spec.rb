@@ -24,12 +24,33 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
     subject { described_class.new(etl_build: etl_build).call }
 
     context "one decision document" do
+      # For Legacy appeal
+      let(:legacy_appeal) { create(:legacy_appeal) }
+      let!(:legacy_decision_document) { create(:decision_document, appeal: legacy_appeal) }
+      let(:case_assignment) do
+        OpenStruct.new(vacols_id: legacy_appeal.vacols_id,
+                       date_due: 1.day.ago,
+                       reassigned_to_judge_date: nil,
+                       docket_date: nil,
+                       created_at: 5.days.ago,
+                       assigned_to_location_date: 3.days.ago,
+                       assigned_to_attorney_date: nil,
+                       document_id: "173341517.524",
+                       assigned_by: OpenStruct.new(first_name: "Joe", last_name: "Schmoe"))
+      end
+      let!(:legacy_judge_case_review) do
+        judge.tap { |user| create(:staff, :judge_role, user: user) }
+        attorney.tap { |user| create(:staff, :attorney_role, user: user) }
+        legacy_judge_task = JudgeLegacyTask.from_vacols(case_assignment, legacy_appeal, judge)
+        create(:judge_case_review, location: :bva_dispatch, task: judge_task, judge: judge, attorney: attorney)
+      end
+
       it "syncs attributes" do
         expect(ETL::DecisionDocument.count).to eq(0)
 
         subject
-
-        expect(ETL::DecisionDocument.count).to eq(1)
+        binding.pry
+        expect(ETL::DecisionDocument.count).to eq(2)
 
         expect(ETL::DecisionDocument.first.decision_document_created_at)
           .to be_within(1.second).of(decision_document.created_at)
