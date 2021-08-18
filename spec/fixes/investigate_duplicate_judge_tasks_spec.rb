@@ -7,7 +7,7 @@ feature "duplicate JudgeAssignTask investigation" do
 
   # Ticket: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/212#
   # Desired Target state: JudgeAssignTask should not change status from cancelled to completed
-  describe "Judge reassigns JudgeAssignTask in first tab and completes the same task in second tab" do
+  describe "Judge reassigns JudgeAssignTask in first tab and attempts to complete the same task in second tab" do
     let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
     let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
@@ -27,7 +27,7 @@ feature "duplicate JudgeAssignTask investigation" do
     let(:appeal) { judge_assign_task.appeal }
     let(:uuid) { appeal.uuid }
 
-    scenario "Caseflow no longer creates multiple JudgeDecisionReview and JudgeAssign tasks" do
+    scenario "Caseflow no longer lets a JugeAssignTask go from closed to open" do
       # open a window and visit case details page, window A
       visit "/queue/appeals/#{uuid}"
       expect(page).to have_content(appeal.veteran.first_name, wait: 30)
@@ -66,13 +66,11 @@ feature "duplicate JudgeAssignTask investigation" do
           "Please return to the case details page and hit refresh for updated task information.")
       end
 
-      visit "/queue/appeals/#{uuid}"
-
-      # Fixed: app should no longer allow the invalid flow of a JudgeAssignTask going from cancelled to completed
+      # Fixed: app no longer allows the invalid flow of a JudgeAssignTask going from cancelled to completed
       expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
-      # Successful Bug Fix: Appeal should now have only one open AttorneyTask
-      open_attorney_tasks = appeal.tasks.select { |task| task.type == "AttorneyTask" && task.open? }
-      expect(open_attorney_tasks.count).to eq(1)
+      # Only one JudgeAssignTask is open
+      open_judge_assign_tasks = appeal.tasks.select { |task| task.type == "JudgeAssignTask" && task.open? }
+      expect(open_judge_assign_tasks.count).to eq(1)
 
       appeal.reload.treee
     end

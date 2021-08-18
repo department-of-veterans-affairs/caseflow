@@ -114,6 +114,15 @@ module Caseflow::Error
     end
   end
 
+  class ClosedTaskError < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 403
+      @title = "Task Error"
+      @message = args[:message] || "It looks like you can't take action on this task because it is closed. " \
+      "Please return to the case details page and hit refresh for updated task information."
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
