@@ -1,29 +1,7 @@
 # frozen_string_literal: true
 
 describe Hearings::ReminderService do
-  let(:hearing_day) { build(:hearing_day, scheduled_for: hearing_date) }
-  let(:hearing) { build(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
-  let(:virtual_hearing) do
-    build(
-      :virtual_hearing,
-      :initialized,
-      status: :active,
-      hearing: hearing,
-      created_at: created_at
-    )
-  end
-
-  before do
-    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
-  end
-
-  after { Timecop.return }
-
-  context ".should_send_reminder_email?" do
-    subject do
-      described_class.new(virtual_hearing, last_sent_reminder).should_send_reminder_email?
-    end
-
+  shared_examples "determines which reminders should send" do
     context "hearing date is 7 days out" do
       let(:hearing_date) { Time.zone.now + 6.days } # Nov 5, 2020 12:00 UTC + 6.days => 7 days or less
       let(:created_at) { hearing_date - 8.days }
@@ -154,4 +132,67 @@ describe Hearings::ReminderService do
       end
     end
   end
+
+  context "with a virtual hearing" do
+    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
+    let(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        status: :active,
+        hearing: hearing,
+        created_at: created_at
+      )
+    end
+
+    before do
+      Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+      hearing
+      virtual_hearing
+      hearing.reload
+    end
+
+    after { Timecop.return }
+
+    context ".should_send_reminder_email?" do
+      subject do
+        described_class.new(
+          hearing: hearing,
+          last_sent_reminder: last_sent_reminder,
+          created_at: created_at
+        ).should_send_reminder_email?
+      end
+      include_examples "determines which reminders should send"
+    end
+  end
+
+  # Right now these tests will fail because we don't send emails for non-virtual
+  # hearings. Once we are sending emails, uncomment this and it should pass.
+  # See: send_reminder_emails_job_spec as well.
+  # context "with no virtual hearing" do
+  #  let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+  #  let(:hearing) do
+  #    create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
+  #  end
+  #
+  #  before do
+  #    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+  #    hearing
+  #    hearing.reload
+  #  end
+  #
+  #  after { Timecop.return }
+  #
+  #    context ".should_send_reminder_email?" do
+  #    subject do
+  #      described_class.new(
+  #        hearing: hearing,
+  #        last_sent_reminder: last_sent_reminder,
+  #        created_at: created_at
+  #      ).should_send_reminder_email?
+  #    end
+  #    include_examples "determines which reminders should send"
+  #  end
+  # end
 end

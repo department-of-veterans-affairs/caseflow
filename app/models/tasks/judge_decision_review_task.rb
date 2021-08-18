@@ -9,7 +9,8 @@
 # and create a new JudgeAssignTask, because another assignment by a judge is needed.
 
 class JudgeDecisionReviewTask < JudgeTask
-  before_create :verify_user_task_unique
+  validate :only_open_task_of_type, on: :create,
+                                    unless: :skip_check_for_only_open_task_of_type
 
   def additional_available_actions(user)
     return [] unless assigned_to == user
@@ -29,24 +30,6 @@ class JudgeDecisionReviewTask < JudgeTask
 
   def self.label
     COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
-  end
-
-  # Use the existence of another open JudgeDecisionReviewTask to prevent duplicates since there should only
-  # ever be one open JudgeDecisionReviewTask at a time for an appeal.
-  def verify_user_task_unique
-    return if !open?
-
-    if appeal.tasks.open.where(
-      type: type,
-      assigned_to: assigned_to,
-      parent: parent
-    ).any? && assigned_to.is_a?(User)
-      fail(
-        Caseflow::Error::DuplicateUserTask,
-        docket_number: appeal.docket_number,
-        task_type: self.class.name
-      )
-    end
   end
 
   private
