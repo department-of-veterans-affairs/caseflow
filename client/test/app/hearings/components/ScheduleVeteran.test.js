@@ -56,7 +56,6 @@ const setScheduledHearingMock = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
 
 const scheduleVeteranProps = {
-  userCanCollectVideoCentralEmails: true,
   showSuccessMessage: jest.fn(),
   onChangeFormData: changeSpy,
   appeals: appealsData,
