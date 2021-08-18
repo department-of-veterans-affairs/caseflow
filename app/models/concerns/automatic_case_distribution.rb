@@ -22,11 +22,11 @@ module AutomaticCaseDistribution
 
     if limit.nil?
       # Distribute priority appeals that are tied to judges (not genpop) with no limit.
-      distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
-      distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
+      distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop", style: "push")
+      distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop", style: "push")
     else
       # Distribute <limit> number of cases, regardless of docket type, oldest first.
-      distribute_limited_priority_appeals_from_all_dockets(limit)
+      distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
     end
   end
 
@@ -39,21 +39,21 @@ module AutomaticCaseDistribution
     # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
     # range
     if FeatureToggle.enabled?(:priority_acd, user: judge)
-      distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
+      distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true, style: "request")
     end
 
     # Distribute priority appeals that are tied to judges (not genpop).
-    distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
-    distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
+    distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop", style: "request")
+    distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop", style: "request")
 
     # Distribute nonpriority appeals that are tied to judges.
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
-    distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
+    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range, style: "request")
+    distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop", style: "request")
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
-    distribute_limited_priority_appeals_from_all_dockets(priority_rem)
+    distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
     # As we may have already distributed nonpriority legacy and hearing docket cases, we adjust the docket proportions.
     deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
@@ -61,15 +61,15 @@ module AutomaticCaseDistribution
     # Distribute nonpriority appeals from any docket according to the docket proportions.
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem == 0 || @remaining_docket_proportions.all_zero?
-      distribute_appeals_according_to_remaining_docket_proportions
+      distribute_appeals_according_to_remaining_docket_proportions(style: "request")
     end
 
     @appeals
   end
 
-  def distribute_limited_priority_appeals_from_all_dockets(limit)
+  def distribute_limited_priority_appeals_from_all_dockets(limit, style)
     num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
-      distribute_appeals(docket, number_of_appeals_to_distribute, priority: true)
+      distribute_appeals(docket, number_of_appeals_to_distribute, priority: true, style: style)
     end
   end
 
@@ -91,14 +91,14 @@ module AutomaticCaseDistribution
   # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
   # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
   # distributions (distributions tied to a judge)
-  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false)
+  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false, style:)
     return [] unless limit.nil? || limit > 0
 
     if range.nil? && !bust_backlog
-      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: limit)
+      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: limit, style: style)
     elsif docket == :legacy && priority == false
       appeals = dockets[docket].distribute_nonpriority_appeals(
-        self, genpop: genpop, range: range, limit: limit, bust_backlog: bust_backlog
+        self, genpop: genpop, range: range, limit: limit, bust_backlog: bust_backlog, style: style
       )
     else
       fail "'range' and 'bust_backlog' are only valid arguments when distributing nonpriority, legacy appeals"
@@ -122,13 +122,13 @@ module AutomaticCaseDistribution
     end
   end
 
-  def distribute_appeals_according_to_remaining_docket_proportions
+  def distribute_appeals_according_to_remaining_docket_proportions(style)
     @nonpriority_iterations += 1
     @remaining_docket_proportions
       .normalize!
       .stochastic_allocation(@rem)
       .each do |docket, number_of_appeals_to_distribute|
-        appeals = distribute_appeals(docket, number_of_appeals_to_distribute, priority: false)
+        appeals = distribute_appeals(docket, number_of_appeals_to_distribute, priority: false, style: style)
         @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
       end
   end
