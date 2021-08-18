@@ -67,7 +67,7 @@ module AutomaticCaseDistribution
     @appeals
   end
 
-  def distribute_limited_priority_appeals_from_all_dockets(limit, style)
+  def distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
     num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       distribute_appeals(docket, number_of_appeals_to_distribute, priority: true, style: style)
     end
@@ -91,7 +91,7 @@ module AutomaticCaseDistribution
   # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
   # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
   # distributions (distributions tied to a judge)
-  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false, style:)
+  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false, style: "push")
     return [] unless limit.nil? || limit > 0
 
     if range.nil? && !bust_backlog
@@ -122,7 +122,7 @@ module AutomaticCaseDistribution
     end
   end
 
-  def distribute_appeals_according_to_remaining_docket_proportions(style)
+  def distribute_appeals_according_to_remaining_docket_proportions(style: "push")
     @nonpriority_iterations += 1
     @remaining_docket_proportions
       .normalize!
