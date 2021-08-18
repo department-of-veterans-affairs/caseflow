@@ -3,7 +3,7 @@
 describe AppealHearingSerializer, :all_dbs do
   context "when a user views hearing information" do
     let(:hearing) { create(:hearing) }
-    subject { described_class.new(hearing, params: {user: user}) }
+    subject { described_class.new(hearing, params: { user: user }) }
 
     context "when user has a VSO role" do
       let(:user) { create(:user, :vso_role) }

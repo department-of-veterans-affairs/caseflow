@@ -9,8 +9,7 @@ class AppealHearingSerializer
   attribute :held_by do |hearing, params|
     if params[:user]&.vso_employee?
       nil
-    end
-    if hearing.judge.present?
+    elsif hearing.judge.present?
       hearing.judge.full_name
     end
   end
