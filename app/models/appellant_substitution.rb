@@ -37,7 +37,8 @@ class AppellantSubstitution < CaseflowRecord
       participant_id: substitute_participant_id,
       payee_code: nil,
       type: claimant_type
-      # Setting the value here to 0 because of the non-null constraint in the schema for claimant records
+      # Setting the value here to 0 because of the non-null constraint in the schema for claimant records.
+      # This will be corrected when `create_stream` is called.
       decision_review: 0
     )
 
