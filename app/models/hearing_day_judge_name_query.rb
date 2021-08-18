@@ -18,6 +18,13 @@ class HearingDayJudgeNameQuery
     # Make sure that @hearing_days is a collection that we can iterate over.
     return judges_names unless @hearing_days.try(:to_a).is_a? Array
 
+    return judges_names if @hearing_days.empty?
+
+    if @hearing_days.is_a? Array
+      ids = @hearing_days.collect(&:id)
+      @hearing_days = HearingDay.where(id: ids)
+    end
+
     if hearing_days.length == 1
       vacols_user = hearing_days.first.vacols_user
 
