@@ -380,7 +380,7 @@ module Seeds
 
     def create_visn_org_queues
       visn_orgs.each do |org|
-        visn = VhaRegionalOffice.create!(org)
+        VhaRegionalOffice.create!(org)
       end
     end
 
