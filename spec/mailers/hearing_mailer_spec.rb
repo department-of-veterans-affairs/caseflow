@@ -41,7 +41,7 @@ describe HearingMailer do
     )
   end
   let(:pexip_url) { "fake.va.gov" }
-
+  let(:reminder_type) { Hearings::ReminderService::TWO_DAY_REMINDER }
   shared_context "ama_hearing" do
     let(:appeal) { create(:appeal, :hearing_docket) }
     let(:hearing) do
@@ -138,13 +138,22 @@ describe HearingMailer do
 
   shared_context "virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
+      HearingMailer.reminder(
+        email_recipient: recipient_info,
+        virtual_hearing: virtual_hearing,
+        type: reminder_type
+      )
     end
   end
 
   shared_context "non_virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: nil, hearing: hearing)
+      HearingMailer.reminder(
+        email_recipient: recipient_info,
+        virtual_hearing: nil,
+        hearing: hearing,
+        type: reminder_type
+      )
     end
   end
 
@@ -170,8 +179,8 @@ describe HearingMailer do
 
   shared_examples "appellant virtual reminder intro" do
     it "displays video hearing reminder email intro" do
-      expect(subject.body).to include("You're scheduled for a virtual hearing with a Veterans " \
-        "Law Judge of the Board of Veterans' Appeals.")
+      expect(subject.body).to include("You're scheduled for a hearing with a " \
+        "Veterans Law Judge of the Board of Veterans' Appeals.")
     end
   end
 
@@ -254,8 +263,9 @@ describe HearingMailer do
       # Internal Use section
       expect(subject.body).to include("For internal Board use:")
       expect(subject.body).to include(hearing.appeal.veteran_state)
-      expect(subject.body).to include("<a href=" \
-        "\"https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\">CF</a>")
+      expect(subject.body).to include("<a href="\
+        "\'https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\'>CF</a>".html_safe
+      )
 
       # Sections not rendered
       expect(subject.body).not_to include("Location")
@@ -278,7 +288,7 @@ describe HearingMailer do
       expect(subject.body).to include("For internal Board use:")
       expect(subject.body).to include(hearing.appeal.veteran_state)
       expect(subject.body).to include("<a href=" \
-        "\"https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\">CF</a>")
+        "\'https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\'>CF</a>".html_safe)
     end
   end
 
@@ -313,6 +323,27 @@ describe HearingMailer do
       # Sections not rendered
       expect(subject.body).not_to include("Location")
       expect(subject.body).not_to include("What should I expect on the day of my hearing?")
+    end
+  end
+
+  shared_examples "appellant shared 60-day reminder details sections" do
+    it "displays shared additional reminder details sections" do
+      expect(subject.body).to include()
+      expect(subject.body).to include("What if I miss my hearing?")
+      expect(subject.body).to include("What if I need to reschedule my hearing?")
+      expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
+
+      if (virtual_hearing.nil?)
+        expect(subject.body).to include("What is a virtual tele-hearing?")
+      end
+    end
+  end
+
+  shared_context "60 day reminder" do
+    context "60 day reminder body" do
+      let(:reminder_type) { Hearings::ReminderService::SIXTY_DAY_REMINDER }
+
+      include_examples "appellant shared 60-day reminder details sections"
     end
   end
 
@@ -738,6 +769,8 @@ describe HearingMailer do
           include_examples "appellant virtual reminder intro"
           include_examples "appellant shared reminder sections"
           include_examples "appellant virtual reminder sections"
+
+          include_context "60 day reminder"
         end
       end
     end
@@ -757,6 +790,8 @@ describe HearingMailer do
           include_examples "appellant video reminder intro"
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
+
+          include_context "60 day reminder"
         end
       end
     end
@@ -776,6 +811,8 @@ describe HearingMailer do
           include_examples "appellant central reminder intro"
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
+
+          include_context "60 day reminder"
         end
       end
     end
@@ -997,6 +1034,8 @@ describe HearingMailer do
           include_examples "appellant video reminder intro"
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
+
+          include_context "60 day reminder"
         end
       end
     end
@@ -1016,6 +1055,8 @@ describe HearingMailer do
           include_examples "appellant central reminder intro"
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
+
+          include_context "60 day reminder"
         end
       end
     end
