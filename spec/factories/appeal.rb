@@ -184,7 +184,7 @@ FactoryBot.define do
 
     trait :advanced_on_docket_due_to_age do
       # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
     end
 
     trait :active do
