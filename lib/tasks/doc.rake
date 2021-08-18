@@ -115,6 +115,7 @@ namespace :doc do
   namespace :belongs_to do
     include ErdRecordAssociations
     include ErdGraphStyling
+    include JailerPolymorphicAssociations
 
     def record_classes
       return @record_classes if @record_classes
@@ -192,8 +193,31 @@ namespace :doc do
         save_graph_files(graph, "belongs_to_erd-subclasses")
       end
     end
+
+    # To include polymorphic associations in Jailer (https://github.com/Wisser/Jailer), append the saved file ''
+    # to 'caseflow-schema/association.csv', which is created by running the following in Jailer installation directory:
+    #   sh jailer.sh build-model -jdbcjar lib/postgresql-42.2.16.jar \
+    #     -datamodel caseflow-schema org.postgresql.Driver \
+    #     jdbc:postgresql://localhost:5432/caseflow_certification_development postgres postgres
+    #   cat $YOUR_PATH/caseflow/docs/schema/caseflow-jailer_polymorphic_associations.csv >> caseflow-schema/association.csv
+    # Then to create the html pages:
+    #   echo "Caseflow schema; 1600000000000" >> caseflow-schema/modelname.csv
+    #   sh jailer.sh render-datamodel -datamodel caseflow-schema
+    # And update Caseflow's documentation:
+    #   cp -Rf render/Caseflowschema/* $YOUR_PATH/caseflow/docs/schema/html
+    task jailer_polymorphic_associations: :prepare do
+      schema_name = ENV.fetch("SCHEMA") # fails if not set
+      base_class = ENV.fetch("ERD_BASE", "ApplicationRecord").constantize
+
+      output_string = jailer_assocs_hash(base_class).values
+        .flat_map { |assocs| assocs.map { |assoc| assoc.join("; ") } }
+        .join("\n") + "\n"
+      File.open("docs/schema/#{schema_name}-jailer_polymorphic_associations.csv", "w") do |file|
+        file.write output_string.force_encoding("UTF-8")
+      end
+    end
   end
 
   desc "Generate documentation for db schema"
-  task schema: ["csv:schema", "belongs_to:erd"]
+  task schema: ["csv:schema", "belongs_to:erd", "belongs_to:jailer_polymorphic_associations"]
 end

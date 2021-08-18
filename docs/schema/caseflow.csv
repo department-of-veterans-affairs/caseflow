@@ -1248,6 +1248,13 @@ vso_configs,id,integer (8) PK,x,x,,,,
 vso_configs,ihp_dockets,string,,,,,,
 vso_configs,organization_id,integer FK,,,x,,x,
 vso_configs,updated_at,datetime ∗,x,,,,x,
+work_modes,,,,,,,,Captures user's current work mode for appeals being worked
+work_modes,appeal_id,integer ∗ FK,x,,x,,x,Appeal ID -- use as FK to AMA appeals and legacy appeals
+work_modes,appeal_type,string ∗,x,,,,x,Whether appeal_id is for AMA or legacy appeals
+work_modes,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+work_modes,id,integer (8) PK,x,x,,,,
+work_modes,overtime,boolean,,,,,,Whether the appeal is currently marked as being worked as overtime
+work_modes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 worksheet_issues,,,,,,,,
 worksheet_issues,allow,boolean,,,,,,
 worksheet_issues,appeal_id,integer FK,,,x,,x,

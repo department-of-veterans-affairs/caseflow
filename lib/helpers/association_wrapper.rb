@@ -84,12 +84,12 @@ class AssocationWrapper
 
   # To-do: bootstrap Jailer schema-documentation generator with polymorphic associations
   # clazz=VACOLS::Case
-  # ag=AssocationWrapper.new(clazz).belongs_to.select_associations.group_by(&:class_name);
+  # ag=AssocationWrapper.new(klass).belongs_to.select_associations.group_by(&:class_name);
   # ag.transform_values { |assocs| assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] } }
-  # def to_jailer_association_csv
-  #   assocs = belongs_to.associations.transform_values { |assocs|
-  #     assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] }
-  #   }
-  #   ...
-  # end
+  def to_jailer_association_csv
+    assocs = belongs_to.associations.transform_values { |assocs|
+      assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] }
+    }
+    binding.pry
+  end
 end

@@ -132,4 +132,59 @@ describe "AssocationWrapper" do
       end
     end
   end
+
+  POLYMORPHIC_TYPES ||= {
+    "appeal_type" => [Appeal, LegacyAppeal],
+    "RecordSyncedByJob.record_type" => [Appeal, LegacyAppeal],
+    "decision_review_type" => [Appeal, SupplementalClaim, HigherLevelReview],
+    "review_type" => [Appeal, SupplementalClaim, HigherLevelReview],
+    "SupplementalClaim.decision_review_remanded_type" => [Appeal, SupplementalClaim, HigherLevelReview],
+    "Intake.detail_type" => [Appeal, SupplementalClaim, HigherLevelReview, RampElection, RampRefiling],
+    "Message.detail_type" => [SupplementalClaim, HigherLevelReview],
+    "EndProductEstablishment.source_type" => [DecisionDocument, SupplementalClaim, HigherLevelReview, RampElection, RampRefiling],
+    "EndProductUpdate.original_decision_review_type" => [SupplementalClaim, HigherLevelReview],
+    "JobNote.job_type" => [SupplementalClaim, HigherLevelReview],
+    "hearing_type" => [Hearing, LegacyHearing],
+    "assigned_to_type" => [User, Organization]
+  }.freeze
+
+  describe "#to_jailer_association_csv" do
+    let(:base_class) { ApplicationRecord }
+    # let(:record_classes) { [Appeal, Task] }
+    it "creates association.csv for Jailer" do
+      Rails.application.eager_load!
+      record_classes = base_class.descendants - [CaseflowRecord] - Task.descendants - VACOLS::Record.descendants - ETL::Record.descendants
+      
+      jailer_assocs_hash = {}
+      record_classes.each { |klass|
+        polymorphic_assocs=AssocationWrapper.new(klass).belongs_to.polymorphic.select_associations
+        next if polymorphic_assocs.blank? || jailer_assocs_hash.key?(klass.table_name)
+
+        # assoc_details_hash = polymorphic_assocs.group_by(&:class_name).transform_values { |assocs| assocs.map{ |assoc| [assoc.plural_name, assoc.foreign_key, assoc.foreign_type] } }
+        jailer_assocs_hash[klass.table_name] = polymorphic_assocs.flat_map do |assoc|
+          polymorphic_types = POLYMORPHIC_TYPES["#{klass.name}.#{assoc.foreign_type}"] || POLYMORPHIC_TYPES[assoc.foreign_type]
+          if polymorphic_types
+            polymorphic_types.map do |specific_assoc_class|
+              cardinality = if specific_assoc_class.reflect_on_association(klass.table_name.to_sym)
+                "1:n"
+              elsif specific_assoc_class.reflect_on_association(klass.table_name.singularize.to_sym)
+                "1:1"
+              else
+                "n:m"
+              end
+              # binding.pry if klass == Task
+              
+              [klass.table_name, specific_assoc_class.table_name, "", cardinality,
+                "A.#{assoc.foreign_key}=B.#{assoc.association_primary_key(specific_assoc_class)} AND A.#{assoc.foreign_type}='#{specific_assoc_class.name}'",
+                "#{klass.table_name} belongs to #{specific_assoc_class.name}",
+                "Autogen'd by #{self.class.name}"]
+            end
+          else
+            fail "---- #{klass.name}: #{assoc.foreign_type}"
+          end
+        end.compact
+      }
+      puts jailer_assocs_hash.values.flat_map{|assocs| assocs.map{|assoc| assoc.join("; ")}}.join("\n")
+    end
+  end
 end

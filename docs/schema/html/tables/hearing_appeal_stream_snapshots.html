@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Caseflow schema</title>
+  <link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1 style="font-style: italic;"><small><a href="../index.html">Table hearing_appeal_stream_snapshots</a></small></h1>
+<table style="width: 100%; text-align: left;" border="0" cellpadding="0"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="width: 1px;">
+</td>
+<td>
+
+<table style="width: 100%; text-align: left;" border="1" cellpadding="1"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 100%;">
+
+<table style="width: 100%; height: 30px; text-align: left;" border="0" cellpadding="0"
+ cellspacing="0">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; width: 1px;">
+      </td>
+      <td class="titlebar">Columns</td>
+    </tr>
+  </tbody>
+</table>
+<table style="width: 100%; text-align: left;" border="0" cellpadding="1"
+ cellspacing="0">
+  <tbody>
+        <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;appeal_id</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int4<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;created_at</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;hearing_id</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int4<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;updated_at</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+<br>
+
+<table style="width: 100%; text-align: left;" border="0" cellpadding="0"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="width: 1px;">
+</td>
+<td>
+
+<table style="width: 100%; text-align: left;" border="1" cellpadding="1"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 100%;">
+
+<table style="width: 100%; height: 30px; text-align: left;" border="0" cellpadding="0"
+ cellspacing="0">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; width: 1px;">
+      </td>
+      <td class="titlebar">Associations</td>
+    </tr>
+  </tbody>
+</table>
+<table style="width: 100%; text-align: left;" border="0" cellpadding="1"
+ cellspacing="0">
+  <tbody>
+        <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td colspan="4" rowspan="1" style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);">depends&nbsp;on</td>
+      <td style="vertical-align: top;width: 100%"><br>
+      </td>
+    </tr>
+ 
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;<a href="legacy_appeals.html">legacy_appeals</a></td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;n:1<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" >&nbsp;on&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><a href="hearing_appeal_stream_snapshots.html">hearing_appeal_stream_snapshots</a>.appeal_id=<a href="legacy_appeals.html">legacy_appeals</a>.id<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;<a href="legacy_hearings.html">legacy_hearings</a></td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;n:1<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow">&nbsp;on&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><a href="hearing_appeal_stream_snapshots.html">hearing_appeal_stream_snapshots</a>.hearing_id=<a href="legacy_hearings.html">legacy_hearings</a>.id<br>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+ <br>
+
+<table style="width: 100%; text-align: left;" border="0" cellpadding="0"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="width: 1px;">
+</td>
+<td>
+
+<table style="width: 100%; text-align: left;" border="1" cellpadding="1"
+cellspacing="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 100%;">
+
+<table style="width: 100%; height: 30px; text-align: left;" border="0" cellpadding="0"
+ cellspacing="0">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; width: 1px;">
+      </td>
+      <td class="titlebar">Closure</td>
+    </tr>
+  </tbody>
+</table>
+<table style="width: 100%; text-align: left;" border="0" cellpadding="1"
+ cellspacing="0">
+  <tbody>
+        <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" >&nbsp;&nbsp;distance&nbsp;0</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" ><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" >&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" >hearing_appeal_stream_snapshots<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" class="highlightedrow">&nbsp;&nbsp;distance&nbsp;1</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow">&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><a href="legacy_appeals.html">legacy_appeals</a>, <a href="legacy_hearings.html">legacy_hearings</a><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" >&nbsp;&nbsp;distance&nbsp;2</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" ><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" >&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><a href="advance_on_docket_motions.html">advance_on_docket_motions</a>, <a href="appeal_series.html">appeal_series</a>, <a href="appeal_views.html">appeal_views</a>, <a href="available_hearing_locations.html">available_hearing_locations</a>, <a href="claims_folder_searches.html">claims_folder_searches</a>, <a href="decision_documents.html">decision_documents</a>, <a href="dispatch_tasks.html">dispatch_tasks</a>, <a href="hearing_days.html">hearing_days</a>, <a href="hearing_email_recipients.html">hearing_email_recipients</a>, <a href="hearing_locations.html">hearing_locations</a>, <a href="hearing_task_associations.html">hearing_task_associations</a>, <a href="hearing_views.html">hearing_views</a>, <a href="ihp_drafts.html">ihp_drafts</a>, <a href="record_synced_by_jobs.html">record_synced_by_jobs</a>, <a href="sent_hearing_email_events.html">sent_hearing_email_events</a>, <a href="special_issue_lists.html">special_issue_lists</a>, <a href="tasks.html">tasks</a>, <a href="users.html">users</a>, <a href="vbms_uploaded_documents.html">vbms_uploaded_documents</a>, <a href="virtual_hearings.html">virtual_hearings</a>, <a href="work_modes.html">work_modes</a><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" class="highlightedrow">&nbsp;&nbsp;distance&nbsp;3</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow">&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><a href="annotations.html">annotations</a>, <a href="appeals.html">appeals</a>, <a href="appellant_substitutions.html">appellant_substitutions</a>, <a href="attorney_case_reviews.html">attorney_case_reviews</a>, <a href="board_grant_effectuations.html">board_grant_effectuations</a>, <a href="cavc_remands.html">cavc_remands</a>, <a href="certifications.html">certifications</a>, <a href="distributed_cases.html">distributed_cases</a>, <a href="distributions.html">distributions</a>, <a href="docket_switches.html">docket_switches</a>, <a href="document_views.html">document_views</a>, <a href="end_product_establishments.html">end_product_establishments</a>, <a href="end_product_updates.html">end_product_updates</a>, <a href="hearings.html">hearings</a>, <a href="intakes.html">intakes</a>, <a href="job_notes.html">job_notes</a>, <a href="judge_case_reviews.html">judge_case_reviews</a>, <a href="messages.html">messages</a>, <a href="nod_date_updates.html">nod_date_updates</a>, <a href="organizations.html">organizations</a>, <a href="organizations_users.html">organizations_users</a>, <a href="post_decision_motions.html">post_decision_motions</a>, <a href="ramp_election_rollbacks.html">ramp_election_rollbacks</a>, <a href="request_issues_updates.html">request_issues_updates</a>, <a href="schedule_periods.html">schedule_periods</a>, <a href="task_timers.html">task_timers</a>, <a href="unrecognized_appellants.html">unrecognized_appellants</a>, <a href="user_quotas.html">user_quotas</a>, <a href="virtual_hearing_establishments.html">virtual_hearing_establishments</a><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" >&nbsp;&nbsp;distance&nbsp;4</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" ><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" >&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><a href="allocations.html">allocations</a>, <a href="claimants.html">claimants</a>, <a href="decision_issues.html">decision_issues</a>, <a href="end_product_code_updates.html">end_product_code_updates</a>, <a href="hearing_issue_notes.html">hearing_issue_notes</a>, <a href="higher_level_reviews.html">higher_level_reviews</a>, <a href="non_availabilities.html">non_availabilities</a>, <a href="ramp_elections.html">ramp_elections</a>, <a href="ramp_issues.html">ramp_issues</a>, <a href="ramp_refilings.html">ramp_refilings</a>, <a href="request_issues.html">request_issues</a>, <a href="supplemental_claims.html">supplemental_claims</a>, <a href="team_quotas.html">team_quotas</a>, <a href="transcriptions.html">transcriptions</a>, <a href="unrecognized_party_details.html">unrecognized_party_details</a>, <a href="vso_configs.html">vso_configs</a><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;font-style: italic; color: rgb(180, 0, 0);" class="highlightedrow">&nbsp;&nbsp;distance&nbsp;5</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow">&nbsp;<br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><a href="legacy_issue_optins.html">legacy_issue_optins</a>, <a href="legacy_issues.html">legacy_issues</a>, <a href="ramp_closed_appeals.html">ramp_closed_appeals</a>, <a href="request_decision_issues.html">request_decision_issues</a><br>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+</tr>
+</tbody>
+</table>
+
+
+<br>
+</body>
+</html>
