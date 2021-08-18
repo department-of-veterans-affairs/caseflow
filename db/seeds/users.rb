@@ -70,6 +70,7 @@ module Seeds
       create_field_vso_and_users
       create_pva_vso_and_users
       create_org_queue_users
+      create_visn_org_queues
       create_qr_user
       create_aod_user_and_tasks
       create_privacy_user
