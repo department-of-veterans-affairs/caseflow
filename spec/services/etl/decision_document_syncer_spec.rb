@@ -38,13 +38,37 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
                        document_id: "173341517.524",
                        assigned_by: OpenStruct.new(first_name: "Joe", last_name: "Schmoe"))
       end
-      let!(:legacy_judge_case_review) do
+      let(:created_at) { "2019-02-14" }
+      before do
         judge.tap { |user| create(:staff, :judge_role, user: user) }
         attorney.tap { |user| create(:staff, :attorney_role, user: user) }
-        legacy_judge_task = JudgeLegacyTask.from_vacols(case_assignment, legacy_appeal, judge)
-        create(:judge_case_review, location: :bva_dispatch, task: judge_task, judge: judge, attorney: attorney)
-      end
 
+        case_assignment = double(
+          vacols_id: legacy_appeal.vacols_id,
+          assigned_by_css_id: attorney.css_id,
+          assigned_to_css_id: judge.css_id,
+          document_id: "02255-00000002",
+          work_product: :draft_decision,
+          created_at: created_at.to_date
+        )
+        allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(legacy_appeal.vacols_id)
+          .and_return(case_assignment)
+        allow(case_assignment).to receive(:valid_document_id?).and_return(true)
+
+        JudgeCaseReview.create!(
+          attorney: attorney,
+          judge: judge,
+          task_id: legacy_appeal.task_id_for_case_reviews,
+          complexity: "easy",
+          quality: "meets_expectations",
+          location: :bva_dispatch,
+          comment: "",
+          factors_not_considered: [],
+          areas_for_improvement: [],
+          one_touch_initiative: false,
+          positive_feedback: []
+        )
+      end
       it "syncs attributes" do
         expect(ETL::DecisionDocument.count).to eq(0)
 

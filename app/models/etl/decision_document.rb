@@ -18,31 +18,31 @@ class ETL::DecisionDocument < ETL::Record
       appeal = original.appeal
       target.docket_number = appeal.docket_number
 
+      judge_case_review = appeal.is_a?(Appeal) ? appeal.latest_judge_case_review : appeal.judge_case_review
       attorney_case_review = appeal.is_a?(Appeal) ? appeal.latest_attorney_case_review : appeal.attorney_case_review
-      target.attorney_case_review_id = attorney_case_review&.id || 0
-      target.attorney_user_id = attorney_case_review&.attorney_id
 
       if appeal.is_a?(Appeal)
-        judge_case_review = appeal.latest_judge_case_review
         target.judge_case_review_id = judge_case_review.id
 
         target.judge_user_id = judge_case_review.judge_id
         check_equal(original.id, "reviewing_judge_name",
                     appeal.reviewing_judge_name, judge_case_review.judge.full_name)
       else
-        judge_case_review = appeal.judge_case_review
         target.judge_case_review_id = judge_case_review&.id || 0
         target.judge_user_id = judge_case_review&.judge_id ||
+                               attorney_case_review&.reviewing_judge_id ||
                                appeal.reviewing_judge.try(:assigned_by)&.assigned_by_user_id
 
-        target.judge_user_id ||= attorney_case_review&.reviewing_judge_id
-        target.attorney_user_id ||= judge_case_review&.attorney_id
-        if judge_case_review && attorney_case_review
-          check_equal(original.id, "judge_user_id", judge_case_review.judge_id, attorney_case_review.reviewing_judge_id)
-          check_equal(original.id, "attorney_user_id", judge_case_review.attorney_id, attorney_case_review.attorney_id)
-        end
-
         # To-do: appeal.vacols_case_review is also available
+      end
+
+      target.attorney_case_review_id = attorney_case_review&.id || 0
+      # Not sure which to prefer but they should be equal; check_equal is called below
+      target.attorney_user_id = attorney_case_review&.attorney_id || judge_case_review&.attorney_id
+
+      if judge_case_review && attorney_case_review
+        check_equal(original.id, "judge_user_id", judge_case_review.judge_id, attorney_case_review.reviewing_judge_id)
+        check_equal(original.id, "attorney_user_id", judge_case_review.attorney_id, attorney_case_review.attorney_id)
       end
 
       target
