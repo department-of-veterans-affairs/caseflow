@@ -48,7 +48,7 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  def really_distribute(distribution, style, genpop: "any")
+  def really_distribute(distribution, style, genpop)
     if genpop == "not_genpop" # always distribute tied appeals, or they'll get stuck.
       return true
     end

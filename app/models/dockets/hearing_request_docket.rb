@@ -20,7 +20,8 @@ class HearingRequestDocket < Docket
     HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
-  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
     appeals = HearingRequestDistributionQuery.new(
