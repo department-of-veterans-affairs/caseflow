@@ -36,21 +36,21 @@ module TaskExtensionForHearings
     hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
-  def create_or_update_email_recipients(hearing, recipient)
+  def create_or_update_email_recipients(hearing, recipients_attributes)
     begin
-      if recipient&.dig(:appellant_email).present?
+      if recipients_attributes&.dig(:appellant_email).present?
         hearing.create_or_update_recipients(
           type: AppellantHearingEmailRecipient,
-          email_address: recipient&.dig(:appellant_email),
-          timezone: recipient&.dig(:appellant_tz)
+          email_address: recipients_attributes&.dig(:appellant_email),
+          timezone: recipients_attributes&.dig(:appellant_tz)
         )
       end
 
-      if recipient&.dig(:representative_email).present?
+      if recipients_attributes&.dig(:representative_email).present?
         hearing.create_or_update_recipients(
           type: RepresentativeHearingEmailRecipient,
-          email_address: recipient&.dig(:representative_email),
-          timezone: recipient&.dig(:representative_tz)
+          email_address: recipients_attributes&.dig(:representative_email),
+          timezone: recipients_attributes&.dig(:representative_tz)
         )
       end
     rescue ActiveRecord::RecordInvalid => error
