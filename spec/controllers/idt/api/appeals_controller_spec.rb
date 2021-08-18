@@ -680,7 +680,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         expect(response.status).to eq(400)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
-        task = BvaDispatchTask.find_by(appeal: root_task.appeal, assigned_to: user)
         error_message = "Expected veteran file number to match BGS file number appeal #{root_task.appeal.id}, " \
                         "user #{user.id}"
 
