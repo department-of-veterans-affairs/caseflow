@@ -48,7 +48,7 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  def really_distribute(distribution, style, genpop)
+  def really_distribute(distribution, style: "push", genpop: "any")
     if genpop == "not_genpop" # always distribute tied appeals, or they'll get stuck.
       return true
     end
@@ -59,8 +59,8 @@ class LegacyDocket
     end
   end
 
-  def distribute_appeals(distribution, style, priority: false, genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style, genpop)
+  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
     if priority
       distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
     else
@@ -69,7 +69,7 @@ class LegacyDocket
   end
 
   def distribute_priority_appeals(distribution, style, genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style, genpop)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
