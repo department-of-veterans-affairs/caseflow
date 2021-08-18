@@ -282,6 +282,107 @@ module Seeds
       end
     end
 
+    def visn_orgs
+      [
+        {
+          name: "VA New England Healthcare System",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "New York/New Jersey VA Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Healthcare",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Capitol Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Mid-Atlantic Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Southeast Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Sunshine Healthcare Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA MidSouth Healthcare Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Healthcare System",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Great Lakes Health Care System",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Heartland Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "South Central VA Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Heart of Texas Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "Rocky Mountain Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "Northwest Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "Sierra Pacific Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "Desert Pacific Healthcare Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        },
+        {
+          name: "VA Midwest Health Care Network",
+          url: "",
+          type: "VhaRegionalOffice"
+        }
+      ]
+    end
+
+    def create_visn_org_queues
+      visn_orgs.each do |org|
+        visn = VhaRegionalOffice.create!(org)
+      end
+    end
+
     def create_qr_user
       qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Yarden QualityReviewer Jordan")
       QualityReview.singleton.add_user(qr_user)
