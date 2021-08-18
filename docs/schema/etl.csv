@@ -88,6 +88,29 @@ etl_build_tables,started_at,datetime,,,,,x,Build start time (usually identical t
 etl_build_tables,status,string,,,,,x,"Enum value: running, complete, error"
 etl_build_tables,table_name,string,,,,,x,Name of the ETL table
 etl_build_tables,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+decision_documents,,,,,,,,
+decision_documents,appeal_id,integer (8) ∗,x,,,,x,Associated appeal
+decision_documents,appeal_type,string ∗,x,,,,x,
+decision_documents,attempted_at,datetime,,,,,,When the job ran
+decision_documents,attorney_case_review_id,integer (8) ∗,x,,,,x,References associated attorney_case_review record
+decision_documents,attorney_user_id,integer (8),,,,,x,Id of the attorney user on the associated judge_case_review
+decision_documents,canceled_at,datetime,,,,,,Timestamp when the job was abandoned
+decision_documents,citation_number,string ∗,x,,,,x,Unique identifier for decision document
+decision_documents,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+decision_documents,decision_date,date ∗,x,,,,x,
+decision_documents,decision_document_created_at,datetime,,,,,x,decision_documents.created_at
+decision_documents,decision_document_updated_at,datetime,,,,,x,decision_documents.updated_at
+decision_documents,docket_number,string,,,,,,from appeals.stream_docket_number
+decision_documents,error,string,,,,,,Message captured from a failed attempt
+decision_documents,id,integer (8) PK,x,x,,,,
+decision_documents,judge_case_review_id,integer (8) ∗,x,,,,x,References associated judge_case_review record
+decision_documents,judge_user_id,integer (8),,,,,x,Id of the judge user on the associated judge_case_review
+decision_documents,last_submitted_at,datetime,,,,,,When the job is eligible to run (can be reset to restart the job)
+decision_documents,processed_at,datetime,,,,,,When the job has concluded
+decision_documents,redacted_document_location,string ∗,x,,,,,
+decision_documents,submitted_at,datetime,,,,,,When the job first became eligible to run
+decision_documents,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+decision_documents,uploaded_to_vbms_at,datetime,,,,,,When document was successfully uploaded to VBMS
 decision_issues,,,,,,,,Copy of decision_issues
 decision_issues,benefit_type,string (20),,,,,x,decision_issues.benefit_type
 decision_issues,caseflow_decision_date,date,,,,,,decision_issues.caseflow_decision_date
@@ -207,6 +230,34 @@ hearings,updated_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,uuid,uuid,,,,,x,Unique identifier for the Hearing
 hearings,vacols_id,string,,,,,x,"When type=LegacyHearing, this column points at the VACOLS case id"
 hearings,witness,string,,,,,,hearings.witness
+judge_case_reviews,,,,,,,,
+judge_case_reviews,actual_task_id,string FK,,,x,,x,Substring from judge_case_reviews.task_id referring to the tasks table for AMA Appeals
+judge_case_reviews,appeal_id,integer (8) ∗,x,,,,x,tasks.appeal_id
+judge_case_reviews,appeal_type,string ∗,x,,,,x,tasks.appeal_type
+judge_case_reviews,areas_for_improvement,text,,,,,,
+judge_case_reviews,attorney_css_id,string (20) ∗,x,,,,,users.css_id
+judge_case_reviews,attorney_full_name,string (255) ∗,x,,,,,users.full_name
+judge_case_reviews,attorney_id,integer (8) ∗,x,,,,x,judge_case_reviews.attorney_id; references users table
+judge_case_reviews,attorney_sattyid,string (20),,,,,,users.sattyid
+judge_case_reviews,comment,text,,,,,,from judge
+judge_case_reviews,complexity,string,,,,,,
+judge_case_reviews,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+judge_case_reviews,factors_not_considered,text,,,,,,
+judge_case_reviews,id,integer (8) PK,x,x,,,,
+judge_case_reviews,judge_css_id,string (20) ∗,x,,,,,users.css_id
+judge_case_reviews,judge_full_name,string (255) ∗,x,,,,,users.full_name
+judge_case_reviews,judge_id,integer,,,,,x,judge_case_reviews.judge_id; references users table
+judge_case_reviews,judge_sattyid,string (20),,,,,,users.sattyid
+judge_case_reviews,location,string,,,,,,
+judge_case_reviews,one_touch_initiative,boolean,,,,,,
+judge_case_reviews,original_task_id,string,,,,,x,"judge_case_reviews.task_id; Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
+judge_case_reviews,positive_feedback,text,,,,,,
+judge_case_reviews,quality,string,,,,,,
+judge_case_reviews,review_created_at,datetime ∗,x,,,,x,judge_case_reviews.created_at
+judge_case_reviews,review_id,integer (8) ∗,x,,,,x,judge_case_reviews.id
+judge_case_reviews,review_updated_at,datetime ∗,x,,,,x,judge_case_reviews.updated_at
+judge_case_reviews,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+judge_case_reviews,vacols_id,string,,,,,x,Substring from judge_case_reviews.task_id for Legacy Appeals
 organizations,,,,,,,,Copy of Organizations table
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
 organizations,created_at,datetime,,,,,x,
