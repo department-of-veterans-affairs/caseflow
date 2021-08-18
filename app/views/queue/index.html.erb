@@ -14,6 +14,7 @@
     flash: flash,
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
+    hasVLJSupportRole: current_user.colocated_in_vacols?,
     userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
