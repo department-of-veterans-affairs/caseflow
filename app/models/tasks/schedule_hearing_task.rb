@@ -227,7 +227,7 @@ class ScheduleHearingTask < Task
     self.assigned_to ||= Bva.singleton
   end
 
-  def create_email_recipients(hearing, recipient)
+  def create_or_update_email_recipients(hearing, recipient)
     if recipient["appellant_email"].present?
       hearing.create_or_update_recipients(
         type: AppellantHearingEmailRecipient,
