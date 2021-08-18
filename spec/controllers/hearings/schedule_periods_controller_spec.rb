@@ -68,7 +68,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     before do
       CachedUser.sync_from_vacols
     end
-    
+
     it "creates a new schedule period" do
       id = SchedulePeriod.last.id + 1
       base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
