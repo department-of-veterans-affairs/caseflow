@@ -11,7 +11,7 @@ class ETL::DecisionDocument < ETL::Record
       target.decision_document_created_at = original.created_at
       target.decision_document_updated_at = original.updated_at
 
-      target.docket_number = original.appeal.stream_docket_number
+      target.docket_number = original.appeal.docket_number
 
       judge_case_review = original.appeal.latest_judge_case_review
       target.judge_case_review_id = judge_case_review.id

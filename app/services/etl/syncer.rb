@@ -57,13 +57,16 @@ class ETL::Syncer
         rejected += (possible - saved)
       end
       build_record.update!(
-        status: :complete,
-        finished_at: Time.zone.now,
+        status: :running,
         rows_inserted: inserted,
         rows_updated: updated,
         rows_rejected: rejected
       )
     end
+    build_record.update!(
+      status: :complete,
+      finished_at: Time.zone.now
+    )
   rescue StandardError => error
     build_record.update!(
       rows_inserted: inserted,
@@ -118,7 +121,7 @@ class ETL::Syncer
   end
 
   def calculate_since
-    last_build = ETL::BuildTable.complete.where(table_name: target_class.table_name).order(created_at: :desc).first
+    last_build = ETL::BuildTable.complete.where(table_name: target_class.table_name).order(:created_at).last
     last_build&.started_at
   end
 
