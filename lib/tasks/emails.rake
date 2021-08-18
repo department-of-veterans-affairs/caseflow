@@ -53,7 +53,6 @@ namespace :emails do
           :confirmation,
           :updated_time_confirmation,
           :cancellation,
-          :reminder
         ].each do |func|
           email = HearingMailer.send(
             func,
@@ -157,7 +156,7 @@ namespace :emails do
       recipients.each do |recipient|
         email = HearingMailer.send(
           :reminder,
-          type: "#{recipient.title.downcase}_#{args.reminder_type.to_sym}",
+          type: args.reminder_type.to_sym,
           hearing: (args.request_type != :virtual) ? hearing : nil,
           email_recipient: recipient,
           virtual_hearing: virtual_hearing

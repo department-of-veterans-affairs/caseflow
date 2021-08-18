@@ -3,11 +3,12 @@
 class Hearings::SendEmail
   class RecipientIsDeceasedVeteran < StandardError; end
 
-  attr_reader :hearing, :virtual_hearing, :type
+  attr_reader :hearing, :virtual_hearing, :type, :reminder_info
 
-  def initialize(virtual_hearing: nil, type:, hearing: nil)
+  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {})
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
+    @reminder_info = reminder_info
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -46,15 +47,15 @@ class Hearings::SendEmail
   delegate :veteran, to: :appeal
 
   def send_reminder
-    if type.include?("appellant") &&
-       type.include?("reminder") &&
+    return false if type != "reminder"
+
+    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
        send_email(appellant_recipient_info)
 
       return true
     end
 
-    if type.include?("representative") &&
-       type.include?("reminder") &&
+    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
        hearing.representative_recipient.email_address.present? &&
        send_email(representative_recipient_info)
 
@@ -70,10 +71,6 @@ class Hearings::SendEmail
       virtual_hearing: hearing.virtual_hearing
     }
 
-    if type.include?("reminder")
-      return HearingMailer.reminder(**args, type: type, hearing: hearing)
-    end
-
     case type
     when "confirmation"
       HearingMailer.confirmation(**args)
@@ -81,6 +78,8 @@ class Hearings::SendEmail
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       HearingMailer.updated_time_confirmation(**args)
+    when "reminder"
+      HearingMailer.reminder(**args, type: reminder_info[:day_type], hearing: hearing)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end

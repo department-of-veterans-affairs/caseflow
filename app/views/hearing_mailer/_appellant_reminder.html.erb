@@ -36,7 +36,7 @@
     </p>
   <% end %>
 <% end %>
-<% if @reminder_type == "appellant_#{Hearings::ReminderService::SIXTY_DAY_REMINDER}"%>
+<% if @reminder_type == Hearings::ReminderService::SIXTY_DAY_REMINDER %>
   <% content_for :additional_reminder_details do %>
     <%= render "hearing_mailer/sections/additional_reminder_details" %>
   <% end %>

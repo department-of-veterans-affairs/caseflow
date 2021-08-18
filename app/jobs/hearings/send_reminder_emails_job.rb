@@ -24,14 +24,28 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
     appellant_reminder_type = appellant_reminder_type(hearing)
     if appellant_reminder_type.present?
       Hearings::SendEmail
-        .new(hearing: hearing, type: appellant_reminder_type)
+        .new(
+          hearing: hearing,
+          type: :reminder,
+          reminder_info: {
+            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+            day_type: appellant_reminder_type
+          }
+        )
         .call
     end
 
     representative_reminder_type = representative_reminder_type(hearing)
     if representative_reminder_type.present?
       Hearings::SendEmail
-        .new(hearing: hearing, type: representative_reminder_type)
+        .new(
+          hearing: hearing,
+          type: :reminder,
+          reminder_info: {
+            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+            day_type: representative_reminder_type
+          }
+        )
         .call
     end
   end
@@ -52,7 +66,7 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
 
     return if reminder_type.blank?
 
-    "appellant_#{reminder_type}".to_sym
+    reminder_type
   end
 
   def representative_reminder_type(hearing)
@@ -69,6 +83,6 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
     # we should not send 60 day reminder email to representative
     return if reminder_type == Hearings::ReminderService::SIXTY_DAY_REMINDER
 
-    "representative_#{reminder_type}".to_sym
+    reminder_type
   end
 end

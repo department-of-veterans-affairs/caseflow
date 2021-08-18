@@ -30,7 +30,7 @@ class Hearings::ReminderService
     #
     # Because hearing.virtual? will return false for any 'cancelled' virtual
     # hearings, this prevents reminder emails for cancelled virtual hearings.
-    type_of_reminder && hearing.virtual?
+    return type_of_reminder if hearing.virtual?
   end
 
   private
