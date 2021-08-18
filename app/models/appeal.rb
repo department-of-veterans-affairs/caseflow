@@ -514,6 +514,8 @@ class Appeal < DecisionReview
 
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
 
+      next if vha_has_issues?
+
       VeteranRecordRequest.create!(
         parent: root_task,
         appeal: self,

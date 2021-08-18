@@ -118,6 +118,20 @@ describe Appeal, :all_dbs do
         subject
       end
     end
+
+    context "when the appeal has vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha"),
+        ]
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
   end
 
   context "#create_issues!" do
