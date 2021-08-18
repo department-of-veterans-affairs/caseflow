@@ -24,51 +24,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
     subject { described_class.new(etl_build: etl_build).call }
 
     context "a decision document for each appeal type" do
-      # For Legacy appeal
-      let(:legacy_appeal) { create(:legacy_appeal) }
-      let!(:legacy_decision_document) { create(:decision_document, appeal: legacy_appeal) }
-      let(:case_assignment) do
-        OpenStruct.new(vacols_id: legacy_appeal.vacols_id,
-                       date_due: 1.day.ago,
-                       reassigned_to_judge_date: nil,
-                       docket_date: nil,
-                       created_at: 5.days.ago,
-                       assigned_to_location_date: 3.days.ago,
-                       assigned_to_attorney_date: nil,
-                       document_id: "173341517.524",
-                       assigned_by: OpenStruct.new(first_name: "Joe", last_name: "Schmoe"))
-      end
-      let(:created_at) { "2019-02-14" }
-      before do
-        judge.tap { |user| create(:staff, :judge_role, user: user) }
-        attorney.tap { |user| create(:staff, :attorney_role, user: user) }
-
-        case_assignment = double(
-          vacols_id: legacy_appeal.vacols_id,
-          assigned_by_css_id: attorney.css_id,
-          assigned_to_css_id: judge.css_id,
-          document_id: "02255-00000002",
-          work_product: :draft_decision,
-          created_at: created_at.to_date
-        )
-        allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(legacy_appeal.vacols_id)
-          .and_return(case_assignment)
-        allow(case_assignment).to receive(:valid_document_id?).and_return(true)
-
-        JudgeCaseReview.create!(
-          attorney: attorney,
-          judge: judge,
-          task_id: legacy_appeal.task_id_for_case_reviews,
-          complexity: "easy",
-          quality: "meets_expectations",
-          location: :bva_dispatch,
-          comment: "",
-          factors_not_considered: [],
-          areas_for_improvement: [],
-          one_touch_initiative: false,
-          positive_feedback: []
-        )
-      end
+      let!(:legacy_decision_document) { create(:decision_document, appeal: create(:legacy_appeal)) }
       it "syncs attributes" do
         expect(ETL::DecisionDocument.count).to eq(0)
 
