@@ -310,8 +310,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         if FeatureToggle.enabled?(:collect_video_and_central_emails)
           # Ensure the new email notification label is visible
           expect(page).to have_content("Email Notifications (Optional)")
-          expect(page).to have_content("The Veteran and POA will receive email reminders 7 and 3 days before the hearing. " \
-            "Caseflow won’t send notifications immediately after scheduling.")
+          expect(page).to have_content("The Veteran and POA will receive email reminders 7 and 3 days " \
+            "before the hearing. Caseflow won’t send notifications immediately after scheduling.")
 
           # Fill in appellant details
           click_dropdown(name: "appellantTz", index: 1)
