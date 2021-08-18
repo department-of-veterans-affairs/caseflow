@@ -5,10 +5,10 @@
 # about their hearing.
 
 class Hearings::ReminderService
-  TWO_DAY_REMINDER = :two_day_reminder.freeze
-  THREE_DAY_REMINDER = :three_day_reminder.freeze
-  SEVEN_DAY_REMINDER = :seven_day_reminder.freeze
-  SIXTY_DAY_REMINDER = :sixty_day_reminder.freeze
+  TWO_DAY_REMINDER = :two_day_reminder
+  THREE_DAY_REMINDER = :three_day_reminder
+  SEVEN_DAY_REMINDER = :seven_day_reminder
+  SIXTY_DAY_REMINDER = :sixty_day_reminder
 
   def initialize(hearing:, last_sent_reminder:, hearing_created_at:)
     @hearing = hearing
@@ -61,7 +61,7 @@ class Hearings::ReminderService
     elsif should_send_7_day_reminder?
       log_reminder_type("7 day")
       return SEVEN_DAY_REMINDER
-    else should_send_60_day_reminder?
+    elsif should_send_60_day_reminder?
       log_reminder_type("60 day")
       return SIXTY_DAY_REMINDER
     end

@@ -42,7 +42,7 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
           hearing: hearing,
           type: :reminder,
           reminder_info: {
-            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
             day_type: representative_reminder_type
           }
         )

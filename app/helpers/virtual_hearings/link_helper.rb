@@ -6,7 +6,7 @@
 
 module VirtualHearings::LinkHelper
   def external_link(url, display_text: nil)
-    "<a href='#{url}'>#{display_text ? display_text : url}</a>".html_safe
+    "<a href='#{url}'>#{display_text || url}</a>".html_safe
   end
 
   def caseflow_url(appeal)
