@@ -27,7 +27,7 @@ feature "duplicate JudgeAssignTask investigation" do
     let(:appeal) { judge_assign_task.appeal }
     let(:uuid) { appeal.uuid }
 
-    scenario "Caseflow creates multiple JudgeDecisionReview and JudgeAssign tasks" do
+    scenario "Caseflow no longer creates multiple JudgeDecisionReview and JudgeAssign tasks" do
       # open a window and visit case details page, window A
       visit "/queue/appeals/#{uuid}"
       expect(page).to have_content(appeal.veteran.first_name, wait: 30)
@@ -53,7 +53,7 @@ feature "duplicate JudgeAssignTask investigation" do
       expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
       visit "/queue/appeals/#{uuid}"
 
-      # in window B, complete the JudgeAssignTask - should not be able to do this due to fix
+      # in window B, attempt to complete the JudgeAssignTask - should not be able to do this due to fix
       within_window second_window do
         click_dropdown(prompt: "Select an action", text: "Assign to attorney")
         click_dropdown(prompt: "Select a user", text: "Other")
@@ -62,26 +62,18 @@ feature "duplicate JudgeAssignTask investigation" do
         click_on "Submit"
         appeal.reload.treee
 
-        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, attorney_user.full_name)
-
-        visit "/queue/appeals/#{uuid}"
-        # Complete JudgeAssignTask to create an invalid number of AttorneyTasks
-        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
-        click_dropdown(prompt: "Select a user", text: "Other")
-        click_dropdown(prompt: "Select a user", text: attorney_user_second.full_name)
-        fill_in "taskInstructions", with: "mimic incorrect flow"
-        click_on "Submit"
-        expect(page).to have_content(appeal.veteran.first_name, wait: 30)
-        appeal.reload.treee
-
-        # FUTURE FIX: app should no longer allow the invalid flow of a JudgeAssignTask going from cancelled to completed
-        # expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
-        # Successful Bug Fix: Appeal should now have only one open AttorneyTask
-        open_attorney_tasks = appeal.tasks.select { |task| task.type == "AttorneyTask" && task.open? }
-        expect(open_attorney_tasks.count).to eq(1)
+        expect(page).to have_content("It looks like you can't take action on this task because it is closed. " \
+          "Please return to the case details page and hit refresh for updated task information.")
       end
 
       visit "/queue/appeals/#{uuid}"
+
+      # Fixed: app should no longer allow the invalid flow of a JudgeAssignTask going from cancelled to completed
+      expect(Task.find(first_judge_assign_task_id).status).to eq("cancelled")
+      # Successful Bug Fix: Appeal should now have only one open AttorneyTask
+      open_attorney_tasks = appeal.tasks.select { |task| task.type == "AttorneyTask" && task.open? }
+      expect(open_attorney_tasks.count).to eq(1)
+
       appeal.reload.treee
     end
   end
