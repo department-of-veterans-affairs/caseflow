@@ -20,19 +20,15 @@ module Seeds
     private
 
     def setup_program_offices!
-      PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: url_for_name(name)) }
+      PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
 
       regular_user = create(:user, full_name: "Stevie VhaProgramOffice Amana", css_id: "VHAPOUSER")
-      admin_user = create(:user, full_name: "Channing VhaProgramOffice Katz", css_id: "VHAPOADMIN")
+      admin_user = create(:user, full_name: "Channing VhaProgramOfficeAdmin Katz", css_id: "VHAPOADMIN")
 
       VhaProgramOffice.all.each do |org|
         org.add_user(regular_user)
         OrganizationsUser.make_user_admin(admin_user, org)
       end
-    end
-
-    def url_for_name(name)
-      name.downcase.gsub(" ", "-").gsub(/-+/, "-")
     end
   end
 end
