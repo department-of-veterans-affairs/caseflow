@@ -2,7 +2,7 @@
 
 describe Hearings::ReminderService do
   shared_examples "determines which reminders should send" do
-    context "hearing is 60 days out" do
+    context "hearing is 60 days out", :skip => "will be unskipped when we enable feature" do
       let(:hearing_date) { Time.zone.now + 59.days } # Nov 5, 2020 12:00 UTC + 59.days => 60 days or less
       let(:created_at) { hearing_date - 61.days }
 
@@ -191,7 +191,7 @@ describe Hearings::ReminderService do
   # Right now these tests will fail because we don't send emails for non-virtual
   # hearings. Once we are sending emails, uncomment this and it should pass.
   # See: send_reminder_emails_job_spec as well.
-  context "with no virtual hearing", :skip => "will be unskipped when we enable feature" do
+  context "with a central hearing", :skip => "will be unskipped when we enable feature" do
    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
    let(:hearing) do
      create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
