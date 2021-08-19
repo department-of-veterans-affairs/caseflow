@@ -18,9 +18,10 @@ class ETL::Syncer
     end
   end
 
-  def initialize(since: nil, etl_build:)
+  def initialize(since: nil, etl_build:, id_offset: 0)
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
+    @id_offset = id_offset
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -132,8 +133,12 @@ class ETL::Syncer
   protected
 
   def instances_needing_update
-    return origin_class.where("updated_at >= ?", since) if incremental?
+    return instances_after_id_offset.where("updated_at >= ?", since) if incremental?
 
-    origin_class
+    instances_after_id_offset
+  end
+
+  def instances_after_id_offset
+    origin_class.where("id >= ?", @id_offset)
   end
 end
