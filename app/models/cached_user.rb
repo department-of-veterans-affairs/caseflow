@@ -34,6 +34,6 @@ class CachedUser < CaseflowRecord
   end
 
   def full_name
-    FullName.new(snamef, "", snamel).formatted(:readable_full)
+    FullName.new(snamef, nil, snamel).formatted(:readable_short)
   end
 end
