@@ -27,6 +27,7 @@ module JailerPolymorphicAssociations
     polymorphic_types_hash["#{klass.name}.#{assoc.foreign_type}"] || polymorphic_types_hash[assoc.foreign_type]
   end
 
+  # :reek:UtilityFunction
   def jailer_record_classes(base_class)
     if base_class == "CaseflowRecord"
       base_class.descendants - [CaseflowRecord] - Task.descendants
@@ -57,6 +58,7 @@ module JailerPolymorphicAssociations
     jailer_assocs_hash
   end
 
+  # :reek:FeatureEnvy
   def to_csv_columns(klass, assoc)
     polymorphic_types(klass, assoc).map do |specific_assoc_class|
       [klass.table_name,
