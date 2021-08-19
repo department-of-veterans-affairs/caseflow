@@ -38,19 +38,19 @@ module TaskExtensionForHearings
 
   def create_or_update_email_recipients(hearing, recipients_attributes)
     begin
-      if recipients_attributes["appellant_email"].present?
+      if recipients_attributes&.dig(:appellant_email).present?
         hearing.create_or_update_recipients(
           type: AppellantHearingEmailRecipient,
-          email_address: recipients_attributes["appellant_email"],
-          timezone: recipients_attributes["appellant_tz"]
+          email_address: recipients_attributes&.dig(:appellant_email),
+          timezone: recipients_attributes&.dig(:appellant_tz)
         )
       end
 
-      if recipients_attributes["representative_email"].present?
+      if recipients_attributes&.dig(:representative_email).present?
         hearing.create_or_update_recipients(
           type: RepresentativeHearingEmailRecipient,
-          email_address: recipients_attributes["representative_email"],
-          timezone: recipients_attributes["representative_tz"]
+          email_address: recipients_attributes&.dig(:representative_email),
+          timezone: recipients_attributes&.dig(:representative_tz)
         )
       end
     rescue ActiveRecord::RecordInvalid => error
