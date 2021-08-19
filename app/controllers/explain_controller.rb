@@ -10,7 +10,7 @@ class ExplainController < ApplicationController
   include ExplainNetworkConcern
 
   def show
-    return render_access_error unless current_user.admin?
+    return render_access_error unless access_allowed?
 
     no_cache
 
@@ -27,6 +27,12 @@ class ExplainController < ApplicationController
   end
 
   private
+
+  def access_allowed?
+    current_user.admin? ||
+      BoardProductOwners.singleton.user_has_access?(current_user) ||
+      CaseflowSupport.singleton.user_has_access?(current_user)
+  end
 
   helper_method :legacy_appeal?, :appeal,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,

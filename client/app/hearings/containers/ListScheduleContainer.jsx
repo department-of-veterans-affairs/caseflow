@@ -36,6 +36,7 @@ import QueueCaseSearchBar from '../../queue/SearchBar';
 import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
+import UserAlerts from '../../components/UserAlerts';
 
 import { LIST_SCHEDULE_VIEWS, ENDPOINT_NAMES } from '../constants';
 
@@ -192,6 +193,7 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         {!addHearingDay && <QueueCaseSearchBar />}
+        <UserAlerts />
         {(this.props.successfulHearingDayCreate || this.props.successfulHearingDayDelete) &&
           <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
             {this.getAlertMessage()}

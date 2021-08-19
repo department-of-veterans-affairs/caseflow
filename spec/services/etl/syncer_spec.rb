@@ -50,4 +50,21 @@ describe ETL::Syncer, :etl do
       end
     end
   end
+
+  describe "ETL::Record.check_equal" do
+    context "when check_equal is given unequal values" do
+      subject { ETL::Record.check_equal(100, "some_attribute", 20, 4) }
+      let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+      before do
+        allow(SlackService).to receive(:new).and_return(slack_service)
+        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+      end
+      it "sends alert to Slack" do
+        subject
+        expect(slack_service).to have_received(:send_notification)
+          .with("ETL::Record 100: Expected some_attribute to equal 20 but got 4",
+                "ETL::Record", "#appeals-data-workgroup")
+      end
+    end
+  end
 end
