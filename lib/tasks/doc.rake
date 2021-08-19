@@ -195,13 +195,13 @@ namespace :doc do
     end
 
     # To include polymorphic associations in Jailer (https://github.com/Wisser/Jailer),
-    # running the following in Jailer installation directory:
+    # run the following in the Jailer installation directory:
     #   sh jailer.sh build-model -jdbcjar lib/postgresql-42.2.16.jar \
     #     -datamodel caseflow-schema org.postgresql.Driver \
     #     jdbc:postgresql://localhost:5432/caseflow_certification_development postgres postgres
     # Append the file created by this method to 'caseflow-schema/association.csv' created by Jailer:
     #   cat $YOUR_PATH/caseflow/docs/schema/caseflow-jailer_polymorphic_associations.csv >> caseflow-schema/association.csv
-    # Then to create the html pages:
+    # Then create the html pages:
     #   echo "Caseflow schema; 1600000000000" >> caseflow-schema/modelname.csv
     #   sh jailer.sh render-datamodel -datamodel caseflow-schema
     # And update Caseflow's documentation:
