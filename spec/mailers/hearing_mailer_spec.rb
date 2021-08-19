@@ -141,7 +141,7 @@ describe HearingMailer do
       HearingMailer.reminder(
         email_recipient: recipient_info,
         virtual_hearing: virtual_hearing,
-        type: reminder_type
+        day_type: reminder_type
       )
     end
   end
@@ -152,7 +152,7 @@ describe HearingMailer do
         email_recipient: recipient_info,
         virtual_hearing: nil,
         hearing: hearing,
-        type: reminder_type
+        day_type: reminder_type
       )
     end
   end
