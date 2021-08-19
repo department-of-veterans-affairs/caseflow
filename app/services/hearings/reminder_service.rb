@@ -2,23 +2,30 @@
 
 ##
 # Service that determines whether or not a send a reminder to the appellant or representative
-# about their virtual hearing.
+# about their hearing.
 
 class Hearings::ReminderService
-  def initialize(virtual_hearing, last_sent_reminder)
-    @virtual_hearing = virtual_hearing
+  def initialize(hearing:, last_sent_reminder:, created_at:)
+    @hearing = hearing
     @last_sent_reminder = last_sent_reminder
+    @created_at = created_at
   end
 
   def should_send_reminder_email?
     return false if days_until_hearing <= 0
 
-    which_type_of_reminder_to_send
+    # This stops reminder emails from going out for any video/central hearings until
+    # we to enable that. Because it still calls 'which_type_of_reminder_to_send'
+    # we will log the email to be sent.
+    #
+    # Also, because hearing.virtual? will return false for any 'cancelled' virtual
+    # hearings, this prevents reminder emails for cancelled virtual hearings.
+    which_type_of_reminder_to_send && hearing.virtual?
   end
 
   private
 
-  attr_reader :virtual_hearing
+  attr_reader :hearing
   attr_reader :last_sent_reminder
 
   def log_reminder_type(type)
@@ -28,7 +35,9 @@ class Hearings::ReminderService
       "Days until hearing: #{days_until_hearing}, \n" \
       "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, \n" \
       "Days between hearing and created at: #{days_between_hearing_and_created_at}, \n" \
-      "Is hearing scheduled for Monday?: #{virtual_hearing.hearing.scheduled_for.monday?})"
+      "Is hearing scheduled for Monday?: #{hearing.scheduled_for.monday?})" \
+      "Is it a virtual_hearing?: #{hearing.virtual?}" \
+      "Hearing class and id: #{hearing.class.name}, #{hearing.id}"
     )
   end
 
@@ -56,7 +65,7 @@ class Hearings::ReminderService
   def should_send_3_day_friday_reminder?
     Time.zone.now.utc.friday? &&
       days_between_hearing_and_created_at > 3 && days_until_hearing <= 3 &&
-      virtual_hearing.hearing.scheduled_for.monday? && days_from_hearing_day_to_last_sent_reminder > 3
+      hearing.scheduled_for.monday? && days_from_hearing_day_to_last_sent_reminder > 3
   end
 
   def should_send_7_day_reminder?
@@ -68,17 +77,17 @@ class Hearings::ReminderService
   # If the virtual hearing was scheduled within a reminder period, we skip sending the reminder for that period
   # because the confirmation will have redundant information.
   def days_between_hearing_and_created_at
-    (virtual_hearing.hearing.scheduled_for - virtual_hearing.created_at) / 1.day
+    (hearing.scheduled_for - @created_at) / 1.day
   end
 
   def days_until_hearing
-    (virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day
+    (hearing.scheduled_for - Time.zone.now.utc) / 1.day
   end
 
   def days_from_hearing_day_to_last_sent_reminder
     # Pick arbitrarily big value if the reminder has never been sent.
     return Float::INFINITY if last_sent_reminder.nil?
 
-    (virtual_hearing.hearing.scheduled_for - last_sent_reminder) / 1.day
+    (hearing.scheduled_for - last_sent_reminder) / 1.day
   end
 end
