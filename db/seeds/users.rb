@@ -70,7 +70,7 @@ module Seeds
       create_field_vso_and_users
       create_pva_vso_and_users
       create_org_queue_users
-      create_visn_org_queues
+      create_visn_org_teams
       create_qr_user
       create_aod_user_and_tasks
       create_privacy_user
@@ -287,99 +287,100 @@ module Seeds
       [
         {
           name: "VA New England Healthcare System",
-          url: "",
+          url: "VA New England Healthcare System",
           type: "VhaRegionalOffice"
         },
         {
           name: "New York/New Jersey VA Health Care Network",
-          url: "",
+          url: "New York/New Jersey VA Health Care Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Healthcare",
-          url: "",
+          url: "VA Healthcare",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Capitol Health Care Network",
-          url: "",
+          url: "VA Capitol Health Care Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Mid-Atlantic Health Care Network",
-          url: "",
+          url: "VA Mid-Atlantic Health Care Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Southeast Network",
-          url: "",
+          url: "VA Southeast Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Sunshine Healthcare Network",
-          url: "",
+          url: "VA Sunshine Healthcare Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA MidSouth Healthcare Network",
-          url: "",
+          url: "VA MidSouth Healthcare Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Healthcare System",
-          url: "",
+          url: "VA Healthcare System",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Great Lakes Health Care System",
-          url: "",
+          url: "VA Great Lakes Health Care System",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Heartland Network",
-          url: "",
+          url: "VA Heartland Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "South Central VA Health Care Network",
-          url: "",
+          url: "South Central VA Health Care Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Heart of Texas Health Care Network",
-          url: "",
+          url: "VA Heart of Texas Health Care Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "Rocky Mountain Network",
-          url: "",
+          url: "Rocky Mountain Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "Northwest Network",
-          url: "",
+          url: "Northwest Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "Sierra Pacific Network",
-          url: "",
+          url: "Sierra Pacific Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "Desert Pacific Healthcare Network",
-          url: "",
+          url: "Desert Pacific Healthcare Network",
           type: "VhaRegionalOffice"
         },
         {
           name: "VA Midwest Health Care Network",
-          url: "",
+          url: "VA Midwest Health Care Network",
           type: "VhaRegionalOffice"
         }
       ]
     end
 
-    def create_visn_org_queues
+    def create_visn_org_teams
       visn_orgs.each do |org|
+        org[:url]&.parameterize&.dasherize
         VhaRegionalOffice.create!(org)
       end
     end
