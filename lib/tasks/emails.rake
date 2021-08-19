@@ -156,7 +156,7 @@ namespace :emails do
       recipients.each do |recipient|
         email = HearingMailer.send(
           :reminder,
-          type: args.reminder_type.to_sym,
+          day_type: args.reminder_type.to_sym,
           hearing: (args.request_type != :virtual) ? hearing : nil,
           email_recipient: recipient,
           virtual_hearing: virtual_hearing
