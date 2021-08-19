@@ -57,13 +57,13 @@ class LegacyDocket
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)
     if priority
-      distribute_priority_appeals(distribution, style, genpop: genpop, limit: limit)
+      distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     else
-      distribute_nonpriority_appeals(distribution, style, genpop: genpop, limit: limit)
+      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     end
   end
 
-  def distribute_priority_appeals(distribution, style, genpop: "any", limit: 1)
+  def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
@@ -74,7 +74,7 @@ class LegacyDocket
     end.compact
   end
 
-  def distribute_nonpriority_appeals(distribution, style, genpop: "any", range: nil, limit: 1, bust_backlog: false)
+  def distribute_nonpriority_appeals(distribution, style: "push", genpop: "any", range: nil, limit: 1, bust_backlog: false)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)
     return [] if !range.nil? && range <= 0
 
