@@ -15,10 +15,47 @@ export const automatedTasks = [
   'HearingTask'
 ];
 
+export const mailTasks = [
+  'AddressChangeMailTask',
+  'AodMotionMailTask',
+  'AppealWithdrawalMailTask',
+  'CavcCorrespondenceMailTask',
+  'ClearAndUnmistakeableErrorMailTask',
+  'CongressionalInterestMailTask',
+  'ControlledCorrespondenceMailTask',
+  'DeathCertificateMailTask',
+  'DocketSwitchMailTask',
+  'EvidenceOrArgumentMailTask',
+  'ExtensionRequestMailTask',
+  'FoiaRequestMailTask',
+  'HearingRelatedMailTask',
+  'OtherMotionMailTask',
+  'PowerOfAttorneyRelatedMailTask',
+  'PrivacyActRequestMailTask',
+  'PrivacyComplaintMailTask',
+  'ReconsiderationMotionMailTask',
+  'ReturnedUndeliverableCorrespondenceMailTask',
+  'StatusInquiryMailTask',
+  'VacateMotionMailTask',
+];
+
+export const hearingAdminActions = [
+  'HearingAdminActionContestedClaimantTask',
+  'HearingAdminActionFoiaPrivacyRequestTask',
+  'HearingAdminActionForeignVeteranCaseTask',
+  'HearingAdminActionIncarceratedVeteranTask',
+  'HearingAdminActionMissingFormsTask',
+  'HearingAdminActionOtherTask',
+  'HearingAdminActionVerifyAddressTask',
+  'HearingAdminActionVerifyPoaTask',
+];
+
 export const nonAutomatedTasksToHide = [
   'AssignHearingDispositionTask',
   'ChangeHearingDispositionTask',
 ];
+
+export const tasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
@@ -133,7 +170,8 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
-  if (automatedTasks.includes(taskInfo.type) || nonAutomatedTasksToHide.includes(taskInfo.type)) {
+  // Some tasks should always be hidden, regardless of additional context
+  if (tasksToHide.includes(taskInfo.type)) {
     return true;
   }
 

@@ -11,7 +11,7 @@ import {
   shouldHideBasedOnPoa,
   shouldHide,
   shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
-} from 'app/queue/substituteAppellant/tasks/utils';
+  hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { isSameDay } from 'date-fns';
@@ -177,6 +177,22 @@ describe('utility functions for task manipulation', () => {
 
     describe('tasks in nonAutomatedTasksToHide array', () => {
       it.each(nonAutomatedTasksToHide)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in mailTasks array', () => {
+      it.each(mailTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in hearingAdminActions array', () => {
+      it.each(hearingAdminActions)('should hide %s', (type) => {
         const task = { id: 1, type, assignedTo: { isOrganization: false } };
 
         expect(shouldHide(task, null, [])).toBe(true);
