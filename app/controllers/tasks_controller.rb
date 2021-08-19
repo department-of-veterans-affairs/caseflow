@@ -112,27 +112,21 @@ class TasksController < ApplicationController
     alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
     tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
-    render json: {
-      tasks: tasks_hash
-    }
+    render json: { tasks: tasks_hash }
   rescue Caseflow::Error::InvalidEmailError => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render json: { "errors": ["message": error.message, "code": error.code] }, status: :bad_request
+    render_update_error(["message": error.message, "code": error.code])
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render json: {
-      "errors": ["title": "Missing Associated Hearing", "detail": error]
-    }, status: :bad_request
+    render_update_error(["title": "Missing Associated Hearing", "detail": error])
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render json: {
-      "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]
-    }, status: :bad_request
+    render_update_error(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
 
   def for_appeal
@@ -177,6 +171,10 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def render_update_error(errors)
+    render json: { "errors": errors }, status: :bad_request
+  end
 
   def queue_config
     params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash

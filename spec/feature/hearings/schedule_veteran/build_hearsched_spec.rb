@@ -321,7 +321,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(name: "representativeTz", index: 1)
           fill_in "POA/Representative Email", with: fill_in_representative_email
         else
-          expect(page).not_to have_content("Email Notifications (Optional)")
+          expect(page.has_no_content?("Email Notifications (Optional)")).to eq(true)
         end
 
         click_button("Schedule", exact: true)
@@ -392,7 +392,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(name: "representativeTz", index: 1)
           fill_in "POA/Representative Email", with: fill_in_representative_email
         else
-          expect(page).not_to have_content("Email Notifications (Optional)")
+          expect(page.has_no_content?("Email Notifications (Optional)")).to eq(true)
         end
 
         click_button("Schedule", exact: true)

@@ -54,10 +54,7 @@ module TaskExtensionForHearings
         )
       end
     rescue ActiveRecord::RecordInvalid => error
-      raise Caseflow::Error::InvalidEmailError.new(
-        message: error.message,
-        code: 1002
-      )
+      raise Caseflow::Error::InvalidEmailError.new(message: error.message, code: 1002)
     end
   end
 
