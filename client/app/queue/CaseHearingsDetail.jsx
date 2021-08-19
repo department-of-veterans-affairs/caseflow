@@ -71,7 +71,6 @@ class CaseHearingsDetail extends React.PureComponent {
       </React.Fragment>
     }];
 
-    // TODO:SELF, look at consolidating logic for !userIsVsoEmployee
     if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
