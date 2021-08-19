@@ -39,12 +39,8 @@ class AppellantSubstitution < CaseflowRecord
       type: claimant_type,
       # Setting the values here to 0 and '' because of the non-null constraint in the schema for claimant records.
       # This will be corrected when `create_stream` is called.
-<<<<<<< HEAD
       decision_review_id: 0,
       decision_review_type: ''
-=======
-      decision_review_id: 0
->>>>>>> 043ef11cd844e6b3a07b40032100cb6dbc7855a4
     )
 
     # To-do: Implement this and the DB schema once we understand the requirements for selecting a
