@@ -61,7 +61,7 @@ class Hearings::ReminderService
       attrs: {
         reminder_type: type,
         hearing_id: hearing.id,
-        is_virtual: hearing.virtual?,
+        request_type: hearing.hearing_request_type,
         hearing_type: hearing.class.name
       }
     )
