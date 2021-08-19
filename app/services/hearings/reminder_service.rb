@@ -41,13 +41,13 @@ class Hearings::ReminderService
   def log_reminder_type(type)
     Rails.logger.info(
       "Send #{type} reminder emails: ( "\
-      "Last sent reminder: #{last_sent_reminder}, \n " \
-      "Days until hearing: #{days_until_hearing}, \n" \
-      "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, \n" \
-      "Days between hearing and created at: #{days_between_hearing_and_created_at}, \n" \
-      "Is hearing scheduled for Monday?: #{hearing.scheduled_for.monday?})" \
-      "Is it a virtual_hearing?: #{hearing.virtual?}" \
-      "Hearing class and id: #{hearing.class.name}, #{hearing.id}"
+      "Last sent reminder: #{last_sent_reminder}, " \
+      "Days until hearing: #{days_until_hearing}, " \
+      "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, " \
+      "Days between hearing and created at: #{days_between_hearing_and_created_at}, " \
+      "Is hearing scheduled for Monday?: #{hearing.scheduled_for.monday?}, " \
+      "Is it a virtual_hearing?: #{hearing.virtual?}, " \
+      "Hearing class and id: #{hearing.class.name}, #{hearing.id})"
     )
     send_to_datadog(type)
   end
