@@ -203,9 +203,8 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @appeal_id = args[:appeal_id]
-      @code = args[:code] || 400
-      @message = args[:message] || "Expected veteran file number to match BGS file number"\
-                                   " appeal #{@appeal_id}, user #{@user_id}"
+      @code = args[:code] || 500
+      @message = args[:message] || "VBMS::FilenumberDoesNotExist"
     end
   end
 

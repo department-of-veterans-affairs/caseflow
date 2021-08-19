@@ -678,10 +678,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         BvaDispatchTask.create_from_root_task(root_task)
         post :outcode, params: params
 
-        expect(response.status).to eq(400)
+        expect(response.status).to eq(500)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
-        error_message = "Expected veteran file number to match BGS file number appeal #{root_task.appeal.id}, " \
-                        "user #{user.id}"
+        error_message = "VBMS::FilenumberDoesNotExist"
 
         expect(response_detail).to eq error_message
       end
