@@ -54,16 +54,16 @@ class Hearings::ReminderService
   def which_type_of_reminder_to_send
     if should_send_2_day_reminder?
       log_reminder_type("2 day")
-      return TWO_DAY_REMINDER
+      TWO_DAY_REMINDER
     elsif should_send_3_day_friday_reminder?
       log_reminder_type("3 day")
-      return THREE_DAY_REMINDER
+      THREE_DAY_REMINDER
     elsif should_send_7_day_reminder?
       log_reminder_type("7 day")
-      return SEVEN_DAY_REMINDER
+      SEVEN_DAY_REMINDER
     elsif should_send_60_day_reminder?
       log_reminder_type("60 day")
-      return SIXTY_DAY_REMINDER
+      SIXTY_DAY_REMINDER
     end
   end
 

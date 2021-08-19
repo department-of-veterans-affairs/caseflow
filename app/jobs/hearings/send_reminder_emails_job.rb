@@ -21,6 +21,11 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   private
 
   def send_reminder_emails(hearing)
+    maybe_send_appellant_reminder_email(hearing)
+    maybe_send_representative_reminder_email(hearing)
+  end
+
+  def maybe_send_appellant_reminder_email(hearing)
     appellant_reminder_type = appellant_reminder_type(hearing)
     if appellant_reminder_type.present?
       Hearings::SendEmail
@@ -34,7 +39,9 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
         )
         .call
     end
+  end
 
+  def maybe_send_representative_reminder_email(hearing)
     representative_reminder_type = representative_reminder_type(hearing)
     if representative_reminder_type.present?
       Hearings::SendEmail

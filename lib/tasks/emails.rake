@@ -52,7 +52,7 @@ namespace :emails do
         [
           :confirmation,
           :updated_time_confirmation,
-          :cancellation,
+          :cancellation
         ].each do |func|
           email = HearingMailer.send(
             func,

@@ -264,8 +264,7 @@ describe HearingMailer do
       expect(subject.body).to include("For internal Board use:")
       expect(subject.body).to include(hearing.appeal.veteran_state)
       expect(subject.body).to include("<a href="\
-        "\'https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\'>CF</a>".html_safe
-      )
+        "\'https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\'>CF</a>".html_safe)
 
       # Sections not rendered
       expect(subject.body).not_to include("Location")
@@ -328,12 +327,11 @@ describe HearingMailer do
 
   shared_examples "appellant shared 60-day reminder details sections" do
     it "displays shared additional reminder details sections" do
-      expect(subject.body).to include()
       expect(subject.body).to include("What if I miss my hearing?")
       expect(subject.body).to include("What if I need to reschedule my hearing?")
       expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
 
-      if (virtual_hearing.nil?)
+      if virtual_hearing.nil?
         expect(subject.body).to include("What is a virtual tele-hearing?")
       end
     end

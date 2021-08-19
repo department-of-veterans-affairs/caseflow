@@ -190,7 +190,6 @@ describe HearingRepository, :all_dbs do
     subject { described_class.maybe_ready_for_reminder_email }
 
     shared_examples "include or exclude hearings depending on the number of days out from the hearing" do
-
       context "is in 60 days" do
         let(:hearing_date) { Time.zone.now + 60.days }
 
