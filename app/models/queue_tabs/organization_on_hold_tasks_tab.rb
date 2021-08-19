@@ -15,8 +15,12 @@ class OrganizationOnHoldTasksTab < QueueTab
     format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION, assignee.name)
   end
 
+  def on_hold_tasks_without_child_user_task
+    on_hold_tasks - on_hold_task_children.map(&:parent)
+  end
+
   def tasks
-    on_hold_task_children_and_timed_hold_parents
+    on_hold_task_children_and_timed_hold_parents + on_hold_tasks_without_child_user_task
   end
 
   # rubocop:disable Metrics/AbcSize
