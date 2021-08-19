@@ -29,7 +29,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
         expect(ETL::DecisionDocument.count).to eq(0)
 
         subject
-        expect(ETL::DecisionDocument.count).to eq(2)
+        expect(ETL::DecisionDocument.count).to eq(1) # skips legacy
 
         expect(ETL::DecisionDocument.first.decision_document_created_at)
           .to be_within(1.second).of(decision_document.created_at)
