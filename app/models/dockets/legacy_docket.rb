@@ -57,9 +57,9 @@ class LegacyDocket
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)
     if priority
-      distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
+      distribute_priority_appeals(distribution, style, genpop: genpop, limit: limit)
     else
-      distribute_nonpriority_appeals(distribution, genpop: genpop, limit: limit)
+      distribute_nonpriority_appeals(distribution, style, genpop: genpop, limit: limit)
     end
   end
 
