@@ -39,7 +39,7 @@ class ETL::Record < ApplicationRecord
     end
 
     def messages
-      return nil if @messages.blank?
+      return nil unless @messages&.any?
 
       @messages
     end

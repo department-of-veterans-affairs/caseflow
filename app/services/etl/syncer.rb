@@ -32,6 +32,7 @@ class ETL::Syncer
     @slack_service ||= SlackService.new(url: slack_url)
   end
 
+  # :reek:FeatureEnvy
   def dump_messages_to_slack(target_class)
     return unless target_class.messages
 
