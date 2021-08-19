@@ -300,7 +300,7 @@ export const shortZoneName = (name) => {
   const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
 
   return zoneName?.split('Time')[0]?.trim();
-}
+};
 
 /**
  * Method to add timezone to the label of the time
@@ -918,6 +918,19 @@ export const getTimezoneAbbreviation = (timezone) => {
   // Create a moment object so we can extract the timezone
   // abbreviation like 'PDT'
   return moment.tz('00:00', 'HH:mm', timezone).format('z');
+};
+
+export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
+  const poaLabel = virtual ? ', POA,' : ' and POA';
+  const recipientLabel = hearing?.representative ? `${appellantTitle}${poaLabel}` : `${appellantTitle}`;
+
+  if (virtual) {
+    return `When you schedule the hearing, the ${recipientLabel} and ` +
+     'Judge will receive an email with connection information for the virtual hearing.';
+  }
+
+  return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
+    'Caseflow won’t send notifications immediately after scheduling.';
 };
 
 /* eslint-enable camelcase */

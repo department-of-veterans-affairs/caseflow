@@ -41,11 +41,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
     orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
-    send_alert("Found orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
+    send_alert("Found #{orphaned_ids.size} orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
     if config[:type_column]
       unusual_record_ids = unusual_records(klass, config).pluck(*select_fields)
-      send_alert("Found unusual records", klass, config, unusual_record_ids) if unusual_record_ids.any?
+      heading = "Found #{unusual_record_ids.size} unusual records"
+      send_alert(heading, klass, config, unusual_record_ids) if unusual_record_ids.any?
     end
   end
 
@@ -54,12 +55,11 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   def send_alert(heading, klass, config, record_ids)
     message = <<~MSG
       #{heading} for #{klass.name}:
-        (id, #{config[:type_column]}, #{config[:id_column]})
-        #{record_ids.map(&:to_s).join('\n')}
+      (id, #{config[:type_column]}, #{config[:id_column]})
+      #{record_ids.map(&:to_s).join("\n")}
     MSG
-    slack_service.send_notification(message)
-    # Also send a message to #appeals-data-workgroup
-    slack_service.send_notification(message, klass, "#appeals-data-workgroup")
+    slack_service.send_notification(message, "#{klass.name} orphaned records via #{config[:id_column]}",
+                                    "#appeals-data-workgroup")
   end
 
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:

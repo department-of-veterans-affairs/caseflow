@@ -354,6 +354,9 @@ class QueueApp extends React.PureComponent {
             appealId={props.match.params.appealId}
           >
             <ScheduleVeteran
+              userCanCollectVideoCentralEmails={
+                this.props.featureToggles.collect_video_and_central_emails
+              }
               userCanViewTimeSlots={
                 this.props.featureToggles.enable_hearing_time_slots
               }
@@ -364,6 +367,9 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran
+            userCanCollectVideoCentralEmails={
+              this.props.featureToggles.collect_video_and_central_emails
+            }
             userCanViewTimeSlots={
               this.props.featureToggles.enable_hearing_time_slots
             }
