@@ -24,6 +24,7 @@ class ETL::Syncer
     @id_offset = id_offset
   end
 
+  # :reek:UtilityFunction
   def slack_url
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end

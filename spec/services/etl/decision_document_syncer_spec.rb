@@ -79,10 +79,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
           SELECT
             docs.appeal_id, docs.appeal_type,
             docs.docket_number AS "Docket nr.",
-            to_char(docs.decision_date, 'mm/dd/yy') AS "Decision Date",
             to_char(judge_cr.review_updated_at, 'mm/dd/yy') AS "Judge Case Review updated",
-            CONCAT(judge.sattyid, ' ', judge.full_name) AS "VLJ number and name",
-            CONCAT(atty.sattyid, ' ', atty.full_name) AS "Attorney number and name",
             atty_cr.overtime AS "Attorney overtime",
             COUNT(CASE WHEN issues.disposition IN ('denied','remanded','allowed') THEN 1 ELSE null END) AS "ard_issues",
             COUNT(CASE WHEN issues.disposition IN ('denied','remanded','allowed') THEN null ELSE 1 END) AS "other_issues"
@@ -102,10 +99,8 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
           LEFT JOIN users AS atty
             ON atty.id = docs.attorney_user_id
           GROUP BY docs.appeal_id, docs.appeal_type,
-            docs.docket_number, docs.decision_date,
+            docs.docket_number,
             judge_cr.review_updated_at,
-            judge.sattyid, judge.full_name,
-            atty.sattyid, atty.full_name,
             atty_cr.overtime
         SQL
         result = connection.exec_query(query).to_a
