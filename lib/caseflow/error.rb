@@ -204,7 +204,8 @@ module Caseflow::Error
       @user_id = args[:user_id]
       @appeal_id = args[:appeal_id]
       @code = args[:code] || 500
-      @message = args[:message] || "VBMS::FilenumberDoesNotExist"
+      @title = args[:title] || "VBMS::FilenumberDoesNotExist"
+      @message = args[:message] || "The veteran file number does not match the file number in VBMS"
     end
   end
 
