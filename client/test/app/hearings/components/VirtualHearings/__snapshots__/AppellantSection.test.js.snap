@@ -194,6 +194,7 @@ SAN FRANCISCO, CA 94103
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Appellant Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -435,6 +436,7 @@ SAN FRANCISCO, CA 94103
           email={null}
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -649,6 +651,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -878,6 +881,7 @@ SAN FRANCISCO, CA 94103
           label="Veteran Timezone"
           name="appellantTz"
           onChange={[Function]}
+          optional={false}
           readOnly={false}
           required={true}
           roTimezone="America/New_York"
@@ -890,6 +894,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="appellantTz"
             onChange={[Function]}
+            optional={false}
             options={
               Array [
                 Object {
@@ -1692,6 +1697,7 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="Veteran Timezone"
                       name="Veteran Timezone"
+                      optional={false}
                       required={true}
                     >
                       <span>
@@ -16985,6 +16991,7 @@ SAN FRANCISCO, CA 94103
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -17237,6 +17244,7 @@ SAN FRANCISCO, CA 94103
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -17443,6 +17451,7 @@ SAN FRANCISCO, CA 94103
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}

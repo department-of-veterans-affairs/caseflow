@@ -168,6 +168,8 @@ class ScheduleHearingTask < Task
       if task_values[:virtual_hearing_attributes].present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService
           .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
+      elsif task_values[:email_recipients].present?
+        create_or_update_email_recipients(hearing, task_values[:email_recipients])
       end
 
       # Create and assign the hearing now that it has been scheduled
