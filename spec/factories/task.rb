@@ -488,6 +488,16 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :pre_docket_task, class: PreDocketTask do
+        parent { create(:root_task, appeal: appeal) }
+        assigned_by { nil }
+      end
+
+      factory :vha_document_search_task, class: VhaDocumentSearchTask do
+        parent { create(:pre_docket_task, appeal: appeal) }
+        assigned_by { nil }
+      end
+
       factory :aod_motion_mail_task, class: AodMotionMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
