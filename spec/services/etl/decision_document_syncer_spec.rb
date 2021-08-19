@@ -98,6 +98,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
             ON judge.id = docs.judge_user_id
           LEFT JOIN users AS atty
             ON atty.id = docs.attorney_user_id
+          WHERE docs.appeal_type = 'Appeal'
           GROUP BY docs.appeal_id, docs.appeal_type,
             docs.docket_number,
             judge_cr.review_updated_at,
