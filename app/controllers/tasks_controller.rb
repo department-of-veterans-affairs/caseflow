@@ -116,17 +116,17 @@ class TasksController < ApplicationController
   rescue Caseflow::Error::InvalidEmailError => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render_update_error(["message": error.message, "code": error.code])
+    render_update_errors(["message": error.message, "code": error.code])
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render_update_error(["title": "Missing Associated Hearing", "detail": error])
+    render_update_errors(["title": "Missing Associated Hearing", "detail": error])
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render_update_error(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
+    render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
 
   def for_appeal
@@ -172,7 +172,7 @@ class TasksController < ApplicationController
 
   private
 
-  def render_update_error(errors)
+  def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
   end
 
