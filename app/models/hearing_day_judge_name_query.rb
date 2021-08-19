@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 ##
-# Gets the first name and last name from VACOLS for the respective Hearing Day.
+# Gets the first name and last name from VACOLS for the respective Hearing Days.
 #
 ##
-
 class HearingDayJudgeNameQuery
   attr_reader :hearing_days
 
@@ -13,31 +12,20 @@ class HearingDayJudgeNameQuery
   end
 
   def call
-    judges_names = {}
+    return {} if hearing_days.blank?
 
-    # Make sure that @hearing_days is a collection that we can iterate over.
-    return judges_names unless @hearing_days.try(:to_a).is_a? Array
-
-    return judges_names if @hearing_days.empty?
-
-    if @hearing_days.is_a? Array
-      ids = @hearing_days.collect(&:id)
-      @hearing_days = HearingDay.where(id: ids)
+    # convert an array to an ActiveRecord::Relation
+    if hearing_days.is_a? Array
+      @hearing_days = HearingDay.where(id: hearing_days.pluck(:id))
     end
 
-    if hearing_days.length == 1
-      vacols_user = hearing_days.first.vacols_user
+    # don't continue unless hearing_days is an ActiveRecord::Relation
+    return {} unless hearing_days.is_a? ActiveRecord::Relation
 
-      judges_names[hearing_days.first.id] = {
-        first_name: vacols_user.try(:snamef),
-        last_name: vacols_user.try(:snamef)
-      }
-    else
-      hearing_days.includes(:vacols_user).pluck(:id, :snamef, :snamel).each do |day|
-        judges_names[day[0]] = { first_name: day[1], last_name: day[2] }
-      end
+    # return a lookup like { 12 => { :first_name => "Leonidas", :last_name => "Olson" } }
+    hearing_days.includes(:vacols_user).pluck(:id, :snamef, :snamel).reduce({}) do |lookup, values|
+      lookup[values[0]] = { first_name: values[1], last_name: values[2] }
+      lookup
     end
-
-    judges_names
   end
 end
