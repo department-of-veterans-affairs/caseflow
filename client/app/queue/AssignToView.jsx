@@ -188,6 +188,7 @@ class AssignToView extends React.Component {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       submit: this.submit,
+      submitDisabled: !this.validateForm(),
       validateForm: isPulacCerullo ?
         () => {
           return true;
