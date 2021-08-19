@@ -49,14 +49,9 @@ class LegacyDocket
   end
 
   def really_distribute(distribution, style: "push", genpop: "any")
-    if genpop == "not_genpop" # always distribute tied appeals, or they'll get stuck.
-      return true
-    end
-    if style == "push"
-      !JudgeTeam.for_judge(distribution.judge).ama_only_push
-    else
+    genpop == "not_genpop" || # always distribute tied cases
+      (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
       !JudgeTeam.for_judge(distribution.judge).ama_only_request
-    end
   end
 
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
@@ -80,7 +75,7 @@ class LegacyDocket
   end
 
   def distribute_nonpriority_appeals(distribution, style, genpop: "any", range: nil, limit: 1, bust_backlog: false)
-    return [] unless really_distribute(distribution, style, genpop)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
     return [] if !range.nil? && range <= 0
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(
