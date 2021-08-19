@@ -93,7 +93,12 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
-    Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(DvcTeam) || org.is_a?(Representative) || org.is_a?(VhaProgramOffice) }
+    Organization.order(:name).reject do |org|
+      org.is_a?(JudgeTeam) ||
+        org.is_a?(DvcTeam) ||
+        org.is_a?(Representative) ||
+        org.is_a?(VhaProgramOffice)
+    end
   end
 
   def serialize_org(org)
