@@ -680,9 +680,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         expect(response.status).to eq(500)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
-        error_message = "VBMS::FilenumberDoesNotExist"
+        response_title = JSON.parse(response.body)["errors"][0]["title"]
+
+        error_message = "The veteran file number does not match the file number in VBMS"
+        error_title = "VBMS::FilenumberDoesNotExist"
 
         expect(response_detail).to eq error_message
+        expect(response_title).to eq error_title
       end
     end
   end
