@@ -386,4 +386,13 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
+  class InvalidEmailError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @code = args[:code]
+      @message = args[:message]
+    end
+  end
 end

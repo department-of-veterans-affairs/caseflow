@@ -36,6 +36,31 @@ module TaskExtensionForHearings
     hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
+  def create_or_update_email_recipients(hearing, recipients_attributes)
+    begin
+      if recipients_attributes&.dig(:appellant_email).present?
+        hearing.create_or_update_recipients(
+          type: AppellantHearingEmailRecipient,
+          email_address: recipients_attributes&.dig(:appellant_email),
+          timezone: recipients_attributes&.dig(:appellant_tz)
+        )
+      end
+
+      if recipients_attributes&.dig(:representative_email).present?
+        hearing.create_or_update_recipients(
+          type: RepresentativeHearingEmailRecipient,
+          email_address: recipients_attributes&.dig(:representative_email),
+          timezone: recipients_attributes&.dig(:representative_tz)
+        )
+      end
+    rescue ActiveRecord::RecordInvalid => error
+      raise Caseflow::Error::InvalidEmailError.new(
+        message: error.message,
+        code: 1002
+      )
+    end
+  end
+
   private
 
   def available_hearing_admin_actions(user)

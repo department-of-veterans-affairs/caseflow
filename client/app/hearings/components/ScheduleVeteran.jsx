@@ -80,7 +80,6 @@ export const ScheduleVeteran = ({
   const header = `Schedule ${appellantTitle} for a Hearing`;
 
   // Determine the Request Type for the hearing
-  const virtual = assignHearingForm?.virtualHearing;
   const requestType = selectedHearingDay?.regionalOffice === 'C' ?
     CENTRAL_OFFICE_HEARING_LABEL :
     VIDEO_HEARING_LABEL;
@@ -94,7 +93,8 @@ export const ScheduleVeteran = ({
   // Create a hearing object for the form
   const hearing = {
     ...assignHearingForm,
-    regionalOffice: assignHearingForm?.regionalOffice?.key,
+    requestType: assignHearingForm?.requestType || appeal?.readableHearingRequestType,
+    regionalOffice: assignHearingForm?.regionalOffice?.key || initialRegionalOffice,
     regionalOfficeTimezone: assignHearingForm?.regionalOffice?.timezone,
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
@@ -114,6 +114,8 @@ export const ScheduleVeteran = ({
     veteranFullName: appeal?.veteranFullName
   };
 
+  const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
+
   // Get parent hearing task of this task which could be
   // Schedule Hearing Task or Assign Hearing Disposition Task
   const parentHearingTask = parentTasks(
@@ -131,7 +133,7 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
+    if (!hearing?.virtualHearing?.appellantTz || !hearing.virtualHearing?.representativeTz) {
       props.onChangeFormData(
         'assignHearing',
         {
@@ -197,14 +199,16 @@ export const ScheduleVeteran = ({
     //
     // `omit` returns an empty object if `null` is provided as an argument, so the `isNil` check here
     // prevents `omit` from returning an empty object.`
-    const virtualHearing = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
+    const emailRecipients = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
+    const recipients = emailRecipients ? ApiUtil.convertToSnakeCase(emailRecipients) : null;
 
     // Format the shared hearing values
     const hearingValues = {
+      email_recipients: recipients,
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
+      virtual_hearing_attributes: virtual && recipients,
       notes: hearing.notes
     };
 
@@ -246,17 +250,17 @@ export const ScheduleVeteran = ({
         hearingDay: (hearing.hearingDay && hearing.hearingDay.hearingId) ?
           null :
           'Please select a hearing date',
-        hearingLocation: hearing.hearingLocation || hearing.virtualHearing ? null : 'Please select a hearing location',
+        hearingLocation: hearing.hearingLocation || virtual ? null : 'Please select a hearing location',
         scheduledTimeString: hearing.scheduledTimeString ? null : 'Please select a hearing time',
-        regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
+        regionalOffice: hearing.regionalOffice || virtual ? null : 'Please select a Regional Office '
       };
 
       const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
       const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
-      const emailOrTzErrors = hearing?.virtualHearing && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
+      const emailOrTzErrors = virtual && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
 
-      if (emailOrTzErrors && virtual) {
+      if (emailOrTzErrors) {
         document.getElementById('email-section').scrollIntoView();
 
         return setErrors({
@@ -294,7 +298,7 @@ export const ScheduleVeteran = ({
 
       const alerts = body?.tasks?.alerts;
 
-      if (alerts && hearing.virtualHearing) {
+      if (alerts && virtual) {
         processAlerts(alerts, props, () => props.startPollingHearing(mostRecentTask?.attributes?.external_hearing_id));
       } else {
         props.showSuccessMessage(getSuccessMsg());
@@ -350,18 +354,10 @@ export const ScheduleVeteran = ({
   // Method to handle changing the form fields when toggling between virtual
   const convertToVirtual = () => {
     if (virtual) {
-      return props.onChangeFormData('assignHearing', {
-        virtualHearing: null
-      });
+      return props.onChangeFormData('assignHearing', { requestType });
     }
 
-    return props.onChangeFormData('assignHearing', {
-      virtualHearing: {
-        status: 'pending',
-        appellantTz: appeal.appellantTz,
-        representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal.appellantTz
-      }
-    });
+    return props.onChangeFormData('assignHearing', { requestType: VIRTUAL_HEARING_LABEL });
   };
 
   // Create the header styling based on video/virtual type
@@ -461,6 +457,7 @@ ScheduleVeteran.propTypes = {
     appellantTz: PropTypes.string
   }),
   assignHearingForm: PropTypes.shape({
+    requestType: PropTypes.string,
     apiFormattedValues: PropTypes.object,
     errorMessages: PropTypes.shape({
       hasErrorMessages: PropTypes.bool,

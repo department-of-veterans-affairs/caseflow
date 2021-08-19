@@ -115,6 +115,10 @@ class TasksController < ApplicationController
     render json: {
       tasks: tasks_hash
     }
+  rescue Caseflow::Error::InvalidEmailError => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render json: { "errors": ["message": error.message, "code": error.code] }, status: :bad_request
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error

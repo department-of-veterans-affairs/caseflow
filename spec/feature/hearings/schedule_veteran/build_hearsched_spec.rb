@@ -307,6 +307,23 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           fill_in "Notes", with: fill_in_unscheduled_notes
         end
 
+        if FeatureToggle.enabled?(:collect_video_and_central_emails)
+          # Ensure the new email notification label is visible
+          expect(page).to have_content("Email Notifications (Optional)")
+          expect(page).to have_content("The Veteran and POA will receive email reminders 7 and 3 days " \
+            "before the hearing. Caseflow won’t send notifications immediately after scheduling.")
+
+          # Fill in appellant details
+          click_dropdown(name: "appellantTz", index: 1)
+          fill_in "Veteran Email", with: fill_in_veteran_email
+
+          # Fill in POA/Representative details
+          click_dropdown(name: "representativeTz", index: 1)
+          fill_in "POA/Representative Email", with: fill_in_representative_email
+        else
+          expect(page).not_to have_content("Email Notifications (Optional)")
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -321,6 +338,20 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           # Ensure new hearing has the unscheduled notes
           expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
           expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
+
+        if FeatureToggle.enabled?(:collect_video_and_central_emails)
+          expect(LegacyHearing.last.email_recipients.count).to eq(2)
+
+          # Appellant Email fields
+          expect(LegacyHearing.last.appellant_recipient.email_address).to eq(fill_in_veteran_email)
+          expect(LegacyHearing.last.appellant_recipient.timezone).to eq("America/New_York")
+
+          # Representative Email fields
+          expect(LegacyHearing.last.representative_recipient.email_address).to eq(fill_in_representative_email)
+          expect(LegacyHearing.last.representative_recipient.timezone).to eq("America/New_York")
+        else
+          expect(LegacyHearing.last.email_recipients.count).to eq(0)
         end
       end
     end
@@ -347,6 +378,23 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           fill_in "Notes", with: fill_in_unscheduled_notes
         end
 
+        if FeatureToggle.enabled?(:collect_video_and_central_emails)
+          # Ensure the new email notification label is visible
+          expect(page).to have_content("Email Notifications (Optional)")
+          expect(page).to have_content("The Veteran and POA will receive email reminders 7 and 3 days " \
+            "before the hearing. Caseflow won’t send notifications immediately after scheduling.")
+
+          # Fill in appellant details
+          click_dropdown(name: "appellantTz", index: 1)
+          fill_in "Veteran Email", with: fill_in_veteran_email
+
+          # Fill in POA/Representative details
+          click_dropdown(name: "representativeTz", index: 1)
+          fill_in "POA/Representative Email", with: fill_in_representative_email
+        else
+          expect(page).not_to have_content("Email Notifications (Optional)")
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -361,6 +409,20 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           # Ensure new hearing has the unscheduled notes
           expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
           expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
+
+        if FeatureToggle.enabled?(:collect_video_and_central_emails)
+          expect(LegacyHearing.last.email_recipients.count).to eq(2)
+
+          # Appellant Email fields
+          expect(LegacyHearing.last.appellant_recipient.email_address).to eq(fill_in_veteran_email)
+          expect(LegacyHearing.last.appellant_recipient.timezone).to eq("America/New_York")
+
+          # Representative Email fields
+          expect(LegacyHearing.last.representative_recipient.email_address).to eq(fill_in_representative_email)
+          expect(LegacyHearing.last.representative_recipient.timezone).to eq("America/New_York")
+        else
+          expect(LegacyHearing.last.email_recipients.count).to eq(0)
         end
       end
 
@@ -747,6 +809,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
 
+        # Ensure the new email notification label is visible
+        expect(page).to have_content("Email Notifications")
+        expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
+          "Judge will receive an email with connection information for the virtual hearing.")
+
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
         select_custom_hearing_time(time) unless slots
@@ -1037,6 +1104,84 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       it_behaves_like "change from Video hearing"
 
       it_behaves_like "withdraw a hearing"
+    end
+
+    context "with collect_video_and_central_emails enabled" do
+      # Ensure the feature flag is enabled before testing
+      before do
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+        FeatureToggle.enable!(:collect_video_and_central_emails)
+        FeatureToggle.enable!(:enable_hearing_time_slots)
+      end
+
+      it_behaves_like "scheduling a central hearing"
+
+      it_behaves_like "scheduling a video hearing"
+
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a slot button"
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a custom time"
+
+      context "scheduling a legacy video hearing" do
+        include_context "video_hearing"
+        include_context "hearing subtree"
+
+        before do
+          cache_appeals
+          navigate_to_schedule_veteran
+          select_hearing_time("8:30")
+          click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+          click_dropdown(
+            text: format_hearing_day(hearing_day, room_label),
+            name: "hearingDate"
+          )
+        end
+
+        scenario "without appellant and rep emails doesn't create email recipients" do
+          # Schedule the Veteran
+          click_button("Schedule", exact: true)
+          click_on "Back to Schedule Veterans"
+          expect(page).to have_content("Schedule Veterans")
+
+          # Ensure that no email recipients were created
+          expect(LegacyHearing.last.email_recipients.count).to eq(0)
+        end
+
+        scenario "with only appellant email filled, does not create rep email" do
+          # Fill in appellant details
+          click_dropdown(name: "appellantTz", index: 1)
+          fill_in "Veteran Email", with: fill_in_veteran_email
+
+          # Schedule the Veteran
+          click_button("Schedule", exact: true)
+          click_on "Back to Schedule Veterans"
+          expect(page).to have_content("Schedule Veterans")
+
+          # Appellant Email fields
+          expect(LegacyHearing.last.appellant_recipient.email_address).to eq(fill_in_veteran_email)
+          expect(LegacyHearing.last.appellant_recipient.timezone).to eq("America/New_York")
+
+          # Representative Email fields
+          expect(LegacyHearing.last.representative_recipient).to eq(nil)
+        end
+
+        scenario "with only rep email filled, does not create appellant email" do
+          # Fill in POA/Representative details
+          click_dropdown(name: "representativeTz", index: 1)
+          fill_in "POA/Representative Email", with: fill_in_representative_email
+
+          # Schedule the Veteran
+          click_button("Schedule", exact: true)
+          click_on "Back to Schedule Veterans"
+          expect(page).to have_content("Schedule Veterans")
+
+          # Representative Email fields
+          expect(LegacyHearing.last.representative_recipient.email_address).to eq(fill_in_representative_email)
+          expect(LegacyHearing.last.representative_recipient.timezone).to eq("America/New_York")
+
+          # Appellant Email fields
+          expect(LegacyHearing.last.appellant_recipient).to eq(nil)
+        end
+      end
     end
   end
 

@@ -43,7 +43,7 @@ export const RepresentativeSection = ({
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
-            optional
+            optional={!virtualHearing?.representativeEmail}
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
             value={virtualHearing?.representativeTz}
