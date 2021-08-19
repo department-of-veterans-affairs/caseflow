@@ -10,7 +10,7 @@ class VhaDocumentSearchTask < Task
   def available_actions(user)
     return [] unless VhaCamo.singleton.user_has_access?(user)
 
-    [ Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h ]
+    [Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h]
   end
 
   def self.label
