@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Seeds::VeteransHealthAdministration do
   describe "#seed!" do
     subject { described_class.new.seed! }

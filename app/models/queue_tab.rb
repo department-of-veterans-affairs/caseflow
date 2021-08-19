@@ -103,15 +103,7 @@ class QueueTab
   end
 
   def on_hold_task_children
-    Task.where(parent: on_hold_tasks, assigned_to_type: "User")
-  end
-
-  def on_hold_tasks_without_child_user_task
-    Task.where(id: on_hold_tasks.pluck(:id) - on_hold_task_children.map(&:parent).pluck(:id))
-  end
-
-  def visible_org_only_task_ids
-    on_hold_tasks_without_child_user_task.visible_in_queue_table_view.pluck(:id)
+    Task.where(parent: on_hold_tasks)
   end
 
   def visible_child_task_ids
@@ -124,7 +116,7 @@ class QueueTab
 
   def on_hold_task_children_and_timed_hold_parents
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids, visible_org_only_task_ids].flatten
+      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
     )
   end
 
