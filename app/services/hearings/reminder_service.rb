@@ -57,7 +57,7 @@ class Hearings::ReminderService
     DataDogService.increment_counter(
       app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
       metric_group: Constants.DATADOG_METRICS.HEARINGS.REMINDER_EMAILS_GROUP_NAME,
-      metric_name: "reminder_emails.would_be_sent",
+      metric_name: "emails.would_be_sent",
       attrs: {
         reminder_type: type,
         hearing_id: hearing.id,
