@@ -160,6 +160,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
           label="Veteran"
           showDivider={false}
@@ -194,21 +195,21 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
             >
               <VirtualHearingEmail
                 emailType="appellantEmail"
-                label="Veteran Email"
+                label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Email"
+                  label="Veteran Email (for these notifications only)"
                   text="None"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                     </strong>
                     <pre>
                       None
@@ -245,6 +246,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       </AppellantSection>
       <RepresentativeSection
         appellantTitle="Veteran"
+        formFieldsOnly={false}
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
@@ -256,7 +258,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         }
         readOnly={true}
         schedulingToVirtual={true}
-        showDivider={false}
+        showDivider={true}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
@@ -268,15 +270,16 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
-          label="Power of Attorney"
+          label="Power of Attorney (POA)"
           showDivider={true}
         >
           <div
             className="cf-help-divider"
           />
           <h2>
-            Power of Attorney
+            Power of Attorney (POA)
           </h2>
           <AddressLine
             label="Attorney"
@@ -309,20 +312,20 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
-                label="POA/Representative Email"
+                label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="POA/Representative Email"
+                  label="POA/Representative Email (for these notifications only)"
                   text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                     </strong>
                     <pre>
                       tom.brady@caseflow.gov
@@ -556,6 +559,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
           label="Veteran"
           showDivider={false}
@@ -591,21 +595,21 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
-                label="Veteran Email"
+                label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Email"
+                  label="Veteran Email (for these notifications only)"
                   text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                     </strong>
                     <pre>
                       Abellona.Valtas@test.com
@@ -619,6 +623,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       </AppellantSection>
       <RepresentativeSection
         appellantTitle="Veteran"
+        formFieldsOnly={false}
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
@@ -630,7 +635,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         }
         readOnly={true}
         schedulingToVirtual={true}
-        showDivider={false}
+        showDivider={true}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
@@ -642,15 +647,16 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
-          label="Power of Attorney"
+          label="Power of Attorney (POA)"
           showDivider={true}
         >
           <div
             className="cf-help-divider"
           />
           <h2>
-            Power of Attorney
+            Power of Attorney (POA)
           </h2>
           <AddressLine
             label="Attorney"
@@ -683,20 +689,20 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
-                label="POA/Representative Email"
+                label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="POA/Representative Email"
+                  label="POA/Representative Email (for these notifications only)"
                   text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                     </strong>
                     <pre>
                       tom.brady@caseflow.gov
@@ -930,6 +936,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
           label="Veteran"
           showDivider={false}
@@ -965,21 +972,21 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
-                label="Veteran Email"
+                label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Email"
+                  label="Veteran Email (for these notifications only)"
                   text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                     </strong>
                     <pre>
                       Abellona.Valtas@test.com
@@ -993,6 +1000,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       </AppellantSection>
       <RepresentativeSection
         appellantTitle="Veteran"
+        formFieldsOnly={false}
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
@@ -1004,7 +1012,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         }
         readOnly={true}
         schedulingToVirtual={true}
-        showDivider={false}
+        showDivider={true}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
@@ -1016,15 +1024,16 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
-          label="Power of Attorney"
+          label="Power of Attorney (POA)"
           showDivider={true}
         >
           <div
             className="cf-help-divider"
           />
           <h2>
-            Power of Attorney
+            Power of Attorney (POA)
           </h2>
           <AddressLine
             label="Attorney"
@@ -1057,20 +1066,20 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
-                label="POA/Representative Email"
+                label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="POA/Representative Email"
+                  label="POA/Representative Email (for these notifications only)"
                   text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                     </strong>
                     <pre>
                       tom.brady@caseflow.gov
@@ -1304,6 +1313,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
           label="Veteran"
           showDivider={false}
@@ -1339,21 +1349,21 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
-                label="Veteran Email"
+                label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Email"
+                  label="Veteran Email (for these notifications only)"
                   text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                     </strong>
                     <pre>
                       Abellona.Valtas@test.com
@@ -1367,6 +1377,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       </AppellantSection>
       <RepresentativeSection
         appellantTitle="Veteran"
+        formFieldsOnly={false}
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
@@ -1378,7 +1389,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         }
         readOnly={true}
         schedulingToVirtual={true}
-        showDivider={false}
+        showDivider={true}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
@@ -1390,15 +1401,16 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         }
       >
         <VirtualHearingSection
+          formFieldsOnly={false}
           hide={false}
-          label="Power of Attorney"
+          label="Power of Attorney (POA)"
           showDivider={true}
         >
           <div
             className="cf-help-divider"
           />
           <h2>
-            Power of Attorney
+            Power of Attorney (POA)
           </h2>
           <AddressLine
             label="Attorney"
@@ -1431,20 +1443,20 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
-                label="POA/Representative Email"
+                label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="POA/Representative Email"
+                  label="POA/Representative Email (for these notifications only)"
                   text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                     </strong>
                     <pre>
                       tom.brady@caseflow.gov
