@@ -297,10 +297,14 @@ describe Docket, :all_dbs do
   end
 
   context "an appeal throws a RecordNotUniqueError on the case_id field" do
-    subject { DirectReviewDocket.new.distribute_appeals(distribution, limit: 3) }
+    subject { DirectReviewDocket.new.distribute_appeals(current_distribution, limit: 3) }
     let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-    let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:current_distribution) do
+      past_distribution.completed!
+      Distribution.create!(judge: judge_user)
+    end
 
     let!(:buggy_appeal) do
       create(:appeal,
@@ -310,7 +314,7 @@ describe Docket, :all_dbs do
     end
     let!(:buggy_distributed_case) do
       DistributedCase.create!(
-        distribution: distribution,
+        distribution: past_distribution,
         ready_at: 6.months.ago,
         docket: buggy_appeal.docket_type,
         priority: false,
@@ -341,10 +345,10 @@ describe Docket, :all_dbs do
     end
 
     it "distributes appeals that occur after the appeal with the bug" do
-      expect(distribution.distributed_cases.length).to eq(1)
+      expect(current_distribution.distributed_cases.length).to eq(0)
       result = subject
 
-      expect(distribution.distributed_cases.length).to eq(3)
+      expect(current_distribution.distributed_cases.length).to eq(2)
       expect(result[1].class).to eq(DistributedCase)
       expect(result[2].class).to eq(DistributedCase)
     end
