@@ -13,11 +13,10 @@ describe('AppealInformation', () => {
     );
 
     // Check that the labels are all there
-    expect(screen.queryAllByText('Veteran Name')).toHaveLength(1);
     expect(screen.queryAllByText('Issues')).toHaveLength(1);
     expect(screen.queryAllByText('Appeal Stream')).toHaveLength(1);
     expect(screen.queryAllByText('Docket Number')).toHaveLength(1);
-    expect(screen.queryAllByText('Power of Attorney')).toHaveLength(1);
+    expect(screen.queryAllByText('Attorney')).toHaveLength(1);
     expect(screen.queryAllByText('Date of Death')).toHaveLength(0);
 
     // Check that all the values are correct
@@ -54,9 +53,6 @@ describe('AppealInformation', () => {
     const info = render(
       <AppealInformation appeal={{ ...amaAppeal, appellantIsNotVeteran: true }} />
     );
-
-    // Check that the labels are all there
-    expect(screen.queryAllByText('Appellant Name')).toHaveLength(1);
 
     // Check that all the values are correct
     expect(screen.queryAllByText(amaAppeal.appellantFullName)).toHaveLength(1);
@@ -111,6 +107,7 @@ describe('AppealInformation', () => {
     const info = render(<AppealInformation appeal={amaAppeal} />);
 
     // Check that the labels are all there
+    expect(screen.queryAllByText('Power Of Attorney')).toHaveLength(1);
     expect(screen.queryAllByText('No representative')).toHaveLength(1);
 
     expect(info).toMatchSnapshot();

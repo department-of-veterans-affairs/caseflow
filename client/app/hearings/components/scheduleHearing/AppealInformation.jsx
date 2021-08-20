@@ -52,9 +52,9 @@ export const AppealInformation = ({ appeal, hearing }) => {
     'No representative';
   const appellantName = appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName;
   const poaLabel =
-    appeal?.powerOfAttorney?.representative_type === 'Other' ?
-      'Power Of Attorney' :
-      appeal?.powerOfAttorney?.representative_type;
+    (appeal?.powerOfAttorney?.representative_type && appeal?.powerOfAttorney?.representative_type !== 'Other') ?
+      appeal?.powerOfAttorney?.representative_type :
+      'Power Of Attorney';
 
   return (
     <div className="schedule-veteran-appeals-info">
