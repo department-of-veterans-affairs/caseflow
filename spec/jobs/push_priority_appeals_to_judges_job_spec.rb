@@ -197,7 +197,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
 
-    let(:judges) { create_list(:user, 5, :judge, :with_vacols_judge_record) }
+    let!(:ama_only_judge) { create(:user, :ama_only_judge, :with_vacols_judge_record) }
+    let(:judges) { create_list(:user, 4, :judge, :with_vacols_judge_record).prepend(ama_only_judge) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
       (1..5).map do |i|
@@ -259,6 +260,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
+
+
     it "should distribute ready priority appeals to the judges" do
       expect(subject.count).to eq judges.count
 
@@ -279,6 +282,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         distributed_cases = DistributedCase.where(distribution: distribution)
         expect(distributed_cases.count).to eq target_distributions
       end
+    end
+
+    it "only distributes ama cases to ama-only judge" do
+      distribution = subject.detect { |dist| dist.judge_id == ama_only_judge.id }
+      distributed_cases = DistributedCase.where(distribution: distribution)
+      intersection = distributed_cases.to_set.intersect? legacy_priority_cases.to_set
+      expect(intersection).to eq false
     end
   end
 
