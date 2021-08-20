@@ -35,7 +35,8 @@ class HearingRequestCaseDistributor
   end
 
   def create_judge_assign_task_for_appeal(appeal)
-    JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge).call
+    assigned_by_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
+    JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge, assigned_by_id: assigned_by_id).call
   end
 
   def create_distribution_case_for_task(task, genpop_value)
