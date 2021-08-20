@@ -153,7 +153,11 @@ namespace :doc do
       graph.save(
         png: target_dir.join("#{schema_name}-#{graph_filename}.png"),
         svg: target_dir.join("#{schema_name}-#{graph_filename}.svg")
-      )
+      ) if update_schema_images?
+    end
+
+    def update_schema_images?
+      ENV.fetch("UPDATE_SCHEMA_ERD_IMAGES", nil)
     end
 
     desc "Generate belongs_to ERD"
