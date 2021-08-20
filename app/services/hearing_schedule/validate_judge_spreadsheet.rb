@@ -21,7 +21,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def judge_css_id_matches_name?(name, css_id)
+  def judge_css_id_and_name_match_record?(name, css_id)
     return if name.nil?
 
     user = CachedUser.find_by(sdomainid: css_id)
@@ -36,7 +36,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_judges_not_in_db
     @spreadsheet_data.reject do |row|
-      judge_css_id_matches_name?(row[:name], row[:judge_css_id])
+      judge_css_id_and_name_match_record?(row[:name], row[:judge_css_id])
     end.pluck(:judge_css_id, :name).compact
   end
 
