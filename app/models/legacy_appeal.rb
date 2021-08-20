@@ -636,6 +636,7 @@ class LegacyAppeal < CaseflowRecord
     @documents_by_type = {}
   end
 
+  # To-do: should AttorneyCaseReview records be included?
   def attorney_case_reviews
     (das_assignments || []).reject { |t| t.document_id.nil? }
   end
