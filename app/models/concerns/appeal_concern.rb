@@ -5,6 +5,11 @@ module AppealConcern
 
   delegate :station_key, to: :regional_office
 
+  included do
+    has_many :attorney_case_reviews
+    has_many :judge_case_reviews
+  end
+
   def regional_office
     return nil if regional_office_key.nil?
 

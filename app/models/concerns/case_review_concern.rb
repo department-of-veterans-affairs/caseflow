@@ -18,7 +18,7 @@ module CaseReviewConcern
       # Populate appeal_* column values based on original implementation that uses `task_id`
       update_attributes(
         appeal_id: appeal_through_task_id&.id,
-        appeal_type: appeal_through_task_id&.class.name
+        appeal_type: appeal_through_task_id&.class&.name
       )
     end
     # use the `belongs_to :appeal` association
