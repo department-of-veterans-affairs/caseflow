@@ -11,7 +11,6 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown,
 } from '../../components/DataDropdowns';
-import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
