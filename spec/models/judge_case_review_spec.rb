@@ -119,7 +119,7 @@ describe JudgeCaseReview, :all_dbs do
         case_review = subject
         expect(case_review.appeal_type).to eq "Appeal"
         expect(case_review.appeal_id).to eq task.appeal.id
-        expect(task.appeal.judge_case_reviews).to include case_review
+        expect(task.appeal.judge_case_reviews).to eq [case_review]
         expect(task.appeal.attorney_case_reviews).to eq []
       end
     end
