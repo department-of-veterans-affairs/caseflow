@@ -190,7 +190,15 @@ describe HearingRepository, :all_dbs do
     subject { described_class.maybe_ready_for_reminder_email }
 
     shared_examples "include or exclude hearings depending on the number of days out from the hearing" do
-      context "within 7 days" do
+      context "is in 60 days" do
+        let(:hearing_date) { Time.zone.now + 60.days }
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
+        end
+      end
+
+      context "is in 7 days" do
         let(:hearing_date) { Time.zone.now + 7.days }
 
         it "returns the hearings" do
@@ -198,8 +206,8 @@ describe HearingRepository, :all_dbs do
         end
       end
 
-      context "is in 10 days" do
-        let(:hearing_date) { Time.zone.now + 10.days }
+      context "is in 70 days" do
+        let(:hearing_date) { Time.zone.now + 70.days }
 
         it "returns nothing" do
           expect(subject).to be_empty
