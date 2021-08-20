@@ -48,10 +48,11 @@ module AutomaticCaseDistribution
 
     # Distribute nonpriority appeals that are tied to judges.
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
+    # rubocop:disable Layout/HashAlignment
     distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop",
                        range: legacy_docket_range, style: "request")
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop", style: "request")
-
+    # rubocop:enable Layout/HashAlignment
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
@@ -68,13 +69,11 @@ module AutomaticCaseDistribution
     @appeals
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
-   def distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
+  def distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
     num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       distribute_appeals(docket, number_of_appeals_to_distribute, priority: true, style: style)
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def ama_statistics
     {
@@ -94,6 +93,7 @@ module AutomaticCaseDistribution
   # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
   # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
   # distributions (distributions tied to a judge)
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
   def distribute_appeals(docket, limit = nil, priority: false, genpop: "any",
                          range: nil, bust_backlog: false, style: "push")
     return [] unless limit.nil? || limit > 0
@@ -113,6 +113,7 @@ module AutomaticCaseDistribution
 
     appeals
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def deduct_distributed_actuals_from_remaining_docket_proportions(*dockets)
     nonpriority_target = batch_size - @appeals.count(&:priority)
@@ -126,7 +127,6 @@ module AutomaticCaseDistribution
     end
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals_according_to_remaining_docket_proportions(style: "push")
     @nonpriority_iterations += 1
     @remaining_docket_proportions
@@ -137,7 +137,6 @@ module AutomaticCaseDistribution
         @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
       end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def priority_target
     proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
