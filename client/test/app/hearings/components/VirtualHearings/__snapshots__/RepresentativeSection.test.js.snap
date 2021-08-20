@@ -159,6 +159,7 @@ SAN FRANCISCO, CA 94103
           label="POA/Representative Timezone"
           name="representativeTz"
           onChange={[Function]}
+          optional={false}
           readOnly={false}
           required={true}
           roTimezone="America/New_York"
@@ -171,6 +172,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="representativeTz"
             onChange={[Function]}
+            optional={false}
             options={
               Array [
                 Object {
@@ -973,6 +975,7 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="POA/Representative Timezone"
                       name="POA/Representative Timezone"
+                      optional={false}
                       required={true}
                     >
                       <span>
@@ -16265,6 +16268,7 @@ SAN FRANCISCO, CA 94103
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16276,7 +16280,7 @@ SAN FRANCISCO, CA 94103
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
@@ -16292,11 +16296,16 @@ SAN FRANCISCO, CA 94103
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -16490,6 +16499,7 @@ SAN FRANCISCO, CA 94103
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           readOnly={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -16674,6 +16684,7 @@ SAN FRANCISCO, CA 94103
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16685,7 +16696,7 @@ SAN FRANCISCO, CA 94103
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
@@ -16701,11 +16712,16 @@ SAN FRANCISCO, CA 94103
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -16917,6 +16933,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16928,7 +16945,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
@@ -16944,11 +16961,16 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>
@@ -17153,6 +17175,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
           label="POA/Representative Email"
+          optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17164,7 +17187,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             }
             name="POA/Representative Email"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             required={false}
             strongLabel={true}
             type="text"
@@ -17180,11 +17203,16 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 <strong>
                   <FormLabel
                     name="POA/Representative Email"
-                    optional={false}
+                    optional={true}
                     required={false}
                   >
                     <span>
                       POA/Representative Email
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
                   </FormLabel>
                 </strong>

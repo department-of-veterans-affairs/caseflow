@@ -130,12 +130,12 @@ class HearingRepository
     # a given timeframe (in days).
     #
     # @note Requires a join with the `hearing_days` table.
-    def scheduled_within_seven_days
+    def scheduled_within_sixty_days
       <<-SQL
         DATE_PART(
         'day',
         hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
-        ) BETWEEN 1 AND 7
+        ) BETWEEN 1 AND 60
       SQL
     end
 
@@ -159,7 +159,7 @@ class HearingRepository
         .where(
           "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
         )
-        .where(scheduled_within_seven_days)
+        .where(scheduled_within_sixty_days)
     end
 
     def legacy_maybe_ready
@@ -170,7 +170,7 @@ class HearingRepository
         .where(
           "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
         )
-        .where(scheduled_within_seven_days).in_batches do |vhs|
+        .where(scheduled_within_sixty_days).in_batches do |vhs|
           vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
           # the subset of hearings that are postponed or cancelled in VACOLS
           # default to [""] if empty so the NOT IN clause in the query below will work
