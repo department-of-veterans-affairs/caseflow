@@ -17,7 +17,7 @@ module AppealConcern
                             RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
-                          end
+                         end
   end
 
   def regional_office_name
