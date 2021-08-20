@@ -197,6 +197,7 @@ detectors:
       - Task
       - UpdateCachedAppealsAttributesJob
       - Veteran
+      - LegacyDocket
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -255,9 +256,7 @@ detectors:
     exclude:
       - Docket#distribute_appeals
       - HearingRequestDocket#distribute_appeals
-  RepeatedConditional:
-    exclude:
-      - LegacyDocket
+
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
