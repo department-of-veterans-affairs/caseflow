@@ -6,7 +6,8 @@ module CaseReviewConcern
   attr_accessor :issues
 
   included do
-    belongs_to :appeal, polymorphic: true
+    include BelongsToPolymorphicAppealConcern
+    belongs_to_polymorphic_appeal :appeal
 
     validates :task, presence: true, unless: :legacy?
   end
