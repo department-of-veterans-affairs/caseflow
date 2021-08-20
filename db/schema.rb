@@ -1071,6 +1071,8 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
 
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
+    t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
+    t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"

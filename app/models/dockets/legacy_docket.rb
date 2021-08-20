@@ -48,7 +48,25 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
+  def really_distribute(distribution, style: "push", genpop: "any")
+    genpop == "not_genpop" || # always distribute tied cases
+      (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
+      !JudgeTeam.for_judge(distribution.judge).ama_only_request
+  end
+
+  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+
+    if priority
+      distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
+    else
+      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit)
+    end
+  end
+
+  def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
@@ -58,7 +76,15 @@ class LegacyDocket
     end.compact
   end
 
-  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1, bust_backlog: false)
+  # rubocop:disable Metrics/ParameterLists
+  def distribute_nonpriority_appeals(distribution,
+                                     style: "push",
+                                     genpop: "any",
+                                     range: nil,
+                                     limit: 1,
+                                     bust_backlog: false)
+    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+
     return [] if !range.nil? && range <= 0
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(
@@ -71,14 +97,7 @@ class LegacyDocket
       dist_case
     end.compact
   end
-
-  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
-    if priority
-      distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
-    else
-      distribute_nonpriority_appeals(distribution, genpop: genpop, limit: limit)
-    end
-  end
+  # rubocop:enable Metrics/ParameterLists
 
   private
 

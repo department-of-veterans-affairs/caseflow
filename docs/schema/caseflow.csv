@@ -817,6 +817,8 @@ non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
+organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
+organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
