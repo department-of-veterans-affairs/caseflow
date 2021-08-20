@@ -171,9 +171,11 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 4
-      expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid, ready_priority_bfkey2, ready_priority_uuid2]
+      expected_array = [ready_priority_bfkey, ready_priority_uuid, ready_priority_bfkey2, ready_priority_uuid2]
+      expect(distributed_cases.map(&:case_id)).to match_array expected_array
       # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing, "legacy", Constants.AMA_DOCKETS.hearing]
+      expected_array2 = ["legacy", Constants.AMA_DOCKETS.hearing, "legacy", Constants.AMA_DOCKETS.hearing]
+      expect(distributed_cases.map(&:docket)).to match_array expected_array2
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
     end
@@ -259,8 +261,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
-
-
 
     it "should distribute ready priority appeals to the judges" do
       expect(subject.count).to eq judges.count
