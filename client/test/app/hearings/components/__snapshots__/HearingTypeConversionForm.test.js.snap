@@ -16,6 +16,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -194,6 +195,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               <VirtualHearingEmail
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
@@ -308,6 +310,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="Virtual"
               >
@@ -411,6 +414,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -588,6 +592,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
@@ -679,6 +684,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="Virtual"
               >
@@ -782,6 +788,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -959,6 +966,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
@@ -1050,6 +1058,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="Virtual"
               >
@@ -1153,6 +1162,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -1330,6 +1340,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={true}
                 required={true}
                 type="Virtual"
@@ -1421,6 +1432,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="Virtual"
               >
