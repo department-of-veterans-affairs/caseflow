@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
 import { UnscheduledNotes } from './UnscheduledNotes';
+import { formatNotificationLabel } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -37,6 +38,7 @@ export const ScheduleVeteranForm = ({
   convertToVirtual,
   userCanViewTimeSlots,
   hearingTask,
+  userCanCollectVideoCentralEmails,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -55,7 +57,7 @@ export const ScheduleVeteranForm = ({
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
   const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
-  const getOriginalRequestType = () => {
+  const getHearingRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
     ) {
@@ -66,7 +68,7 @@ export const ScheduleVeteranForm = ({
     }
 
     // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
+    return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
 
   // Set the section props
@@ -74,6 +76,8 @@ export const ScheduleVeteranForm = ({
     errors,
     hearing,
     appellantTitle,
+    userCanCollectVideoCentralEmails,
+    showDivider: false,
     schedulingToVirtual: virtual,
     virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
@@ -130,8 +134,8 @@ export const ScheduleVeteranForm = ({
           <HearingTypeDropdown
             enableFullPageConversion
             update={convertToVirtual}
-            originalRequestType={getOriginalRequestType()}
-            virtualHearing={hearing?.virtualHearing}
+            originalRequestType={getHearingRequestType()}
+            virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
         <div className="cf-help-divider usa-width-one-whole" />
@@ -207,18 +211,24 @@ export const ScheduleVeteranForm = ({
                       hearing={hearing}
                       roTimezone={hearing?.hearingDay?.timezone}
                     />
-                  ) : getHearingTime()}
+                  ) : (
+                    getHearingTime()
+                  )}
                 </div>
               )}
-
             </React.Fragment>
           )}
         </div>
-        {virtual && (
-          <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection {...sectionProps} fullWidth />
-            <RepresentativeSection {...sectionProps} fullWidth />
-          </div>
+        {(userCanCollectVideoCentralEmails || virtual) && (
+          <React.Fragment>
+            <div className="cf-help-divider usa-width-one-whole" />
+            <div className="usa-width-one-whole" >
+              <h2>Email Notifications {!virtual && '(Optional)'}</h2>
+              <p>{formatNotificationLabel(hearing, virtual, appellantTitle)}</p>
+              <AppellantSection {...sectionProps} fullWidth />
+              <RepresentativeSection {...sectionProps} fullWidth />
+            </div>
+          </React.Fragment>
         )}
       </div>
     </div>
@@ -238,6 +248,7 @@ ScheduleVeteranForm.propTypes = {
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   hearingTask: PropTypes.object
 };
 
