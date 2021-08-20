@@ -2,6 +2,7 @@
 
 class AttorneyCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include HasAppealUpdatedSince
   include IssueUpdater
   include ::AmaAttorneyCaseReviewDocumentIdValidator
 

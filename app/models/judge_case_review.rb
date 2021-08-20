@@ -2,6 +2,7 @@
 
 class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include HasAppealUpdatedSince
   include IssueUpdater
 
   belongs_to :judge, class_name: "User"
