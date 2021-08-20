@@ -150,10 +150,12 @@ namespace :doc do
       target_dir = Rails.root.join("docs/schema/")
 
       save_dot_file(graph, target_dir.join("#{schema_name}-#{graph_filename}.dot"))
-      graph.save(
-        png: target_dir.join("#{schema_name}-#{graph_filename}.png"),
-        svg: target_dir.join("#{schema_name}-#{graph_filename}.svg")
-      ) if update_schema_images?
+      if update_schema_images?
+        graph.save(
+          png: target_dir.join("#{schema_name}-#{graph_filename}.png"),
+          svg: target_dir.join("#{schema_name}-#{graph_filename}.svg")
+        )
+      end
     end
 
     def update_schema_images?
