@@ -13,7 +13,8 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
-      { id_column: :participant_id,
+      { # To-do: Add a foreign-key to `people` table and remove this
+        id_column: :participant_id,
         type_column: nil,
         includes_method: :person },
       { id_column: :decision_review_id,
