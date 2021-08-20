@@ -73,6 +73,9 @@ class Docket
       rescue ActiveRecord::RecordNotUnique => error
         Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
         Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
+      rescue PG::UniqueViolation => error
+        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
       end
     end
   end
@@ -93,17 +96,19 @@ class Docket
 
   def assign_judge_tasks_for_appeals(appeals, judge)
     appeals.map do |appeal|
+      distribution_task = appeal.tasks.of_type(:DistributionTask).first
+      distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
       Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
-      task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge).call
-      Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
+      judge_task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge,
+                                              assigned_by_id: distribution_task_assignee_id).call
+      Rails.logger.info("Assigned judge task with task id #{judge_task.id} to #{judge_task.assigned_to.css_id}")
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
       appeal.tasks.of_type(:DistributionTask).update(status: :completed)
-      distribution_task = appeal.tasks.of_type(:DistributionTask).first
       Rails.logger.info("Closing distribution task with task id #{distribution_task.id} "\
-        "that was assigned to id #{distribution_task.assigned_to_id}")
+        "that was assigned to id #{distribution_task_assignee_id}")
 
-      task
+      judge_task
     end
   end
 
