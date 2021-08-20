@@ -14,7 +14,7 @@ class AppealsUpdatedSinceQuery
 
   private
 
-  # Before adding to this list, consider adding `include HasAppealUpdatedSince` 
+  # Before adding to this list, consider adding `include HasAppealUpdatedSince`
   # or `scope :updated_since_for_appeals` to the model, esp. if the ETL::Appeal table uses the model's data.
   SKIP_ASSOCIATIONS = %w[
     versions

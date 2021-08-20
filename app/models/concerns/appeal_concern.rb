@@ -14,7 +14,7 @@ module AppealConcern
     return nil if regional_office_key.nil?
 
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
+                           RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
                          end
