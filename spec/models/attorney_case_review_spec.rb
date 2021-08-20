@@ -459,10 +459,12 @@ describe AttorneyCaseReview, :all_dbs do
           expect(judge_task.reload.assigned_by).to eq(attorney)
         end
         it "should create an AttorneyCaseReview record" do
-          subject
-          case_review = AttorneyCaseReview.find_by(task: attorney_task)
+          case_review = subject
           expect(case_review.appeal_type).to eq "Appeal"
           expect(case_review.appeal_id).to eq attorney_task.appeal.id
+
+          expect(attorney_task.appeal.attorney_case_reviews).to include case_review
+          expect(attorney_task.appeal.judge_case_reviews).to eq []
         end
         it "should check for erroneous AMA states"
       end

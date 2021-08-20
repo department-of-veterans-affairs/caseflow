@@ -114,6 +114,14 @@ describe JudgeCaseReview, :all_dbs do
         expect(subject.valid?).to eq true
         expect(subject.location).to eq "bva_dispatch"
       end
+
+      it "should associate appeal to JudgeCaseReview" do
+        case_review = subject
+        expect(case_review.appeal_type).to eq "Appeal"
+        expect(case_review.appeal_id).to eq task.appeal.id
+        expect(task.appeal.judge_case_reviews).to include case_review
+        expect(task.appeal.attorney_case_reviews).to eq []
+      end
     end
 
     context "when legacy case review" do
