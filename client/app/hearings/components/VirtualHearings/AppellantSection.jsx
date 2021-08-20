@@ -26,7 +26,8 @@ export const AppellantSection = ({
   showOnlyAppellantName,
   showMissingEmailAlert,
   showTimezoneField,
-  schedulingToVirtual
+  schedulingToVirtual,
+  userCanCollectVideoCentralEmails
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -76,11 +77,12 @@ export const AppellantSection = ({
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && schedulingToVirtual && (
+      {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames(columnWidthClass)} >
             <Timezone
-              required
+              required={schedulingToVirtual}
+              optional={!schedulingToVirtual}
               value={virtualHearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
@@ -99,7 +101,8 @@ export const AppellantSection = ({
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(columnWidthClass)} >
           <VirtualHearingEmail
-            required
+            required={schedulingToVirtual}
+            optional={!schedulingToVirtual}
             readOnly={readOnly}
             label={`${appellantTitle} Email`}
             emailType="appellantEmail"
@@ -140,5 +143,7 @@ AppellantSection.propTypes = {
   showDivider: PropTypes.bool,
   showMissingEmailAlert: PropTypes.bool,
   showTimezoneField: PropTypes.bool,
+  virtual: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool
 };

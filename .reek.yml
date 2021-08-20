@@ -26,6 +26,7 @@ detectors:
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - HearingRenderer
+      - Hearings::SendEmail#initialize
       - LegacyDocket#distribute_appeals
       - SanitizedJsonDifference
       - SanitizedJsonConfiguration
@@ -54,6 +55,7 @@ detectors:
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
   DataClump:
     exclude:
+      - ForeignKeyPolymorphicAssociationJob
       - HearingSerializerBase
       - LegacyDocket
       - SanitizedJsonConfiguration

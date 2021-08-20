@@ -80,7 +80,7 @@ module ErdRecordAssociations
     klass.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to }
   end
 
-  EXCLUDED_ASSOCIATIONS = [
+  EXCLUDED_ASSOCIATIONS ||= [
     # These are common Rails fields that clutter the visualization
     :created_by, :updated_by,
 
