@@ -35,7 +35,6 @@ export const AppealStreamDetails = ({
       </Link>
     </React.Fragment>
   ) : caseLabel;
-
 };
 
 AppealStreamDetails.propTypes = {
@@ -46,14 +45,16 @@ AppealStreamDetails.propTypes = {
   isAdvancedOnDocket: PropTypes.bool,
 };
 
-export const AppealInformation = ({ appeal, appellantTitle, hearing }) => {
+export const AppealInformation = ({ appeal, hearing }) => {
   /* eslint-disable camelcase */
   const poaText = appeal?.powerOfAttorney?.representative_name ?
     appeal?.powerOfAttorney?.representative_name :
     'No representative';
-  /* eslint-enable camelcase */
   const appellantName = appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName;
-  const poaLabel = appeal?.powerOfAttorney.representative_type === 'Other' ? 'Power Of Attorney' : appeal?.powerOfAttorney.representative_type;
+  const poaLabel =
+    appeal?.powerOfAttorney?.representative_type === 'Other' ?
+      'Power Of Attorney' :
+      appeal?.powerOfAttorney?.representative_type;
 
   return (
     <div className="schedule-veteran-appeals-info">
@@ -65,7 +66,13 @@ export const AppealInformation = ({ appeal, appellantTitle, hearing }) => {
         addressCity={appeal?.appellantAddress?.city}
         addressZip={appeal?.appellantAddress?.zip}
       />
-      <ReadOnly spacing={15} label="Relation to Veteran" text={appeal?.appellantRelationship} />
+      {appeal?.appellantRelationship && (
+        <ReadOnly
+          spacing={15}
+          label="Relation to Veteran"
+          text={appeal?.appellantRelationship}
+        />
+      )}
       <ReadOnly spacing={15} label="Issues" text={appeal?.issueCount} />
       <ReadOnly
         className="schedule-veteran-appeals-info-stream"
@@ -112,3 +119,5 @@ AppealInformation.propTypes = {
   appellantTitle: PropTypes.string,
   hearing: PropTypes.object
 };
+
+/* eslint-enable camelcase */

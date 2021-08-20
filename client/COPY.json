@@ -1005,7 +1005,7 @@
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
   "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
   "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
-  "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "Changes to the email are used to send notifications for this hearing only",
+  "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "This email address will be used to send notifications for this hearing only.",
 
   "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
   "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the %s, POA / Representative, and Veterans Law Judge (VLJ).",

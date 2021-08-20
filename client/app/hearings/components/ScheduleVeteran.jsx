@@ -361,10 +361,7 @@ export const ScheduleVeteran = ({
   };
 
   // Create the header styling based on video/virtual type
-  const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
-  const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
-  const recipients = hearing?.representative ? `${appellantTitle}, power of attorney,` : `${appellantTitle}`;
-  const helperLabel = sprintf(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL, recipients);
+  const headerStyle = setMargin('0 0 45px 0');
 
   // This protects against users navigating directly to this page without the correct data in the store
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
@@ -374,10 +371,6 @@ export const ScheduleVeteran = ({
       <AppSegment filledBackground extraClassNames="schedule-veteran-page">
         <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
-        {virtual ?
-          <div {...helperTextStyle}>{helperLabel}</div> :
-          !fullHearingDay && <div {...marginTop(45)} />}
-
         {fullHearingDay && (
           <Alert
             title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
