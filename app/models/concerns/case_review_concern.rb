@@ -12,17 +12,20 @@ module CaseReviewConcern
   end
 
   def appeal
-    unless appeal_association?
-      # This code block can be removed once all DB records have appeal_* values and
-      # code has been updated to populate them on creation of all CaseReview records.
-      # Populate appeal_* column values based on original implementation that uses `task_id`
-      update_attributes(
-        appeal_id: appeal_through_task_id&.id,
-        appeal_type: appeal_through_task_id&.class&.name
-      )
-    end
+    # This associate_with_appeal call can be removed once all DB records have appeal_* values and
+    # code has been updated to populate them on creation of all CaseReview records.
+    associate_with_appeal unless appeal_association?
+
     # use the `belongs_to :appeal` association
     super
+  end
+
+  def associate_with_appeal
+    # Populate appeal_* column values based on original implementation that uses `task_id`
+    update_attributes(
+      appeal_id: appeal_through_task_id&.id,
+      appeal_type: appeal_through_task_id&.class&.name
+    )
   end
 
   def appeal_through_task_id

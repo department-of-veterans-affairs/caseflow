@@ -173,6 +173,10 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.areas_for_improvement).to eq ["process_violations"]
             expect(subject.judge).to eq judge
             expect(subject.attorney).to eq attorney
+
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+
             expect(decass.reload.demdusr).to eq "CFS456"
             expect(decass.defdiff).to eq "3"
             expect(decass.deoq).to eq "1"
@@ -244,6 +248,9 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.factors_not_considered).to eq %w[theory_contention relevant_records]
             expect(subject.areas_for_improvement).to eq ["process_violations"]
 
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+
             expect_decass_to_be_up_to_date(decass)
 
             vacols_case.reload
@@ -293,6 +300,9 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.location).to eq "omo_office"
             expect(subject.judge).to eq judge
             expect(subject.attorney).to eq attorney
+
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
 
             expect_decass_to_be_up_to_date(decass)
 

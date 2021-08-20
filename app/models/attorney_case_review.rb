@@ -73,6 +73,7 @@ class AttorneyCaseReview < CaseflowRecord
         record = create(params)
         if record.valid?
           record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          record.associate_with_appeal
         end
         record
       end
