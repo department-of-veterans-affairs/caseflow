@@ -32,4 +32,8 @@ class CachedUser < CaseflowRecord
     staff_attributes = staff.attributes.select { |attr| CachedUser.staff_column_names.include?(attr) }
     assign_attributes(staff_attributes)
   end
+
+  def full_name
+    FullName.new(snamef, nil, snamel).formatted(:readable_short)
+  end
 end
