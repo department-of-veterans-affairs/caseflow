@@ -99,7 +99,9 @@ class Docket
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
       appeal.tasks.of_type(:DistributionTask).update(status: :completed)
-      Rails.logger.info("Closing distribution task with task id #{task.id} to #{task.assigned_to.css_id}")
+      distribution_task = appeal.tasks.of_type(:DistributionTask).first
+      Rails.logger.info("Closing distribution task with task id #{distribution_task.id} "\
+        "that was assigned to id #{distribution_task.assigned_to_id}")
 
       task
     end
