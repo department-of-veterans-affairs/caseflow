@@ -3,6 +3,7 @@
 # Veterans Health Administration related seeds
 
 module Seeds
+  # rubocop:disable Metrics/MethodLength
   class VeteransHealthAdministration < Base
     PROGRAM_OFFICES = [
       "Community Care - Payment Operations Management",
