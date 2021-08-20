@@ -444,6 +444,44 @@ describe Distribution, :all_dbs do
           expect(subject.distributed_cases.count).to eq(15)
         end
       end
+
+      describe "JudgeTeam ama_only_request toggle" do
+        context "when the toggle is not set for a JudgeTeam (default case)" do
+          it "includes mostly legacy cases" do
+            subject.distribute!
+
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases.count).to be >= 10
+          end
+        end
+
+        context "when a JudgeTeam is AMA-only for requested distributions" do
+          before do
+            judge_team.update!(ama_only_request: true)
+            subject.distribute!
+          end
+          after { judge_team.update!(ama_only_request: false) }
+
+          it "does distribute tied legacy cases" do
+            tied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query == "not_genpop"
+            end
+
+            expect(tied_legacy_docket_cases.count).to eq(2)
+          end
+
+          it "does not distribute any untied legacy cases" do
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases.count).to eq(0)
+          end
+        end
+      end
     end
 
     context "priority_push is true" do
