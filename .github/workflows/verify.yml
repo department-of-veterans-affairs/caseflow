@@ -90,16 +90,13 @@ jobs:
       - name: Setup test database
         env:
           RAILS_ENV: test
-          PGHOST: localhost
+          # PGHOST: localhost
           # PGUSER: postgres
           POSTGRES_HOST: localhost
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
           bin/rails db:create && bin/rails db:schema:load
-
-      - name: Debug
-        run: env
 
       - name: Create DB schema documentation
         env:
@@ -110,3 +107,4 @@ jobs:
         run: |
           env
           ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:csv:schema
+          cat docs/schema/caseflow.csv
