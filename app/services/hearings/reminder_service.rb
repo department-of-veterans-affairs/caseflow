@@ -114,7 +114,7 @@ class Hearings::ReminderService
   end
 
   def days_until_hearing
-    (hearing.scheduled_for - Time.zone.now.utc) / 1.day
+    (hearing.hearing_day.scheduled_for - Time.now.utc.to_date).to_i
   end
 
   def days_from_hearing_day_to_last_sent_reminder
