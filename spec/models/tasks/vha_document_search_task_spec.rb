@@ -7,9 +7,9 @@ describe VhaDocumentSearchTask, :postgres do
 
   before { camo.add_user(user) }
 
-  describe "#label" do
+  describe ".label" do
     it "uses a friendly label" do
-      expect(task.label).to eq "Assess Documentation"
+      expect(task.class.label).to eq COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
     end
   end
 

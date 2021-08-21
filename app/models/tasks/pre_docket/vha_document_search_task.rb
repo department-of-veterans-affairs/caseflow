@@ -8,7 +8,7 @@ class VhaDocumentSearchTask < Task
   validates :parent, presence: true
 
   def available_actions(user)
-    return [] unless user.organizations.include?(assigned_to)
+    return [] unless assigned_to.user_has_access?(user)
 
     []
   end

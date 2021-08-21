@@ -10,7 +10,7 @@ describe PreDocketTasksFactory, :postgres do
     let(:bva_intake) { BvaIntake.singleton }
     let(:bva_intake_user) { create(:intake_user) }
     let(:camo) { VhaCamo.singleton }
-    let(:camo_user) { create(:user) }
+    let(:bva_intake_user) { create(:intake_user) }
 
     let(:appeal) { create(:appeal, intake: create(:intake, user: bva_intake_user)) }
 
