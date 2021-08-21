@@ -17,8 +17,10 @@ services:
     container_name: appeals-db
     ports:
       - "5432:5432"
-    volumes:
-      - "postgresdata:/var/lib/postgresql/data"
+#    volumes:
+#      - "postgresdata:/var/lib/postgresql/data"
+# Use RAM disk instead: https://stackoverflow.com/questions/42226418/how-to-move-postresql-to-ram-disk-in-docker
+    tmpfs: /var/lib/postgresql/data
     environment:
      - POSTGRES_PASSWORD=postgres
 
@@ -33,5 +35,5 @@ services:
 #    volumes:
 #      - ./local/sqs/conf:/conf
 
-volumes:
-  postgresdata:
+#volumes:
+#  postgresdata:
