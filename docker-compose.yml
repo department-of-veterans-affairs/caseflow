@@ -1,17 +1,17 @@
 version: '3'
 services:
-  vacols-db:
-    container_name: VACOLS_DB
-    image: vacols_db:latest
-    ports:
-      - "1521:1521"
-
-  appeals-redis:
-    container_name: appeals-redis
-    image: redis:2.8.23
-    ports:
-      - "6379:6379"
-
+#  vacols-db:
+#    container_name: VACOLS_DB
+#    image: vacols_db:latest
+#    ports:
+#      - "1521:1521"
+#
+#  appeals-redis:
+#    container_name: appeals-redis
+#    image: redis:2.8.23
+#    ports:
+#      - "6379:6379"
+#
   appeals-postgres:
     image: postgres:11.7
     container_name: appeals-db
@@ -22,16 +22,16 @@ services:
     environment:
      - POSTGRES_PASSWORD=postgres
 
-  appeals-localstack-aws:
-    container_name: localstack
-    image: localstack/localstack:0.11.4
-    ports:
-      - "4567-4583:4567-4583"
-      - "8082:${PORT_WEB_UI-8080}"
-    environment:
-      - SERVICES=sqs
-    volumes:
-      - ./local/sqs/conf:/conf
+#  appeals-localstack-aws:
+#    container_name: localstack
+#    image: localstack/localstack:0.11.4
+#    ports:
+#      - "4567-4583:4567-4583"
+#      - "8082:${PORT_WEB_UI-8080}"
+#    environment:
+#      - SERVICES=sqs
+#    volumes:
+#      - ./local/sqs/conf:/conf
 
 volumes:
   postgresdata:
