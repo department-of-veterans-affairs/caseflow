@@ -113,9 +113,6 @@ namespace :doc do
   end
 
   namespace :belongs_to do
-    include ErdRecordAssociations
-    include ErdGraphStyling
-
     def record_classes
       return @record_classes if @record_classes
 
@@ -164,6 +161,10 @@ namespace :doc do
 
     desc "Generate belongs_to ERD"
     task erd: :prepare do
+      # `include`s should be within the `task` scope: https://stackoverflow.com/questions/17304110/
+      include ErdRecordAssociations
+      include ErdGraphStyling
+
       node_classes = exclude_verbose_classes(record_classes)
 
       # Subclasses ERD
