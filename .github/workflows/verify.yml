@@ -92,10 +92,10 @@ jobs:
           RAILS_ENV: test
           PGHOST: localhost
           # PGUSER: postgres
-          # POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
-          bin/rails db:setup
+          bin/rails db:reset && bin/rails db:migrate
 
       - name: Run tests
         run: bin/rspec
