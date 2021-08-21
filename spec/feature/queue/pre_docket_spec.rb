@@ -95,7 +95,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       click_on("Switch views")
       click_on("#{program_office.name} team cases")
 
-      expect(page).to have_current_path("/organizations/#{program_office.url}")
+      expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
       expect(page).to have_content("Assess Documentation Task")
 
       find_link("#{veteran.name} (#{veteran.file_number})").click
