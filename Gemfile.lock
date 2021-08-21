@@ -110,9 +110,6 @@ GEM
       arel (>= 9.0)
     activerecord-import (1.0.2)
       activerecord (>= 3.2)
-    activerecord-oracle_enhanced-adapter (5.2.8)
-      activerecord (~> 5.2.0)
-      ruby-plsql (>= 0.6.0)
     activestorage (5.2.4.6)
       actionpack (= 5.2.4.6)
       activerecord (= 5.2.4.6)
@@ -561,8 +558,6 @@ GEM
       rack (>= 1.1)
       rubocop (>= 0.72.0)
     ruby-graphviz (1.2.4)
-    ruby-oci8 (2.2.7)
-    ruby-plsql (0.7.1)
     ruby-prof (1.4.1)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
@@ -677,7 +672,6 @@ PLATFORMS
 DEPENDENCIES
   aasm (= 4.11.0)
   activerecord-import
-  activerecord-oracle_enhanced-adapter (~> 5.2.0)
   acts_as_tree
   anbt-sql-formatter
   bgs!
@@ -748,7 +742,6 @@ DEPENDENCIES
   rubocop (= 0.79)
   rubocop-performance
   rubocop-rails
-  ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   sass-rails (~> 5.0)
   scss_lint
