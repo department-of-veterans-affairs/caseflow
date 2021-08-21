@@ -108,3 +108,11 @@ jobs:
           env
           ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:csv:schema
           cat docs/schema/caseflow.csv
+
+      - name: Run RSpec
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        run: bundle exec rspec
