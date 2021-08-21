@@ -95,7 +95,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
-          bin/rails db:reset && bin/rails db:migrate
+          bin/rails db:create && bin/rails db:schema:load
 
       - name: Run tests
         run: bin/rspec
