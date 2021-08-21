@@ -135,6 +135,7 @@ group :test do
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "sqlite3"
 end
 # rubocop:enable Metrics/LineLength
 

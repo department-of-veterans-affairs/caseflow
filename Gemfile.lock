@@ -614,6 +614,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sql_tracker (1.3.2)
+    sqlite3 (1.4.2)
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
@@ -751,6 +752,7 @@ DEPENDENCIES
   single_cov
   sniffybara!
   sql_tracker
+  sqlite3
   stringex
   strong_migrations
   test-prof
