@@ -194,6 +194,8 @@ cached_user_attributes,sattyid,string,,,,,,
 cached_user_attributes,sdomainid,string PK,x,x,,,x,
 cached_user_attributes,slogid,string ∗,x,,,,,
 cached_user_attributes,smemgrp,string (8),,,,,,
+cached_user_attributes,snamef,string,,,,,,User's First Name in VACOLS
+cached_user_attributes,snamel,string,,,,,,User's Last Name in VACOLS
 cached_user_attributes,stafkey,string ∗,x,,,,,
 cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
@@ -299,19 +301,19 @@ claims_folder_searches,user_id,integer FK,,,x,,x,
 decision_documents,,,,,,,,
 decision_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
 decision_documents,appeal_type,string,,,,,,
-decision_documents,attempted_at,datetime,,,,,,
+decision_documents,attempted_at,datetime,,,,,,When the job ran
 decision_documents,canceled_at,datetime,,,,,,Timestamp when job was abandoned
-decision_documents,citation_number,string ∗,x,,,,x,
+decision_documents,citation_number,string ∗,x,,,,x,Unique identifier for decision document
 decision_documents,created_at,datetime ∗,x,,,,,
 decision_documents,decision_date,date ∗,x,,,,,
-decision_documents,error,string,,,,,,
+decision_documents,error,string,,,,,,Message captured from a failed attempt
 decision_documents,id,integer (8) PK,x,x,,,,
-decision_documents,last_submitted_at,datetime,,,,,,
-decision_documents,processed_at,datetime,,,,,,
+decision_documents,last_submitted_at,datetime,,,,,,When the job is eligible to run (can be reset to restart the job)
+decision_documents,processed_at,datetime,,,,,,When the job has concluded
 decision_documents,redacted_document_location,string ∗,x,,,,,
-decision_documents,submitted_at,datetime,,,,,,
+decision_documents,submitted_at,datetime,,,,,,When the job first became eligible to run
 decision_documents,updated_at,datetime ∗,x,,,,x,
-decision_documents,uploaded_to_vbms_at,datetime,,,,,,
+decision_documents,uploaded_to_vbms_at,datetime,,,,,,When document was successfully uploaded to VBMS
 decision_issues,,,,,,,,Issues that represent a decision made on a decision review.
 decision_issues,benefit_type,string,,,,,,"Classification of the benefit being decided on. Maps 1 to 1 to VA lines of business, and typically used to know which line of business the decision correlates to."
 decision_issues,caseflow_decision_date,date,,,,,,"This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
@@ -811,6 +813,8 @@ non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
+organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
+organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,

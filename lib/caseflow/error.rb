@@ -196,6 +196,19 @@ module Caseflow::Error
     end
   end
 
+  class BgsFileNumberMismatch < SerializableError
+    # Add attr_accessors for testing
+    attr_accessor :user_id, :appeal_id
+
+    def initialize(args)
+      @user_id = args[:user_id]
+      @appeal_id = args[:appeal_id]
+      @code = args[:code] || 500
+      @title = args[:title] || "VBMS::FilenumberDoesNotExist"
+      @message = args[:message] || "The veteran file number does not match the file number in VBMS"
+    end
+  end
+
   class RoundRobinTaskDistributorError < SerializableError
     def initialize(args)
       @code = args[:code] || 500
@@ -382,6 +395,15 @@ module Caseflow::Error
 
     def initialize(args = {})
       @error_type = args[:error_type]
+      @code = args[:code]
+      @message = args[:message]
+    end
+  end
+
+  class InvalidEmailError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
       @code = args[:code]
       @message = args[:message]
     end

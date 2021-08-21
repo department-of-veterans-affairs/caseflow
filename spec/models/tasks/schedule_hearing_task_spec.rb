@@ -113,6 +113,67 @@ describe ScheduleHearingTask, :all_dbs do
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
       end
 
+      context "when params includes email_recipients" do
+        let(:appellant_email) { "fake@email.com" }
+        let(:representative_email) { "another_fake@email.com" }
+        let(:email_recipients) do
+          {
+            appellant_email: appellant_email,
+            representative_email: representative_email
+          }
+        end
+
+        before do
+          update_params[:business_payloads][:values][:email_recipients] = email_recipients
+        end
+
+        it "creates appellant and representative email recipient", :aggregate_failures do
+          expect(subject.count).to eq(2)
+          expect(Hearing.count).to eq(1)
+          expect(Hearing.first.appellant_recipient.email_address).to eq(appellant_email)
+          expect(Hearing.first.representative_recipient.email_address).to eq(representative_email)
+          expect(Hearing.first.email_recipients.count).to eq(2)
+        end
+
+        context "with only appellant email" do
+          let(:representative_email) { nil }
+
+          it "creates appellant email recipient", :aggregate_failures do
+            expect(subject.count).to eq(2)
+            expect(Hearing.count).to eq(1)
+            expect(Hearing.first.appellant_recipient.email_address).to eq(appellant_email)
+            expect(Hearing.first.email_recipients.count).to eq(1)
+          end
+        end
+
+        context "with only representative email" do
+          let(:appellant_email) { nil }
+
+          it "creates representative email recipient", :aggregate_failures do
+            expect(subject.count).to eq(2)
+            expect(Hearing.count).to eq(1)
+            expect(Hearing.first.representative_recipient.email_address).to eq(representative_email)
+            expect(Hearing.first.email_recipients.count).to eq(1)
+          end
+        end
+
+        context "with invalid params" do
+          let(:appellant_email) { "blah" }
+
+          it "does not create email recipients", :aggregate_failures do
+            expect { subject }
+              .to raise_error(Caseflow::Error::InvalidEmailError)
+              .with_message("Validation failed: Email address Validation failed: " \
+              "Appellant email does not appear to be a valid e-mail address")
+
+            # does not create the hearing
+            expect(Hearing.count).to eq(0)
+            expect(AssignHearingDispositionTask.count).to eq(0)
+            expect(HearingEmailRecipient.count).to eq(0)
+          end
+        end
+      end
+
       context "when params includes virtual_hearing_attributes" do
         let(:appellant_email) { "fake@email.com" }
         let(:virtual_hearing_attributes) do
@@ -140,8 +201,7 @@ describe ScheduleHearingTask, :all_dbs do
             expect { subject }
               .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
               .with_message("Validation failed: Email address Validation failed: " \
-                "Appellant email does not appear to be a valid e-mail address"
-              )
+                "Appellant email does not appear to be a valid e-mail address")
             # does not create the hearing
             expect(Hearing.count).to eq(0)
             expect(AssignHearingDispositionTask.count).to eq(0)
