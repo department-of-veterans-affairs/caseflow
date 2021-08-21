@@ -102,8 +102,11 @@ class InitialTasksFactory
           handle_different_poa
         end
       end
+    when "ScheduleHearingTask"
+      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
     else
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
+      excluded_attrs = %w[status closed_at placed_on_hold_at]
+      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
     end
   end
 
