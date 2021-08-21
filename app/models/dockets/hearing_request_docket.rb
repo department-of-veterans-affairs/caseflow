@@ -20,7 +20,8 @@ class HearingRequestDocket < Docket
     HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
-  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
     appeals = HearingRequestDistributionQuery.new(
@@ -33,6 +34,7 @@ class HearingRequestDocket < Docket
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
     ).call
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.limit_genpop_appeals(appeals_array, limit)
     # genpop 'any' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a

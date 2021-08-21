@@ -121,7 +121,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     context "judge assignment" do
       include_context "hearing_days"
 
-      it "stages hearing days for judge assignment" do
+      it "stages hearing days for judge assignment", skip: "flake" do
         base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
         post :create, params: {
           schedule_period: {
