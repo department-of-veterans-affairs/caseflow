@@ -104,7 +104,9 @@ jobs:
       - name: Create DB schema documentation
         env:
           RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
         run: |
           env
-          sudo service postgresql start
           ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:csv:schema
