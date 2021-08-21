@@ -97,5 +97,5 @@ jobs:
         run: |
           bin/rails db:create && bin/rails db:schema:load
 
-      - name: Run tests
-        run: bin/rspec
+      - name: Create DB schema documentation
+        run: RAILS_ENV=test ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:csv:schema
