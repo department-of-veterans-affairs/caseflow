@@ -64,15 +64,15 @@ etl_production:
   <<: *etl_default
   url: <%= ENV["ETL_DB_URL"] %>
 
-development_vacols:
-  adapter: oracle_enhanced
-  username: VACOLS_DEV
-  password: VACOLS_DEV
-  <% if ! ENV['DOCKERIZED'] %>
-  host: localhost
-  port: 1521
-  <% end %>
-  database: <%= ENV['DEMO_DB'] || "BVAP" %>
+# development_vacols:
+#   adapter: oracle_enhanced
+#   username: VACOLS_DEV
+#   password: VACOLS_DEV
+#   <% if ! ENV['DOCKERIZED'] %>
+#   host: localhost
+#   port: 1521
+#   <% end %>
+#   database: <%= ENV['DEMO_DB'] || "BVAP" %>
 
 demo_vacols:
   adapter: sqlite3
@@ -80,30 +80,30 @@ demo_vacols:
   timeout: 5000
   database: db/demo-vacols.sqlite3
 
-ssh_forwarding_vacols:
-  adapter: oracle_enhanced
-  host: localhost
-  port: 1526
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  database: BVAP
+# ssh_forwarding_vacols:
+#   adapter: oracle_enhanced
+#   host: localhost
+#   port: 1526
+#   username: <%= ENV["VACOLS_USERNAME"] %>
+#   password: <%= ENV["VACOLS_PASSWORD"] %>
+#   database: BVAP
 
-staging_vacols:
-  adapter: oracle_enhanced
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  host: vacols.dev.vaco.va.gov
-  port: 1526
-  database: BVAP.VACO.VA.GOV
+# staging_vacols:
+#   adapter: oracle_enhanced
+#   username: <%= ENV["VACOLS_USERNAME"] %>
+#   password: <%= ENV["VACOLS_PASSWORD"] %>
+#   host: vacols.dev.vaco.va.gov
+#   port: 1526
+#   database: BVAP.VACO.VA.GOV
 
-production_vacols:
-  adapter: oracle_enhanced
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  host: <%= ENV["VACOLS_HOST"] %>
-  port: <%= ENV["VACOLS_PORT"] %>
-  database: <%= ENV["VACOLS_DATABASE"] %>
-  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+# production_vacols:
+#   adapter: oracle_enhanced
+#   username: <%= ENV["VACOLS_USERNAME"] %>
+#   password: <%= ENV["VACOLS_PASSWORD"] %>
+#   host: <%= ENV["VACOLS_HOST"] %>
+#   port: <%= ENV["VACOLS_PORT"] %>
+#   database: <%= ENV["VACOLS_DATABASE"] %>
+#   pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -122,12 +122,12 @@ test:
 # Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
 # Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
 # Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
-test_vacols:
-  adapter: oracle_enhanced
-  username: VACOLS_TEST
-  password: VACOLS_TEST
-  database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
-    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
-    (CONNECT_DATA=(SID=BVAP))
-  )"
+# test_vacols:
+#   adapter: oracle_enhanced
+#   username: VACOLS_TEST
+#   password: VACOLS_TEST
+#   database: "(DESCRIPTION=
+#     (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
+#     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
+#     (CONNECT_DATA=(SID=BVAP))
+#   )"
