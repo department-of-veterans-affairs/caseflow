@@ -52,10 +52,13 @@ jobs:
       postgres:
         image: postgres:11
         env:
-          POSTGRES_USER: root
           POSTGRES_DB: caseflow_certification_test
-          POSTGRES_PASSWORD: ""
-        ports: ["5432:5432"]
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          - 5432:5432
+        # ports: ["5432:5432"]
 
     steps:
       - name: Checkout code
@@ -88,7 +91,9 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: root
+          PGUSER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
         run: |
           bin/rails db:setup
 
