@@ -16,7 +16,8 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
       { # To-do: Add a foreign-key to `people` table and remove this
         id_column: :participant_id,
         type_column: nil,
-        includes_method: :person },
+        includes_method: :person
+      },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
         includes_method: :decision_review }

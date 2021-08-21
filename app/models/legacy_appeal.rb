@@ -842,7 +842,7 @@ class LegacyAppeal < CaseflowRecord
   def reviewing_judge_name
     das_assignments.max_by(&:created_at).try(:assigned_by_name)
   end
-  
+
   def death_dismissal!
     multi_transaction do
       cancel_open_caseflow_tasks!
