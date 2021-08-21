@@ -6,12 +6,12 @@ services:
 #    ports:
 #      - "1521:1521"
 #
-#  appeals-redis:
-#    container_name: appeals-redis
-#    image: redis:2.8.23
-#    ports:
-#      - "6379:6379"
-#
+  appeals-redis:
+    container_name: appeals-redis
+    image: redis:2.8.23
+    ports:
+      - "6379:6379"
+
   appeals-postgres:
     image: postgres:11.7
     container_name: appeals-db
