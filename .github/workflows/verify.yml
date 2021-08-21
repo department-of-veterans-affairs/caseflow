@@ -91,8 +91,8 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: postgres
-          POSTGRES_PASSWORD: postgres
+          # PGUSER: postgres
+          # POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
           bin/rails db:setup
