@@ -59,6 +59,10 @@ jobs:
         ports:
           - 5432:5432
         # ports: ["5432:5432"]
+      redis:
+        image: redis:alpine
+        ports: ["6379:6379"]
+        # options: --entrypoint redis-server
 
     steps:
       - name: Checkout code
