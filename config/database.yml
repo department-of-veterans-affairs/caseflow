@@ -74,7 +74,7 @@ etl_production:
 #   <% end %>
 #   database: <%= ENV['DEMO_DB'] || "BVAP" %>
 
-demo_vacols:
+test_vacols:
   adapter: sqlite3
   pool: 5
   timeout: 5000
