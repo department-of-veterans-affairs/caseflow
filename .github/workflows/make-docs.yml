@@ -1,10 +1,10 @@
 name: Make-docs-to-wiki
 
 # Run when a PR is merged or when a commit is made directly to the master branch.
-on:
-  push:
-    branches:
-      - master
+on: [push]
+  # push:
+    # branches:
+    #   - master
 
 jobs:
   make_docs:
