@@ -204,18 +204,22 @@ describe "SanitizedJsonExporter/Importer" do
       expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
       reassociate_fields_for_polymorphics = {
-        Task => %w[assigned_to_id appeal_id],
         AppealIntake => ["detail_id"],
-        DecisionDocument => ["appeal_id"]
+        AttorneyCaseReview => ["appeal_id"],
+        DecisionDocument => ["appeal_id"],
+        JudgeCaseReview => ["appeal_id"],
+        Task => %w[assigned_to_id appeal_id]
       }
-      expect(configuration.reassociate_fields[:type]).to eq reassociate_fields_for_polymorphics
+      expect(configuration.reassociate_fields[:type]).to match_array reassociate_fields_for_polymorphics
 
       reassociate_fields_for_appeal = {
+        AttorneyCaseReview => ["appeal_id"],
         CavcRemand => %w[source_appeal_id remand_appeal_id],
         Claimant => ["decision_review_id"],
         DecisionDocument => ["appeal_id"],
         DecisionIssue => ["decision_review_id"],
         Hearing => ["appeal_id"],
+        JudgeCaseReview => ["appeal_id"],
         Task => %w[appeal_id]
       }
       expect(configuration.reassociate_fields["Appeal"]).to match_array reassociate_fields_for_appeal

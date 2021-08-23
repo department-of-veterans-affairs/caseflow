@@ -3,11 +3,12 @@
 class Hearings::SendEmail
   class RecipientIsDeceasedVeteran < StandardError; end
 
-  attr_reader :hearing, :virtual_hearing, :type
+  attr_reader :hearing, :virtual_hearing, :type, :reminder_info
 
-  def initialize(virtual_hearing: nil, type:, hearing: nil)
+  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {})
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
+    @reminder_info = reminder_info
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -45,14 +46,23 @@ class Hearings::SendEmail
   delegate :appellant_recipient, :representative_recipient, :judge_recipient, to: :hearing
   delegate :veteran, to: :appeal
 
+  def email_type_is_reminder?
+    type == "reminder"
+  end
+
   def send_reminder
-    if type == "appellant_reminder" && send_email(appellant_recipient_info)
+    return false if !email_type_is_reminder?
+
+    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
+       send_email(appellant_recipient_info)
+
       return true
     end
 
-    if type == "representative_reminder" &&
+    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
        hearing.representative_recipient.email_address.present? &&
        send_email(representative_recipient_info)
+
       return true
     end
 
@@ -72,8 +82,8 @@ class Hearings::SendEmail
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       HearingMailer.updated_time_confirmation(**args)
-    when "appellant_reminder", "representative_reminder"
-      HearingMailer.reminder(**args, hearing: hearing)
+    when "reminder"
+      HearingMailer.reminder(**args, day_type: reminder_info[:day_type], hearing: hearing)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
@@ -160,11 +170,11 @@ class Hearings::SendEmail
 
     ::SentHearingEmailEvent.create!(
       hearing: hearing,
-      email_type: type.ends_with?("reminder") ? "reminder" : type,
+      email_type: type,
       email_address: recipient_info.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient_info.title.downcase,
-      sent_by: type.ends_with?("reminder") ? User.system_user : hearing.virtual_hearing.updated_by,
+      sent_by: email_type_is_reminder? ? User.system_user : hearing.virtual_hearing.updated_by,
       email_recipient: recipient_info.hearing_email_recipient
     )
   rescue StandardError => error
