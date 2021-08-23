@@ -43,11 +43,11 @@ jobs:
           sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
           echo '
-            test_vacols:
-              adapter: sqlite3
-              pool: 5
-              timeout: 5000
-              database: db/demo-vacols.sqlite3
+          test_vacols:
+            adapter: sqlite3
+            pool: 5
+            timeout: 5000
+            database: db/demo-vacols.sqlite3
           ' >> config/database.yml
 
           cat config/database.yml
