@@ -636,22 +636,6 @@ class LegacyAppeal < CaseflowRecord
     @documents_by_type = {}
   end
 
-  def attorney_case_reviews
-    (das_assignments || []).reject { |t| t.document_id.nil? }
-  end
-
-  def das_assignments
-    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
-  end
-
-  def reviewing_judge
-    das_assignments.max_by(&:created_at)
-  end
-
-  def reviewing_judge_name
-    reviewing_judge.try(:assigned_by_name)
-  end
-
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -863,8 +847,12 @@ class LegacyAppeal < CaseflowRecord
     @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
   end
 
+  def reviewing_judge
+    das_assignments.max_by(&:created_at)
+  end
+
   def reviewing_judge_name
-    das_assignments.max_by(&:created_at).try(:assigned_by_name)
+    reviewing_judge.try(:assigned_by_name)
   end
 
   def death_dismissal!
