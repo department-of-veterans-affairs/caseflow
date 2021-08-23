@@ -1972,7 +1972,7 @@ describe LegacyAppeal, :all_dbs do
       context "when there is a representative with reptype '#{reptype}'" do
         let(:vacols_case) { create(:case) }
         before { create(:representative, reptype: code, repkey: vacols_case.bfkey) }
-        
+
         it { is_expected.to eq(result) }
       end
     end
@@ -2545,13 +2545,6 @@ describe LegacyAppeal, :all_dbs do
       context "and representative is found by repkey" do
         let(:repkey) { vacols_case.bfkey }
         let(:repcorkey) { "CF99999" }
-
-        it { is_expected.to eq(result) }
-      end
-
-      context "and representative is found by repcorkey" do
-        let(:repkey) { "12345" }
-        let(:repcorkey) { vacols_case.bfcorkey }
 
         it { is_expected.to eq(result) }
       end

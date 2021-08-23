@@ -90,7 +90,7 @@ describe VACOLS::Case, :all_dbs do
           before do
             other_cases_with_valid_reps_count.times.each do
               other_case = create(:case, correspondent: vacols_case.correspondent)
-              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample 
+              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample
               create(
                 :representative,
                 repkey: other_case.bfkey,
@@ -110,7 +110,7 @@ describe VACOLS::Case, :all_dbs do
           before do
             other_case_with_contested_reps_count.times.each do
               other_case = create(:case, correspondent: vacols_case.correspondent)
-              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample
               create(
                 :representative,
                 repkey: other_case.bfkey,
@@ -131,7 +131,7 @@ describe VACOLS::Case, :all_dbs do
           before do
             other_cases_with_valid_reps_count.times.each do
               other_case = create(:case, correspondent: vacols_case.correspondent)
-              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample 
+              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample
               create(
                 :representative,
                 repkey: other_case.bfkey,
@@ -142,7 +142,7 @@ describe VACOLS::Case, :all_dbs do
 
             other_case_with_contested_reps_count.times.each do
               other_case = create(:case, correspondent: vacols_case.correspondent)
-              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample
               create(
                 :representative,
                 repkey: other_case.bfkey,
