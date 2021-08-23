@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_20_153715) do
+ActiveRecord::Schema.define(version: 2021_08_23_144420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1324,6 +1324,9 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.boolean "sent_status", comment: "This column keeps track of whether the email was sent or not."
+    t.datetime "sent_status_checked_at", comment: "The date the status was last checked/updated in the GovDelivery API."
+    t.string "sent_status_email_external_message_id", comment: "The GovDelivery external message id for the email sent to the coordinator."
     t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
