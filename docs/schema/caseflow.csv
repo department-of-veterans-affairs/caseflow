@@ -104,6 +104,8 @@ appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new ap
 appellant_substitutions,task_params,jsonb ∗,x,,,,,"JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
 appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
+attorney_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
+attorney_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
 attorney_case_reviews,document_id,string ∗,x,,,,,
@@ -696,6 +698,8 @@ job_notes,send_to_intake_user,boolean,,,,,,Should the note trigger a message to 
 job_notes,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at
 job_notes,user_id,integer (8) ∗ FK,x,,x,,x,The user who created the note
 judge_case_reviews,,,,,,,,
+judge_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
+judge_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 judge_case_reviews,areas_for_improvement,text,,,,,,
 judge_case_reviews,attorney_id,integer FK,,,x,,,
 judge_case_reviews,comment,text,,,,,,
@@ -813,6 +817,8 @@ non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
+organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
+organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,

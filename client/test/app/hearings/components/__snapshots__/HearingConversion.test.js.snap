@@ -9343,8 +9343,9 @@ SAN FRANCISCO, CA 94103
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={true}
                 readOnly={true}
-                required={true}
+                required={false}
                 type="change_from_virtual"
                 update={
                   [MockFunction] {
@@ -9564,6 +9565,7 @@ SAN FRANCISCO, CA 94103
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="change_from_virtual"
                 update={
@@ -18840,6 +18842,7 @@ SAN FRANCISCO, CA 94103
                 label="Veteran Timezone"
                 name="appellantTz"
                 onChange={[Function]}
+                optional={false}
                 readOnly={false}
                 required={true}
                 roTimezone="America/New_York"
@@ -18852,6 +18855,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="appellantTz"
                   onChange={[Function]}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -19654,6 +19658,7 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="Veteran Timezone"
                             name="Veteran Timezone"
+                            optional={false}
                             required={true}
                           >
                             <span>
@@ -34947,6 +34952,7 @@ SAN FRANCISCO, CA 94103
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={false}
                 required={true}
                 type="change_to_virtual"
@@ -35214,6 +35220,7 @@ SAN FRANCISCO, CA 94103
                 label="POA/Representative Timezone"
                 name="representativeTz"
                 onChange={[Function]}
+                optional={false}
                 readOnly={false}
                 required={true}
                 roTimezone="America/New_York"
@@ -35226,6 +35233,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="representativeTz"
                   onChange={[Function]}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -36028,6 +36036,7 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="POA/Representative Timezone"
                             name="POA/Representative Timezone"
+                            optional={false}
                             required={true}
                           >
                             <span>
@@ -51320,6 +51329,7 @@ SAN FRANCISCO, CA 94103
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={false}
                 type="change_to_virtual"
                 update={
@@ -51349,7 +51359,7 @@ SAN FRANCISCO, CA 94103
                   }
                   name="POA/Representative Email"
                   onChange={[Function]}
-                  optional={false}
+                  optional={true}
                   required={false}
                   strongLabel={true}
                   type="text"
@@ -51365,11 +51375,16 @@ SAN FRANCISCO, CA 94103
                       <strong>
                         <FormLabel
                           name="POA/Representative Email"
-                          optional={false}
+                          optional={true}
                           required={false}
                         >
                           <span>
                             POA/Representative Email
+                            <span
+                              className="cf-optional"
+                            >
+                              Optional
+                            </span>
                           </span>
                         </FormLabel>
                       </strong>
