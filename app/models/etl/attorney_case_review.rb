@@ -18,8 +18,8 @@ class ETL::AttorneyCaseReview < ETL::Record
       judge = user_cache(original.reviewing_judge_id)
       appeal = original.appeal
 
-      target.appeal_id = appeal.id
-      target.appeal_type = appeal.class.name
+      target.appeal_id = original.appeal_id
+      target.appeal_type = original.appeal_type
       target.attorney_css_id = attorney.css_id
       target.attorney_full_name = attorney.full_name
       target.attorney_id = attorney.id
