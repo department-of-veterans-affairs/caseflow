@@ -42,7 +42,7 @@ jobs:
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
           sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
-          echo '
+          echo '# Copied from demo_vacols
           test_vacols:
             adapter: sqlite3
             pool: 5
@@ -64,6 +64,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
+          bundle install sqlite3
+
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
           # Skipping VACOLS since Oracle DB is not set up
