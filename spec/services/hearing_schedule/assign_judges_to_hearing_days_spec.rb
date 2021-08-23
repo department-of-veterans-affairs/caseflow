@@ -27,8 +27,24 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     let(:judge2_last_name) { "Jouda" }
     let(:judge2_css_id) { "BSVAJOUDA" }
 
-    let(:judge1) { create(:user, full_name: "#{judge1_first_name} #{judge1_last_name}", css_id: judge1_css_id) }
-    let!(:judge2) { create(:user, full_name: "#{judge2_first_name} #{judge2_last_name}", css_id: judge2_css_id) }
+    let(:judge1) do
+      create(
+        :user,
+        :with_vacols_judge_record,
+        full_name: "#{judge1_first_name} #{judge1_last_name}",
+        css_id: judge1_css_id
+      )
+    end
+    let!(:judge2) do
+      create(
+        :user,
+        :with_vacols_judge_record,
+        full_name: "#{judge2_first_name} #{judge2_last_name}",
+        css_id: judge2_css_id
+      )
+    end
+    let(:vacols_staff_one) { VACOLS::Staff.find_by(sdomainid: judge1.css_id) }
+    let(:vacols_staff_two) { VACOLS::Staff.find_by(sdomainid: judge2.css_id) }
 
     let!(:hd1) { create(:hearing_day, judge: judge1) }
     let!(:hd2) { create(:hearing_day, judge: judge1) }
@@ -49,6 +65,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     before do
       allow(spreadsheet_data).to receive(:judge_assignment_template).and_return(judge_assignment_template)
       allow(spreadsheet_data).to receive(:judge_assignments).and_return(judge_assignments)
+      CachedUser.sync_from_vacols
     end
 
     context "#stage_assignments" do
