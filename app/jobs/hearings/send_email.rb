@@ -34,7 +34,7 @@ class Hearings::SendEmail
       judge_recipient.update!(email_sent: send_email(judge_recipient_info))
     end
 
-    if hearing.representative_recipient.email_address.present? && !hearing.representative_recipient.email_sent
+    if hearing.representative_recipient&.email_address.present? && !hearing.representative_recipient.email_sent
       representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
@@ -60,7 +60,7 @@ class Hearings::SendEmail
     end
 
     if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
-       hearing.representative_recipient.email_address.present? &&
+       hearing.representative_recipient&.email_address.present? &&
        send_email(representative_recipient_info)
 
       return true
