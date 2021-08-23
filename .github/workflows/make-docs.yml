@@ -34,7 +34,9 @@ jobs:
           # Would like to run `bundle lock --update` to update Gemfile.lock without installing gems (to be done in next step)
           # but bundler is not installed yet, so manually modify it:
           sed '/ruby-oci8/d' -i Gemfile.lock
-          sed '/^    activerecord-oracle_enhanced-adapter /,/^      [a-z]/{/^    activerecord-oracle_enhanced-adapter /!{/^      [a-z]/!d}}' -i Gemfile.lock
+          sed '/^    activerecord-oracle_enhanced-adapter/,/^    [a-z]/{/^    activerecord-oracle_enhanced-adapter/!{/^    [a-z]/!d}}' -i Gemfile.lock
+          sed '/activerecord-oracle_enhanced-adapter/d' -i Gemfile.lock
+          sed '/ruby-plsql/d' -i Gemfile.lock
 
           # Remove VACOLS database configuration
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
