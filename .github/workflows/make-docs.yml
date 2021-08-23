@@ -24,6 +24,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Remove references to Oracle DB
+        run: |
+          sed '/ruby-oci8/d' -i Gemfile
+          # Update Gemfile.lock without installing gems (to be done in next step)
+          bundle lock --update
+
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
