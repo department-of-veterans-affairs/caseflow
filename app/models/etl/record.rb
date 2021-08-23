@@ -30,20 +30,22 @@ class ETL::Record < ApplicationRecord
       primary_key
     end
 
-    def slack_url
-      ENV["SLACK_DISPATCH_ALERT_URL"]
-    end
-
-    def slack_service
-      @slack_service ||= SlackService.new(url: slack_url)
-    end
-
     # :reek:LongParameterList
     def check_equal(record_id, attribute, expected, actual)
       return if expected == actual
 
-      msg = "#{name} #{record_id}: Expected #{attribute} to equal #{expected} but got #{actual}"
-      slack_service.send_notification(msg, name, "#appeals-data-workgroup")
+      @messages ||= []
+      @messages << "#{record_id}: Expected #{attribute} to equal #{expected} but got #{actual}" if @messages.size < 300
+    end
+
+    def messages
+      return nil unless @messages&.any?
+
+      @messages
+    end
+
+    def clear_messages
+      @messages = []
     end
 
     private
