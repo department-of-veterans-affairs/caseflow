@@ -8,5 +8,10 @@ describe Seeds::VeteransHealthAdministration do
       expect { subject }.to_not raise_error
       expect(VhaProgramOffice.count).to eq(6)
     end
+
+    it "creates all VISN organizations" do
+      expect { subject }.to_not raise_error
+      expect(Organization.count).to eq(24)
+    end
   end
 end

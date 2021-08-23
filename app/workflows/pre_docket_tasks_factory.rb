@@ -12,6 +12,11 @@ class PreDocketTasksFactory
       assigned_to: BvaIntake.singleton,
       parent: @root_task
     )
-    pre_docket_task.put_on_hold_due_to_new_child_task
+    VhaDocumentSearchTask.create!(
+      appeal: @appeal,
+      assigned_by: @appeal.intake.user,
+      assigned_to: VhaCamo.singleton,
+      parent: pre_docket_task
+    )
   end
 end

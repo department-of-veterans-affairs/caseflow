@@ -18,7 +18,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let(:ready_priority_bfkey) { "12345" }
+    let(:ready_priority_bfkey2) { "12346" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
+    let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
     let!(:judge_with_ready_priority_cases) do
       create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
@@ -117,11 +119,46 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         hearing.update!(judge: judge)
       end
     end
+    let!(:ama_only_judge_with_ready_priority_cases) do
+      create(:user, :ama_only_judge, :with_vacols_judge_record).tap do |judge|
+        vacols_case = create(
+          :case,
+          :aod,
+          bfkey: ready_priority_bfkey2,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: 3.days.ago,
+          bfbox: nil,
+          folder: build(:folder, tinum: "1801005", titrnum: "923456790S")
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+
+        appeal = create(
+          :appeal,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age,
+          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          docket_type: Constants.AMA_DOCKETS.hearing
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
     let(:eligible_judges) do
       [
         judge_with_ready_priority_cases,
         judge_with_ready_nonpriority_cases,
-        judge_with_nonready_priority_cases
+        judge_with_nonready_priority_cases,
+        ama_only_judge_with_ready_priority_cases
       ]
     end
 
@@ -129,14 +166,16 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "should only distribute the ready priority cases tied to a judge" do
       expect(subject.count).to eq eligible_judges.count
-      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 0, 0]
+      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
       # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq 2
-      expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
+      expect(distributed_cases.count).to eq 4
+      expected_array = [ready_priority_bfkey, ready_priority_uuid, ready_priority_bfkey2, ready_priority_uuid2]
+      expect(distributed_cases.map(&:case_id)).to match_array expected_array
       # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
+      expected_array2 = ["legacy", Constants.AMA_DOCKETS.hearing, "legacy", Constants.AMA_DOCKETS.hearing]
+      expect(distributed_cases.map(&:docket)).to match_array expected_array2
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
     end
@@ -160,7 +199,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
 
-    let(:judges) { create_list(:user, 5, :judge, :with_vacols_judge_record) }
+    let!(:ama_only_judge) { create(:user, :ama_only_judge, :with_vacols_judge_record) }
+    let(:judges) { create_list(:user, 4, :judge, :with_vacols_judge_record).prepend(ama_only_judge) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
       (1..5).map do |i|
@@ -242,6 +282,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         distributed_cases = DistributedCase.where(distribution: distribution)
         expect(distributed_cases.count).to eq target_distributions
       end
+    end
+
+    it "only distributes ama cases to ama-only judge" do
+      distribution = subject.detect { |dist| dist.judge_id == ama_only_judge.id }
+      distributed_cases = DistributedCase.where(distribution: distribution)
+      intersection = distributed_cases.to_set.intersect? legacy_priority_cases.to_set
+      expect(intersection).to eq false
     end
   end
 
