@@ -1962,21 +1962,25 @@ describe LegacyAppeal, :all_dbs do
 
   context "#contested_claim" do
     subject { appeal.contested_claim }
-    let(:vacols_case) { create(:case) }
 
-    context "when there is no contesting claimant" do
+    context "when there is no representative" do
+      let(:vacols_case) { create(:case) }
       it { is_expected.to eq false }
     end
 
-    context "when there is a contesting claimant" do
-      let(:vacols_case) do
-        vacols_c = create(:case)
-        create(:representative, reptype: "C", repkey: vacols_c.bfkey)
-        vacols_c
+    shared_examples "when there is a representative" do |reptype, code, result|
+      context "when there is a representative with reptype '#{reptype}'" do
+        let(:vacols_case) { create(:case) }
+        before { create(:representative, reptype: code, repkey: vacols_case.bfkey) }
+        
+        it { is_expected.to eq(result) }
       end
-
-      it { is_expected.to eq true }
     end
+    include_examples "when there is a representative", "Attorney", "A", false
+    include_examples "when there is a representative", "Agent", "G", false
+    include_examples "when there is a representative", "Contesting Claimant", "C", true
+    include_examples "when there is a representative", "Contesting Claimant's Attorney", "D", true
+    include_examples "when there is a representative", "Contesting Claimant's Agent", "E", true
   end
 
   context "#update" do

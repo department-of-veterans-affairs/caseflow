@@ -64,4 +64,99 @@ describe VACOLS::Case, :all_dbs do
       end
     end
   end
+
+  describe ".vacols_representatives" do
+    let(:vacols_case) { create(:case) }
+    subject { vacols_case.vacols_representatives }
+
+    context "representative exists for this case in the vacols.rep table" do
+      let!(:vacols_rep) { create(:representative, repkey: vacols_case.bfkey) }
+
+      it "returns the representative associated with the case in the vacols.rep table" do
+        expect(subject).to eq([vacols_rep])
+      end
+    end
+
+    context "representative does not exist for this case in the vacols.rep table" do
+      context "Veteran does not have any other cases in VACOLS" do
+        it "returns no representatives for the case" do
+          expect(subject).to eq([])
+        end
+      end
+
+      context "Veteran has other cases in VACOLS" do
+        context "Other cases have representatives for the Veteran" do
+          let(:other_cases_with_valid_reps_count) { Random.rand(1..8) }
+          before do
+            other_cases_with_valid_reps_count.times.each do
+              other_case = create(:case, correspondent: vacols_case.correspondent)
+              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample 
+              create(
+                :representative,
+                repkey: other_case.bfkey,
+                repcorkey: vacols_case.correspondent.stafkey,
+                reptype: VACOLS::Representative::APPELLANT_REPTYPES[random_valid_reptype][:code]
+              )
+            end
+          end
+
+          it "returns the representatives associated with the Veteran's other cases" do
+            expect(subject.length).to eq(other_cases_with_valid_reps_count)
+          end
+        end
+
+        context "Other case has representative for a contested claim" do
+          let(:other_case_with_contested_reps_count) { Random.rand(1..4) }
+          before do
+            other_case_with_contested_reps_count.times.each do
+              other_case = create(:case, correspondent: vacols_case.correspondent)
+              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+              create(
+                :representative,
+                repkey: other_case.bfkey,
+                repcorkey: vacols_case.correspondent.stafkey,
+                reptype: VACOLS::Representative::CONTESTED_REPTYPES[random_contested_reptype][:code]
+              )
+            end
+          end
+
+          it "returns no representatives for the case" do
+            expect(subject).to eq([])
+          end
+        end
+
+        context "Other cases exist for normal representation as well as contested claim" do
+          let(:other_cases_with_valid_reps_count) { Random.rand(1..8) }
+          let(:other_case_with_contested_reps_count) { Random.rand(1..4) }
+          before do
+            other_cases_with_valid_reps_count.times.each do
+              other_case = create(:case, correspondent: vacols_case.correspondent)
+              random_valid_reptype = VACOLS::Representative::APPELLANT_REPTYPES.keys.sample 
+              create(
+                :representative,
+                repkey: other_case.bfkey,
+                repcorkey: vacols_case.correspondent.stafkey,
+                reptype: VACOLS::Representative::APPELLANT_REPTYPES[random_valid_reptype][:code]
+              )
+            end
+
+            other_case_with_contested_reps_count.times.each do
+              other_case = create(:case, correspondent: vacols_case.correspondent)
+              random_contested_reptype = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+              create(
+                :representative,
+                repkey: other_case.bfkey,
+                repcorkey: vacols_case.correspondent.stafkey,
+                reptype: VACOLS::Representative::CONTESTED_REPTYPES[random_contested_reptype][:code]
+              )
+            end
+          end
+
+          it "returns only the representatives representing the Veteran and no contesting claimants" do
+            expect(subject.length).to eq(other_cases_with_valid_reps_count)
+          end
+        end
+      end
+    end
+  end
 end
