@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Remove references to Oracle DB
+      - name: Remove references to VACOLS Oracle DB
         run: |
           sed '/ruby-oci8/d' -i Gemfile
           # Would like to run `bundle lock --update` to update Gemfile.lock without installing gems (to be done in next step)
@@ -33,7 +33,7 @@ jobs:
 
           # Remove VACOLS database configuration
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
-          sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' config/database.yml
+          sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
