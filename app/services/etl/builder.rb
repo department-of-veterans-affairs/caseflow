@@ -38,7 +38,7 @@ class ETL::Builder
 
   def last_built
     # DO NOT memoize
-    ETL::Build.complete.order(created_at: :desc).first&.started_at
+    ETL::Build.complete.order(:created_at).last&.started_at
   end
 
   def build_record
