@@ -132,7 +132,10 @@ class HearingRepository
     # @note Requires a join with the `hearing_days` table.
     def scheduled_within_sixty_days
       <<-SQL
-        (hearing_days.scheduled_for - "#{Time.zone.today.strftime('%Y-%m-%d')}") BETWEEN 1 AND 60
+        DATE_PART(
+        'day',
+        hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
+        ) BETWEEN 1 AND 60
       SQL
     end
 

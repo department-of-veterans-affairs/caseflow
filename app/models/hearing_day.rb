@@ -83,6 +83,10 @@ class HearingDay < CaseflowRecord
     central_office? || virtual?
   end
 
+  def scheduled_for_as_date
+    scheduled_for.to_date
+  end
+
   def confirm_no_children_records
     fail HearingDayHasChildrenRecords if !vacols_hearings.empty? || !hearings.empty?
   end
