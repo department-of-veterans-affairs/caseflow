@@ -9,6 +9,8 @@ on: [push]
 jobs:
   make_docs:
     name: Put 'make docs' files in wiki
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -27,6 +29,8 @@ jobs:
       - name: Remove references to VACOLS Oracle DB
         run: |
           sed '/ruby-oci8/d' -i Gemfile
+          sed '/activerecord-oracle_enhanced-adapter/d' -i Gemfile
+
           # Would like to run `bundle lock --update` to update Gemfile.lock without installing gems (to be done in next step)
           # but bundler is not installed yet, so manually modify it:
           sed '/ruby-oci8/d' -i Gemfile.lock
