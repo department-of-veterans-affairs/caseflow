@@ -3,6 +3,7 @@
 exports[`RepresentativeSection Displays timezone when showTimezoneField is passed as prop 1`] = `
 <RepresentativeSection
   appellantTitle="Veteran"
+  formFieldsOnly={false}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -116,15 +117,16 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
-    label="Power of Attorney"
+    label="Power of Attorney (POA)"
     showDivider={true}
   >
     <div
       className="cf-help-divider"
     />
     <h2>
-      Power of Attorney
+      Power of Attorney (POA)
     </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
@@ -16267,7 +16269,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -16278,7 +16280,7 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="POA/Representative Email"
+            name="POA/Representative Email (for these notifications only)"
             onChange={[Function]}
             optional={true}
             required={false}
@@ -16291,16 +16293,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="POA/Representative Email"
+                htmlFor="POA/Representative Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="POA/Representative Email"
+                    name="POA/Representative Email (for these notifications only)"
                     optional={true}
                     required={false}
                   >
                     <span>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                       <span
                         className="cf-optional"
                       >
@@ -16316,8 +16318,8 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="POA/Representative Email"
-                name="POA/Representative Email"
+                id="POA/Representative Email (for these notifications only)"
+                name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="tom.brady@caseflow.gov"
@@ -16325,12 +16327,12 @@ SAN FRANCISCO, CA 94103
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
@@ -16343,6 +16345,7 @@ SAN FRANCISCO, CA 94103
 exports[`RepresentativeSection Does not allow editing emails when read-only 1`] = `
 <RepresentativeSection
   appellantTitle="Veteran"
+  formFieldsOnly={false}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -16456,15 +16459,16 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
-    label="Power of Attorney"
+    label="Power of Attorney (POA)"
     showDivider={true}
   >
     <div
       className="cf-help-divider"
     />
     <h2>
-      Power of Attorney
+      Power of Attorney (POA)
     </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
@@ -16498,21 +16502,21 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           optional={true}
           readOnly={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
-            label="POA/Representative Email"
+            label="POA/Representative Email (for these notifications only)"
             text="tom.brady@caseflow.gov"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                POA/Representative Email
+                POA/Representative Email (for these notifications only)
               </strong>
               <pre>
                 tom.brady@caseflow.gov
@@ -16526,9 +16530,10 @@ SAN FRANCISCO, CA 94103
 </RepresentativeSection>
 `;
 
-exports[`RepresentativeSection Matches snapshot with default props 1`] = `
+exports[`RepresentativeSection Does not display address when formFieldsOnly = true 1`] = `
 <RepresentativeSection
-  appellantTitle="Veteran"
+  appellantTitle="Appellant"
+  formFieldsOnly={true}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -16641,15 +16646,237 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={true}
     hide={false}
-    label="Power of Attorney"
+    label="Power of Attorney (POA)"
+    showDivider={true}
+  >
+    <div
+      className="cf-help-divider"
+    />
+    <strong>
+       
+      Power of Attorney (POA)
+    </strong>
+    <ReadOnly
+      text="PARALYZED VETERANS OF AMERICA, INC."
+    >
+      <div
+        data-css-1a5irm0=""
+      >
+        <pre>
+          PARALYZED VETERANS OF AMERICA, INC.
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="usa-grid css-1jfbwxw"
+    >
+      <div
+        className="usa-width-one-half"
+      >
+        <VirtualHearingEmail
+          email="tom.brady@caseflow.gov"
+          emailType="representativeEmail"
+          label="POA/Representative Email (for these notifications only)"
+          optional={true}
+          type="change_to_virtual"
+          update={[MockFunction]}
+        >
+          <TextField
+            className={
+              Array [
+                "cf-form-textinput cf-inline-field",
+              ]
+            }
+            name="POA/Representative Email (for these notifications only)"
+            onChange={[Function]}
+            optional={true}
+            required={false}
+            strongLabel={true}
+            type="text"
+            useAriaLabel={false}
+            value="tom.brady@caseflow.gov"
+          >
+            <div
+              className="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                htmlFor="POA/Representative Email (for these notifications only)"
+              >
+                <strong>
+                  <FormLabel
+                    name="POA/Representative Email (for these notifications only)"
+                    optional={true}
+                    required={false}
+                  >
+                    <span>
+                      POA/Representative Email (for these notifications only)
+                      <span
+                        className="cf-optional"
+                      >
+                        Optional
+                      </span>
+                    </span>
+                  </FormLabel>
+                </strong>
+              </label>
+              <input
+                className={
+                  Array [
+                    "cf-form-textinput cf-inline-field",
+                  ]
+                }
+                id="POA/Representative Email (for these notifications only)"
+                name="POA/Representative Email (for these notifications only)"
+                onChange={[Function]}
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
+          </TextField>
+          <HelperText
+            label="This email address will be used to send notifications for this hearing only."
+          >
+            <div
+              className="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </HelperText>
+        </VirtualHearingEmail>
+      </div>
+    </div>
+  </VirtualHearingSection>
+</RepresentativeSection>
+`;
+
+exports[`RepresentativeSection Matches snapshot with default props 1`] = `
+<RepresentativeSection
+  appellantTitle="Veteran"
+  formFieldsOnly={false}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "caseType": "Original",
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "poaName": "AMERICAN LEGION",
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  schedulingToVirtual={true}
+  type="change_to_virtual"
+  update={[MockFunction]}
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <VirtualHearingSection
+    formFieldsOnly={false}
+    hide={false}
+    label="Power of Attorney (POA)"
     showDivider={true}
   >
     <div
       className="cf-help-divider"
     />
     <h2>
-      Power of Attorney
+      Power of Attorney (POA)
     </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
@@ -16683,7 +16910,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -16694,7 +16921,7 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="POA/Representative Email"
+            name="POA/Representative Email (for these notifications only)"
             onChange={[Function]}
             optional={true}
             required={false}
@@ -16707,16 +16934,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="POA/Representative Email"
+                htmlFor="POA/Representative Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="POA/Representative Email"
+                    name="POA/Representative Email (for these notifications only)"
                     optional={true}
                     required={false}
                   >
                     <span>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                       <span
                         className="cf-optional"
                       >
@@ -16732,8 +16959,8 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="POA/Representative Email"
-                name="POA/Representative Email"
+                id="POA/Representative Email (for these notifications only)"
+                name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="tom.brady@caseflow.gov"
@@ -16741,12 +16968,12 @@ SAN FRANCISCO, CA 94103
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
@@ -16759,6 +16986,7 @@ SAN FRANCISCO, CA 94103
 exports[`RepresentativeSection Shows Representative name when representative address blank 1`] = `
 <RepresentativeSection
   appellantTitle="Veteran"
+  formFieldsOnly={false}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -16896,15 +17124,16 @@ exports[`RepresentativeSection Shows Representative name when representative add
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
-    label="Power of Attorney"
+    label="Power of Attorney (POA)"
     showDivider={true}
   >
     <div
       className="cf-help-divider"
     />
     <h2>
-      Power of Attorney
+      Power of Attorney (POA)
     </h2>
     <AddressLine
       name="PARALYZED VETERANS OF AMERICA, INC."
@@ -16932,7 +17161,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
         <VirtualHearingEmail
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -16943,7 +17172,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="POA/Representative Email"
+            name="POA/Representative Email (for these notifications only)"
             onChange={[Function]}
             optional={true}
             required={false}
@@ -16956,16 +17185,16 @@ exports[`RepresentativeSection Shows Representative name when representative add
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="POA/Representative Email"
+                htmlFor="POA/Representative Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="POA/Representative Email"
+                    name="POA/Representative Email (for these notifications only)"
                     optional={true}
                     required={false}
                   >
                     <span>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                       <span
                         className="cf-optional"
                       >
@@ -16981,8 +17210,8 @@ exports[`RepresentativeSection Shows Representative name when representative add
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="POA/Representative Email"
-                name="POA/Representative Email"
+                id="POA/Representative Email (for these notifications only)"
+                name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="tom.brady@caseflow.gov"
@@ -16990,12 +17219,12 @@ exports[`RepresentativeSection Shows Representative name when representative add
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
@@ -17008,6 +17237,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
 exports[`RepresentativeSection Shows Representative not present message when no representative 1`] = `
 <RepresentativeSection
   appellantTitle="Veteran"
+  formFieldsOnly={false}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -17144,15 +17374,16 @@ exports[`RepresentativeSection Shows Representative not present message when no 
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
-    label="Power of Attorney"
+    label="Power of Attorney (POA)"
     showDivider={true}
   >
     <div
       className="cf-help-divider"
     />
     <h2>
-      Power of Attorney
+      Power of Attorney (POA)
     </h2>
     <ReadOnly
       text="The Veteran does not have a representative recorded in VBMS"
@@ -17174,7 +17405,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         <VirtualHearingEmail
           email="tom.brady@caseflow.gov"
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -17185,7 +17416,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="POA/Representative Email"
+            name="POA/Representative Email (for these notifications only)"
             onChange={[Function]}
             optional={true}
             required={false}
@@ -17198,16 +17429,16 @@ exports[`RepresentativeSection Shows Representative not present message when no 
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="POA/Representative Email"
+                htmlFor="POA/Representative Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="POA/Representative Email"
+                    name="POA/Representative Email (for these notifications only)"
                     optional={true}
                     required={false}
                   >
                     <span>
-                      POA/Representative Email
+                      POA/Representative Email (for these notifications only)
                       <span
                         className="cf-optional"
                       >
@@ -17223,8 +17454,8 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="POA/Representative Email"
-                name="POA/Representative Email"
+                id="POA/Representative Email (for these notifications only)"
+                name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="tom.brady@caseflow.gov"
@@ -17232,12 +17463,12 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>

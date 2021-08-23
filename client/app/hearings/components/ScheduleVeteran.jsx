@@ -23,7 +23,7 @@ import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
-import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import { setMargin, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import { parentTasks } from '../../queue/utils';
 import {

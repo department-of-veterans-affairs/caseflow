@@ -394,6 +394,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               }
             >
               <VirtualHearingSection
+                formFieldsOnly={false}
                 hide={false}
                 label="Veteran"
                 showDivider={false}
@@ -428,21 +429,21 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   >
                     <VirtualHearingEmail
                       emailType="appellantEmail"
-                      label="Veteran Email"
+                      label="Veteran Email (for these notifications only)"
                       optional={false}
                       readOnly={true}
                       required={true}
                       type="Virtual"
                     >
                       <ReadOnly
-                        label="Veteran Email"
+                        label="Veteran Email (for these notifications only)"
                         text="None"
                       >
                         <div
                           data-css-1a5irm0=""
                         >
                           <strong>
-                            Veteran Email
+                            Veteran Email (for these notifications only)
                           </strong>
                           <pre>
                             None
@@ -479,6 +480,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             </AppellantSection>
             <RepresentativeSection
               appellantTitle="Veteran"
+              formFieldsOnly={false}
               hearing={
                 Object {
                   "appellantFullName": undefined,
@@ -490,7 +492,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               }
               readOnly={true}
               schedulingToVirtual={true}
-              showDivider={false}
+              showDivider={true}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}
               type="Virtual"
@@ -502,15 +504,16 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               }
             >
               <VirtualHearingSection
+                formFieldsOnly={false}
                 hide={false}
-                label="Power of Attorney"
+                label="Power of Attorney (POA)"
                 showDivider={true}
               >
                 <div
                   className="cf-help-divider"
                 />
                 <h2>
-                  Power of Attorney
+                  Power of Attorney (POA)
                 </h2>
                 <ReadOnly
                   text="The Veteran does not have a representative recorded in VBMS"
@@ -531,20 +534,20 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   >
                     <VirtualHearingEmail
                       emailType="representativeEmail"
-                      label="POA/Representative Email"
+                      label="POA/Representative Email (for these notifications only)"
                       optional={true}
                       readOnly={true}
                       type="Virtual"
                     >
                       <ReadOnly
-                        label="POA/Representative Email"
+                        label="POA/Representative Email (for these notifications only)"
                         text="None"
                       >
                         <div
                           data-css-1a5irm0=""
                         >
                           <strong>
-                            POA/Representative Email
+                            POA/Representative Email (for these notifications only)
                           </strong>
                           <pre>
                             None

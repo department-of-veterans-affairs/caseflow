@@ -16194,12 +16194,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           </div>
         </TextField>
         <HelperText
-          label="Changes to the email are used to send notifications for this hearing only"
+          label="This email address will be used to send notifications for this hearing only."
         >
           <div
             className="helper-text"
           >
-            Changes to the email are used to send notifications for this hearing only
+            This email address will be used to send notifications for this hearing only.
           </div>
         </HelperText>
       </VirtualHearingEmail>
@@ -32373,12 +32373,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           </div>
         </TextField>
         <HelperText
-          label="Changes to the email are used to send notifications for this hearing only"
+          label="This email address will be used to send notifications for this hearing only."
         >
           <div
             className="helper-text"
           >
-            Changes to the email are used to send notifications for this hearing only
+            This email address will be used to send notifications for this hearing only.
           </div>
         </HelperText>
       </VirtualHearingEmail>
@@ -48581,12 +48581,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           </div>
         </TextField>
         <HelperText
-          label="Changes to the email are used to send notifications for this hearing only"
+          label="This email address will be used to send notifications for this hearing only."
         >
           <div
             className="helper-text"
           >
-            Changes to the email are used to send notifications for this hearing only
+            This email address will be used to send notifications for this hearing only.
           </div>
         </HelperText>
       </VirtualHearingEmail>
@@ -64760,12 +64760,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           </div>
         </TextField>
         <HelperText
-          label="Changes to the email are used to send notifications for this hearing only"
+          label="This email address will be used to send notifications for this hearing only."
         >
           <div
             className="helper-text"
           >
-            Changes to the email are used to send notifications for this hearing only
+            This email address will be used to send notifications for this hearing only.
           </div>
         </HelperText>
       </VirtualHearingEmail>
