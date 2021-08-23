@@ -1,0 +1,95 @@
+name: Make-docs-to-wiki
+
+# Run when a PR is merged or when a commit is made directly to the master branch.
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  make_docs:
+    name: Put 'make docs' files in wiki
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_DB: caseflow_certification_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports: ["5432:5432"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Setup test database
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        run: |
+          bin/rails db:create && bin/rails db:schema:load
+          DB=etl bundle exec rake db:create db:schema:load
+          # Skipping VACOLS since Oracle DB is not set up
+
+      # Need graphviz to create ERDs
+      - name: Setup Graphviz
+        uses: ts-graphviz/setup-graphviz@v1
+
+      - name: Create DB schema documentation
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        run: |
+          cp Makefile.example Makefile
+          
+          echo "::group::Caseflow schema"
+          make erd-caseflow doc-schema-caseflow
+          echo "::endgroup::"
+
+          echo "::group::Caseflow ETL schema"
+          make erd-etl doc-schema-etl
+          echo "::endgroup::"
+
+          # Skipping VACOLS since Oracle DB is not set up
+
+      # The followin is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
+      # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
+      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
+      - name: Checkout wiki code
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki_checkout
+      - name: Push 'make docs' files to wiki
+        env:
+          WIKI_COMMIT_MESSAGE: 'Automatically update to wiki'
+          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
+          WIKI_COMMIT_USER_NAME: 'yoomlam'
+          WIKI_SOURCE_DIR: 'docs'
+        run: |
+          rsync -av "$WIKI_SOURCE_DIR" "wiki_checkout/make_docs" --exclude .git
+          cd wiki_checkout
+          git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+          git config --local user.name "$WIKI_COMMIT_USER_NAME"
+
+          if git diff-index --quiet HEAD; then
+            echo "::group::No changes to schema"
+            ls -al make_docs
+            echo "::endgroup::"
+          else
+            echo "::group::Pushing changes to wiki"
+            git add .
+            git diff-index --quiet HEAD || git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+            echo "::endgroup::"
+          end
