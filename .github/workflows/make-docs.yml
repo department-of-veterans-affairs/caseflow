@@ -65,6 +65,7 @@ jobs:
           POSTGRES_USER: postgres
         run: |
           bundle add sqlite3
+          bundle install
 
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
