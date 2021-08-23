@@ -53,20 +53,22 @@ class Hearings::SendEmail
   def send_reminder
     return false if !email_type_is_reminder?
 
-    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
-       send_email(appellant_recipient_info)
+    return true if try_sending_appellant_reminder?
 
-      return true
-    end
-
-    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
-       hearing.representative_recipient&.email_address.present? &&
-       send_email(representative_recipient_info)
-
-      return true
-    end
+    return true if try_sending_representative_reminder?
 
     false
+  end
+
+  def try_sending_appellant_reminder?
+    reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
+      send_email(appellant_recipient_info)
+  end
+
+  def try_sending_representative_reminder?
+    reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
+      hearing.representative_recipient&.email_address.present? &&
+      send_email(representative_recipient_info)
   end
 
   def email_for_recipient(recipient_info)
