@@ -636,18 +636,6 @@ class LegacyAppeal < CaseflowRecord
     @documents_by_type = {}
   end
 
-  def attorney_case_reviews
-    (das_assignments || []).reject { |t| t.document_id.nil? }
-  end
-
-  def das_assignments
-    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
-  end
-
-  def reviewing_judge_name
-    das_assignments.max_by(&:created_at).try(:assigned_by_name)
-  end
-
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -832,13 +820,39 @@ class LegacyAppeal < CaseflowRecord
     # Created at date will be nil if there is no decass record created for this appeal yet
     return unless vacols_case_review&.created_at
 
-    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
+    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id_for_case_reviews)
+  end
 
-    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
+  def judge_case_review
+    # Created at date will be nil if there is no decass record created for this appeal yet
+    return unless vacols_case_review&.created_at
+
+    @judge_case_review ||= JudgeCaseReview.find_by(task_id: task_id_for_case_reviews)
+  end
+
+  def task_id_for_case_reviews
+    "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
   end
 
   def vacols_case_review
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  # How are these related to AttorneyCaseReview records?
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge
+    das_assignments.max_by(&:created_at)
+  end
+
+  def reviewing_judge_name
+    reviewing_judge.try(:assigned_by_name)
   end
 
   def death_dismissal!

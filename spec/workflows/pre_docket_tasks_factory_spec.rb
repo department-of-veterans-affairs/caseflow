@@ -2,7 +2,7 @@
 
 describe PreDocketTasksFactory, :postgres do
   context "PreDocket Appeals" do
-    before { BvaIntake.singleton.add_user(bva_intake_user) }
+    before { bva_intake.add_user(bva_intake_user) }
 
     let(:bva_intake) { BvaIntake.singleton }
     let(:camo) { VhaCamo.singleton }
