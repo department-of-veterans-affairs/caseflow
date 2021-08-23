@@ -42,6 +42,16 @@ jobs:
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
           sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
+          echo '
+            test_vacols:
+              adapter: sqlite3
+              pool: 5
+              timeout: 5000
+              database: db/demo-vacols.sqlite3
+          ' >> config/database.yml
+
+          cat config/database.yml
+
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
