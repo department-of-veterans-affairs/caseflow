@@ -96,14 +96,12 @@ class InitialTasksFactory
     when "EvidenceSubmissionWindowTask"
       evidence_submission_window_task(source_task, creation_params)
     when "InformalHearingPresentationTask"
-      create_ihp_task.tap do |vso_tasks|
-        warn_poa_not_a_representative if vso_tasks.blank?
-        if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
-          handle_different_poa
-        end
-      end
+      handle_substitution_ihp_task_and_poa
+    when "ScheduleHearingTask"
+      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
     else
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
+      excluded_attrs = %w[status closed_at placed_on_hold_at]
+      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
     end
   end
 
@@ -116,6 +114,15 @@ class InitialTasksFactory
     EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                          parent: distribution_task,
                                          end_date: evidence_submission_hold_end_date)
+  end
+
+  def handle_substitution_ihp_task_and_poa
+    create_ihp_task.tap do |vso_tasks|
+      warn_poa_not_a_representative if vso_tasks.blank?
+      if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
+        handle_different_poa
+      end
+    end
   end
 
   def warn_poa_not_a_representative

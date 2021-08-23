@@ -5,11 +5,17 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
   before do
     FeatureToggle.enable!(:vha_predocket_appeals)
-    BvaIntake.singleton.add_user(bva_intake_user)
+    bva_intake.add_user(bva_intake_user)
+    camo.add_user(camo_user)
   end
+
   after { FeatureToggle.disable!(:vha_predocket_appeals) }
 
+  let(:bva_intake) { BvaIntake.singleton }
   let(:bva_intake_user) { create(:intake_user) }
+  let(:camo) { VhaCamo.singleton }
+  let(:camo_user) { create(:user) }
+
   let(:veteran) { create(:veteran) }
 
   context "as a BVA Intake user" do
@@ -33,13 +39,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         date: 1.month.ago.mdY
       )
       click_intake_finish
-
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
       appeal = Appeal.last
-
       visit "/queue/appeals/#{appeal.external_id}"
-
       expect(page).to have_content("Pre Docket Task")
 
       created_task_types = Set.new(appeal.tasks.map(&:type))

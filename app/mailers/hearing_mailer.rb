@@ -50,7 +50,7 @@ class HearingMailer < ActionMailer::Base
     )
   end
 
-  def reminder(email_recipient:, virtual_hearing: nil, hearing: nil)
+  def reminder(email_recipient:, day_type:, virtual_hearing: nil, hearing: nil)
     # Guard to prevent reminder emails from sending to the judge
     return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
@@ -61,6 +61,7 @@ class HearingMailer < ActionMailer::Base
     @hearing = hearing || virtual_hearing.hearing
     @representative_reminder =
       virtual_hearing.nil? && email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+    @reminder_type = day_type
 
     mail(
       to: recipient.email,

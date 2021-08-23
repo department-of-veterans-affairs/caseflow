@@ -5,8 +5,8 @@
 # emails.
 
 module VirtualHearings::LinkHelper
-  def external_link(url)
-    "<a href='#{url}'>#{url}</a>".html_safe
+  def external_link(url, display_text: nil)
+    "<a href='#{url}'>#{display_text || url}</a>".html_safe
   end
 
   def caseflow_url(appeal)
