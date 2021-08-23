@@ -447,14 +447,14 @@ describe Distribution, :all_dbs do
 
       describe "JudgeTeam ama_only_request toggle" do
         context "when the toggle is not set for a JudgeTeam (default case)" do
-          it "includes mostly legacy cases" do
+          it "includes untied legacy cases" do
             subject.distribute!
 
             untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
               dc.docket == "legacy" && dc.genpop_query != "not_genpop"
             end
 
-            expect(untied_legacy_docket_cases.count).to be >= 10
+            expect(untied_legacy_docket_cases).to_not be_empty
           end
         end
 
@@ -463,7 +463,6 @@ describe Distribution, :all_dbs do
             judge_team.update!(ama_only_request: true)
             subject.distribute!
           end
-          after { judge_team.update!(ama_only_request: false) }
 
           it "does distribute tied legacy cases" do
             tied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
