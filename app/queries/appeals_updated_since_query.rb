@@ -14,6 +14,8 @@ class AppealsUpdatedSinceQuery
 
   private
 
+  # Before adding to this list, consider adding `include HasAppealUpdatedSince`
+  # or `scope :updated_since_for_appeals` to the model, esp. if the ETL::Appeal table uses the model's data.
   SKIP_ASSOCIATIONS = %w[
     versions
     appeal_views
@@ -23,8 +25,6 @@ class AppealsUpdatedSinceQuery
     record_synced_by_job
     request_decision_issues
     request_issues_updates
-    work_mode
-    appellant_substitution
   ].freeze
 
   attr_reader :since_date

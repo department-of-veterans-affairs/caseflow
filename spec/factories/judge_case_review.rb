@@ -8,5 +8,10 @@ FactoryBot.define do
     quality { "outstanding" }
     judge { create(:user) }
     attorney { create(:user) }
+    appeal { nil }
+
+    after(:create) do |case_review, _evaluator|
+      case_review.appeal # creates association to appeal if it doesn't exist
+    end
   end
 end
