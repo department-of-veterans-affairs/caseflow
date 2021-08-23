@@ -2,6 +2,7 @@
 
 class AttorneyCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include HasAppealUpdatedSince
   include IssueUpdater
   include ::AmaAttorneyCaseReviewDocumentIdValidator
 
@@ -73,6 +74,7 @@ class AttorneyCaseReview < CaseflowRecord
         record = create(params)
         if record.valid?
           record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          record.associate_with_appeal
         end
         record
       end

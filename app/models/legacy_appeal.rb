@@ -854,6 +854,19 @@ class LegacyAppeal < CaseflowRecord
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
+  # How are these related to AttorneyCaseReview records?
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge_name
+    das_assignments.max_by(&:created_at).try(:assigned_by_name)
+  end
+
   def death_dismissal!
     multi_transaction do
       cancel_open_caseflow_tasks!

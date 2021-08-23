@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_13_122051) do
+ActiveRecord::Schema.define(version: 2021_08_20_153715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,6 +146,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
   end
 
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this case review is associated with"
+    t.string "appeal_type", comment: "The type of appeal this case review is associated with"
     t.integer "attorney_id"
     t.datetime "created_at", null: false
     t.string "document_id"
@@ -157,6 +159,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
+    t.index ["appeal_type", "appeal_id"], name: "index_attorney_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
@@ -911,6 +914,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
   end
 
   create_table "judge_case_reviews", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this case review is associated with"
+    t.string "appeal_type", comment: "The type of appeal this case review is associated with"
     t.text "areas_for_improvement", default: [], array: true
     t.integer "attorney_id"
     t.text "comment"
@@ -924,6 +929,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
     t.string "quality"
     t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_judge_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
 
@@ -1065,6 +1071,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_122051) do
 
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
+    t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
+    t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"

@@ -12,9 +12,7 @@ describe IncompleteDistributionsJob, :postgres do
     subject { described_class.perform_now }
 
     let(:judge) do
-      create(:user, css_id: "MYNAMEISJUDGE").tap do |judge|
-        allow(judge).to receive(:judge_in_vacols?) { true }
-      end
+      create(:user, :judge, :with_vacols_judge_record, css_id: "MYNAMEISJUDGE")
     end
     let!(:distribution) { Distribution.create!(judge: judge) }
 

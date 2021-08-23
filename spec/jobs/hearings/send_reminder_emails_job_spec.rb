@@ -2,7 +2,51 @@
 
 describe Hearings::SendReminderEmailsJob do
   describe "#perform" do
+    subject { Hearings::SendReminderEmailsJob.new.perform }
+
     shared_examples "send reminder emails" do
+      context "hearing date is 60 days out", skip: "will be unskipped when we enable feature" do
+        let(:hearing_date) { Time.zone.now + 59.days } # at most 60 days out
+
+        it "sends reminder emails only to appellant", :aggregate_failures do
+          expect(HearingMailer).to receive(:reminder).once.and_call_original
+
+          subject
+          expect(hearing.appellant_recipient&.reminder_sent_at).not_to be_nil
+        end
+
+        it "creates sent email events", :aggregate_failures do
+          subject
+
+          expect(SentHearingEmailEvent.count).to eq(1)
+          expect(SentHearingEmailEvent.is_reminder.count).to eq(1)
+          expect(SentHearingEmailEvent.is_reminder.map(&:sent_by)).to all(eq(User.system_user))
+        end
+
+        context "appellant email was already sent" do
+          let(:appellant_reminder_sent_at) { hearing_date - 50.days }
+          let!(:appellant_reminder) do
+            create(
+              :sent_hearing_email_event,
+              :reminder,
+              recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+              sent_at: appellant_reminder_sent_at,
+              email_recipient: hearing.appellant_recipient
+            )
+          end
+
+          it "does not send reminder email for the representative", :aggregate_failures do
+            expect(HearingMailer).not_to receive(:reminder)
+
+            subject
+            expect(hearing.appellant_recipient&.reminder_sent_at).to(
+              be_within(1.second).of(appellant_reminder_sent_at)
+            )
+            expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
+          end
+        end
+      end
+
       context "hearing date is 7 days out" do
         let(:hearing_date) { Time.zone.now + 6.days } # at most 7 days out
 
@@ -212,6 +256,27 @@ describe Hearings::SendReminderEmailsJob do
     end
 
     shared_examples "reminder emails logged but not sent" do
+      context "hearing date is 60 days out" do
+        let(:hearing_date) { Time.zone.now + 60.days }
+        let(:type) { "60 day" }
+
+        it "logs, but doesnt send reminder emails", :aggregate_failures do
+          expect(HearingMailer).not_to receive(:reminder)
+          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
+
+          subject
+          expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
+        end
+
+        it "logs, but doesnt create sent email events", :aggregate_failures do
+          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
+          subject
+
+          expect(SentHearingEmailEvent.count).to eq(0)
+          expect(SentHearingEmailEvent.is_reminder.count).to eq(0)
+        end
+      end
+
       context "hearing date is 7 days out" do
         let(:hearing_date) { Time.zone.now + 6.days }
         let(:type) { "7 day" }
@@ -321,22 +386,10 @@ describe Hearings::SendReminderEmailsJob do
         )
       end
 
-      subject { Hearings::SendReminderEmailsJob.new.perform }
-      context "virtual hearing" do
-        include_examples "send reminder emails"
-      end
-      context "video hearing" do
-        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
-        include_examples "send reminder emails"
-      end
-      context "central hearing" do
-        let(:hearing_day_ro) { nil }
-        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:central] }
-        include_examples "send reminder emails"
-      end
+      include_examples "send reminder emails"
     end
 
-    context "when there is no virtual hearing" do
+    context "when there is a video hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:ama_disposition) { nil }
       let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
@@ -374,22 +427,58 @@ describe Hearings::SendReminderEmailsJob do
         )
       end
 
-      subject { Hearings::SendReminderEmailsJob.new.perform }
+      # When we start sending the emails for video/central hearings:
+      # - Use this instead: include_examples "send reminder emails"
+      # - Delete the "reminder emails logged but not sent" shared_examples
+      # - Delete the "logs but doesn't send for type" shared_examples
+      # See reminder_service_spec as well
+      include_examples "reminder emails logged but not sent"
+    end
+
+    context "when there is a central hearing" do
+      let(:hearing_date) { Time.zone.now }
+      let(:ama_disposition) { nil }
+      let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day_ro) { "RO01" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: hearing_day_request_type,
+          regional_office: hearing_day_ro,
+          scheduled_for: hearing_date
+        )
+      end
+      let(:hearing) do
+        create(
+          :hearing,
+          hearing_day: hearing_day,
+          disposition: ama_disposition,
+          created_at: Time.zone.now - 14.days
+        )
+      end
+      let!(:appellant_recipient) do
+        create(
+          :hearing_email_recipient,
+          :appellant_hearing_email_recipient,
+          hearing: hearing,
+          timezone: "America/New_York"
+        )
+      end
+      let!(:representative_recipient) do
+        create(
+          :hearing_email_recipient,
+          :representative_hearing_email_recipient,
+          hearing: hearing,
+          timezone: "America/Los_Angeles"
+        )
+      end
 
       # When we start sending the emails for video/central hearings:
       # - Use this instead: include_examples "send reminder emails"
       # - Delete the "reminder emails logged but not sent" shared_examples
       # - Delete the "logs but doesn't send for type" shared_examples
       # See reminder_service_spec as well
-      context "video hearing_day" do
-        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:video] }
-        include_examples "reminder emails logged but not sent"
-      end
-      context "central hearing_day" do
-        let(:hearing_day_ro) { nil }
-        let(:hearing_day_request_type) { HearingDay::REQUEST_TYPES[:central] }
-        include_examples "reminder emails logged but not sent"
-      end
+      include_examples "reminder emails logged but not sent"
     end
   end
 end
