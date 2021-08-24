@@ -2,8 +2,13 @@ import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as yup from 'yup';
+
+import { convertStringToBoolean } from '../util';
+import Alert from 'app/components/Alert';
+import Button from 'app/components/Button';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
+
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
@@ -12,17 +17,15 @@ import {
   LIVING_PAYEE_CODES,
   VBMS_BENEFIT_TYPES
 } from '../constants';
-import { convertStringToBoolean } from '../util';
 import {
   ADD_RELATIONSHIPS,
+  CLAIMANT_NOT_FOUND_START,
   CLAIMANT_NOT_FOUND_END,
   DECEASED_CLAIMANT_TITLE,
   DECEASED_CLAIMANT_MESSAGE,
   NO_RELATIONSHIPS,
   SELECT_CLAIMANT_LABEL,
 } from 'app/../COPY';
-import Alert from 'app/components/Alert';
-import Button from 'app/components/Button';
 
 const email = React.createElement(
   'a',
@@ -83,11 +86,11 @@ export const SelectClaimant = (props) => {
 
   const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
-
   const enableAddClaimant = useMemo(
     () => isAppeal && veteranIsNotClaimant,
     [isAppeal, veteranIsNotClaimant]
   );
+  const allowNonVeteranClaimant = !['higher_level_review', 'supplemental_claim'].includes(formType);
 
   const radioOpts = useMemo(() => {
     return [
@@ -139,8 +142,11 @@ export const SelectClaimant = (props) => {
         id="claimantLabel"
         style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
-        {SELECT_CLAIMANT_LABEL}
-
+        {
+          allowNonVeteranClaimant ?
+            SELECT_CLAIMANT_LABEL :
+            [CLAIMANT_NOT_FOUND_START, email, CLAIMANT_NOT_FOUND_END]
+        }
         <br />
         <br />
       </p>
