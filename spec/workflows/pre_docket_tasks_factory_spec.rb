@@ -5,7 +5,6 @@ describe PreDocketTasksFactory, :postgres do
     before { bva_intake.add_user(bva_intake_user) }
 
     let(:bva_intake) { BvaIntake.singleton }
-    let(:bva_intake_user) { create(:intake_user) }
     let(:camo) { VhaCamo.singleton }
     let(:bva_intake_user) { create(:intake_user) }
 
