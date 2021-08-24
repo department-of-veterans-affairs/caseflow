@@ -192,8 +192,22 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             task_id: tasks.first.id
           )
         end
+
+        def create_legacy_appeal_with_id(id)
+          vacols_case = create(:case,
+                               :status_active,
+                               :assigned,
+                               user: user,
+                               assigner: assigner2,
+                               document_id: "9876",
+                               bfdloout: 5.days.ago.to_date)
+          create(:legacy_appeal, id: id, vacols_case: vacols_case)
+        end
         let!(:legacy_case_review1) do
-          vacols_id = vacols_case1.bfkey
+          # Find or create a LegacyAppeal with the same record id
+          legacy_appeal = LegacyAppeal.find_by_id(case_review1.appeal_id) ||
+                          create_legacy_appeal_with_id(case_review1.appeal_id)
+          vacols_id = legacy_appeal.vacols_id
           created_at = VACOLS::Decass.where(defolder: vacols_id).first.deadtim
           create(
             :attorney_case_review,
@@ -218,8 +232,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           # AttorneyCaseReviews affect the "documents" attribute, so only 2 documents are returned.
           expect(AttorneyCaseReview.count).to eq 3
           expect(AttorneyCaseReview.pluck(:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
-          expect(AttorneyCaseReview.pluck(:appeal_id).uniq).to eq [1]
-          binding.pry
+          expect(AttorneyCaseReview.pluck(:appeal_id).uniq.size).to eq 1
 
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
