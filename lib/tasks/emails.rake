@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 namespace :emails do
+  def write_output(file, subject, body)
+    return if body.blank?
+
+    output_file = Rails.root.join("tmp", file)
+    File.write(output_file, subject, mode: "w")
+    File.write(output_file, body, mode: "a")
+  end
+
   namespace :hearings do
     desc "creates sample emails for hearings mailer"
     task sample: :environment do
@@ -171,6 +179,27 @@ namespace :emails do
         File.write(output_file, email_subject, mode: "w")
         File.write(output_file, email_body, mode: "a")
       end
+    end
+
+    desc "creates reminder emails for hearings mailer"
+    # :environment is required for FactoryBot build/create to work
+    task status_emails: :environment do
+      # Build the objects for test
+      include FactoryBot::Syntax::Methods
+      sent_hearing_email_event = build(:sent_hearing_email_event)
+
+      # Create the emails
+      mailer_function_name = :notification
+      email = HearingEmailStatusMailer.send(
+        mailer_function_name,
+        sent_hearing_email_event: sent_hearing_email_event
+      )
+      email_body = email.html_part&.decoded || email.body
+      email_subject = email.subject
+
+      # Write the email to a file
+      file_name = "#{mailer_function_name}_#{sent_hearing_email_event.recipient_role}.html"
+      write_output(file_name, email_subject, email_body)
     end
   end
 end

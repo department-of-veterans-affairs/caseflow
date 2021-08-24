@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      h3 { margin-bottom: 0px; }
+      h3 + p { margin-top: 5px; }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+    <%= yield :intro %>
+    <%= yield :email_and_hearing_info %>
+    <%= yield :link %>
+  </body>
+</html>
