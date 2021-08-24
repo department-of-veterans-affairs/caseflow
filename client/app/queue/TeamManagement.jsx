@@ -159,6 +159,7 @@ const mapStateToProps = (state) => {
     privateBars,
     vsos,
     vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs
   } = state.teamManagement;
 
