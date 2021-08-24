@@ -64,8 +64,10 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
+          bundle config frozen false
           bundle add sqlite3
           bundle install
+          git diff
           git config --local user.email "temp@email.com"
           git config --local user.name "TEMP USER"
           git add .
