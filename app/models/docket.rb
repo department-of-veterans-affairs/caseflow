@@ -58,7 +58,7 @@ class Docket
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
-  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
+  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     Distribution.transaction do
       appeals = appeals(priority: priority, ready: true).limit(limit)
 

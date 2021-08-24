@@ -31,7 +31,6 @@ class ETL::JudgeCaseReview < ETL::Record
       # memoize to save SQL calls
       attorney = user_cache(original.attorney_id)
       judge = user_cache(original.judge_id)
-      appeal = original.appeal
 
       target.review_created_at = original.created_at
       target.review_updated_at = original.updated_at
@@ -49,11 +48,17 @@ class ETL::JudgeCaseReview < ETL::Record
       target.attorney_sattyid = attorney.vacols_user&.sattyid
 
       target.original_task_id = original.task_id
-      target.actual_task_id = original.task_id if appeal.is_a?(Appeal)
-      target.vacols_id = original.vacols_id if appeal.is_a?(LegacyAppeal)
+      begin
+        target.appeal_id = original.appeal_id
+        target.appeal_type = original.appeal_type
 
-      target.appeal_id = appeal.id
-      target.appeal_type = appeal.class.name
+        target.actual_task_id = original.task_id if original.appeal_type == "Appeal"
+        target.vacols_id = original.vacols_id if original.appeal_type == "LegacyAppeal"
+      rescue ActiveRecord::RecordNotFound
+        check_equal(original.id, "task_id", original.task_id, nil)
+        target.appeal_id = "0"
+        target.appeal_type = "Missing"
+      end
 
       mirrored_hearing_attributes.each do |attr|
         target[attr] = original.send(attr)

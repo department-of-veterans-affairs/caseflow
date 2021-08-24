@@ -3,31 +3,34 @@
 class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  APPEAL_ASSOCIATION_DETAILS = { id_column: :appeal_id,
+                                 type_column: :appeal_type,
+                                 includes_method: :appeal }.freeze
+  HEARING_ASSOCIATION_DETAILS = { id_column: :hearing_id,
+                                  type_column: :hearing_type,
+                                  includes_method: :hearing }.freeze
+
   # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
-      { id_column: :participant_id,
+      { # To-do: Add a foreign-key to `people` table and remove this
+        id_column: :participant_id,
         type_column: nil,
-        includes_method: :person },
+        includes_method: :person
+      },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
         includes_method: :decision_review }
     ],
-    HearingEmailRecipient => [{ id_column: :hearing_id,
-                                type_column: :hearing_type,
-                                includes_method: :hearing }],
-    SentHearingEmailEvent => [{ id_column: :hearing_id,
-                                type_column: :hearing_type,
-                                includes_method: :hearing }],
-    SpecialIssueList => [{ id_column: :appeal_id,
-                           type_column: :appeal_type,
-                           includes_method: :appeal }],
-    Task => [{ id_column: :appeal_id,
-               type_column: :appeal_type,
-               includes_method: :appeal }],
-    VbmsUploadedDocument => [{ id_column: :appeal_id,
-                               type_column: :appeal_type,
-                               includes_method: :appeal }]
+
+    HearingEmailRecipient => [HEARING_ASSOCIATION_DETAILS],
+    SentHearingEmailEvent => [HEARING_ASSOCIATION_DETAILS],
+
+    AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
+    JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
+    SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
+    Task => [APPEAL_ASSOCIATION_DETAILS],
+    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS]
   }.freeze
 
   def perform
