@@ -260,8 +260,6 @@ judge_case_reviews,updated_at,datetime ∗,x,,,,x,Default created_at/updated_a
 judge_case_reviews,vacols_id,string,,,,,x,Substring from judge_case_reviews.task_id for Legacy Appeals
 organizations,,,,,,,,Copy of Organizations table
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
-organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
-organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,x,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string,,,,,,

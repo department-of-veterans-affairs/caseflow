@@ -104,8 +104,6 @@ appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new ap
 appellant_substitutions,task_params,jsonb ∗,x,,,,,"JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
 appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
-attorney_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
-attorney_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
 attorney_case_reviews,document_id,string ∗,x,,,,,
@@ -698,8 +696,6 @@ job_notes,send_to_intake_user,boolean,,,,,,Should the note trigger a message to 
 job_notes,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at
 job_notes,user_id,integer (8) ∗ FK,x,,x,,x,The user who created the note
 judge_case_reviews,,,,,,,,
-judge_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
-judge_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 judge_case_reviews,areas_for_improvement,text,,,,,,
 judge_case_reviews,attorney_id,integer FK,,,x,,,
 judge_case_reviews,comment,text,,,,,,
@@ -817,8 +813,6 @@ non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
-organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
-organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
@@ -1012,6 +1006,9 @@ sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
+sent_hearing_email_events,sent_status,boolean,,,,,,This column keeps track of whether the email was sent or not.
+sent_hearing_email_events,sent_status_checked_at,datetime,,,,,,The date the status was last checked/updated in the GovDelivery API.
+sent_hearing_email_events,sent_status_email_external_message_id,string,,,,,,The GovDelivery external message id for the email sent to the coordinator.
 special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal associated with this record
 special_issue_lists,appeal_type,string,,,,,x,The type of appeal associated with this record
