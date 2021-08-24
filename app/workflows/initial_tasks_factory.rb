@@ -51,13 +51,15 @@ class InitialTasksFactory
       case @appeal.docket_type
       when "evidence_submission"
         EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
+        distribution_task.completed! if @appeal&.docket_switch.old_docket_stream.distributed_to_a_judge?
       when "hearing"
         ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+        distribution_task.completed! if @appeal&.docket_switch.old_docket_stream.distributed_to_a_judge?
       when "direct_review"
         vso_tasks = create_ihp_task
         # If the appeal is direct docket and there are no ihp tasks,
         # then it is initially ready for distribution.
-        distribution_task.ready_for_distribution! if vso_tasks.empty?
+        distribution_task.ready_for_distribution! if vso_tasks.empty? && !@appeal&.docket_switch.old_docket_stream.distributed_to_a_judge?
       end
     end
   end
