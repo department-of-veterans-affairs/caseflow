@@ -66,6 +66,10 @@ jobs:
         run: |
           bundle add sqlite3
           bundle install
+          git config --local user.email "temp@email.com"
+          git config --local user.name "TEMP USER"
+          git add .
+          git commit -m "Local commit"
 
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
