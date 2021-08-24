@@ -136,7 +136,7 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
       it "should be successful" do
         ua.update(unrecognized_power_of_attorney_id: nil)
         patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
-        ua.reload 
+        ua.reload
 
         expect(response.status).to eq 200
         expect(ua.power_of_attorney.is_a?(AttorneyPowerOfAttorney))
