@@ -51,8 +51,6 @@ jobs:
             database: test-vacols
           ' >> config/database.yml
 
-          cat config/database.yml
-
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
@@ -80,7 +78,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
-          cp Makefile.example Makefile
+          ln -s Makefile.example Makefile
           
           echo "::group::Caseflow schema"
           make erd-caseflow doc-schema-caseflow
@@ -109,15 +107,15 @@ jobs:
           rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs"
 
           cd wiki_checkout
+          git add .
           if git diff-index --quiet HEAD; then
             echo "::group::No changes to schema"
-            ls -al make_docs
+            ls -alR make_docs
             echo "::endgroup::"
           else
             echo "::group::Pushing changes to wiki"
             git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
             git config --local user.name "$WIKI_COMMIT_USER_NAME"
-            git add .
-            git diff-index --quiet HEAD || git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
             echo "::endgroup::"
           fi
