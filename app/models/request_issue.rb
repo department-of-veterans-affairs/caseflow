@@ -509,7 +509,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
-    return false if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+    user = RequestStore.store[:current_user]
+    return false if benefit_type == "vha" && :vha_predocket_appeals, user: user)
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end

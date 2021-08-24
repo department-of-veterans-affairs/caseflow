@@ -122,7 +122,7 @@ describe Appeal, :all_dbs do
     context "when the appeal has vha issues" do
       let(:request_issues) do
         [
-          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "vha")
         ]
       end
 
