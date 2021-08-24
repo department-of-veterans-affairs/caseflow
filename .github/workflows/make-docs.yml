@@ -65,6 +65,7 @@ jobs:
         run: |
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
+
           # Skipping VACOLS since Oracle DB is not set up
           # bundle exec rake spec:setup_vacols
 
@@ -78,6 +79,7 @@ jobs:
           POSTGRES_HOST: localhost
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
+          UPDATE_SCHEMA_ERD_IMAGES: true
         run: |
           ln -s Makefile.example Makefile
           
@@ -109,6 +111,7 @@ jobs:
           rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs"
 
           cd wiki_checkout
+          rm -f make_docs/schema/*-erd.pdf
           git add .
           if git diff-index --quiet HEAD; then
             echo "::group::No changes to schema"
