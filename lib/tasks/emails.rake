@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 namespace :emails do
-  def write_output(file, subject, body)
+  # This function sends the email to a file in caseflow/tmp
+  def write_output_to_file(file_name, email)
+    body = email.html_part&.decoded || email.body
+    subject = email.subject
+
     return if body.blank?
 
-    output_file = Rails.root.join("tmp", file)
+    output_file = Rails.root.join("tmp", file_name)
     File.write(output_file, subject, mode: "w")
     File.write(output_file, body, mode: "a")
   end
@@ -67,15 +71,8 @@ namespace :emails do
             email_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
-          email_body = email.html_part&.decoded || email.body
-          email_subject = email.subject
-
-          next if email_body.blank?
-
-          output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
-
-          File.write(output_file, email_subject, mode: "w")
-          File.write(output_file, email_body, mode: "a")
+          file_name = "#{func}_#{recipient.title}.html"
+          write_output_to_file(file_name, email)
         end
       end
     end
@@ -169,15 +166,8 @@ namespace :emails do
           email_recipient: recipient,
           virtual_hearing: virtual_hearing
         )
-        email_body = email.html_part&.decoded || email.body
-        email_subject = email.subject
-
-        next if email_body.blank?
-
-        output_file = Rails.root.join("tmp", "reminder_#{recipient.title}.html")
-
-        File.write(output_file, email_subject, mode: "w")
-        File.write(output_file, email_body, mode: "a")
+        file_name = "reminder_#{recipient.title}.html"
+        write_output_to_file(file_name, email)
       end
     end
 
@@ -188,18 +178,16 @@ namespace :emails do
       include FactoryBot::Syntax::Methods
       sent_hearing_email_event = build(:sent_hearing_email_event)
 
-      # Create the emails
+      # Fill in the template using the test objects
       mailer_function_name = :notification
       email = HearingEmailStatusMailer.send(
         mailer_function_name,
         sent_hearing_email_event: sent_hearing_email_event
       )
-      email_body = email.html_part&.decoded || email.body
-      email_subject = email.subject
 
-      # Write the email to a file
+      # Write the email html to a file in tmp
       file_name = "#{mailer_function_name}_#{sent_hearing_email_event.recipient_role}.html"
-      write_output(file_name, email_subject, email_body)
+      write_output_to_file(file_name, email)
     end
   end
 end
