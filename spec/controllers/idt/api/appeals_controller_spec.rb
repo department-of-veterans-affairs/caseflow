@@ -203,6 +203,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             task_id: "#{vacols_id}-#{created_at}"
           )
         end
+
         before do
           # cancel one, so it does not show up
           Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
@@ -213,11 +214,12 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         it "returns a list of active assigned appeals" do
           # Expect 3 AttorneyCaseReviews with the same appeal_id but different appeal_type
-          # Only 2 of these are relevant to the AMA appeal. 
+          # Only 2 of these are relevant to the AMA appeal.
           # AttorneyCaseReviews affect the "documents" attribute, so only 2 documents are returned.
           expect(AttorneyCaseReview.count).to eq 3
-          expect(AttorneyCaseReview.pluck(:appeal_type).uniq).to match_array ["Appeal", "LegacyAppeal"]
+          expect(AttorneyCaseReview.pluck(:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
           expect(AttorneyCaseReview.pluck(:appeal_id).uniq).to eq [1]
+          binding.pry
 
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
