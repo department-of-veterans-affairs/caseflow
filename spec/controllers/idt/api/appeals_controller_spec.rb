@@ -242,7 +242,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
           expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
           expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
-          # Ensure the first document is the latest one
+          # Ensure the first document is the latest one (i.e., the same as the one shown in the Case Details page)
+          decision_doc_id = Appeal.find_by_uuid(ama_appeals.first["id"]).latest_attorney_case_review.document_id
+          expect(ama_appeals.first["attributes"]["documents"].first["document_id"]).to eq decision_doc_id
           expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
             .to eq case_review2.attorney.full_name
           expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
