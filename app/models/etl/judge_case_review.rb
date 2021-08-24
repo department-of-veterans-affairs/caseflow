@@ -49,12 +49,11 @@ class ETL::JudgeCaseReview < ETL::Record
 
       target.original_task_id = original.task_id
       begin
-        appeal = original.appeal
-        target.actual_task_id = original.task_id if appeal.is_a?(Appeal)
-        target.vacols_id = original.vacols_id if appeal.is_a?(LegacyAppeal)
+        target.appeal_id = original.appeal_id
+        target.appeal_type = original.appeal_type
 
-        target.appeal_id = appeal.id
-        target.appeal_type = appeal.class.name
+        target.actual_task_id = original.task_id if original.appeal_type == "Appeal"
+        target.vacols_id = original.vacols_id if original.appeal_type == "LegacyAppeal"
       rescue ActiveRecord::RecordNotFound
         check_equal(original.id, "task_id", original.task_id, nil)
         target.appeal_id = "0"
