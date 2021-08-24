@@ -42,7 +42,7 @@ jobs:
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
           sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
-          echo '# Copied from demo_vacols
+          echo '# Copied from demo_vacols configuration
           test_vacols:
             adapter: postgresql
             pool: 5
@@ -104,19 +104,19 @@ jobs:
           WIKI_COMMIT_MESSAGE: 'Automatically update to wiki'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
-          WIKI_SOURCE_DIR: 'docs'
         run: |
-          rsync -av "$WIKI_SOURCE_DIR" "wiki_checkout/make_docs" --exclude .git
-          cd wiki_checkout
-          git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
-          git config --local user.name "$WIKI_COMMIT_USER_NAME"
+          rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs/schema"
+          ls -al
 
+          cd wiki_checkout
           if git diff-index --quiet HEAD; then
             echo "::group::No changes to schema"
             ls -al make_docs
             echo "::endgroup::"
           else
             echo "::group::Pushing changes to wiki"
+            git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+            git config --local user.name "$WIKI_COMMIT_USER_NAME"
             git add .
             git diff-index --quiet HEAD || git commit -m "$WIKI_COMMIT_MESSAGE" && git push
             echo "::endgroup::"
