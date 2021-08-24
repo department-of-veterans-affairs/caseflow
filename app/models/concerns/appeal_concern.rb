@@ -7,8 +7,8 @@ module AppealConcern
 
   included do
     if ancestors.include?(ApplicationRecord)
-      has_many :attorney_case_reviews
-      has_many :judge_case_reviews
+      has_many :attorney_case_reviews, polymorphic: true
+      has_many :judge_case_reviews, polymorphic: true
     end
   end
 
