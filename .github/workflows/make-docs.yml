@@ -106,7 +106,6 @@ jobs:
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
           rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs/schema"
-          ls -al
 
           cd wiki_checkout
           if git diff-index --quiet HEAD; then
@@ -120,4 +119,4 @@ jobs:
             git add .
             git diff-index --quiet HEAD || git commit -m "$WIKI_COMMIT_MESSAGE" && git push
             echo "::endgroup::"
-          end
+          fi
