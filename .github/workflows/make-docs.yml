@@ -26,6 +26,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Since installing a client to Oracle DB is a pain and setting up the VACOLS DB is not necessary, let's skip it.
       - name: Remove references to VACOLS Oracle DB
         run: |
           sed '/ruby-oci8/d' -i Gemfile
@@ -63,8 +64,13 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
+          echo "::group::Set up Caseflow DB"
           bin/rails db:create && bin/rails db:schema:load
+          echo "::endgroup::"
+
+          echo "::group::Set up Caseflow ETL DB"
           DB=etl bundle exec rake db:create db:schema:load
+          echo "::endgroup::"
 
           # Skipping VACOLS since Oracle DB is not set up
           # bundle exec rake spec:setup_vacols
@@ -104,14 +110,18 @@ jobs:
           path: wiki_checkout
       - name: Push 'make docs' files to wiki
         env:
-          WIKI_COMMIT_MESSAGE: 'Automatically update DB schema'
+          WIKI_COMMIT_MESSAGE: '`make docs` - Automatically update DB schema documentation files'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
           rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs"
 
           cd wiki_checkout
-          rm -f make_docs/schema/*-erd.pdf
+
+          echo "::group::Ignore files that change with every run"
+          rm -vf make_docs/schema/*-erd.pdf
+          echo "::endgroup::"
+
           git add .
           if git diff-index --quiet HEAD; then
             echo "::group::No changes to schema"
