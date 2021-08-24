@@ -115,6 +115,11 @@ class TeamManagement extends React.PureComponent {
                 <OrgList orgs={this.props.vhaProgramOffices} />
               </React.Fragment> }
 
+              { this.props.vhaRegionalOffices && <React.Fragment>
+                <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
+                <OrgList orgs={this.props.vhaRegionalOffices} />
+              </React.Fragment> }
+
               { this.props.otherOrgs && <React.Fragment>
                 <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
                 <OrgList orgs={this.props.otherOrgs} />
@@ -138,7 +143,8 @@ TeamManagement.propTypes = {
   privateBars: PropTypes.array,
   success: PropTypes.object,
   vsos: PropTypes.array,
-  vhaProgramOffices: PropTypes.array
+  vhaProgramOffices: PropTypes.array,
+  vhaRegionalOffices: PropTypes.array
 };
 
 const mapStateToProps = (state) => {
@@ -162,6 +168,7 @@ const mapStateToProps = (state) => {
     privateBars,
     vsos,
     vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs,
     success,
     error

@@ -97,7 +97,8 @@ class TeamManagementController < ApplicationController
       org.is_a?(JudgeTeam) ||
         org.is_a?(DvcTeam) ||
         org.is_a?(Representative) ||
-        org.is_a?(VhaProgramOffice)
+        org.is_a?(VhaProgramOffice) ||
+        org.is_a?(VhaRegionalOffice)
     end
   end
 
