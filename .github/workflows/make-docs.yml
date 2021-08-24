@@ -42,11 +42,11 @@ jobs:
           # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
           sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
 
-          # Rails expects a 'test_vacols' configuration due to "#{Rails.env}_vacols"
+          # Even though it won't be used in this script, Rails expects a 'test_vacols' configuration due to "#{Rails.env}_vacols"
           echo '# Copied from demo_vacols configuration
           test_vacols:
             adapter: postgresql
-            pool: 5
+            pool: 1
             timeout: 5000
             database: test-vacols
           ' >> config/database.yml
@@ -66,6 +66,7 @@ jobs:
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
           # Skipping VACOLS since Oracle DB is not set up
+          # bundle exec rake spec:setup_vacols
 
       # Need graphviz to create ERDs
       - name: Setup Graphviz
@@ -89,6 +90,7 @@ jobs:
           echo "::endgroup::"
 
           # Skipping VACOLS since Oracle DB is not set up
+          # make erd-vacols
 
       # The followin is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
@@ -100,7 +102,7 @@ jobs:
           path: wiki_checkout
       - name: Push 'make docs' files to wiki
         env:
-          WIKI_COMMIT_MESSAGE: 'Automatically update to wiki'
+          WIKI_COMMIT_MESSAGE: 'Automatically update DB schema'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
