@@ -29,7 +29,6 @@ class Hearings::SendSentStatusEmail
   # - If that condition fails, use the log function to record
   def email_should_send
     return false if invalid_email?
-    return false if invalid_example?
 
     true
   end
@@ -37,15 +36,6 @@ class Hearings::SendSentStatusEmail
   def invalid_email?
     if sent_hearing_email_event.email_address.blank?
       log("email_invalid")
-      return true
-    end
-
-    false
-  end
-
-  def invalid_example?
-    if true == false # This is just an example, this will never be reached
-      log("example_failure")
       return true
     end
 
