@@ -83,15 +83,64 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
         {
           unrecognized_power_of_attorney: {
             address_line_1: updated_address_1,
-            address_line_2: updated_address_2
+            address_line_2: updated_address_2,
+            name: "test",
+            city: "city",
+            state: "state",
+            country: "country",
+            party_type: "individual",
+            zip: "12345"
           }
         }
       end
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:ua) { create(:unrecognized_appellant) }
       it "should be successful" do
+        ua.update(unrecognized_power_of_attorney_id: nil)
         patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+        ua.reload
+
         expect(response.status).to eq 200
+        expect(ua.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney))
+        expect(ua.power_of_attorney.name).to eq "test"
+        expect(ua.power_of_attorney.address_line_1).to eq updated_address_1
+      end
+      it "returns failure if unsuccessful" do
+        ua.update(unrecognized_power_of_attorney_id: nil)
+        allow_any_instance_of(UnrecognizedAppellant).to receive(:update_power_of_attorney!).and_return(false)
+        patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+        ua.reload
+
+        expect(response.status).to eq 400
+        expect(ua.power_of_attorney.nil?)
+      end
+      it "fails gracefully if missing a required param" do
+        ua.update(unrecognized_power_of_attorney_id: nil)
+        params[:unrecognized_power_of_attorney][:city] = nil
+        allow_any_instance_of(UnrecognizedAppellant).to receive(:update_power_of_attorney!).and_return(false)
+        patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+        ua.reload
+
+        expect(response.status).to eq 400
+        expect(ua.power_of_attorney.nil?)
+      end
+    end
+    context "when user adds poa_participant_id" do
+      let(:params) do
+        {
+          poa_participant_id: 123
+        }
+      end
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:ua) { create(:unrecognized_appellant) }
+      it "should be successful" do
+        ua.update(unrecognized_power_of_attorney_id: nil)
+        patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+        ua.reload 
+
+        expect(response.status).to eq 200
+        expect(ua.power_of_attorney.is_a?(AttorneyPowerOfAttorney))
+        expect(ua.power_of_attorney.participant_id).to eq "123"
       end
     end
   end
