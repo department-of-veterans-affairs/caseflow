@@ -88,6 +88,7 @@ class TeamManagementController < ApplicationController
       private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
       vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
       vha_program_offices: VhaProgramOffice.order(:name).map { |vpo| serialize_org(vpo) },
+      vha_regional_offices: VhaRegionalOffice.order(:name).map { |vro| serialize_org(vro) },
       other_orgs: other_orgs.map { |org| serialize_org(org) }
     )
   end
@@ -97,7 +98,8 @@ class TeamManagementController < ApplicationController
       org.is_a?(JudgeTeam) ||
         org.is_a?(DvcTeam) ||
         org.is_a?(Representative) ||
-        org.is_a?(VhaProgramOffice)
+        org.is_a?(VhaProgramOffice) ||
+        org.is_a?(VhaRegionalOffice)
     end
   end
 
