@@ -44,10 +44,10 @@ jobs:
 
           echo '# Copied from demo_vacols
           test_vacols:
-            adapter: sqlite3
+            adapter: postgresql
             pool: 5
             timeout: 5000
-            database: db/demo-vacols.sqlite3
+            database: test-vacols
           ' >> config/database.yml
 
           cat config/database.yml
@@ -64,15 +64,6 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         run: |
-          bundle config frozen false
-          bundle add sqlite3
-          bundle install
-          git diff
-          git config --local user.email "temp@email.com"
-          git config --local user.name "TEMP USER"
-          git add .
-          git commit -m "Local commit"
-
           bin/rails db:create && bin/rails db:schema:load
           DB=etl bundle exec rake db:create db:schema:load
           # Skipping VACOLS since Oracle DB is not set up
