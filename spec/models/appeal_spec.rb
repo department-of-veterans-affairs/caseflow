@@ -126,6 +126,14 @@ describe Appeal, :all_dbs do
         ]
       end
 
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
       it "does not create business line tasks" do
         expect(VeteranRecordRequest).to_not receive(:create!)
 
