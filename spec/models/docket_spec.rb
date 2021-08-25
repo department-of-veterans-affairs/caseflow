@@ -348,7 +348,7 @@ describe Docket, :all_dbs do
       expect(current_distribution.distributed_cases.length).to eq(0)
       result = subject
 
-      expect(current_distribution.distributed_cases.length).to eq(2)
+      expect(current_distribution.distributed_cases.length).to eq(3)
       expect(result[1].class).to eq(DistributedCase)
       expect(result[2].class).to eq(DistributedCase)
     end

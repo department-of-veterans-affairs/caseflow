@@ -63,23 +63,26 @@ class Docket
     appeals = appeals(priority: priority, ready: true).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
-      begin
-        appeal = task.appeal
+      appeal = task.appeal
+      # check if distributed case already exists for this appeal.
+      # if so, make a distributed case with a different case id.
+      # This is modeled after the allow! method in the redistributed_case model
+      if DistributedCase.find_by(case_id: appeal.uuid)
+        ymd = Time.zone.today.strftime("%F")
+        distribution.distributed_cases.create!(case_id: "#{appeal.uuid}-redistributed-#{ymd}",
+                                               docket: docket_type,
+                                               priority: priority,
+                                               ready_at: appeal.ready_for_distribution_at,
+                                               task: task)
+      else
         distribution.distributed_cases.create!(case_id: appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: appeal.ready_for_distribution_at,
                                                task: task)
-      rescue ActiveRecord::RecordNotUnique => error
-        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
-      rescue PG::UniqueViolation => error
-        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-        Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
       end
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
