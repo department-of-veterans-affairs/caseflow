@@ -18,6 +18,12 @@ import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  let vhaHasIssues = false;
+  requestIssues.forEach(function(ri) {
+    if (ri.benefitType == "vha") {
+      vhaHasIssues = true;
+    }
+  });
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
@@ -39,9 +45,15 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
     leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
-  leadMessageArr.push(
-    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-  );
+  if (vhaHasIssues) {
+    leadMessageArr.push(
+      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+    );
+  } else {
+    leadMessageArr.push(
+      <strong>Appeal created and sent to VHA for pre-docket review.</strong>
+    );
+  }
 
   return leadMessageArr;
 };
