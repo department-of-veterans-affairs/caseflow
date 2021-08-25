@@ -8,7 +8,10 @@ class Hearings::SendSentStatusEmail
   end
 
   def call
-    send_email if email_should_send
+    if email_should_send
+      message = send_email
+      external_message_id(message)
+    end
   end
 
   private
@@ -21,7 +24,17 @@ class Hearings::SendSentStatusEmail
     email = HearingEmailStatusMailer.notification(
       sent_hearing_email_event: sent_hearing_email_event
     )
-    email.deliver_now!
+    message = email.deliver_now!
+    message
+  end
+
+  # TODO: refactor this in send_email to DRY
+  def external_message_id(msg)
+    if msg.is_a?(GovDelivery::TMS::EmailMessage)
+      response = msg.response
+      response_external_url = response.body.dig("_links", "self")
+      response_external_url
+    end
   end
 
   # Each of the guards in here should
