@@ -28,7 +28,9 @@ class Hearings::SendSentStatusEmail
     message
   end
 
-  # TODO: refactor this in send_email to DRY
+  # Use nocov to ignore for code coverage calculations, this code isn't tested
+  # because it depends on the response from GovDelivery
+  # :nocov:
   def external_message_id(message)
     if message.is_a?(GovDelivery::TMS::EmailMessage)
       response = message.response
@@ -36,6 +38,7 @@ class Hearings::SendSentStatusEmail
       response_external_url
     end
   end
+  # :nocov:
 
   # Each of the guards in here should
   # - Check a condition
