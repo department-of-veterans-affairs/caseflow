@@ -22,16 +22,16 @@ class Hearings::SendSentStatusEmail
   # See app/jobs/hearings/send_email.rb::send_email for notes on deliver_now!
   def send_email
     email = HearingEmailStatusMailer.notification(
-      sent_hearing_email_event: sent_hearing_email_event
+      sent_hearing_email_event: @sent_hearing_email_event
     )
     message = email.deliver_now!
     message
   end
 
   # TODO: refactor this in send_email to DRY
-  def external_message_id(msg)
-    if msg.is_a?(GovDelivery::TMS::EmailMessage)
-      response = msg.response
+  def external_message_id(message)
+    if message.is_a?(GovDelivery::TMS::EmailMessage)
+      response = message.response
       response_external_url = response.body.dig("_links", "self")
       response_external_url
     end
@@ -47,7 +47,7 @@ class Hearings::SendSentStatusEmail
   end
 
   def invalid_email?
-    if sent_hearing_email_event.email_address.blank?
+    if @sent_hearing_email_event.email_address.blank?
       log("email_invalid")
       return true
     end
