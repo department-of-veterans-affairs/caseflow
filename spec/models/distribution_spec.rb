@@ -277,40 +277,42 @@ describe Distribution, :all_dbs do
       end
 
       context "when a nonpriority distribution of an AMA appeal with an existing distributed case is attempted" do
-        let(:judge_buggy) { create(:user) }
-        let!(:judge_team_buggy) { JudgeTeam.create_for_judge(judge_buggy) }
-        let!(:vacols_judge_buggy) { create(:staff, :judge_role, sdomainid: judge_buggy.css_id) }
-
-        let!(:buggy_appeal) do
-          create(:appeal,
-                 :with_post_intake_tasks,
-                 :advanced_on_docket_due_to_age,
-                 docket_type: Constants.AMA_DOCKETS.direct_review)
-        end
-
-        let!(:past_distribution) { Distribution.create!(judge: judge_buggy) }
-
+        let!(:target_appeal) { due_direct_review_cases.first }
+        let(:past_distribution) { Distribution.create(judge: judge) }
         let!(:past_distributed_case) do
           DistributedCase.create!(
             distribution: past_distribution,
             ready_at: 6.months.ago,
-            docket: buggy_appeal.docket_type,
+            docket: target_appeal.docket_type,
             priority: false,
-            case_id: buggy_appeal.uuid,
-            task: buggy_appeal.tasks.of_type("DistributionTask").first
+            case_id: target_appeal.uuid,
+            task: target_appeal.tasks.of_type("DistributionTask").first,
+            genpop: false,
+            genpop_query: "not_genpop"
           )
+        end
+        let(:current_distribution) do
+          past_distribution.completed!
+          Distribution.create!(judge: judge)
+        end
+        let!(:second_distribution_task) do
+          first_distribution_task = target_appeal.tasks.find_by(type: "DistributionTask")
+          first_distribution_task.completed!
+          create(:distribution_task, appeal: target_appeal, status: Constants.TASK_STATUSES.assigned)
         end
 
         before do
-          past_distribution.completed!
-          first_distribution_task = buggy_appeal.tasks.find_by(type: "DistributionTask")
-          first_distribution_task.completed!
+          allow_any_instance_of(Distribution)
+            .to receive(:batch_size)
+            .and_return(400)
+
+          second_distribution_task.assigned!
         end
 
-        subject { Distribution.create!(judge: judge) }
+        subject { current_distribution.distribute! }
 
         it "allows other cases to be distributed" do
-          subject.distribute!
+          subject
         end
       end
 
