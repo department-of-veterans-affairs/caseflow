@@ -184,7 +184,8 @@ class AssignHearingDispositionTask < Task
     scheduled_time_string:,
     hearing_location: nil,
     virtual_hearing_attributes: nil,
-    notes: nil
+    notes: nil,
+    email_recipients_attributes: nil
   )
     multi_transaction do
       new_hearing_task = hearing_task.cancel_and_recreate
@@ -197,6 +198,8 @@ class AssignHearingDispositionTask < Task
       if virtual_hearing_attributes.present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService
           .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+      elsif email_recipients_attributes.present?
+        create_or_update_email_recipients(new_hearing, email_recipients_attributes)
       end
 
       [new_hearing_task, self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)]
@@ -250,7 +253,8 @@ class AssignHearingDispositionTask < Task
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
         hearing_location: new_hearing_attrs[:hearing_location],
         virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
-        notes: new_hearing_attrs[:notes]
+        notes: new_hearing_attrs[:notes],
+        email_recipients_attributes: new_hearing_attrs[:email_recipients]
       )
     when "schedule_later"
       schedule_later(

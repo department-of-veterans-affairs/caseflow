@@ -14,12 +14,14 @@ export const Timezone = ({
   onChange,
   time,
   roTimezone,
-  required
+  required,
+  optional
 }) => {
   const { options, commonsCount } = timezones(time, roTimezone);
 
   return (
     <SearchableDropdown
+      optional={optional}
       required={!readOnly && required}
       styling={timezoneStyles(commonsCount)}
       name={name}
@@ -46,6 +48,7 @@ Timezone.propTypes = {
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
+  optional: PropTypes.bool,
   value: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,

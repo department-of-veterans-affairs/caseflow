@@ -3,31 +3,34 @@
 class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  APPEAL_ASSOCIATION_DETAILS = { id_column: :appeal_id,
+                                 type_column: :appeal_type,
+                                 includes_method: :appeal }.freeze
+  HEARING_ASSOCIATION_DETAILS = { id_column: :hearing_id,
+                                  type_column: :hearing_type,
+                                  includes_method: :hearing }.freeze
+
   # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
-      { id_column: :participant_id,
+      { # To-do: Add a foreign-key to `people` table and remove this
+        id_column: :participant_id,
         type_column: nil,
-        includes_method: :person },
+        includes_method: :person
+      },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
         includes_method: :decision_review }
     ],
-    HearingEmailRecipient => [{ id_column: :hearing_id,
-                                type_column: :hearing_type,
-                                includes_method: :hearing }],
-    SentHearingEmailEvent => [{ id_column: :hearing_id,
-                                type_column: :hearing_type,
-                                includes_method: :hearing }],
-    SpecialIssueList => [{ id_column: :appeal_id,
-                           type_column: :appeal_type,
-                           includes_method: :appeal }],
-    Task => [{ id_column: :appeal_id,
-               type_column: :appeal_type,
-               includes_method: :appeal }],
-    VbmsUploadedDocument => [{ id_column: :appeal_id,
-                               type_column: :appeal_type,
-                               includes_method: :appeal }]
+
+    HearingEmailRecipient => [HEARING_ASSOCIATION_DETAILS],
+    SentHearingEmailEvent => [HEARING_ASSOCIATION_DETAILS],
+
+    AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
+    JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
+    SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
+    Task => [APPEAL_ASSOCIATION_DETAILS],
+    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS]
   }.freeze
 
   def perform
@@ -41,11 +44,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
     orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
-    send_alert("Found orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
+    send_alert("Found #{orphaned_ids.size} orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
     if config[:type_column]
       unusual_record_ids = unusual_records(klass, config).pluck(*select_fields)
-      send_alert("Found unusual records", klass, config, unusual_record_ids) if unusual_record_ids.any?
+      heading = "Found #{unusual_record_ids.size} unusual records"
+      send_alert(heading, klass, config, unusual_record_ids) if unusual_record_ids.any?
     end
   end
 
@@ -54,12 +58,11 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   def send_alert(heading, klass, config, record_ids)
     message = <<~MSG
       #{heading} for #{klass.name}:
-        (id, #{config[:type_column]}, #{config[:id_column]})
-        #{record_ids.map(&:to_s).join('\n')}
+      (id, #{config[:type_column]}, #{config[:id_column]})
+      #{record_ids.map(&:to_s).join("\n")}
     MSG
-    slack_service.send_notification(message)
-    # Also send a message to #appeals-data-workgroup
-    slack_service.send_notification(message, klass, "#appeals-data-workgroup")
+    slack_service.send_notification(message, "#{klass.name} orphaned records via #{config[:id_column]}",
+                                    "#appeals-data-workgroup")
   end
 
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:

@@ -15,15 +15,16 @@ class InitialTasksFactory
     end
   end
 
+  delegate :veteran, to: :@appeal
+
+  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
+
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
-      if @appeal.vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals,
-                                                           user: RequestStore.store[:current_user])
-        create_pre_docket_tasks
-      end
     end
+    maybe_create_translation_task
   end
 
   private
@@ -72,10 +73,6 @@ class InitialTasksFactory
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def create_pre_docket_tasks
-    PreDocketTasksFactory.new(@appeal).create_pre_docket_task!
-  end
-
   def create_selected_tasks
     # Given a selection of task_ids, select it and all its tree ancestors
     task_ids = @appeal.appellant_substitution.selected_task_ids
@@ -99,14 +96,12 @@ class InitialTasksFactory
     when "EvidenceSubmissionWindowTask"
       evidence_submission_window_task(source_task, creation_params)
     when "InformalHearingPresentationTask"
-      create_ihp_task.tap do |vso_tasks|
-        warn_poa_not_a_representative if vso_tasks.blank?
-        if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
-          handle_different_poa
-        end
-      end
+      handle_substitution_ihp_task_and_poa
+    when "ScheduleHearingTask"
+      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
     else
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
+      excluded_attrs = %w[status closed_at placed_on_hold_at]
+      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
     end
   end
 
@@ -119,6 +114,15 @@ class InitialTasksFactory
     EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                          parent: distribution_task,
                                          end_date: evidence_submission_hold_end_date)
+  end
+
+  def handle_substitution_ihp_task_and_poa
+    create_ihp_task.tap do |vso_tasks|
+      warn_poa_not_a_representative if vso_tasks.blank?
+      if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
+        handle_different_poa
+      end
+    end
   end
 
   def warn_poa_not_a_representative
@@ -170,5 +174,15 @@ class InitialTasksFactory
     return false if @appeal.veteran.alive?
 
     FeatureToggle.enabled?(:death_dismissal_streamlining)
+  end
+
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran&.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 end

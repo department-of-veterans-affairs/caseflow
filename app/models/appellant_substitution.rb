@@ -7,6 +7,10 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
+  }
+
   validates :created_by, :source_appeal, :substitution_date,
             :claimant_type, # Claimant record type for the substitute
             :substitute_participant_id,

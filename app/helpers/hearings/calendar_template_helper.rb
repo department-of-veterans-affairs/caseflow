@@ -10,7 +10,7 @@ module Hearings::CalendarTemplateHelper
     HEARING_TIME_DISPLAY_FORMAT = "%A, %-d %B %Y at %-l:%M%P %Z"
 
     def format_hearing_time(time)
-      time.strftime(HEARING_TIME_DISPLAY_FORMAT)
+      time.strftime("%A, %B #{time.day.ordinalize} %Y at %-l:%M%P %Z")
     end
 
     def central_office_display_time(hearing)
