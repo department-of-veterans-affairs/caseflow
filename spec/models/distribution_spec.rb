@@ -276,6 +276,44 @@ describe Distribution, :all_dbs do
         end
       end
 
+      context "when a nonpriority distribution of an AMA appeal with an existing distributed case is attempted" do
+        let(:judge_buggy) { create(:user) }
+        let!(:judge_team_buggy) { JudgeTeam.create_for_judge(judge_buggy) }
+        let!(:vacols_judge_buggy) { create(:staff, :judge_role, sdomainid: judge_buggy.css_id) }
+
+        let!(:buggy_appeal) do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 :advanced_on_docket_due_to_age,
+                 docket_type: Constants.AMA_DOCKETS.direct_review)
+        end
+
+        let!(:past_distribution) { Distribution.create!(judge: judge_buggy) }
+
+        let!(:past_distributed_case) do
+          DistributedCase.create!(
+            distribution: past_distribution,
+            ready_at: 6.months.ago,
+            docket: buggy_appeal.docket_type,
+            priority: false,
+            case_id: buggy_appeal.uuid,
+            task: buggy_appeal.tasks.of_type("DistributionTask").first
+          )
+        end
+
+        before do
+          past_distribution.completed!
+          first_distribution_task = buggy_appeal.tasks.find_by(type: "DistributionTask")
+          first_distribution_task.completed!
+        end
+
+        subject { Distribution.create!(judge: judge) }
+
+        it "allows other cases to be distributed" do
+          subject.distribute!
+        end
+      end
+
       context "when an illegit nonpriority legacy case re-distribution is attempted" do
         let(:case_id) { legacy_case.bfkey }
         let!(:previous_location) { legacy_case.bfcurloc }
