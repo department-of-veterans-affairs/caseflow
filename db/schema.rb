@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_20_153715) do
+ActiveRecord::Schema.define(version: 2021_08_23_144420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1317,6 +1317,7 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
   create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
     t.string "email_address", comment: "Address the email was sent to"
     t.bigint "email_recipient_id", comment: "Associated HearingEmailRecipient"
+    t.boolean "email_sent", comment: "This column keeps track of whether the email was sent or not"
     t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.bigint "hearing_id", null: false, comment: "Associated hearing"
@@ -1324,6 +1325,9 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.datetime "sent_status_checked_at", comment: "The date the status was last checked/updated in the GovDelivery API"
+    t.datetime "sent_status_email_attempted_at", comment: "The date the failure email was attempted to be sent"
+    t.string "sent_status_email_external_message_id", comment: "The GovDelivery message ID for the failure email sent in case the first email fails to send. This is different from the external_message_id that tracks the first email sent"
     t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
@@ -1542,8 +1546,6 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
-    # To-do: consider removing this index, which is superceded by the
-    # addition of index_vbms_uploaded_documents_on_appeal_type_and_appeal_id
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
     t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
