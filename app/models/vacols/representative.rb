@@ -18,15 +18,18 @@ class VACOLS::Representative < VACOLS::Record
   class InvalidRepTypeError < RepError; end
 
   # mapping of values in REP.REPTYPE
-  ACTIVE_REPTYPES = {
+  APPELLANT_REPTYPES = {
     appellant_attorney: { code: "A", name: "Attorney" },
-    appellant_agent: { code: "G", name: "Agent" },
+    appellant_agent: { code: "G", name: "Agent" }
+  }.freeze
+  CONTESTED_REPTYPES = {
     # :fee_agreement: "F", # deprecated
     contesting_claimant: { code: "C", name: "Contesting Claimant" },
     contesting_claimant_attorney: { code: "D", name: "Contesting Claimant's Attorney" },
     contesting_claimant_agent: { code: "E", name: "Contesting Claimant's Agent" }
     # :fee_attorney_reference_list: "R", # deprecated
   }.freeze
+  ACTIVE_REPTYPES = APPELLANT_REPTYPES.merge(CONTESTED_REPTYPES).freeze
 
   def self.reptype_name_from_code(reptype)
     ACTIVE_REPTYPES.values.find { |obj| obj[:code] == reptype }.try(:[], :name)
