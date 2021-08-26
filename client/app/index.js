@@ -23,47 +23,35 @@ import Loadable from 'components/shared/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
-const Router = React.lazy(() => import('app/2.0/router'));
-const BaseContainer = React.lazy(() => import('app/containers/BaseContainer'));
-const Certification = React.lazy(() =>
-  import('app/certification/Certification')
-);
+import Router from 'app/2.0/router';
+import BaseContainer from 'app/containers/BaseContainer';
+import Certification from 'app/certification/Certification';
 
 // Dispatch
-const EstablishClaimPage = React.lazy(() =>
-  import('app/containers/EstablishClaimPage')
-);
-const ManageEstablishClaim = React.lazy(() =>
-  import('app/manageEstablishClaim/index')
-);
-const CaseWorker = React.lazy(() =>
-  import('app/containers/CaseWorker/CaseWorkerIndex')
-);
+import EstablishClaimPage from 'app/containers/EstablishClaimPage';
+import ManageEstablishClaim from 'app/manageEstablishClaim/index';
+import CaseWorker from 'app/containers/CaseWorker/CaseWorkerIndex';
 
-const Hearings = React.lazy(() => import('app/hearings/index'));
-const Help = React.lazy(() => import('app/help/index'));
-const Error500 = React.lazy(() => import('app/errors/Error500'));
-const Error404 = React.lazy(() => import('app/errors/Error404'));
-const Unauthorized = React.lazy(() => import('app/containers/Unauthorized'));
-const OutOfService = React.lazy(() => import('app/containers/OutOfService'));
-const Feedback = React.lazy(() => import('app/containers/Feedback'));
-const StatsContainer = React.lazy(() =>
-  import('app/containers/stats/StatsContainer')
-);
-const Login = React.lazy(() => import('app/login'));
-const TestUsers = React.lazy(() => import('app/test/TestUsers'));
-const TestData = React.lazy(() => import('app/test/TestData'));
-const PerformanceDegradationBanner = React.lazy(() =>
-  import('app/components/PerformanceDegradationBanner')
-);
-const EstablishClaimAdmin = React.lazy(() => import('app/establishClaimAdmin'));
-const Queue = React.lazy(() => import('app/queue/index'));
-const IntakeManager = React.lazy(() => import('app/intakeManager'));
-const IntakeEdit = React.lazy(() => import('app/intakeEdit'));
-const NonComp = React.lazy(() => import('app/nonComp'));
-const AsyncableJobs = React.lazy(() => import('app/asyncableJobs'));
-const Inbox = React.lazy(() => import('app/inbox'));
-const Explain = React.lazy(() => import('app/explain'));
+import Hearings from 'app/hearings/index';
+import Help from 'app/help/index';
+import Error500 from 'app/errors/Error500';
+import Error404 from 'app/errors/Error404';
+import Unauthorized from 'app/containers/Unauthorized';
+import OutOfService from 'app/containers/OutOfService';
+import Feedback from 'app/containers/Feedback';
+import StatsContainer from 'app/containers/stats/StatsContainer';
+import Login from 'app/login';
+import TestUsers from 'app/test/TestUsers';
+import TestData from 'app/test/TestData';
+import PerformanceDegradationBanner from 'app/components/PerformanceDegradationBanner';
+import EstablishClaimAdmin from 'app/establishClaimAdmin';
+import Queue from 'app/queue/index';
+import IntakeManager from 'app/intakeManager';
+import IntakeEdit from 'app/intakeEdit';
+import NonComp from 'app/nonComp';
+import AsyncableJobs from 'app/asyncableJobs';
+import Inbox from 'app/inbox';
+import Explain from 'app/explain';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
