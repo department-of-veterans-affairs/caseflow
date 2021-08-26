@@ -1,17 +1,7 @@
-<%= content_for :intro do %>
-  <p>Dear <%= @sent_hearing_email_event.sent_by&.full_name %></p>
-
-  <p>An email failed to send please take appropriate action.</p>
+<%= content_for :information do %>
+  <p><%= "You scheduled a #{@hearing_type} hearing for #{@veteran_name} on #{@hearing_date} and entered the appellant email #{@email_address}. Caseflow tried to send a #{@email_type} email to that address, but the email failed to send." %></p>
 <% end %>
 
-<%= content_for :email_and_hearing_info do %>
-  <ul>
-    <li>Email Recipient: <%= @sent_hearing_email_event.recipient_role%></li>
-    <li>Email Type: <%= @sent_hearing_email_event.email_type%></li>
-    <li>Hearing Info: <%= [@hearing.scheduled_for, @hearing.request_type, @hearing.judge&.full_name]%></li>
-  </ul>
-<% end %>
-
-<%= content_for :link do %>
-  <p><%= external_link caseflow_url(@hearing&.appeal), display_text: "Click here" %> to update their email in Caseflow.</p>
+<%= content_for :instructions do %>
+  <p>Please check the email address and <%= external_link hearing_details_url(@hearing), display_text: "update it on the Hearing Details page" %> if it contains a typo or you have an alternate address. If you update the email address and Save at the bottom of the screen, email will be sent to the updated address.</p>
 <% end %>
