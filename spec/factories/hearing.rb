@@ -57,6 +57,13 @@ FactoryBot.define do
       end
     end
 
+    # Create a hearing on a video hearing_day
+    trait :video do
+      after(:create) do |hearing, _evaluator|
+        hearing.hearing_day.request_type = "V"
+      end
+    end
+
     # A better representation of a hearing subtree:
     # RootTask, on_hold
     #   DistributionTask, on_hold

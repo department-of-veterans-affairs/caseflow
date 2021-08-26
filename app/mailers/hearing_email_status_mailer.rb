@@ -14,7 +14,15 @@ class HearingEmailStatusMailer < ActionMailer::Base
 
     mail(
       to: @sent_hearing_email_event.email_address,
-      subject: "Email Failed to Send - Do Not Reply"
+      subject: notification_subject
     )
+  end
+
+  def notification_subject
+    hearing_type = Constants::HEARING_REQUEST_TYPES.key(@hearing.request_type).titleize
+    email_type = @sent_hearing_email_event.email_type.downcase
+    email_address = @sent_hearing_email_event.email_address
+
+    "#{hearing_type} #{email_type} email failed to send to #{email_address}"
   end
 end
