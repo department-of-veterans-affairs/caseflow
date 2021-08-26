@@ -308,7 +308,7 @@ module IntakeHelpers
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
-    find('#decision-date').set(date.strftime("%m/%d/%Y"))
+    find("#decision-date").set(date.strftime("%m/%d/%Y"))
     safe_click "#decision-date"
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
