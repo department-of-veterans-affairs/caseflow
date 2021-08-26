@@ -254,7 +254,9 @@ describe FetchHearingLocationsForVeteransJob do
               receive(:record_geomatched_appeal).with("error")
             )
           end
-          expect(Raven).to receive(:capture_exception)
+          expect(Raven).to receive(:capture_exception).with(anything,
+                                                            hash_including(extra: { actionable: false,
+                                                                                    appeal_external_id: anything }))
 
           subject.perform
         end
