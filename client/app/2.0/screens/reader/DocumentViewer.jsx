@@ -54,7 +54,7 @@ import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/Ke
 
 /**
  * Document Viewer Screen Component
- * @param {Object} props -- Contains the route props and PDF web worker
+ * @param {Object} props -- Contains the route props
  */
 const DocumentViewer = (props) => {
   // Get the Document List state
@@ -63,12 +63,9 @@ const DocumentViewer = (props) => {
   // Create the Dispatcher
   const dispatch = useDispatch();
 
-  console.log(props.pdfWorker);
-
   // Attach the PDF Worker to the params to setup PDFJS
   const params = {
     ...props.match.params,
-    worker: props.pdfWorker,
     currentDocument: state.currentDocument,
     scale: state.scale
   };
@@ -175,7 +172,6 @@ const DocumentViewer = (props) => {
     showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({
       currentDocument,
       pageNumber: currentPage,
-      worker: props.pdfWorker,
       scale
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
@@ -284,7 +280,6 @@ const DocumentViewer = (props) => {
 
       dispatch(showPdf({
         currentDocument: state.currentDocument,
-        worker: props.pdfWorker,
         scale: 1
       }));
     },
@@ -292,7 +287,6 @@ const DocumentViewer = (props) => {
       dispatch(showPdf({
         currentDocument: state.currentDocument,
         rotation: state.currentDocument.rotation,
-        worker: props.pdfWorker,
         scale: state.scale
       }));
     },
@@ -305,7 +299,7 @@ const DocumentViewer = (props) => {
 
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${direction}`, scale);
 
-      dispatch(showPdf({ currentDocument: state.currentDocument, worker: props.pdfWorker, scale }));
+      dispatch(showPdf({ currentDocument: state.currentDocument, scale }));
     },
     setPageNumber: (pageNumber) => {
       // Calculate the page number
@@ -348,7 +342,6 @@ const DocumentViewer = (props) => {
     if (currentDocument?.id) {
       dispatch(showPdf({
         currentDocument,
-        worker: props.pdfWorker,
         scale: state.scale
       }));
     } else {
