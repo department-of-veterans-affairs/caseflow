@@ -20,7 +20,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
   let vhaHasIssues = false;
 
-  requestIssues.forEach(ri => {
+  requestIssues.forEach((ri) => {
     if (ri.benefitType === 'vha') {
       vhaHasIssues = true;
     }
