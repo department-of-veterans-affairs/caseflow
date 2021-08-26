@@ -54,6 +54,8 @@ describe Api::V3::DecisionReviews::LegacyAppealsController, :all_dbs, type: :req
 
           expect(response).to have_http_status(:ok)
           expect(legacy_appeals.size).to eq 2
+          expect(legacy_appeals[0]["id"]).to eq eligible_appeal.vacols_id
+          expect(legacy_appeals[1]["id"]).to eq eligible_appeal_2.vacols_id
         end
       end
 
