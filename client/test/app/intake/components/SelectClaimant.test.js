@@ -1,6 +1,6 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
 import { axe } from 'jest-axe';
+import { screen, render } from '@testing-library/react';
 
 import COPY from 'app/../COPY';
 
@@ -70,73 +70,112 @@ describe('SelectClaimant', () => {
   });
 
   describe('with formType', () => {
-    const setupProps = { toggled: true };
+    describe('appeal', () => {
+      const formType = { formType: 'appeal' };
+      const setupProps = { ...formType, toggled: true };
 
-    it('renders correctly', () => {
-      const { container } = setupDeceasedAppellants(setupProps);
+      describe('with deceased appellants', () => {
+        const { container } = setupDeceasedAppellants(setupProps);
 
-      expect(container).toMatchSnapshot();
-    });
-
-    it('passes a11y testing', async () => {
-      const { container } = setupDeceasedAppellants(setupProps);
-
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
-    });
-  });
-
-  describe("with formType 'appeal'", () => {
-    const formType = { formType: 'appeal' };
-    const setupProps = { ...formType, toggled: true };
-
-    it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
-      setupDeceasedAppellants(setupProps);
-
-      const radioNo = screen.getByRole('radio', { name: /no/i });
-
-      expect(radioNo).toBeEnabled();
-      expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
-    });
-
-    it('renders deceasedVeteranAlert', () => {
-      setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
-
-      const alert = screen.getByRole('alert');
-
-      expect(alert).toBeInTheDocument();
-    });
-
-    describe('nonVeteranClaimants enabled', () => {
-      it('renders correctly', async () => {
-        // Component only differs when veteranIsNotClaimant is set
-        const veteranIsNotClaimant = true;
-        const { container } = setupDefault({
-          ...defaultProps,
-          veteranIsNotClaimant,
+        it('renders correctly', () => {
+          expect(container).toMatchSnapshot();
         });
 
-        // Ensure it's rendering the additional content
-        expect(
-          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_START)
-        ).not.toBeInTheDocument();
-        expect(
-          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_END)
-        ).not.toBeInTheDocument();
+        it('passes a11y testing', async () => {
+          const results = await axe(container);
+
+          expect(results).toHaveNoViolations();
+        });
+
+        it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
+          setupDeceasedAppellants(setupProps);
+
+          const radioNo = screen.getByRole('radio', { name: /no/i });
+
+          expect(radioNo).toBeEnabled();
+          expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
+        });
+
+        it('renders deceasedVeteranAlert', () => {
+          setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
+
+          const alert = screen.getByRole('alert');
+
+          expect(alert).toBeInTheDocument();
+        });
+      });
+
+      describe('claimant not found', () => {
+        it('renders correctly', async () => {
+          // Component only differs when veteranIsNotClaimant is set
+          const veteranIsNotClaimant = true;
+          const { container } = setupDefault({
+            ...defaultProps,
+            veteranIsNotClaimant,
+          });
+
+          // Ensure it's rendering the additional content
+          expect(
+            screen.queryByText(COPY.CLAIMANT_NOT_FOUND_START)
+          ).not.toBeInTheDocument();
+          expect(
+            screen.queryByText(COPY.CLAIMANT_NOT_FOUND_END)
+          ).not.toBeInTheDocument();
+
+          expect(
+            screen.queryByText(COPY.SELECT_CLAIMANT_LABEL)
+          ).toBeInTheDocument();
+          expect(
+            screen.queryByRole('radio', { name: /claimant not listed/i })
+          ).toBeInTheDocument();
+
+          expect(container).toMatchSnapshot();
+        });
+
+        it('passes a11y testing', async () => {
+          const { container } = setupDefault({ ...defaultProps });
+
+          const results = await axe(container);
+
+          expect(results).toHaveNoViolations();
+        });
+      });
+    });
+
+    describe('supplemental_claim', () => {
+      it('renders correctly', async () => {
+        const formType = 'supplemental_claim';
+        const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         expect(
-          screen.queryByText(COPY.SELECT_CLAIMANT_LABEL)
+          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })[0]
         ).toBeInTheDocument();
         expect(
-          screen.queryByRole('radio', { name: /claimant not listed/i })
+          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })[0]
+        ).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
+      });
+    });
+
+    describe('higher_level_review', () => {
+      it('renders correctly', async () => {
+        const formType = 'higher_level_review';
+        const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
+
+        expect(
+          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })[0]
+        ).toBeInTheDocument();
+        expect(
+          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })[0]
         ).toBeInTheDocument();
 
         expect(container).toMatchSnapshot();
       });
 
       it('passes a11y testing', async () => {
-        const { container } = setupDefault({ ...defaultProps });
+        const formType = 'higher_level_review';
+        const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         const results = await axe(container);
 
