@@ -19,8 +19,9 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
   let vhaHasIssues = false;
-  requestIssues.forEach(function(ri) {
-    if (ri.benefitType === "vha") {
+
+  requestIssues.forEach(ri => {
+    if (ri.benefitType === 'vha') {
       vhaHasIssues = true;
     }
   });
