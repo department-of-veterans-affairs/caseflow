@@ -45,6 +45,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                  end
   end
 
+  NONACTIONABLE_ERRORS = [Caseflow::Error::VaDotGovMissingFacilityError].freeze
+
+  # rubocop:disable Metrics/MethodLength
   def perform
     setup_job
     current_appeal = 0
@@ -69,7 +72,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
           break
         rescue StandardError => error
-          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
+          actionable = NONACTIONABLE_ERRORS.include?(error.class)
+          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id, actionable: actionable })
 
           # For unknown errors, we capture the exeception in Sentry. This error could represent
           # a broad range of things, so we just skip geomatching for the appeal, and expect
@@ -79,6 +83,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
