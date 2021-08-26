@@ -22,9 +22,9 @@ class UnrecognizedAppellantsController < ApplicationController
   end
 
   private
-  
+
   def prevent_update_if_poa_exists
-    render json: {}, status: :bad_request if @unrecognized_appellant.power_of_attorney
+    render json: { message: "POA already exists" }, status: :bad_request if @unrecognized_appellant.power_of_attorney
   end
 
   def find_unrecognized_appellant
