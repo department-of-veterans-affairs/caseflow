@@ -16,10 +16,9 @@ class ETL::AttorneyCaseReview < ETL::Record
       # memoize to save SQL calls
       attorney = user_cache(original.attorney_id)
       judge = user_cache(original.reviewing_judge_id)
-      appeal = original.appeal
 
-      target.appeal_id = appeal.id
-      target.appeal_type = appeal.class.name
+      target.appeal_id = original.appeal_id
+      target.appeal_type = original.appeal_type
       target.attorney_css_id = attorney.css_id
       target.attorney_full_name = attorney.full_name
       target.attorney_id = attorney.id
@@ -37,7 +36,7 @@ class ETL::AttorneyCaseReview < ETL::Record
       target.reviewing_judge_sattyid = judge.vacols_user&.sattyid
       target.task_id = original.task_id
       target.untimely_evidence = original.untimely_evidence
-      target.vacols_id = original.vacols_id if appeal.is_a?(LegacyAppeal)
+      target.vacols_id = original.vacols_id if original.appeal_type == "LegacyAppeal"
       target.work_product = original.work_product
 
       target

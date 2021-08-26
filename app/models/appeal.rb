@@ -92,7 +92,6 @@ class Appeal < DecisionReview
   scope :established, -> { where.not(established_at: nil) }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
-  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
 
@@ -198,10 +197,6 @@ class Appeal < DecisionReview
     super
   end
 
-  def attorney_case_reviews
-    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
-  end
-
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
@@ -214,8 +209,12 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
+  def latest_judge_case_review
+    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
+  end
+
   def reviewing_judge_name
-    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -423,9 +422,12 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+      PreDocketTasksFactory.new(self).call
+    else
+      InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    end
     create_business_line_tasks!
-    maybe_create_translation_task
   end
 
   # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
@@ -565,17 +567,6 @@ class Appeal < DecisionReview
     self.stream_docket_number ||= docket_number if receipt_date
     self.stream_type ||= type.parameterize.underscore.to_sym
     save! if has_changes_to_save? # prevent infinite recursion
-  end
-
-  def maybe_create_translation_task
-    veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran.validate_address
-    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
-  rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran_state_code
-  ensure
-    distribution_task = tasks.open.find_by(type: DistributionTask.name)
-    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
   def default_docket_number_from_receipt_date

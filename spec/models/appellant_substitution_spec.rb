@@ -73,7 +73,7 @@ describe AppellantSubstitution do
       let(:evidence_submission_hold_end_date) { Time.zone.today + rand(1..200).days }
 
       shared_examples "new appeal has user-selected ScheduleHearingTask task" do
-        it "copies ScheduleHearingTask to nw appeal" do
+        it "copies ScheduleHearingTask to new appeal" do
           expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to be > 0
 
           target_appeal = subject.target_appeal
@@ -127,7 +127,7 @@ describe AppellantSubstitution do
       shared_examples "new appeal does not have post-distribution tasks" do
         let(:expected_task_types) do
           %w[RootTask DistributionTask TrackVeteranTask InformalHearingPresentationTask
-             EvidenceSubmissionWindowTask ScheduleHearingTask]
+             EvidenceSubmissionWindowTask HearingTask ScheduleHearingTask]
         end
         it "doesn't create tasks typically created after DistributionTask is completed" do
           target_appeal = subject.target_appeal
@@ -219,6 +219,7 @@ describe AppellantSubstitution do
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
+          expect(target_appeal.aod_based_on_age).to be true
         end
       end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_12_182219) do
+ActiveRecord::Schema.define(version: 2021_08_20_153715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,6 +146,8 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
   end
 
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this case review is associated with"
+    t.string "appeal_type", comment: "The type of appeal this case review is associated with"
     t.integer "attorney_id"
     t.datetime "created_at", null: false
     t.string "document_id"
@@ -157,6 +159,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
+    t.index ["appeal_type", "appeal_id"], name: "index_attorney_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
@@ -410,18 +413,18 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
-    t.datetime "attempted_at"
+    t.datetime "attempted_at", comment: "When the job ran"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
-    t.string "citation_number", null: false
+    t.string "citation_number", null: false, comment: "Unique identifier for decision document"
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
-    t.string "error"
-    t.datetime "last_submitted_at"
-    t.datetime "processed_at"
+    t.string "error", comment: "Message captured from a failed attempt"
+    t.datetime "last_submitted_at", comment: "When the job is eligible to run (can be reset to restart the job)"
+    t.datetime "processed_at", comment: "When the job has concluded"
     t.string "redacted_document_location", null: false
-    t.datetime "submitted_at"
+    t.datetime "submitted_at", comment: "When the job first became eligible to run"
     t.datetime "updated_at", null: false
-    t.datetime "uploaded_to_vbms_at"
+    t.datetime "uploaded_to_vbms_at", comment: "When document was successfully uploaded to VBMS"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
     t.index ["updated_at"], name: "index_decision_documents_on_updated_at"
@@ -911,6 +914,8 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
   end
 
   create_table "judge_case_reviews", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this case review is associated with"
+    t.string "appeal_type", comment: "The type of appeal this case review is associated with"
     t.text "areas_for_improvement", default: [], array: true
     t.integer "attorney_id"
     t.text "comment"
@@ -924,6 +929,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
     t.string "quality"
     t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_judge_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
 
@@ -1065,6 +1071,8 @@ ActiveRecord::Schema.define(version: 2021_08_12_182219) do
 
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
+    t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
+    t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
