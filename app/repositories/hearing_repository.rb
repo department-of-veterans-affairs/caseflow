@@ -139,7 +139,7 @@ class HearingRepository
             "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [:postponed, :cancelled]
           )
           .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
-      binding.pry
+
       legacy_events = []
       SentHearingEmailEvent
         .where("sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') "\
