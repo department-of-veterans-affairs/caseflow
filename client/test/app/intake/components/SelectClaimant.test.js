@@ -3,8 +3,7 @@ import { axe } from 'jest-axe';
 import { screen, render } from '@testing-library/react';
 
 import { SelectClaimant } from 'app/intake/components/SelectClaimant';
-
-import { FORM_TYPES } from '../constants';
+import { FORM_TYPES } from 'app/intake/constants';
 import COPY from 'app/../COPY';
 
 const defaultRelationships = [
