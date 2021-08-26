@@ -15,6 +15,6 @@ class Api::V3::LegacyAppealSerializer
   attribute :veteran_full_name
   attribute :decision_date
   attribute :latest_soc_ssoc_date do |object|
-    ([object&.soc_date] + object&.ssoc_dates).max
+    ([object.soc_date] + object.ssoc_dates).max
   end
 end

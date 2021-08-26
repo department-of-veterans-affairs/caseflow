@@ -75,8 +75,6 @@ class Api::V3::DecisionReviews::LegacyAppealsController < Api::V3::BaseControlle
 
   def opt_in_eligible_appeals
     veteran_legacy_appeals.select do |appeal|
-      return false unless appeal.soc_date
-
       appeal.eligible_for_opt_in?(receipt_date: Time.zone.today)
     end
   end
