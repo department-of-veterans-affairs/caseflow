@@ -40,7 +40,11 @@ class AppellantSubstitution < CaseflowRecord
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
-      type: claimant_type
+      type: claimant_type,
+      # Setting the values here to 0 and '' because of the non-null constraint in the schema for claimant records.
+      # This will be corrected when `create_stream` is called.
+      decision_review_id: 0,
+      decision_review_type: ""
     )
 
     # To-do: Implement this and the DB schema once we understand the requirements for selecting a
