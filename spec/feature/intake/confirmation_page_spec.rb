@@ -60,4 +60,24 @@ feature "Intake Confirmation Page", :postgres do
       end
     end
   end
+
+  describe "when completing an appeal" do
+    context "appeal has VHA issues" do
+      let(:claim_review_type) { :board_appeal }
+      it "displays the correct copy on confirmation page" do
+        start_claim_review(claim_review_type)
+        visit "/intake"
+        click_intake_continue
+        click_intake_add_issue
+
+        add_intake_vha_issue(date: 2.days.ago)
+        click_intake_finish
+
+        expect(page).to have_content("Intake completed")
+        expect(page).to have_content("If needed, you may correct the issues")
+        expect(page).to_not have_content("Edit the notice letter to reflect the status of requested issues.")
+        expect(page).to have_content("Appeal created and sent to VHA for pre-docket review.")
+      end
+    end
+  end
 end
