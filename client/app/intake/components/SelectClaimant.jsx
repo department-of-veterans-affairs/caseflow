@@ -3,17 +3,18 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as yup from 'yup';
 
-import { convertStringToBoolean } from '../util';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
+import { convertStringToBoolean } from '../util';
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
-  GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
+  FORM_TYPES,
+  GENERIC_FORM_ERRORS,
   LIVING_PAYEE_CODES,
   VBMS_BENEFIT_TYPES
 } from '../constants';
@@ -90,7 +91,11 @@ export const SelectClaimant = (props) => {
     () => isAppeal && veteranIsNotClaimant,
     [isAppeal, veteranIsNotClaimant]
   );
-  const allowNonVeteranClaimant = !['higher_level_review', 'supplemental_claim'].includes(formType);
+
+  const allowNonVeteranClaimant = ![
+    FORM_TYPES.HIGHER_LEVEL_REVIEW.key,
+    FORM_TYPES.SUPPLEMENTAL_CLAIM.key
+  ].includes(formType);
 
   const radioOpts = useMemo(() => {
     return [
