@@ -11,6 +11,7 @@
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
     },
+    pdfWorker: asset_path('pdf.worker.js'),
     buildDate: build_date
   }) %>
 <% end %>
