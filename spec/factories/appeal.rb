@@ -185,6 +185,7 @@ FactoryBot.define do
     trait :advanced_on_docket_due_to_age do
       after(:create) do |appeal, _evaluator|
         appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+        appeal.conditionally_set_aod_based_on_age # since claimants has changed
       end
     end
 
