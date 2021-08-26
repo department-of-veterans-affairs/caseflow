@@ -2,9 +2,10 @@ import React from 'react';
 import { axe } from 'jest-axe';
 import { screen, render } from '@testing-library/react';
 
-import COPY from 'app/../COPY';
-
 import { SelectClaimant } from 'app/intake/components/SelectClaimant';
+
+import { FORM_TYPES } from '../constants';
+import COPY from 'app/../COPY';
 
 const defaultRelationships = [
   {
@@ -144,7 +145,7 @@ describe('SelectClaimant', () => {
 
     describe('supplemental_claim', () => {
       it('renders correctly', async () => {
-        const formType = 'supplemental_claim';
+        const formType = FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
         const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         expect(
@@ -160,7 +161,7 @@ describe('SelectClaimant', () => {
 
     describe('higher_level_review', () => {
       it('renders correctly', async () => {
-        const formType = 'higher_level_review';
+        const formType = FORM_TYPES.HIGHER_LEVEL_REVIEW.key;
         const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         expect(
@@ -174,7 +175,7 @@ describe('SelectClaimant', () => {
       });
 
       it('passes a11y testing', async () => {
-        const formType = 'higher_level_review';
+        const formType = FORM_TYPES.HIGHER_LEVEL_REVIEW.key;
         const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         const results = await axe(container);
