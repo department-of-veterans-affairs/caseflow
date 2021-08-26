@@ -259,6 +259,19 @@ describe FetchHearingLocationsForVeteransJob do
           subject.perform
         end
       end
+
+      context "when non-actionable error is thrown" do
+        let(:nonactionable_error) { Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500) }
+        before { allow_any_instance_of(GeomatchService).to receive(:geomatch).and_raise(nonactionable_error) }
+
+        it "records a geomatch error with actionable attribute = false" do
+          expect(Raven).to receive(:capture_exception).with(nonactionable_error,
+                                                            hash_including(extra: { actionable: true,
+                                                                                    appeal_external_id: anything }))
+
+          subject.perform
+        end
+      end
     end
   end
 
