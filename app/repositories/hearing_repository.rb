@@ -124,6 +124,33 @@ class HearingRepository
       ama_maybe_ready + legacy_maybe_ready
     end
 
+    # Get all `SentHearingEmailEvent` objects that need their status to be checked
+    # against GovDelivery API.
+    def maybe_needs_email_sent_status_checked
+      ama_events =
+        SentHearingEmailEvent
+          .where(
+            "sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') " \
+              "AND sent_hearing_email_events.sent_status IS NULL"
+          )
+          .joins(hearings_and_hearing_days_join_clause)
+          .where(
+            "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
+            "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [:postponed, :cancelled]
+          )
+          .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
+      binding.pry
+      legacy_events = []
+      SentHearingEmailEvent
+        .where("sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') "\
+          "AND sent_hearing_email_events.sent_status IS NULL")
+        .joins(legacy_hearings_and_hearing_days_join_clause)
+        .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
+        .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }
+
+      ama_events + legacy_events.flatten
+    end
+
     private
 
     # Returns a where clause that can be used to find all hearings that occur within
@@ -139,6 +166,28 @@ class HearingRepository
       SQL
     end
 
+    # Returns a where clause that can be used to find all hearings that occur within
+    # in the future
+    #
+    # @note Requires a join with the `hearing_days` table.
+    def scheduled_for_future
+      <<-SQL
+        hearing_days.scheduled_for >= CURRENT_DATE
+      SQL
+    end
+
+    def hearings_and_hearing_days_join_clause
+      "INNER JOIN hearings on hearings.id = sent_hearing_email_events.hearing_id " \
+        "AND sent_hearing_email_events.hearing_type = 'Hearing'" \
+        "INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id"
+    end
+
+    def legacy_hearings_and_hearing_days_join_clause
+      "INNER JOIN legacy_hearings on legacy_hearings.id = sent_hearing_email_events.hearing_id " \
+        "AND sent_hearing_email_events.hearing_type = 'LegacyHearing'" \
+        "INNER JOIN hearing_days ON hearing_days.id = legacy_hearings.hearing_day_id"
+    end
+
     # This exists to exclude hearing_days with the type :travel, while we don't have
     # many of them, they do exist and we don't want to send reminders for them yet.
     def hearing_day_types_to_send_reminders_for
@@ -147,6 +196,19 @@ class HearingRepository
         HearingDay::REQUEST_TYPES[:video],
         HearingDay::REQUEST_TYPES[:central]
       ]
+    end
+
+    def active_legacy_hearings_in_batch(vacols_hearings)
+      vacols_ids = vacols_hearings.pluck("legacy_hearings.vacols_id")
+      # the subset of hearings that are postponed or cancelled in VACOLS
+      # default to [""] if empty so the NOT IN clause in the query below will work
+      selected_vacols_ids =
+        VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
+
+      vacols_hearings.where(
+        "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
+        postponed_or_cancelled_vacols_ids: selected_vacols_ids
+      ).to_a
     end
 
     def ama_maybe_ready
@@ -171,16 +233,7 @@ class HearingRepository
           "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
         )
         .where(scheduled_within_sixty_days).in_batches do |vhs|
-          vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
-          # the subset of hearings that are postponed or cancelled in VACOLS
-          # default to [""] if empty so the NOT IN clause in the query below will work
-          selected_vacols_ids =
-            VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
-
-          legacy_maybe_ready << vhs.where(
-            "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
-            postponed_or_cancelled_vacols_ids: selected_vacols_ids
-          ).to_a
+          legacy_maybe_ready << active_legacy_hearings_in_batch(vhs)
         end
 
       legacy_maybe_ready.flatten
