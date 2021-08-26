@@ -60,7 +60,7 @@ exports[`SelectClaimant with default value props renders correctly 1`] = `
 </div>
 `;
 
-exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled renders correctly 1`] = `
+exports[`SelectClaimant with formType appeal claimant not found renders correctly 1`] = `
 <div>
   <div
     class="cf-different-claimant"
@@ -196,7 +196,9 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
 </div>
 `;
 
-exports[`SelectClaimant with formType renders correctly 1`] = `
+exports[`SelectClaimant with formType appeal with deceased appellants renders correctly 1`] = `<div />`;
+
+exports[`SelectClaimant with formType higher_level_review renders correctly 1`] = `
 <div>
   <div
     class="cf-different-claimant"
@@ -222,14 +224,13 @@ exports[`SelectClaimant with formType renders correctly 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            disabled=""
             id="different-claimant-option_false"
             name="different-claimant-option"
             type="radio"
             value="false"
           />
           <label
-            class="disabled"
+            class=""
             for="different-claimant-option_false"
           >
             No
@@ -239,6 +240,7 @@ exports[`SelectClaimant with formType renders correctly 1`] = `
           class="cf-form-radio-option"
         >
           <input
+            checked=""
             id="different-claimant-option_true"
             name="different-claimant-option"
             type="radio"
@@ -253,6 +255,197 @@ exports[`SelectClaimant with formType renders correctly 1`] = `
         </div>
       </div>
     </fieldset>
+    <div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              <p
+                id="claimantLabel"
+                style="margin-top: 8.95px; margin-bottom: -25px;"
+              >
+                Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, 
+                <a
+                  href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"
+                >
+                  email
+                </a>
+                 for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).
+                <br />
+                <br />
+              </p>
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="claimant-options_CLAIMANT_WITH_PVA_AS_VSO"
+              name="claimant-options"
+              type="radio"
+              value="CLAIMANT_WITH_PVA_AS_VSO"
+            />
+            <label
+              class=""
+              for="claimant-options_CLAIMANT_WITH_PVA_AS_VSO"
+            >
+              Bob Vance, Spouse
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="claimant-options_1129318238"
+              name="claimant-options"
+              type="radio"
+              value="1129318238"
+            />
+            <label
+              class=""
+              for="claimant-options_1129318238"
+            >
+              Cathy Smith, Child
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SelectClaimant with formType supplemental_claim renders correctly 1`] = `
+<div>
+  <div
+    class="cf-different-claimant"
+    style="margin-top: 10px;"
+  >
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            Is the claimant someone other than the Veteran?
+             
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="different-claimant-option_false"
+            name="different-claimant-option"
+            type="radio"
+            value="false"
+          />
+          <label
+            class=""
+            for="different-claimant-option_false"
+          >
+            No
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            checked=""
+            id="different-claimant-option_true"
+            name="different-claimant-option"
+            type="radio"
+            value="true"
+          />
+          <label
+            class=""
+            for="different-claimant-option_true"
+          >
+            Yes
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              <p
+                id="claimantLabel"
+                style="margin-top: 8.95px; margin-bottom: -25px;"
+              >
+                Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, 
+                <a
+                  href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"
+                >
+                  email
+                </a>
+                 for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).
+                <br />
+                <br />
+              </p>
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="claimant-options_CLAIMANT_WITH_PVA_AS_VSO"
+              name="claimant-options"
+              type="radio"
+              value="CLAIMANT_WITH_PVA_AS_VSO"
+            />
+            <label
+              class=""
+              for="claimant-options_CLAIMANT_WITH_PVA_AS_VSO"
+            >
+              Bob Vance, Spouse
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="claimant-options_1129318238"
+              name="claimant-options"
+              type="radio"
+              value="1129318238"
+            />
+            <label
+              class=""
+              for="claimant-options_1129318238"
+            >
+              Cathy Smith, Child
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
   </div>
 </div>
 `;
