@@ -1256,7 +1256,7 @@ RSpec.feature "Reader", :all_dbs do
       open_search_bar
 
       search_input = find("#search-ahead")
-      next_doc = find("#button-next")
+      next_doc = find("#button-previous")
 
       fill_in "search-ahead", with: "decision"
       expect(search_input.value).to eq("decision")
@@ -1352,6 +1352,7 @@ RSpec.feature "Reader", :all_dbs do
       safe_click "#button-previous"
       click_on "Back"
 
+      expect(page).to have_css("#read-indicator")
       expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
     end
 

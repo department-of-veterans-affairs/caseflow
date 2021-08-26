@@ -78,26 +78,22 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (ids, documents, annotations, sort) => {
-  const rows = ids.reduce((acc, id) => {
-    // Add the current document
-    acc.push(documents[id]);
+export const documentRows = (ids, documents, annotations) => ids.reduce((acc, id) => {
+  // Add the current document
+  acc.push(documents[id]);
 
-    // Get the documents with comments
-    const [docWithComments] = annotations.filter((note) => note.document_id === id);
+  // Get the documents with comments
+  const [docWithComments] = annotations.filter((note) => note.document_id === id);
 
-    // Apply the comment if present
-    if (docWithComments && documents[id].listComments) {
-      // Add the comment to the list
-      acc.push({ ...documents[id], isComment: true });
-    }
+  // Apply the comment if present
+  if (docWithComments && documents[id].listComments) {
+    // Add the comment to the list
+    acc.push({ ...documents[id], isComment: true });
+  }
 
-    // Default to return the document
-    return acc;
-  }, []);
-
-  return orderBy(rows, [sort.sortBy], sort.sortAscending ? ['asc'] : ['desc']);
-};
+  // Default to return the document
+  return acc;
+}, []);
 
 /**
  * Helper Method to download the document
@@ -185,13 +181,7 @@ export const filterDocuments = (criteria, documents, state) => {
     }) :
     Object.keys(docs).map((doc) => docs[doc].id);
 
-  const sorted = sortBy(ids, criteria.sort.sortBy);
-
-  if (criteria.sort.sortAscending) {
-    sorted.reverse();
-  }
-
-  return sorted;
+  return orderBy(ids, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {
