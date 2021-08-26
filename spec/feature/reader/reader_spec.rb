@@ -77,7 +77,7 @@ end
 
 RSpec.feature "Reader", :all_dbs do
   before do
-    # FeatureToggle.enable!(:interface_version_2)
+    FeatureToggle.enable!(:interface_version_2)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)

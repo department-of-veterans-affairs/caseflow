@@ -63,6 +63,8 @@ const DocumentViewer = (props) => {
   // Create the Dispatcher
   const dispatch = useDispatch();
 
+  console.log(props.pdfWorker);
+
   // Attach the PDF Worker to the params to setup PDFJS
   const params = {
     ...props.match.params,
