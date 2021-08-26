@@ -127,28 +127,7 @@ class HearingRepository
     # Get all `SentHearingEmailEvent` objects that need their status to be checked
     # against GovDelivery API.
     def maybe_needs_email_sent_status_checked
-      ama_events =
-        SentHearingEmailEvent
-          .where(
-            "sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') " \
-              "AND sent_hearing_email_events.sent_status IS NULL"
-          )
-          .joins(hearings_and_hearing_days_join_clause)
-          .where(
-            "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
-            "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [:postponed, :cancelled]
-          )
-          .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
-
-      legacy_events = []
-      SentHearingEmailEvent
-        .where("sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') "\
-          "AND sent_hearing_email_events.sent_status IS NULL")
-        .joins(legacy_hearings_and_hearing_days_join_clause)
-        .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
-        .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }
-
-      ama_events + legacy_events.flatten
+      ama_sent_hearing_email_events + legacy_sent_hearing_email_events
     end
 
     private
@@ -209,6 +188,33 @@ class HearingRepository
         "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
         postponed_or_cancelled_vacols_ids: selected_vacols_ids
       ).to_a
+    end
+
+    def ama_sent_hearing_email_events
+      SentHearingEmailEvent
+        .where(
+          "sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') " \
+            "AND sent_hearing_email_events.sent_status IS NULL"
+        )
+        .joins(hearings_and_hearing_days_join_clause)
+        .where(
+          "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
+          "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [:postponed, :cancelled]
+        )
+        .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
+    end
+
+    def legacy_sent_hearing_email_events
+      legacy_events = []
+
+      SentHearingEmailEvent
+        .where("sent_hearing_email_events.recipient_role IN ('veteran', 'appellant', 'representative') "\
+          "AND sent_hearing_email_events.sent_status IS NULL")
+        .joins(legacy_hearings_and_hearing_days_join_clause)
+        .where(scheduled_for_future).order("hearing_days.scheduled_for ASC")
+        .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }
+
+      legacy_events.flatten
     end
 
     def ama_maybe_ready
