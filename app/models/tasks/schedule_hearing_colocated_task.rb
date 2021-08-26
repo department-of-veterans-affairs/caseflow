@@ -55,6 +55,6 @@ class ScheduleHearingColocatedTask < ColocatedTask
     parent = DistributionTask.create!(appeal: appeal, parent: appeal.root_task)
     ScheduleHearingTask.create!(appeal: appeal, parent: parent)
     JudgeTask.open.where(appeal: appeal).find_each(&:cancel_task_and_child_subtasks)
-    DistributedCase.find_by(case_id: appeal.uuid)&.update!(case_id: "#{appeal.uuid}-attempt1")
+    DistributedCase.find_by(case_id: appeal.uuid)&.rename_for_redistribution!
   end
 end
