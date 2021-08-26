@@ -11,7 +11,12 @@ class UnrecognizedAppellantsController < ApplicationController
   end
 
   def update_power_of_attorney
-    render json: {}
+    unrecognized_appellant = UnrecognizedAppellant.find(params[:unrecognized_appellant_id])
+    if unrecognized_appellant.update_power_of_attorney!(unrecognized_appellant_params)
+      render json: unrecognized_appellant, include: [:unrecognized_power_of_attorney]
+    else
+      render json: unrecognized_appellant, status: :bad_request
+    end
   end
 
   private
