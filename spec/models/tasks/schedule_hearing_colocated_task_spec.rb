@@ -39,7 +39,7 @@ describe ScheduleHearingColocatedTask, :all_dbs do
       expect(JudgeDecisionReviewTask.find_by(appeal: appeal).status).to eq Task.statuses[:cancelled]
       expect(AttorneyTask.find_by(appeal: appeal).status).to eq Task.statuses[:cancelled]
       expect(ScheduleHearingColocatedTask.find_by(appeal: appeal).status).to eq Task.statuses[:completed]
-      expect(distributed_case.reload.case_id).to match /#{appeal.uuid}-redistributed-.*/
+      expect(distributed_case.reload.case_id).to match(/#{appeal.uuid}-redistributed-.*/)
     end
   end
 end
