@@ -31,7 +31,7 @@ export const initialState = {
   filterCriteria: {
     sort: {
       sortBy: 'receivedAt',
-      sortAscending: true
+      sortAscending: false
     },
     category: {},
     tag: {},

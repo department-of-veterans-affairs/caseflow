@@ -1,5 +1,5 @@
 // External Dependencies
-import { sortBy, isEmpty, range } from 'lodash';
+import { orderBy, sortBy, isEmpty, range } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
@@ -78,30 +78,26 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (ids, documents, annotations) => ids.reduce((rows, id) => {
-  // Add the current document
-  rows.push(documents[id]);
+export const documentRows = (ids, documents, annotations, sort) => {
+  const rows = ids.reduce((acc, id) => {
+    // Add the current document
+    acc.push(documents[id]);
 
-  // Get the documents with comments
-  const [docWithComments] = annotations.filter((note) => note.document_id === id);
+    // Get the documents with comments
+    const [docWithComments] = annotations.filter((note) => note.document_id === id);
 
-  // Apply the comment if present
-  if (docWithComments && documents[id].listComments) {
-    // Add the comment to the list
-    rows.push({ ...documents[id], isComment: true });
-  }
+    // Apply the comment if present
+    if (docWithComments && documents[id].listComments) {
+      // Add the comment to the list
+      acc.push({ ...documents[id], isComment: true });
+    }
 
-  // Default to return the document
-  return rows;
-}, []);
+    // Default to return the document
+    return acc;
+  }, []);
 
-/**
- * Helper Method to get the Categories for each Document
- * @param {Object} document -- The Document to get categories
- */
-export const categoriesOfDocument = (document) =>
-  sortBy(Object.keys(documentCategories).filter((categoryName) =>
-    document[formatCategoryName(categoryName)]), 'renderOrder');
+  return orderBy(rows, [sort.sortBy], sort.sortAscending ? ['asc'] : ['desc']);
+};
 
 /**
  * Helper Method to download the document
@@ -145,39 +141,6 @@ export const translateX = (rotation, outerHeight, outerWidth) =>
  */
 export const columnCount = (width, pageWidth, numPages) =>
   Math.min(Math.max(Math.floor(width / pageWidth), 1), numPages);
-
-/**
- * Helper Method to sort an object by an array of keys
- * @param {Object} options -- Values to sort the list by and optional direction
- */
-export const sortKeysBy = ({ keys, list, value, dir }) => keys.sort((first, second) => {
-  // Return the keys if there is no list
-  if (!list[first] || !list[second]) {
-    return keys;
-  }
-
-  // Map fields according to the sort order and value, default to ascending sort
-  const fieldA = dir === 'desc' ? list[second][value] : list[first][value];
-  const fieldB = dir === 'desc' ? list[first][value] : list[second][value];
-
-  // Handle string columns
-  if (typeof fieldA === 'string') {
-    return fieldA.localeCompare(fieldB);
-  }
-
-  // Field A is less than B and not a string
-  if (fieldA < fieldB) {
-    return -1;
-  }
-
-  // Field A is greater than B and not a string
-  if (fieldA > fieldB) {
-    return 1;
-  }
-
-  // Field A is equivalent to B and not a string
-  return 0;
-});
 
 /**
  * Helper Method to filter documents based on criteria object

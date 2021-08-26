@@ -1256,7 +1256,7 @@ RSpec.feature "Reader", :all_dbs do
       open_search_bar
 
       search_input = find("#search-ahead")
-      next_doc = find("#button-previous")
+      next_doc = find("#button-next")
 
       fill_in "search-ahead", with: "decision"
       expect(search_input.value).to eq("decision")

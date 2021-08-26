@@ -56,7 +56,7 @@ export const DocumentsTable = ({ show, ...props }) => {
       <Table
         {...tableProps}
         columns={(row) => row?.isComment ? commentHeaders(tableProps) : documentHeaders(tableProps)}
-        rowObjects={documentRows(props.filteredDocIds, props.documents, props.comments)}
+        rowObjects={documentRows(props.filteredDocIds, props.documents, props.comments, tableProps.sortBy)}
         summary="Document list"
         className="documents-table"
         headerClassName="cf-document-list-header-row"
