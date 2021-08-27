@@ -1319,7 +1319,6 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email."
     t.bigint "sent_hearing_email_event_id", comment: "Associated sent hearing email event."
     t.datetime "updated_at", null: false
-    t.index ["sent_hearing_email_event_id"], name: "index_admin_email_events_on_hearing_email_event_id"
   end
 
   create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
