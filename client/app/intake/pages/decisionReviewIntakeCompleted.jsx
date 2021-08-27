@@ -15,6 +15,18 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
+const checkIssuesForVha = (requestIssues) => {
+  let hasVhaIssues = false;
+
+  requestIssues.forEach((ri) => {
+    if (ri.benefitType === 'vha') {
+      hasVhaIssues = true;
+    }
+  });
+
+  return hasVhaIssues;
+};
+
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
@@ -49,25 +61,16 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   return leadMessageArr;
 };
 
-const checkIssuesForVha = (requestIssues) => {
-  let hasVhaIssues = false;
-  requestIssues.forEach((ri) => {
-    if (ri.benefitType === 'vha') {
-      hasVhaIssues = true;
-    }
-  });
-  return hasVhaIssues;
-}
-
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
-    let statusMessage = "Appeal created:"
+    let statusMessage = 'Appeal created:';
 
     if (checkIssuesForVha(requestIssues)) {
-      statusMessage = "Appeal created and sent to VHA for pre-docket review."
+      statusMessage = 'Appeal created and sent to VHA for pre-docket review.';
     }
+
     return [<Fragment>
       <strong>{statusMessage}</strong>
       {eligibleRequestIssues.map((ri, i) => <p key={`appeal-issue-${i}`}>Issue: {ri.contentionText}</p>)}
@@ -165,9 +168,10 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = "Intake completed"
+    let title = 'Intake completed';
+
     if (checkIssuesForVha(requestIssues)) {
-      title = "Appeal recorded in pre-docket queue"
+      title = 'Appeal recorded in pre-docket queue';
     }
 
     const deceasedVeteranAlert = () => {
