@@ -13,8 +13,11 @@ class HearingEmailStatusMailer < ActionMailer::Base
     # Extract each piece of data the templates use
     @hearing = @sent_hearing_email_event.hearing
     @hearing_type = @hearing.hearing_request_type
-    @email_type = @sent_hearing_email_event.email_type.downcase
+    # Email types are: "confirmation", "cancellation", "updated_time_confirmation", "reminder"
+    # The gsub is so that "updated_time_confirmation" shows as "Updated Time Confirmation"
+    @email_type = @sent_hearing_email_event.email_type.tr("_", " ").downcase
     @email_address = @sent_hearing_email_event.email_address
+    @recipient_role = @sent_hearing_email_event.recipient_role
     @veteran_name = formatted_appellant_name(@hearing.appeal)
     @hearing_date = Hearings::CalendarTemplateHelper.hearing_date_only(@hearing)
 

@@ -1,5 +1,5 @@
 <%= content_for :information do %>
-  <p><%= "You scheduled a #{@hearing_type} hearing for #{@veteran_name} on #{@hearing_date} and entered the appellant email #{@email_address}. Caseflow tried to send a #{@email_type} email to that address, but the email failed to send." %></p>
+  <p><%= "You scheduled a #{@hearing_type} hearing for #{@veteran_name} on #{@hearing_date} and entered the #{@recipient_role} email #{@email_address}. Caseflow tried to send a #{@email_type} email to that address, but the email failed to send." %></p>
 <% end %>
 
 <%= content_for :instructions do %>
