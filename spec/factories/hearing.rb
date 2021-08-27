@@ -57,12 +57,21 @@ FactoryBot.define do
       end
     end
 
-    # Create a hearing on a video hearing_day
+    # Create a video hearing, AKA a hearing on a video hearing_day, that's not virtual
     trait :video do
       after(:create) do |hearing, _evaluator|
         hearing.hearing_day.request_type = "V"
       end
     end
+
+    # Create a virtual hearing on a video hearing_day
+    trait :virtual do
+      after(:create) do |hearing, _evaluator|
+        hearing.hearing_day.request_type = "V"
+        hearing.virtual_hearing = create(:virtual_hearing)
+      end
+    end
+
 
     # A better representation of a hearing subtree:
     # RootTask, on_hold
