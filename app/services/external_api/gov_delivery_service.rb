@@ -22,7 +22,6 @@ class ExternalApi::GovDeliveryService
 
     private
 
-    # :nocov:
     def send_gov_delivery_request(endpoint, method, body: nil)
       url = URI::DEFAULT_PARSER.escape("https://#{BASE_URL}#{endpoint}")
 
@@ -64,6 +63,5 @@ class ExternalApi::GovDeliveryService
       # Return the request object
       request
     end
-    # :nocov:
   end
 end
