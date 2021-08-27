@@ -149,7 +149,6 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
       end
       it "should be unsuccessful if UA already has a POA" do
         patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
-        ua.reload
 
         expect(response.status).to eq 400
       end
