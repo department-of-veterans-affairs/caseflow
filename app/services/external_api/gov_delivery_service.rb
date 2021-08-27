@@ -40,10 +40,6 @@ class ExternalApi::GovDeliveryService
         case method
         when :get
           HTTPI.get(request)
-        when :delete
-          HTTPI.delete(request)
-        when :post
-          HTTPI.post(request)
         end
       end
     end
