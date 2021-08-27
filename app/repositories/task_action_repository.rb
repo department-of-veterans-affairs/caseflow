@@ -304,7 +304,9 @@ class TaskActionRepository
     }.freeze
 
     def complete_data(task, _user = nil)
-      params = { modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym] }
+      params = {
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+      }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
       if defined? task.completion_contact
@@ -443,6 +445,15 @@ class TaskActionRepository
       action = select_ama_review_decision_action(task, user) if task.ama?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+    end
+
+    def vha_send_to_board_intake(*)
+      {
+        modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
     end
 
     def vha_assign_to_program_office_data(*)

@@ -1126,5 +1126,9 @@
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
-  "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office"
+  "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
+
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
 }

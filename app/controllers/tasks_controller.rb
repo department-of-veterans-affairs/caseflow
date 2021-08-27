@@ -42,7 +42,8 @@ class TasksController < ApplicationController
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task, # Consider for removal, after cleaning up occurrences in prod
     TranscriptionTask: TranscriptionTask,
-    TranslationTask: TranslationTask
+    TranslationTask: TranslationTask,
+    VhaDocumentSearchTask: VhaDocumentSearchTask
   }.freeze
 
   def set_application

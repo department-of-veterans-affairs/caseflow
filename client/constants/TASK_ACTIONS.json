@@ -363,5 +363,10 @@
     "label": "Assign to Program Office",
     "value": "modal/assign_to_program_office",
     "func": "vha_assign_to_program_office_data"
+  },
+  "VHA_SEND_TO_BOARD_INTAKE": {
+    "label": "Send to Board Intake",
+    "value": "modal/vha_send_to_board_intake",
+    "func": "vha_send_to_board_intake"
   }
 }

@@ -282,10 +282,6 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
-  routedAssignToVhaProgramOffice = (props) => (
-    <AssignToView isTeamAssign {...props.match.params} />
-  );
-
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -517,6 +513,14 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   )
+
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedCamoSendToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -829,12 +833,6 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
-                }`}
-              render={this.routedAssignToVhaProgramOffice}
-            />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CREATE_MAIL_TASK.value
                 }`}
               render={this.routedCreateMailTask}
@@ -922,6 +920,18 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoSendToBoardIntake}
             />
 
             <PageRoute

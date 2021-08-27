@@ -5,6 +5,10 @@ class VhaCamo < Organization
     VhaCamo.first || VhaCamo.create(name: "VHA CAMO", url: "vha-camo")
   end
 
+  def can_receive_task?(_task)
+    false
+  end
+
   def queue_tabs
     [
       in_progress_tasks_tab,
