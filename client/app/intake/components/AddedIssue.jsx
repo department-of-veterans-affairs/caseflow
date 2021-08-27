@@ -116,7 +116,9 @@ class AddedIssue extends React.PureComponent {
             <em>(Originally: {issue.text})</em>
           </div>
         )}
-        {issue.benefitType && this.props.formType === 'appeal' && <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
+        {issue.benefitType &&
+          this.props.formType === 'appeal' &&
+          <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
         {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
         {issue.untimelyExemptionNotes && (
