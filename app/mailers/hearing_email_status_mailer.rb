@@ -12,7 +12,7 @@ class HearingEmailStatusMailer < ActionMailer::Base
 
     # Extract each piece of data the templates use
     @hearing = @sent_hearing_email_event.hearing
-    @hearing_type = Constants::HEARING_REQUEST_TYPES.key(@hearing.request_type).titleize
+    @hearing_type = @hearing.hearing_request_type
     @email_type = @sent_hearing_email_event.email_type.downcase
     @email_address = @sent_hearing_email_event.email_address
     @veteran_name = formatted_appellant_name(@hearing.appeal)
