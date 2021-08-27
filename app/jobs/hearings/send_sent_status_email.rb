@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Hearings::SendSentStatusEmail
-  class RecipientIsDeceasedVeteran < StandardError; end
 
   def initialize(sent_hearing_admin_email_event:)
     @sent_hearing_admin_email_event = sent_hearing_admin_email_event
