@@ -34,7 +34,7 @@ class ExternalApi::GovDeliveryService
       request.headers["Content-Type"] = "application/json" if method == :post
 
       MetricsService.record(
-        "#{host} #{method.to_s.upcase} request to #{url}",
+        "#{BASE_URL} #{method.to_s.upcase} request to #{url}",
         service: :gov_delivery,
         name: endpoint
       ) do
