@@ -3,6 +3,9 @@
 describe Hearings::SendSentStatusEmail do
   describe "call" do
     let(:sent_hearing_email_event) { create(:sent_hearing_email_event) }
+    let(:sent_hearing_admin_email_event) do
+      create(:sent_hearing_admin_email_event, sent_hearing_email_event: sent_hearing_email_event)
+    end
     let(:sender) { described_class.new(sent_hearing_email_event: sent_hearing_email_event) }
     let(:external_message_id) { "a-very-long-id" }
     subject { sender.call }
@@ -12,8 +15,8 @@ describe Hearings::SendSentStatusEmail do
       expect(HearingEmailStatusMailer).to receive(:notification).once.and_call_original
       # Mock the external_message_id method
       allow_any_instance_of(described_class).to receive(:external_message_id).and_return(external_message_id)
-      # SendSentStatusEmail should return the external_message_id
-      expect(subject).to equal(external_message_id)
+      # SendSentStatusEmail should set the external_message_id
+      expect(subject).external_message_id.to eq(external_message_id)
     end
 
     it "fails to send when there is no email on the event" do
@@ -25,8 +28,8 @@ describe Hearings::SendSentStatusEmail do
       expect(Rails.logger).to receive(:info)
       # Expect we logged the failure to DataDog
       expect(DataDogService).to receive(:increment_counter)
-      # SendSentStatusEmail should return nothing
-      expect(subject).to be_falsey
+      # We should not set an external_message_id
+      expect(subject).external_message_id.to be_falsey
     end
   end
 end
