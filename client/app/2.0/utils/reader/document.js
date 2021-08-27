@@ -149,16 +149,13 @@ export const filterDocuments = (criteria, documents, state) => {
   const { active, filters } = formatFilterCriteria(criteria);
 
   // Set the Original Documents according to the initial state
-  const docs = state.storeDocuments ? state.storeDocuments : documents;
+  const docs = Object.values(state.storeDocuments ? state.storeDocuments : documents);
+  const sortedDocs = orderBy(docs, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 
-  // Set the IDs to the store doc IDs or the filtered IDs if active
-  const ids = active.length ? Object.keys(docs).map((doc) => docs[doc].id).
-    filter((id) => {
+  return active.length ?
+    sortedDocs.filter((document) => {
       // Initialize whether to show the document
       let include = true;
-
-      // Set the Current Document
-      const [document] = Object.values(docs).filter((doc) => doc.id === id);
 
       // Apply the Category filters
       if (!isEmpty(filters.category)) {
@@ -167,7 +164,6 @@ export const filterDocuments = (criteria, documents, state) => {
 
       // Apply the Tag filters
       if (!isEmpty(filters.tag)) {
-        // include = include && filters.tag.filter((name) => document[name] === true).length;
         include = include && document?.tags?.some((tag) => filters.tag.includes(tag.text));
       }
 
@@ -178,10 +174,8 @@ export const filterDocuments = (criteria, documents, state) => {
 
       // Default return the object to be truthy
       return include;
-    }) :
-    Object.keys(docs).map((doc) => docs[doc].id);
-
-  return orderBy(ids, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
+    }).map((doc) => doc.id) :
+    sortedDocs.map((doc) => doc.id);
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {

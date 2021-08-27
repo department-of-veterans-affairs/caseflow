@@ -283,32 +283,32 @@ export const CommentHeader = () => (
 export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'last-read-column',
-    valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={lastReadIndicatorRef} {...props} />
+    valueFunction: (doc) => <LastReadIndicator {...props} docId={doc.id} getRef={lastReadIndicatorRef} />
   },
   {
     cellClass: 'categories-column',
     header: <CategoryHeader {...props} />,
-    valueFunction: (doc) => <CategoryIcons doc={doc} {...props} />
+    valueFunction: (doc) => <CategoryIcons {...props} doc={doc} />
   },
   {
     cellClass: 'receipt-date-column',
     header: <ReceiptDateHeader {...props} />,
-    valueFunction: (doc) => <ReceiptDateCell doc={doc} {...props} />
+    valueFunction: (doc) => <ReceiptDateCell {...props} doc={doc} />
   },
   {
     cellClass: 'doc-type-column',
     header: <TypeHeader {...props} />,
-    valueFunction: (doc) => <TypeCell doc={doc} {...props} />
+    valueFunction: (doc) => <TypeCell {...props} doc={doc} />
   },
   {
     cellClass: 'tags-column',
     header: <TagHeader {...props} />,
-    valueFunction: (doc) => <TagCell doc={doc} tags={doc.tags} {...props} />
+    valueFunction: (doc) => <TagCell {...props} doc={doc} tags={doc.tags} />
   },
   {
     cellClass: 'comments-column',
     header: <CommentHeader {...props} />,
-    valueFunction: (doc) => <CommentIndicator doc={doc} {...props} />
+    valueFunction: (doc) => <CommentIndicator {...props} doc={doc} />
   }
 ];
 
