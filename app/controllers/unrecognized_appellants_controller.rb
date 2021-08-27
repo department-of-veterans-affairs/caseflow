@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class UnrecognizedAppellantsController < ApplicationController
-  before_action :find_unrecognized_appellant, only: [:update_power_of_attorney]
   before_action :prevent_update_if_poa_exists, only: [:update_power_of_attorney]
 
   def update
@@ -14,21 +13,21 @@ class UnrecognizedAppellantsController < ApplicationController
   end
 
   def update_power_of_attorney
-    if @unrecognized_appellant.update_power_of_attorney!(unrecognized_appellant_params)
-      render json: @unrecognized_appellant, include: [:unrecognized_power_of_attorney]
+    if unrecognized_appellant.update_power_of_attorney!(unrecognized_appellant_params)
+      render json: unrecognized_appellant, include: [:unrecognized_power_of_attorney]
     else
-      render json: @unrecognized_appellant, status: :bad_request
+      render json: unrecognized_appellant, status: :bad_request
     end
   end
 
   private
 
   def prevent_update_if_poa_exists
-    render json: { message: "POA already exists" }, status: :bad_request if @unrecognized_appellant.power_of_attorney
+    render json: { message: "POA already exists" }, status: :bad_request if unrecognized_appellant.power_of_attorney
   end
 
-  def find_unrecognized_appellant
-    @unrecognized_appellant = UnrecognizedAppellant.find(params[:unrecognized_appellant_id])
+  def unrecognized_appellant
+    @unrecognized_appellant ||= UnrecognizedAppellant.find(params[:unrecognized_appellant_id])
   end
 
   def unrecognized_appellant_params
