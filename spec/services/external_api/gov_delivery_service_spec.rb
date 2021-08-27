@@ -47,10 +47,10 @@ describe ExternalApi::GovDeliveryService do
   end
   let(:endpoint) { "#{email_event.external_message_id}/recipients" }
 
-  describe "#get_message_status" do
+  describe "#get_recipients_from_event" do
     let(:event_status) { "sent" }
 
-    subject { ExternalApi::GovDeliveryService.get_message_by_event(email_event: email_event) }
+    subject { ExternalApi::GovDeliveryService.get_recipients_from_event(email_event: email_event) }
 
     let(:success_create_resp) do
       HTTPI::Response.new(200, {}, { "status" => event_status }.to_json)

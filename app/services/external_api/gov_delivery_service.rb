@@ -8,7 +8,7 @@ class ExternalApi::GovDeliveryService
   CERT_FILE_LOCATION = ENV["SSL_CERT_FILE"]
 
   class << self
-    def get_message_by_event(email_event:)
+    def get_recipients_from_event(email_event:)
       # Construct the endpoint from the email event
       path = "#{email_event.external_message_id}/recipients"
 
