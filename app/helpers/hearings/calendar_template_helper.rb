@@ -32,7 +32,7 @@ module Hearings::CalendarTemplateHelper
 
     def hearing_date_only(hearing)
       datetime = hearing.scheduled_for
-      datetime.strftime("%a, %b #{datetime.day.ordinalize}") #  Fri, Mar 26
+      datetime.strftime("%a, %b %I") #  Fri, Mar 26
     end
   end
 end
