@@ -18,13 +18,7 @@ import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  let vhaHasIssues = false;
-
-  requestIssues.forEach((ri) => {
-    if (ri.benefitType === 'vha') {
-      vhaHasIssues = true;
-    }
-  });
+  const vhaHasIssues = checkIssuesForVha(requestIssues);
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
@@ -46,25 +40,36 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
     leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
-  if (vhaHasIssues) {
+  if (!vhaHasIssues) {
     leadMessageArr.push(
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-    );
-  } else {
-    leadMessageArr.push(
-      <strong>Appeal created and sent to VHA for pre-docket review.</strong>
     );
   }
 
   return leadMessageArr;
 };
 
+const checkIssuesForVha = (requestIssues) => {
+  let hasVhaIssues = false;
+  requestIssues.forEach((ri) => {
+    if (ri.benefitType === 'vha') {
+      hasVhaIssues = true;
+    }
+  });
+  return hasVhaIssues;
+}
+
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
+    let statusMessage = "Appeal created:"
+
+    if (checkIssuesForVha(requestIssues)) {
+      statusMessage = "Appeal created and sent to VHA for pre-docket review."
+    }
     return [<Fragment>
-      <strong>Appeal created:</strong>
+      <strong>{statusMessage}</strong>
       {eligibleRequestIssues.map((ri, i) => <p key={`appeal-issue-${i}`}>Issue: {ri.contentionText}</p>)}
     </Fragment>];
   }
@@ -160,6 +165,11 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
+    let title = "Intake completed"
+    if (checkIssuesForVha(requestIssues)) {
+      title = "Appeal recorded in pre-docket queue"
+    }
+
     const deceasedVeteranAlert = () => {
       return (
         <div className="cf-msg-screen-deck">
@@ -176,7 +186,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType === 'appeal' && !completedReview.veteranIsNotClaimant;
 
     return <div><StatusMessage
-      title="Intake completed"
+      title={title}
       type="success"
       leadMessageList={
         leadMessageList({
