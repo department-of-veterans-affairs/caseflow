@@ -21,40 +21,75 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   private
 
   def send_reminder_emails(hearing)
-    if should_send_appellant_reminder?(hearing)
-      Hearings::SendEmail
-        .new(hearing: hearing, type: :appellant_reminder)
-        .call
-    end
+    maybe_send_appellant_reminder_email(hearing)
+    maybe_send_representative_reminder_email(hearing)
+  end
 
-    if should_send_representative_reminder?(hearing)
+  def maybe_send_appellant_reminder_email(hearing)
+    appellant_reminder_type = appellant_reminder_type(hearing)
+    if appellant_reminder_type.present?
       Hearings::SendEmail
-        .new(hearing: hearing, type: :representative_reminder)
+        .new(
+          hearing: hearing,
+          type: :reminder,
+          reminder_info: {
+            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+            day_type: appellant_reminder_type
+          }
+        )
         .call
     end
   end
 
-  def should_send_appellant_reminder?(hearing)
-    return false if hearing.appellant_recipient.email_address.blank?
+  def maybe_send_representative_reminder_email(hearing)
+    representative_reminder_type = representative_reminder_type(hearing)
+    if representative_reminder_type.present?
+      Hearings::SendEmail
+        .new(
+          hearing: hearing,
+          type: :reminder,
+          reminder_info: {
+            recipient: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
+            day_type: representative_reminder_type
+          }
+        )
+        .call
+    end
+  end
 
-    created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
-    Hearings::ReminderService
+  def hearing_created_at(hearing)
+    hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
+  end
+
+  def appellant_reminder_type(hearing)
+    return if hearing.appellant_recipient&.email_address.blank?
+
+    reminder_type = Hearings::ReminderService
       .new(
         hearing: hearing,
         last_sent_reminder: hearing.appellant_recipient&.reminder_sent_at,
-        created_at: created_at
-      ).should_send_reminder_email?
+        hearing_created_at: hearing_created_at(hearing)
+      ).reminder_type
+
+    return if reminder_type.blank?
+
+    reminder_type
   end
 
-  def should_send_representative_reminder?(hearing)
-    return false if hearing.representative_recipient.email_address.blank?
+  def representative_reminder_type(hearing)
+    return if hearing.representative_recipient&.email_address.blank?
 
-    created_at = hearing.virtual? ? hearing.virtual_hearing.created_at : hearing.created_at
-    Hearings::ReminderService
+    reminder_type = Hearings::ReminderService
       .new(
         hearing: hearing,
         last_sent_reminder: hearing.representative_recipient&.reminder_sent_at,
-        created_at: created_at
-      ).should_send_reminder_email?
+        hearing_created_at: hearing_created_at(hearing)
+      ).reminder_type
+
+    return if reminder_type.blank?
+    # we should not send 60 day reminder email to representative
+    return if reminder_type == Hearings::ReminderService::SIXTY_DAY_REMINDER
+
+    reminder_type
   end
 end

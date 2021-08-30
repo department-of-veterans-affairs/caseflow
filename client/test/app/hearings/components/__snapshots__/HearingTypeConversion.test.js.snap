@@ -16,6 +16,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -118,6 +119,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "appellantFullName": "Abellona Valtas",
         "appellantIsNotVeteran": false,
         "appellantRelationship": "Spouse",
+        "appellantTz": "America/New_York",
         "assignedAttorney": null,
         "assignedJudge": null,
         "assignedToLocation": "Hearing Admin",
@@ -427,6 +429,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     <VirtualHearingEmail
                       emailType="appellantEmail"
                       label="Veteran Email"
+                      optional={false}
                       readOnly={true}
                       required={true}
                       type="Virtual"
@@ -529,6 +532,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     <VirtualHearingEmail
                       emailType="representativeEmail"
                       label="POA/Representative Email"
+                      optional={true}
                       readOnly={true}
                       type="Virtual"
                     >
