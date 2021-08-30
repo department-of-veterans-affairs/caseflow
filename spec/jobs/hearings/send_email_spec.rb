@@ -115,17 +115,17 @@ describe Hearings::SendEmail do
           expect(HearingMailer)
             .to receive(:cancellation)
             .once
-            .with(email_recipient: appellant_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: appellant_recipient_info, virtual_hearing: virtual_hearing)
 
           expect(HearingMailer)
             .to receive(:cancellation)
             .once
-            .with(email_recipient: representative_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: representative_recipient_info, virtual_hearing: virtual_hearing)
 
           # NO for judge
           expect(HearingMailer)
             .to_not receive(:cancellation)
-            .with(email_recipient: judge_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: judge_recipient_info, virtual_hearing: virtual_hearing)
 
           subject
         end
