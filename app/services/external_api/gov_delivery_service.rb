@@ -6,23 +6,40 @@ class ExternalApi::GovDeliveryService
   BASE_URL = ENV["GOVDELIVERY_SERVER"]
   AUTH_TOKEN = ENV["GOVDELIVERY_TOKEN"]
   CERT_FILE_LOCATION = ENV["SSL_CERT_FILE"]
+  STATUS_FIELD_NAME = "status"
 
   class << self
-    def get_message_by_event(email_event:)
+    def get_sent_status_from_event(email_event:)
+      get_sent_status(external_message_id: email_event.external_message_id)
+    end
+
+    def get_recipients_from_event(email_event:)
+      get_recipients(external_message_id: email_event.external_message_id)
+    end
+
+    def get_sent_status(external_message_id:)
+      # assumes the email has only one recipient
+      get_recipients(external_message_id: external_message_id).first[STATUS_FIELD_NAME]
+    end
+
+    def get_recipients(external_message_id:)
       # Construct the endpoint from the email event
-      path = "#{email_event.external_message_id}/recipients"
+      path = "#{external_message_id}/recipients"
 
       # Send the request to the gov delivery API
       response = send_gov_delivery_request(path, :get)
       return if response.nil?
 
-      # Return the GovDelivery Response
-      ExternalApi::GovDeliveryService::Response.new(response)
+      gd_response = ExternalApi::GovDeliveryService::Response.new(response)
+
+      fail gd_response.error if gd_response.error.present?
+
+      # Return the body of the GovDelivery Response
+      gd_response.body
     end
 
     private
 
-    # :nocov:
     def send_gov_delivery_request(endpoint, method, body: nil)
       url = URI::DEFAULT_PARSER.escape("https://#{BASE_URL}#{endpoint}")
 
@@ -34,17 +51,13 @@ class ExternalApi::GovDeliveryService
       request.headers["Content-Type"] = "application/json" if method == :post
 
       MetricsService.record(
-        "#{host} #{method.to_s.upcase} request to #{url}",
+        "#{BASE_URL} #{method.to_s.upcase} request to #{url}",
         service: :gov_delivery,
         name: endpoint
       ) do
         case method
         when :get
           HTTPI.get(request)
-        when :delete
-          HTTPI.delete(request)
-        when :post
-          HTTPI.post(request)
         end
       end
     end
@@ -64,6 +77,5 @@ class ExternalApi::GovDeliveryService
       # Return the request object
       request
     end
-    # :nocov:
   end
 end

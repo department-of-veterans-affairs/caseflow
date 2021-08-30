@@ -28,26 +28,24 @@ class ExternalApi::GovDeliveryService::Response
 
   private
 
-  # :nocov:
+  ERROR_LOOKUP = {
+    401 => Caseflow::Error::GovDeliveryUnauthorizedError,
+    403 => Caseflow::Error::GovDeliveryForbiddenError,
+    404 => Caseflow::Error::GovDeliveryNotFoundError,
+    500 => Caseflow::Error::GovDeliveryInternalServerError,
+    502 => Caseflow::Error::GovDeliveryBadGatewayError,
+    503 => Caseflow::Error::GovDeliveryServiceUnavailableError
+  }.freeze
+
   def check_for_error
     return if success?
 
-    msg = error_message
-    case code
-    when 401
-      Caseflow::Error::GovDeliveryUnauthorizedError.new(code: code, message: msg)
-    when 403
-      Caseflow::Error::GovDeliveryForbiddenError.new(code: code, message: msg)
-    when 404
-      Caseflow::Error::GovDeliveryNotFoundError.new(code: code, message: msg)
-    when 500
-      Caseflow::Error::GovDeliveryInternalServerError.new(code: code, message: msg)
-    when 502
-      Caseflow::Error::GovDeliveryBadGatewayError.new(code: code, message: msg)
-    when 503
-      Caseflow::Error::GovDeliveryServiceUnavailableError.new(code: code, message: msg)
+    message = error_message
+
+    if ERROR_LOOKUP.key? code
+      ERROR_LOOKUP[code].new(code: code, message: message)
     else
-      Caseflow::Error::GovDeliveryApiError.new(code: code, message: msg)
+      Caseflow::Error::GovDeliveryApiError.new(code: code, message: message)
     end
   end
 
@@ -56,5 +54,4 @@ class ExternalApi::GovDeliveryService::Response
 
     body&.error || "No error message from GovDelivery"
   end
-  # :nocov:
 end

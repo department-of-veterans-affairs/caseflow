@@ -46,53 +46,34 @@ describe ExternalApi::GovDeliveryService do
     )
   end
   let(:endpoint) { "#{email_event.external_message_id}/recipients" }
+  let(:event_status_sent) { "sent" }
+  let(:response_body) { [{ "status" => event_status_sent }].to_json }
+  let(:success_response) do
+    HTTPI::Response.new(200, {}, response_body)
+  end
 
-  describe "#get_message_status" do
-    let(:event_status) { "sent" }
+  describe "#get_recipients_from_event" do
+    subject { ExternalApi::GovDeliveryService.get_recipients_from_event(email_event: email_event) }
 
-    subject { ExternalApi::GovDeliveryService.get_message_by_event(email_event: email_event) }
+    it "returns a list of objects" do
+      allow(HTTPI).to receive(:get).and_return(success_response)
 
-    let(:success_create_resp) do
-      HTTPI::Response.new(200, {}, { "status" => event_status }.to_json)
-    end
-
-    it "calls #send_gov_delivery_request" do
-      expect(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request)
-      subject
-    end
-
-    it "passed correct arguments to #send_gov_delivery_request" do
-      expect(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request).with(endpoint, :get)
-      subject
-    end
-
-    it "returns an instance of ExternalApi::GovDeliveryService::CreateResponse class" do
-      allow(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request).with(endpoint, :get)
-        .and_return(success_create_resp)
-
-      expect(subject).to be_instance_of(ExternalApi::GovDeliveryService::Response)
-    end
-
-    it "success response" do
-      allow(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request).with(endpoint, :get)
-        .and_return(success_create_resp)
-
-      expect(subject.code).to eq(200)
-      expect(subject.success?).to eq(true)
-      expect(subject.body.dig("status")).to eq(event_status)
+      expect(subject).to be_instance_of Array
+      expect(subject.length).to eq 1
+      expect(subject).to match_array JSON.parse(response_body)
     end
 
     context "response failure" do
       let!(:error_code) { nil }
 
-      before(:each) do
+      before do
         allow(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request)
           .and_return(HTTPI::Response.new(error_code, {}, {}.to_json))
       end
 
       context "fallback error code" do
         it "throws Caseflow::Error::GovDeliveryApiError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryApiError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryApiError
         end
       end
 
@@ -100,7 +81,7 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 401 }
 
         it "throws Caseflow::Error::GovDeliveryUnauthorizedError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryUnauthorizedError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryUnauthorizedError
         end
       end
 
@@ -108,7 +89,7 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 403 }
 
         it "throws Caseflow::Error::GovDeliveryForbiddenError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryForbiddenError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryForbiddenError
         end
       end
 
@@ -116,7 +97,7 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 404 }
 
         it "throws Caseflow::Error::GovDeliveryNotFoundError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryNotFoundError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryNotFoundError
         end
       end
 
@@ -124,7 +105,7 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 500 }
 
         it "throws Caseflow::Error::GovDeliveryInternalServerError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryInternalServerError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryInternalServerError
         end
       end
 
@@ -132,7 +113,7 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 502 }
 
         it "throws Caseflow::Error::GovDeliveryBadGatewayError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryBadGatewayError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryBadGatewayError
         end
       end
 
@@ -140,9 +121,19 @@ describe ExternalApi::GovDeliveryService do
         let!(:error_code) { 503 }
 
         it "throws Caseflow::Error::GovDeliveryServiceUnavailableError" do
-          expect(subject.error).to be_an_instance_of(Caseflow::Error::GovDeliveryServiceUnavailableError)
+          expect { subject }.to raise_error Caseflow::Error::GovDeliveryServiceUnavailableError
         end
       end
+    end
+  end
+
+  describe "#get_sent_status_from_event" do
+    subject { ExternalApi::GovDeliveryService.get_sent_status_from_event(email_event: email_event) }
+
+    it "returns the expected value" do
+      allow(HTTPI).to receive(:get).and_return(success_response)
+
+      expect(subject).to eq event_status_sent
     end
   end
 end

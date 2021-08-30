@@ -1,1 +1,5 @@
-GovDeliveryService = (!ApplicationController.dependencies_faked? ? ExternalApi::GovDeliveryService : Fakes::GovDeliveryService)
+GovDeliveryService = if ApplicationController.dependencies_faked?
+                       Fakes::GovDeliveryService
+                     else
+                       ExternalApi::GovDeliveryService
+                     end

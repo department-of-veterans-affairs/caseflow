@@ -1,7 +1,23 @@
 # frozen_string_literal: true
 
 class Fakes::GovDeliveryService
-  def self.get_message_by_event(*)
-    ExternalApi::GovDeliveryService::Response.new(HTTPI::Response.new(200, {}, {}))
+  FAKE_STATUS = "sent"
+
+  class << self
+    def get_sent_status_from_event(*)
+      FAKE_STATUS
+    end
+
+    def get_recipients_from_event(*)
+      [{}]
+    end
+
+    def get_sent_status(*)
+      FAKE_STATUS
+    end
+
+    def get_recipients(*)
+      [{}]
+    end
   end
 end
