@@ -36,7 +36,7 @@ describe ETL::JudgeCaseReviewSyncer, :etl, :all_dbs do
       let(:appeal) { create(:legacy_appeal) }
       let(:task_id) { "#{appeal.vacols_id}-2019-12-17" }
 
-      it "denormalizes Appeal, Attorney and Reviewing Judge" do
+      it "denormalizes Appeal, Attorney and Judge" do
         expect(ETL::JudgeCaseReview.count).to eq(0)
 
         subject
@@ -56,7 +56,7 @@ describe ETL::JudgeCaseReviewSyncer, :etl, :all_dbs do
       let(:appeal) { create(:appeal) }
       let(:task_id) { create(:ama_judge_decision_review_task, appeal: appeal).id }
 
-      it "denormalizes Appeal, Attorney and Reviewing Judge" do
+      it "denormalizes Appeal, Attorney and Judge" do
         expect(ETL::JudgeCaseReview.count).to eq(0)
 
         subject

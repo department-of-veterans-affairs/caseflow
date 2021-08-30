@@ -11,7 +11,7 @@ describe Seeds::VeteransHealthAdministration do
 
     it "creates all VISN organizations" do
       expect { subject }.to_not raise_error
-      expect(Organization.count).to eq(24)
+      expect(VhaRegionalOffice.count).to eq(18)
     end
   end
 end

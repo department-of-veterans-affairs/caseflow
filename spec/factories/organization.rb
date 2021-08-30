@@ -45,6 +45,10 @@ FactoryBot.define do
       type { "Bva" }
     end
 
+    factory :vha_program_office do
+      type { VhaProgramOffice.name }
+    end
+
     factory :business_line, class: BusinessLine do
       type { "BusinessLine" }
     end
