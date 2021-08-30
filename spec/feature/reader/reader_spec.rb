@@ -993,9 +993,9 @@ RSpec.feature "Reader", :all_dbs do
         find("div.num-of-documents", text: "#{documents.length} Documents")
 
         # these are the categories we expect the documents to have in the expected sort order
-        expect(cats_in_row(3)).to match_array [cats[:case_summary]]
+        expect(cats_in_row(1)).to match_array [cats[:case_summary]]
         expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
-        expect(cats_in_row(1)).to match_array [cats[:procedural], cats[:case_summary]]
+        expect(cats_in_row(3)).to match_array [cats[:procedural], cats[:case_summary]]
       end
 
       step "edit the BVA Decision document categories" do
