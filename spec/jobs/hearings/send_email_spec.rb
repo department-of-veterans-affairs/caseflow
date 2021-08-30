@@ -59,6 +59,22 @@ describe Hearings::SendEmail do
       allow(send_email_job).to receive(:representative_recipient_info).and_return(representative_recipient_info)
     end
 
+    context "there is no representative recipient" do
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          hearing: hearing,
+          representative_email: nil,
+          judge_email_sent: judge_email_sent,
+          appellant_email_sent: appellant_email_sent
+        )
+      end
+
+      it "does not error" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
     context "appellant_recipient name is populated correctly" do
       context "veteran is appellant" do
         it "uses the full name of the veteran" do
