@@ -51,6 +51,15 @@ class UnrecognizedAppellant < CaseflowRecord
     false
   end
 
+  def update_power_of_attorney!(params)
+    poa_participant_id = params[:poa_participant_id]
+    if poa_participant_id
+      update(poa_participant_id: poa_participant_id)
+    else
+      update(unrecognized_power_of_attorney: UnrecognizedPartyDetail.new(params[:unrecognized_power_of_attorney]))
+    end
+  end
+
   private
 
   def create_version
