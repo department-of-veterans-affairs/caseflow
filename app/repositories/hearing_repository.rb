@@ -184,16 +184,21 @@ class HearingRepository
       selected_vacols_ids =
         VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
 
-      vacols_hearings.where.not(vacols_id: selected_vacols_ids).to_a
+      vacols_hearings.where(
+        "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
+        postponed_or_cancelled_vacols_ids: selected_vacols_ids
+      ).to_a
     end
 
     def ama_sent_hearing_email_events
-SentHearingEmailEvent
-        .where(recipient_role: ["veteran", "appellant", "representative"], sent_status: nil)
+      SentHearingEmailEvent
+        .where(recipient_role: ["veteran", "appellant", "representative"], send_successful: nil)
         .joins(hearings_and_hearing_days_join_clause)
         .where(
           "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
-          "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [:postponed, :cancelled]
+          "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [
+            :postponed, :cancelled, :scheduled_in_error
+          ]
         )
         .where(scheduled_for_future).order(HearingDay.arel_table[:scheduled_for].asc)
     end
@@ -202,8 +207,7 @@ SentHearingEmailEvent
       legacy_events = []
 
       SentHearingEmailEvent
-      SentHearingEmailEvent
-        .where(recipient_role: ["veteran", "appellant", "representative"], sent_status: nil)
+        .where(recipient_role: ["veteran", "appellant", "representative"], send_successful: nil)
         .joins(legacy_hearings_and_hearing_days_join_clause)
         .where(scheduled_for_future).order(HearingDay.arel_table[:scheduled_for].asc)
         .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }
@@ -216,7 +220,7 @@ SentHearingEmailEvent
         .joins("INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
         .where(
           "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
-          non_active_hearing_dispositions: [:postponed, :cancelled]
+          non_active_hearing_dispositions: [:postponed, :cancelled, :scheduled_in_error]
         )
         .where(
           "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for

@@ -151,10 +151,11 @@ describe HearingRepository, :all_dbs do
   end
 
   context ".maybe_ready_for_reminder_email" do
+    subject { described_class.maybe_ready_for_reminder_email }
+
     let(:regional_office) { "RO42" }
     let(:hearing_date) { Time.zone.now }
-    let(:ama_disposition) { nil }
-    let(:hearing_day) do
+    let(:video_hearing_day) do
       create(
         :hearing_day,
         regional_office: regional_office,
@@ -170,26 +171,36 @@ describe HearingRepository, :all_dbs do
         request_type: HearingDay::REQUEST_TYPES[:central]
       )
     end
-    let!(:hearing) do
-      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
-    end
-    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: hearing) }
 
-    let!(:video_hearing) do
-      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
-    end
-    let!(:central_hearing) do
-      create(:hearing, regional_office: regional_office, hearing_day: central_hearing_day, disposition: ama_disposition)
-    end
+    context "for both active ama and active legacy hearings" do
+      let(:ama_disposition) { nil }
+      let(:legacy_disposition) { nil }
+      let!(:ama_virtual_hearing) do
+        create(:hearing, regional_office: regional_office, hearing_day: video_hearing_day, disposition: ama_disposition)
+      end
+      let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: ama_virtual_hearing) }
 
-    subject { described_class.maybe_ready_for_reminder_email }
+      let!(:ama_video_hearing) do
+        create(:hearing, regional_office: regional_office, hearing_day: video_hearing_day, disposition: ama_disposition)
+      end
+      let!(:ama_central_hearing) do
+        create(:hearing, regional_office: regional_office, hearing_day: central_hearing_day, disposition: ama_disposition)
+      end
+      let!(:legacy_video_hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: video_hearing_day,
+          disposition: legacy_disposition
+        )
+      end
 
-    shared_examples "include or exclude hearings depending on the number of days out from the hearing" do
       context "is in 60 days" do
         let(:hearing_date) { Time.zone.now + 60.days }
 
         it "returns the hearings" do
-          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
+          expect(subject.sort_by(&:id)).to eq(
+            [ama_virtual_hearing, ama_video_hearing, ama_central_hearing, legacy_video_hearing].sort_by(&:id)
+          )
         end
       end
 
@@ -197,7 +208,9 @@ describe HearingRepository, :all_dbs do
         let(:hearing_date) { Time.zone.now + 7.days }
 
         it "returns the hearings" do
-          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
+          expect(subject.sort_by(&:id)).to eq(
+            [ama_virtual_hearing, ama_video_hearing, ama_central_hearing, legacy_video_hearing].sort_by(&:id)
+          )
         end
       end
 
@@ -211,13 +224,13 @@ describe HearingRepository, :all_dbs do
     end
 
     context "for an AMA hearing" do
-      context "active virtual hearing" do
-        include_examples "include or exclude hearings depending on the number of days out from the hearing"
-      end
-
-      %w[postponed cancelled no_show held].each do |disposition|
+      %w[postponed cancelled scheduled_in_error].each do |disposition|
         context "#{disposition} virtual hearing" do
           let(:ama_disposition) { disposition }
+          let(:hearing_date) { Time.zone.now + 7.days }
+          let(:hearing) do
+            create(:hearing, disposition: ama_disposition, hearing_day: video_hearing_day)
+          end
 
           it "returns nothings" do
             expect(subject).to be_empty
@@ -227,23 +240,18 @@ describe HearingRepository, :all_dbs do
     end
 
     context "for a Legacy hearing" do
-      let(:legacy_dispositon) { nil }
-      let(:hearing) do
-        create(
-          :legacy_hearing,
-          regional_office: regional_office,
-          hearing_day_id: hearing_day.id,
-          case_hearing: create(:case_hearing, hearing_disp: legacy_dispositon)
-        )
-      end
-
-      context "active virtual hearing" do
-        include_examples "include or exclude hearings depending on the number of days out from the hearing"
-      end
-
-      %w[P C N H].each do |disposition_code|
+      %w[P C E].each do |disposition_code|
         context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
-          let(:ama_disposition) { disposition_code }
+          let(:legacy_disposition) { disposition_code }
+          let!(:hearing) do
+            create(
+              :legacy_hearing,
+              regional_office: regional_office,
+              hearing_day: central_hearing_day,
+              case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
+            )
+          end
+          let(:hearing_date) { Time.zone.now + 7.days }
 
           it "returns nothings" do
             expect(subject).to be_empty
@@ -253,26 +261,22 @@ describe HearingRepository, :all_dbs do
     end
   end
 
-  context ".maybe_needs_email_sent_status_checked" do
-    before do
-      Timecop.travel(Time.zone.now)
+  context ".maybe_needs_email_sent_status_checked", focus: true do
+    subject { described_class.maybe_needs_email_sent_status_checked }
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:video_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
     end
 
-    subject { described_class.maybe_needs_email_sent_status_checked }
-
     context "for both active ama and active legacy hearings" do
-      let(:regional_office) { "RO42" }
-      let(:hearing_date) { Time.zone.now }
       let(:ama_disposition) { nil }
-      let(:legacy_dispositon) { nil }
-      let(:video_hearing_day) do
-        create(
-          :hearing_day,
-          regional_office: regional_office,
-          scheduled_for: hearing_date,
-          request_type: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
+      let(:legacy_disposition) { nil }
 
       let(:ama_video_hearing) do
         create(
@@ -288,7 +292,7 @@ describe HearingRepository, :all_dbs do
           :legacy_hearing,
           regional_office: regional_office,
           hearing_day_id: video_hearing_day.id,
-          case_hearing: create(:case_hearing, hearing_disp: legacy_dispositon)
+          case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
         )
       end
 
@@ -334,10 +338,10 @@ describe HearingRepository, :all_dbs do
       context "hearings are in the future" do
         let(:hearing_date) { Time.zone.now + 7.days }
 
-        context "when sent_status is not nil" do
-          let(:sent_status) { true }
+        context "when send_successful is not nil" do
+          let(:send_successful) { true }
           let!(:sent_event_with_sent_status) do
-            create(:sent_hearing_email_event, sent_status: sent_status)
+            create(:sent_hearing_email_event, send_successful: send_successful)
           end
 
           it "does not return event" do
@@ -370,11 +374,11 @@ describe HearingRepository, :all_dbs do
     end
 
     context "for an AMA hearing with closed disposition" do
-      %w[postponed cancelled no_show held].each do |disposition|
+      %w[postponed cancelled scheduled_in_error].each do |disposition|
         context "#{disposition} hearing" do
           let(:ama_disposition) { disposition }
           let(:hearing) do
-            create(:hearing, disposition: ama_disposition)
+            create(:hearing, disposition: ama_disposition, hearing_day: video_hearing_day)
           end
           let!(:sent_event) do
             create(:sent_hearing_email_event, hearing: hearing)
@@ -388,13 +392,14 @@ describe HearingRepository, :all_dbs do
     end
 
     context "for a Legacy hearing with closed disposition" do
-      %w[P C N H].each do |disposition_code|
+      %w[P C E].each do |disposition_code|
         context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
-          let(:legacy_dispositon) { disposition_code }
+          let(:legacy_disposition) { disposition_code }
           let(:hearing) do
             create(
               :legacy_hearing,
-              case_hearing: create(:case_hearing, hearing_disp: legacy_dispositon)
+              hearing_day: video_hearing_day,
+              case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
             )
           end
           let!(:sent_event) do
