@@ -185,8 +185,6 @@ export const filterDocuments = (criteria, documents, state) => {
     return list;
   }, []);
 
-  console.log('DOCS LIST: ', documentIds);
-
   return documentIds;
 };
 
