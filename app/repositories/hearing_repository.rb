@@ -192,7 +192,7 @@ class HearingRepository
 
     def ama_sent_hearing_email_events
       SentHearingEmailEvent
-        .where(recipient_role: ["veteran", "appellant", "representative"], send_successful: nil)
+        .where(recipient_role: %w[veteran appellant representative], send_successful: nil)
         .joins(hearings_and_hearing_days_join_clause)
         .where(
           "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
@@ -207,7 +207,7 @@ class HearingRepository
       legacy_events = []
 
       SentHearingEmailEvent
-        .where(recipient_role: ["veteran", "appellant", "representative"], send_successful: nil)
+        .where(recipient_role: %w[veteran appellant representative], send_successful: nil)
         .joins(legacy_hearings_and_hearing_days_join_clause)
         .where(scheduled_for_future).order(HearingDay.arel_table[:scheduled_for].asc)
         .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }

@@ -184,7 +184,12 @@ describe HearingRepository, :all_dbs do
         create(:hearing, regional_office: regional_office, hearing_day: video_hearing_day, disposition: ama_disposition)
       end
       let!(:ama_central_hearing) do
-        create(:hearing, regional_office: regional_office, hearing_day: central_hearing_day, disposition: ama_disposition)
+        create(
+          :hearing,
+          regional_office: regional_office,
+          hearing_day: central_hearing_day,
+          disposition: ama_disposition
+        )
       end
       let!(:legacy_video_hearing) do
         create(
@@ -261,7 +266,7 @@ describe HearingRepository, :all_dbs do
     end
   end
 
-  context ".maybe_needs_email_sent_status_checked", focus: true do
+  context ".maybe_needs_email_sent_status_checked" do
     subject { described_class.maybe_needs_email_sent_status_checked }
     let(:regional_office) { "RO42" }
     let(:hearing_date) { Time.zone.now }
