@@ -1001,6 +1001,12 @@ schedule_periods,start_date,date ∗,x,,,,,
 schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
+sent_hearing_admin_email_events,,,,,,,,
+sent_hearing_admin_email_events,created_at,datetime ∗,x,,,,,
+sent_hearing_admin_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email.
+sent_hearing_admin_email_events,id,integer (8) PK,x,x,,,,
+sent_hearing_admin_email_events,sent_hearing_email_event_id,integer (8) FK,,,x,,x,Associated sent hearing email event.
+sent_hearing_admin_email_events,updated_at,datetime ∗,x,,,,,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
 sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
 sent_hearing_email_events,email_recipient_id,integer (8) FK,,,x,,,Associated HearingEmailRecipient
@@ -1010,6 +1016,8 @@ sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hea
 sent_hearing_email_events,hearing_type,string ∗,x,,,,x,'Hearing' or 'LegacyHearing'
 sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
+sent_hearing_email_events,send_successful,boolean,,,,,,This column keeps track of whether the email was sent or not
+sent_hearing_email_events,send_successful_checked_at,datetime,,,,,,The date the status was last checked/updated in the GovDelivery API
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
