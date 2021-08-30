@@ -44,6 +44,7 @@ const Hearings = React.lazy(() => import('app/hearings/index'));
 const Help = React.lazy(() => import('app/help/index'));
 const Error500 = React.lazy(() => import('app/errors/Error500'));
 const Error404 = React.lazy(() => import('app/errors/Error404'));
+const Error403 = React.lazy(() => import('app/errors/Error403'));
 const Unauthorized = React.lazy(() => import('app/containers/Unauthorized'));
 const OutOfService = React.lazy(() => import('app/containers/OutOfService'));
 const Feedback = React.lazy(() => import('app/containers/Feedback'));
