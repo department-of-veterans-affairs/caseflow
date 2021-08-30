@@ -10,6 +10,8 @@ class Hearings::SendSentStatusEmail
   def call
     if email_should_send
       message = send_email
+      return if message.nil?
+
       external_message_id = get_external_message_id(message)
       @sent_hearing_admin_email_event.update(external_message_id: external_message_id)
       log("sent admin email")
@@ -28,6 +30,11 @@ class Hearings::SendSentStatusEmail
     )
     message = email.deliver_now!
     message
+  rescue StandardError, Savon::Error, BGS::ShareError => error
+    Raven.capture_exception(error)
+
+    log("failure to send email")
+    nil
   end
 
   # Use nocov to ignore for code coverage calculations, this code isn't tested
@@ -46,14 +53,14 @@ class Hearings::SendSentStatusEmail
   # - Check a condition
   # - If that condition fails, use the log function to record
   def email_should_send
-    return false if invalid_email?
+    return false if email_missing?
 
     true
   end
 
-  def invalid_email?
+  def email_missing?
     if @sent_hearing_email_event.email_address.blank?
-      log("email_invalid")
+      log("email missing")
       return true
     end
 
