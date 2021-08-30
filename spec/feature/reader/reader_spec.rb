@@ -954,14 +954,14 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".cf-modal")
     end
 
-    fscenario "Sort order" do
+    scenario "Sort order" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       # this will wait for the document count to display before expecting anything
       find("div.num-of-documents", text: "#{documents.length} Documents")
 
       # confirm that the documents are sorted by receipt date ascending (oldest first)
-      sorted_documents = documents.sort_by(&:received_at)
+      sorted_documents = documents.sort_by(&:received_at).reverse!
 
       sorted_documents.each_with_index do |doc, index|
         selector = "#documents-table-body tr:nth-child(#{index + 1}) td.receipt-date-column"
@@ -969,7 +969,7 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    fscenario "Categories" do
+    scenario "Categories" do
       cats = {
         procedural: "Procedural",
         medical: "Medical",
@@ -993,9 +993,9 @@ RSpec.feature "Reader", :all_dbs do
         find("div.num-of-documents", text: "#{documents.length} Documents")
 
         # these are the categories we expect the documents to have in the expected sort order
-        expect(cats_in_row(1)).to match_array [cats[:procedural], cats[:case_summary]]
-        expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
         expect(cats_in_row(3)).to match_array [cats[:case_summary]]
+        expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
+        expect(cats_in_row(1)).to match_array [cats[:procedural], cats[:case_summary]]
       end
 
       step "edit the BVA Decision document categories" do
