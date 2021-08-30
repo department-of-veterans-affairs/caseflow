@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_20_153715) do
+ActiveRecord::Schema.define(version: 2021_08_25_194335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -386,8 +386,8 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
 
   create_table "claimants", comment: "This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews.", force: :cascade do |t|
     t.datetime "created_at"
-    t.bigint "decision_review_id", comment: "The ID of the decision review the claimant is on."
-    t.string "decision_review_type", comment: "The type of decision review the claimant is on."
+    t.bigint "decision_review_id", null: false, comment: "The ID of the decision review the claimant is on."
+    t.string "decision_review_type", null: false, comment: "The type of decision review the claimant is on."
     t.text "notes", comment: "This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
@@ -1542,8 +1542,6 @@ ActiveRecord::Schema.define(version: 2021_08_20_153715) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
-    # To-do: consider removing this index, which is superceded by the
-    # addition of index_vbms_uploaded_documents_on_appeal_type_and_appeal_id
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
     t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
