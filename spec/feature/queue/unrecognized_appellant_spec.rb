@@ -141,7 +141,7 @@ feature "Unrecognized appellants", :postgres do
       FeatureToggle.enable!(:edit_unrecognized_appellant_poa)
       FeatureToggle.enable!(:poa_button_refresh)
     end
-    after do 
+    after do
       FeatureToggle.disable!(:edit_unrecognized_appellant_poa)
       FeatureToggle.disable!(:poa_button_refresh)
     end

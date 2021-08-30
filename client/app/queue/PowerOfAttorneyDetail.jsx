@@ -64,7 +64,12 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       return null;
     }
 
-    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} appellantType={appellantType} />;
+    return <WrappedComponent
+      powerOfAttorney={powerOfAttorney}
+      appealId={appealId}
+      poaAlert={poaAlert}
+      appellantType={appellantType}
+    />;
   };
 
   wrappedComponent.propTypes = {
