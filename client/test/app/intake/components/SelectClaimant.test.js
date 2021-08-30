@@ -148,10 +148,10 @@ describe('SelectClaimant', () => {
         const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         expect(
-          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })[0]
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })
         ).toBeInTheDocument();
         expect(
-          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })[0]
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })
         ).toBeInTheDocument();
 
         expect(container).toMatchSnapshot();
@@ -164,10 +164,10 @@ describe('SelectClaimant', () => {
         const { container } = setupDefault({ ...defaultProps, formType, veteranIsNotClaimant: true });
 
         expect(
-          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })[0]
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_START, { exact: false })
         ).toBeInTheDocument();
         expect(
-          screen.queryAllByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })[0]
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_END, { exact: false })
         ).toBeInTheDocument();
 
         expect(container).toMatchSnapshot();
