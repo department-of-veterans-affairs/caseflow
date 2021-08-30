@@ -1,0 +1,764 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClaimantForm default values prepopulates with default values 1`] = `
+<div>
+  <h1>
+    Add Claimant
+  </h1>
+  <p>
+    You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.
+  </p>
+  <form>
+    <div
+      class=""
+    >
+      <div
+        class="cf-form-dropdown dropdown-relationship"
+      >
+        <label
+          class="question-label"
+          for="relationship"
+          id="relationship-label"
+        >
+          <strong>
+            <span>
+              Relationship to the Veteran
+            </span>
+          </strong>
+        </label>
+        <div
+          class="cf-select"
+        >
+          <div
+            class=" css-2b097c-container"
+          >
+            <div
+              class="cf-select__control css-yk16xz-control"
+            >
+              <div
+                class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+              >
+                <div
+                  class="cf-select__single-value css-1uccc91-singleValue"
+                >
+                  Other
+                </div>
+                <div
+                  class="css-81nyic-Input"
+                >
+                  <div
+                    class="cf-select__input"
+                    style="display: inline-block;"
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-labelledby="relationship-label"
+                      aria-owns="relationship-listbox"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      id="relationship"
+                      role="combobox"
+                      spellcheck="false"
+                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+              >
+                <span
+                  class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="css-6q0nyr-Svg"
+                    focusable="false"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    width="20"
+                  >
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value="other"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            Is the claimant an organization or individual?
+             
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="partyType_organization"
+            name="partyType"
+            type="radio"
+            value="organization"
+          />
+          <label
+            class=""
+            for="partyType_organization"
+          >
+            Organization
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="partyType_individual"
+            name="partyType"
+            type="radio"
+            value="individual"
+          />
+          <label
+            class=""
+            for="partyType_individual"
+          >
+            Individual
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <br />
+    <div
+      class="sc-eCssSg jjCqxh"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="firstName"
+        >
+          <strong>
+            <span>
+              First name
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="firstName"
+          name="firstName"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-eCssSg jjCqxh"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="middleName"
+        >
+          <strong>
+            <span>
+              Middle name/initial
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="middleName"
+          name="middleName"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-eCssSg jjCqxh"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="lastName"
+        >
+          <strong>
+            <span>
+              Last name
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="lastName"
+          name="lastName"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-jSgupP fVzfOf"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="suffix"
+        >
+          <strong>
+            <span>
+              Suffix
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="suffix"
+          name="suffix"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="dateOfBirth"
+        >
+          <span>
+            <b>
+              Date of birth
+            </b>
+            <span
+              class="cf-optional"
+            >
+              Optional
+            </span>
+          </span>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="dateOfBirth"
+          max="9999-12-31"
+          name="dateOfBirth"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-hKgILt lgVycS"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="addressLine1"
+        >
+          <strong>
+            <span>
+              Street address 1
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="addressLine1"
+          name="addressLine1"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-hKgILt lgVycS"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="addressLine2"
+        >
+          <strong>
+            <span>
+              Street address 2
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="addressLine2"
+          name="addressLine2"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-bdfBwQ eMrOcK"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="city"
+        >
+          <strong>
+            <span>
+              City
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="city"
+          name="city"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-state"
+        >
+          <label
+            class="question-label"
+            for="state"
+            id="state-label"
+          >
+            <strong>
+              <span>
+                State
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    CA
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="state-label"
+                        aria-owns="state-listbox"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="state"
+                        role="combobox"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"
+                      />
+                    </svg>
+                  </div>
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <input
+                name="state"
+                type="hidden"
+                value="California"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sc-gsTCUz fPDxqp"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="zip"
+        >
+          <strong>
+            <span>
+              Zip
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="zip"
+          name="zip"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="country"
+        >
+          <strong>
+            <span>
+              Country
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="country"
+          name="country"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-eCssSg jjCqxh"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="emailAddress"
+        >
+          <strong>
+            <span>
+              Claimant email
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="emailAddress"
+          name="emailAddress"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="sc-gKsewC gdIzHy"
+    >
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="phoneNumber"
+        >
+          <strong>
+            <span>
+              Phone number
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="phoneNumber"
+          name="phoneNumber"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            Do you have a VA Form 21-22 for this claimant?
+             
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="poaForm_false"
+            name="poaForm"
+            type="radio"
+            value="false"
+          />
+          <label
+            class=""
+            for="poaForm_false"
+          >
+            No
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="poaForm_true"
+            name="poaForm"
+            type="radio"
+            value="true"
+          />
+          <label
+            class=""
+            for="poaForm_true"
+          >
+            Yes
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+`;
+
+exports[`ClaimantForm renders default state correctly 1`] = `
+<div>
+  <h1>
+    Add Claimant
+  </h1>
+  <p>
+    You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.
+  </p>
+  <form>
+    <div
+      class=""
+    >
+      <div
+        class="cf-form-dropdown dropdown-relationship"
+      >
+        <label
+          class="question-label"
+          for="relationship"
+          id="relationship-label"
+        >
+          <strong>
+            <span>
+              Relationship to the Veteran
+            </span>
+          </strong>
+        </label>
+        <div
+          class="cf-select"
+        >
+          <div
+            class=" css-2b097c-container"
+          >
+            <div
+              class="cf-select__control css-yk16xz-control"
+            >
+              <div
+                class="cf-select__value-container css-g1d714-ValueContainer"
+              >
+                <div
+                  class="cf-select__placeholder css-1wa3eu0-placeholder"
+                >
+                  Select...
+                </div>
+                <div
+                  class="css-81nyic-Input"
+                >
+                  <div
+                    class="cf-select__input"
+                    style="display: inline-block;"
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-labelledby="relationship-label"
+                      aria-owns="relationship-listbox"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      id="relationship"
+                      role="combobox"
+                      spellcheck="false"
+                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+              >
+                <span
+                  class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="css-6q0nyr-Svg"
+                    focusable="false"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    width="20"
+                  >
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <br />
+  </form>
+</div>
+`;

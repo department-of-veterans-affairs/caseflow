@@ -1,0 +1,17 @@
+<h3>
+  Test Your Connection
+</h3>
+<% if defined?(kind) && kind == :reminder %>
+  <p>
+    Test your audio and video connection by visiting the VA Video Connect test site <strong>with the device you plan to use for your hearing</strong>: <%= external_link @test_link %>
+  </p>
+<% else %>
+  <p>
+    At least 1 week before your hearing day, test your audio and video
+    connection by visiting the VA Video Connect test site <strong>with the device
+    you plan to use for your hearing</strong>: <%= external_link @test_link %>
+  </p>
+  <p>
+    Want to learn more about Virtual Tele-hearings? Watch this video at <%= external_link "https://www.youtube.com/watch?v=UDI3C_ytJt8" %>.
+  </p>
+<% end %>

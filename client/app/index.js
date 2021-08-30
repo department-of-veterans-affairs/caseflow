@@ -80,6 +80,7 @@ const COMPONENTS = {
   Login,
   TestUsers,
   TestData,
+  Error403,
   Error404,
   Error500,
   OutOfService,

@@ -85,8 +85,6 @@ group :test, :development, :demo do
   gem "brakeman"
   gem "bullet"
   gem "bundler-audit"
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: :ruby
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
@@ -98,8 +96,10 @@ group :test, :development, :demo do
   gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
-  gem "pry"
-  gem "pry-byebug"
+  gem "pluck_to_hash"
+  gem "pry", "~> 0.13.0"
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem "pry-byebug", "~> 3.9"
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"

@@ -30,10 +30,7 @@ feature "Non-veteran claimants", :postgres do
 
   let(:decision_date) { 3.months.ago.mdY }
 
-  context "with non_veteran_claimants feature toggle" do
-    before { FeatureToggle.enable!(:non_veteran_claimants) }
-    after  { FeatureToggle.disable!(:non_veteran_claimants) }
-
+  context "when intaking appeals with non_veteran_claimants" do
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
     end
@@ -321,6 +318,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     it "returns to review page if data is reloaded before saving" do
+      BvaIntake.singleton.add_user(current_user)
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.appeal)
       safe_click ".cf-submit.usa-button"
@@ -435,11 +433,14 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(claimant.name).to eq("Darlyn Duck")
         expect(claimant.relationship).to eq("Spouse")
-        expect(page).to have_content("Edit Information")
 
+        expect(page).to have_content("Edit Information")
         click_on "Edit Information"
 
         expect(page).to have_content("Edit Appellant Information")
+        # Check that form is prepopulated with existing appellant information
+        expect(find("#firstName").value).to eq "Darlyn"
+        expect(find("#lastName").value).to eq "Duck"
       end
     end
 
@@ -511,6 +512,9 @@ feature "Non-veteran claimants", :postgres do
 
   def populate_review_data
     fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
     click_intake_continue
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click

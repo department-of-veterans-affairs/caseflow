@@ -216,5 +216,13 @@ RSpec.describe IntakesController, :postgres do
         }
       ]
     end
+    it "works when the user is not an intake user" do
+      User.unauthenticate!
+      User.authenticate!(roles: ["NOT Mail Intake"])
+
+      get :attorneys, params: { query: "JON SMITH" }
+
+      expect(response.status).to eq(200)
+    end
   end
 end

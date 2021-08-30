@@ -9,7 +9,7 @@ import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
-import { marginTop, noMaxWidth } from '../details/style';
+import { marginTop } from '../details/style';
 
 export const RepresentativeSection = ({
   hearing,
@@ -17,10 +17,12 @@ export const RepresentativeSection = ({
   errors,
   type,
   readOnly,
+  fullWidth,
   update,
   appellantTitle,
   showTimezoneField,
-  schedulingToVirtual
+  schedulingToVirtual,
+  userCanCollectVideoCentralEmails
 }) => (
   <VirtualHearingSection label="Power of Attorney">
     {hearing?.representative ? (
@@ -37,10 +39,11 @@ export const RepresentativeSection = ({
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    {showTimezoneField && schedulingToVirtual && (
+    {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+        <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
+            optional={!virtualHearing?.representativeEmail}
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
             value={virtualHearing?.representativeTz}
@@ -57,8 +60,9 @@ export const RepresentativeSection = ({
       </div>
     )}
     <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-      <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+      <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
         <VirtualHearingEmail
+          optional
           readOnly={readOnly}
           emailType="representativeEmail"
           label="POA/Representative Email"
@@ -83,7 +87,9 @@ RepresentativeSection.propTypes = {
   type: PropTypes.string,
   update: PropTypes.func,
   readOnly: PropTypes.bool,
+  fullWidth: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showTimezoneField: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool
 };

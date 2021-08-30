@@ -4,10 +4,10 @@ require_relative "./shared_setup.rb"
 
 RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   describe "with a dismissed appeal" do
-    let(:veteran) { create(:veteran, date_of_death: 30.days.ago) }
+    let(:veteran) { create(:veteran, date_of_death: Time.zone.parse("2021-07-04")) }
     let(:appeal) do
       create(:appeal,
-             :dispatched_with_decision_issue,
+             :dispatched, :with_decision_issue,
              docket_type: docket_type,
              disposition: "dismissed_death",
              receipt_date: veteran.date_of_death + 5.days,
@@ -23,6 +23,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
 
       context "with evidence submission docket" do
         let(:docket_type) { "evidence_submission" }
+        let(:evidence_submission_window_end_time) { Time.zone.parse("2021-10-17 00:00") }
 
         it_should_behave_like "fill substitution form"
       end
@@ -33,7 +34,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         it_should_behave_like "fill substitution form"
       end
 
-      context "with direct review docket" do
+      context "with hearing docket" do
         let(:docket_type) { Constants.AMA_DOCKETS.hearing }
 
         context "without hearings feature toggle" do

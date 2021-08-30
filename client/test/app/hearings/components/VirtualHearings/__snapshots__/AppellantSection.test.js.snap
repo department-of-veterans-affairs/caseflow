@@ -188,12 +188,13 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Appellant Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -203,11 +204,6 @@ SAN FRANCISCO, CA 94103
               Array [
                 "cf-form-textinput cf-inline-field",
               ]
-            }
-            inputStyling={
-              Object {
-                "data-css-d0z96": "",
-              }
             }
             name="Appellant Email"
             onChange={[Function]}
@@ -247,7 +243,6 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                data-css-d0z96=""
                 id="Appellant Email"
                 name="Appellant Email"
                 onChange={[Function]}
@@ -259,11 +254,11 @@ SAN FRANCISCO, CA 94103
           <HelperText
             label="Changes to the email are used to send notifications for this hearing only"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
-            </span>
+            </div>
           </HelperText>
         </VirtualHearingEmail>
       </div>
@@ -435,12 +430,13 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           email={null}
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -650,11 +646,12 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -878,12 +875,13 @@ SAN FRANCISCO, CA 94103
       className="usa-grid css-1jfbwxw"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <Timezone
           label="Veteran Timezone"
           name="appellantTz"
           onChange={[Function]}
+          optional={false}
           readOnly={false}
           required={true}
           roTimezone="America/New_York"
@@ -896,6 +894,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="appellantTz"
             onChange={[Function]}
+            optional={false}
             options={
               Array [
                 Object {
@@ -1698,6 +1697,7 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="Veteran Timezone"
                       name="Veteran Timezone"
+                      optional={false}
                       required={true}
                     >
                       <span>
@@ -16972,11 +16972,11 @@ SAN FRANCISCO, CA 94103
         <HelperText
           label="The hearing time in email notifications is calculated based on the timezone"
         >
-          <span
-            data-css-tgxxqt=""
+          <div
+            className="helper-text"
           >
             The hearing time in email notifications is calculated based on the timezone
-          </span>
+          </div>
         </HelperText>
       </div>
     </div>
@@ -16985,12 +16985,13 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -17000,11 +17001,6 @@ SAN FRANCISCO, CA 94103
               Array [
                 "cf-form-textinput cf-inline-field",
               ]
-            }
-            inputStyling={
-              Object {
-                "data-css-d0z96": "",
-              }
             }
             name="Veteran Email"
             onChange={[Function]}
@@ -17044,7 +17040,6 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                data-css-d0z96=""
                 id="Veteran Email"
                 name="Veteran Email"
                 onChange={[Function]}
@@ -17056,11 +17051,11 @@ SAN FRANCISCO, CA 94103
           <HelperText
             label="Changes to the email are used to send notifications for this hearing only"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
-            </span>
+            </div>
           </HelperText>
         </VirtualHearingEmail>
       </div>
@@ -17243,12 +17238,13 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
@@ -17449,12 +17445,13 @@ SAN FRANCISCO, CA 94103
       id="email-section"
     >
       <div
-        className="usa-width-one-half css-uplrl8"
+        className="usa-width-one-half"
       >
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -17464,11 +17461,6 @@ SAN FRANCISCO, CA 94103
               Array [
                 "cf-form-textinput cf-inline-field",
               ]
-            }
-            inputStyling={
-              Object {
-                "data-css-d0z96": "",
-              }
             }
             name="Veteran Email"
             onChange={[Function]}
@@ -17508,7 +17500,6 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                data-css-d0z96=""
                 id="Veteran Email"
                 name="Veteran Email"
                 onChange={[Function]}
@@ -17520,11 +17511,11 @@ SAN FRANCISCO, CA 94103
           <HelperText
             label="Changes to the email are used to send notifications for this hearing only"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
-            </span>
+            </div>
           </HelperText>
         </VirtualHearingEmail>
       </div>

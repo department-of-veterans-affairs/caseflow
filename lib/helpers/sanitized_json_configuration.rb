@@ -120,7 +120,9 @@ class SanitizedJsonConfiguration
                   hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten +
                   hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten
 
-          users.uniq.compact.sort_by(&:id)
+          org_admins = organizations_for(records[Task], records[User]).map(&:admins).flatten
+
+          (users + org_admins).uniq.compact.sort_by(&:id)
         end
       },
       OrganizationsUser => {
@@ -129,11 +131,7 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          # eager load task associations
-          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_to).assigned_to_any_org
-          org_ids = records[OrganizationsUser].map(&:organization_id) + org_tasks.map(&:assigned_to_id)
-          # Use Organization.unscoped to include inactive organizations when exporting
-          Organization.unscoped.where(id: org_ids).order(:id)
+          organizations_for(records[Task], records[User])
         end
       },
       Person => {
@@ -149,6 +147,14 @@ class SanitizedJsonConfiguration
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
+
+  def organizations_for(tasks, users)
+    # eager load task associations
+    org_tasks = Task.where(id: tasks.map(&:id)).includes(:assigned_to).assigned_to_any_org
+    org_ids = org_tasks.map(&:assigned_to_id) + OrganizationsUser.where(user: users).map(&:organization_id)
+    # Use Organization.unscoped to include inactive organizations when exporting
+    Organization.unscoped.where(id: org_ids.uniq).order(:id)
+  end
 
   def reorder_for_import(tasks)
     tasks = tasks.sort_by(&:id)
@@ -209,6 +215,8 @@ class SanitizedJsonConfiguration
 
         # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
+
+        class_to_fieldnames_hash.transform_values!(&:uniq)
       end.compact
     end
   end

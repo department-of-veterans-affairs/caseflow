@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+def wait_for_page_render
+  # This find forces a wait for the page to render. Without it, a test asserting presence or absence of content
+  # may pass whether the content is present or not!
+  find("div", id: "caseTitleDetailsSubheader")
+end
+
 RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -186,6 +192,7 @@ RSpec.feature "Case details", :all_dbs do
 
   context "attorney case details view" do
     context "when Veteran is the appellant" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -194,7 +201,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -227,6 +234,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "when veteran is not in BGS" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -235,7 +243,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -250,10 +258,14 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(page).to have_content("About the Veteran")
         expect(page.has_no_content?("About the Appellant")).to eq(true)
-        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/1/1990")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to_not have_content("Regional Office")
+
+        # Veteran gender information comes from BGS so case details page will display no gender information when the
+        # Veteran is not in BGS.
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_MALE)
       end
     end
 
@@ -402,7 +414,7 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view contains POA information" do
           visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to_not have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
+          expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
           expect(page).to have_content(appeal.representative_name)
           expect(page).to_not have_button("Refresh POA")
         end
@@ -632,8 +644,7 @@ RSpec.feature "Case details", :all_dbs do
           vacols_case: create(
             :case,
             :assigned,
-            user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            user: attorney_user
           )
         )
       end
@@ -1208,7 +1219,6 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
       let!(:attorney_task) { create(:ama_attorney_task, parent: judge_task, assigned_to: user) }
-      let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
         FeatureToggle.enable!(:view_nod_date_updates)
@@ -1216,7 +1226,6 @@ RSpec.feature "Case details", :all_dbs do
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
         nod_date_update.update!(updated_at: "2019-01-05")
       end
@@ -1235,11 +1244,9 @@ RSpec.feature "Case details", :all_dbs do
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
-        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
-        expect(second_row_with_date).to have_content("03/01/2019")
-        expect(third_row_with_date).to have_content("02/01/2019")
-        expect(fourth_row_with_date).to have_content("01/05/2019")
+        expect(second_row_with_date).to have_content("02/01/2019")
+        expect(third_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
@@ -1892,8 +1899,9 @@ RSpec.feature "Case details", :all_dbs do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
         let(:disposition) { "allowed" }
+        let(:status) { :dispatched }
         let(:appeal) do
-          create(:appeal, :dispatched_with_decision_issue,
+          create(:appeal, status, :with_decision_issue,
                  docket_type: docket_type,
                  stream_type: case_type,
                  disposition: disposition)
@@ -1908,9 +1916,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is not shown" do
           it "the 'Add Substitute' button is not shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            # This find forces a wait for the page to render. Without it, this test will always pass,
-            # whether the content is present or not!
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -1918,7 +1924,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is shown" do
           it "the 'Add Substitute' button is shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -1933,6 +1939,13 @@ RSpec.feature "Case details", :all_dbs do
           let(:case_type) { "de_novo" }
 
           it_behaves_like "the button is not shown"
+        end
+
+        context "When the appeal is in post-dispatch state" do
+          let(:disposition) { "dismissed_death" }
+          let(:status) { :post_dispatch }
+
+          it_behaves_like "the button is shown"
         end
 
         context "when the docket type is 'hearing'" do
@@ -1985,7 +1998,59 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content("About the Appellant")
           expect(page).to have_content("Substitution granted by the RO")
           expect(page).to have_content(substitution_date)
+          expect(page).to have_content(COPY::CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE)
         end
+      end
+    end
+
+    describe "Add CAVC Remand button" do
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+
+      let(:appeal) do
+        create(:appeal, status, :with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+      let(:user) { create(:user, css_id: "CAVC_LIT_USER") }
+
+      before do
+        CavcLitigationSupport.singleton.add_user(user)
+        User.authenticate!(user: user)
+        FeatureToggle.enable!(:cavc_remand)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add CAVC Remand' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          wait_for_page_render
+          expect(page).to have_no_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "The 'Add CAVC Remand' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          wait_for_page_render
+          expect(page).to have_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      context "when the appeal is in dispatch state" do
+        let(:status) { :dispatched }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is in post-dispatch state" do
+        let(:status) { :post_dispatch }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is not yet dispatched" do
+        let(:status) { :assigned_to_judge }
+        it_behaves_like "the button is not shown"
       end
     end
   end
@@ -2072,6 +2137,19 @@ RSpec.feature "Case details", :all_dbs do
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+    let(:veteran) { create(:veteran) }
+    let(:higher_level_review) do
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+
+    let(:supplemental_claim) do
+      create(:supplemental_claim,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+    let(:user) { create(:intake_user) }
 
     context "when the current user does not have high enough BGS sensitivity level" do
       before do
@@ -2135,6 +2213,99 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_current_path(case_details_page_path)
           end
         end
+      end
+    end
+
+    context "when the current user does not have sensitivity level for Veteran file" do
+      before do
+        User.authenticate!(user: user)
+        Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+        Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
+      end
+
+      context "when case is higher level review" do
+        it "renders 403 error page" do
+          visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
+        end
+      end
+
+      context "when case is supplemental claim" do
+        it "renders 403 error page" do
+          visit "/supplemental_claims/#{supplemental_claim.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
+        end
+      end
+    end
+  end
+
+  describe "POA/VSO restricted visibility" do
+    let(:appeal) { create(:appeal) }
+
+    RSpec.shared_context("with restrict_poa_visibility feature toggle") do
+      before { FeatureToggle.enable!(:restrict_poa_visibility) }
+      after { FeatureToggle.disable!(:restrict_poa_visibility) }
+    end
+
+    RSpec.shared_examples("access Case Details") do
+      it "should view Case Details page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+      end
+    end
+
+    RSpec.shared_examples("vso restricted") do
+      it "has VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    RSpec.shared_examples("vso unrestricted") do
+      it "does not have VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    context "as vso user" do
+      let(:user) { create(:user, :vso_role) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso restricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
+      end
+    end
+
+    context "as non-vso user" do
+      let(:user) { create(:default_user) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso unrestricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
       end
     end
   end

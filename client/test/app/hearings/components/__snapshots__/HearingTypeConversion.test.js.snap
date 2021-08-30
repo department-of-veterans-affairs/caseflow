@@ -16,6 +16,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -118,6 +119,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "appellantFullName": "Abellona Valtas",
         "appellantIsNotVeteran": false,
         "appellantRelationship": "Spouse",
+        "appellantTz": "America/New_York",
         "assignedAttorney": null,
         "assignedJudge": null,
         "assignedToLocation": "Hearing Admin",
@@ -361,11 +363,11 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             <HelperText
               label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
             >
-              <span
-                data-css-tgxxqt=""
+              <div
+                className="helper-text"
               >
                 Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
-              </span>
+              </div>
             </HelperText>
             <AppellantSection
               appellantTitle="Veteran"
@@ -422,11 +424,12 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   id="email-section"
                 >
                   <div
-                    className="usa-width-one-half css-uplrl8"
+                    className="usa-width-one-half"
                   >
                     <VirtualHearingEmail
                       emailType="appellantEmail"
                       label="Veteran Email"
+                      optional={false}
                       readOnly={true}
                       required={true}
                       type="Virtual"
@@ -524,11 +527,12 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   className="usa-grid css-1jfbwxw"
                 >
                   <div
-                    className="usa-width-one-half css-uplrl8"
+                    className="usa-width-one-half"
                   >
                     <VirtualHearingEmail
                       emailType="representativeEmail"
                       label="POA/Representative Email"
+                      optional={true}
                       readOnly={true}
                       type="Virtual"
                     >
