@@ -49,6 +49,7 @@ class UpdateAttorneyCaseReview
   end
 
   def correct_ama_document_id
+    # binding.pry
     return unless case_review
     return if correct_format?
 

@@ -3,12 +3,12 @@ import { MemoryRouter } from 'react-router';
 
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
-import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
-import { formatTaskData } from 'app/queue/substituteAppellant/tasks/utils';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
+const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
 
-const filteredEvidenceSubmissionTasks = formatTaskData(
+const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
   allEvidenceSubmissionWindowTasks
 );
 
@@ -39,7 +39,7 @@ export default {
 
 const storeArgs = {
   substituteAppellant: {
-    relationships:  [
+    relationships: [
       { value: 'CLAIMANT_WITH_PVA_AS_VSO',
         fullName: 'Bob Vance',
         relationshipType: 'Spouse',

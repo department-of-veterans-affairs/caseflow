@@ -86,6 +86,7 @@ export class CaseTitleDetails extends React.PureComponent {
       requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
       then(() => {
         this.handleModalClose();
+        window.location.reload();
       }).
       catch((error) => {
         const documentIdErrors = JSON.parse(error.message).errors;
@@ -197,7 +198,7 @@ export class CaseTitleDetails extends React.PureComponent {
                   {
                     classNames: ['usa-button'],
                     name: 'Save',
-                    disabled: !this.state.value,
+                    disabled: !this.state.value || this.state.value === appeal.documentID,
                     onClick: this.submitForm(appeal.caseReviewId, appeal.isLegacyAppeal)
                   }
                 ]}
@@ -207,8 +208,7 @@ export class CaseTitleDetails extends React.PureComponent {
                 <TextField
                   errorMessage={highlightModal ? documentIdError : null}
                   name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
-                  placeholder={appeal.documentID}
-                  value={this.state.value}
+                  value={this.state.value || appeal.documentID}
                   onChange={this.changeButtonState}
                   autoComplete="off"
                   required

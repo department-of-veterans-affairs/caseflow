@@ -59,7 +59,30 @@ module LegacyAttorneyCaseReviewDocumentIdValidator
       "IME" => invalid_ime_document_id_message,
       "OTI" => invalid_ime_document_id_message,
       "DEC" => invalid_decision_document_id_message,
-      "OTD" => invalid_decision_document_id_message
+      "OTD" => invalid_decision_document_id_message,
+      "DRM" => invalid_decision_document_id_message,
+      "AFI" => invalid_decision_document_id_message,
+      "BOT" => invalid_decision_document_id_message,
+      "COR" => invalid_decision_document_id_message,
+      "DAF" => invalid_decision_document_id_message,
+      "DEV" => invalid_decision_document_id_message,
+      "DIM" => invalid_decision_document_id_message,
+      "DOR" => invalid_decision_document_id_message,
+      "DVH" => invalid_decision_document_id_message,
+      "INT" => invalid_decision_document_id_message,
+      "OTB" => invalid_decision_document_id_message,
+      "OTH" => invalid_decision_document_id_message,
+      "OTR" => invalid_decision_document_id_message,
+      "REA" => invalid_decision_document_id_message,
+      "REM" => invalid_decision_document_id_message,
+      "REU" => invalid_decision_document_id_message,
+      "RRC" => invalid_decision_document_id_message,
+      "SUP" => invalid_decision_document_id_message,
+      "VAC" => invalid_decision_document_id_message,
+      "VDC" => invalid_decision_document_id_message,
+      "VDR" => invalid_decision_document_id_message,
+      "VDS" => invalid_decision_document_id_message,
+      "VRM" => invalid_decision_document_id_message
     }
   end
 
