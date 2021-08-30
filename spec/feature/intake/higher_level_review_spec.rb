@@ -52,7 +52,6 @@ feature "Higher-Level Review", :all_dbs do
   before { FeatureToggle.enable!(:filed_by_va_gov_hlr) }
   after { FeatureToggle.disable!(:filed_by_va_gov_hlr) }
   it "Creates an end product and contentions for it" do
-    
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
