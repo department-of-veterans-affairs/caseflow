@@ -16,7 +16,7 @@ feature "NonComp Reviews Queue", :postgres do
     let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
     let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
     let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
-    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal) }
+    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
 
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
