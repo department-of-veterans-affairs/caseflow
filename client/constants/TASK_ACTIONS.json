@@ -363,5 +363,10 @@
     "label": "Assign to Program Office",
     "value": "modal/assign_to_program_office",
     "func": "vha_assign_to_program_office_data"
+  },
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE": {
+    "label": "Assign to VISN",
+    "value": "modal/assign_to_regional_office",
+    "func": "vha_assign_to_regional_office_data"
   }
 }

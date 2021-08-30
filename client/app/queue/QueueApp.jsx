@@ -286,6 +286,10 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
+  routedAssignToVhaRegionalOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -832,6 +836,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaRegionalOffice}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${

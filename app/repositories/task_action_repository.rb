@@ -456,6 +456,20 @@ class TaskActionRepository
       }
     end
 
+    def vha_assign_to_regional_office_data(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        options: organizations_to_options(VhaRegionalOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task, user)
