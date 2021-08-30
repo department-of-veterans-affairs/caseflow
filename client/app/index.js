@@ -37,6 +37,7 @@ const Hearings = React.lazy(() => import('app/hearings/index'));
 const Help = React.lazy(() => import('app/help/index'));
 const Error500 = React.lazy(() => import('app/errors/Error500'));
 const Error404 = React.lazy(() => import('app/errors/Error404'));
+const Error403 = React.lazy(() => import('app/errors/Error403'));
 const Unauthorized = React.lazy(() => import('app/containers/Unauthorized'));
 const OutOfService = React.lazy(() => import('app/containers/OutOfService'));
 const Feedback = React.lazy(() => import('app/containers/Feedback'));
@@ -56,7 +57,7 @@ const IntakeEdit = React.lazy(() => import('app/intakeEdit'));
 const NonComp = React.lazy(() => import('app/nonComp'));
 const AsyncableJobs = React.lazy(() => import('app/asyncableJobs'));
 const Inbox = React.lazy(() => import('app/inbox'));
-const Explain = React.lazy(() => import('app/Explain'));
+const Explain = React.lazy(() => import('app/explain'));
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
