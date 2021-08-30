@@ -72,7 +72,6 @@ FactoryBot.define do
       end
     end
 
-
     # A better representation of a hearing subtree:
     # RootTask, on_hold
     #   DistributionTask, on_hold

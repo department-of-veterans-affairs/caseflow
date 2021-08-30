@@ -174,7 +174,7 @@ namespace :emails do
     desc "creates reminder emails for hearings mailer"
     # :environment is required for FactoryBot build/create to work
     task status_emails: :environment do
-      ["appellant", "representative"].each do |recipient_role|
+      %w["appellant representative"].each do |recipient_role|
         # Build the objects for test
         include FactoryBot::Syntax::Methods
         sent_hearing_email_event = build(

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Hearings::SendSentStatusEmail
-
   def initialize(sent_hearing_admin_email_event:)
     @sent_hearing_admin_email_event = sent_hearing_admin_email_event
     @sent_hearing_email_event = sent_hearing_admin_email_event.sent_hearing_email_event
