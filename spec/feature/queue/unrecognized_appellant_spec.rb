@@ -148,6 +148,7 @@ feature "Unrecognized appellants", :postgres do
       allow(user).to receive(:vacols_roles).and_return(["colocated"])
       visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
       expect(page).to have_content("Update POA")
+      expect(page).to have_content("Refresh POA")
 
       click_on "Update POA"
       expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")

@@ -29,6 +29,7 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
     const appeal = appealWithDetailSelector(state, { appealId });
 
     return {
+      appellantType: appeal?.appellantType,
       powerOfAttorney: appeal?.powerOfAttorney,
       loading: false,
       error: loadingPowerOfAttorney?.error
@@ -43,7 +44,7 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
  */
 const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
   const wrappedComponent = ({ appealId, getAppealValue: getAppealValueRedux }) => {
-    const { error, loading, powerOfAttorney } = useSelector(
+    const { error, loading, powerOfAttorney, appellantType } = useSelector(
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
     );
@@ -63,7 +64,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       return null;
     }
 
-    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} />;
+    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} appellantType={appellantType} />;
   };
 
   wrappedComponent.propTypes = {
@@ -126,6 +127,8 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     const unrecognizedPoa = 'Unrecognized representative';
     const recognizedAppellant = appellantType !== unrecognizedAppellant;
     const recognizedPoa = poa.representative_type !== unrecognizedPoa;
+    console.log(appellantType)
+    console.log(poa)
 
     if (recognizedAppellant && recognizedPoa) {
       return <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />;
