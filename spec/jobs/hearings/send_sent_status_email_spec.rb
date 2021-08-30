@@ -7,7 +7,7 @@ describe Hearings::SendSentStatusEmail do
       create(:sent_hearing_admin_email_event, sent_hearing_email_event: sent_hearing_email_event)
     end
     let(:sender) { described_class.new(sent_hearing_admin_email_event: sent_hearing_admin_email_event) }
-    let(:external_message_id) { "a-very-long-id" }
+    let(:external_message_id) { "id/123423423" }
     subject { sender.call }
 
     it "sends a notification email" do
