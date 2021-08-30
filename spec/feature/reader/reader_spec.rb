@@ -362,7 +362,7 @@ RSpec.feature "Reader", :all_dbs do
         .to eq "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
     end
 
-    scenario "Arrow keys to navigate through documents" do
+    fscenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
       end
@@ -1310,7 +1310,8 @@ RSpec.feature "Reader", :all_dbs do
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scrolled_amount(elem_name)).to eq(first_match_scroll_top)
+      expect(scrolled_amount(elem_name)).to be <= first_match_scroll_top
+      expect(scrolled_amount(elem_name)).to be >= first_match_scroll_top - 5
     end
 
     scenario "Download PDF file" do
