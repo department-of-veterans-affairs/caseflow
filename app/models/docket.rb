@@ -67,15 +67,21 @@ class Docket
       # check if distributed case already exists for this appeal.
       # if so, make a distributed case with a different case id.
       # This is modeled after the allow! method in the redistributed_case model
-      if DistributedCase.find_by(case_id: appeal.uuid)
+      uuid = appeal.uuid
+      distributed_case = DistributedCase.find_by(case_id: uuid)
+      if distributed_case
+        Rails.logger.error("A distributed case, id #{distributed_case.id}, "\
+          "\n already exists for appeal of uuid #{uuid}.")
+        Raven.capture_message("A distributed case, id #{distributed_case.id}, "\
+          "\n already exists for appeal of uuid #{uuid}.")
         ymd = Time.zone.today.strftime("%F")
-        distribution.distributed_cases.create!(case_id: "#{appeal.uuid}-redistributed-#{ymd}",
+        distribution.distributed_cases.create!(case_id: "#{uuid}-redistributed-#{ymd}",
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: appeal.ready_for_distribution_at,
                                                task: task)
       else
-        distribution.distributed_cases.create!(case_id: appeal.uuid,
+        distribution.distributed_cases.create!(case_id: uuid,
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: appeal.ready_for_distribution_at,
@@ -83,6 +89,7 @@ class Docket
       end
     end
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
@@ -125,7 +132,6 @@ class Docket
         .group("appeals.id")
     end
 
-    # rubocop:disable Metrics/LineLength
     def nonpriority
       include_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
@@ -133,7 +139,6 @@ class Docket
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
-    # rubocop:enable Metrics/LineLength
 
     def include_aod_motions
       joins(claimants: :person)
