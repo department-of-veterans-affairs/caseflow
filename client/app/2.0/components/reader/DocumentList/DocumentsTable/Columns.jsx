@@ -106,10 +106,10 @@ export const ReceiptDateHeader = ({
     name="Receipt Date"
     id="receipt-date-header"
     classNames={['cf-document-list-button-header']}
-    ariaLabel={`Sort by Receipt Date. ${sortBy === 'receivedAt' ? sortLabel : '' }`}
-    onClick={() => changeSort('receivedAt')}
+    ariaLabel={`Sort by Receipt Date. ${sortBy === 'received_at' ? sortLabel : '' }`}
+    onClick={() => changeSort('received_at')}
   >
-    Receipt Date {sortBy === 'receivedAt' ? sortIcon : <DoubleArrow />}
+    Receipt Date {sortBy === 'received_at' ? sortIcon : <DoubleArrow />}
   </Button>
 );
 
@@ -120,6 +120,7 @@ ReceiptDateHeader.propTypes = {
   sortLabel: PropTypes.string,
 };
 
+/* eslint-disable camelcase */
 /**
  * Receipt Date Value for Receipt Date Column in Documents table
  * @param {Object} doc -- The document for which to display the receipt date
@@ -127,10 +128,11 @@ ReceiptDateHeader.propTypes = {
 export const ReceiptDateCell = ({ doc, filterCriteria }) => (
   <span className="document-list-receipt-date">
     <Highlight searchQuery={filterCriteria.searchQuery}>
-      {formatDateStr(doc?.receivedAt)}
+      {formatDateStr(doc?.received_at)}
     </Highlight>
   </span>
 );
+/* eslint-enable camelcase */
 
 ReceiptDateCell.propTypes = {
   filterCriteria: PropTypes.object,

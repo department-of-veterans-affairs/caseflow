@@ -150,8 +150,8 @@ export const filterDocuments = (criteria, documents, state) => {
   const { active, filters } = formatFilterCriteria(criteria);
 
   // Set the Original Documents according to the initial state
-  const docs = ApiUtil.convertToCamelCase(state.storeDocuments ? state.storeDocuments : documents);
-  const docsWithDate = Object.values(docs).map((doc) => ({ ...doc, receivedAt: new Date(`${doc.receivedAt} 00:00`) }));
+  const docs = Object.values(state.storeDocuments ? state.storeDocuments : documents);
+  const docsWithDate = docs.map((doc) => ({ ...doc, received_at: new Date(`${doc.received_at} 00:00`) }));
   const sortedDocs = orderBy(docsWithDate, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 
   const documentIds = sortedDocs.reduce((list, document) => {

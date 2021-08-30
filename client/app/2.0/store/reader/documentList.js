@@ -30,7 +30,7 @@ export const initialState = {
   tagOptions: [],
   filterCriteria: {
     sort: {
-      sortBy: 'receivedAt',
+      sortBy: 'received_at',
       sortAscending: false
     },
     category: {},
