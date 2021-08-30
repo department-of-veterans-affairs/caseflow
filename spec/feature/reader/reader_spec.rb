@@ -1027,8 +1027,8 @@ RSpec.feature "Reader", :all_dbs do
         expect(find("#case_summary", visible: false).disabled?).to be true
       end
 
-      step "view the next document, NOD" do
-        find("#button-next").click
+      step "view the previous document, NOD" do
+        find("#button-previous").click
 
         # this will wait for the document title to display before expecting anything
         find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "NOD")
