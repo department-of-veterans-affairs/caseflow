@@ -83,6 +83,10 @@ class CaseHearingsDetail extends React.PureComponent {
               {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
             </Link>
           </Tooltip>
+        },
+        {
+          label: 'Judge',
+          value: hearing.heldBy
         }
       );
     }
@@ -91,10 +95,6 @@ class CaseHearingsDetail extends React.PureComponent {
       {
         label: 'Date',
         value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-      },
-      {
-        label: 'Judge',
-        value: hearing.heldBy
       }
     );
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe Distribution, :all_dbs do
-  let(:judge) { create(:user) }
-  let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+  let(:judge) { create(:user, :judge) }
+  let(:judge_team) { JudgeTeam.for_judge(judge) }
   let(:member_count) { 5 }
   let(:attorneys) { create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
@@ -442,7 +442,7 @@ describe Distribution, :all_dbs do
       end
 
       context "when the judge has an empty team" do
-        let(:judge_wo_attorneys) { create(:user) }
+        let(:judge_wo_attorneys) { create(:user, :judge) }
         let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
 
         subject { Distribution.create(judge: judge_wo_attorneys) }
@@ -482,6 +482,43 @@ describe Distribution, :all_dbs do
           expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(other_dockets_proportion)
           expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
           expect(subject.distributed_cases.count).to eq(15)
+        end
+      end
+
+      describe "JudgeTeam ama_only_request toggle" do
+        context "when the toggle is not set for a JudgeTeam (default case)" do
+          it "includes untied legacy cases" do
+            subject.distribute!
+
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases).to_not be_empty
+          end
+        end
+
+        context "when a JudgeTeam is AMA-only for requested distributions" do
+          before do
+            judge_team.update!(ama_only_request: true)
+            subject.distribute!
+          end
+
+          it "does distribute tied legacy cases" do
+            tied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query == "not_genpop"
+            end
+
+            expect(tied_legacy_docket_cases.count).to eq(2)
+          end
+
+          it "does not distribute any untied legacy cases" do
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases.count).to eq(0)
+          end
         end
       end
     end

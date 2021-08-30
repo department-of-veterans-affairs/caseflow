@@ -18,9 +18,7 @@ class ETL::Build < ETL::Record
   end
 
   def built
-    built = 0
-    etl_build_tables.each { |ebt| built += ebt.rows_built }
-    built
+    etl_build_tables.map(&:rows_built).sum
   end
 
   def build_for(table_name)

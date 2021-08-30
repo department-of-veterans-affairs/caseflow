@@ -60,7 +60,7 @@ class Docket
   # rubocop:disable Lint/UnusedMethodArgument
   # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
-  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
+  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
