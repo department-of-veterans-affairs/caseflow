@@ -31,7 +31,6 @@ class DecisionReviewsController < ApplicationController
   def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
-        binding.pry
         business_line.tasks.reload
         render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
@@ -59,7 +58,7 @@ class DecisionReviewsController < ApplicationController
   def in_progress_tasks
     apply_task_serializer(
       business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
-        task.appeal.request_issues.active.any?
+        task.appeal.request_issues.active.any? || (task.active? && task.is_a?(BoardGrantEffectuationTask))
       end
     )
   end
