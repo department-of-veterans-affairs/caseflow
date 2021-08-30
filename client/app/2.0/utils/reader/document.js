@@ -152,7 +152,7 @@ export const filterDocuments = (criteria, documents, state) => {
   const docs = Object.values(state.storeDocuments ? state.storeDocuments : documents);
   const sortedDocs = orderBy(docs, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 
-  return active.length ?
+  const documentList = active.length ?
     sortedDocs.filter((document) => {
       // Initialize whether to show the document
       let include = true;
@@ -176,6 +176,8 @@ export const filterDocuments = (criteria, documents, state) => {
       return include;
     }).map((doc) => doc.id) :
     sortedDocs.map((doc) => doc.id);
+
+  return documentList;
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {
