@@ -154,4 +154,107 @@ describe HearingRepository, :all_dbs do
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
     end
   end
+
+  context ".maybe_ready_for_reminder_email" do
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:ama_disposition) { nil }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+    end
+    let(:central_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: nil,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:central]
+      )
+    end
+    let!(:hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
+    end
+    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: hearing) }
+
+    let!(:video_hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
+    end
+    let!(:central_hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: central_hearing_day, disposition: ama_disposition)
+    end
+
+    subject { described_class.maybe_ready_for_reminder_email }
+
+    shared_examples "include or exclude hearings depending on the number of days out from the hearing" do
+      context "is in 60 days" do
+        let(:hearing_date) { Time.zone.now + 60.days }
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
+        end
+      end
+
+      context "is in 7 days" do
+        let(:hearing_date) { Time.zone.now + 7.days }
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq([hearing, video_hearing, central_hearing].sort_by(&:id))
+        end
+      end
+
+      context "is in 70 days" do
+        let(:hearing_date) { Time.zone.now + 70.days }
+
+        it "returns nothing" do
+          expect(subject).to be_empty
+        end
+      end
+    end
+
+    context "for an AMA hearing" do
+      context "active virtual hearing" do
+        include_examples "include or exclude hearings depending on the number of days out from the hearing"
+      end
+
+      %w[postponed cancelled no_show held].each do |disposition|
+        context "#{disposition} virtual hearing" do
+          let(:ama_disposition) { disposition }
+
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
+        end
+      end
+    end
+
+    context "for a Legacy hearing" do
+      let(:legacy_dispositon) { nil }
+      let(:hearing) do
+        create(
+          :legacy_hearing,
+          regional_office: regional_office,
+          hearing_day_id: hearing_day.id,
+          case_hearing: create(:case_hearing, hearing_disp: legacy_dispositon)
+        )
+      end
+
+      context "active virtual hearing" do
+        include_examples "include or exclude hearings depending on the number of days out from the hearing"
+      end
+
+      %w[P C N H].each do |disposition_code|
+        context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
+          let(:ama_disposition) { disposition_code }
+
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
+        end
+      end
+    end
+  end
 end

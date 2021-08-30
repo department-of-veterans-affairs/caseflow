@@ -34,9 +34,9 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
     S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
-    schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
-                                                                          file_name: file_name))
-    render json: { id: schedule_period.id }
+    create_params = schedule_period_params.merge(user_id: current_user.id, file_name: file_name)
+
+    assign_hearing_days_or_create_schedule_period(create_params)
   rescue StandardError => error
     render(
       json: {
@@ -51,7 +51,11 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
 
   # Route to finalize and confirm a hearing schedule
   def update
-    if schedule_period.can_be_finalized?
+    if params[:schedule_period_id] == "confirm_judge_assignments"
+      hearing_days = params["schedule_period"]
+      HearingSchedule::AssignJudgesToHearingDays.confirm_assignments(hearing_days)
+      render json: { success: true }
+    elsif schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
       render json: { id: schedule_period.id }
     else
@@ -79,6 +83,17 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
   end
 
   private
+
+  def assign_hearing_days_or_create_schedule_period(create_params)
+    if params["schedule_period"]["type"] == "JudgeSchedulePeriod"
+      spreadsheet_data = HearingSchedule::AssignJudgesToHearingDays.load_spreadsheet_data(create_params["file_name"])
+      hearing_days = HearingSchedule::AssignJudgesToHearingDays.stage_assignments(spreadsheet_data)
+      render json: { hearing_days: hearing_days }
+    else
+      schedule_period = SchedulePeriod.create!(create_params)
+      render json: { id: schedule_period.id }
+    end
+  end
 
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :start_date, :end_date)

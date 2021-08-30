@@ -3,96 +3,274 @@
 
 <% content_for :head do %>
   <%= stylesheet_link_tag 'explain_appeal' %>
+  <style>
+    #header_table td {
+      border: none;
+    }
+
+    #section_checkboxes {
+      margin: 0 auto; /* horizontally center */
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      background-color: lightcyan;
+      box-shadow: 0px 3px 5px 0px dimgrey;
+    }
+
+    #section_checkboxes .section_checkbox_row {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border: 1px solid darkgray;
+      font-size: .9em;
+    }
+
+    #section_checkboxes .row_item {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      margin-left: 20px;
+      margin-right: 4px;
+    }
+
+    #section_checkboxes .row_item:nth-of-type(1) {
+      margin-left: 20px;
+    }
+    #section_checkboxes .row_item:nth-last-of-type(1) {
+      margin-right: 20px;
+    }
+
+    #section_checkboxes label {
+      margin-bottom: 0em;
+    }
+
+    #section_checkboxes label::before {
+      /* space between checkbox and label text */
+      margin-right: 0.3em;
+    }
+
+    .go_to_section_link {
+      margin-left: 30px;
+      margin-bottom: 0.65em;
+      opacity: 20%; /* made more visible when section is displayed */
+    }
+    .go_to_section_link.enabled {
+      opacity: 100%;
+      color: blue;
+      cursor: crosshair;
+    }
+
+    #menubar_settings {
+      position: absolute;
+      right: 12px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      font-size: 0.9em;
+      background-color: #baf1f1;
+      visibility: hidden; /* made visible only when menu is in sticky mode */
+    }
+  </style>
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
-  <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
-  To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
-  (Other formats:
-  <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
-    {action: 'show', show_pii: show_pii_query_param, fields: fields_query_param.to_s, format: "text"}) %>,
-  <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
-  )
-  <hr/>
-
-  <h3>Appeal <%=appeal.id%> (<%=appeal.uuid%>)</h3>
+  <table id="header_table" style="margin: 4px;">
+    <colgroup>
+      <col style="width: 60%;">
+      <col style="width: 40%;">
+   </colgroup>
+   <tbody>
+<tr><td>
+  <h3>Appeal <%=appeal.id%> (<%=legacy_appeal? ? "VACOLS id: #{appeal.vacols_id}" : appeal.uuid%>)</h3>
   <ul id="appeal_info">
-    <li>status: <%= appeal_status.to_s %></li>
+    <% if legacy_appeal? %>
+      <li>location: <%= appeal.location_code.to_s %></li>
+    <% else %>
+      <li>status: <%= appeal.status.status.to_s %></li>
+    <% end %>
     <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
     <% if sje.records_hash["appeals"].length > 1 %>
-    <li>Related Appeals:
-      <ul>
-        <% sje.records_hash["appeals"].each do |appeal| %>
-          <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
-        <% end %>
-      </ul>
-    </li>
+      <li>Related Appeals:
+        <ul>
+          <% sje.records_hash["appeals"].each do |appeal| %>
+            <li>Appeal id: <%= appeal["id"] %>, <%= appeal["uuid"] || appeal["vacols_id"] %></li>
+          <% end %>
+        </ul>
+      </li>
     <% end %>
   </ul>
+</td><td>
+  <div style="border: 1px solid lightgray; padding: 10px;">
+    <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
+    <br/>To toggle PII, click
+      <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param,
+                                                      fields: fields_query_param.to_s,
+                                                      sections: sections_query_param.to_s}) %>.
+    <br/>(
+          <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
+            {action: 'show', format: "text", show_pii: show_pii_query_param,
+                                            fields: fields_query_param.to_s,
+                                            sections: sections_query_param.to_s}) %>,
+          <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
+        )
+  </div>
+</td></tr>
+    </tbody>
+  </table>
 
-  <h3>Task tree</h3>
-  <code style="color: green">
-    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
-    <% if appeal.is_a?(LegacyAppeal) %>
-      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
-      <br/>la.location_history.map(&:summary)
-    <% end %>
-  </code>
-  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
-  <details>
-    <summary style="color: blue">Task tree configuration</summary>
+  <%
+    sections1 = %w[task_tree intake_tree hearing_tree]
 
-    <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-      <% available_fields.each do |field_name| %>
-        <% if treee_fields.include?(field_name.to_sym) %>
-          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" checked />
-        <% else %>
-          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" />
+    sections2 = []
+    sections2 += %w[timeline_chart network_graph] unless legacy_appeal?
+    sections2 += %w[narrative_table]
+
+    enabledSections = (enabled_sections.first&.downcase == 'all') ? sections1 + sections2 : enabled_sections
+    enabledSections << "task_tree" unless fields_query_param.nil?;
+  %>
+
+  <div id="section_checkboxes">
+    <div class="section_checkbox_row" id="main_panel_section_btns">
+      <% [sections1, sections2].each do |sections|  %>
+        <% sections.each do |sectionId| %>
+          <span class="row_item">
+            <% sectionEnabled = enabledSections.include?(sectionId) %>
+            <input id="<%=sectionId%>_chkbox" value="<%=sectionId%>_section" type="checkbox" <%=sectionEnabled ? 'checked' : nil%>
+                  onclick="toggleSection(this, 'main_panel', '<%=sectionId%>')">
+            <label for="<%=sectionId%>_chkbox"><%=sectionId.titleize%></label>
+            <a id="<%=sectionId%>_goLink" class="go_to_section_link <%=sectionEnabled ? 'enabled' : nil%>" 
+              onclick="scrollToSection('<%=sectionId%>')">(go there)</a>
+          </span>
         <% end %>
-        <label for="<%=field_name%>"><%=field_name%></label>
       <% end %>
+
+      <span class="row_item">
+        <input id="side_panel_chkbox" value="side_panel" type="checkbox"
+               onclick="toggleSidePanel(this, event)">
+        <label for="side_panel_chkbox">Floating Panel</label>
+      </span>
     </div>
-    <p/><a id="task_tree_link" href="">Update task tree</a>
-  </details>
-  <hr/>
+    <div>
+      <div id="menubar_settings" visibility="hidden">
+        <input id="autoshow_chkbox" type="checkbox">
+        <label for="autoshow_chkbox" style="margin: 8px;">Show on scrollup</label>
 
-  <h3>Intake (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
-  <code style="color: green">
-    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>),
-      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
-  </code>
-  <pre style="font-size:0.9em; padding:10px"><code><%= intake_as_text %></code></pre>
-  <hr/>
+        <button id="hide_menubar_btn" class="menuBtn" onclick="temporarilyHideStickyMenu()">Hide</button>
+      </div>
+    </div>
+  </div>
 
-  <h3>Hearing (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
-  <code style="color: green">
-    puts HearingRenderer.render(Appeal.find(<%= appeal.id %>),
-      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
-  </code>
-  <pre style="font-size:0.9em; padding:10px"><code><%= hearing_as_text %></code></pre>
-  <hr/>
+  <%= render "menubar", menubarId: "section_checkboxes", contentId: "main_panel", autoshowId: "autoshow_chkbox" %>
+  <%= render "side_panel" %>
 
-  <h3>Appeal Narrative (<span class="show_pii_true">contains PII</span>)</h3>
-  
-  <details>
-    <summary id="narrative_table" style="color: purple">Narrative table</summary>
-    <%= react_component("Explain", props: {
-      eventData: event_table_data
-    }) %>
-  </details>
-  <hr/>
+  <br/>
+  <div id="main_panel">
+    <% (sections1 + sections2).each do |sectionId|  %>
+      <% sectionEnabled = enabledSections.include?(sectionId) %>
+      <div id="<%=sectionId%>_section" style="display: <%=sectionEnabled ? 'block' : 'none'%>;">
+        <%= render sectionId %>
+        <hr/>
+      </div>
+    <% end %>
+  </div>
+  <div id="blank_section" style="margin-bottom: 90vh;" />
 
-  <%= javascript_include_tag 'explain-appeal' %>
   <script type="text/javascript">
-    // Handle Task Tree field checkboxes
-    function updateTaskTreeLink(){
-      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.name);
-      const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
-      document.querySelector('#task_tree_link').setAttribute("href", newUrl);
+    function toggleSection(chkbox, panelId, sectionId) {
+      const section = document.getElementById(chkbox.value);
+      section.style.display = chkbox.checked ? "block" : "none";
+
+      const goLink = document.getElementById(sectionId+"_goLink");
+      if(goLink) {
+        chkbox.checked ? goLink.classList.add("enabled") : goLink.classList.remove("enabled");
+      }
+
+      if(chkbox.checked){
+        if(panelId){
+          const panel = document.getElementById(panelId);
+          panel.appendChild(section); // Add it to the bottom of the page
+        }
+
+        // If more than 1 section visible, scroll to the newly visible section
+        // const visibleMainSections = document.querySelectorAll('#main_panel > div[style="display: block;"]')
+        // visibleMainSections.length > 1 && scrollToSection(sectionId);
+        setDetailsPaneMessage("Showing "+chkbox.value);
+      } else {
+        setDetailsPaneMessage("Hiding "+chkbox.value);
+      }
     }
-    updateTaskTreeLink();
-    document.querySelectorAll('#treeefields input').forEach((elem)=>{
-      elem.addEventListener('click', () => updateTaskTreeLink());
+
+    function showSection(sectionId){
+      const chkbox = document.getElementById(sectionId+"_chkbox");
+      if(!chkbox.checked){
+        chkbox.checked = true;
+        chkbox.onclick(); // calls toggleSection
+      }
+    }
+
+    /**
+     * https://stackoverflow.com/questions/52292603/is-there-a-callback-for-window-scrollto
+     * Native scrollTo with callback
+     * @param offset - offset to scroll to
+     * @param callback - callback function
+     */
+    function smoothScrollTo(offset, callback) {
+      const fixedOffset = offset.toFixed();
+      const body = document.body
+      const yOffsetAtBottom = body.scrollHeight - body.scrollTop - body.clientHeight - 20
+      const onScroll = ()=>{
+        const atBottom = window.pageYOffset >=  yOffsetAtBottom;
+        if (atBottom || window.pageYOffset.toFixed() === fixedOffset) {
+          window.removeEventListener('scroll', onScroll);
+          callback();
+        }
+      }
+
+      window.addEventListener('scroll', onScroll);
+      onScroll();
+      window.scrollTo({
+          top: offset,
+          behavior: 'smooth'
+      });
+    }
+
+    var tempIgnoreScroll = false;
+    function scrollToSection(sectionId){
+      tempIgnoreScroll = true;
+      const section = document.getElementById(sectionId+"_section");
+      const yPosAboveSection = section.getBoundingClientRect().top + window.pageYOffset - 100;
+      smoothScrollTo(yPosAboveSection, ()=>{
+        tempIgnoreScroll = false;
+        enableStickyMenu();
+        hideStickyMenu();
+        console.log("scrolled to section", sectionId);
+      });
+    }
+
+    const setDetailsPaneMessage = (htmlContent)=>{
+      document.getElementById("side_panel_message").innerHTML = htmlContent;
+    };
+
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    function toggleSidePanel(chkbox, event) {
+      const panel = document.getElementById(chkbox.value);
+      toggleSection(chkbox);
+      panel.style.top || showDetailsPane();
+      panel.style.top || (panel.style.top = "48px");
+      panel.style.left || (panel.style.left = "140px");
+      // panel.style.left || (panel.style.left = Math.min(
+      //                        window.innerWidth - panel.offsetWidth - 140,
+      //                        window.innerWidth/2
+      //                      )+"px");
+    }
+
+    window.addEventListener('load', (event) => {
+      console.log('show.html.erb onLoadListener');
+      const isTreeFieldsParamsProvided = <%= fields_query_param != nil %>;
+      if (isTreeFieldsParamsProvided) {
+        // showSection("task_tree");
+        scrollToSection("task_tree");
+      }
     });
   </script>
 </div>

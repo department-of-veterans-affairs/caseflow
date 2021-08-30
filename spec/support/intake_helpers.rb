@@ -119,22 +119,26 @@ module IntakeHelpers
     receipt_date: 1.day.ago,
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
-    no_claimant: false
+    no_claimant: false,
+    intake_user: User.authenticate!(roles: ["Mail Intake"])
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: claim_participant_id.present?
+      veteran_is_not_claimant: claim_participant_id.present?,
+      filed_by_va_gov: false
     )
 
     intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
-      user: User.authenticate!(roles: ["Mail Intake"]),
+      user: intake_user,
       started_at: 5.minutes.ago,
       detail: appeal
     )
+
+    BvaIntake.singleton.add_user(intake.user)
 
     unless no_claimant
       stub_valid_address

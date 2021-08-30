@@ -30,7 +30,7 @@ describe MandateHoldTask, :postgres do
 
       it "creates task with child TimedHoldTask" do
         new_task = subject
-        expect(new_task.valid?)
+        expect(new_task).to be_valid
         expect(new_task.assigned_to).to eq CavcLitigationSupport.singleton
         expect(new_task.status).to eq Constants.TASK_STATUSES.on_hold
 

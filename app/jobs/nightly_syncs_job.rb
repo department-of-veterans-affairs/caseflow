@@ -13,8 +13,6 @@ class NightlySyncsJob < CaseflowJob
     sync_vacols_cases
     sync_decision_review_tasks
     sync_bgs_attorneys
-
-    datadog_report_runtime(metric_group_name: "nightly_syncs_job")
   end
 
   private

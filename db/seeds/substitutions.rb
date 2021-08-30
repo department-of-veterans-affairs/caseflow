@@ -30,7 +30,7 @@ module Seeds
 
       create(
         :appeal,
-        :dispatched_with_decision_issue,
+        :dispatched, :with_decision_issue,
         disposition: "dismissed_death",
         number_of_claimants: 1,
         veteran: veteran,

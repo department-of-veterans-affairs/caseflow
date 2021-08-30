@@ -11,7 +11,8 @@ export const shouldSupportSubstituteAppellant = ({
     decisionIssue.disposition === 'dismissed_death';
 
   return (
-    currentUserOnClerkOfTheBoard &&
+    !appeal.isLegacyAppeal &&
+      currentUserOnClerkOfTheBoard &&
       !appeal.appellantIsNotVeteran &&
       featureToggles.recognized_granted_substitution_after_dd &&
       appeal.caseType === 'Original' &&
@@ -22,8 +23,7 @@ export const shouldSupportSubstituteAppellant = ({
       !hasSubstitution &&
       // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`
       (userIsCobAdmin ||
-        appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
-      !appeal.isLegacyAppeal
+        appeal.decisionIssues.some(decisionHasDismissedDeathDisposition))
   );
 };
 

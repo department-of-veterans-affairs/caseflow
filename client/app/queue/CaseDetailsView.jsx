@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
-import { CATEGORIES, TASK_ACTIONS } from './constants';
+import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
@@ -47,6 +47,8 @@ import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
+import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
+import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -66,17 +68,23 @@ const alertPaddingStyle = css({
   marginTop: '2rem',
 });
 
-const editInformationLinkStyling = css({
+const editAppellantInformationLinkStyling = css({
   fontSize: '2rem',
   fontWeight: 'normal',
   margin: '5px',
 });
+
+const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const updatePOALink =
+        appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -85,6 +93,9 @@ export const CaseDetailsView = (props) => {
   );
   const userIsCobAdmin = useSelector(
     (state) => state.ui.userIsCobAdmin
+  );
+  const userIsVsoEmployee = useSelector(
+    (state) => state.ui.userIsVsoEmployee
   );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
@@ -144,10 +155,13 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispatched = appeal.status === 'dispatched';
+  const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
 
-  const editInformation =
-  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
+  const editAppellantInformation =
+    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+
+  const editPOAInformation =
+    !appeal.hasPOA && props.hasVLJSupportRole && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -201,6 +215,9 @@ export const CaseDetailsView = (props) => {
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
         )}
+        {shouldShowVsoVisibilityAlert({ featureToggles, userIsVsoEmployee }) && (
+          <div className={topAlertStyles}><VsoVisibilityAlert /></div>
+        )}
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
@@ -236,6 +253,15 @@ export const CaseDetailsView = (props) => {
           <PowerOfAttorneyDetail
             title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
+            additionalHeaderContent={
+              editPOAInformation && (
+                <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
+                  <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
+                    {updatePOALink}
+                  </Link>
+                </span>
+              )
+            }
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
@@ -249,8 +275,8 @@ export const CaseDetailsView = (props) => {
               appeal={appeal}
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
               additionalHeaderContent={
-                editInformation && (
-                  <span className="cf-push-right" {...editInformationLinkStyling}>
+                editAppellantInformation && (
+                  <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
                     <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
                       {COPY.EDIT_APPELLANT_INFORMATION_LINK}
                     </Link>
@@ -297,6 +323,7 @@ CaseDetailsView.propTypes = {
   userCanAccessReader: PropTypes.bool,
   veteranCaseListIsVisible: PropTypes.bool,
   userCanScheduleVirtualHearings: PropTypes.bool,
+  hasVLJSupportRole: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
@@ -318,7 +345,7 @@ const mapDispatchToProps = (dispatch) =>
       resetSuccessMessages,
       transitionAlert,
       stopPollingHearing,
-      setHearingDay,
+      setHearingDay
     },
     dispatch
   );

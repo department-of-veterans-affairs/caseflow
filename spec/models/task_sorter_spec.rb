@@ -272,8 +272,8 @@ describe TaskSorter, :all_dbs do
 
         before do
           tasks.each do |task|
-            first_name = fake_names.sample
-            last_name = "#{fake_names.sample} #{fake_names.sample}"
+            first_name = fake_names.pop
+            last_name = "#{fake_names.pop} #{fake_names.pop}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,

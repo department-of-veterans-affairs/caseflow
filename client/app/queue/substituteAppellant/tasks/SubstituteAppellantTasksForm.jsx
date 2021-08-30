@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ReactMarkdown from 'react-markdown';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
@@ -16,6 +15,8 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
+import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
+import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -43,7 +44,19 @@ export const SubstituteAppellantTasksForm = ({
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch } = methods;
+  const selectedTaskIds = watch('taskIds');
+
+  const adjustedTasks = useMemo(() =>
+    disabledTasksBasedOnSelections({ tasks, selectedTaskIds }),
+  [tasks, selectedTaskIds]
+  );
+
+  const shouldShowScheduleHearingTaskAlert = useMemo(() => {
+    return taskTypesSelected({ tasks, selectedTaskIds }).includes('ScheduleHearingTask');
+  },
+  [tasks, selectedTaskIds]
+  );
 
   return (
     <FormProvider {...methods}>
@@ -64,7 +77,8 @@ export const SubstituteAppellantTasksForm = ({
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
             <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
-            <TaskSelectionTable tasks={tasks} />
+            {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
+            <TaskSelectionTable tasks={adjustedTasks} />
           </div>
         </AppSegment>
         <div className="controls cf-app-segment">

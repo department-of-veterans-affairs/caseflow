@@ -5,17 +5,18 @@
 # recipients (judge, representative, appellant).
 
 class SentHearingEmailEvent < CaseflowRecord
-  belongs_to :hearing, polymorphic: true
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing(:hearing)
+
   belongs_to :sent_by, class_name: "User"
+  belongs_to :email_recipient, class_name: "HearingEmailRecipient"
+
+  has_one :sent_hearing_admin_email_events
 
   before_create :assign_sent_at_time
 
-  # Add compatibility with old data where the role was called veteran instead of
-  # appellant.
-  RECIPIENT_ROLES = MailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
-
   # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
-  enum recipient_role: RECIPIENT_ROLES.map { |key| [key, key.to_s] }.to_h,
+  enum recipient_role: HearingEmailRecipient::RECIPIENT_ROLES.keys.map { |key| [key, key.to_s] }.to_h,
        _prefix: :sent_to
 
   # Overrides the generated method for compatibility with old data prior to:
@@ -32,10 +33,6 @@ class SentHearingEmailEvent < CaseflowRecord
       reminder: "reminder"
     }
   ), _prefix: :is
-
-  def readonly?
-    !new_record?
-  end
 
   def sent_to_role
     case recipient_role

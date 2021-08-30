@@ -14,7 +14,7 @@ export default class BenefitType extends React.PureComponent {
       register
     } = this.props;
 
-    return <div className="cf-benefit-type">
+    return <div className="cf-benefit-type" style={{ marginTop: '10px' }} >
       <RadioField
         name="benefit-type-options"
         label="What is the Benefit Type?"

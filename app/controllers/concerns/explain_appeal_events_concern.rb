@@ -5,10 +5,15 @@ require "action_view"
 ##
 # Used by ExplainController to build the data for presenting events based on
 # exported data from SanitizedJsonExporter sje.
+# Specifically, this data is used to build the Appeal Narrative.
 
 # :reek:FeatureEnvy
 module ExplainAppealEventsConcern
   extend ActiveSupport::Concern
+
+  def appeal_object_id
+    @appeal_object_id ||= "#{appeal.class.name}_#{appeal.id}"
+  end
 
   # :reek:FeatureEnvy
   def event_table_data
@@ -79,8 +84,8 @@ module ExplainAppealEventsConcern
   # rubocop:enable Metrics/AbcSize
 
   def hearings_as_event_data
-    hearing_days = exported_records(HearingDay).index_by { |req| req["id"] }
-    virtual_hearings = exported_records(VirtualHearing).index_by { |req| req["hearing_id"] }
+    hearing_days = exported_records(HearingDay).index_by { |rec| rec["id"] }
+    virtual_hearings = exported_records(VirtualHearing).index_by { |rec| rec["hearing_id"] }
     exported_records(Hearing).map do |hearing|
       hearing_day = hearing_days[hearing["hearing_day_id"]]
       virtual_hearing = virtual_hearings[hearing["id"]]
@@ -89,10 +94,6 @@ module ExplainAppealEventsConcern
   end
 
   private
-
-  def exported_records(klass)
-    sje.records_hash[klass.table_name] || []
-  end
 
   # # :reek:NestedIterators
   # def records_hash_for(appeal)

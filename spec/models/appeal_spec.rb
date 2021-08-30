@@ -118,6 +118,51 @@ describe Appeal, :all_dbs do
         subject
       end
     end
+
+    context "when the appeal has only vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has vha and non-vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "education")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
   end
 
   context "#create_issues!" do
@@ -250,10 +295,16 @@ describe Appeal, :all_dbs do
 
   context "#latest_attorney_case_review" do
     let(:appeal) { create(:appeal) }
-    let(:task1) { create(:ama_attorney_task, appeal: appeal) }
-    let(:task2) { create(:ama_attorney_task, appeal: appeal) }
+    let!(:task1) { create(:ama_attorney_task, appeal: appeal) }
     let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
-    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
+    let!(:attorney_case_review2) do
+      task1.update!(status: Constants.TASK_STATUSES.completed)
+      if appeal.tasks.open.of_type("JudgeDecisionReviewTask").any?
+        appeal.tasks.open.find_by(type: "JudgeDecisionReviewTask").completed!
+      end
+      task2 = create(:ama_attorney_task, appeal: appeal)
+      create(:attorney_case_review, task: task2, created_at: 1.day.ago)
+    end
 
     subject { appeal.latest_attorney_case_review }
 
@@ -909,8 +960,15 @@ describe Appeal, :all_dbs do
       let!(:attorney) { create(:user) }
       let!(:attorney2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_attorney_task, assigned_to: attorney2, appeal: appeal) }
+      let(:judge_decision_review_task) { create(:ama_judge_decision_review_task, appeal: appeal) }
+      let!(:task) do
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney,
+                                   appeal: appeal, created_at: 1.day.ago)
+      end
+      let!(:task2) do
+        task.completed!
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2, appeal: appeal)
+      end
 
       subject { appeal.assigned_attorney }
 
@@ -919,7 +977,7 @@ describe Appeal, :all_dbs do
       end
 
       it "should know the right assigned attorney with a cancelled task" do
-        task2.update(status: "cancelled")
+        task2.cancelled!
         expect(subject).to eq attorney
       end
     end
@@ -1068,6 +1126,7 @@ describe Appeal, :all_dbs do
       let(:appeal) do
         appeal = create(:appeal, :with_post_intake_tasks)
         create(:bva_dispatch_task, :completed, appeal: appeal)
+        create(:decision_document, citation_number: "A18123456", appeal: appeal)
         appeal
       end
 

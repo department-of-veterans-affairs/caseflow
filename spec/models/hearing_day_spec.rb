@@ -277,8 +277,8 @@ describe HearingDay, :all_dbs do
         context "a video day at RO (#{ro})" do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
-          it "has 12 slots" do
-            expect(subject).to be(12)
+          it "has 10 slots" do
+            expect(subject).to be(10)
           end
         end
       end
@@ -337,17 +337,15 @@ describe HearingDay, :all_dbs do
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
-        it "begins_at 8:30 eastern" do
-          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: 8, min: 30)
-          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+        it "begins_at returns nil" do
+          expect(subject).to eq(nil)
         end
       end
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
-        it "begins_at 9:00 eastern" do
-          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: 9, min: 0)
-          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+        it "begins_at returns nil" do
+          expect(subject).to eq(nil)
         end
       end
       selected_ro_ids.each do |ro|
@@ -355,12 +353,8 @@ describe HearingDay, :all_dbs do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
 
-          regional_office_info = RegionalOffice::CITIES[ro]
-          regional_office_timezone = regional_office_info[:timezone]
-
-          it "begins_at 08:30 ro timezone" do
-            expected_begins_at = scheduled_for.in_time_zone(regional_office_timezone).change(hour: 8, min: 30)
-            expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+          it "begins_at returns nil" do
+            expect(subject).to eq(nil)
           end
         end
       end

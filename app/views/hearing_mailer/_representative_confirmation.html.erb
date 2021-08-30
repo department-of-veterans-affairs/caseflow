@@ -1,0 +1,42 @@
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @recipient.name %>,
+  </p>
+
+  <p>
+    You have a Client scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
+  </p>
+
+  <h3><%= @hearing.appeal.appellant_or_veteran_name %></h3>
+  <p>
+    <a href="<%= caseflow_url(@virtual_hearing.hearing.appeal) %>">
+      View the case details
+    </a> (Note: You must be logged in to the VA network to access case details.)
+  </p>
+<% end %>
+
+<%= content_for :date_time do %>
+  <%= render "hearing_mailer/sections/date_time" %>
+<% end %>
+
+<%= content_for :how_to_join do %>
+  <%= render "hearing_mailer/sections/how_to_join" %>
+<% end %>
+
+<%= content_for :test_your_connection do %>
+  <%= render "hearing_mailer/sections/test_your_connection" %>
+<% end %>
+
+<% content_for :help_desk do %>
+  <%= render "hearing_mailer/sections/help_desk" %>
+<% end %>
+
+<% content_for :rescheduling_or_canceling_your_hearing do %>
+  <%= render "hearing_mailer/sections/rescheduling_or_canceling_your_hearing" %>
+<% end %>
+
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>The Board of Veterans' Appeals
+  </p>
+<% end %>

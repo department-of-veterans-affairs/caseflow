@@ -34,6 +34,7 @@ class LegacyHearing < CaseflowRecord
   include HearingTimeConcern
   include UpdatedByUserConcern
   include HearingConcern
+  include HasHearingEmailRecipientsConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -66,6 +67,7 @@ class LegacyHearing < CaseflowRecord
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
+  has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :hearing_id
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
@@ -75,12 +77,10 @@ class LegacyHearing < CaseflowRecord
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents,
-           :number_of_documents_after_certification, :appellant_tz, :representative_tz,
-           :representative_type, :veteran, :veteran_file_number, :docket_name,
-           :closest_regional_office, :available_hearing_locations, :veteran_email_address,
-           :appellant_address, :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
-           :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
-           :appellant_relationship,
+           :number_of_documents_after_certification, :representative_type, :veteran, :veteran_file_number,
+           :docket_name, :closest_regional_office, :available_hearing_locations, :appellant_address,
+           :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
+           :appellant_country, :appellant_state, :appellant_zip, :appellant_relationship,
            to: :appeal,
            allow_nil: true
   delegate :external_id, to: :appeal, prefix: true
@@ -100,10 +100,6 @@ class LegacyHearing < CaseflowRecord
 
   def representative
     appeal&.representative_name
-  end
-
-  def representative_email_address
-    appeal&.representative_email_address
   end
 
   def assigned_to_vso?(user)

@@ -337,8 +337,11 @@ class RequestIssue < CaseflowRecord
     else
       return if is_unidentified
 
-      # in theory we should never get here
-      fail MissingDecisionDate, id
+      if rating?
+        fail MissingDecisionDate, id
+      end
+
+      nil
     end
   end
 
@@ -506,6 +509,9 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
+    user = RequestStore.store[:current_user]
+    return false if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user)
+
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 

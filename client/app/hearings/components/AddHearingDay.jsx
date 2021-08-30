@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { HearingTime } from './modalForms/HearingTime';
 import moment from 'moment-timezone';
 
+import { DocketStartTimes } from './DocketStartTimes';
 import {
   RegionalOfficeDropdown,
   HearingCoordinatorDropdown,
@@ -274,6 +275,14 @@ export const AddHearingDay = ({
               value={selectedRegionalOffice?.key}
             />
           )}
+          {selectedVideo &&
+            <DocketStartTimes
+              setSlotCount={setSlotCount}
+              setHearingStartTime={setHearingStartTime}
+              hearingStartTime={hearingStartTime}
+              roTimezone={selectedRegionalOffice?.timezone}
+            />
+          }
           {selectedRequestType !== null && (
             <React.Fragment>
               <JudgeDropdown

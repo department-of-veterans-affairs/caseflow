@@ -29,7 +29,7 @@ import ApiUtil from 'app/util/ApiUtil';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
-import { VIDEO_HEARING_LABEL } from 'app/hearings/constants';
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 
 jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
@@ -258,7 +258,7 @@ describe('ScheduleVeteran', () => {
           errors: [
             {
               code: 1002,
-              message: 'Validation Error: Appellant email malformed',
+              message: 'Validation Error: Email Address Validation Failed: Appellant email malformed',
             },
           ],
         },
@@ -394,6 +394,7 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
+                requestType: VIRTUAL_HEARING_LABEL,
                 virtualHearing: virtualHearing.virtualHearing,
               },
             },
@@ -419,6 +420,9 @@ describe('ScheduleVeteran', () => {
             values: {
               ...scheduleHearingDetails.apiFormattedValues,
               virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
+                omit(virtualHearing.virtualHearing, ['status'])
+              ),
+              email_recipients: ApiUtil.convertToSnakeCase(
                 omit(virtualHearing.virtualHearing, ['status'])
               ),
               override_full_hearing_day_validation: false,
@@ -492,7 +496,11 @@ describe('ScheduleVeteran', () => {
             description: 'Update Task',
             values: {
               ...scheduleHearingDetails.apiFormattedValues,
-              virtual_hearing_attributes: null,
+              email_recipients: {
+                appellant_tz: 'America/New_York',
+                representative_tz: 'America/New_York',
+              },
+              virtual_hearing_attributes: false,
               override_full_hearing_day_validation: false,
             },
           },
@@ -583,6 +591,7 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
+                requestType: VIRTUAL_HEARING_LABEL,
                 virtualHearing: virtualHearing.virtualHearing,
               },
             },
