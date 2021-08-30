@@ -33,7 +33,7 @@ describe HearingEmailStatusMailer do
     end
 
     it "has the correct email address" do
-      email_sentence_fragment = "entered the appellant email #{email_address}"
+      email_sentence_fragment = "entered the #{sent_hearing_email_event.recipient_role} email #{email_address}"
 
       expect(email.body).to include(email_sentence_fragment)
     end
