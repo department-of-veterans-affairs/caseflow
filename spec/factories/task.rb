@@ -493,6 +493,11 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :assess_documentation_task, class: AssessDocumentationTask do
+        parent { create(:vha_document_search_task, appeal: appeal) }
+        assigned_by { nil }
+      end
+
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
         parent { create(:pre_docket_task, appeal: appeal) }
         assigned_to { VhaCamo.singleton }

@@ -11,6 +11,8 @@ class SentHearingEmailEvent < CaseflowRecord
   belongs_to :sent_by, class_name: "User"
   belongs_to :email_recipient, class_name: "HearingEmailRecipient"
 
+  has_one :sent_hearing_admin_email_events
+
   before_create :assign_sent_at_time
 
   # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
