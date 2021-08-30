@@ -954,7 +954,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".cf-modal")
     end
 
-    scenario "Sort order" do
+    fscenario "Sort order" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       # this will wait for the document count to display before expecting anything
@@ -969,7 +969,7 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    scenario "Categories" do
+    fscenario "Categories" do
       cats = {
         procedural: "Procedural",
         medical: "Medical",
