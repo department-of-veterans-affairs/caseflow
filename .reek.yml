@@ -18,13 +18,16 @@ detectors:
       - Veteran
       - ControllerSchema#respond_to_missing?
       - SanitizedJsonDifference
+      - JudgeTeam#create_for_judge
   ControlParameter:
     exclude:
+      - ExplainTimelineConcern::TimelineSpanData
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - HearingRenderer
+      - Hearings::SendEmail#initialize
       - LegacyDocket#distribute_appeals
       - SanitizedJsonDifference
       - SanitizedJsonConfiguration
@@ -36,6 +39,7 @@ detectors:
       - Veteran
       - VirtualHearing#email_recipient_name
       - JudgeDecisionReviewTask#additional_available_actions
+      - LegacyDocket#really_distribute
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -53,6 +57,7 @@ detectors:
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
   DataClump:
     exclude:
+      - ForeignKeyPolymorphicAssociationJob
       - HearingSerializerBase
       - LegacyDocket
       - SanitizedJsonConfiguration
@@ -89,7 +94,7 @@ detectors:
       - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - VirtualHearings::DeleteConferencesJob#send_cancellation_emails
-      - VirtualHearings::SendEmail#external_message_id
+      - Hearings::SendEmail#external_message_id
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
@@ -120,6 +125,7 @@ detectors:
       - Seeds::Users#create_aod_user_and_tasks
       - SlackService#http_service
       - SyncReviewsJob
+      - TasksForAppeal#tasks_visible_to_vso_employee
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
@@ -154,6 +160,9 @@ detectors:
       - Seeds::MTV#send_mtv_to_judge
       - Seeds::Tasks#create_task_at_colocated
       - VirtualHearings::CreateConferenceJob#perform
+      - Docket#distribute_appeals      
+      - LegacyDocket#distribute_priority_appeals
+      - LegacyDocket#distribute_nonpriority_appeals
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReviews::IntakeError#potential_error_code
@@ -188,6 +197,7 @@ detectors:
       - Task
       - UpdateCachedAppealsAttributesJob
       - Veteran
+      - LegacyDocket
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -241,6 +251,12 @@ detectors:
       - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
+      - LegacyDocket
+  UnusedParameters:
+    exclude:
+      - Docket#distribute_appeals
+      - HearingRequestDocket#distribute_appeals
+
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

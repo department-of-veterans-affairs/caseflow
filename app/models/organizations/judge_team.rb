@@ -9,10 +9,14 @@ class JudgeTeam < Organization
       user.administered_judge_teams.detect { |team| team.judge.eql?(user) }
     end
 
-    def create_for_judge(user)
+    def create_for_judge(user, ama_only_push = false, ama_only_request = false)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true).tap do |org|
+      create!(name: user.css_id,
+              url: user.css_id.downcase,
+              accepts_priority_pushed_cases: true,
+              ama_only_push: ama_only_push,
+              ama_only_request: ama_only_request).tap do |org|
         OrganizationsUser.make_user_admin(user, org)
       end
     end
@@ -39,6 +43,6 @@ class JudgeTeam < Organization
   end
 
   def serialize
-    super.merge(name: judge.full_name.titleize)
+    super.merge(name: judge&.full_name&.titleize)
   end
 end

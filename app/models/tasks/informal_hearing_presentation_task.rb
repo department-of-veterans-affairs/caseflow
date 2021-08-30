@@ -34,6 +34,8 @@ class InformalHearingPresentationTask < Task
     Constants.TASK_ACTIONS.CANCEL_TASK.to_h
   ].freeze
 
+  NON_IHP_WRITING_ORG_TYPES = %w[FieldVso PrivateBar].freeze
+
   def available_actions(user)
     return USER_ACTIONS if assigned_to == user
 

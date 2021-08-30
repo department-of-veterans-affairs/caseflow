@@ -30,6 +30,7 @@ class HearingDay < CaseflowRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
+  has_one :vacols_user, through: :judge
   has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -42,7 +43,7 @@ class HearingDay < CaseflowRecord
   SLOTS_BY_REQUEST_TYPE = {
     REQUEST_TYPES[:virtual] => { default: 8, maximum: 12 },
     REQUEST_TYPES[:central] => { default: 10, maximum: 10 },
-    REQUEST_TYPES[:video] => { default: 12, maximum: 12 }
+    REQUEST_TYPES[:video] => { default: 10, maximum: 10 }
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
@@ -94,14 +95,14 @@ class HearingDay < CaseflowRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def open_hearings
-    closed_hearing_dispositions = [
-      Constants.HEARING_DISPOSITION_TYPES.postponed,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled,
-      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-    ]
+  def ama_and_legacy_hearings
+    hearings + vacols_hearings
+  end
 
-    (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
+  def open_hearings
+    ama_and_legacy_hearings.reject do |hearing|
+      Hearing::CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition)
+    end
   end
 
   def hearings_for_user(current_user)
@@ -123,6 +124,7 @@ class HearingDay < CaseflowRecord
   end
 
   def to_hash
+    judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
                                            .new(HearingDay.where(id: id))
@@ -133,7 +135,10 @@ class HearingDay < CaseflowRecord
 
     ::HearingDaySerializer.new(
       self,
-      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+      params: {
+        video_hearing_days_request_types: video_hearing_days_request_types,
+        judge_names: judge_names
+      }
     ).serializable_hash[:data][:attributes]
   end
 
@@ -175,18 +180,9 @@ class HearingDay < CaseflowRecord
   # - Date: from the scheduled_for column for this hearing_day
   def begins_at
     # If 'first_slot_time' column has a value, use that
-    unless first_slot_time.nil?
-      return combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
+    if first_slot_time.present?
+      combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
     end
-
-    # if no value in db and central, 09:00
-    return combine_time_and_date("09:00", "America/New_York", scheduled_for) if central_office?
-
-    # if no value in db and virtual, 08:30
-    return combine_time_and_date("08:30", "America/New_York", scheduled_for) if virtual?
-
-    # if no value in db and video (not central or virtual): first_slot_time is 08:30
-    combine_time_and_date("08:30", RegionalOffice.find!(regional_office).timezone, scheduled_for)
   end
 
   def judge_first_name
@@ -195,6 +191,10 @@ class HearingDay < CaseflowRecord
 
   def judge_last_name
     judge ? judge.full_name.split(" ").last : nil
+  end
+
+  def judge_css_id
+    judge&.css_id
   end
 
   private

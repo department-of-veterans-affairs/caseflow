@@ -9129,11 +9129,11 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
           <HelperText
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              className="helper-text"
             >
               The time at the Board of Veterans' Appeals in Washington, DC
-            </span>
+            </div>
           </HelperText>
         </div>
       </div>
@@ -9337,14 +9337,15 @@ SAN FRANCISCO, CA 94103
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={true}
                 readOnly={true}
-                required={true}
+                required={false}
                 type="change_from_virtual"
                 update={
                   [MockFunction] {
@@ -9558,12 +9559,13 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={true}
                 type="change_from_virtual"
                 update={
@@ -18627,11 +18629,11 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           <HelperText
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              className="helper-text"
             >
               The time at the Board of Veterans' Appeals in Washington, DC
-            </span>
+            </div>
           </HelperText>
         </div>
       </div>
@@ -18834,12 +18836,13 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <Timezone
                 label="Veteran Timezone"
                 name="appellantTz"
                 onChange={[Function]}
+                optional={false}
                 readOnly={false}
                 required={true}
                 roTimezone="America/New_York"
@@ -18852,6 +18855,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="appellantTz"
                   onChange={[Function]}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -19654,6 +19658,7 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="Veteran Timezone"
                             name="Veteran Timezone"
+                            optional={false}
                             required={true}
                           >
                             <span>
@@ -34928,11 +34933,11 @@ SAN FRANCISCO, CA 94103
               <HelperText
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
-                <span
-                  data-css-tgxxqt=""
+                <div
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
-                </span>
+                </div>
               </HelperText>
             </div>
           </div>
@@ -34941,12 +34946,13 @@ SAN FRANCISCO, CA 94103
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email"
+                optional={false}
                 readOnly={false}
                 required={true}
                 type="change_to_virtual"
@@ -34974,11 +34980,6 @@ SAN FRANCISCO, CA 94103
                     Array [
                       "cf-form-textinput cf-inline-field",
                     ]
-                  }
-                  inputStyling={
-                    Object {
-                      "data-css-d0z96": "",
-                    }
                   }
                   name="Veteran Email"
                   onChange={[Function]}
@@ -35018,7 +35019,6 @@ SAN FRANCISCO, CA 94103
                           "cf-form-textinput cf-inline-field",
                         ]
                       }
-                      data-css-d0z96=""
                       id="Veteran Email"
                       name="Veteran Email"
                       onChange={[Function]}
@@ -35030,11 +35030,11 @@ SAN FRANCISCO, CA 94103
                 <HelperText
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
-                  <span
-                    data-css-tgxxqt=""
+                  <div
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
-                  </span>
+                  </div>
                 </HelperText>
               </VirtualHearingEmail>
             </div>
@@ -35214,12 +35214,13 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <Timezone
                 label="POA/Representative Timezone"
                 name="representativeTz"
                 onChange={[Function]}
+                optional={false}
                 readOnly={false}
                 required={true}
                 roTimezone="America/New_York"
@@ -35232,6 +35233,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="representativeTz"
                   onChange={[Function]}
+                  optional={false}
                   options={
                     Array [
                       Object {
@@ -36034,6 +36036,7 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="POA/Representative Timezone"
                             name="POA/Representative Timezone"
+                            optional={false}
                             required={true}
                           >
                             <span>
@@ -51308,11 +51311,11 @@ SAN FRANCISCO, CA 94103
               <HelperText
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
-                <span
-                  data-css-tgxxqt=""
+                <div
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
-                </span>
+                </div>
               </HelperText>
             </div>
           </div>
@@ -51320,12 +51323,13 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
+                optional={true}
                 readOnly={false}
                 type="change_to_virtual"
                 update={
@@ -51353,14 +51357,9 @@ SAN FRANCISCO, CA 94103
                       "cf-form-textinput cf-inline-field",
                     ]
                   }
-                  inputStyling={
-                    Object {
-                      "data-css-d0z96": "",
-                    }
-                  }
                   name="POA/Representative Email"
                   onChange={[Function]}
-                  optional={false}
+                  optional={true}
                   required={false}
                   strongLabel={true}
                   type="text"
@@ -51376,11 +51375,16 @@ SAN FRANCISCO, CA 94103
                       <strong>
                         <FormLabel
                           name="POA/Representative Email"
-                          optional={false}
+                          optional={true}
                           required={false}
                         >
                           <span>
                             POA/Representative Email
+                            <span
+                              className="cf-optional"
+                            >
+                              Optional
+                            </span>
                           </span>
                         </FormLabel>
                       </strong>
@@ -51391,7 +51395,6 @@ SAN FRANCISCO, CA 94103
                           "cf-form-textinput cf-inline-field",
                         ]
                       }
-                      data-css-d0z96=""
                       id="POA/Representative Email"
                       name="POA/Representative Email"
                       onChange={[Function]}
@@ -51403,11 +51406,11 @@ SAN FRANCISCO, CA 94103
                 <HelperText
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
-                  <span
-                    data-css-tgxxqt=""
+                  <div
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
-                  </span>
+                  </div>
                 </HelperText>
               </VirtualHearingEmail>
             </div>

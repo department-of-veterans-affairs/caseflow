@@ -110,6 +110,16 @@ class TeamManagement extends React.PureComponent {
                 <OrgList orgs={this.props.privateBars} isRepresentative />
               </React.Fragment> }
 
+              { this.props.vhaProgramOffices && <React.Fragment>
+                <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL}</OrgHeader>
+                <OrgList orgs={this.props.vhaProgramOffices} />
+              </React.Fragment> }
+
+              { this.props.vhaRegionalOffices && <React.Fragment>
+                <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
+                <OrgList orgs={this.props.vhaRegionalOffices} />
+              </React.Fragment> }
+
               { this.props.otherOrgs && <React.Fragment>
                 <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
                 <OrgList orgs={this.props.otherOrgs} />
@@ -132,7 +142,9 @@ TeamManagement.propTypes = {
   otherOrgs: PropTypes.array,
   privateBars: PropTypes.array,
   success: PropTypes.object,
-  vsos: PropTypes.array
+  vsos: PropTypes.array,
+  vhaProgramOffices: PropTypes.array,
+  vhaRegionalOffices: PropTypes.array
 };
 
 const mapStateToProps = (state) => {
@@ -146,6 +158,8 @@ const mapStateToProps = (state) => {
     judgeTeams,
     privateBars,
     vsos,
+    vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs
   } = state.teamManagement;
 
@@ -154,6 +168,8 @@ const mapStateToProps = (state) => {
     judgeTeams,
     privateBars,
     vsos,
+    vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs,
     success,
     error

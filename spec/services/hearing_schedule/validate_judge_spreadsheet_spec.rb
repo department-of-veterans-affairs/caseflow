@@ -1,45 +1,19 @@
 # frozen_string_literal: true
 
 describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
+  let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
+  let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
+
   before do
-    create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
-    create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
-  end
-
-  context "when judge non-availaility dates are duplicated" do
-    subject do
-      HearingSchedule::ValidateJudgeSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/judgeDuplicateDates.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
-      ).validate
-    end
-
-    it "returns JudgeDatesNotUnique" do
-      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique
-    end
-  end
-
-  context "when judge non-availaility dates are not the right format" do
-    subject do
-      HearingSchedule::ValidateJudgeSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/judgeWrongDataType.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
-      ).validate
-    end
-
-    it "returns JudgeDatesNotCorrectFormat" do
-      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat
-    end
+    CachedUser.sync_from_vacols
   end
 
   context "when the judge is not in the db" do
     subject do
       HearingSchedule::ValidateJudgeSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/judgeNotInDb.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
+        HearingSchedule::GetSpreadsheetData.new(
+          Roo::Spreadsheet.open("spec/support/judgeNotInDb.xlsx", extension: :xlsx)
+        )
       ).validate
     end
 
@@ -48,12 +22,12 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
     end
   end
 
-  context "when judge non-availaility dates valid" do
+  context "when spreadsheet data is valid" do
     subject do
       HearingSchedule::ValidateJudgeSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/validJudgeSpreadsheet.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
+        HearingSchedule::GetSpreadsheetData.new(
+          Roo::Spreadsheet.open("spec/support/validJudgeSpreadsheet.xlsx", extension: :xlsx)
+        )
       ).validate
     end
 

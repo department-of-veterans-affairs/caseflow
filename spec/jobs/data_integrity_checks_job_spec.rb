@@ -6,6 +6,7 @@ describe DataIntegrityChecksJob do
   let(:untracked_legacy_appeals_checker) { UntrackedLegacyAppealsChecker.new }
   let(:reviews_with_duplicate_ep_error_checker) { ReviewsWithDuplicateEpErrorChecker.new }
   let(:stuck_virtual_hearings_checker) { StuckVirtualHearingsChecker.new }
+  let(:appeals_with_more_than_one_open_hearing_task_checker) { AppealsWithMoreThanOneOpenHearingTaskChecker.new }
   let(:decision_date_checker) { DecisionDateChecker.new }
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
   let(:slack_messages) { [] }
@@ -18,6 +19,9 @@ describe DataIntegrityChecksJob do
     allow(UntrackedLegacyAppealsChecker).to receive(:new).and_return(untracked_legacy_appeals_checker)
     allow(ReviewsWithDuplicateEpErrorChecker).to receive(:new).and_return(reviews_with_duplicate_ep_error_checker)
     allow(StuckVirtualHearingsChecker).to receive(:new).and_return(stuck_virtual_hearings_checker)
+    allow(AppealsWithMoreThanOneOpenHearingTaskChecker).to receive(:new).and_return(
+      appeals_with_more_than_one_open_hearing_task_checker
+    )
     allow(DecisionDateChecker).to receive(:new).and_return(decision_date_checker)
     allow(SlackService).to receive(:new).and_return(slack_service)
     [
@@ -26,6 +30,7 @@ describe DataIntegrityChecksJob do
       untracked_legacy_appeals_checker,
       reviews_with_duplicate_ep_error_checker,
       stuck_virtual_hearings_checker,
+      appeals_with_more_than_one_open_hearing_task_checker,
       decision_date_checker
     ].each do |checker|
       allow(checker).to receive(:call).and_call_original
@@ -85,6 +90,10 @@ describe DataIntegrityChecksJob do
       expect(stuck_virtual_hearings_checker).to have_received(:call).once
       expect(stuck_virtual_hearings_checker).to have_received(:report?).once
       expect(stuck_virtual_hearings_checker).to_not have_received(:report)
+
+      expect(appeals_with_more_than_one_open_hearing_task_checker).to have_received(:call).once
+      expect(appeals_with_more_than_one_open_hearing_task_checker).to have_received(:report?).once
+      expect(appeals_with_more_than_one_open_hearing_task_checker).to_not have_received(:report)
 
       expect(decision_date_checker).to have_received(:call).once
       expect(decision_date_checker).to have_received(:report?).once

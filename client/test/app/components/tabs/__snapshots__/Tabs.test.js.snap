@@ -41,7 +41,6 @@ exports[`Tabs renders correctly 1`] = `
       class="tabPanel active"
       id="abc123-tabpanel-1"
       role="tabpanel"
-      tabindex="0"
     >
       <p>
         Content
@@ -52,7 +51,6 @@ exports[`Tabs renders correctly 1`] = `
       class="tabPanel"
       id="abc123-tabpanel-2"
       role="tabpanel"
-      tabindex="-1"
     >
       <p>
         Some other content

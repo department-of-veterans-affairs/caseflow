@@ -249,6 +249,18 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               <span
                 data-css-l6c9n4=""
               >
+                Judge
+                :
+              </span>
+               
+              
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              <span
+                data-css-l6c9n4=""
+              >
                 Date
                 :
               </span>
@@ -258,18 +270,6 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               >
                 8/7/20
               </span>
-            </li>
-            <li
-              data-css-1yjr6ry=""
-            >
-              <span
-                data-css-l6c9n4=""
-              >
-                Judge
-                :
-              </span>
-               
-              
             </li>
             <li
               data-css-1yjr6ry=""

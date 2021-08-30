@@ -630,7 +630,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       let!(:active_nonrating_request_issue) do
         create(:request_issue,
                :nonrating,
-               decision_review: another_higher_level_review)
+               decision_review: another_higher_level_review,
+               nonrating_issue_category: "Accrued Benefits")
       end
 
       before do
@@ -676,7 +677,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         create(
           :request_issue,
           :nonrating,
-          decision_review: higher_level_review
+          decision_review: another_higher_level_review,
+          nonrating_issue_category: "Accrued Benefits"
         )
       end
 
@@ -1613,7 +1615,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
             :unidentified,
             benefit_type: "compensation",
             decision_review: higher_level_review,
-            contested_issue_description: "This is unidentified"
+            contested_issue_description: "This is unidentified",
+            decision_date: Time.zone.today
           )
         end
 

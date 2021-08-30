@@ -53,24 +53,17 @@ describe Docket, :all_dbs do
              :cavc_ready_for_distribution,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
-    let!(:unrecognized_appellant_appeal) do
-      create(:appeal,
-             :with_post_intake_tasks,
-             claimants: [create(:claimant, :with_unrecognized_appellant_detail)],
-             docket_type: Constants.AMA_DOCKETS.direct_review)
-    end
 
     context "appeals" do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
-        it "returns all appeals except for unrecognized_appellant appeals if no option given" do
+        it "returns all appeals if no option given" do
           expect(subject).to include appeal
           expect(subject).to include denied_aod_motion_appeal
           expect(subject).to include inapplicable_aod_motion_appeal
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
-          expect(subject).to_not include unrecognized_appellant_appeal
         end
       end
 
@@ -83,7 +76,6 @@ describe Docket, :all_dbs do
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
-          expect(subject).to_not include unrecognized_appellant_appeal
         end
       end
 
@@ -96,7 +88,6 @@ describe Docket, :all_dbs do
           expect(subject).to_not include aod_age_appeal
           expect(subject).to_not include aod_motion_appeal
           expect(subject).to_not include cavc_appeal
-          expect(subject).to_not include unrecognized_appellant_appeal
         end
       end
 

@@ -58,7 +58,7 @@ class Docket
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
-  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
+  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     Distribution.transaction do
       appeals = appeals(priority: priority, ready: true).limit(limit)
 
@@ -85,11 +85,7 @@ class Docket
   private
 
   def docket_appeals
-    Appeal.joins(:claimants)
-      .joins("left join unrecognized_appellants on claimants.id = unrecognized_appellants.claimant_id")
-      .where(docket_type: docket_type)
-      .where("unrecognized_appellants.id is null")
-      .extending(Scopes)
+    Appeal.where(docket_type: docket_type).extending(Scopes)
   end
 
   def assign_judge_tasks_for_appeals(appeals, judge)

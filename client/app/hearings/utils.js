@@ -291,6 +291,18 @@ export const zoneName = (time, name, format) => {
 };
 
 /**
+ * Method to get short zone label from like 'Eastern' or 'Pacific'
+ * @param {string} name -- Name of the zone, defaults to 'America/New_York'
+ * @returns {string} -- The short label of the timezone
+ */
+export const shortZoneName = (name) => {
+  const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
+  const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
+
+  return zoneName?.split('Time')[0]?.trim();
+};
+
+/**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
@@ -442,7 +454,7 @@ export const startPolling = (hearing, { setShouldStartPolling, resetState, dispa
 
 export const parseVirtualHearingErrors = (msg, hearing) => {
   // Remove the validation string from th error
-  const messages = msg.split(':')[1];
+  const messages = msg.split(':')[2];
 
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
@@ -906,6 +918,19 @@ export const getTimezoneAbbreviation = (timezone) => {
   // Create a moment object so we can extract the timezone
   // abbreviation like 'PDT'
   return moment.tz('00:00', 'HH:mm', timezone).format('z');
+};
+
+export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
+  const poaLabel = virtual ? ', POA,' : ' and POA';
+  const recipientLabel = hearing?.representative ? `${appellantTitle}${poaLabel}` : `${appellantTitle}`;
+
+  if (virtual) {
+    return `When you schedule the hearing, the ${recipientLabel} and ` +
+     'Judge will receive an email with connection information for the virtual hearing.';
+  }
+
+  return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
+    'Caseflow won’t send notifications immediately after scheduling.';
 };
 
 /* eslint-enable camelcase */

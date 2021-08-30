@@ -669,5 +669,25 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         expect(@raven_user[:css_id]).to eq(user.css_id)
       end
     end
+
+    context "when veteran file number doesn't match BGS file number" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { "123123123" }
+      end
+      it "throws an error" do
+        BvaDispatchTask.create_from_root_task(root_task)
+        post :outcode, params: params
+
+        expect(response.status).to eq(500)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        response_title = JSON.parse(response.body)["errors"][0]["title"]
+
+        error_message = "The veteran file number does not match the file number in VBMS"
+        error_title = "VBMS::FilenumberDoesNotExist"
+
+        expect(response_detail).to eq error_message
+        expect(response_title).to eq error_title
+      end
+    end
   end
 end

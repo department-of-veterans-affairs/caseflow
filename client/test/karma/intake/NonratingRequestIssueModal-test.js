@@ -12,10 +12,9 @@ describe('NonratingRequestIssueModal', () => {
   context('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <NonratingRequestIssueModal 
-        formType={formType} 
+        <NonratingRequestIssueModal
+        formType={formType}
         intakeData={intakeData}
-        featureToggles={{attorneyFees: true }}
         onSkip={() => null} />
       );
 
@@ -43,7 +42,6 @@ describe('NonratingRequestIssueModal', () => {
        <NonratingRequestIssueModal
        formType={formType}
        intakeData={intakeData}
-       featureToggles={{attorneyFees: true }}
        />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
@@ -54,10 +52,9 @@ describe('NonratingRequestIssueModal', () => {
 
     it('disables button when nothing selected', () => {
       const wrapper = mount(
-        <NonratingRequestIssueModal 
-        formType={formType} 
-        intakeData={intakeData} 
-        featureToggles={{attorneyFees: true }} />
+        <NonratingRequestIssueModal
+        formType={formType}
+        intakeData={intakeData} />
         );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');

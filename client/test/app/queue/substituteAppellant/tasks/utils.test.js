@@ -1,17 +1,21 @@
 import { uniq } from 'lodash';
 
 import {
+  automatedTasks,
+  nonAutomatedTasksToHide,
   calculateEvidenceSubmissionEndDate,
   filterTasks,
   prepTaskDataForUi,
   shouldAutoSelect,
   shouldDisable,
-  shouldHideBasedOnPoaType,
+  shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks,
-} from 'app/queue/substituteAppellant/tasks/utils';
+  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
+  hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { isSameDay } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 describe('utility functions for task manipulation', () => {
   const nonDistributionTaskTypes = [
@@ -73,20 +77,61 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
-  describe('shouldHideBasedOnPoaType', () => {
+  describe('shouldDisableBasedOnTaskType', () => {
+    describe('when a ScheduleVeteranTask is selected', () => {
+      const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
+
+      const shouldDisables = [
+        'EvidenceSubmissionWindowTask',
+        'TranscriptionTask'
+      ];
+
+      const shouldNotDisables = [
+        'ScheduleHearingTask',
+        'ExampleTask'
+      ];
+
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+  });
+
+  describe('disabledTasksBasedOnSelections', () => {
+    const tasks = [
+      { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
+      { taskId: 2, type: 'ScheduleHearingTask' },
+      { taskId: 3, type: 'TranscriptionTask' }
+    ];
+
+    describe('when EvidenceSubmissionWindowTask is selected', () => {
+      const selectedTaskIds = [1];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
+          ])
+        );
+      });
+    });
+  });
+
+  const poa = { ihp_allowed: true };
+
+  describe('shouldHideBasedOnPoa', () => {
+
     describe('task type is InformalHearingPresentationTask', () => {
       const taskInfo = { type: 'InformalHearingPresentationTask' };
 
-      it('should hide if the poa is an attorney', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'Attorney')).toBe(true);
-      });
-
-      it('should hide if the poa is an agent', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'Agent')).toBe(true);
-      });
-
-      it('should not hide if the poa is not an agent/attorney', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'other poa type')).toBe(false);
+      it('should hide if the backend says rep is non-ihp-writing', () => {
+        expect(shouldHideBasedOnPoa(taskInfo, { ihp_allowed: false })).toBe(true);
       });
     });
 
@@ -94,13 +139,13 @@ describe('utility functions for task manipulation', () => {
       const taskInfo = { type: 'JudgeAssignTask' };
 
       it('should not hide', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'other POA type')).toBe(false);
+        expect(shouldHideBasedOnPoa(taskInfo, { ihp_allowed: false })).toBe(false);
       });
     });
   });
 
   describe('shouldHide', () => {
-    let poaType = 'other poa type';
+
     const otherOrgTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: true }, type: 'other task type' };
     const otherUserTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false }, type: 'other task type' };
 
@@ -109,7 +154,7 @@ describe('utility functions for task manipulation', () => {
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns true', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
       });
     });
 
@@ -118,19 +163,53 @@ describe('utility functions for task manipulation', () => {
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns false', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(false);
       });
     });
 
-    describe('tasks with a type in the automatedTasks array', () => {
-      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask', assignedTo: { isOrganization: false } };
-      const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
-      const poaTypes = ['Attorney', 'Agent', null];
+    describe('tasks in automatedTasks array', () => {
+      it.each(automatedTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
 
-      describe.each(poaTypes)(' poaType: %s', (type) => {
-        it('should hide these tasks', () => {
-          expect(shouldHide(userTaskInfo, type, allTasks)).toBe(true);
-        });
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in nonAutomatedTasksToHide array', () => {
+      it.each(nonAutomatedTasksToHide)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in mailTasks array', () => {
+      it.each(mailTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in hearingAdminActions array', () => {
+      it.each(hearingAdminActions)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks with a type in the automatedTasks array by poaType', () => {
+      const userTaskInfo = {
+        taskId: 1,
+        hideFromCaseTimeline: false,
+        type: 'JudgeDecisionReviewTask',
+        assignedTo: { isOrganization: false },
+      };
+      const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
+
+      it('should hide these tasks', () => {
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
       });
 
     });
@@ -139,11 +218,10 @@ describe('utility functions for task manipulation', () => {
       describe('the task type is only assigned to a user', () => {
         const userTaskInfo = { hideFromCaseTimeline: false, type: 'RootTask', assignedTo: { isOrganization: false } };
 
-        poaType = 'Attorney';
         const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
         it('should not hide these tasks', () => {
-          expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
+          expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(false);
         });
       });
     });
@@ -153,11 +231,9 @@ describe('utility functions for task manipulation', () => {
       const orgTaskInfo = { taskId: 2, hideFromCaseTimeline: true, type: 'BvaDispatchTask', assignedTo: { isOrganization: true } };
       const allTasks = [orgTaskInfo, userTaskInfo, otherOrgTask, otherUserTask];
 
-      poaType = 'other poa type';
-
       it('should hide both organization and user Bva Dispatch tasks', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
-        expect(shouldHide(orgTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
+        expect(shouldHide(orgTaskInfo, poa, allTasks)).toBe(true);
       });
 
     });
@@ -290,7 +366,7 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-04');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-04'))).toBe(true);
   });
 
   it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
@@ -301,6 +377,6 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-23');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-23'))).toBe(true);
   });
 });

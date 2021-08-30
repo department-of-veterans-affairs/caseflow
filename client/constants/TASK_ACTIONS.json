@@ -354,5 +354,14 @@
   "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
     "label": "Remove hearing to correct a scheduling error",
     "value": "modal/hearing_scheduled_in_error"
+  },
+  "READY_TO_DOCKET": {
+    "label": "Ready to Docket",
+    "value": "modal/ready_to_docket"
+  },
+  "VHA_ASSIGN_TO_PROGRAM_OFFICE": {
+    "label": "Assign to Program Office",
+    "value": "modal/assign_to_program_office",
+    "func": "vha_assign_to_program_office_data"
   }
 }

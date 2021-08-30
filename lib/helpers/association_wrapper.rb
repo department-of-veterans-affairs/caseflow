@@ -17,6 +17,11 @@ class AssocationWrapper
       self
     end
 
+    def polymorphic
+      @selects << ->(assoc) { assoc.polymorphic? }
+      self
+    end
+
     def without_type_field
       # Ignoring scenario where assoc.foreign_key.is_a?(Symbol)
       @selects << ->(assoc) { assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }

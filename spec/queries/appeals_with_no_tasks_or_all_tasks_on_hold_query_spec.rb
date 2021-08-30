@@ -3,10 +3,16 @@
 describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_one_task) { create(:root_task, :assigned).appeal }
+  let!(:appeal_with_only_active_track_veteran_task) do
+    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal.tasks.find_by(type: :DistributionTask).descendants.each(&:cancelled!)
+    create(:track_veteran_task, :assigned, parent: appeal.root_task)
+    appeal
+  end
   let!(:appeal_with_two_tasks_not_distribution) do
     appeal = create(:appeal)
     create(:root_task, appeal: appeal)
-    create(:track_veteran_task, :assigned, appeal: appeal)
+    create(:track_veteran_task, :assigned, parent: appeal.root_task)
     appeal
   end
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
@@ -40,6 +46,12 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   let!(:dispatched_appeal_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
     create(:bva_dispatch_task, :completed, appeal: appeal)
+    create(:decision_document, citation_number: "A18123456", appeal: appeal)
+    appeal
+  end
+  let!(:incompletely_dispatched_appeal_on_hold) do
+    appeal = create(:appeal, :with_post_intake_tasks)
+    create(:bva_dispatch_task, :completed, appeal: appeal)
     appeal
   end
 
@@ -48,6 +60,7 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
 
     let(:stuck_appeals) do
       [
+        appeal_with_only_active_track_veteran_task, # detected by appeals_with_only_on_hold_tasks
         appeal_with_zero_tasks,
         appeal_with_one_task,
         appeal_with_all_tasks_on_hold,
@@ -106,6 +119,12 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
       let(:appeal) { dispatched_appeal_on_hold }
 
       it { is_expected.to eq(true) }
+    end
+
+    context "incompletely_dispatched_appeal_on_hold" do
+      let(:appeal) { incompletely_dispatched_appeal_on_hold }
+
+      it { is_expected.to eq(false) }
     end
   end
 end

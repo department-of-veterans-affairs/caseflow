@@ -17,16 +17,6 @@ feature "Task queue", :all_dbs do
       )
     end
 
-    let!(:attorney_task_new_docs) do
-      create(
-        :ama_attorney_task,
-        :on_hold,
-        assigned_to: attorney_user,
-        placed_on_hold_at: 4.days.ago,
-        appeal: attorney_task.appeal
-      )
-    end
-
     let!(:colocated_task) do
       create(
         :ama_colocated_task,

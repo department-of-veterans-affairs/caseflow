@@ -62,8 +62,8 @@ describe BvaDispatchTask, :all_dbs do
         BvaDispatch.singleton.add_user(create(:user))
       end
 
-      it "should raise an error" do
-        expect { subject }.to raise_error(NotImplementedError)
+      it "should not raise an error" do
+        subject
       end
     end
   end

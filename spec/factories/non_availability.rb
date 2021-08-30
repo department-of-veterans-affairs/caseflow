@@ -12,8 +12,4 @@ FactoryBot.define do
   factory :ro_non_availability, class: RoNonAvailability, parent: :non_availability do
     object_identifier { "RO01" }
   end
-
-  factory :judge_non_availability, class: JudgeNonAvailability, parent: :non_availability do
-    object_identifier { "CSS_ID1" }
-  end
 end
