@@ -2,6 +2,7 @@
 
 class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include HasAppealUpdatedSince
   include IssueUpdater
 
   belongs_to :judge, class_name: "User"
@@ -27,7 +28,7 @@ class JudgeCaseReview < CaseflowRecord
   # LEGACY Limit and Probablity. See AMA at app/models/quality_review_case_selector.rb:5
   # As of Dec 2019, we want AMA and Legacy to use the same cap. The percentages may differ. The
   # goal is to get to the cap as steadily across the month as possible
-  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 137
+  MONTHLY_LIMIT_OF_QUALITY_REVIEWS = 137
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
 
   def update_in_vacols!
@@ -84,13 +85,14 @@ class JudgeCaseReview < CaseflowRecord
         record = create(params)
         if record.valid?
           record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          record.associate_with_appeal
         end
         record
       end
     end
 
     def reached_monthly_limit_in_quality_reviews?
-      where(location: :quality_review).this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
+      where(location: :quality_review).this_month.size >= MONTHLY_LIMIT_OF_QUALITY_REVIEWS
     end
 
     def repository

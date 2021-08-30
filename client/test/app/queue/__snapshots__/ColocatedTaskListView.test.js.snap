@@ -85,7 +85,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-0"
           role="tabpanel"
-          tabindex="0"
         >
           <p
             class="cf-margin-top-0"
@@ -522,82 +521,156 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="tooltip-5"
+                      aria-label=""
                       currentitem="false"
+                      data-css-9shxm7=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="tooltip-5"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
+                      <span>
+                        Days Waiting
+                      </span>
                       <span
-                        aria-label=""
-                        data-css-9shxm7=""
+                        aria-label="Sort by Days Waiting"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
                       >
-                        <span>
-                          Days Waiting
-                        </span>
-                        <span
-                          aria-label="Sort by Days Waiting"
-                          data-css-ilmt4b=""
-                          role="button"
-                          tabindex="0"
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="table-icon"
-                            height="16px"
-                            version="1.1"
-                            viewBox="0 0 13 16"
-                            width="13px"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
                           >
                             <g
-                              fill="none"
-                              fill-rule="evenodd"
-                              stroke="none"
-                              stroke-width="1"
+                              fill-rule="nonzero"
                             >
                               <g
-                                fill-rule="nonzero"
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
                               >
                                 <g
-                                  fill="#d6d7d9"
-                                  transform="translate(2.000000, 1.000000)"
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
                                 >
-                                  <g
-                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
-                                  >
-                                    <path
-                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                    />
-                                  </g>
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
                                 </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
                                 <g
-                                  fill="#d6d7d9"
-                                  transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
                                 >
-                                  <g
-                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
-                                  >
-                                    <path
-                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                    />
-                                  </g>
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
                                 </g>
                               </g>
                             </g>
-                          </svg>
-                        </span>
+                          </g>
+                        </svg>
                       </span>
                     </span>
                     <span
                       data-css-fs14qy=""
                     >
                       <div
-                        class="__react_component_tooltip place-top type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Calendar days since 
                         <br />
                          this case was assigned
@@ -681,29 +754,103 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-71"
+                      aria-label="Direct Review"
                       currentitem="false"
+                      data-css-2moai0=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="badge-200603-71"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
-                      <span
-                        aria-label="Direct Review"
-                        data-css-2moai0=""
-                      >
-                        D
-                      </span>
+                      D
                     </span>
                     <span
                       data-css-19if8q3=""
                     >
                       <div
-                        class="__react_component_tooltip place-bottom type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-71"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Direct Review
                       </div>
                     </span>
@@ -716,13 +863,17 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    <span
-                      class=""
+                    <div
+                      class="css-w0yocm"
                     >
-                      1
-                       
-                      day
-                    </span>
+                      <span
+                        class=""
+                      >
+                        1
+                         
+                        day
+                      </span>
+                    </div>
                   </td>
                   <td
                     class=""
@@ -804,29 +955,103 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-72"
+                      aria-label="Direct Review"
                       currentitem="false"
+                      data-css-2moai0=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="badge-200603-72"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
-                      <span
-                        aria-label="Direct Review"
-                        data-css-2moai0=""
-                      >
-                        D
-                      </span>
+                      D
                     </span>
                     <span
                       data-css-hd31kg=""
                     >
                       <div
-                        class="__react_component_tooltip place-bottom type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-72"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Direct Review
                       </div>
                     </span>
@@ -839,20 +1064,24 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    <span
-                      class="cf-red-text"
-                    >
-                      31
-                       
-                      days
-                    </span>
                     <div
-                      class="cf-continuous-progress-bar"
+                      class="css-w0yocm"
                     >
+                      <span
+                        class="cf-red-text"
+                      >
+                        31
+                         
+                        days
+                      </span>
                       <div
-                        class="cf-continuous-progress-bar-warning"
-                        style="width: 100%;"
-                      />
+                        class="cf-continuous-progress-bar"
+                      >
+                        <div
+                          class="cf-continuous-progress-bar-warning"
+                          style="width: 100%;"
+                        />
+                      </div>
                     </div>
                   </td>
                   <td
@@ -899,14 +1128,12 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-1"
           role="tabpanel"
-          tabindex="-1"
         />
         <div
           aria-hidden="true"
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-2"
           role="tabpanel"
-          tabindex="-1"
         />
       </div>
     </div>
@@ -999,14 +1226,12 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-0"
           role="tabpanel"
-          tabindex="-1"
         />
         <div
           aria-hidden="false"
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-1"
           role="tabpanel"
-          tabindex="0"
         >
           <p
             class="cf-margin-top-0"
@@ -1443,82 +1668,156 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="tooltip-5"
+                      aria-label=""
                       currentitem="false"
+                      data-css-9shxm7=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="tooltip-5"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
+                      <span>
+                        Days on Hold
+                      </span>
                       <span
-                        aria-label=""
-                        data-css-9shxm7=""
+                        aria-label="Sort by Days on Hold"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
                       >
-                        <span>
-                          Days on Hold
-                        </span>
-                        <span
-                          aria-label="Sort by Days on Hold"
-                          data-css-ilmt4b=""
-                          role="button"
-                          tabindex="0"
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="table-icon"
-                            height="16px"
-                            version="1.1"
-                            viewBox="0 0 13 16"
-                            width="13px"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
                           >
                             <g
-                              fill="none"
-                              fill-rule="evenodd"
-                              stroke="none"
-                              stroke-width="1"
+                              fill-rule="nonzero"
                             >
                               <g
-                                fill-rule="nonzero"
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
                               >
                                 <g
-                                  fill="#d6d7d9"
-                                  transform="translate(2.000000, 1.000000)"
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
                                 >
-                                  <g
-                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
-                                  >
-                                    <path
-                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                    />
-                                  </g>
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
                                 </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
                                 <g
-                                  fill="#d6d7d9"
-                                  transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
                                 >
-                                  <g
-                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
-                                  >
-                                    <path
-                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                    />
-                                  </g>
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
                                 </g>
                               </g>
                             </g>
-                          </svg>
-                        </span>
+                          </g>
+                        </svg>
                       </span>
                     </span>
                     <span
                       data-css-fs14qy=""
                     >
                       <div
-                        class="__react_component_tooltip place-top type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Calendar days since 
                         <br />
                          this case was placed on hold
@@ -1602,29 +1901,103 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-73"
+                      aria-label="Direct Review"
                       currentitem="false"
+                      data-css-2moai0=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="badge-200603-73"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
-                      <span
-                        aria-label="Direct Review"
-                        data-css-2moai0=""
-                      >
-                        D
-                      </span>
+                      D
                     </span>
                     <span
                       data-css-t9ad6e=""
                     >
                       <div
-                        class="__react_component_tooltip place-bottom type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-73"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Direct Review
                       </div>
                     </span>
@@ -1661,11 +2034,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>
@@ -1727,29 +2096,103 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-74"
+                      aria-label="Direct Review"
                       currentitem="false"
+                      data-css-2moai0=""
                       data-event="focus mouseenter"
-                      data-event-off="keydown mouseleave"
+                      data-event-off="mouseleave keydown"
                       data-for="badge-200603-74"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
-                      <span
-                        aria-label="Direct Review"
-                        data-css-2moai0=""
-                      >
-                        D
-                      </span>
+                      D
                     </span>
                     <span
                       data-css-ns953s=""
                     >
                       <div
-                        class="__react_component_tooltip place-bottom type-dark "
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-74"
+                        role="tooltip"
                       >
+                        <style>
+                          
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                        </style>
                         Direct Review
                       </div>
                     </span>
@@ -1786,11 +2229,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>
@@ -1816,7 +2255,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-2"
           role="tabpanel"
-          tabindex="-1"
         />
       </div>
     </div>

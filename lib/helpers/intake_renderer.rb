@@ -66,48 +66,64 @@ class IntakeRenderer
     [label(context), calculate_breadcrumbs(context)].flatten
   end
 
-  def veteran_details(vet)
+  def veteran_details(veteran)
     details = []
-    details += [vet.name, "FN: #{vet.file_number}"] if show_pii
-    details << "PID: #{vet.participant_id}"
+    details += [veteran.name, "FN: #{veteran.file_number}"] if show_pii
+    details << "PID: #{veteran.participant_id}"
     details
   end
 
-  def veteran_children(vet)
+  # :nocov:
+  def veteran_children(veteran)
     reviews = [Appeal, HigherLevelReview, SupplementalClaim].map do |klass|
-      klass.where(veteran_file_number: vet.file_number)
+      klass.where(veteran_file_number: veteran.file_number)
     end.flatten
-    reviews.sort_by! { |dr| dr.receipt_date || Time.zone.today }
-    reviews.map { |dr| structure(dr) }
+    reviews.sort_by! { |decision_review| decision_review.receipt_date || Time.zone.today }
+    reviews.map { |decision_review| structure(decision_review) }
+  end
+  # :nocov:
+
+  def decision_review_details(decision_review)
+    ["rcvd #{decision_review.receipt_date}", decision_review.uuid]
   end
 
-  def decision_review_details(dr)
-    ["rcvd #{dr.receipt_date.to_s}", dr.uuid]
-  end
-
-  def decision_review_children(dr)
+  def decision_review_children(decision_review)
     children = []
-    children << "est. err: #{truncate(dr.establishment_error, 60)}" if dr.establishment_error.present?
-    children << (structure(dr.claimant) || "no claimant")
-    children << (structure(dr.intake) || "no intake")
-
-    epes = dr.try(:end_product_establishments)&.to_a
-    other_ris = dr.request_issues.where(end_product_establishment: nil).map { |ri| structure(ri) }
-    if epes.present?
-      children += epes.map { |epe| structure(epe) }
-      children << { "other issues:": other_ris } if other_ris.present?
-    else
-      children += other_ris
+    if decision_review.establishment_error.present?
+      children << "est. err: #{truncate(decision_review.establishment_error, 60)}"
     end
+    children << (structure(decision_review.claimant) || "no claimant")
+    children << (structure(decision_review.intake) || "no intake")
 
-    children += dr.request_issues_updates.map { |riu| structure(riu) }
-    children += dr.decision_issues.map { |di| structure(di) }
+    children += decision_review_epes_and_other_request_issues(decision_review)
+
+    children += decision_review.request_issues_updates.map { |riu| structure(riu) }
+    children += decision_review.decision_issues.map { |decision_issue| structure(decision_issue) }
 
     children
   end
 
-  def decision_review_context(dr)
-    dr.veteran
+  def decision_review_epes_and_other_request_issues(decision_review)
+    result = []
+
+    other_ris = decision_review.request_issues.where(end_product_establishment: nil).map do |request_issue|
+      structure(request_issue)
+    end
+
+    epes = decision_review.try(:end_product_establishments)&.to_a
+
+    if epes.present?
+      result += epes.map { |epe| structure(epe) }
+      result << { "other issues:": other_ris } if other_ris.present?
+    else
+      result += other_ris
+    end
+
+    result
+  end
+
+  def decision_review_context(decision_review)
+    decision_review.veteran
   end
 
   def claimant_details(claimant)
@@ -122,6 +138,7 @@ class IntakeRenderer
     details
   end
 
+  # :nocov:
   def claimant_context(claimant)
     claimant.decision_review
   end
@@ -141,7 +158,7 @@ class IntakeRenderer
   def end_product_establishment_children(epe)
     children = []
     children << "Claim #{epe.reference_id}" if epe.reference_id.present?
-    children += epe.request_issues.map { |ri| structure(ri) }
+    children += epe.request_issues.map { |request_issue| structure(request_issue) }
     history = end_product_establishment_history(epe)
     children << { "history:": history } if history.present?
     children
@@ -153,20 +170,20 @@ class IntakeRenderer
       [epe.established_at, "established"],
       [epe.last_synced_at, "last synced: #{epe.synced_status || 'nil'}"]
     ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
   end
 
   def end_product_establishment_context(epe)
     epe.source
   end
 
-  def request_issue_details(ri)
-    details = [ri.benefit_type]
-    details << if ri.rating?
+  def request_issue_details(request_issue)
+    details = [request_issue.benefit_type]
+    details << if request_issue.rating?
                  "rating"
-               elsif ri.nonrating?
+               elsif request_issue.nonrating?
                  "nonrating"
-               elsif ri.verified_unidentified_issue?
+               elsif request_issue.verified_unidentified_issue?
                  "verified unidentified"
                else
                  "unidentified"
@@ -174,46 +191,72 @@ class IntakeRenderer
     details
   end
 
-  def request_issue_children(ri)
-    children = []
-    children << "descr: #{truncate(ri.description, 55)}"
-    children << "#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}" if ri.nonrating?
-    if ri.contention_reference_id
-      contention = "Contention #{ri.contention_reference_id}"
-      contention += " (disp: #{ri.contention_disposition.disposition})" if ri.contention_disposition
-      children << contention
+  def request_issue_children(request_issue)
+    children = ["descr: #{truncate(request_issue.description, 55)}"]
+
+    if request_issue.nonrating?
+      children << "#{request_issue.nonrating_issue_category} - #{request_issue.nonrating_issue_description}"
     end
-    children << "corrected by: #{label(ri.correction_request_issue)}" if ri.corrected?
-    if ri.ineligible_reason.present?
-      child = "ineligible (#{ri.ineligible_reason})"
-      if ri.ineligible_due_to_id.present?
-        child = {
-          "#{child}" => ["due to #{label(ri.ineligible_due_to)}"]
-        }
-      end
-      children << child
-    end
-    children += ri.decision_issues.map { |di| label(di) }
-    history = request_issue_history(ri)
+
+    children += request_issue_contention(request_issue)
+
+    children << "corrected by: #{label(request_issue.correction_request_issue)}" if request_issue.corrected?
+
+    children += request_issue_ineligible_reason(request_issue)
+
+    children += request_issue.decision_issues.map { |decision_issue| label(decision_issue) }
+
+    history = request_issue_history(request_issue)
     children << { "history:": history } if history.present?
+
     children
   end
 
-  def request_issue_history(ri)
-    history = [
-      [ri.created_at, "created"],
-      [ri.closed_at, "closed: #{ri.closed_status}"],
-      [ri.rating_issue_associated_at, "rating issue associated"],
-      [ri.contention_removed_at, "contention removed"],
-      [ri.contention_updated_at, "contention updated"],
-      [ri.decision_sync_attempted_at, "decision sync attempted"],
-      [ri.decision_sync_canceled_at, "decision sync canceled"]
-    ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+  def request_issue_contention(request_issue)
+    result = []
+
+    if request_issue.contention_reference_id
+      contention = "Contention #{request_issue.contention_reference_id}"
+      if request_issue.contention_disposition
+        contention += " (disp: #{request_issue.contention_disposition.disposition})"
+      end
+      children << contention
+    end
+
+    result
   end
 
-  def request_issue_context(ri)
-    ri.end_product_establishment || ri.decision_review
+  def request_issue_ineligible_reason(request_issue)
+    result = []
+
+    if request_issue.ineligible_reason.present?
+      child = "ineligible (#{request_issue.ineligible_reason})"
+      if request_issue.ineligible_due_to_id.present?
+        child = {
+          child.to_s => ["due to #{label(request_issue.ineligible_due_to)}"]
+        }
+      end
+      result << child
+    end
+
+    result
+  end
+
+  def request_issue_history(request_issue)
+    history = [
+      [request_issue.created_at, "created"],
+      [request_issue.closed_at, "closed: #{request_issue.closed_status}"],
+      [request_issue.rating_issue_associated_at, "rating issue associated"],
+      [request_issue.contention_removed_at, "contention removed"],
+      [request_issue.contention_updated_at, "contention updated"],
+      [request_issue.decision_sync_attempted_at, "decision sync attempted"],
+      [request_issue.decision_sync_canceled_at, "decision sync canceled"]
+    ]
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
+  end
+
+  def request_issue_context(request_issue)
+    request_issue.end_product_establishment || request_issue.decision_review
   end
 
   def request_issues_update_children(riu)
@@ -221,7 +264,7 @@ class IntakeRenderer
     %w[added removed withdrawn edited correction].each do |update_type|
       issues = riu.send("#{update_type}_issues")
       if issues.present?
-        children << { "#{update_type}:": issues.map { |ri| label(ri) } }
+        children << { "#{update_type}:": issues.map { |request_issue| label(request_issue) } }
       end
     end
     children << "error: #{truncate(riu.error, 60)}" if riu.error.present?
@@ -232,16 +275,17 @@ class IntakeRenderer
     riu.review
   end
 
-  def decision_issue_details(di)
-    [di.disposition]
+  def decision_issue_details(decision_issue)
+    [decision_issue.disposition]
   end
 
-  def decision_issue_children(di)
-    ["descr: #{truncate(di.description, 60)}"] + di.request_issues.map { |ri| label(ri) }
+  def decision_issue_children(decision_issue)
+    labels = decision_issue.request_issues.map { |request_issue| label(request_issue) }
+    ["descr: #{truncate(decision_issue.description, 60)}"] + labels
   end
 
-  def decision_issue_context(di)
-    di.decision_review
+  def decision_issue_context(decision_issue)
+    decision_issue.decision_review
   end
 
   def user_details(user)
@@ -249,6 +293,9 @@ class IntakeRenderer
   end
 
   def truncate(text, size)
-    (text.size > size) ? text[0, size - 1] + "…" : text
+    if text
+      (text.size > size) ? text[0, size - 1] + "…" : text
+    end
   end
+  # :nocov:
 end

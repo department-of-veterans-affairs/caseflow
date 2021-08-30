@@ -611,8 +611,7 @@ describe ColocatedTask, :all_dbs do
       create(:judge_address_motion_to_vacate_task,
              appeal: appeal,
              assigned_to: judge,
-             parent: vacate_motion_mail_task
-      )
+             parent: vacate_motion_mail_task)
     end
     let(:post_decision_motion_params) do
       {
@@ -629,7 +628,7 @@ describe ColocatedTask, :all_dbs do
       Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
     end
     let(:attorney_task) { AttorneyTask.find_by(assigned_to: attorney) }
-    let(:parent) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: vacate_stream ) }
+    let(:parent) { attorney_task.parent }
 
     let(:params_list) do
       [{

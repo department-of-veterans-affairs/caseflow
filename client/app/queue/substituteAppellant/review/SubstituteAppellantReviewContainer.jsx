@@ -6,11 +6,10 @@ import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActi
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
 
-import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
+import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
-import { format } from 'date-fns';
 
 export const SubstituteAppellantReviewContainer = () => {
   const { appealId } = useParams();
@@ -40,17 +39,13 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const { relationships } = useSelector((state) => state.substituteAppellant);
   const relationship = useMemo(() => {
-    return relationships.find((rel) => String(rel.value) === String(existingValues.participantId));
+    return relationships?.find((rel) => String(rel.value) === String(existingValues.participantId)) ?? null;
   }, [relationships, existingValues?.participantId]);
 
   const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(
     { substitutionDate: existingValues.substitutionDate,
       veteranDateOfDeath: appeal.veteranDateOfDeath,
       selectedTasks });
-
-  const formatSubmissionEndDateToBackend = (endDate) => {
-    return evidenceSubmissionEndDate ? format(endDate, 'yyyy-MM-dd') : null;
-  };
 
   const handleBack = () => {
     dispatch(stepBack());
@@ -73,7 +68,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     if (evidenceSubmissionTask) {
       taskParams[evidenceSubmissionTask.uniqueId] = {
-        hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+        hold_end_date: evidenceSubmissionEndDate
       };
     }
 
@@ -87,7 +82,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      poa_participant_id: poa.poa_participant_id,
+      poa_participant_id: poa ? poa.poa_participant_id : null,
       selected_task_ids: existingValues.taskIds,
       task_params: buildTaskCreationParameters()
     };
@@ -102,7 +97,12 @@ export const SubstituteAppellantReviewContainer = () => {
           detail: COPY.SUBSTITUTE_APPELLANT_SUCCESS_DETAIL,
         })
       );
+
+      // Route to new appeal stream
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
+
+      // Reset Redux store after route transition begins to avoid rendering errors
+      dispatch(reset());
     } catch (error) {
       console.error('Error during substitute appellant appeal creation', error);
       dispatch(

@@ -6,11 +6,6 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
   before do
     Timecop.freeze(Time.zone.today)
     User.authenticate!(roles: ["Admin Intake"])
-    FeatureToggle.enable!(:edit_ep_claim_labels)
-  end
-
-  after do
-    FeatureToggle.disable!(:edit_ep_claim_labels)
   end
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
@@ -134,7 +129,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         # make issue update - add issue
         click_on("Add issue")
         find(".cf-select", text: "Select or enter").click
-        find(".cf-select__option", text: "Unknown issue category").click
+        find(".cf-select__option", text: "Unknown Issue Category").click
         fill_in "decision-date", with: "08192020"
         fill_in "Issue description", with: "this is a description"
         click_on("Add this issue")

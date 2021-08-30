@@ -6,6 +6,7 @@ class ClaimantsController < ApplicationController
     # Because `update_cached_attributes!` is in a before save hook for BGSPowerOfAttorney, the below code
     # updates the poa before saving it
     poa&.save!
-    render json: { poa: poa }
+
+    render json: { poa: ::WorkQueue::PowerOfAttorneySerializer.new(poa).serializable_hash.dig(:data, :attributes) }
   end
 end

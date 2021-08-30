@@ -168,88 +168,74 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
-  describe "AssocationWrapper#untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).untyped_associations_with(User).fieldnames }
-    context "for Task class" do
-      let(:target_class) { Task }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
-      end
-    end
-    context "for Hearing class" do
-      let(:target_class) { Hearing }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
-      end
-    end
-    context "for AppealIntake class" do
-      let(:target_class) { AppealIntake }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[user_id]
-      end
-    end
+  describe "SjConfiguration uses of AssocationWrapper" do
+    let(:configuration) { SjConfiguration.new }
+    it "causes SjConfiguration instances to return correct results" do
+      expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
+      expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
 
-    context "SjConfiguration uses of AssocationWrapper" do
-      let(:configuration) { SjConfiguration.new }
-      it "causes SjConfiguration instances to return correct results" do
-        expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
-        expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
+      offset_id_fields = {
+        DecisionReview => [],
+        # Veteran => [],
+        AppealIntake => [],
+        JudgeCaseReview => ["task_id"],
+        AttorneyCaseReview => ["task_id"],
+        DecisionDocument => [],
+        Claimant => ["decision_review_id"],
+        Task => %w[parent_id],
+        TaskTimer => ["task_id"],
+        CavcRemand => %w[decision_issue_ids],
+        DecisionIssue => ["decision_review_id"],
+        RequestIssue => %w[contested_decision_issue_id
+                           corrected_by_request_issue_id
+                           decision_review_id
+                           ineligible_due_to_id],
+        RequestDecisionIssue => %w[decision_issue_id request_issue_id],
+        Hearing => %w[hearing_day_id],
+        HearingTaskAssociation => %w[hearing_id hearing_task_id],
+        HearingDay => [],
+        VirtualHearing => ["hearing_id"],
+        OrganizationsUser => []
+      }
+      # pp configuration.offset_id_fields.transform_keys(&:name)
+      expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        offset_id_fields = {
-          DecisionReview => [],
-          # Veteran => [],
-          AppealIntake => [],
-          JudgeCaseReview => ["task_id"],
-          AttorneyCaseReview => ["task_id"],
-          DecisionDocument => [],
-          Claimant => ["decision_review_id"],
-          Task => %w[parent_id],
-          TaskTimer => ["task_id"],
-          CavcRemand => %w[decision_issue_ids],
-          DecisionIssue => ["decision_review_id"],
-          RequestIssue => %w[contested_decision_issue_id
-                             corrected_by_request_issue_id
-                             decision_review_id
-                             ineligible_due_to_id],
-          RequestDecisionIssue => %w[decision_issue_id request_issue_id],
-          Hearing => %w[hearing_day_id],
-          HearingTaskAssociation => %w[hearing_id hearing_task_id],
-          HearingDay => [],
-          VirtualHearing => ["hearing_id"],
-          OrganizationsUser => []
-        }
-        # pp configuration.offset_id_fields.transform_keys(&:name)
-        expect(configuration.offset_id_fields).to eq offset_id_fields
+      reassociate_fields_keys = [:type, "Appeal", "Veteran", "Person", "User", "Organization"]
+      expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
-        reassociate_fields_keys = [:type, "Appeal", "Veteran", "Person", "User", "Organization"]
-        expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
+      reassociate_fields_for_polymorphics = {
+        AppealIntake => ["detail_id"],
+        AttorneyCaseReview => ["appeal_id"],
+        DecisionDocument => ["appeal_id"],
+        JudgeCaseReview => ["appeal_id"],
+        Task => %w[assigned_to_id appeal_id]
+      }
+      expect(configuration.reassociate_fields[:type]).to match_array reassociate_fields_for_polymorphics
 
-        reassociate_fields_for_polymorphics = {
-          Task => %w[assigned_to_id appeal_id],
-          AppealIntake => ["detail_id"],
-          DecisionDocument => ["appeal_id"]
-        }
-        expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+      reassociate_fields_for_appeal = {
+        AttorneyCaseReview => ["appeal_id"],
+        CavcRemand => %w[source_appeal_id remand_appeal_id],
+        Claimant => ["decision_review_id"],
+        DecisionDocument => ["appeal_id"],
+        DecisionIssue => ["decision_review_id"],
+        Hearing => ["appeal_id"],
+        JudgeCaseReview => ["appeal_id"],
+        Task => %w[appeal_id]
+      }
+      expect(configuration.reassociate_fields["Appeal"]).to match_array reassociate_fields_for_appeal
 
-        reassociate_fields_for_appeal = {
-          CavcRemand => %w[source_appeal_id remand_appeal_id],
-          Hearing => ["appeal_id"]
-        }
-        expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
-
-        reassociate_fields_for_user = {
-          AppealIntake => ["user_id"],
-          JudgeCaseReview => %w[judge_id attorney_id],
-          AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
-          Task => %w[assigned_by_id cancelled_by_id],
-          CavcRemand => %w[updated_by_id created_by_id],
-          Hearing => %w[updated_by_id judge_id created_by_id],
-          HearingDay => %w[updated_by_id judge_id created_by_id],
-          VirtualHearing => %w[updated_by_id created_by_id],
-          OrganizationsUser => ["user_id"]
-        }
-        expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
-      end
+      reassociate_fields_for_user = {
+        AppealIntake => ["user_id"],
+        JudgeCaseReview => %w[judge_id attorney_id],
+        AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
+        Task => %w[assigned_by_id cancelled_by_id],
+        CavcRemand => %w[updated_by_id created_by_id],
+        Hearing => %w[updated_by_id judge_id created_by_id],
+        HearingDay => %w[updated_by_id judge_id created_by_id],
+        VirtualHearing => %w[updated_by_id created_by_id],
+        OrganizationsUser => ["user_id"]
+      }
+      expect(configuration.reassociate_fields["User"]).to eq reassociate_fields_for_user
     end
   end
 
@@ -293,6 +279,22 @@ describe "SanitizedJsonExporter/Importer" do
         expect { subject }.to output(/WARNING: Don't know how to map value/).to_stdout
         expect(subject).to eq []
       end
+    end
+  end
+
+  describe "SanitizedJsonConfiguration.select_sanitize_fields" do
+    let(:sjconfiguration) { SanitizedJsonConfiguration.new }
+    it "returns columns with 'PII' in its column comment" do
+      vets_sanitized_fields = %w[file_number first_name last_name middle_name ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Veteran)).to match_array vets_sanitized_fields
+      expect(sjconfiguration.configuration[Veteran][:sanitize_fields]).to match_array vets_sanitized_fields
+
+      people_sanitized_fields = %w[date_of_birth email_address first_name last_name middle_name name_suffix ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Person)).to match_array people_sanitized_fields
+      expect(sjconfiguration.configuration[Person][:sanitize_fields]).to match_array people_sanitized_fields
+    end
+    it "doesn't override manually set sanitize_fields for Task" do
+      expect(sjconfiguration.configuration[Task][:sanitize_fields]).to match_array %w[instructions]
     end
   end
 
@@ -603,6 +605,7 @@ describe "SanitizedJsonExporter/Importer" do
 
         cavc_appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
       end
+      let!(:bva_org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, Bva.singleton) } }
 
       let!(:sje) do
         # simulates "Assign to person", which creates child task
@@ -617,17 +620,21 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 1
         expect(Claimant.count).to eq 2
         expect(Organization.count).to eq 8
-        expect(User.count).to eq 6
+        expect(User.count).to eq 7
         expect(DecisionDocument.count).to eq 1
         expect(Task.count).to eq 16
         expect(TaskTimer.count).to eq 2
+
+        # Include organization admins in export even if the admins are not referenced.
+        # Expect exported user records to include the sanitized bva_org_admin.css_id
+        expect(sje.records_hash["users"].pluck("css_id")).to include sje.value_mapping[bva_org_admin.css_id]
 
         subject
         record_counts = {
           "appeals" => 2,
           "veterans" => 1,
           "claimants" => 2,
-          "users" => 6,
+          "users" => 7,
           "organizations" => 0,
           "organizations_users" => 0,
           "decision_documents" => 1,
@@ -641,7 +648,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(sji.imported_records.transform_values(&:count)).to include record_counts
         reused_record_counts = {
           "organizations" => 4,
-          "organizations_users" => 3,
+          "organizations_users" => 4,
           "people" => 1
         }
         expect(sji.reused_records.transform_values(&:count)).to eq reused_record_counts
@@ -650,7 +657,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 12
+        expect(User.count).to eq 14
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 

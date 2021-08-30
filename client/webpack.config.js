@@ -12,7 +12,8 @@ const config = {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts'),
-    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/'
+    chunkFilename: '[name].[contenthash].webpack.chunk.js',
+    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : 'auto'
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),

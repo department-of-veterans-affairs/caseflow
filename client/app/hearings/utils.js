@@ -261,6 +261,15 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
   _.concat(_.map(_.values(object), transformer), [noneOption]);
 
 /**
+ * Method to normalize the Regional Office Timezone names
+ * @param {string} name -- Name of the Regional Office timezone
+ */
+export const getFriendlyZoneName = (name) => {
+  // There is not a friendly name for some of the Regional Office zones, choose the city name instead for those
+  return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
+};
+
+/**
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
@@ -268,7 +277,7 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
  */
 export const zoneName = (time, name, format) => {
   // Default to using America/New_York
-  const timezone = name ? name : COMMON_TIMEZONES[3];
+  const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
 
   // Filter the zone name
   const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
@@ -279,6 +288,18 @@ export const zoneName = (time, name, format) => {
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
     format(`h:mm A ${format || ''}`)}${label}` : time;
+};
+
+/**
+ * Method to get short zone label from like 'Eastern' or 'Pacific'
+ * @param {string} name -- Name of the zone, defaults to 'America/New_York'
+ * @returns {string} -- The short label of the timezone
+ */
+export const shortZoneName = (name) => {
+  const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
+  const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
+
+  return zoneName?.split('Time')[0]?.trim();
 };
 
 /**
@@ -310,15 +331,6 @@ export const hearingTimeOptsWithZone = (options, local) =>
       [label]: local && localTime !== time ? `${localTime} / ${time}` : time
     };
   });
-
-/**
- * Method to normalize the Regional Office Timezone names
- * @param {string} name -- Name of the Regional Office timezone
- */
-export const getFriendlyZoneName = (name) => {
-  // There is not a friendly name for some of the Regional Office zones, choose the city name instead for those
-  return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
-};
 
 /**
  * Method to return a list of Regional Office Timezones sorted with common timezones at the top
@@ -442,7 +454,7 @@ export const startPolling = (hearing, { setShouldStartPolling, resetState, dispa
 
 export const parseVirtualHearingErrors = (msg, hearing) => {
   // Remove the validation string from th error
-  const messages = msg.split(':')[1];
+  const messages = msg.split(':')[2];
 
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
@@ -906,6 +918,19 @@ export const getTimezoneAbbreviation = (timezone) => {
   // Create a moment object so we can extract the timezone
   // abbreviation like 'PDT'
   return moment.tz('00:00', 'HH:mm', timezone).format('z');
+};
+
+export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
+  const poaLabel = virtual ? ', POA,' : ' and POA';
+  const recipientLabel = hearing?.representative ? `${appellantTitle}${poaLabel}` : `${appellantTitle}`;
+
+  if (virtual) {
+    return `When you schedule the hearing, the ${recipientLabel} and ` +
+     'Judge will receive an email with connection information for the virtual hearing.';
+  }
+
+  return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
+    'Caseflow won’t send notifications immediately after scheduling.';
 };
 
 /* eslint-enable camelcase */

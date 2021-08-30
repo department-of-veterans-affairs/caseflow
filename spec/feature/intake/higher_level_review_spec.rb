@@ -100,7 +100,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Fiduciary", match: :prefer_exact).click
+      find("label", text: "Insurance", match: :prefer_exact).click
     end
 
     within_fieldset("Was an informal conference requested?") do
@@ -119,7 +119,7 @@ feature "Higher-Level Review", :all_dbs do
 
     expect(page).to have_content("Please select the claimant listed on the form.")
 
-    # We do not need to select payee codes for fiduciaries
+    # We do not need to select payee codes for non-VBMS business lines
     expect(page).to_not have_content("What is the payee code for this claimant?")
 
     # Switch the benefit type to compensation to test choosing the payee code.
@@ -133,9 +133,10 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_continue
 
-    expect(page).to have_content(
-      "If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed"
-    )
+    # uncomment this test when when caseflow-1285 is resolved
+    # expect(page).to have_content(
+    #   "If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed"
+    # )
     expect(page).to have_content(
       "Please select an option.\nBob Vance, Spouse"
     )
@@ -1427,129 +1428,6 @@ feature "Higher-Level Review", :all_dbs do
           safe_click ".confirm"
           expect(page).to have_content("Claim Issues Saved")
           expect(page).to have_content("Contention: Looks like a VACOLS issue")
-        end
-
-        context "with unidentified issue on legacy opt-in" do
-          before do
-            FeatureToggle.enable!(:verify_unidentified_issue)
-            FeatureToggle.enable!(:unidentified_issue_decision_date)
-          end
-
-          after do
-            FeatureToggle.disable!(:verify_unidentified_issue)
-            FeatureToggle.enable!(:unidentified_issue_decision_date)
-          end
-
-          let(:decision_date) { 30.days.ago.to_date.mdY }
-
-          scenario "show unidentified modal" do
-            start_higher_level_review(veteran, legacy_opt_in_approved: true)
-            visit "/intake/add_issues"
-            click_intake_add_issue
-            click_intake_no_matching_issues
-            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-
-            # Expect unidentified issue modal for unidentified issue
-            click_intake_no_matching_issues
-            expect(page).to have_content("Describe the issue to mark it as needing further review")
-            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
-            safe_click ".add-issue"
-
-            # Expect legacy opt in issue modal to show
-            expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-
-            add_intake_rating_issue("ankylosis of hip")
-
-            expect(page).to have_content("Service connection, ankylosis of hip")
-          end
-
-          scenario "with legacy opt in not approved" do
-            start_higher_level_review(veteran, legacy_opt_in_approved: false)
-            visit "/intake/add_issues"
-            click_intake_add_issue
-            click_intake_no_matching_issues
-
-            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-            # do not show inactive appeals when legacy opt in is false
-            click_intake_no_matching_issues
-            expect(page).to have_content("Describe the issue to mark it as needing further review")
-            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
-            safe_click ".add-issue"
-
-            add_intake_rating_issue("ankylosis of hip")
-            expect(page).to have_content(ineligible_constants.legacy_issue_not_withdrawn.to_s)
-
-            click_intake_finish
-
-            ineligible_checklist = find("ul.cf-issue-checklist")
-            expect(ineligible_checklist).to have_content(
-              ineligible_constants.legacy_issue_not_withdrawn.to_s
-            )
-
-            expect(RequestIssue.find_by(
-                     is_unidentified: true,
-                     ineligible_reason: :legacy_issue_not_withdrawn,
-                     vacols_id: "vacols1",
-                     vacols_sequence_id: "1"
-                   )).to_not be_nil
-
-            expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
-          end
-
-          scenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
-            start_higher_level_review(veteran, legacy_opt_in_approved: true)
-            visit "/intake/add_issues"
-            click_intake_add_issue
-            click_intake_no_matching_issues
-            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-
-            click_intake_no_matching_issues
-            expect(page).to have_content("Describe the issue to mark it as needing further review")
-            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
-            safe_click ".add-issue"
-
-            add_intake_rating_issue("ankylosis of hip")
-            click_intake_finish
-            expect(page).to have_content("correct the issues")
-            click_on "correct the issues"
-            expect(page).to have_content("This issue has automatically closed the VACOLS issue")
-
-            click_intake_add_issue
-            click_intake_no_matching_issues
-
-            expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
-            click_intake_no_matching_issues
-            expect(find_field("Verify record of prior decision", visible: false)).to_not be_checked
-
-            find("label", text: "Verify record of prior decision").click
-            expect(page).to have_button("Next", disabled: true)
-            expect(page).not_to have_content("Decision date (optional)")
-            expect(page).not_to have_content("Notes (optional)")
-
-            fill_in "Transcribe the issue as it's written on the form", with: "Verified issue"
-            fill_in "Decision date", with: decision_date
-            fill_in "Notes", with: "Testing verified unidentified issues"
-            click_on "Next"
-
-            expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
-            expect(page).to have_content("impairment of hip")
-            add_intake_rating_issue("limitation of thigh motion")
-            expect(page).to have_content("Testing verified unidentified issues")
-
-            click_button("Save")
-            safe_click "#Unidentified-issue-button-id-1"
-            expect(page).to have_content("Number of issues has changed")
-            safe_click "#Number-of-issues-has-changed-button-id-1"
-
-            expect(page).to have_content("Claim Issues Saved")
-            verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
-                                                  vacols_id: "vacols1",
-                                                  unidentified_issue_text: "Verified issue",
-                                                  is_unidentified: false)
-
-            expect(verified_issue).to_not be_nil
-            expect(page).to have_content("Contention: #{verified_issue.contention_text}")
-          end
         end
       end
 

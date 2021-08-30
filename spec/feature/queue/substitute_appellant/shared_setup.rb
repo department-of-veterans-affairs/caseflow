@@ -9,11 +9,14 @@ RSpec.shared_context("with Clerk of the Board user") do
   end
 end
 
-RSpec.shared_context("with feature toggle") do
-  before do
-    FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
-  end
+RSpec.shared_context("with recognized_granted_substitution_after_dd feature toggle") do
+  before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
   after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+end
+
+RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle") do
+  before { FeatureToggle.enable!(:hearings_substitution_death_dismissal) }
+  after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
 end
 
 RSpec.shared_context "with existing relationships" do
@@ -34,6 +37,14 @@ RSpec.shared_context "with existing relationships" do
     if docket_type.eql?("evidence_submission")
       EvidenceSubmissionWindowTask.find_or_create_by(appeal: appeal).update!(status: "completed")
     end
+  end
+end
+
+RSpec.shared_examples("substitution unavailable") do
+  it "does not show button to start substitution" do
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    expect(page).to_not have_content "+ Add Substitute"
   end
 end
 
@@ -109,9 +120,20 @@ RSpec.shared_examples("fill substitution form") do
       # example appeal has an evidence submission task
       if docket_type.eql?("evidence_submission")
         expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window")
-        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
+        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").find("label").click
       end
 
+      if docket_type.eql?("hearing")
+        schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
+        schedule_hearing_task_id = schedule_hearing_task.id
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Schedule hearing")
+
+        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
+
+        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
+      end
       page.find("button", text: "Continue").click
     end
 
@@ -141,6 +163,17 @@ RSpec.shared_examples("fill substitution form") do
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
 
+      # Verify that the Evidence Submission Window was stored correctly
+      if docket_type.eql?("evidence_submission")
+        # Ensure that our new window ends on specified date, accounting for user's time zone (not based on midnight UTC)
+        window_task = EvidenceSubmissionWindowTask.find_by(appeal: new_appeal)
+        expect(window_task.timer_ends_at).to be_between(
+          evidence_submission_window_end_time - 1.day,
+          evidence_submission_window_end_time + 1.day
+        )
+        expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
+      end
+
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
       # Substitute claimant is shown
@@ -153,6 +186,14 @@ RSpec.shared_examples("fill substitution form") do
       # Substitution is shown on timeline
       expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION
       expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED
+    end
+
+    step "verify items on original appeal" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to_not have_content "+ Add Substitute"
+
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
     end
   end
 end

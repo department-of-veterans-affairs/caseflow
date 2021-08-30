@@ -84,6 +84,7 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f app/assets/javascripts/*webpack*
 	rm -rf public/assets
 	rm -rf tmp/capybara
+	rm -f log/logstasher.log
 
 realclean: clean ## TODO
 	rm -rf client/node_modules
@@ -203,13 +204,13 @@ karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
 erd-etl:	## Create ERD diagram for the ETL database
-	ERD_BASE=ETL::Record bundle exec erd --filename etl-erd --title 'ODS/ETL Data Model'
+	ERD_BASE=ETL::Record bundle exec erd --filename docs/schema/etl-erd --title 'ODS/ETL Data Model'
 
 erd-vacols:	## Create ERD diagram for the VACOLS database
-	ERD_BASE=VACOLS::Record bundle exec erd --filename vacols-erd --title 'VACOLS Data Model'
+	ERD_BASE=VACOLS::Record bundle exec erd --filename docs/schema/vacols-erd --title 'VACOLS Data Model'
 
 erd-caseflow:	## Create ERD diagram for the Caseflow database
-	ERD_BASE=CaseflowRecord bundle exec erd --filename caseflow-erd --title 'Caseflow Data Model'
+	ERD_BASE=CaseflowRecord bundle exec erd --filename docs/schema/caseflow-erd --title 'Caseflow Data Model'
 
 erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
 
@@ -222,6 +223,9 @@ doc-schema-etl:	# Create docs/schema/etl.csv
 doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
 
 docs: erd doc-schema	# Build all documentation
+
+check-fks: # Check for missing foreign keys
+	bundle exec rake immigrant:check_keys
 
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help

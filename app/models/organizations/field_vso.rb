@@ -9,6 +9,10 @@ class FieldVso < Vso
     ]
   end
 
+  def should_write_ihp?(_appeal)
+    false
+  end
+
   private
 
   def add_vso_config

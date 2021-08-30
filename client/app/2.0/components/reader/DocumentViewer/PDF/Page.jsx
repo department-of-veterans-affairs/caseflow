@@ -36,7 +36,7 @@ export const Page = ({
   const pageIndex = (numColumns * rowIndex) + columnIndex;
 
   useEffect(() => {
-    if (currentDocument?.id && props.isVisible) {
+    if (currentDocument?.id) {
       showPage({
         pageIndex,
         scale,
@@ -67,7 +67,7 @@ export const Page = ({
           {addingComment && (
             <div
               id={`canvas-cursor-${pageIndex}`}
-              className="canvas-cursor"
+              className="commentIcon-container canvas-cursor"
               style={{
                 position: 'absolute',
                 display: pageIndex === currentPageIndex ? 'block' : 'none',

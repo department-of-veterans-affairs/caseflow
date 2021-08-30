@@ -28,32 +28,34 @@ const ReaderRoutes = (props) => {
   return (
     <AppFrame wideApp>
       <BaseLayout appName={appName} {...props}>
-        <PageRoute
-          exact
-          loading={loading}
-          loadingMessage={LOADING_DATA_MESSAGE}
-          title={claimsFolderPageTitle(props.appeal)}
-          path="/reader/appeal/:vacolsId/documents"
-          breadcrumb="Reader"
-          render={(routeProps) => <DocumentList {...props} {...routeProps} />}
-          appName={appName}
-        />
-        <PageRoute
-          exact
-          loading={loading}
-          loadingMessage={LOADING_DATA_MESSAGE}
-          title="Document Viewer | Caseflow Reader"
-          path="/reader/appeal/:vacolsId/documents/:docId"
-          breadcrumb="Document Viewer"
-          render={(routeProps) => (
-            <DocumentViewer
-              {...props}
-              {...routeProps}
-              documentPathBase={`/reader/appeal/${ routeProps.match.params.vacolsId }/documents`}
-            />
-          )}
-          appName={appName}
-        />
+        <React.Fragment>
+          <PageRoute
+            exact
+            loading={loading}
+            loadingMessage={LOADING_DATA_MESSAGE}
+            title={claimsFolderPageTitle(props.appeal)}
+            path="/reader/appeal/:vacolsId/documents"
+            breadcrumb="Reader"
+            render={(routeProps) => <DocumentList {...props} {...routeProps} />}
+            appName={appName}
+          />
+          <PageRoute
+            exact
+            loading={loading}
+            loadingMessage={LOADING_DATA_MESSAGE}
+            title="Document Viewer | Caseflow Reader"
+            path="/reader/appeal/:vacolsId/documents/:docId"
+            breadcrumb="Document Viewer"
+            render={(routeProps) => (
+              <DocumentViewer
+                {...props}
+                {...routeProps}
+                documentPathBase={`/reader/appeal/${ routeProps.match.params.vacolsId }/documents`}
+              />
+            )}
+            appName={appName}
+          />
+        </React.Fragment>
       </BaseLayout>
     </AppFrame>
   );

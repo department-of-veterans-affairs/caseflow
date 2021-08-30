@@ -329,9 +329,7 @@ describe BgsPowerOfAttorney do
           .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
       end
 
-      after { FeatureToggle.enable!(:poa_auto_ihp_update) }
-
-      it "IhpTaks update method isn't called" do
+      it "IhpTasks update method isn't called" do
         poa.save_with_updated_bgs_record!
         expect_any_instance_of(described_class).to_not receive(:update_ihp_task)
         expect(poa.send(:update_ihp_enabled?)).to eq(false)
@@ -347,7 +345,7 @@ describe BgsPowerOfAttorney do
       end
       after { FeatureToggle.disable!(:poa_auto_ihp_update) }
 
-      it "IhpTaks update method is called" do
+      it "IhpTasks update method is called" do
         before_poa_pid = poa.poa_participant_id
         expect(before_poa_pid).to_not be_nil
 

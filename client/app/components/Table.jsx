@@ -99,7 +99,7 @@ const HeaderRow = (props) => {
           </span>;
         }
 
-        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
+        return <th scope="col" key={columnNumber} className={cellClasses(column)} {...column?.sortProps}>
           { column.tooltip ?
             <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
             <React.Fragment>{columnContent}</React.Fragment>

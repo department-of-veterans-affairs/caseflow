@@ -29,7 +29,7 @@ describe VirtualHearings::DeleteConferencesJob do
 
     shared_examples "sends emails to appellant and representative" do
       it "updates the appropriate fields", :aggregate_failures do
-        expect(VirtualHearings::SendEmail).to receive(:new).with(
+        expect(Hearings::SendEmail).to receive(:new).with(
           virtual_hearing: virtual_hearing,
           type: :cancellation
         ).and_call_original
@@ -58,11 +58,13 @@ describe VirtualHearings::DeleteConferencesJob do
       end
 
       it "does not send emails if they have already been sent" do
-        virtual_hearing.update(
-          appellant_email_sent: true,
-          representative_email_sent: true
+        virtual_hearing.hearing.appellant_recipient.update!(
+          email_sent: true
         )
-        expect(VirtualHearings::SendEmail).not_to receive(:new)
+        virtual_hearing.hearing.representative_recipient.update!(
+          email_sent: true
+        )
+        expect(Hearings::SendEmail).not_to receive(:new)
         expect(job).not_to receive(:send_cancellation_emails)
 
         subject
@@ -330,7 +332,7 @@ describe VirtualHearings::DeleteConferencesJob do
 
       context "job retries to max attempts" do
         before do
-          allow_any_instance_of(VirtualHearings::SendEmail).to receive(:send_email).and_return(false)
+          allow_any_instance_of(Hearings::SendEmail).to receive(:send_email).and_return(false)
         end
 
         after do

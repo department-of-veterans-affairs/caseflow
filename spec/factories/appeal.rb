@@ -5,6 +5,7 @@ FactoryBot.define do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    filed_by_va_gov { false }
     sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
@@ -42,6 +43,14 @@ FactoryBot.define do
           evaluator.number_of_claimants,
           decision_review: appeal,
           type: claimant_class_name
+        )
+      elsif evaluator.has_unrecognized_appellant
+        create(
+          :claimant,
+          :with_unrecognized_appellant_detail,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          type: "OtherClaimant"
         )
       elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
@@ -93,6 +102,10 @@ FactoryBot.define do
     transient do
       number_of_claimants { nil }
       issue_count { nil }
+    end
+
+    transient do
+      has_unrecognized_appellant { false }
     end
 
     transient do
@@ -170,8 +183,10 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+        appeal.conditionally_set_aod_based_on_age # since claimants has changed
+      end
     end
 
     trait :active do
@@ -230,6 +245,30 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_evidence_submission_window_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_deceased_veteran do
+      after(:create) do |appeal, _evaluator|
+        appeal.veteran.update!(date_of_death: 1.month.ago)
+      end
+    end
+
+    trait :with_ihp_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        FactoryBot.create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: org
+        )
       end
     end
 
@@ -368,6 +407,16 @@ FactoryBot.define do
       end
     end
 
+    # An appeal which was dispatched, but has then had other open tasks added.
+    # Note that the -ed suffix in 'dispatched' does not carry over to 'post_dispatch', which is how
+    # it is referred to elsewhere in the code.
+    trait :post_dispatch do
+      dispatched
+      after(:create) do |appeal|
+        create(:congressional_interest_mail_task, parent: appeal.root_task)
+      end
+    end
+
     trait :with_straight_vacate_stream do
       dispatched
       after(:create) do |appeal, evaluator|
@@ -410,9 +459,7 @@ FactoryBot.define do
       end
     end
 
-    trait :dispatched_with_decision_issue do
-      dispatched
-
+    trait :with_decision_issue do
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|
@@ -431,6 +478,60 @@ FactoryBot.define do
                                 decision_text: "Decision text")
         request_issue.decision_issues << decision_issue
       end
+    end
+
+    trait :decision_issue_with_future_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: 2.months.from_now)
+      end
+    end
+
+    trait :decision_issue_with_no_decision_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: nil)
+      end
+    end
+  end
+
+  trait :decision_issue_with_no_end_product_last_action_date do
+    description = "Service connection for pain disorder"
+    notes = "Pain disorder notes"
+    after(:create) do |appeal, evaluator|
+      request_issue = create(:request_issue,
+                             :rating,
+                             decision_review: appeal,
+                             veteran_participant_id: appeal.veteran.participant_id,
+                             contested_issue_description: description,
+                             notes: notes)
+      decision_issue = create(:decision_issue,
+                              :rating,
+                              decision_review: appeal,
+                              disposition: evaluator.disposition,
+                              description: "Issue description",
+                              decision_text: "Decision text",
+                              caseflow_decision_date: nil,
+                              rating_promulgation_date: nil)
+      request_issue.decision_issues << decision_issue
     end
   end
 end

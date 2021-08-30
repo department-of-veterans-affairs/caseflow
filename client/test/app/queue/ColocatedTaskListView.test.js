@@ -3,6 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
+import ApiUtil from 'app/util/ApiUtil';
 import { ColocatedTaskListView } from 'app/queue/ColocatedTaskListView';
 import ReduxBase from 'app/components/ReduxBase';
 import {
@@ -37,6 +38,10 @@ beforeAll(() => {
   // Ensure consistent handling of dates across tests
   jest.useFakeTimers('modern');
   jest.setSystemTime(fakeDate);
+
+  jest.spyOn(ApiUtil, 'get').mockImplementation(() =>
+    new Promise((resolve) => resolve({ body: { document_count: 1 } })));
+
 });
 
 afterAll(() => {
@@ -106,8 +111,7 @@ describe('ColocatedTaskListView', () => {
       const [
         hearings,
         caseDetails,
-        columnTasks,
-        types,
+        columnTasks, types,
         docketNumber,
         numberDaysOnHold,
         documents,
@@ -140,7 +144,7 @@ describe('ColocatedTaskListView', () => {
       );
 
       expect(
-        within(documents).getByText(/Loading number of docs/i)
+        within(documents).getByText(/View docs/i)
       ).toBeInTheDocument();
     });
 
@@ -158,7 +162,7 @@ describe('ColocatedTaskListView', () => {
 
       expect(within(numberDaysOnHold).getByText('31 days')).toBeInTheDocument();
 
-      expect(numberDaysOnHold.lastChild).toHaveClass(
+      expect(numberDaysOnHold.lastChild.lastChild).toHaveClass(
         'cf-continuous-progress-bar'
       );
     });
@@ -286,7 +290,7 @@ describe('ColocatedTaskListView', () => {
       );
 
       expect(
-        within(documents).getByText(/Loading number of docs/i)
+        within(documents).getByText(/View docs/i)
       ).toBeInTheDocument();
     });
 

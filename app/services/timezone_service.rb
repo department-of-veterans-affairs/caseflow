@@ -11,7 +11,14 @@ class TimezoneService
   class InvalidZip5Error < StandardError; end
 
   # There were multiple timezones for an address.
-  class AmbiguousTimezoneError < StandardError; end
+  class AmbiguousTimezoneError < StandardError
+    attr_accessor :country_code
+    def initialize(args)
+      @country_code = args[:country_code]
+    end
+  end
+
+  ACCEPTABLE_USA_VARIATIONS = ["us", "u.s."].freeze
 
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
@@ -31,7 +38,9 @@ class TimezoneService
     end
 
     # Maps a US 5-digit zip code to a timezone.
-    def zip5_to_timezone(zip)
+    def zip5_to_timezone(orig_zip)
+      zip = orig_zip&.strip
+
       Address.validate_zip5_code(zip)
 
       timezone_name = Ziptz.new.time_zone_name(zip)
@@ -62,7 +71,7 @@ class TimezoneService
 
       return country.zones.first.canonical_zone if unambiguous_timezone
 
-      fail AmbiguousTimezoneError, "ambiguous timezone for #{iso3166_code}"
+      fail AmbiguousTimezoneError, country_code: iso3166_code
     rescue TZInfo::InvalidCountryCode
       # Re-raise custom error for more info.
       raise InvalidCountryCodeError, "invalid country code \"#{iso3166_code}\""
@@ -70,7 +79,11 @@ class TimezoneService
 
     # Finds the ISO 3166 country code corresponding to the given country name, or fails
     # with an error if not found.
-    def iso3166_alpha2_code_from_name(country_name)
+    def iso3166_alpha2_code_from_name(orig_country_name)
+      country_name = orig_country_name&.strip
+
+      return "US" if ACCEPTABLE_USA_VARIATIONS.include?(country_name&.downcase)
+
       iso3166_code = ISO3166::Country.find_country_by_name(country_name)
       iso3166_code = ISO3166::Country.find_country_by_alpha3(country_name) if iso3166_code.blank?
 

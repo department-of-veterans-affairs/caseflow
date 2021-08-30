@@ -46,7 +46,7 @@ class LegacyAppeal < CaseflowRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_name_suffix, :veteran_date_of_birth, :veteran_gender
+  vacols_attr_accessor :veteran_name_suffix
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
@@ -82,13 +82,12 @@ class LegacyAppeal < CaseflowRecord
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher
 
-  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex, :gender,
            :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
-  delegate :end_products,
-           to: :veteran,
-           allow_nil: true
+  delegate :end_products, to: :veteran, allow_nil: true
+  delegate :bgs_power_of_attorney, to: :power_of_attorney, allow_nil: true
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -228,34 +227,6 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
-  def appellant_tz
-    return if appellant_address.blank?
-
-    # Use an address object if this is a hash
-    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
@@ -347,10 +318,6 @@ class LegacyAppeal < CaseflowRecord
     power_of_attorney.bgs_representative_email_address
   end
 
-  def representative_id
-    power_of_attorney.vacols_id
-  end
-
   def poa_last_synced_at
     power_of_attorney.bgs_poa_last_synced_at
   end
@@ -390,10 +357,6 @@ class LegacyAppeal < CaseflowRecord
     scheduled_hearings.any?
   end
 
-  def any_held_hearings?
-    hearings.any?(&:held?)
-  end
-
   def completed_hearing_on_previous_appeal?
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
@@ -424,7 +387,9 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def contested_claim
-    vacols_representatives.any? { |r| r.reptype == "C" }
+    vacols_representatives.any? do |r|
+      VACOLS::Representative::CONTESTED_REPTYPES.values.pluck(:code).include?(r.reptype)
+    end
   end
 
   def claimant
@@ -673,18 +638,6 @@ class LegacyAppeal < CaseflowRecord
     @documents_by_type = {}
   end
 
-  def attorney_case_reviews
-    (das_assignments || []).reject { |t| t.document_id.nil? }
-  end
-
-  def das_assignments
-    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
-  end
-
-  def reviewing_judge_name
-    das_assignments.max_by(&:created_at).try(:assigned_by_name)
-  end
-
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -869,13 +822,39 @@ class LegacyAppeal < CaseflowRecord
     # Created at date will be nil if there is no decass record created for this appeal yet
     return unless vacols_case_review&.created_at
 
-    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
+    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id_for_case_reviews)
+  end
 
-    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
+  def judge_case_review
+    # Created at date will be nil if there is no decass record created for this appeal yet
+    return unless vacols_case_review&.created_at
+
+    @judge_case_review ||= JudgeCaseReview.find_by(task_id: task_id_for_case_reviews)
+  end
+
+  def task_id_for_case_reviews
+    "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
   end
 
   def vacols_case_review
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  # How are these related to AttorneyCaseReview records?
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge
+    das_assignments.max_by(&:created_at)
+  end
+
+  def reviewing_judge_name
+    reviewing_judge.try(:assigned_by_name)
   end
 
   def death_dismissal!
@@ -924,6 +903,10 @@ class LegacyAppeal < CaseflowRecord
     # attorney listed in the review, check to see if a decision has already been written for the appeal. If so, assume
     # this appeal is assigned to the acting judge as a judge task as a best guess
     vacols_case_review.valid_document_id?
+  end
+
+  def claimant_participant_id
+    veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
   private
@@ -1007,10 +990,6 @@ class LegacyAppeal < CaseflowRecord
       claimant_participant_id: claimant_participant_id,
       vacols_id: vacols_id
     )
-  end
-
-  def claimant_participant_id
-    person_for_appellant&.participant_id
   end
 
   class << self

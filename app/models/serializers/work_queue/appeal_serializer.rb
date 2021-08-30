@@ -24,8 +24,13 @@ class WorkQueue::AppealSerializer
 
   attribute :status
 
-  attribute :decision_issues do |object|
-    object.decision_issues.uniq.map do |issue|
+  attribute :decision_issues do |object, params|
+    if params[:user].nil?
+      fail Caseflow::Error::MissingRequiredProperty, message: "Params[:user] is required"
+    end
+
+    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
@@ -48,7 +53,7 @@ class WorkQueue::AppealSerializer
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
-  attribute(:hearings) { |object| hearings(object) }
+  attribute(:hearings) { |object, params| hearings(object, params) }
 
   attribute :withdrawn, &:withdrawn?
 
@@ -60,6 +65,8 @@ class WorkQueue::AppealSerializer
 
   attribute :assigned_to_location
 
+  attribute :distributed_to_a_judge, &:distributed_to_a_judge?
+
   attribute :completed_hearing_on_previous_appeal? do
     false
   end
@@ -70,13 +77,57 @@ class WorkQueue::AppealSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_first_name do |object|
+    object.claimant&.first_name
+  end
+
+  attribute :appellant_middle_name do |object|
+    object.claimant&.middle_name
+  end
+
+  attribute :appellant_last_name do |object|
+    object.claimant&.last_name
+  end
+
+  attribute :appellant_suffix do |object|
+    object.claimant&.suffix
+  end
+
+  attribute :appellant_date_of_birth do |object|
+    object.claimant&.date_of_birth
+  end
+
   attribute :appellant_address do |object|
     object.claimant&.address
+  end
+
+  attribute :appellant_phone_number do |object|
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+  end
+
+  attribute :appellant_email_address do |object|
+    object.claimant&.email_address
   end
 
   attribute :appellant_tz, &:appellant_tz
 
   attribute :appellant_relationship, &:appellant_relationship
+
+  attribute :appellant_type do |appeal|
+    appeal.claimant&.type
+  end
+
+  attribute :appellant_party_type do |appeal|
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+  end
+
+  attribute :unrecognized_appellant_id do |appeal|
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+  end
+
+  attribute :has_poa do |appeal|
+    appeal.claimant&.power_of_attorney
+  end
 
   attribute :cavc_remand do |object|
     if object.cavc_remand
@@ -96,6 +147,12 @@ class WorkQueue::AppealSerializer
     if object.appellant_substitution
       WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution)
         .serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :substitutions do |object|
+    object.substitutions.map do |substitution|
+      WorkQueue::AppellantSubstitutionSerializer.new(substitution).serializable_hash[:data][:attributes]
     end
   end
 

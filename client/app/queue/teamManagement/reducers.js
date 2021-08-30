@@ -6,6 +6,8 @@ export const initialState = {
   judgeTeams: [],
   vsos: [],
   privateBars: [],
+  vhaProgramOffices: [],
+  vhaRegionalOffices: [],
   otherOrgs: []
 };
 
@@ -17,6 +19,8 @@ const teamManagementReducer = (state = initialState, action = {}) => {
       judgeTeams: { $set: action.payload.judge_teams },
       privateBars: { $set: action.payload.private_bars },
       vsos: { $set: action.payload.vsos },
+      vhaProgramOffices: { $set: action.payload.vha_program_offices },
+      vhaRegionalOffices: { $set: action.payload.vha_regional_offices },
       otherOrgs: { $set: action.payload.other_orgs }
     });
   case ACTIONS.ON_RECEIVE_NEW_DVC_TEAM:

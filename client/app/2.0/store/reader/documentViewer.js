@@ -43,6 +43,7 @@ export const initialState = {
   canvasList: [],
   hideSearchBar: true,
   hidePdfSidebar: false,
+  editingTag: false,
   scrollToComment: null,
   pageDimensions: {},
   documentErrors: {},
@@ -160,6 +161,7 @@ export const searchText = createAsyncThunk(
         // Highlight the selected mark in the document
         if (index === matchIndex) {
           item.classList.add('highlighted');
+          item.scrollIntoView();
 
           // Send the New Match Position
           return parseFloat(item.parentElement.style.top);
@@ -382,6 +384,9 @@ const documentViewerSlice = createSlice({
       },
       prepare: () => addMetaLabel('clear-search')
     },
+    toggleTagEdit: (state, action) => {
+      state.editingTag = action.payload;
+    },
     toggleKeyboardInfo: (state, action) => {
       state.keyboardInfoOpen = action.payload;
     },
@@ -457,6 +462,14 @@ const documentViewerSlice = createSlice({
       addCase(showPdf.pending, (state) => {
         state.loading = true;
       }).
+      addCase(showPdf.fulfilled, (state, action) => {
+        // Add the PDF data to the store
+        state.selected = action.payload.currentDocument;
+
+        // Add the PDF data to the store
+        state.scale = action.payload.scale;
+        state.viewport = action.payload.viewport;
+      }).
       addCase(searchText.fulfilled, (state, action) => {
         // Update the Search Term
         state.search.searchTerm = action.payload.searchTerm;
@@ -468,14 +481,6 @@ const documentViewerSlice = createSlice({
         state.search.matchIndex = action.payload.matchIndex || 0;
 
         state.search.scrollPosition = action.payload.scrollPosition;
-      }).
-      addCase(showPdf.fulfilled, (state, action) => {
-        // Add the PDF data to the store
-        state.selected = action.payload.currentDocument;
-
-        // Add the PDF data to the store
-        state.scale = action.payload.scale;
-        state.viewport = action.payload.viewport;
       }).
       addCase(saveDescription.rejected, (state, action) => {
         // Set the error state
@@ -494,6 +499,7 @@ const documentViewerSlice = createSlice({
       addCase(addTag.fulfilled, (state, action) => {
         // Reset the state
         state.pendingTag = false;
+        state.editingTag = false;
 
         // Update the tags
         state.selected.tags = action.payload.tags;
@@ -511,6 +517,7 @@ const documentViewerSlice = createSlice({
       addCase(removeTag.fulfilled, (state, action) => {
         // Reset the state on success
         state.pendingTag = false;
+        state.editingTag = false;
 
         // Filter out the removed text
         state.selected.tags = state.selected.tags.filter(
@@ -567,7 +574,8 @@ export const {
   resetDescription,
   setPageNumber,
   toggleKeyboardInfo,
-  clearSearch
+  clearSearch,
+  toggleTagEdit
 } = documentViewerSlice.actions;
 
 // Default export the reducer

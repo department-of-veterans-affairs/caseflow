@@ -140,6 +140,7 @@ feature "AmaQueue", :all_dbs do
       end
 
       before do
+        allow_any_instance_of(AppealDecisionIssuesPolicy).to receive(:visible_decision_issues).and_return([])
         allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(attorney_user).and_return(true)
         allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
           address_line_1: "Veteran Address",
@@ -527,7 +528,7 @@ feature "AmaQueue", :all_dbs do
           "sent to #{judge_user.full_name} for review."
         )
 
-        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
+        expect(appeal.reload.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do

@@ -17,8 +17,8 @@ class WorkQueue::LegacyAppealSerializer
     end
   end
 
-  attribute :hearings do |object|
-    hearings(object)
+  attribute :hearings do |object, params|
+    hearings(object, params)
   end
 
   attribute :completed_hearing_on_previous_appeal?

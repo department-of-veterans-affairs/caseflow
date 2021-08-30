@@ -5,14 +5,21 @@ module AppealConcern
 
   delegate :station_key, to: :regional_office
 
+  included do
+    if ancestors.include?(ApplicationRecord)
+      has_many :attorney_case_reviews, as: :appeal
+      has_many :judge_case_reviews, as: :appeal
+    end
+  end
+
   def regional_office
     return nil if regional_office_key.nil?
 
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
+                           RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
-                          end
+                         end
   end
 
   def regional_office_name
@@ -60,6 +67,20 @@ module AppealConcern
     end
   end
 
+  def appellant_or_veteran_name
+    return appellant_fullname_readable if appellant_is_not_veteran
+
+    veteran_full_name
+  end
+
+  def appellant_tz
+    timezone_identifier_for_address(appellant_address)
+  end
+
+  def representative_tz
+    timezone_identifier_for_address(representative_address)
+  end
+
   #
   # This section was added to deal with displaying FNOD information in various places.
   # Currently, the FNOD information is used by both queue and hearings in:
@@ -98,5 +119,47 @@ module AppealConcern
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
+
+  def timezone_identifier_for_address(addr)
+    return if addr.blank?
+
+    address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
+
+    # Some appellant addresses have empty country values but valid city, state, and zip codes.
+    # If the address has a zip code then we make the best guess that the address is within the US
+    # (TimezoneService.address_to_timezone will raise an error if this guess is wrong and the zip
+    # code is not a valid US zip code), otherwise we return nil without attempting to get
+    # thetimezone identifier.
+    if address_obj.country.blank?
+      return if address_obj.zip.blank?
+
+      new_address_hash = address_obj.as_json.symbolize_keys.merge(country: "USA")
+      address_obj = Address.new(**new_address_hash)
+    end
+
+    # APO/FPO/DPO addresses do not have time zones so we don't attempt to fetch them.
+    return if address_obj.military_or_diplomatic_address?
+
+    begin
+      TimezoneService.address_to_timezone(address_obj).identifier
+    rescue TimezoneService::AmbiguousTimezoneError => error
+      # TimezoneService raises an error for foreign countries that span multiple time zones since we
+      # only look up time zones by country for foreign addresses. We do not act on these errors (they
+      # are valid addresses, we just cannot determine the time zone) so we do not send the error to
+      # Sentry, only to Datadog for trend tracking.
+      DataDogService.increment_counter(
+        metric_group: "appeal_timezone_service",
+        metric_name: "ambiguous_timezone_error",
+        app_name: RequestStore[:application],
+        attrs: {
+          country_code: error.country_code
+        }
+      )
+      nil
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 end

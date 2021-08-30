@@ -1,18 +1,23 @@
+// Runtime Dependencies
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
+// Style dependencies
+import 'app/styles/app.scss';
+import 'pdfjs-dist/web/pdf_viewer.css';
+
+// External Dependencies
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
-import _ from 'lodash';
-
-// Local Dependencies
-import './styles/app.scss';
-import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
+import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import BaseLayout from 'layouts/BaseLayout';
+
+// Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
+
+// Shared Component Dependencies
 import { ErrorBoundary } from 'components/shared/ErrorBoundary';
 import Loadable from 'components/shared/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
@@ -39,6 +44,7 @@ const Hearings = React.lazy(() => import('app/hearings/index'));
 const Help = React.lazy(() => import('app/help/index'));
 const Error500 = React.lazy(() => import('app/errors/Error500'));
 const Error404 = React.lazy(() => import('app/errors/Error404'));
+const Error403 = React.lazy(() => import('app/errors/Error403'));
 const Unauthorized = React.lazy(() => import('app/containers/Unauthorized'));
 const OutOfService = React.lazy(() => import('app/containers/OutOfService'));
 const Feedback = React.lazy(() => import('app/containers/Feedback'));
@@ -58,6 +64,7 @@ const IntakeEdit = React.lazy(() => import('app/intakeEdit'));
 const NonComp = React.lazy(() => import('app/nonComp'));
 const AsyncableJobs = React.lazy(() => import('app/asyncableJobs'));
 const Inbox = React.lazy(() => import('app/inbox'));
+const Explain = React.lazy(() => import('app/explain'));
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -74,6 +81,7 @@ const COMPONENTS = {
   Login,
   TestUsers,
   TestData,
+  Error403,
   Error404,
   Error500,
   OutOfService,
@@ -89,6 +97,7 @@ const COMPONENTS = {
   NonComp,
   AsyncableJobs,
   Inbox,
+  Explain
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -99,9 +108,9 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         <ReduxBase reducer={rootReducer}>
           <BrowserRouter>
             <Switch>
-            <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
+              <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
                 <Component {...props} />
-            </Loadable>
+              </Loadable>
             </Switch>
           </BrowserRouter>
         </ReduxBase>
@@ -112,7 +121,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       )}
     </ErrorBoundary>
   );
-
   /* eslint-enable */
 
   const renderApp = (Component) => {
@@ -140,12 +148,14 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
+        './2.0/router',
+        './explain/index'
       ],
       () => renderApp(component)
     );
   }
 };
 
-_.forOwn(COMPONENTS, (component, name) =>
+forOwn(COMPONENTS, (component, name) =>
   ReactOnRails.register({ [name]: componentWrapper(component) })
 );

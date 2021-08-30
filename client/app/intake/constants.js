@@ -51,6 +51,7 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
+  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date'
 };
 
 export const INTAKE_STATES = {
@@ -105,6 +106,8 @@ export const ACTIONS = {
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
   SET_RECEIPT_DATE_ERROR: 'SET_RECEIPT_DATE_ERROR',
+  SET_FILED_BY_VA_GOV: 'SET_FILED_BY_VA_GOV',
+  SET_FILED_BY_VA_GOV_ERROR: 'SET_FILED_BY_VA_GOV_ERROR',
   SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
@@ -177,10 +180,10 @@ export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
+    filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
     unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },
-    claimant_notes: { key: 'claimantNotes' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
@@ -203,6 +206,15 @@ export const REVIEW_DATA_FIELDS = {
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
   },
+};
+
+export const GENERIC_FORM_ERRORS = {
+  blank: 'Please select an option.'
+};
+
+export const RECEIPT_DATE_ERRORS = {
+  invalid: 'Please enter a valid receipt date.',
+  in_future: 'Receipt date cannot be in the future.'
 };
 
 export const CLAIMANT_ERRORS = {
@@ -340,4 +352,4 @@ const getValidPayeeCodes = (isDeceased) => {
 export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
 export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
 
-export const VBMS_BENEFIT_TYPES = ['compensation', 'pension'];
+export const VBMS_BENEFIT_TYPES = ['compensation', 'pension', 'fiduciary'];

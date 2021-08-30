@@ -76,40 +76,17 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
-    context "when restrict appeal intakes enabled" do
-      before { FeatureToggle.enable!(:restrict_appeal_intakes) }
-      after { FeatureToggle.disable!(:restrict_appeal_intakes) }
+    before { BvaIntake.singleton.add_user(current_user) }
 
-      it "does not allow user to intake appeals" do
-        visit "/intake"
-        select_form(Constants.INTAKE_FORM_NAMES.appeal)
+    scenario "can intake appeals" do
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
-        expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
-        expect(page).to have_css(".cf-submit[disabled]")
-
-        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        safe_click ".cf-submit.usa-button"
-
-        expect(page).to have_current_path("/intake/search")
-      end
-
-      context "when the user is on the BVA Intake team" do
-        before { BvaIntake.singleton.add_user(current_user) }
-
-        it "allows the user to intake appeals" do
-          visit "/intake"
-          select_form(Constants.INTAKE_FORM_NAMES.appeal)
-
-          expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
-          expect(page).to_not have_css(".cf-submit[disabled]")
-        end
-      end
+      expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+      expect(page).to_not have_css(".cf-submit[disabled]")
     end
 
     context "user has unread Inbox messages" do
-      before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
-      after { FeatureToggle.disable!(:inbox) }
-
       scenario "user sees Alert on Intake start page" do
         create(:message, user: current_user)
 
@@ -202,7 +179,6 @@ feature "Intake", :all_dbs do
         safe_click ".cf-submit.usa-button"
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
-
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("You don't have permission to view this Veteran's information")
       end
@@ -655,6 +631,10 @@ feature "Intake", :all_dbs do
           expect(page).to have_current_path("/intake/review_request")
 
           fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+
+          within_fieldset("Was this form submitted through VA.gov?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
 
           within_fieldset("Which review option did the Veteran request?") do
             find("label", text: "Evidence Submission", match: :prefer_exact).click

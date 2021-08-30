@@ -53,7 +53,9 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
     props.selectedComment,
     props.hideSearchBar,
     props.addingComment,
-    props.droppedComment
+    props.droppedComment,
+    props.editingComment,
+    props.editingTag
   ]);
 
   return (
@@ -98,5 +100,7 @@ Pdf.propTypes = {
   hideSearchBar: PropTypes.bool,
   addingComment: PropTypes.bool,
   droppedComment: PropTypes.object,
+  editingComment: PropTypes.bool,
+  editingTag: PropTypes.bool,
   comments: PropTypes.array,
 };

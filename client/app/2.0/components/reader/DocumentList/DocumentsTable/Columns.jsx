@@ -24,12 +24,11 @@ import { TagPicker } from 'components/reader/DocumentList/DocumentsTable/TagPick
  * @param {Object} annotations -- Object containing all annotations per document
  * @param {Function} jumpToComment -- Function to jump to the clicked comment
  */
-export const commentValue = ({ comments, documentPathBase, showPdf, ...props }) => (doc) => (
+export const commentValue = ({ comments, documentPathBase, ...props }) => (doc) => (
   <ul className="cf-no-styling-list" aria-label="Document comments">
     {sort(comments.filter((comment) => comment.document_id === doc.id), ['page', 'y']).map((comment, index) => (
       <Comment
         {...props}
-        showPdf={showPdf}
         documentPathBase={documentPathBase}
         currentDocument={doc}
         comment={comment}
@@ -170,11 +169,10 @@ TypeHeader.propTypes = {
  * Document Type Column component
  * @param {Object} props -- Contains the document and functions to navigate
  */
-export const TypeCell = ({ doc, showPdf, documentPathBase, filterCriteria }) => (
+export const TypeCell = ({ doc, documentPathBase, filterCriteria }) => (
   <div>
     <ViewableItemLink
       boldCondition={!doc.opened_by_current_user}
-      onOpen={() => showPdf(doc.id)}
       linkProps={{
         to: `${documentPathBase}/${doc.id}`,
         'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')

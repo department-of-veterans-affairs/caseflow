@@ -82,7 +82,11 @@ class BaseHearingUpdateForm
   end
 
   def show_virtual_hearing_progress_alerts?
-    [appellant_email_sent_flag, representative_email_sent_flag, judge_email_sent_flag].any?(false)
+    [
+      virtual_hearing_updates[:appellant_email_sent],
+      virtual_hearing_updates[:representative_email_sent],
+      virtual_hearing_updates[:judge_email_sent]
+    ].any?(false)
   end
 
   def should_create_or_update_virtual_hearing?
@@ -160,8 +164,16 @@ class BaseHearingUpdateForm
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
+  def appellant_email
+    virtual_hearing_attributes&.fetch(:appellant_email, nil)&.strip
+  end
+
   def representative_email
-    virtual_hearing_attributes&.fetch(:representative_email, nil)
+    virtual_hearing_attributes&.fetch(:representative_email, nil)&.strip
+  end
+
+  def judge_email
+    hearing.judge&.email
   end
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
@@ -188,18 +200,7 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.dig(:request_cancelled) == true
   end
 
-  # strip leading and trailing spaces
-  def sanitize_updated_emails
-    if virtual_hearing_attributes[:appellant_email].present?
-      virtual_hearing_attributes[:appellant_email] = virtual_hearing_attributes[:appellant_email].strip
-    end
-
-    if representative_email.present?
-      virtual_hearing_attributes[:representative_email] = representative_email&.strip
-    end
-  end
-
-  def virtual_hearing_updates
+  def define_virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
     emails_sent_updates = {
@@ -208,30 +209,105 @@ class BaseHearingUpdateForm
       representative_email_sent: representative_email_sent_flag
     }.reject { |_k, email_sent| email_sent == true }
 
-    sanitize_updated_emails if virtual_hearing_attributes.present?
-
     updates = (virtual_hearing_attributes || {}).merge(emails_sent_updates)
 
     if judge_id.present?
-      updates[:judge_email] = hearing.judge&.email
+      updates[:judge_email] = judge_email
     end
 
     updates
+  end
+
+  def virtual_hearing_updates
+    @virtual_hearing_updates ||= define_virtual_hearing_updates
   end
 
   def virtual_hearing_created?
     @virtual_hearing_created ||= false
   end
 
-  # rubocop:disable Metrics/AbcSize
+  def update_appellant_recipient
+    update_params = {
+      email_address: appellant_email.presence,
+      timezone: virtual_hearing_updates[:appellant_tz].presence,
+      email_sent: virtual_hearing_updates&.key?(:appellant_email_sent) ? false : true
+    }.compact
+
+    hearing.appellant_recipient.update!(**update_params) if update_params.any?
+  end
+
+  def update_representative_recipient
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email
+      )
+    end
+
+    if hearing.representative_recipient.present?
+      update_params = {
+        timezone: virtual_hearing_updates[:representative_tz].presence,
+        email_sent: virtual_hearing_updates&.key?(:representative_email_sent) ? false : true
+      }.compact
+
+      hearing.representative_recipient.update!(**update_params) if update_params.any?
+    end
+  end
+
+  def update_judge_recipient
+    if judge_email.present?
+      hearing.create_or_update_recipients(
+        type: JudgeHearingEmailRecipient,
+        email_address: judge_email
+      )
+    end
+
+    if hearing.judge_recipient.present?
+      update_params = {
+        email_sent: virtual_hearing_updates&.key?(:judge_email_sent) ? false : true
+      }.compact
+
+      hearing.judge_recipient.update!(**update_params) if update_params.any?
+    end
+  end
+
+  def update_email_recipients
+    update_appellant_recipient
+    update_representative_recipient
+    update_judge_recipient
+  end
+
+  def create_or_update_email_recipients
+    hearing.create_or_update_recipients(
+      type: AppellantHearingEmailRecipient,
+      email_address: appellant_email,
+      timezone: virtual_hearing_updates[:appellant_tz]
+    )
+
+    hearing.representative_recipient&.unset_email_address!
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email,
+        timezone: virtual_hearing_updates[:representative_tz]
+      )
+    end
+
+    hearing.judge_recipient&.unset_email_address!
+    if judge_email.present?
+      hearing.create_or_update_recipients(
+        type: JudgeHearingEmailRecipient,
+        email_address: judge_email,
+        timezone: nil
+      )
+    end
+  end
+
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
-    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
-      new_virtual_hearing.judge_email = hearing.judge&.email
-      new_virtual_hearing.representative_email = representative_email&.strip
-      new_virtual_hearing.appellant_tz = virtual_hearing_attributes[:appellant_tz]
-      new_virtual_hearing.representative_tz = virtual_hearing_attributes[:representative_tz]
+    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do
+      create_or_update_email_recipients
+
       @virtual_hearing_created = true
     end
 
@@ -240,12 +316,11 @@ class BaseHearingUpdateForm
 
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
-      # Update the virtual hearings
-      virtual_hearing.update!(virtual_hearing_updates)
-
+      virtual_hearing.update!(request_cancelled: true)
+      update_email_recipients
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
-      virtual_hearing.update!(virtual_hearing_updates)
+      update_email_recipients
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
@@ -253,7 +328,6 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||

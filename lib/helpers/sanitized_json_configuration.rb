@@ -7,6 +7,10 @@ require "helpers/sanitation_transforms.rb"
 # Needed by SanitizedJsonExporter and SanitizedJsonImporter.
 
 class SanitizedJsonConfiguration
+  def self.select_sanitize_fields(clazz)
+    clazz.columns.select { |column| column.comment&.starts_with?("PII") }.map(&:name)
+  end
+
   # For exporting, the :retrieval lambda is run according to the ordering in this hash.
   # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -17,7 +21,6 @@ class SanitizedJsonConfiguration
         # i.e., DecisionReview has no table_name and hence cannot be used
         # when reassociating using polymorphic associations.
         track_imported_ids: true,
-        sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
           (records[Appeal] +
             records[Appeal].map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
@@ -26,11 +29,9 @@ class SanitizedJsonConfiguration
       },
       Veteran => {
         track_imported_ids: true,
-        sanitize_fields: %w[file_number first_name last_name middle_name ssn],
         retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
       AppealIntake => {
-        sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
       DecisionDocument => {
@@ -56,13 +57,21 @@ class SanitizedJsonConfiguration
       AttorneyCaseReview => {
         retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
+      DecisionIssue => {
+        # In order to import DecisionIssues before RequestIssues (since RequestIssue records refer to DecisionIssue),
+        # export DecisionIssue records first.
+        sanitize_fields: %w[decision_text description],
+        retrieval: lambda do |records|
+          appeal_decision_issue_ids = records[Appeal].map(&:decision_issues).flatten.map(&:id)
+          request_issues = records[Appeal].map(&:request_issues).flatten
+          other_decision_issues_ids = request_issues.compact.map(&:contested_decision_issue).compact.map(&:id)
+
+          DecisionIssue.where(id: appeal_decision_issue_ids + other_decision_issues_ids).order(:id)
+        end
+      },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
         retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten.sort_by(&:id) }
-      },
-      DecisionIssue => {
-        sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
       },
       RequestDecisionIssue => {
         retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).order(:id) }
@@ -111,7 +120,9 @@ class SanitizedJsonConfiguration
                   hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten +
                   hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten
 
-          users.uniq.compact.sort_by(&:id)
+          org_admins = organizations_for(records[Task], records[User]).map(&:admins).flatten
+
+          (users + org_admins).uniq.compact.sort_by(&:id)
         end
       },
       OrganizationsUser => {
@@ -120,24 +131,30 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          # eager load task associations
-          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
-          org_ids = records[OrganizationsUser].map(&:organization_id) +
-                    org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
-          # Use Organization.unscoped to include inactive organizations when exporting
-          Organization.unscoped.where(id: org_ids).order(:id)
+          organizations_for(records[Task], records[User])
         end
       },
       Person => {
         track_imported_ids: true,
-        sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
         retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
       }
-    }
+    }.each do |clazz, class_configuration|
+      class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
+        Rails.logger.info "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
+      end
+    end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
+
+  def organizations_for(tasks, users)
+    # eager load task associations
+    org_tasks = Task.where(id: tasks.map(&:id)).includes(:assigned_to).assigned_to_any_org
+    org_ids = org_tasks.map(&:assigned_to_id) + OrganizationsUser.where(user: users).map(&:organization_id)
+    # Use Organization.unscoped to include inactive organizations when exporting
+    Organization.unscoped.where(id: org_ids.uniq).order(:id)
+  end
 
   def reorder_for_import(tasks)
     tasks = tasks.sort_by(&:id)
@@ -198,6 +215,8 @@ class SanitizedJsonConfiguration
 
         # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
+
+        class_to_fieldnames_hash.transform_values!(&:uniq)
       end.compact
     end
   end
@@ -228,8 +247,16 @@ class SanitizedJsonConfiguration
     # To-do: include other source appeals, e.g., those with the same docket number
     [
       appeal.cavc_remand&.source_appeal,
-      appeal.appellant_substitution&.source_appeal
-    ].compact
+      appeal.appellant_substitution&.source_appeal,
+      decision_reviews_associated_with(appeal)[Appeal]
+    ].flatten.compact
+  end
+
+  # To-do: export other decision_reviews, i.e., HLRs and SCs
+  def self.decision_reviews_associated_with(appeal)
+    appeal.request_issues.includes(:contested_decision_issue).map do |rqi|
+      rqi.contested_decision_issue&.decision_review
+    end.compact.group_by(&:class)
   end
 
   def before_sanitize(record, obj_hash)
@@ -264,7 +291,8 @@ class SanitizedJsonConfiguration
     @id_offset ||= 2_000_000_000
   end
 
-  # Start with important types that other records will reassociate with
+  # Start with important types that other records will reassociate with.
+  # Then import according to the order in the Json file
   def first_types_to_import
     # HearingDay is needed by Hearing
     @first_types_to_import ||= [Appeal, Organization, User, HearingDay, Task]
@@ -307,7 +335,7 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |klass|
         [klass,
-         AssocationWrapper.new(klass).typed_associations(excluding: offset_id_fields[klass]).fieldnames.presence]
+         AssocationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
@@ -316,7 +344,7 @@ class SanitizedJsonConfiguration
           assoc_class.name,
           reassociate_types.map do |klass|
             [klass,
-             AssocationWrapper.new(klass).untyped_associations_with(assoc_class).fieldnames.presence]
+             AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
       end .to_h

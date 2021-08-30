@@ -30,6 +30,7 @@ class Hearing < CaseflowRecord
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
   include HearingConcern
+  include HasHearingEmailRecipientsConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -40,6 +41,7 @@ class Hearing < CaseflowRecord
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
+  has_many :email_recipients, class_name: "HearingEmailRecipient"
 
   class HearingDayFull < StandardError; end
 
@@ -53,11 +55,9 @@ class Hearing < CaseflowRecord
 
   delegate :appellant_first_name, :appellant_last_name, :representative_address,
            :representative_type, :appellant_city, :appellant_state, :appellant_relationship,
-           :appellant_zip, :appellant_address_line_1, :appellant_email_address, :appellant_tz,
-           :representative_tz, :veteran_age, :veteran_gender, :veteran_first_name,
-           :veteran_last_name, :veteran_file_number, :veteran_email_address, :docket_number,
-           :docket_name, :request_issues, :decision_issues, :available_hearing_locations,
-           :closest_regional_office, :advanced_on_docket?,
+           :appellant_zip, :appellant_address_line_1, :veteran_age, :veteran_gender, :veteran_first_name,
+           :veteran_last_name, :veteran_file_number, :docket_number, :docket_name, :request_issues,
+           :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :hearing_day_full?, :request_type, to: :hearing_day
@@ -70,6 +70,7 @@ class Hearing < CaseflowRecord
 
   attr_accessor :override_full_hearing_day_validation
 
+  scope :with_no_disposition, -> { where(disposition: nil) }
   scope :not_scheduled_in_error,
         lambda {
           where(
@@ -131,10 +132,6 @@ class Hearing < CaseflowRecord
 
   def representative
     appeal.representative_name
-  end
-
-  def representative_email_address
-    appeal&.representative_email_address
   end
 
   def claimant_id

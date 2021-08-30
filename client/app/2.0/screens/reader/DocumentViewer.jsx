@@ -35,6 +35,7 @@ import {
   addTag,
   removeTag,
   clearSearch,
+  toggleTagEdit
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -82,6 +83,13 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    handleTagEdit: (event) => () => {
+      if (event === 'focus') {
+        return dispatch(toggleTagEdit(true));
+      }
+
+      return dispatch(toggleTagEdit(false));
+    },
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
       if (deleted) {
@@ -274,8 +282,8 @@ const DocumentViewer = (props) => {
 
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
-      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
-      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount)),
+      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount))
     }),
     fitToScreen: () => {
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');

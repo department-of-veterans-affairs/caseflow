@@ -18,10 +18,11 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let(:ready_priority_bfkey) { "12345" }
+    let(:ready_priority_bfkey2) { "12346" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
+    let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
     let!(:judge_with_ready_priority_cases) do
-      create(:user).tap do |judge|
-        create(:staff, :judge_role, user: judge)
+      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
           :case,
           :aod,
@@ -56,8 +57,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let!(:judge_with_ready_nonpriority_cases) do
-      create(:user).tap do |judge|
-        create(:staff, :judge_role, user: judge)
+      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
           :case,
           bfd19: 1.year.ago,
@@ -88,7 +88,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     let!(:judge_with_nonready_priority_cases) do
-      create(:user).tap do |judge|
+      create(:user, :judge).tap do |judge|
         create(:staff, :judge_role, user: judge)
         vacols_case = create(
           :case,
@@ -119,11 +119,46 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         hearing.update!(judge: judge)
       end
     end
+    let!(:ama_only_judge_with_ready_priority_cases) do
+      create(:user, :ama_only_judge, :with_vacols_judge_record).tap do |judge|
+        vacols_case = create(
+          :case,
+          :aod,
+          bfkey: ready_priority_bfkey2,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: 3.days.ago,
+          bfbox: nil,
+          folder: build(:folder, tinum: "1801005", titrnum: "923456790S")
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+
+        appeal = create(
+          :appeal,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age,
+          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          docket_type: Constants.AMA_DOCKETS.hearing
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
     let(:eligible_judges) do
       [
         judge_with_ready_priority_cases,
         judge_with_ready_nonpriority_cases,
-        judge_with_nonready_priority_cases
+        judge_with_nonready_priority_cases,
+        ama_only_judge_with_ready_priority_cases
       ]
     end
 
@@ -131,14 +166,16 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "should only distribute the ready priority cases tied to a judge" do
       expect(subject.count).to eq eligible_judges.count
-      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 0, 0]
+      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
       # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq 2
-      expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
+      expect(distributed_cases.count).to eq 4
+      expected_array = [ready_priority_bfkey, ready_priority_uuid, ready_priority_bfkey2, ready_priority_uuid2]
+      expect(distributed_cases.map(&:case_id)).to match_array expected_array
       # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
+      expected_array2 = ["legacy", Constants.AMA_DOCKETS.hearing, "legacy", Constants.AMA_DOCKETS.hearing]
+      expect(distributed_cases.map(&:docket)).to match_array expected_array2
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
     end
@@ -162,7 +199,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
 
-    let(:judges) { create_list(:user, 5, :with_vacols_judge_record) }
+    let!(:ama_only_judge) { create(:user, :ama_only_judge, :with_vacols_judge_record) }
+    let(:judges) { create_list(:user, 4, :judge, :with_vacols_judge_record).prepend(ama_only_judge) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
       (1..5).map do |i|
@@ -245,13 +283,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expect(distributed_cases.count).to eq target_distributions
       end
     end
+
+    it "only distributes ama cases to ama-only judge" do
+      distribution = subject.detect { |dist| dist.judge_id == ama_only_judge.id }
+      distributed_cases = DistributedCase.where(distribution: distribution)
+      intersection = distributed_cases.to_set.intersect? legacy_priority_cases.to_set
+      expect(intersection).to eq false
+    end
   end
 
   context ".slack_report" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:legacy_priority_case) do
-      judge = create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) }
+      judge = create(:user, :judge, :with_vacols_judge_record)
       create(
         :case,
         :aod,
@@ -283,7 +328,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 2.months.ago)
       most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
       hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-      hearing.update!(judge: create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) })
+      hearing.update!(judge: create(:user, :judge, :with_vacols_judge_record))
       appeal.reload
     end
     let!(:ready_priority_evidence_case) do
@@ -770,8 +815,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
     end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
-    let!(:judge_with_team_and_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
-    let!(:judge_with_team_without_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+    let!(:judge_with_team_and_distributions) { create(:user, :judge) }
+    let!(:judge_with_team_without_distributions) { create(:user, :judge) }
 
     let!(:distributions_for_valid_judge) { 6 }
 
@@ -807,10 +852,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:judge_without_team) { create(:user) }
     let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
     let!(:judge_without_priority_push_team) do
-      create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+      create(:user, :judge).tap { |judge| JudgeTeam.for_judge(judge).update(accepts_priority_pushed_cases: false) }
     end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
-    let!(:judge_with_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+    let!(:judge_with_team) { create(:user, :judge) }
 
     subject { PushPriorityAppealsToJudgesJob.new.eligible_judges }
 
@@ -822,7 +867,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".priority_distributions_this_month_for_all_judges" do
     let(:batch_size) { 20 }
     let!(:judge_with_no_priority_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -833,7 +878,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_no_recent_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -844,7 +889,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_no_completed_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -854,7 +899,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_a_valid_distribution) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -865,7 +910,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:judge_with_multiple_valid_distributions) do
-      create(:user, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -932,6 +977,21 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     it "only returns recently completed priority distributions" do
       expect(subject.count).to eq 1
       expect(subject.first).to eq recent_completed_priority_distribution
+    end
+  end
+
+  context "when the entire job fails" do
+    let(:error_msg) { "Some dummy error" }
+
+    it "sends a message to Slack that includes the error" do
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
+      described_class.perform_now
+
+      expected_msg = ".ERROR. after running for .*: #{error_msg}"
+      expect(slack_msg).to match(/^#{expected_msg}/)
     end
   end
 end

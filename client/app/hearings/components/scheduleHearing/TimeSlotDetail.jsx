@@ -6,6 +6,7 @@ import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { renderAppealType } from '../../../queue/utils';
 import { HearingRequestType } from '../assignHearings/AssignHearingsFields';
 import { Dot } from '../../../components/Dot';
+import Tooltip from '../../../components/Tooltip';
 
 export const TimeSlotDetail = ({
   issueCount,
@@ -37,7 +38,9 @@ export const TimeSlotDetail = ({
           <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
           {showType && docketNumber}{' '}
           <Dot spacing={itemSpacing} />{' '}
-          {poaName}
+          <Tooltip text={poaName} position="bottom">
+            <span>{poaName}</span>
+          </Tooltip>
         </div>
       )}
       {showType && (

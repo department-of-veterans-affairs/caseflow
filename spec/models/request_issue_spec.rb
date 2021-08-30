@@ -103,6 +103,24 @@ describe RequestIssue, :all_dbs do
     )
   end
 
+  let!(:rating_request_issue_without_contested_issue) do
+    create(
+      :request_issue,
+      decision_review: review,
+      ramp_claim_id: ramp_claim_id,
+      decision_sync_processed_at: decision_sync_processed_at,
+      end_product_establishment: end_product_establishment,
+      contention_reference_id: nil,
+      benefit_type: benefit_type,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      closed_at: closed_at,
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason,
+      edited_description: edited_description
+    )
+  end
+
   let!(:nonrating_request_issue) do
     create(
       :request_issue,
@@ -1235,6 +1253,16 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#approx_decision_date_of_issue_being_contested" do
+    subject { rating_request_issue_without_contested_issue.approx_decision_date_of_issue_being_contested }
+
+    context "when decision date is missing" do
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
   context "#validate_eligibility!" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:duplicate_appeal_reference_id) { "xyz555" }
@@ -1349,7 +1377,6 @@ describe RequestIssue, :all_dbs do
 
     context "when duplicate request issue is a correction" do
       let(:correction_type) { "control" }
-      let(:contested_decision_issue_id) { 12 }
 
       it "does not flag the correction issue as a duplicate" do
         rating_request_issue.validate_eligibility!

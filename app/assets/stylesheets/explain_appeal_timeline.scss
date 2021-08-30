@@ -1,0 +1,150 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ */
+
+@import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
+
+$task-color-assigned: #FFFF80;
+$task-color-onhold: #A3A303;
+$task-color-inprogress: #00FF00;
+$task-color-completed: #00B800;
+$task-color-cancelled: #D89696;
+
+$background-phase-color-distribution: #F0F0F0;
+$background-phase-color-decision: #D2D2D2;
+$background-phase-color-dispatch: #B4B4B4;
+
+/* Legend for timeline: color-coding table */
+#timelineColors {
+  margin: 0px;
+  font-size: 0.8em;
+
+  table {
+    margin: 0px;
+  }
+  td {
+    border-width: 0px;
+  }
+
+  // Tasks
+  td.assigned_task {
+    background-color: $task-color-assigned;
+    border-color:     $task-color-assigned;
+  }
+  td.inprogress_task {
+    background-color: $task-color-inprogress;
+    border-color:     $task-color-inprogress;
+  }
+  td.onhold_task {
+    background-color: $task-color-onhold;
+    border-color:     $task-color-onhold;
+  }
+  td.cancelled_task {
+    background-color: $task-color-cancelled;
+    border-color:     $task-color-cancelled;
+  }
+  td.completed_task {
+    background-color: $task-color-completed;
+    border-color:     $task-color-completed;
+  }
+
+  // Phases
+  td.distribution_phase {
+    background-color: $background-phase-color-distribution;
+    border-color:     $background-phase-color-distribution;
+  }
+  td.decision_phase {
+    background-color: $background-phase-color-decision;
+    border-color:     $background-phase-color-decision;
+  }
+  td.dispatch_phase {
+    background-color: $background-phase-color-dispatch;
+    border-color:     $background-phase-color-dispatch;
+  }
+}
+
+/* Timeline elements */
+#timeline{
+  .vis-item .vis-item-overflow {
+    overflow: visible; /* allow event labels to overflow its timeline box */
+  }
+
+  /* These task_<status> colors should roughly match with those for #events_table above */
+  .vis-range.task_assigned {
+    background-color: $task-color-assigned;
+    border-color:     $task-color-assigned;
+  }
+  .vis-range.task_in_progress {
+    background-color: $task-color-inprogress;
+    border-color:     $task-color-inprogress;
+  }
+  .vis-range.task_on_hold,
+  .vis-box.hearing_postponed {
+    background-color: $task-color-onhold;
+    border-color:     $task-color-onhold;
+  }
+  .vis-range.task_cancelled,
+  .vis-box.hearing_cancelled {
+    background-color: $task-color-cancelled;
+    border-color:     $task-color-cancelled;
+  }
+  .vis-range.task_completed,
+  .vis-box.hearing_held {
+    background-color: $task-color-completed;
+    border-color:     $task-color-completed;
+  }
+
+  /* Color dots simlar to ranges above */
+  .vis-dot.task_assigned {
+    border-color: $task-color-assigned;
+  }
+  .vis-dot.task_in_progress {
+    border-color: $task-color-inprogress;
+  }
+  .vis-dot.task_on_hold {
+    border-color: $task-color-onhold;
+  }
+  .vis-dot.task_cancelled {
+    border-color: $task-color-cancelled;
+  }
+  .vis-dot.task_completed {
+    border-color: $task-color-completed;
+  }
+
+  /* events with "type=background" */
+  div.vis-background {
+    font-style: italic;
+  }
+  div.DistributionTask {
+    background-color: $background-phase-color-distribution;
+  }
+  div.JudgeDecisionReviewTask {
+    background-color: $background-phase-color-decision;
+  }
+  div.BvaDispatchTask {
+    background-color: $background-phase-color-dispatch;
+  }
+
+  /* minor tasks that don't really add much info to the timeline */
+  div.RootTask,
+  div.TrackVeteranTask {
+    font-size: 0.7em;
+  }
+
+  .event_detail {
+    max-width: 100px;
+    word-wrap: break-word;
+    margin: 0px;
+    font-size: 0.7em;
+    white-space: pre-line;
+  }
+}

@@ -28,6 +28,13 @@ export const changeDocument = (event, props) => {
  * @param {Object} props -- Current Document Viewer props
  */
 export const keyHandler = (event, props) => {
+  // Set the flag to determine whether a comment is being placed and prevent keyboard navigation
+  const placingComment =
+    Boolean(props?.addingComment) ||
+    Boolean(props?.droppedComment) ||
+    Boolean(props?.editingTag) ||
+    Boolean(props?.editingComment);
+
   // Do not listen to key events if editing
   if (props.currentDocument.id) {
     // Calculate the meta key
@@ -82,7 +89,7 @@ export const keyHandler = (event, props) => {
         // Move the cursor
         props.moveMouse(props.getCoords({ pageX: coords.x, pageY: coords.y }, pageIndex), pageIndex);
       // Ignore arrow keys when editing search fields
-      } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id) && !props.addingComment) {
+      } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id) && !placingComment) {
         changeDocument(event, props);
       }
 

@@ -6,7 +6,11 @@ import PropTypes from 'prop-types';
 import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
-import { FilterIcon, PageArrowLeft, PageArrowRight } from 'app/components/RenderFunctions';
+import {
+  FilterIcon,
+  PageArrowLeft,
+  PageArrowRight,
+} from 'app/components/RenderFunctions';
 
 /**
  * Document Footer displays the PDF footer controls
@@ -28,7 +32,13 @@ export const DocumentFooter = ({
   <div className="cf-pdf-footer cf-pdf-toolbar" {...toolbarStyles.footer}>
     <div className="cf-pdf-footer-buttons-left">
       {prevDocId !== 0 && (
-        <Button name="previous" classNames={['cf-pdf-button']} onClick={prevDoc} ariaLabel="previous PDF">
+        <Button
+          id="button-previous"
+          name="previous"
+          classNames={['cf-pdf-button']}
+          onClick={prevDoc}
+          ariaLabel="previous PDF"
+        >
           <PageArrowLeft />
           <span className="left-button-label">Previous</span>
         </Button>
@@ -68,7 +78,13 @@ export const DocumentFooter = ({
     </div>
     <div className="cf-pdf-footer-buttons-right">
       {nextDocId !== 0 && (
-        <Button name="next" classNames={['cf-pdf-button cf-right-side']} onClick={nextDoc} ariaLabel="next PDF">
+        <Button
+          id="button-next"
+          name="next"
+          classNames={['cf-pdf-button cf-right-side']}
+          onClick={nextDoc}
+          ariaLabel="next PDF"
+        >
           <span className="right-button-label">Next</span>
           <PageArrowRight />
         </Button>

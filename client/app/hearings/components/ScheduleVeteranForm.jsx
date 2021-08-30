@@ -15,6 +15,7 @@ import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
+import { ReadOnlyHearingTimeWithZone } from './modalForms/ReadOnlyHearingTimeWithZone';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
@@ -24,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
 import { UnscheduledNotes } from './UnscheduledNotes';
+import { formatNotificationLabel } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -36,6 +38,7 @@ export const ScheduleVeteranForm = ({
   convertToVirtual,
   userCanViewTimeSlots,
   hearingTask,
+  userCanCollectVideoCentralEmails,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -51,9 +54,10 @@ export const ScheduleVeteranForm = ({
     isEmpty(appeal?.availableHearingLocations);
 
   const unscheduledNotes = hearing?.notes;
-  const hearingDayIsVirtual = hearing?.hearingDay?.requestType === 'R';
+  const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
-  const getOriginalRequestType = () => {
+  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
+  const getHearingRequestType = () => {
     if (
       appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
     ) {
@@ -64,7 +68,7 @@ export const ScheduleVeteranForm = ({
     }
 
     // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
+    return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
 
   // Set the section props
@@ -72,6 +76,8 @@ export const ScheduleVeteranForm = ({
     errors,
     hearing,
     appellantTitle,
+    userCanCollectVideoCentralEmails,
+    showDivider: false,
     schedulingToVirtual: virtual,
     virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
@@ -81,6 +87,33 @@ export const ScheduleVeteranForm = ({
         ...hearing?.virtualHearing,
         ...virtualHearing,
       })
+  };
+
+  const getHearingTime = () => {
+    const onTimeChange =
+      (scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString);
+
+    if (hearingDayIsVideo && hearing.hearingDay?.beginsAt) {
+      return (
+        <ReadOnlyHearingTimeWithZone
+          hearingStartTime={hearing.hearingDay?.beginsAt}
+          timezone={hearing?.hearingDay?.timezone}
+          onRender={onTimeChange}
+        />
+      );
+    }
+
+    return <HearingTime
+      regionalOffice={ro}
+      errorMessage={errors?.scheduledTimeString}
+      vertical
+      label="Hearing Time"
+      enableZone
+      localZone={hearing?.hearingDay?.timezone}
+      onChange={onTimeChange}
+      value={hearing.scheduledTimeString}
+    />;
+
   };
 
   return (
@@ -96,16 +129,16 @@ export const ScheduleVeteranForm = ({
           updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
           uniqueId={hearingTask?.taskId}
         />
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
             update={convertToVirtual}
-            originalRequestType={getOriginalRequestType()}
-            virtualHearing={hearing?.virtualHearing}
+            originalRequestType={getHearingRequestType()}
+            virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           {virtual ? (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
@@ -125,45 +158,51 @@ export const ScheduleVeteranForm = ({
               }
             />
           )}
-          <RegionalOfficeDropdown
-            errorMessage={errors?.regionalOffice}
-            excludeVirtualHearingsOption={!virtual}
-            onChange={(regionalOffice) =>
-              props.onChange('regionalOffice', regionalOffice)
-            }
-            value={ro}
-            validateValueOnMount
-          />
+          <div {...marginTop(30)}>
+            <RegionalOfficeDropdown
+              errorMessage={errors?.regionalOffice}
+              excludeVirtualHearingsOption={!virtual}
+              onChange={(regionalOffice) =>
+                props.onChange('regionalOffice', regionalOffice)
+              }
+              value={ro}
+              validateValueOnMount
+            />
+          </div>
           {ro && (
             <React.Fragment>
               {!virtual && (
-                <AppealHearingLocationsDropdown
-                  errorMessage={errors?.hearingLocation}
-                  key={`hearingLocation__${ro}`}
-                  regionalOffice={ro}
-                  appealId={appeal.externalId}
-                  value={location}
-                  onChange={(hearingLocation) =>
-                    props.onChange('hearingLocation', hearingLocation)
-                  }
-                  dynamic={dynamic}
-                  staticHearingLocations={availableHearingLocations}
-                />
+                <div {...marginTop(30)}>
+                  <AppealHearingLocationsDropdown
+                    errorMessage={errors?.hearingLocation}
+                    key={`hearingLocation__${ro}`}
+                    regionalOffice={ro}
+                    appealId={appeal.externalId}
+                    value={location}
+                    onChange={(hearingLocation) =>
+                      props.onChange('hearingLocation', hearingLocation)
+                    }
+                    dynamic={dynamic}
+                    staticHearingLocations={availableHearingLocations}
+                  />
+                </div>
               )}
-              <HearingDateDropdown
-                errorMessage={errors?.hearingDay}
-                key={`hearingDate__${ro}`}
-                regionalOffice={ro}
-                value={hearing.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => {
-                // Call fetch scheduled hearings only if passed
-                  fetchScheduledHearings(hearingDay)(dispatch);
+              <div {...marginTop(30)}>
+                <HearingDateDropdown
+                  errorMessage={errors?.hearingDay}
+                  key={`hearingDate__${ro}`}
+                  regionalOffice={ro}
+                  value={hearing.hearingDay || initialHearingDate}
+                  onChange={(hearingDay) => {
+                    // Call fetch scheduled hearings only if passed
+                    fetchScheduledHearings(hearingDay)(dispatch);
 
-                  props.onChange('hearingDay', hearingDay);
-                }}
-              />
+                    props.onChange('hearingDay', hearingDay);
+                  }}
+                />
+              </div>
               {hearing.hearingDay?.hearingId && (
-                <React.Fragment>
+                <div {...marginTop(30)}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
@@ -173,30 +212,23 @@ export const ScheduleVeteranForm = ({
                       roTimezone={hearing?.hearingDay?.timezone}
                     />
                   ) : (
-                    <HearingTime
-                      regionalOffice={ro}
-                      errorMessage={errors?.scheduledTimeString}
-                      vertical
-                      label="Hearing Time"
-                      enableZone
-                      localZone={hearing?.hearingDay?.timezone}
-                      onChange={(scheduledTimeString) =>
-                        props.onChange('scheduledTimeString', scheduledTimeString)
-                      }
-                      value={hearing.scheduledTimeString}
-                    />
+                    getHearingTime()
                   )}
-                </React.Fragment>
+                </div>
               )}
-
             </React.Fragment>
           )}
         </div>
-        {virtual && (
-          <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection {...sectionProps} />
-            <RepresentativeSection {...sectionProps} />
-          </div>
+        {(userCanCollectVideoCentralEmails || virtual) && (
+          <React.Fragment>
+            <div className="cf-help-divider usa-width-one-whole" />
+            <div className="usa-width-one-whole" >
+              <h2>Email Notifications {!virtual && '(Optional)'}</h2>
+              <p>{formatNotificationLabel(hearing, virtual, appellantTitle)}</p>
+              <AppellantSection {...sectionProps} fullWidth />
+              <RepresentativeSection {...sectionProps} fullWidth />
+            </div>
+          </React.Fragment>
         )}
       </div>
     </div>
@@ -216,6 +248,7 @@ ScheduleVeteranForm.propTypes = {
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   hearingTask: PropTypes.object
 };
 

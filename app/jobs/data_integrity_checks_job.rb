@@ -7,6 +7,7 @@ class DataIntegrityChecksJob < CaseflowJob
   CHECKERS = %w[
     DecisionReviewTasksForInactiveAppealsChecker
     DecisionDateChecker
+    AppealsWithMoreThanOneOpenHearingTaskChecker
     ExpiredAsyncJobsChecker
     LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
@@ -15,6 +16,7 @@ class DataIntegrityChecksJob < CaseflowJob
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker
     StuckVirtualHearingsChecker
+    TasksAssignedToInactiveUsersChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
@@ -37,8 +39,6 @@ class DataIntegrityChecksJob < CaseflowJob
       slack_msg += " See Sentry event #{Raven.last_event_id}" if Raven.last_event_id.present?
       slack_service.send_notification(slack_msg, klass, checker.slack_channel)
     end
-
-    datadog_report_runtime(metric_group_name: "data_integrity_checks_job")
   end
 
   private

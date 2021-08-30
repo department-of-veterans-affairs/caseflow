@@ -119,9 +119,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[1]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[1]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Root Task
+                        </span>
                       </span>
                        
                     </label>
@@ -150,6 +156,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                   >
                     <input
                       aria-label="taskIds[2]"
+                      disabled=""
                       id="taskIds[2]"
                       name="taskIds[2]"
                       type="checkbox"
@@ -158,9 +165,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[2]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[2]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Distribution Task
+                        </span>
                       </span>
                        
                     </label>
@@ -197,9 +210,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[3]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[3]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Evidence Submission Window Task
+                        </span>
                       </span>
                        
                     </label>
@@ -236,9 +255,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[4]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[4]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Assign
+                        </span>
                       </span>
                        
                     </label>
@@ -275,9 +300,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[5]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[5]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Review
+                        </span>
                       </span>
                        
                     </label>
@@ -314,9 +345,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[6]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[6]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Draft decision
+                        </span>
                       </span>
                        
                     </label>
@@ -353,9 +390,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[7]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[7]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Board Dispatch
+                        </span>
                       </span>
                        
                     </label>
@@ -392,9 +435,15 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                       for="taskIds[8]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[8]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Board Dispatch
+                        </span>
                       </span>
                        
                     </label>
@@ -563,9 +612,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[1]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[1]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Root Task
+                        </span>
                       </span>
                        
                     </label>
@@ -595,6 +650,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                     <input
                       aria-label="taskIds[2]"
                       checked=""
+                      disabled=""
                       id="taskIds[2]"
                       name="taskIds[2]"
                       type="checkbox"
@@ -603,9 +659,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[2]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[2]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Distribution Task
+                        </span>
                       </span>
                        
                     </label>
@@ -643,9 +705,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[3]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[3]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Evidence Submission Window Task
+                        </span>
                       </span>
                        
                     </label>
@@ -682,9 +750,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[4]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[4]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Assign
+                        </span>
                       </span>
                        
                     </label>
@@ -721,9 +795,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[5]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[5]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Review
+                        </span>
                       </span>
                        
                     </label>
@@ -760,9 +840,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[6]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[6]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Draft decision
+                        </span>
                       </span>
                        
                     </label>
@@ -799,9 +885,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[7]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[7]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Board Dispatch
+                        </span>
                       </span>
                        
                     </label>
@@ -838,9 +930,15 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                       for="taskIds[8]"
                     >
                       <span
-                        class="usa-sr-only"
+                        class=""
                       >
-                        taskIds[8]
+                         
+                        <span
+                          class="usa-sr-only"
+                        >
+                          Select 
+                          Board Dispatch
+                        </span>
                       </span>
                        
                     </label>

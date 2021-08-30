@@ -6,23 +6,24 @@
 # Currently used for attorney fee cases when the attorney isn't found in the BGS attorney database.
 
 class OtherClaimant < Claimant
-  delegate :name, :first_name, :middle_name, :last_name,
+  delegate :name, :first_name, :middle_name, :last_name, :suffix,
            :address, :address_line_1, :address_line_2, :address_line_3,
-           :city, :state, :zip, :country,
-           :power_of_attorney,
+           :city, :state, :zip, :country, :date_of_birth,
+           :email_address, :phone_number,
+           :power_of_attorney, :party_type,
            to: :unrecognized_appellant,
            allow_nil: true
 
-  NIL_ATTRIBUTES = [ # not applicable without CorpDB record
-    :date_of_birth,
-    :advanced_on_docket?,
-    :advanced_on_docket_based_on_age?,
-    :advanced_on_docket_motion_granted?
-  ].freeze
-  NIL_ATTRIBUTES.each do |attribute|
-    define_method attribute do |*_args|
-      nil
-    end
+  def advanced_on_docket?(appeal)
+    advanced_on_docket_motion_granted?(appeal)
+  end
+
+  def advanced_on_docket_based_on_age?
+    false
+  end
+
+  def advanced_on_docket_motion_granted?(appeal)
+    AdvanceOnDocketMotion.granted.for_appeal(appeal).any?
   end
 
   def relationship
@@ -55,8 +56,9 @@ class OtherClaimant < Claimant
     UnrecognizedAppellant.create!(
       relationship: relationship,
       claimant_id: id,
-      unrecognized_party_detail: create_party_detail!(params.permit!)
-    )
+      unrecognized_party_detail: create_party_detail!(params.permit!),
+      created_by: RequestStore[:current_user]
+    ).set_current_version_to_self!
   end
 
   def create_party_detail!(params)

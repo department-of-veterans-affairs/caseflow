@@ -20,7 +20,10 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
-  belongs_to :appeal, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
+
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
@@ -94,6 +97,8 @@ class Task < CaseflowRecord
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
+
+  attr_accessor :skip_check_for_only_open_task_of_type
 
   ############################################################################################
   ## class methods
@@ -464,6 +469,10 @@ class Task < CaseflowRecord
     [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
+  def append_instruction(instruction)
+    update!(instructions: flattened_instructions(instructions: instruction))
+  end
+
   def hide_from_queue_table_view
     self.class.hide_from_queue_table_view
   end
@@ -554,25 +563,36 @@ class Task < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |task|
-      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = flattened_instructions(reassign_params)
-      task.status = Constants.TASK_STATUSES.assigned
-      task.save!
+    # We do not validate the number of tasks in this scenario because when a
+    # task is reassigned, more than one open task of the same type must exist during the reassignment.
+    @skip_check_for_only_open_task_of_type = true
+    replacement = dup.tap do |task|
+      begin
+        ActiveRecord::Base.transaction do
+          task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+          task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+          task.instructions = flattened_instructions(reassign_params)
+          task.status = Constants.TASK_STATUSES.assigned
+
+          task.save!
+        end
+      ensure
+        @skip_check_for_only_open_task_of_type = nil
+      end
     end
 
     # Preserve the open children and status of the old task
-    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
-    sibling.update!(status: status)
-
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
+    replacement.update!(status: status)
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    [sibling, self, sibling.children].flatten
+    [replacement, self, replacement.children].flatten
   end
+  # rubocop:enable Metrics/AbcSize
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
@@ -815,6 +835,12 @@ class Task < CaseflowRecord
     end
 
     true
+  end
+
+  def only_open_task_of_type
+    if appeal.reload.tasks.open.of_type(type).any?
+      fail Caseflow::Error::MultipleOpenTasksOfSameTypeError, task_type: type
+    end
   end
 
   def parent_can_have_children
