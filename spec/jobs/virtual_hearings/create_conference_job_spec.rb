@@ -116,7 +116,7 @@ describe VirtualHearings::CreateConferenceJob do
     context "appellant email fails to send" do
       before do
         expected_mailer_args = {
-          email_recipient: having_attributes(title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]),
+          email_recipient_info: having_attributes(title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]),
           virtual_hearing: instance_of(VirtualHearing)
         }
 

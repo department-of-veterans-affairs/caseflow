@@ -12,7 +12,7 @@ class Hearings::CalendarService
     # Sent when first switching a video hearing to a virtual hearing,
     # and also when the scheduled time for an existing virtual hearing
     # is changed.
-    def confirmation_calendar_invite(virtual_hearing, recipient, link)
+    def confirmation_calendar_invite(virtual_hearing, email_recipient_info, link)
       create_calendar_event(virtual_hearing.hearing) do |event, time_zone, start_time|
         template_context = {
           virtual_hearing: virtual_hearing,
@@ -24,17 +24,17 @@ class Hearings::CalendarService
         event.url = link
         event.location = link
         event.status = "CONFIRMED"
-        event.summary = summary(recipient)
+        event.summary = summary(email_recipient_info)
         event.description = render_virtual_hearing_calendar_event_template(
-          recipient, :confirmation, template_context
+          email_recipient_info, :confirmation, template_context
         )
       end
     end
 
     # Sent when a virtual hearing is switched back to a video hearing.
-    def update_to_video_calendar_invite(virtual_hearing, recipient)
+    def update_to_video_calendar_invite(virtual_hearing, email_recipient_info)
       create_calendar_event(virtual_hearing.hearing) do |event, time_zone, start_time|
-        if recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+        if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
           # For judges, just cancel the original invitation.
           event.status = "CANCELLED"
         else
@@ -45,9 +45,9 @@ class Hearings::CalendarService
           }
 
           event.status = "CONFIRMED"
-          event.summary = summary(recipient)
+          event.summary = summary(email_recipient_info)
           event.description = render_virtual_hearing_calendar_event_template(
-            recipient, :changed_to_video, template_context
+            email_recipient_info, :changed_to_video, template_context
           )
         end
       end
@@ -55,8 +55,8 @@ class Hearings::CalendarService
 
     private
 
-    def summary(recipient)
-      case recipient.title
+    def summary(email_recipient_info)
+      case email_recipient_info.title
       when HearingEmailRecipient::RECIPIENT_TITLES[:veteran],
         HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         "Hearing with the Board of Veterans' Appeals"
@@ -94,7 +94,7 @@ class Hearings::CalendarService
       cal.to_ical
     end
 
-    def render_virtual_hearing_calendar_event_template(recipient, event_type, locals)
+    def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
       template = ActionView::Base.new(ActionMailer::Base.view_paths, {})
       template.class_eval do
         include Hearings::CalendarTemplateHelper
@@ -110,7 +110,7 @@ class Hearings::CalendarService
       # representative_changed_to_video_event_description
       #        veteran_changed_to_video_event_description
 
-      template_name = "#{recipient.title.downcase}_#{event_type}_event_description"
+      template_name = "#{email_recipient_info.title.downcase}_#{event_type}_event_description"
 
       template.render(
         file: "hearing_mailer/calendar_events/#{template_name}",

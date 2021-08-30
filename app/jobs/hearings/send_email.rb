@@ -73,7 +73,7 @@ class Hearings::SendEmail
 
   def email_for_recipient(recipient_info)
     args = {
-      email_recipient: recipient_info,
+      email_recipient_info: recipient_info,
       virtual_hearing: hearing.virtual_hearing
     }
 

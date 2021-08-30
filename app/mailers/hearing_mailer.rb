@@ -8,74 +8,74 @@ class HearingMailer < ActionMailer::Base
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
 
-  def cancellation(email_recipient:, virtual_hearing: nil)
+  def cancellation(email_recipient_info:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
-    @recipient = email_recipient
+    @recipient_info = email_recipient_info
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing&.hearing
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
     mail(
-      to: recipient.email,
+      to: recipient_info.email,
       subject: cancellation_subject
     )
   end
 
-  def confirmation(email_recipient:, virtual_hearing: nil)
-    @recipient = email_recipient
+  def confirmation(email_recipient_info:, virtual_hearing: nil)
+    @recipient_info = email_recipient_info
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
     @link = link
-    @test_link = virtual_hearing&.test_link(email_recipient.title)
+    @test_link = virtual_hearing&.test_link(email_recipient_info.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: confirmation_subject)
+    mail(to: recipient_info.email, subject: confirmation_subject)
   end
 
-  def updated_time_confirmation(email_recipient:, virtual_hearing: nil)
-    @recipient = email_recipient
+  def updated_time_confirmation(email_recipient_info:, virtual_hearing: nil)
+    @recipient_info = email_recipient_info
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = virtual_hearing&.test_link(email_recipient.title)
+    @test_link = virtual_hearing&.test_link(email_recipient_info.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
     mail(
-      to: recipient.email,
+      to: recipient_info.email,
       subject: "Your Board hearing time has changed – Do Not Reply"
     )
   end
 
-  def reminder(email_recipient:, day_type:, virtual_hearing: nil, hearing: nil)
+  def reminder(email_recipient_info:, day_type:, virtual_hearing: nil, hearing: nil)
     # Guard to prevent reminder emails from sending to the judge
-    return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
-    @recipient = email_recipient
+    @recipient_info = email_recipient_info
     @virtual_hearing = virtual_hearing
-    @test_link = virtual_hearing&.test_link(email_recipient.title)
+    @test_link = virtual_hearing&.test_link(email_recipient_info.title)
     @link = virtual_hearing.present? ? link : nil
     @hearing = hearing || virtual_hearing.hearing
     @representative_reminder =
-      virtual_hearing.nil? && email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+      virtual_hearing.nil? && email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
     @reminder_type = day_type
 
     mail(
-      to: recipient.email,
+      to: recipient_info.email,
       subject: reminder_subject
     )
   end
 
   private
 
-  attr_reader :recipient, :virtual_hearing
+  attr_reader :recipient_info, :virtual_hearing
 
   def cancellation_subject
     # :reek:RepeatedConditionals
-    case recipient.title
+    case recipient_info.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
@@ -84,15 +84,15 @@ class HearingMailer < ActionMailer::Base
   end
 
   def confirmation_calendar_invite
-    Hearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
+    Hearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient_info, link)
   end
 
   def cancellation_calendar_invite
-    Hearings::CalendarService.update_to_video_calendar_invite(virtual_hearing, recipient)
+    Hearings::CalendarService.update_to_video_calendar_invite(virtual_hearing, recipient_info)
   end
 
   def calendar_invite_name
-    case recipient.title
+    case recipient_info.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
       HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "BoardHearing.ics"
@@ -112,7 +112,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def reminder_subject
-    if recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+    if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     else
       "Reminder: Your Board hearing is #{formatted_time} – Do Not Reply"
@@ -121,7 +121,7 @@ class HearingMailer < ActionMailer::Base
 
   def confirmation_subject
     # :reek:RepeatedConditionals
-    case recipient.title
+    case recipient_info.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
@@ -134,7 +134,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def link
-    return virtual_hearing.host_link if recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    return virtual_hearing.host_link if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
     virtual_hearing.guest_link
   end
