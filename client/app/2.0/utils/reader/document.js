@@ -1,5 +1,5 @@
 // External Dependencies
-import { orderBy, sortBy, isEmpty, range } from 'lodash';
+import { orderBy, isEmpty, range } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
@@ -12,6 +12,7 @@ import {
   PAGE_MARGIN
 } from 'store/constants/reader';
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
+import ApiUtil from 'app/util/ApiUtil';
 import { fetchAppealDetails } from 'store/reader/appeal';
 import { navigate } from 'store/routes';
 
@@ -149,11 +150,12 @@ export const filterDocuments = (criteria, documents, state) => {
   const { active, filters } = formatFilterCriteria(criteria);
 
   // Set the Original Documents according to the initial state
-  const docs = Object.values(state.storeDocuments ? state.storeDocuments : documents);
-  const sortedDocs = orderBy(docs, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
+  const docs = ApiUtil.convertToCamelCase(state.storeDocuments ? state.storeDocuments : documents);
+  const docsWithDate = Object.values(docs).map((doc) => ({ ...doc, receivedAt: new Date(`${doc.receivedAt} 00:00`) }));
+  const sortedDocs = orderBy(docsWithDate, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 
-  const documentList = active.length ?
-    sortedDocs.filter((document) => {
+  const documentIds = sortedDocs.reduce((list, document) => {
+    if (active.length) {
       // Initialize whether to show the document
       let include = true;
 
@@ -173,11 +175,19 @@ export const filterDocuments = (criteria, documents, state) => {
       }
 
       // Default return the object to be truthy
-      return include;
-    }).map((doc) => doc.id) :
-    sortedDocs.map((doc) => doc.id);
+      if (include) {
+        list.push(document.id);
+      }
+    } else {
+      list.push(document.id);
+    }
 
-  return documentList;
+    return list;
+  }, []);
+
+  console.log('DOCS LIST: ', documentIds);
+
+  return documentIds;
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {
