@@ -58,38 +58,37 @@ class Docket
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
+  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
     appeals = appeals(priority: priority, ready: true).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
-      appeal = task.appeal
-      # check if distributed case already exists for this appeal.
-      # if so, make a distributed case with a different case id.
+      # If distributed case already exists for this appeal, make a distributed case with a different case id.
       # This is modeled after the allow! method in the redistributed_case model
-      uuid = appeal.uuid
-      distributed_case = DistributedCase.find_by(case_id: uuid)
+      distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
       if distributed_case
         Rails.logger.error("A distributed case, id #{distributed_case.id}, "\
-          "\n already exists for appeal of uuid #{uuid}.")
+          "\n already exists for appeal of uuid #{task.appeal.uuid}.")
         Raven.capture_message("A distributed case, id #{distributed_case.id}, "\
-          "\n already exists for appeal of uuid #{uuid}.")
+          "\n already exists for appeal of uuid #{task.appeal.uuid}.")
         ymd = Time.zone.today.strftime("%F")
-        distribution.distributed_cases.create!(case_id: "#{uuid}-redistributed-#{ymd}",
+        distribution.distributed_cases.create!(case_id: "#{task.appeal.uuid}-redistributed-#{ymd}",
                                                docket: docket_type,
                                                priority: priority,
-                                               ready_at: appeal.ready_for_distribution_at,
+                                               ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
       else
-        distribution.distributed_cases.create!(case_id: uuid,
+        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
-                                               ready_at: appeal.ready_for_distribution_at,
+                                               ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
       end
     end
   end
   # rubocop:enable Lint/UnusedMethodArgument
+  # rubocop:enable Metrics/MethodLength
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
