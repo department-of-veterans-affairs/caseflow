@@ -112,7 +112,7 @@ export const searchString = (searchQuery, state) => (doc) =>
     const searchWord = word.trim();
 
     return searchWord.length > 0 && (
-      doDatesMatch(doc?.received_at, searchWord) ||
+      doDatesMatch(doc?.received_at?.toString(), searchWord) ||
       commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
