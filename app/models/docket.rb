@@ -57,8 +57,14 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
+  def flag_redistribution(distributed_case, task)
+    Rails.logger.error("A distributed case, id #{distributed_case.id}, "\
+      "\n already exists for appeal of uuid #{task.appeal.uuid}.")
+    Raven.capture_message("A distributed case, id #{distributed_case.id}, "\
+        "\n already exists for appeal of uuid #{task.appeal.uuid}.")
+  end
+
   # rubocop:disable Lint/UnusedMethodArgument
-  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true).limit(limit)
@@ -68,10 +74,7 @@ class Docket
       # This is modeled after the allow! method in the redistributed_case model
       distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
       if distributed_case
-        Rails.logger.error("A distributed case, id #{distributed_case.id}, "\
-          "\n already exists for appeal of uuid #{task.appeal.uuid}.")
-        Raven.capture_message("A distributed case, id #{distributed_case.id}, "\
-          "\n already exists for appeal of uuid #{task.appeal.uuid}.")
+        flag_redistribution(distributed_case, task)
         ymd = Time.zone.today.strftime("%F")
         distribution.distributed_cases.create!(case_id: "#{task.appeal.uuid}-redistributed-#{ymd}",
                                                docket: docket_type,
@@ -88,7 +91,6 @@ class Docket
     end
   end
   # rubocop:enable Lint/UnusedMethodArgument
-  # rubocop:enable Metrics/MethodLength
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
@@ -136,7 +138,8 @@ class Docket
         .where("people.date_of_birth > ?", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
-        .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+        .having("count(case when advance_on_docket_motions.granted "\
+          "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
 
     def include_aod_motions
