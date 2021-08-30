@@ -31,6 +31,7 @@ class DecisionReviewsController < ApplicationController
   def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
+        binding.pry
         business_line.tasks.reload
         render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
