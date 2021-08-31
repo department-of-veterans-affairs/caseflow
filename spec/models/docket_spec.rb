@@ -364,50 +364,6 @@ describe Docket, :all_dbs do
     end
   end
 
-  context "can_redistribute_appeal?" do
-    let!(:distributed_appeal_can_redistribute) do
-      create(:appeal,
-             :assigned_to_judge,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             associated_judge: judge_user)
-    end
-    let!(:distributed_appeal_cannot_redistribute) do
-      create(:appeal,
-             :with_schedule_hearing_tasks,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             associated_judge: judge_user,
-             associated_attorney: attorney_user)
-    end
-    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
-    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-    let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
-    let(:attorney_user) { create(:user) }
-    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
-    let!(:attorney_on_judge_team) { judge_team.add_user(attorney_user) }
-    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
-
-    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
-    let(:docket) { DirectReviewDocket.new }
-    before do
-      distributed_appeal_can_redistribute.tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
-      past_distribution.completed!
-    end
-
-    context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
-      subject { docket.can_redistribute_appeal?(distributed_appeal_can_redistribute) }
-      it "returns true " do
-        expect(subject).to be true
-      end
-    end
-
-    context "when an appeal has open tasks" do
-      subject { DirectReviewDocket.new.can_redistribute_appeal?(distributed_appeal_cannot_redistribute) }
-      it "returns false" do
-        expect(subject).to be false
-      end
-    end
-  end
-
   context "distribute_appeals" do
     let!(:appeals) do
       (1..10).map do

@@ -57,22 +57,6 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  def flag_redistribution(distributed_case, task)
-    Rails.logger.error("A distributed case, id #{distributed_case.id}, "\
-      "\n already exists for appeal of uuid #{task.appeal.uuid}.")
-    Raven.capture_message("A distributed case, id #{distributed_case.id}, "\
-        "\n already exists for appeal of uuid #{task.appeal.uuid}.")
-  end
-
-  def can_redistribute_appeal?(appeal)
-    relevant_tasks = appeal.tasks.reject do |task|
-      task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
-        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
-    end
-    return false if relevant_tasks.any?(&:open?)
-    return true if relevant_tasks.all?(&:closed?)
-  end
-
   # rubocop:disable Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
@@ -82,8 +66,8 @@ class Docket
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
       # This is modeled after the allow! method in the redistributed_case model
       distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
-      if distributed_case && can_redistribute_appeal?(task.appeal)
-        flag_redistribution(distributed_case, task)
+      if distributed_case && task.appeal.can_redistribute_appeal?
+        distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,

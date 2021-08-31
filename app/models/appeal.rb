@@ -555,6 +555,15 @@ class Appeal < DecisionReview
     appellant&.relationship
   end
 
+  def can_redistribute_appeal?
+    relevant_tasks = tasks.reject do |task|
+      task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+    end
+    return false if relevant_tasks.any?(&:open?)
+    return true if relevant_tasks.all?(&:closed?)
+  end
+
   private
 
   def business_lines_needing_assignment

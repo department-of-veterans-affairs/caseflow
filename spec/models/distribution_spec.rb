@@ -311,8 +311,10 @@ describe Distribution, :all_dbs do
 
         subject { current_distribution.distribute! }
 
-        it "allows other cases to be distributed" do
+        it "allows cases to be distributed" do
           subject
+          expect(current_distribution.distributed_cases.pluck(:case_id)).to include(target_appeal.uuid)
+          expect(current_distribution.status).to eq("completed")
         end
       end
 
