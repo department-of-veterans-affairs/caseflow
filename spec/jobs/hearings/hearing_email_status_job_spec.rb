@@ -79,7 +79,7 @@ describe Hearings::HearingEmailStatusJob do
         create(:sent_hearing_email_event)
       end
 
-      it "does not set sent_successful", focus: true do
+      it "does not set sent_successful" do
         subject
 
         expect(non_virtual_sent_hearing_email_event.reload.send_successful)
