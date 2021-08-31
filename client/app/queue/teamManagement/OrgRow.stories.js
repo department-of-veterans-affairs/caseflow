@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import { createJudgeTeam } from 'test/data/factory';
+import { createJudgeTeam } from 'test/data/teamManagement';
 import { OrgRow } from './OrgRow';
 
 const judgeTeam = createJudgeTeam(1)[0];
@@ -17,8 +17,8 @@ export default {
   component: OrgRow,
   args: {
     ...judgeTeam,
-    showPriorityPushToggles: true
-  }
+    showPriorityPushToggles: false
+  },
 };
 
 const Template = (args) => (
@@ -31,3 +31,14 @@ const Template = (args) => (
 
 export const Default = Template.bind({});
 
+export const JudgeTeam = Template.bind({});
+JudgeTeam.args = {
+  showPriorityPushToggles: true
+};
+
+export const JudgeTeamUnprivileged = Template.bind({});
+JudgeTeamUnprivileged.args = {
+  showPriorityPushToggles: true,
+  current_user_can_toggle_priority_pushed_cases: false
+};
+JudgeTeamUnprivileged.storyName = 'Judge Team (w/o Editing Privs)';
