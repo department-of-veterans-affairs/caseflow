@@ -68,7 +68,7 @@ feature "NonComp Reviews Queue", :postgres do
 
     before { FeatureToggle.enable!(:board_grant_effectuation_task) }
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
-    
+
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
       expect(page).to have_content("Non-Comp Org")
@@ -78,8 +78,6 @@ feature "NonComp Reviews Queue", :postgres do
       # default is the in progress page
       expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Higher-Level Review", count: 2)
-      binding.pry
-      spec/feature/non_comp/reviews_spec.rb
       expect(page).to have_content("Board Grant")
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
