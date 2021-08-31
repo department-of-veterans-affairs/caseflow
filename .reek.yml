@@ -214,6 +214,7 @@ detectors:
       - Api::V3::DecisionReviews::ContestableIssueParams
       - Api::V3::DecisionReviews::IntakeError
       - ControllerSchema::Field
+      - HearingEmailStatusMailer
   TooManyMethods:
     enabled: false
   TooManyStatements:

@@ -118,6 +118,51 @@ describe Appeal, :all_dbs do
         subject
       end
     end
+
+    context "when the appeal has only vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has vha and non-vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "education")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
   end
 
   context "#create_issues!" do
