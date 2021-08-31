@@ -4,7 +4,6 @@
 
 module Seeds
   class Intake < Base
-    # :nocov:
     def seed!
       create_intake_users
       create_higher_level_review_tasks
@@ -251,6 +250,5 @@ module Seeds
     def create_bgs_attorneys
       5000.times { create(:bgs_attorney) }
     end
-    # :nocov:
   end
 end

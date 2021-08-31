@@ -4,7 +4,6 @@
 
 module Seeds
   class MTV < Base
-    # :nocov:
     def seed!
       setup_motion_to_vacate_appeals
     end
@@ -217,6 +216,5 @@ module Seeds
       vacate_at_attorney_review(mtv_judge, drafting_attorney, lit_support_user)
       fully_processed_vacate_appeal(mtv_judge, drafting_attorney, lit_support_user)
     end
-    # :nocov:
   end
 end
