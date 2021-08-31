@@ -9,6 +9,6 @@ describe AssessDocumentationTask, :postgres do
 
   describe "#available_actions" do
     subject { task.available_actions(user) }
-    it { is_expected.to eq [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h] }
+    it { is_expected.to eq [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,] }
   end
 end
