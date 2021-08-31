@@ -49,7 +49,8 @@ feature "Higher-Level Review", :all_dbs do
   let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
-
+  before { FeatureToggle.enable!(:filed_by_va_gov_hlr) }
+  after { FeatureToggle.disable!(:filed_by_va_gov_hlr) }
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -87,6 +88,9 @@ feature "Higher-Level Review", :all_dbs do
       "What is the Benefit Type?\nPlease select an option."
     )
     expect(page).to have_content(
+      "Was this form submitted through VA.gov?"
+    )
+    expect(page).to have_content(
       "Was an informal conference requested?\nPlease select an option."
     )
     expect(page).to have_content(
@@ -98,6 +102,10 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content(
       "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?\nPlease select an option."
     )
+
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
 
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Insurance", match: :prefer_exact).click
@@ -182,6 +190,7 @@ feature "Higher-Level Review", :all_dbs do
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(receipt_date)
+    expect(higher_level_review.filed_by_va_gov).to eq(true)
     expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
