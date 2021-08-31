@@ -5,17 +5,22 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 
-import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
-import { useClaimantForm } from '../../intake/addClaimant/utils';
-import Button from '../../components/Button';
 import Alert from '../../components/Alert';
-import COPY from 'app/../COPY';
-import { EDIT_POA_SUCCESS_ALERT_TITLE, EDIT_POA_SUCCESS_ALERT_MESSAGE } from '../../../COPY.json';
-import { appealWithDetailSelector } from '../selectors';
-import { mapPOADataToApi, mapPOADataFromApi } from './utils';
-import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
-import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
+import { EDIT_CLAIMANT_PAGE_DESCRIPTION,
+  EDIT_POA_SUCCESS_ALERT_TITLE,
+  EDIT_POA_SUCCESS_ALERT_MESSAGE,
+  EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE,
+  UPDATE_POA_PAGE_DESCRIPTION } from 'app/../COPY';
+
 import { clearAppealDetails } from '../QueueActions';
+import { appealWithDetailSelector } from '../selectors';
+import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+
+import ApiUtil from '../../util/ApiUtil';
+import { mapPOADataToApi, mapPOADataFromApi } from './utils';
+import { useClaimantForm } from '../../intake/addClaimant/utils';
 
 const EditPOAInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -62,7 +67,7 @@ const EditPOAInformation = ({ appealId }) => {
   };
   const editPOAHeader = defaultValues.firstName ? "Edit Appellant's POA Information" : "Update Appellant's POA";
   const editPOADescription = defaultValues.firstName ?
-    COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION : COPY.UPDATE_POA_PAGE_DESCRIPTION;
+    EDIT_CLAIMANT_PAGE_DESCRIPTION : UPDATE_POA_PAGE_DESCRIPTION;
 
   return <div>
     <FormProvider {...methods}>
@@ -70,7 +75,7 @@ const EditPOAInformation = ({ appealId }) => {
         {editFailure === true &&
           <Alert
             type="error"
-            title={COPY.EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
+            title={EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
             message={
               <Fragment>Please try again and if this error persists,
                 <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>
