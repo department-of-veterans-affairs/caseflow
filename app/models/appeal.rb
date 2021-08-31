@@ -263,7 +263,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution_at
-    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+    tasks.select { |task| task.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
   def regional_office_key
@@ -364,6 +364,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
+  # :reek:FeatureEnvy
   def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
@@ -555,6 +556,7 @@ class Appeal < DecisionReview
     appellant&.relationship
   end
 
+  # :reek:FeatureEnvy
   def can_redistribute_appeal?
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
