@@ -115,7 +115,7 @@ describe Hearings::HearingEmailStatusJob do
           .not_to be_nil
         expect(representative_sent_hearing_email_event.sent_hearing_admin_email_event)
           .not_to be_nil
-     end
+      end
     end
   end
 end
