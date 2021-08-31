@@ -15,6 +15,7 @@ class AssessDocumentationTask < Task
   # Actions that can be taken on both organization and user tasks
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
 
   # Actions a user can take on a task assigned to someone on their team
@@ -30,6 +31,7 @@ class AssessDocumentationTask < Task
   def self.label
     COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
   end
+
 
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
