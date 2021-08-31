@@ -230,6 +230,9 @@
   "EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE": "New NOD Date Not Saved",
   "EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE": "*If you believe this information needs to be updated, please reach out to the Clerk of the Board at [BVA.Clerk@va.gov](mailto:BVA.Clerk@va.gov).*",
 
+  "EDIT_POA_SUCCESS_ALERT_TITLE": "You have successfully updated the Appellant's POA Information",
+  "EDIT_POA_SUCCESS_ALERT_MESSAGE": "To make further changes, select 'Edit Information' in the Appellant's Power of Attorney section.",
+
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
   "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
