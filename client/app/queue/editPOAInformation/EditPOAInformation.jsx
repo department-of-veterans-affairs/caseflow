@@ -10,10 +10,12 @@ import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
+import { EDIT_POA_SUCCESS_ALERT_TITLE, EDIT_POA_SUCCESS_ALERT_MESSAGE } from '../../../COPY.json';
 import { appealWithDetailSelector } from '../selectors';
 import { mapPOADataToApi, mapPOADataFromApi } from './utils';
-import { resetSuccessMessages } from '../uiReducer/uiActions';
+import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
+import { clearAppealDetails } from '../QueueActions';
 
 const EditPOAInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -43,10 +45,17 @@ const EditPOAInformation = ({ appealId }) => {
 
     setLoading(true);
 
-    ApiUtil.patch(`/power_of_attorney/${appellantId}`, { data: updatePayload }).then(() => {
+    ApiUtil.patch(`/unrecognized_appellants/${appellantId}/power_of_attorney`, { data: updatePayload }).then(() => {
+      dispatch(clearAppealDetails(appealId));
       push(`/queue/appeals/${appealId}`);
+
+      dispatch(showSuccessMessage({
+        title: EDIT_POA_SUCCESS_ALERT_TITLE,
+        detail: EDIT_POA_SUCCESS_ALERT_MESSAGE
+      }));
     },
-    () => {
+    // eslint-disable-next-line no-unused-vars
+    (error) => {
       setEditFailure(true);
       setLoading(false);
     });
