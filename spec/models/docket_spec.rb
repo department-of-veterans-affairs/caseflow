@@ -296,7 +296,7 @@ describe Docket, :all_dbs do
     end
   end
 
-  context "an appeal throws a RecordNotUniqueError on the case_id field" do
+  context "an appeal has already been distributed" do
     subject { DirectReviewDocket.new.distribute_appeals(current_distribution, limit: 3) }
     let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
@@ -306,24 +306,24 @@ describe Docket, :all_dbs do
       Distribution.create!(judge: judge_user)
     end
 
-    let!(:buggy_appeal) do
+    let!(:distributed_appeal) do
       create(:appeal,
              :assigned_to_judge,
              docket_type: Constants.AMA_DOCKETS.direct_review,
              associated_judge: judge_user)
     end
-    let!(:buggy_distributed_case) do
+    let!(:distributed_case) do
       DistributedCase.create!(
         distribution: past_distribution,
         ready_at: 6.months.ago,
-        docket: buggy_appeal.docket_type,
+        docket: distributed_appeal.docket_type,
         priority: false,
-        case_id: buggy_appeal.uuid,
-        task: buggy_appeal.tasks.of_type("DistributionTask").first
+        case_id: distributed_appeal.uuid,
+        task: distributed_appeal.tasks.of_type("DistributionTask").first
       )
     end
     let!(:second_distribution_task) do
-      create(:distribution_task, appeal: buggy_appeal, status: Constants.TASK_STATUSES.assigned)
+      create(:distribution_task, appeal: distributed_appeal, status: Constants.TASK_STATUSES.assigned)
     end
     let!(:appeal_second) do
       create(:appeal,
@@ -339,18 +339,72 @@ describe Docket, :all_dbs do
     end
 
     before do
-      judge_assign_task = JudgeAssignTask.find_by(appeal_id: buggy_appeal.id)
+      judge_assign_task = JudgeAssignTask.find_by(appeal_id: distributed_appeal.id)
       judge_assign_task.cancelled!
       second_distribution_task.assigned!
     end
 
-    it "distributes appeals that occur after the appeal with the bug" do
+    it "distributes appeals including the one that has been distributed" do
       expect(current_distribution.distributed_cases.length).to eq(0)
       result = subject
 
       expect(current_distribution.distributed_cases.length).to eq(3)
+      expect(result[0].class).to eq(DistributedCase)
       expect(result[1].class).to eq(DistributedCase)
       expect(result[2].class).to eq(DistributedCase)
+    end
+
+    it "sets the case ids when a redistribution occurs" do
+      distributed_case.id
+      ymd = Time.zone.today.strftime("%F")
+      result = subject
+
+      expect(DistributedCase.find(distributed_case.id).case_id).to eq("#{distributed_appeal.uuid}-redistributed-#{ymd}")
+      expect(result[0].case_id).to eq(distributed_appeal.uuid)
+    end
+  end
+
+  context "can_redistribute_appeal?" do
+    let!(:distributed_appeal_can_redistribute) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:distributed_appeal_cannot_redistribute) do
+      create(:appeal,
+             :with_schedule_hearing_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user,
+             associated_attorney: attorney_user)
+    end
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let(:attorney_user) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
+    let!(:attorney_on_judge_team) { judge_team.add_user(attorney_user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:docket) { DirectReviewDocket.new }
+    before do
+      distributed_appeal_can_redistribute.tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
+      past_distribution.completed!
+    end
+
+    context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
+      subject { docket.can_redistribute_appeal?(distributed_appeal_can_redistribute) }
+      it "returns true " do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has open tasks" do
+      subject { DirectReviewDocket.new.can_redistribute_appeal?(distributed_appeal_cannot_redistribute) }
+      it "returns false" do
+        expect(subject).to be false
+      end
     end
   end
 

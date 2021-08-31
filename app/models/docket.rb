@@ -64,24 +64,33 @@ class Docket
         "\n already exists for appeal of uuid #{task.appeal.uuid}.")
   end
 
+  def can_redistribute_appeal?(appeal)
+    relevant_tasks = appeal.tasks.reject do |task|
+      task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+    end
+    return false if relevant_tasks.any?(&:open?)
+    return true if relevant_tasks.all?(&:closed?)
+  end
+
   # rubocop:disable Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
-      # If distributed case already exists for this appeal, make a distributed case with a different case id.
+      # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
       # This is modeled after the allow! method in the redistributed_case model
       distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
-      if distributed_case
+      if distributed_case && can_redistribute_appeal?(task.appeal)
         flag_redistribution(distributed_case, task)
-        ymd = Time.zone.today.strftime("%F")
-        distribution.distributed_cases.create!(case_id: "#{task.appeal.uuid}-redistributed-#{ymd}",
+        distributed_case.rename_for_redistribution!
+        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
-      else
+      elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
