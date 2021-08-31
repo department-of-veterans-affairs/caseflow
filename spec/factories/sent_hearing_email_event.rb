@@ -20,5 +20,9 @@ FactoryBot.define do
     trait :with_hearing do
       hearing { create(:hearing) }
     end
+
+    trait :with_virtual_hearing do
+      hearing { create(:hearing, :virtual) }
+    end
   end
 end

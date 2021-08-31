@@ -5,38 +5,116 @@ describe Hearings::HearingEmailStatusJob do
     subject { Hearings::HearingEmailStatusJob.new.perform }
 
     let!(:appellant_sent_hearing_email_event) do
-      create(:sent_hearing_email_event, recipient_role: "appellant")
+      create(
+        :sent_hearing_email_event,
+        :with_virtual_hearing,
+        recipient_role: "appellant"
+      )
     end
 
     let!(:representative_sent_hearing_email_event) do
-      create(:sent_hearing_email_event, recipient_role: "representative")
+      create(
+        :sent_hearing_email_event,
+        :with_virtual_hearing,
+        recipient_role: "representative"
+      )
     end
+
+    let(:success_status) { "sent" }
+    let(:invalid_status) { "invalid" }
+    let(:failure_status) { "failed" }
 
     context "when GovDelivery throws an error" do
-    end
+      it "captures error and allows job to continue running" do
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: appellant_sent_hearing_email_event)
+          .and_raise(Caseflow::Error::GovDeliveryApiError.new(code: 401, message: "error"))
 
-    context "when reported status from GovDelivery is invalid" do
-    end
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: representative_sent_hearing_email_event)
+          .and_return(success_status)
 
-    context "when reported status indicates success" do
-      it "makes request to GovDelivery and handles status successfuly" do
         subject
 
-        expect(appellant_sent_hearing_email_event.send_successful).to eq(true)
-        expect(appellant_sent_hearing_email_event.send_successful_checked_at).not_to be_nil
-        expect(representative_sent_hearing_email_event.send_successful).to eq(true)
-        expect(representative_sent_hearing_email_event.send_successful_checked_at).not_to be_nil
+        expect(appellant_sent_hearing_email_event.reload.send_successful)
+          .to eq(nil)
+        expect(appellant_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+        expect(representative_sent_hearing_email_event.reload.send_successful)
+          .to eq(true)
+        expect(appellant_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
       end
     end
 
-    context "when reported status indicates failure" do
-      it "makes request to GovDelivery and handles status successfuly" do
+    context "when GovDelivery reports invalid status" do
+      it "handles invalid status and does not update send_successful" do
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: appellant_sent_hearing_email_event)
+          .and_return(success_status)
+
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: representative_sent_hearing_email_event)
+          .and_return(invalid_status)
+
         subject
 
-        expect(appellant_sent_hearing_email_event.send_successful).to eq(false)
-        expect(appellant_sent_hearing_email_event.send_successful_checked_at).not_to be_nil
-        expect(representative_sent_hearing_email_event.send_successful).to eq(false)
-        expect(representative_sent_hearing_email_event.send_successful_checked_at).not_to be_nil
+        expect(appellant_sent_hearing_email_event.reload.send_successful)
+          .to eq(true)
+        expect(appellant_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+        expect(representative_sent_hearing_email_event.reload.send_successful)
+          .to eq(nil)
+        expect(representative_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+      end
+    end
+
+    context "when email event belongs to a non-virtual hearing" do
+      let!(:non_virtual_sent_hearing_email_event) do
+        create(:sent_hearing_email_event)
+      end
+
+      it "does not set sent_successful", focus: true do
+        subject
+
+        expect(non_virtual_sent_hearing_email_event.reload.send_successful)
+          .to eq(nil)
+        expect(non_virtual_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+      end
+    end
+
+    context "when GovDelivery reports failure status" do
+      it "handles failure status and sets send_successful", :aggregate_failures do
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: appellant_sent_hearing_email_event)
+          .and_return(failure_status)
+
+        allow(ExternalApi::GovDeliveryService)
+          .to receive(:get_sent_status_from_event)
+          .once.with(email_event: representative_sent_hearing_email_event)
+          .and_return(failure_status)
+
+        subject
+
+        expect(appellant_sent_hearing_email_event.reload.send_successful)
+          .to eq(false)
+        expect(appellant_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+        expect(appellant_sent_hearing_email_event.sent_hearing_admin_email_event)
+          .not_to be_nil
+        expect(representative_sent_hearing_email_event.reload.send_successful)
+          .to eq(false)
+        expect(representative_sent_hearing_email_event.send_successful_checked_at)
+          .not_to be_nil
+        expect(representative_sent_hearing_email_event.sent_hearing_admin_email_event)
+          .not_to be_nil
      end
     end
   end

@@ -24,6 +24,6 @@ class Hearings::HearingEmailStatusJob < ApplicationJob
     reported_status =
       ExternalApi::GovDeliveryService.get_sent_status_from_event(email_event: sent_hearing_email_event)
 
-    sent_hearing_email_event.handle_reported_status(reported_status) unless reported_status.nil?
+    sent_hearing_email_event.handle_reported_status(reported_status) unless reported_status.blank?
   end
 end
