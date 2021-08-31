@@ -65,6 +65,13 @@ class AppellantSubstitution < CaseflowRecord
     InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
   end
 
+  def duplicate_existing_hearings
+    # copy over any existing `Hearing` object from the source appeal.
+    # Modeling this somewhat on https://hackmd.io/wOBc0n16RAKD0WlJ3nxHUQ?view
+    # Probably want to pull in Tango on this for confirmation/approval?
+
+  end
+
   def find_or_create_power_of_attorney_for(unassociated_claimant)
     return power_of_attorney if unassociated_claimant.power_of_attorney&.poa_participant_id == poa_participant_id
 
