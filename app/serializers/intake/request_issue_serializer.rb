@@ -33,4 +33,5 @@ class Intake::RequestIssueSerializer
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?
   end
+  attribute :benefit_type
 end
