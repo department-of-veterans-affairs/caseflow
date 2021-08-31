@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 namespace :emails do
+  # This function sends the email to a file in caseflow/tmp
+  def write_output_to_file(file_name, email)
+    body = email.html_part&.decoded || email.body
+    subject = email.subject
+
+    return if body.blank?
+
+    output_file = Rails.root.join("tmp", file_name)
+    File.write(output_file, subject, mode: "w")
+    File.write(output_file, body, mode: "a")
+  end
+
   namespace :hearings do
     desc "creates sample emails for hearings mailer"
     task sample: :environment do
@@ -59,15 +71,8 @@ namespace :emails do
             email_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
-          email_body = email.html_part&.decoded || email.body
-          email_subject = email.subject
-
-          next if email_body.blank?
-
-          output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
-
-          File.write(output_file, email_subject, mode: "w")
-          File.write(output_file, email_body, mode: "a")
+          file_name = "#{func}_#{recipient.title}.html"
+          write_output_to_file(file_name, email)
         end
       end
     end
@@ -161,15 +166,32 @@ namespace :emails do
           email_recipient: recipient,
           virtual_hearing: virtual_hearing
         )
-        email_body = email.html_part&.decoded || email.body
-        email_subject = email.subject
+        file_name = "reminder_#{recipient.title}.html"
+        write_output_to_file(file_name, email)
+      end
+    end
 
-        next if email_body.blank?
+    desc "creates reminder emails for hearings mailer"
+    # :environment is required for FactoryBot build/create to work
+    task status_emails: :environment do
+      %w["appellant representative"].each do |recipient_role|
+        # Build the objects for test
+        include FactoryBot::Syntax::Methods
+        sent_hearing_email_event = build(
+          :sent_hearing_email_event,
+          recipient_role: recipient_role
+        )
 
-        output_file = Rails.root.join("tmp", "reminder_#{recipient.title}.html")
+        # Fill in the template using the test objects
+        mailer_function_name = :notification
+        email = HearingEmailStatusMailer.send(
+          mailer_function_name,
+          sent_hearing_email_event: sent_hearing_email_event
+        )
 
-        File.write(output_file, email_subject, mode: "w")
-        File.write(output_file, email_body, mode: "a")
+        # Write the email html to a file in tmp
+        file_name = "admin_#{mailer_function_name}_#{sent_hearing_email_event.recipient_role}.html"
+        write_output_to_file(file_name, email)
       end
     end
   end
