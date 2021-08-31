@@ -11,6 +11,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     covidTimelinessExemption: {
       $set: Boolean(featureToggles.covidTimelinessExemption)
     },
+    filedByVaGovHlr: {
+      $set: Boolean(featureToggles.filedByVaGovHlr)
+    },
   });
 };
 
@@ -19,6 +22,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
     {
       useAmaActivationDate: false,
       correctClaimReviews: false,
+      filedByVaGovHlr: false
     },
     data.featureToggles
   );
