@@ -19,7 +19,9 @@ class AssessDocumentationTask < Task
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
 
-    task_actions = DEFAULT_ACTIONS
+    task_actions = []
+
+    task_actions.concat(DEFAULT_ACTIONS)
 
     if assigned_to.is_a?(VhaProgramOffice)
       task_actions.concat(PO_ACTIONS)
