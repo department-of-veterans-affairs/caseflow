@@ -1125,8 +1125,8 @@
 
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
-  "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN",
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
-  "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN"
+  "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center"
 }

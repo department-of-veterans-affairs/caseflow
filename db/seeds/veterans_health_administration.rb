@@ -15,7 +15,7 @@ module Seeds
 
     def seed!
       setup_program_offices!
-      create_visn_org_teams
+      create_visn_org_teams!
     end
 
     private
@@ -32,9 +32,14 @@ module Seeds
       end
     end
 
-    def create_visn_org_teams
+    def create_visn_org_teams!
+      regular_user = create(:user, full_name: "Stacy VISNUser Smith", css_id: "VISNUSER")
+      admin_user = create(:user, full_name: "Betty VISNAdmin Rose", css_id: "VISNADMIN")
+
       Constants.VISN_ORG_NAMES.visn_orgs.name.each do |name|
-        VhaRegionalOffice.create!(name: name, url: name)
+        visn = VhaRegionalOffice.create!(name: name, url: name)
+        visn.add_user(regular_user)
+        OrganizationsUser.make_user_admin(admin_user, visn)
       end
     end
   end
