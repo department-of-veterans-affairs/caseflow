@@ -29,5 +29,10 @@ module Hearings::CalendarTemplateHelper
     def formatted_date_time_for_zone(time_zone, date_time_utc)
       time_zone.strftime(HEARING_TIME_DISPLAY_FORMAT, date_time_utc)
     end
+
+    def hearing_date_only(hearing)
+      datetime = hearing.scheduled_for
+      datetime.strftime("%a, %b %I") #  Fri, Mar 26
+    end
   end
 end
