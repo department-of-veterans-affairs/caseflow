@@ -1,5 +1,5 @@
 /* eslint camelcase: 0 */
-import { times } from 'lodash';
+import { isFunction, times } from 'lodash';
 
 export const createUser = (count = 1, values = {}) => {
   return times(count).map((index) => ({
@@ -24,3 +24,17 @@ export const createTask = (count = 1, values = {}) => {
     user: values.user || createUser()[0]
   }));
 };
+
+export const createOrg = (count = 1, values = {}) => {
+  return times(count).map((index) => ({
+    id: (values.startingId || 1) + index,
+    accepts_priority_pushed_cases: values.accepts_priority_pushed_cases ?? true,
+    name: (isFunction(values.name) ? values.name() : (values?.name ?? `OrgName ${index}`)),
+    participant_id: (isFunction(values.participant_id) ? values.participant_id() : (values?.participant_id ?? null)),
+    type: values.type ?? 'Organization',
+    url: (isFunction(values.url) ? values.url() : (values?.url ?? `org-${index}`)),
+    user_admin_path: values.user_admin_path ?? null,
+    current_user_can_toggle_priority_pushed_cases: values.current_user_can_toggle_priority_pushed_cases ?? true
+  }));
+};
+
