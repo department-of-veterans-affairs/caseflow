@@ -77,7 +77,7 @@ feature "Intake Confirmation Page", :postgres do
         expect(page).to have_content("Appeal recorded in pre-docket queue")
         expect(page).to have_content("If needed, you may correct the issues")
         expect(page).to_not have_content("Edit the notice letter to reflect the status of requested issues.")
-        expect(page).to have_content("Appeal created and sent to VHA for pre-docket review.")
+        expect(page).to have_content("Appeal created and sent to VHA for document assessment.")
       end
     end
   end

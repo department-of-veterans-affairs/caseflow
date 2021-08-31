@@ -68,7 +68,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
     let statusMessage = 'Appeal created:';
 
     if (checkIssuesForVha(requestIssues)) {
-      statusMessage = 'Appeal created and sent to VHA for document assessment';
+      statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 
     return [<Fragment>
