@@ -66,38 +66,41 @@ feature "NonComp Reviews Queue", :postgres do
       non_comp_org.add_user(user)
     end
 
-    scenario "displays tasks page" do
-      visit "decision_reviews/nco"
-      expect(page).to have_content("Non-Comp Org")
-      expect(page).to have_content("In progress tasks")
-      expect(page).to have_content("Completed tasks")
+    before { FeatureToggle.enable!(:board_grant_effectuation_task) }
+    after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
-      # default is the in progress page
-      expect(page).to have_content("Days Waiting")
-      expect(page).to have_content("Higher-Level Review", count: 2)
-      expect(page).to have_content("Board Grant")
-      expect(page).to have_content(veteran_a.name)
-      expect(page).to have_content(veteran_b.name)
-      expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(veteran_a.participant_id)
-      expect(page).to have_content(veteran_b.participant_id)
-      expect(page).to have_content(veteran_c.participant_id)
+      scenario "displays tasks page" do
+        visit "decision_reviews/nco"
+        expect(page).to have_content("Non-Comp Org")
+        expect(page).to have_content("In progress tasks")
+        expect(page).to have_content("Completed tasks")
 
-      # ordered by assigned_at descending
+        # default is the in progress page
+        expect(page).to have_content("Days Waiting")
+        expect(page).to have_content("Higher-Level Review", count: 2)
+        expect(page).to have_content("Board Grant")
+        expect(page).to have_content(veteran_a.name)
+        expect(page).to have_content(veteran_b.name)
+        expect(page).to have_content(veteran_c.name)
+        expect(page).to have_content(veteran_a.participant_id)
+        expect(page).to have_content(veteran_b.participant_id)
+        expect(page).to have_content(veteran_c.participant_id)
 
-      expect(page).to have_content(
-        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
-      )
+        # ordered by assigned_at descending
 
-      click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 1)
-      expect(page).to have_content("Date Completed")
+        expect(page).to have_content(
+          /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+        )
 
-      # ordered by closed_at descending
-      expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 1 [\d\/]+ Higher-Level Review/
-      )
-    end
+        click_on "Completed tasks"
+        expect(page).to have_content("Higher-Level Review", count: 1)
+        expect(page).to have_content("Date Completed")
+
+        # ordered by closed_at descending
+        expect(page).to have_content(
+          /#{veteran_b.name} 5\d+ 1 [\d\/]+ Higher-Level Review/
+        )
+      end
 
     context "with user enabled for intake" do
       scenario "displays tasks page" do
