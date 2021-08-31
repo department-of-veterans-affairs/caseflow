@@ -11,7 +11,7 @@ class SentHearingEmailEvent < CaseflowRecord
   belongs_to :sent_by, class_name: "User"
   belongs_to :email_recipient, class_name: "HearingEmailRecipient"
 
-  has_one :sent_hearing_admin_email_events
+  has_one :sent_hearing_admin_email_event
 
   before_create :assign_sent_at_time
 
@@ -128,10 +128,10 @@ class SentHearingEmailEvent < CaseflowRecord
   end
 
   def handle_failed_email_status
-    if sent_hearing_admin_email_events.present?
+    if sent_hearing_admin_email_event.present?
       email_already_sent_failure
     else
-      sent_hearing_admin_email_event = sent_hearing_admin_email_events.create
+      sent_hearing_admin_email_event = create_sent_hearing_admin_email_event
 
       Hearings::SendSentStatusEmail.new(
         sent_hearing_admin_email_event: sent_hearing_admin_email_event
