@@ -14,11 +14,20 @@ module Seeds
     ].freeze
 
     def seed!
+      setup_camo_org
       setup_program_offices!
       create_visn_org_teams!
     end
 
     private
+
+    def setup_camo_org
+      regular_user = create(:user, full_name: "Greg CAMOUser Camo", css_id: "CAMOUSER")
+      admin_user = create(:user, full_name: "Alex CAMOAdmin Camo", css_id: "CAMOADMIN")
+      camo = VhaCamo.singleton
+      camo.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, camo)
+    end
 
     def setup_program_offices!
       PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
