@@ -2,7 +2,7 @@
 <html lang="en">
 <%= render "layouts/head" %>
 
-<% if browser.ie?(">= 11") %>
+<% if browser.ie? %>
 <h1> You are using an unsupported browser.</h1>
 <p class="disclaimer">
 Please use either <a href="microsoft-edge:<%= request.original_url %>">Microsoft Edge</a> or <a href="https://www.google.com/chrome" ">Google Chrome</a>
