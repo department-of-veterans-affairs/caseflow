@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrgRow renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <div
+        class="cf-form-textinput   "
+      >
+        <input
+          aria-label="Name-undefined"
+          class="cf-form-textinput"
+          id="Name-undefined"
+          name="Name-undefined"
+          readonly=""
+          type="text"
+          value=""
+        />
+      </div>
+    </td>
+    <td />
+    <td />
+    <td />
+    <td />
+  </tr>
+</div>
+`;
+
+exports[`OrgRow with JudgeTeam renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <div
+        class="cf-form-textinput   "
+      >
+        <input
+          aria-label="Name-undefined"
+          class="cf-form-textinput"
+          id="Name-undefined"
+          name="Name-undefined"
+          readonly=""
+          type="text"
+          value=""
+        />
+      </div>
+    </td>
+    <td />
+    <td />
+    <td />
+    <td />
+  </tr>
+</div>
+`;
