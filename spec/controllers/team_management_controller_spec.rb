@@ -245,5 +245,17 @@ describe TeamManagementController, :postgres, type: :controller do
       org = PrivateBar.find(response_body["org"]["id"])
       expect(org.name).to eq(org_name)
     end
+
+    context "when adding another org with the same participant_id" do
+      before { post(:create_private_bar, params: params, format: :json) }
+      it "returns error" do
+        similar_params = params.dup.tap {|parameters| parameters[:organization][:url] = "dup-org"}
+        post(:create_private_bar, params: similar_params, format: :json)
+        expect(response.status).to eq(400)
+        response_body = JSON.parse(response.body)
+        error_message = "Participant ID #{participant_id} is already used for existing team 'New Private Bar org'"
+        expect(response_body["errors"].first["detail"]).to start_with error_message
+      end
+    end
   end
 end
