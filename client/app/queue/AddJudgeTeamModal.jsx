@@ -35,7 +35,7 @@ class AddJudgeTeamModal extends React.Component {
   formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
 
   dropdownOptions = () =>
-    this.state.nonJudges.map((user) => ({ label: this.formatName(user),
+    this.state.nonJudges?.map((user) => ({ label: this.formatName(user),
       value: user }));
 
   submit = () => this.props.requestSave(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).

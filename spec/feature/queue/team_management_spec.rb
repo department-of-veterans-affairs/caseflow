@@ -44,6 +44,22 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_content("VISNs")
         expect(page).to have_content("Other teams")
       end
+
+      context "when JudgeTeam for the judge already exists" do
+        before do
+          # this should cause DuplicateJudgeTeam error
+          expect(JudgeTeam).to receive(:for_judge).and_return(JudgeTeam.new)
+        end
+        scenario "user can view the team management page" do
+          visit("/team_management")
+
+          find("button", text: "+ Add Judge Team").click
+          click_dropdown(text: user.full_name)
+          find("button", text: "Submit").click
+          error_message = "User #{user.id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
+          expect(page).to have_content(error_message)
+        end
+      end
     end
 
     context "when user is a dvc" do
