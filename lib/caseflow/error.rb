@@ -325,6 +325,7 @@ module Caseflow::Error
   end
 
   class DuplicateParticipantIdOrganization < SerializableError
+    # :reek:FeatureEnvy
     def initialize(args)
       participant_id = args[:participant_id]
       organization = args[:organization]
