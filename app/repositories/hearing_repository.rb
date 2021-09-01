@@ -97,6 +97,7 @@ class HearingRepository
       hearing
     end
 
+    # :nocov:
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
@@ -119,6 +120,7 @@ class HearingRepository
         end
       end.flatten
     end
+    # :nocov:
 
     # Get all hearings that *might* need to have a reminder email sent.
     #
