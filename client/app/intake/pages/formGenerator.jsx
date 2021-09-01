@@ -124,8 +124,7 @@ const formFieldMapping = (props) => {
       value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
     />,
-    'filed-by-va-gov': (isAppeal || props.featureToggles.filedByVaGovHlr) &&
-    <RadioField
+    'filed-by-va-gov': <RadioField
       name="filed-by-va-gov"
       label={<span><b>Was this form submitted through VA.gov? </b>
         (Indicated by a stamp at the top right corner of the form)</span>}
