@@ -56,7 +56,6 @@ RSpec.feature "Team management page", :postgres do
           find("button", text: "+ Add Judge Team").click
           click_dropdown(text: user.full_name)
           find("button", text: "Submit").click
-          binding.pry
           expect(page).to have_content("Success")
 
           find("button", text: "+ Add Judge Team").click
