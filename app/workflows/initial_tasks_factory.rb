@@ -110,13 +110,16 @@ class InitialTasksFactory
       fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
     end
 
+    # Ensure we properly handle time zone of submitted end date
     evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
 
     if @appeal.docket_type == "hearing"
       excluded_attrs = %w[status closed_at placed_on_hold_at]
-      esw_task = source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
-      esw_task.end_date = evidence_submission_hold_end_date
-      esw_task.save!
+      esw_task = source_task.copy_with_ancestors_to_stream(
+        @appeal,
+        new_attributes: { end_date: evidence_submission_hold_end_date },
+        extra_excluded_attributes: excluded_attrs
+      )
     else
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                                  parent: distribution_task,
