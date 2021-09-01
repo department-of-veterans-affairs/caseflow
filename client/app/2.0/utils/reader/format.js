@@ -49,11 +49,6 @@ export const sortCategories = (document) => {
 };
 
 /**
- * This is a dummy method that will be replaced in a later part of the stack
- */
-export const formatDocumentRows = () => [];
-
-/**
  * Helper Method to Format the Rows for the comments table
  * @param {array} documents -- The list of documents
  * @param {object} annotations -- The list of annotations for each document
