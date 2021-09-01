@@ -1,6 +1,7 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { random, range, difference } from 'lodash';
 import * as PDF from 'pdfjs';
+import pdfjsWorker from 'pdfjs/build/pdf.worker.entry';
 import Mark from 'mark.js';
 
 // Local Dependencies
@@ -16,6 +17,9 @@ import {
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
+
+// Set the PDFJS service worker
+PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Create a place in-memory to store the downloaded PDF documents
 const pdfDocuments = {};
@@ -228,14 +232,9 @@ export const showPage = async (params) => {
 export const showPdf = createAsyncThunk(
   'documentViewer/show',
   async (
-    { rotation = null, pageNumber, currentDocument, worker, scale },
+    { rotation = null, pageNumber, currentDocument, scale },
     { dispatch }
   ) => {
-    // Attach the Service Worker if not already attached
-    if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
-      PDF.GlobalWorkerOptions.workerSrc = worker;
-    }
-
     // Update the Document as read if not already
     if (!currentDocument.opened_by_current_user) {
       dispatch(markDocAsRead({ docId: currentDocument.id }));

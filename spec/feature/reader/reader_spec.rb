@@ -961,7 +961,7 @@ RSpec.feature "Reader", :all_dbs do
       find("div.num-of-documents", text: "#{documents.length} Documents")
 
       # confirm that the documents are sorted by receipt date ascending (oldest first)
-      sorted_documents = documents.sort_by(&:received_at)
+      sorted_documents = documents.sort_by(&:received_at).reverse!
 
       sorted_documents.each_with_index do |doc, index|
         selector = "#documents-table-body tr:nth-child(#{index + 1}) td.receipt-date-column"
@@ -993,9 +993,9 @@ RSpec.feature "Reader", :all_dbs do
         find("div.num-of-documents", text: "#{documents.length} Documents")
 
         # these are the categories we expect the documents to have in the expected sort order
-        expect(cats_in_row(1)).to match_array [cats[:procedural], cats[:case_summary]]
+        expect(cats_in_row(1)).to match_array [cats[:case_summary]]
         expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
-        expect(cats_in_row(3)).to match_array [cats[:case_summary]]
+        expect(cats_in_row(3)).to match_array [cats[:procedural], cats[:case_summary]]
       end
 
       step "edit the BVA Decision document categories" do
@@ -1027,8 +1027,8 @@ RSpec.feature "Reader", :all_dbs do
         expect(find("#case_summary", visible: false).disabled?).to be true
       end
 
-      step "view the next document, NOD" do
-        find("#button-next").click
+      step "view the previous document, NOD" do
+        find("#button-previous").click
 
         # this will wait for the document title to display before expecting anything
         find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "NOD")
@@ -1310,7 +1310,8 @@ RSpec.feature "Reader", :all_dbs do
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scrolled_amount(elem_name)).to eq(first_match_scroll_top)
+      expect(scrolled_amount(elem_name)).to be <= first_match_scroll_top
+      expect(scrolled_amount(elem_name)).to be >= first_match_scroll_top - 5
     end
 
     scenario "Download PDF file" do

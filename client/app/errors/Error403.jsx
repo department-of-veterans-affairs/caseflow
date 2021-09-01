@@ -43,3 +43,5 @@ Error403.propTypes = {
   errorTitle: PropTypes.string.isRequired,
   errorDetail: PropTypes.string.isRequired,
 };
+
+export default Error403;

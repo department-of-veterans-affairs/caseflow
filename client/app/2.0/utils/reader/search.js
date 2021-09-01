@@ -100,6 +100,7 @@ export const tagContainsString = (searchQuery, doc) =>
 export const descriptionContainsString = (searchQuery, doc) =>
   doc?.description && doc?.description.toLowerCase().includes(searchQuery);
 
+/* eslint-disable camelcase */
 /**
  * Helper Method that checks if a description contains the given search string
  * @param {string} searchQuery -- The query being used to search
@@ -111,13 +112,14 @@ export const searchString = (searchQuery, state) => (doc) =>
     const searchWord = word.trim();
 
     return searchWord.length > 0 && (
-      doDatesMatch(doc?.receivedAt, searchWord) ||
+      doDatesMatch(doc?.received_at?.toString(), searchWord) ||
       commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       tagContainsString(searchWord, doc) ||
       descriptionContainsString(searchWord, doc));
   });
+/* eslint-enable camelcase */
 
 /**
  * Helper Method to display search text on document search

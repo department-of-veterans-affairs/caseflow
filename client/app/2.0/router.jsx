@@ -2,7 +2,7 @@
 import React from 'react';
 
 // Lazy Load Routes
-const ReaderRoutes = React.lazy(() => import('routes/Reader'));
+import ReaderRoutes from 'routes/Reader';
 
 const Router = (props) => {
   return (
