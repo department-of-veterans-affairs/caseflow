@@ -190,20 +190,23 @@ const DocumentViewer = (props) => {
     },
     cancelDrop: () => dispatch(cancelDrop()),
     addComment: () => dispatch(addComment()),
-    saveComment: (comment, action = 'save') => {
+    saveComment: (formData, action = 'save') => {
       // Construct a whitespace-only Regex
       const whitespace = new RegExp(/^\s+$/);
 
+      // Capture the comment
+      const comment = formData.pendingComment || formData.comment;
+
       // Handle empty comments
-      if ((whitespace.test(comment.pendingComment) || whitespace.test(comment.comment)) && action === 'save') {
-        return dispatch(toggleDeleteModal(comment.id));
+      if ((whitespace.test(comment) || formData.pendingComment === '')) {
+        return dispatch(toggleDeleteModal(formData.id));
       }
 
       // Calculate the comment data to update/create
       const data = {
-        ...comment,
-        relevant_date: comment.pendingDate || comment.relevant_date,
-        comment: comment.pendingComment || comment.comment
+        ...formData,
+        relevant_date: formData.pendingDate || formData.relevant_date,
+        comment
       };
 
       // Send the analytics event based on the action

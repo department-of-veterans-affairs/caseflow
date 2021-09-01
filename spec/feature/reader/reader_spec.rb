@@ -543,7 +543,7 @@ RSpec.feature "Reader", :all_dbs do
         click_on "Save"
 
         # Delete modal should appear.
-        expect(page).to have_css("#Delete-Comment-button")
+        expect(page).to have_css("#Delete-Comment-button-id-1")
       end
     end
 

@@ -9,7 +9,7 @@ import Modal from 'app/components/Modal';
  * Delete Comment Modal Component
  * @param {Object} props
  */
-export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion, show, deleteCommentId }) => show && (
+export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion, show }) => show && (
   <Modal
     title="Delete Comment"
     closeHandler={closeDeleteModal}
@@ -34,7 +34,6 @@ export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion
 );
 
 DeleteComment.propTypes = {
-  deleteCommentId: PropTypes.number,
   show: PropTypes.bool,
   pendingDeletion: PropTypes.bool,
   removeComment: PropTypes.func,
