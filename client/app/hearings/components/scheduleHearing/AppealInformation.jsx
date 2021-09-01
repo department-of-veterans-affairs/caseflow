@@ -66,7 +66,7 @@ export const AppealInformation = ({ appeal, hearing }) => {
         addressCity={appeal?.appellantAddress?.city}
         addressZip={appeal?.appellantAddress?.zip}
       />
-      {appeal?.appellantRelationship && (
+      {appeal?.appellantIsNotVeteran && appeal?.appellantRelationship && (
         <ReadOnly
           spacing={15}
           label="Relation to Veteran"
