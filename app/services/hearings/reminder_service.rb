@@ -20,11 +20,6 @@ class Hearings::ReminderService
   def reminder_type
     return if days_until_hearing <= 0
 
-    type_of_reminder = which_type_of_reminder_to_send
-
-    # Only log 60 day reminder type email but do not send
-    return if type_of_reminder == SIXTY_DAY_REMINDER
-
     type_of_reminder
   end
 
