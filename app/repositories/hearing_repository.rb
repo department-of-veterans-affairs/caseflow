@@ -108,10 +108,15 @@ class HearingRepository
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|
-        hearing = LegacyHearing
-          .assign_or_create_from_vacols_record(vacols_record,
-                                               legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
-        set_vacols_values(hearing, vacols_record)
+        begin
+          hearing = LegacyHearing
+            .assign_or_create_from_vacols_record(vacols_record,
+                                                 legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
+          set_vacols_values(hearing, vacols_record)
+        rescue RegionalOffice::NotFoundError => error
+          Raven.capture_exception(error: error)
+          next
+        end
       end.flatten
     end
 
