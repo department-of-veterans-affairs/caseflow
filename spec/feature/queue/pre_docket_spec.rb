@@ -146,7 +146,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(page).to have_content("ASSIGNED TO\n#{regional_office.name}")
 
-        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(ro_instructions)
       end
     end
