@@ -54,12 +54,13 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 const formFieldMapping = (props) => {
   const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
   const renderVaGovValue = () => {
+    console.log(props.filedByVaGov)
     // eslint-disable-next-line no-undefined
     if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
 
-    return props.filedByVaGov !== null && props.filedByVaGov.toString();
+    return props.filedByVaGov && props.filedByVaGov.toString();
   };
 
   return ({
