@@ -86,9 +86,9 @@ class TeamManagementController < ApplicationController
   def fail_on_duplicate_participant_id
     existing_org = Organization.find_by_participant_id(update_params[:participant_id])
     if existing_org
-      fail(Caseflow::Error::DuplicateParticipantIdOrganization, 
-          participant_id: update_params[:participant_id], 
-          organization: existing_org)
+      fail(Caseflow::Error::DuplicateParticipantIdOrganization,
+           participant_id: update_params[:participant_id],
+           organization: existing_org)
     end
   end
 

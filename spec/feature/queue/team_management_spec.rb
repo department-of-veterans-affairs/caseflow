@@ -77,7 +77,7 @@ RSpec.feature "Team management page", :postgres do
         let(:error_message) { "User #{user.id} already has a JudgeTeam. Cannot create another JudgeTeam for user." }
         include_examples "user cannot add another team", "Judge Team"
 
-      scenario "user can view the team management page" do
+      scenario "user cannot create VSO with the same participant_id" do
         visit("/team_management")
 
         find("button", text: "+ Add VSO").click
@@ -92,6 +92,12 @@ RSpec.feature "Team management page", :postgres do
         fill_in "BGS Participant ID", with: "1234567"
         # binding.pry
         find("button", text: "Submit").click
+
+        # find("button", text: "+ Add VSO").click
+        # fill_in "Name", with: "Vso 2"
+        # fill_in "URL", with: "vso-2"
+        # fill_in "BGS Participant ID", with: "1234567"
+        # find("button", text: "Submit").click
       end
     end
 
