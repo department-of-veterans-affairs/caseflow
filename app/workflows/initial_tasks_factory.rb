@@ -110,14 +110,14 @@ class InitialTasksFactory
       fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
     end
 
+    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
+
     if @appeal.docket_type == "hearing"
       excluded_attrs = %w[status closed_at placed_on_hold_at]
-      binding.pry
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
-      # Do we want to use hold_end_date here? Could assign ^ to a variable and act on the new ESW
-      # But the whole point is they wanted to reopen it, right?
+      esw_task = source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+      esw_task.end_date = evidence_submission_hold_end_date
+      esw_task.save!
     else
-      evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                                  parent: distribution_task,
                                                  end_date: evidence_submission_hold_end_date)
