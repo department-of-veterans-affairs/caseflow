@@ -188,10 +188,7 @@ describe Hearings::ReminderService do
     end
   end
 
-  # Right now these tests will fail because we don't send emails for non-virtual
-  # hearings. Once we are sending emails, uncomment this and it should pass.
-  # See: send_reminder_emails_job_spec as well.
-  context "with a central hearing", skip: "will be unskipped when we enable feature" do
+  context "with a central hearing" do
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
     let(:hearing) do
       create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
