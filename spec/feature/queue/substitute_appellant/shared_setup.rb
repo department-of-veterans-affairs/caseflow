@@ -174,6 +174,11 @@ RSpec.shared_examples("fill substitution form") do
         expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
       end
 
+      if docket_type.eql?("hearing")
+        # Ensure that we are displaying hearing info from source appeal
+        expect(page).to have_content "Hearings"
+      end
+
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
       # Substitute claimant is shown

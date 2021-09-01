@@ -53,7 +53,13 @@ class WorkQueue::AppealSerializer
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
-  attribute(:hearings) { |object, params| hearings(object, params) }
+  attribute(:hearings) do |object, params|
+    associated_hearings = []
+    if(object.appellant_substitution && object.id != object.appellant_substitution.source_appeal.id)
+      associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
+    end
+    associated_hearings + hearings(object, params)
+  end
 
   attribute :withdrawn, &:withdrawn?
 
