@@ -20,7 +20,7 @@ class Hearings::ReminderService
   def reminder_type
     return if days_until_hearing <= 0
 
-    type_of_reminder
+    which_type_of_reminder_to_send
   end
 
   private
