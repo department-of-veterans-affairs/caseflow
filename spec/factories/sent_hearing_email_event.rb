@@ -18,5 +18,9 @@ FactoryBot.define do
       email_type { "reminder" }
       sent_by { User.system_user }
     end
+
+    trait :with_hearing do
+      hearing { create(:hearing) }
+    end
   end
 end
