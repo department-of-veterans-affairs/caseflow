@@ -346,7 +346,7 @@ describe HearingRepository, :all_dbs do
         context "when send_successful is not nil" do
           let(:send_successful) { true }
           let!(:sent_event_with_sent_status) do
-            create(:sent_hearing_email_event, send_successful: send_successful)
+            create(:sent_hearing_email_event, send_successful: send_successful, hearing: ama_video_hearing)
           end
 
           it "does not return event" do
@@ -358,7 +358,7 @@ describe HearingRepository, :all_dbs do
         context "when recipient is not appellant or representative" do
           let(:recipient_role) { "judge" }
           let!(:sent_event_judge) do
-            create(:sent_hearing_email_event, recipient_role: recipient_role)
+            create(:sent_hearing_email_event, recipient_role: recipient_role, hearing: ama_video_hearing)
           end
 
           it "does not return event" do
