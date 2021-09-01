@@ -4,17 +4,14 @@ import { orderBy, isEmpty, range } from 'lodash';
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
 import {
-  documentCategories,
   DOCUMENTS_OR_COMMENTS_ENUM,
   CATEGORIES,
   PDF_PAGE_WIDTH,
   PDF_PAGE_HEIGHT,
   PAGE_MARGIN
 } from 'store/constants/reader';
-import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
-import ApiUtil from 'app/util/ApiUtil';
+import { formatFilterCriteria, searchString } from 'utils/reader';
 import { fetchAppealDetails } from 'store/reader/appeal';
-import { navigate } from 'store/routes';
 
 /*
  * Helper Method to load documents into the store only when necessary
@@ -22,23 +19,6 @@ import { navigate } from 'store/routes';
  * @param {string} vacolsId -- The New Appeal ID
  */
 export const fetchDocuments = ({ appeal, params }, dispatch) => () => {
-  // Set the crumbs for the Reader app
-  const crumbs = [{
-    breadcrumb: 'Reader',
-    path: '/reader/appeal/:vacolsId/documents'
-  }];
-
-  // Update the crumbs if navigating to a document
-  if (params.docId) {
-    crumbs.push({
-      breadcrumb: 'Document Viewer',
-      path: '/reader/appeal/:vacolsId/documents/:docId'
-    });
-  }
-
-  // Load the crumbs into the navbar
-  dispatch(navigate({ crumbs }));
-
   // Load the Data Needed by the Documents List
   if (appeal.id !== params.vacolsId) {
     // Load the new Documents

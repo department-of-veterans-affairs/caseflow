@@ -242,7 +242,7 @@ export const TagHeader = ({
 TagHeader.propTypes = {
   documentList: PropTypes.object,
   filterCriteria: PropTypes.object,
-  tagOptions: PropTypes.object,
+  tagOptions: PropTypes.array,
   tagFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
   clearTagFilters: PropTypes.func,

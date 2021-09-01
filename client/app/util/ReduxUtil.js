@@ -59,7 +59,7 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
 
       debounceFns[action.type](label);
     }
-  } else {
+  } else if (!action.type.includes('pending') && !action.type.includes('fulfilled')) {
     console.warn('No analytics present for action: ', action.type);
   }
 

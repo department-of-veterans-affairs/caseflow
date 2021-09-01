@@ -95,7 +95,6 @@ export const DocumentHeader = ({
         name="search"
         classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
         ariaLabel="search text"
-        type="submit"
         onClick={() => toggleSearchBar()}
       >
         <SearchIcon />

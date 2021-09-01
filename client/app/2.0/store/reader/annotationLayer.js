@@ -150,6 +150,7 @@ const annotationLayerSlice = createSlice({
     },
     startEdit: {
       reducer: (state, action) => {
+        state.editingComment = Boolean(action.payload);
         state.comments = state.comments.map((comment) => ({
           ...comment,
           pendingComment: comment.comment,
@@ -186,10 +187,11 @@ const annotationLayerSlice = createSlice({
       },
       prepare: (payload) => {
         if (isEmpty(payload)) {
-          addMetaLabel('cancel-edit-annotation', payload);
-        } else {
-          addMetaLabel('edit-annotation-content-locally', payload);
+          return addMetaLabel('cancel-edit-annotation', payload);
         }
+
+        return addMetaLabel('edit-annotation-content-locally', payload);
+
       }
     },
     selectComment: {

@@ -88,5 +88,5 @@ DocumentsTable.propTypes = {
   filterCriteria: PropTypes.object,
   setTagFilter: PropTypes.func,
   setDocListScrollPosition: PropTypes.func,
-  tagOptions: PropTypes.object
+  tagOptions: PropTypes.array
 };

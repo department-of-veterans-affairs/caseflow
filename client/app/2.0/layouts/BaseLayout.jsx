@@ -19,15 +19,11 @@ const BaseLayout = ({
   appName,
   defaultUrl,
 }) => {
-  // Get the Breadcrumbs from the store
-  const { crumbs } = useSelector((state) => ({ crumbs: state.routes.crumbs }));
-
   return (
     <React.Fragment>
       <NavigationBar
         wideApp
         appName={appName}
-        crumbs={crumbs}
         logoProps={{
           accentColor: LOGO_COLORS[appName.toUpperCase()].ACCENT,
           overlapColor: LOGO_COLORS[appName.toUpperCase()].OVERLAP
@@ -55,7 +51,6 @@ BaseLayout.propTypes = {
   buildDate: PropTypes.string,
   appName: PropTypes.string,
   defaultUrl: PropTypes.string,
-  crumbs: PropTypes.array,
 };
 
 export default BaseLayout;

@@ -389,8 +389,11 @@ const documentViewerSlice = createSlice({
     toggleKeyboardInfo: (state, action) => {
       state.keyboardInfoOpen = action.payload;
     },
-    setPageNumber: (state, action) => {
-      state.selected.currentPage = action.payload;
+    setPageNumber: {
+      reducer: (state, action) => {
+        state.selected.currentPage = action.payload;
+      },
+      prepare: (page) => addMetaLabel('changing-page', page)
     },
     changeDescription: (state, action) => {
       state.selected.pendingDescription = action.payload;
@@ -436,7 +439,7 @@ const documentViewerSlice = createSlice({
         addedSectionKeys.map((key) => addMetaLabel('opened-accordion-section', null, key));
         removedSectionKeys.map((key) => addMetaLabel('closed-accordion-section', null, key));
 
-        return sections;
+        return { payload: sections };
       }
     },
     togglePdfSideBar: {

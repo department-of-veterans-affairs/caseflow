@@ -21,7 +21,7 @@ export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion
         disabled: pendingDeletion
       },
       {
-        id: `#Delete-Comment-button-id-${deleteCommentId}`,
+        id: '#Delete-Comment-button',
         classNames: ['usa-button', 'usa-button-secondary'],
         name: 'Confirm delete',
         onClick: removeComment,
@@ -34,7 +34,7 @@ export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion
 );
 
 DeleteComment.propTypes = {
-  deleteCommentId: PropTypes.string,
+  deleteCommentId: PropTypes.number,
   show: PropTypes.bool,
   pendingDeletion: PropTypes.bool,
   removeComment: PropTypes.func,
