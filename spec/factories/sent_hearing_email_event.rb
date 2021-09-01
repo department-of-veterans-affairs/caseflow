@@ -11,6 +11,8 @@ FactoryBot.define do
     recipient_role { "appellant" }
     external_message_id { "id/1" }
     sent_at { Time.zone.now }
+    send_successful { nil }
+    send_successful_checked_at { Time.zone.now }
 
     trait :reminder do
       email_type { "reminder" }
