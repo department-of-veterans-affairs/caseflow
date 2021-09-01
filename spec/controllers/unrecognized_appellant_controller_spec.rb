@@ -114,6 +114,11 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
         expect(response.status).to eq 400
         expect(ua.power_of_attorney.nil?)
       end
+      it "should be unsuccessful if UA already has a POA" do
+        patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+
+        expect(response.status).to eq 400
+      end
       it "fails gracefully if missing a required param" do
         ua.update(unrecognized_power_of_attorney_id: nil)
         params[:unrecognized_power_of_attorney][:city] = nil
@@ -141,6 +146,11 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
         expect(response.status).to eq 200
         expect(ua.power_of_attorney.is_a?(AttorneyPowerOfAttorney))
         expect(ua.power_of_attorney.participant_id).to eq "123"
+      end
+      it "should be unsuccessful if UA already has a POA" do
+        patch :update_power_of_attorney, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
+
+        expect(response.status).to eq 400
       end
     end
   end
