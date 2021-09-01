@@ -362,7 +362,7 @@ RSpec.feature "Reader", :all_dbs do
         .to eq "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
     end
 
-    fscenario "Arrow keys to navigate through documents" do
+    scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
       end
