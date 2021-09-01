@@ -1005,7 +1005,7 @@ sent_hearing_admin_email_events,,,,,,,,
 sent_hearing_admin_email_events,created_at,datetime ∗,x,,,,,
 sent_hearing_admin_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email.
 sent_hearing_admin_email_events,id,integer (8) PK,x,x,,,,
-sent_hearing_admin_email_events,sent_hearing_email_event_id,integer (8) FK,,,x,,,Associated sent hearing email event.
+sent_hearing_admin_email_events,sent_hearing_email_event_id,integer (8) FK,,,x,,x,Associated sent hearing email event.
 sent_hearing_admin_email_events,updated_at,datetime ∗,x,,,,,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
 sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
