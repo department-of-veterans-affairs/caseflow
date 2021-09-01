@@ -115,15 +115,17 @@ class InitialTasksFactory
 
     if @appeal.docket_type == "hearing"
       excluded_attrs = %w[status closed_at placed_on_hold_at]
-      esw_task = source_task.copy_with_ancestors_to_stream(
+      source_task.copy_with_ancestors_to_stream(
         @appeal,
         new_attributes: { end_date: evidence_submission_hold_end_date },
         extra_excluded_attributes: excluded_attrs
       )
     else
-      EvidenceSubmissionWindowTask.create!(appeal: @appeal,
-                                                 parent: distribution_task,
-                                                 end_date: evidence_submission_hold_end_date)
+      EvidenceSubmissionWindowTask.create!(
+        appeal: @appeal,
+        parent: distribution_task,
+        end_date: evidence_submission_hold_end_date
+      )
     end
   end
 

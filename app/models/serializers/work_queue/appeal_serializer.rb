@@ -55,7 +55,7 @@ class WorkQueue::AppealSerializer
 
   attribute(:hearings) do |object, params|
     associated_hearings = []
-    if(object.appellant_substitution && object.id != object.appellant_substitution.source_appeal.id)
+    if (object.appellant_substitution && object.id != object.appellant_substitution.source_appeal.id)
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
     end
     associated_hearings + hearings(object, params)

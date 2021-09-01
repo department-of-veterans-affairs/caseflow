@@ -611,8 +611,8 @@ class Task < CaseflowRecord
     return unless parent
 
     new_task_attributes = attributes
-                          .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
-                          .merge(new_attributes)
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+      .merge(new_attributes)
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
