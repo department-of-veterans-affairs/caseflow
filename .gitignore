@@ -47,7 +47,7 @@ npm-debug.log*
 node_modules
 
 # Generated js bundles
-/app/assets/javascripts/*webpack-bundle.js*
+/app/assets/javascripts/*webpack*
 
 # Storybook
 /public/storybook/*

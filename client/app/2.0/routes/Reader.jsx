@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 import BaseLayout from 'layouts/BaseLayout';
 
 // Lazy load screens
-const DocumentList = React.lazy(() => import('screens/reader/DocumentList'));
-const DocumentViewer = React.lazy(() => import('screens/reader/DocumentViewer'));
+import DocumentList from 'screens/reader/DocumentList';
+import DocumentViewer from 'screens/reader/DocumentViewer';
 
 const ReaderRoutes = (props) => {
   // Override The App Name here for the page routes

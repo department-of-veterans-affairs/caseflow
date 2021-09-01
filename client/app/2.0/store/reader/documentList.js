@@ -30,8 +30,8 @@ export const initialState = {
   tagOptions: [],
   filterCriteria: {
     sort: {
-      sortBy: 'receivedAt',
-      sortAscending: true
+      sortBy: 'received_at',
+      sortAscending: false
     },
     category: {},
     tag: {},
@@ -293,10 +293,6 @@ const documentListSlice = createSlice({
 
           // Format the search query
           const searchQuery = filterCriteria.searchQuery.toLowerCase();
-
-          // if (query['?tag']) {
-          //   filterCriteria.tag[query['?tag']] = true;
-          // }
 
           // Set the Filtered IDs
           state.filteredDocIds = filterDocuments(filterCriteria, documents, action.payload);

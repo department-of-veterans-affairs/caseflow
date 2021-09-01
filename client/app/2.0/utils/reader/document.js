@@ -1,5 +1,5 @@
 // External Dependencies
-import { sortBy, isEmpty, range } from 'lodash';
+import { orderBy, isEmpty, range } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
@@ -12,6 +12,7 @@ import {
   PAGE_MARGIN
 } from 'store/constants/reader';
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
+import ApiUtil from 'app/util/ApiUtil';
 import { fetchAppealDetails } from 'store/reader/appeal';
 import { navigate } from 'store/routes';
 
@@ -78,9 +79,9 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (ids, documents, annotations) => ids.reduce((rows, id) => {
+export const documentRows = (ids, documents, annotations) => ids.reduce((acc, id) => {
   // Add the current document
-  rows.push(documents[id]);
+  acc.push(documents[id]);
 
   // Get the documents with comments
   const [docWithComments] = annotations.filter((note) => note.document_id === id);
@@ -88,20 +89,12 @@ export const documentRows = (ids, documents, annotations) => ids.reduce((rows, i
   // Apply the comment if present
   if (docWithComments && documents[id].listComments) {
     // Add the comment to the list
-    rows.push({ ...documents[id], isComment: true });
+    acc.push({ ...documents[id], isComment: true });
   }
 
   // Default to return the document
-  return rows;
+  return acc;
 }, []);
-
-/**
- * Helper Method to get the Categories for each Document
- * @param {Object} document -- The Document to get categories
- */
-export const categoriesOfDocument = (document) =>
-  sortBy(Object.keys(documentCategories).filter((categoryName) =>
-    document[formatCategoryName(categoryName)]), 'renderOrder');
 
 /**
  * Helper Method to download the document
@@ -147,39 +140,6 @@ export const columnCount = (width, pageWidth, numPages) =>
   Math.min(Math.max(Math.floor(width / pageWidth), 1), numPages);
 
 /**
- * Helper Method to sort an object by an array of keys
- * @param {Object} options -- Values to sort the list by and optional direction
- */
-export const sortKeysBy = ({ keys, list, value, dir }) => keys.sort((first, second) => {
-  // Return the keys if there is no list
-  if (!list[first] || !list[second]) {
-    return keys;
-  }
-
-  // Map fields according to the sort order and value, default to ascending sort
-  const fieldA = dir === 'desc' ? list[second][value] : list[first][value];
-  const fieldB = dir === 'desc' ? list[first][value] : list[second][value];
-
-  // Handle string columns
-  if (typeof fieldA === 'string') {
-    return fieldA.localeCompare(fieldB);
-  }
-
-  // Field A is less than B and not a string
-  if (fieldA < fieldB) {
-    return -1;
-  }
-
-  // Field A is greater than B and not a string
-  if (fieldA > fieldB) {
-    return 1;
-  }
-
-  // Field A is equivalent to B and not a string
-  return 0;
-});
-
-/**
  * Helper Method to filter documents based on criteria object
  * @param {Object} criteria -- The criteria to filter on
  * @param {Object} documents -- The list of documents
@@ -190,16 +150,14 @@ export const filterDocuments = (criteria, documents, state) => {
   const { active, filters } = formatFilterCriteria(criteria);
 
   // Set the Original Documents according to the initial state
-  const docs = state.storeDocuments ? state.storeDocuments : documents;
+  const docs = Object.values(state.storeDocuments ? state.storeDocuments : documents);
+  const docsWithDate = docs.map((doc) => ({ ...doc, received_at: new Date(`${doc.received_at} 00:00`) }));
+  const sortedDocs = orderBy(docsWithDate, [criteria.sort.sortBy], criteria.sort.sortAscending ? ['asc'] : ['desc']);
 
-  // Set the IDs to the store doc IDs or the filtered IDs if active
-  const ids = active.length ? Object.keys(docs).map((doc) => docs[doc].id).
-    filter((id) => {
+  const documentIds = sortedDocs.reduce((list, document) => {
+    if (active.length) {
       // Initialize whether to show the document
       let include = true;
-
-      // Set the Current Document
-      const [document] = Object.values(docs).filter((doc) => doc.id === id);
 
       // Apply the Category filters
       if (!isEmpty(filters.category)) {
@@ -208,7 +166,6 @@ export const filterDocuments = (criteria, documents, state) => {
 
       // Apply the Tag filters
       if (!isEmpty(filters.tag)) {
-        // include = include && filters.tag.filter((name) => document[name] === true).length;
         include = include && document?.tags?.some((tag) => filters.tag.includes(tag.text));
       }
 
@@ -218,17 +175,17 @@ export const filterDocuments = (criteria, documents, state) => {
       }
 
       // Default return the object to be truthy
-      return include;
-    }) :
-    Object.keys(docs).map((doc) => docs[doc].id);
+      if (include) {
+        list.push(document.id);
+      }
+    } else {
+      list.push(document.id);
+    }
 
-  const sorted = sortBy(ids, criteria.sort.sortBy);
+    return list;
+  }, []);
 
-  if (criteria.sort.sortAscending) {
-    sorted.reverse();
-  }
-
-  return sorted;
+  return documentIds;
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {
