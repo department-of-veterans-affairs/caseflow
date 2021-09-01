@@ -104,8 +104,6 @@ const annotationLayerSlice = createSlice({
   reducers: {
     [removeComment.fulfilled.toString()]: {
       prepare: (commentId) => {
-        console.log('\n\n===DELETING===\n\n', commentId);
-
         return addMetaLabel('request-delete-annotation', commentId);
       }
     },
