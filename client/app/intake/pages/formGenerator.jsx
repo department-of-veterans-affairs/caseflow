@@ -59,7 +59,8 @@ const formFieldMapping = (props) => {
       return 'false';
     }
 
-    return props.filedByVaGov && props.filedByVaGov.toString();
+    // eslint-disable-next-line no-undefined
+    return props.sameOffice === null || props.sameOffice === undefined ? null : props.filedByVaGov.toString();
   };
 
   return ({
