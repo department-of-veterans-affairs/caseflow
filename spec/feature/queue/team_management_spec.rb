@@ -47,11 +47,17 @@ RSpec.feature "Team management page", :postgres do
 
       context "when JudgeTeam for the judge already exists" do
         before do
-          # this should cause DuplicateJudgeTeam error
-          expect(JudgeTeam).to receive(:for_judge).and_return(JudgeTeam.new)
+          # Always return the same set of users in order to cause DuplicateJudgeTeam error
+          allow_any_instance_of(UserFinder).to receive(:users).and_return([user])
         end
         scenario "user can view the team management page" do
           visit("/team_management")
+
+          find("button", text: "+ Add Judge Team").click
+          click_dropdown(text: user.full_name)
+          find("button", text: "Submit").click
+          binding.pry
+          expect(page).to have_content("Success")
 
           find("button", text: "+ Add Judge Team").click
           click_dropdown(text: user.full_name)
