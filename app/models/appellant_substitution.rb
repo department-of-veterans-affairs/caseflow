@@ -21,6 +21,7 @@ class AppellantSubstitution < CaseflowRecord
 
   before_create :establish_appeal_stream
   after_create :initialize_tasks
+  # after_create :duplicate_existing_hearings
 
   def substitute_claimant
     target_appeal.claimant
@@ -67,9 +68,17 @@ class AppellantSubstitution < CaseflowRecord
 
   def duplicate_existing_hearings
     # copy over any existing `Hearing` object from the source appeal.
-    # Modeling this somewhat on https://hackmd.io/wOBc0n16RAKD0WlJ3nxHUQ?view
-    # Probably want to pull in Tango on this for confirmation/approval?
+    return unless source_appeal.docket_type === Constants.AMA_DOCKETS.hearing
+    return if source_appeal.id === target_appeal.id #skip for pending appeals
 
+    source_appeal.hearings.map do |hearing|
+      hearing.dup.tap do |hearing_copy|
+        hearing_copy.appeal = target_appeal
+        # Avoid HearingDayFull validation error
+        hearing_copy.override_full_hearing_day_validation = true
+        hearing_copy.save!
+      end
+    end
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
