@@ -150,6 +150,7 @@ feature "Intake Review Page", :postgres do
             :higher_level_review,
             veteran_file_number: veteran.file_number,
             receipt_date: receipt_date,
+            filed_by_va_gov: false,
             informal_conference: false,
             legacy_opt_in_approved: false,
             same_office: false
