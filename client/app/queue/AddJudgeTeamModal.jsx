@@ -1,7 +1,8 @@
 import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -76,6 +77,12 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   showErrorMessage
 }, dispatch);
+
+AddJudgeTeamModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewJudgeTeam: PropTypes.func,
+  showErrorMessage: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTeamModal));
 
