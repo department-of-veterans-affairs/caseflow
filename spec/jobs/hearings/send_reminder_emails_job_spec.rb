@@ -5,7 +5,7 @@ describe Hearings::SendReminderEmailsJob do
     subject { Hearings::SendReminderEmailsJob.new.perform }
 
     shared_examples "send reminder emails" do
-      context "hearing date is 60 days out", skip: "will be unskipped when we enable feature" do
+      context "hearing date is 60 days out" do
         let(:hearing_date) { Time.zone.now + 59.days } # at most 60 days out
 
         it "sends reminder emails only to appellant", :aggregate_failures do

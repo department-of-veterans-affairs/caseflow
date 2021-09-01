@@ -2,7 +2,7 @@
 
 describe Hearings::ReminderService do
   shared_examples "determines which reminders should send" do
-    context "hearing is 60 days out", skip: "will be unskipped when we enable feature" do
+    context "hearing is 60 days out" do
       let(:hearing_date) { Time.zone.now + 59.days } # Nov 5, 2020 12:00 UTC + 59.days => 60 days or less
       let(:created_at) { hearing_date - 61.days }
 
