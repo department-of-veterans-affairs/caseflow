@@ -1,9 +1,9 @@
 // External Dependencies
+import { isEmpty } from 'lodash';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
-import { setPageNumber } from 'store/reader/documentViewer';
 import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';
 import ApiUtil from 'app/util/ApiUtil';
@@ -102,67 +102,95 @@ const annotationLayerSlice = createSlice({
   name: 'annotationLayer',
   initialState,
   reducers: {
-    startMove: (state, action) => {
-      state.moving = action.payload;
-    },
-    addComment: (state) => {
-      state.dropping = true;
-    },
-    dropComment: (state, action) => {
-      // Reset the dropping state
-      state.dropping = false;
-
-      // Set the dropped comment
-      state.droppedComment = action.payload;
-
-      // Update the comments with the temporary comment
-      state.comments = [...state.comments, action.payload];
-    },
-    cancelDrop: (state) => {
-      // Reset the dropping state
-      state.dropping = false;
-
-      // Update the comments with the temporary comment
-      state.comments = state.comments.filter((comment) => comment.id !== 'placing-annotation-icon');
-
-      // Remove the dropped comment
-      state.droppedComment = null;
-
-      // Remove the error state
-      state.errors = initialState.errors;
-    },
-    startEdit: (state, action) => {
-      state.editingComment = Boolean(action.payload);
-      state.comments = state.comments.map((comment) => ({
-        ...comment,
-        pendingComment: comment.comment,
-        editing: comment.id === action.payload
-      }));
-
-      // Update the selected comment
-      state.selected = state.comments.filter((comment) => comment.id === action.payload)[0];
-    },
-    updateComment: (state, action) => {
-      // Update the state of the dropped comment otherwise update the selected comment
-      if (state.droppedComment) {
-        state.droppedComment = {
-          ...state.droppedComment,
-          pendingComment: action.payload.pendingComment,
-          pendingDate: action.payload.pendingDate
-        };
-      } else {
-        state.selected = {
-          ...state.selected,
-          pendingComment: action.payload.pendingComment,
-          pendingDate: action.payload.pendingDate
-        };
+    [removeComment.fulfilled.toString()]: {
+      prepare: (commentId) => {
+        return addMetaLabel('request-delete-annotation', commentId);
       }
+    },
+    startMove: {
+      reducer: (state, action) => {
+        state.moving = action.payload;
+      },
+      prepare: (moving) => addMetaLabel('request-move-annotation', moving)
+    },
+    addComment: {
+      reducer: (state) => {
+        state.dropping = true;
+      },
+      prepare: () => addMetaLabel('start-placing-annotation')
+    },
+    dropComment: {
+      reducer: (state, action) => {
+      // Reset the dropping state
+        state.dropping = false;
 
-      state.comments = state.comments.map((comment) => ({
-        ...comment,
-        pendingDate: comment.id === action.payload.id ? action.payload.pendingDate : null,
-        pendingComment: comment.id === action.payload.id ? action.payload.pendingComment : null
-      }));
+        // Set the dropped comment
+        state.droppedComment = action.payload;
+
+        // Update the comments with the temporary comment
+        state.comments = [...state.comments, action.payload];
+      },
+      prepare: (droppedComment) => addMetaLabel('stop-placing-annotation', droppedComment)
+    },
+    cancelDrop: {
+      reducer: (state) => {
+      // Reset the dropping state
+        state.dropping = false;
+
+        // Update the comments with the temporary comment
+        state.comments = state.comments.filter((comment) => comment.id !== 'placing-annotation-icon');
+
+        // Remove the dropped comment
+        state.droppedComment = null;
+
+        // Remove the error state
+        state.errors = initialState.errors;
+      },
+      prepare: () => addMetaLabel('cancel-placing-annotation')
+    },
+    startEdit: {
+      reducer: (state, action) => {
+        state.comments = state.comments.map((comment) => ({
+          ...comment,
+          pendingComment: comment.comment,
+          editing: comment.id === action.payload
+        }));
+
+        // Update the selected comment
+        state.selected = state.comments.filter((comment) => comment.id === action.payload)[0];
+      },
+      prepare: (commentId) => addMetaLabel('start-edit-annotation', commentId)
+    },
+    updateComment: {
+      reducer: (state, action) => {
+        // Update the state of the dropped comment otherwise update the selected comment
+        if (state.droppedComment) {
+          state.droppedComment = {
+            ...state.droppedComment,
+            pendingComment: action.payload.pendingComment,
+            pendingDate: action.payload.pendingDate
+          };
+        } else {
+          state.selected = {
+            ...state.selected,
+            pendingComment: action.payload.pendingComment,
+            pendingDate: action.payload.pendingDate
+          };
+        }
+
+        state.comments = state.comments.map((comment) => ({
+          ...comment,
+          pendingDate: comment.id === action.payload.id ? action.payload.pendingDate : null,
+          pendingComment: comment.id === action.payload.id ? action.payload.pendingComment : null
+        }));
+      },
+      prepare: (payload) => {
+        if (isEmpty(payload)) {
+          addMetaLabel('cancel-edit-annotation', payload);
+        } else {
+          addMetaLabel('edit-annotation-content-locally', payload);
+        }
+      }
     },
     selectComment: {
       reducer: (state, action) => {
