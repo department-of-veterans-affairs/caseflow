@@ -111,50 +111,6 @@ describe ExternalApi::GovDeliveryService do
           it "throws Caseflow::Error::GovDeliveryInternalServerError" do
             expect { subject }.to raise_error Caseflow::Error::GovDeliveryInternalServerError
           end
-        end
-
-        context "502" do
-          let!(:error_code) { 502 }
-
-          it "throws Caseflow::Error::GovDeliveryBadGatewayError" do
-            expect { subject }.to raise_error Caseflow::Error::GovDeliveryBadGatewayError
-          end
-        end
-
-        context "503" do
-          let!(:error_code) { 503 }
-
-          it "throws Caseflow::Error::GovDeliveryServiceUnavailableError" do
-            expect { subject }.to raise_error Caseflow::Error::GovDeliveryServiceUnavailableError
-          end
-        end
-      end
-    end
-
-    describe "#get_sent_status_from_event" do
-      subject { ExternalApi::GovDeliveryService.get_sent_status_from_event(email_event: email_event) }
-
-      it "returns the expected value" do
-        allow(HTTPI).to receive(:get).and_return(success_response)
-
-        expect(subject).to eq event_status_sent
-      end
-
-      context "with an empty response" do
-        it "returns nil" do
-          allow(HTTPI).to receive(:get).and_return(empty_response)
-
-          expect(subject).to be_nil
-        end
-      end
-    end
-  end
-
-  context "get message" do
-    let(:message_subject) { "This is the message subject" }
-    let(:body) do
-      "\u003c!DOCTYPE html\u003e\n\u003chtml\u003e\n This is the message body  " \
-      "\u003cbr\u003eSincerly Yours \u003c/html\u003e"
     end
     let(:sanitized_body) { " This is the message body\nSincerly Yours " }
     let(:response_body) { { "subject" => message_subject, "body" => body }.to_json }
@@ -171,7 +127,6 @@ describe ExternalApi::GovDeliveryService do
     end
 
     describe "#get_message_from_event" do
-      subject { ExternalApi::GovDeliveryService.get_message_from_event(email_event: email_event) }
 
       it "returns the expected value" do
         allow(HTTPI).to receive(:get).and_return(success_response)
