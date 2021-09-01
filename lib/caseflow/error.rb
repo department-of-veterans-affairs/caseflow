@@ -324,6 +324,15 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateParticipantIdOrganization < SerializableError
+    def initialize(args)
+      participant_id = args[:participant_id]
+      organization = args[:organization]
+      @code = args[:code] || 400
+      @message = args[:message] || "Participant ID #{participant_id} is already used for existing team '#{organization.name}'. Cannot create another team with the same participant ID."
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
