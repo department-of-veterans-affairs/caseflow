@@ -100,7 +100,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         )
       end
 
-      step "Program office has AssessDocumentationTask in queue" do
+      step "Program Office has AssessDocumentationTask in queue" do
         User.authenticate!(user: program_office_user)
         visit "/queue"
 
@@ -116,6 +116,38 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(po_instructions)
+      end
+
+      step "Program Office can assign AssessDocumentationTask to Regional Office" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.label).click
+        expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
+        find("div", class: "cf-select__option", text: regional_office.name).click
+        fill_in("Provide instructions and context for this action:", with: ro_instructions)
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=inProgressTab&page=1")
+        expect(page).to have_content("Task assigned to #{regional_office.name}")
+      end
+
+      step "Regional Office has AssessDocumentationTask in queue" do
+        User.authenticate!(user: regional_office_user)
+        visit "/queue"
+
+        click_on("Switch views")
+        click_on("#{regional_office.name} team cases")
+
+        expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_content("Assess Documentation Task")
+
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        expect(page).to have_content("ASSIGNED TO\n#{regional_office.name}")
+
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(ro_instructions)
       end
     end
   end
