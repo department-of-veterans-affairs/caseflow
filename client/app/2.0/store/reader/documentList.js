@@ -294,10 +294,6 @@ const documentListSlice = createSlice({
           // Format the search query
           const searchQuery = filterCriteria.searchQuery.toLowerCase();
 
-          // if (query['?tag']) {
-          //   filterCriteria.tag[query['?tag']] = true;
-          // }
-
           // Set the Filtered IDs
           state.filteredDocIds = filterDocuments(filterCriteria, documents, action.payload);
 
