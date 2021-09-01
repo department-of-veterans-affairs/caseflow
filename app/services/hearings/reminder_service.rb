@@ -25,7 +25,7 @@ class Hearings::ReminderService
     # Only log 60 day reminder type email but do not send
     return if type_of_reminder == SIXTY_DAY_REMINDER
 
-    return type_of_reminder
+    type_of_reminder
   end
 
   private
