@@ -1353,7 +1353,6 @@ RSpec.feature "Reader", :all_dbs do
       safe_click "#button-previous"
       click_on "Back"
 
-      expect(page).to have_css("#read-indicator")
       expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
     end
 
