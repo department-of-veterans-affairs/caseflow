@@ -29,7 +29,7 @@ export const recordSearch = async (vacolsId, query) => {
  * @param {string} searchQuery -- The query being used to search
  * @param {Object} doc -- The document with key `type` to be matched
  */
-export const typeContainsString = (searchQuery, doc) => (doc.type.toLowerCase().includes(searchQuery));
+export const typeContainsString = (searchQuery, doc) => (doc?.type?.toLowerCase().includes(searchQuery));
 
 /**
  * Helper Method that checks if the search string is in one of the document comments
@@ -39,7 +39,7 @@ export const typeContainsString = (searchQuery, doc) => (doc.type.toLowerCase().
  * @returns {boolean} -- Returns whether the comment contains the search string
  */
 export const commentContainsString = (searchQuery, payload, doc) =>
-  payload.comments.filter((note) => note.document_id === doc.id).
+  payload.comments.filter((note) => note.document_id === doc?.id).
     reduce((acc, annotation) =>
       acc || annotation.comment.toLowerCase().includes(searchQuery),
     false);
@@ -86,9 +86,9 @@ export const categoryContainsWords = (searchQuery, doc) =>
  * @returns {boolean} -- Returns whether the tag contains the search string
  */
 export const tagContainsString = (searchQuery, doc) =>
-  Object.keys(doc.tags || {}).
+  Object.keys(doc?.tags || {}).
     reduce((acc, tag) =>
-      acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery)),
+      acc || (doc?.tags[tag].text.toLowerCase().includes(searchQuery)),
     false);
 
 /**
@@ -98,8 +98,9 @@ export const tagContainsString = (searchQuery, doc) =>
  * @returns {boolean} -- Returns whether the tag contains the search string
  */
 export const descriptionContainsString = (searchQuery, doc) =>
-  doc.description && doc.description.toLowerCase().includes(searchQuery);
+  doc?.description && doc?.description.toLowerCase().includes(searchQuery);
 
+/* eslint-disable camelcase */
 /**
  * Helper Method that checks if a description contains the given search string
  * @param {string} searchQuery -- The query being used to search
@@ -111,13 +112,14 @@ export const searchString = (searchQuery, state) => (doc) =>
     const searchWord = word.trim();
 
     return searchWord.length > 0 && (
-      doDatesMatch(doc.receivedAt, searchWord) ||
+      doDatesMatch(doc?.received_at?.toString(), searchWord) ||
       commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       tagContainsString(searchWord, doc) ||
       descriptionContainsString(searchWord, doc));
   });
+/* eslint-enable camelcase */
 
 /**
  * Helper Method to display search text on document search

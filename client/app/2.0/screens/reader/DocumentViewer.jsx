@@ -34,7 +34,8 @@ import {
   toggleKeyboardInfo,
   addTag,
   removeTag,
-  setPageIndex
+  clearSearch,
+  toggleTagEdit
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -53,7 +54,7 @@ import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/Ke
 
 /**
  * Document Viewer Screen Component
- * @param {Object} props -- Contains the route props and PDF web worker
+ * @param {Object} props -- Contains the route props
  */
 const DocumentViewer = (props) => {
   // Get the Document List state
@@ -65,7 +66,6 @@ const DocumentViewer = (props) => {
   // Attach the PDF Worker to the params to setup PDFJS
   const params = {
     ...props.match.params,
-    worker: props.pdfWorker,
     currentDocument: state.currentDocument,
     scale: state.scale
   };
@@ -82,7 +82,13 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
-    setPageIndex: (index) => dispatch(setPageIndex(index)),
+    handleTagEdit: (event) => () => {
+      if (event === 'focus') {
+        return dispatch(toggleTagEdit(true));
+      }
+
+      return dispatch(toggleTagEdit(false));
+    },
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
       if (deleted) {
@@ -166,7 +172,6 @@ const DocumentViewer = (props) => {
     showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({
       currentDocument,
       pageNumber: currentPage,
-      worker: props.pdfWorker,
       scale
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
@@ -186,16 +191,23 @@ const DocumentViewer = (props) => {
     cancelDrop: () => dispatch(cancelDrop()),
     addComment: () => dispatch(addComment()),
     saveComment: (comment, action = 'save') => {
+      // Construct a whitespace-only Regex
+      const whitespace = new RegExp(/^\s+$/);
+
       // Handle empty comments
-      if (comment.pendingComment === '' && action === 'save') {
+      if ((whitespace.test(comment.pendingComment) || whitespace.test(comment.comment)) && action === 'save') {
         return dispatch(toggleDeleteModal(comment.id));
       }
+
       // Calculate the comment data to update/create
       const data = {
         ...comment,
         relevant_date: comment.pendingDate || comment.relevant_date,
         comment: comment.pendingComment || comment.comment
       };
+
+      // Send the analytics event based on the action
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `request-${action}-annotation`);
 
       // Determine whether to save or create the comment
       const dispatcher = action === 'create' ? createComment : saveComment;
@@ -235,8 +247,13 @@ const DocumentViewer = (props) => {
     closeDeleteModal: () => dispatch(toggleDeleteModal(null)),
     shareComment: (id) => dispatch(toggleShareModal(id)),
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
-    removeComment: () => dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id })),
-    toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
+    removeComment: () => {
+      // Send the analytics event
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'request-delete-annotation');
+
+      dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id }));
+    },
+    toggleAccordion: (sections) => dispatch(toggleAccordion(sections, state.openSections)),
     togglePdfSidebar: (open = null) => dispatch(togglePdfSideBar(open)),
     toggleSearchBar: (open = null) => {
       // Toggle the Search
@@ -263,15 +280,14 @@ const DocumentViewer = (props) => {
 
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
-      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
-      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount)),
+      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount))
     }),
     fitToScreen: () => {
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
       dispatch(showPdf({
         currentDocument: state.currentDocument,
-        worker: props.pdfWorker,
         scale: 1
       }));
     },
@@ -279,7 +295,6 @@ const DocumentViewer = (props) => {
       dispatch(showPdf({
         currentDocument: state.currentDocument,
         rotation: state.currentDocument.rotation,
-        worker: props.pdfWorker,
         scale: state.scale
       }));
     },
@@ -292,9 +307,12 @@ const DocumentViewer = (props) => {
 
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${direction}`, scale);
 
-      dispatch(showPdf({ currentDocument: state.currentDocument, worker: props.pdfWorker, scale }));
+      dispatch(showPdf({ currentDocument: state.currentDocument, scale }));
     },
     setPageNumber: (pageNumber) => {
+      // Add the analytics event
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'jump-to-page');
+
       // Calculate the page number
       const number = pageNumber - 1;
       const page = number >= gridRef.current?.props?.rowCount ? gridRef.current?.props?.rowCount - 1 : number;
@@ -303,6 +321,9 @@ const DocumentViewer = (props) => {
       gridRef.current?.scrollToPosition({ scrollTop: page * (state.viewport.height + PAGE_MARGIN) });
     },
     prevDoc: () => {
+      // Clear the document search
+      dispatch(clearSearch());
+
       const doc = state.documents[docs.prev];
 
       // Load the previous doc if found
@@ -311,6 +332,9 @@ const DocumentViewer = (props) => {
       }
     },
     nextDoc: () => {
+      // Clear the document search
+      dispatch(clearSearch());
+
       const doc = state.documents[docs.next];
 
       // Load the next doc if found
@@ -329,7 +353,6 @@ const DocumentViewer = (props) => {
     if (currentDocument?.id) {
       dispatch(showPdf({
         currentDocument,
-        worker: props.pdfWorker,
         scale: state.scale
       }));
     } else {

@@ -29,7 +29,6 @@ JumpToComment.propTypes = {
   documentPathBase: PropTypes.string,
   currentDocument: PropTypes.object,
   comment: PropTypes.object,
-  showPdf: PropTypes.func,
 };
 
 /**
@@ -47,6 +46,7 @@ export const Comment = ({
   editComment,
   shareComment,
   filterCriteria,
+  docType,
   ...props
 }) => {
   // Set the Classes for the component
@@ -59,10 +59,10 @@ export const Comment = ({
     <div className="horizontal-comment">
       <DateLabel date={date} />
       <div className="comment-page-number">
-        {comment.docType && (
+        {docType && (
           <span>
             <Highlight searchQuery={filterCriteria?.searchQuery}>
-              {comment.docType}
+              {docType}
             </Highlight>
           </span>
         )}
@@ -132,6 +132,7 @@ Comment.propTypes = {
   selected: PropTypes.bool,
   filterCriteria: PropTypes.object,
   date: PropTypes.string,
+  docType: PropTypes.string,
   children: PropTypes.element,
   page: PropTypes.number,
   currentDocument: PropTypes.object,

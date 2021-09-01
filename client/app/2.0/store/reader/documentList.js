@@ -1,10 +1,11 @@
 // External Dependencies
-import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { isNil, pickBy } from 'lodash';
+import { createSlice, createAction, createAsyncThunk, current } from '@reduxjs/toolkit';
+import { isNil, pickBy, isEmpty } from 'lodash';
+import querystring from 'querystring';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
-import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
+import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM, documentCategories } from 'store/constants/reader';
 import {
   filterDocuments,
   addMetaLabel,
@@ -29,8 +30,8 @@ export const initialState = {
   tagOptions: [],
   filterCriteria: {
     sort: {
-      sortBy: 'receivedAt',
-      sortAscending: true
+      sortBy: 'received_at',
+      sortAscending: false
     },
     category: {},
     tag: {},
@@ -271,17 +272,24 @@ const documentListSlice = createSlice({
           loadDocuments.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {
+          // Extract the Filter Criteria to process
+          const { filterCriteria } = state;
+
+          // Parse the query paramse
+          const query = querystring.parse(window.location.search);
+
           // If the Action is loading the documents, also update the manifest
           if (action.type === loadDocuments.fulfilled.toString()) {
             state.manifestVbmsFetchedAt = action.payload.manifestVbmsFetchedAt;
             state.manifestVvaFetchedAt = action.payload.manifestVvaFetchedAt;
+
+            if (query['?category'] && documentCategories[query['?category']]) {
+              filterCriteria.category[query['?category']] = true;
+            }
           }
 
           // Set the Documents
           const documents = action.payload.documents;
-
-          // Extract the Filter Criteria to process
-          const { filterCriteria } = state;
 
           // Format the search query
           const searchQuery = filterCriteria.searchQuery.toLowerCase();

@@ -74,6 +74,15 @@ Capybara::Screenshot.register_driver(:sniffybara_headless) do |driver, path|
   driver.browser.save_screenshot(path)
 end
 
+Capybara.register_driver :logging_selenium_chrome do |app|
+  caps = Selenium::WebDriver::Remote::Capabilities.chrome(loggingPrefs: { browser: "ALL" })
+  browser_options = ::Selenium::WebDriver::Chrome::Options.new
+  # browser_options.args << '--some_option' # add whatever browser args and other options you need (--headless, etc)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: browser_options, desired_capabilities: caps)
+end
+
+Capybara.javascript_driver = :logging_selenium_chrome
+
 Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5

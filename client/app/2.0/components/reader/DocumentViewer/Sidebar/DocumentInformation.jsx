@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
@@ -40,7 +41,7 @@ export const DocumentInformation = ({
       errorMessage={error?.visible ? error.message : null}
     />
     <p className="cf-pdf-meta-title">
-      <strong>Receipt Date:</strong> {formatDateStr(currentDocument.receivedAt)}
+      <strong>Receipt Date:</strong> {formatDateStr(currentDocument?.received_at)}
     </p>
     <hr />
     {isEmpty(appeal) ? <LoadingMessage message="Loading details..." /> : (
@@ -80,3 +81,4 @@ DocumentInformation.propTypes = {
   appeal: PropTypes.object,
   currentDocument: PropTypes.object,
 };
+/* eslint-enable camelcase */
