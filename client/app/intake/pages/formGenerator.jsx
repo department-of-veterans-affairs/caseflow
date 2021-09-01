@@ -52,6 +52,16 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 }));
 
 const formFieldMapping = (props) => {
+  const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
+  const renderVaGovValue = () => {
+    // eslint-disable-next-line no-undefined
+    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
+      return 'false';
+    }
+
+    return props.filedByVaGov !== null && props.filedByVaGov.toString();
+  };
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type':
@@ -114,7 +124,7 @@ const formFieldMapping = (props) => {
       value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
     />,
-    'filed-by-va-gov': (props.formName === FORM_TYPES.APPEAL.formName || props.featureToggles.filedByVaGovHlr) &&
+    'filed-by-va-gov': (isAppeal || props.featureToggles.filedByVaGovHlr) &&
     <RadioField
       name="filed-by-va-gov"
       label={<span><b>Was this form submitted through VA.gov? </b>
@@ -125,9 +135,7 @@ const formFieldMapping = (props) => {
         props.setFiledByVaGov(convertStringToBoolean(value));
       }}
       errorMessage={props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.filedByVaGov === null || props.filedByVaGov === undefined ?
-        'false' : props.filedByVaGov.toString()}
+      value={renderVaGovValue()}
       inputRef={props.register}
     />,
     'opt-in-election': <Fragment>

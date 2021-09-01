@@ -10,7 +10,7 @@ const higherLevelReviewFormHeader = (veteranName) => (
 
 const reviewHigherLevelReviewSchema = (yup.object().shape({
   ...receiptDateInputValidation(true),
-  'filed-by-va-gov': yup.string(),
+  'filed-by-va-gov': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'informal-conference': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank),
