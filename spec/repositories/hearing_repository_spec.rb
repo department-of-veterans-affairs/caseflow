@@ -350,6 +350,7 @@ describe HearingRepository, :all_dbs do
           end
 
           it "does not return event" do
+            expect(subject.length).to eq(4)
             expect(subject.pluck(:id)).not_to include(sent_event_with_sent_status.id)
           end
         end
@@ -361,6 +362,7 @@ describe HearingRepository, :all_dbs do
           end
 
           it "does not return event" do
+            expect(subject.length).to eq(4)
             expect(subject.pluck(:id)).not_to include(sent_event_judge.id)
           end
         end
