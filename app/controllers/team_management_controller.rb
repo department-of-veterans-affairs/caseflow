@@ -24,8 +24,6 @@ class TeamManagementController < ApplicationController
   end
 
   def create_judge_team
-    # fail_on_duplicate_participant_id
-
     user = User.find(params[:user_id])
 
     fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
@@ -38,8 +36,6 @@ class TeamManagementController < ApplicationController
   end
 
   def create_dvc_team
-    fail_on_duplicate_participant_id
-
     user = User.find(params[:user_id])
 
     fail(Caseflow::Error::DuplicateDvcTeam, user_id: user.id) if DvcTeam.for_dvc(user)
@@ -52,7 +48,7 @@ class TeamManagementController < ApplicationController
   end
 
   def create_private_bar
-    # fail_on_duplicate_participant_id
+    fail_on_duplicate_participant_id
 
     org = PrivateBar.create!(update_params)
 
