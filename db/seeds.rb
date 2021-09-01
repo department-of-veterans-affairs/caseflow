@@ -45,6 +45,7 @@ class SeedDB
     call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::MTV
+    call_and_log_seed_step Seeds::VeteransHealthAdministration
   end
 end
 

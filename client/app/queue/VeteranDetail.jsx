@@ -36,8 +36,14 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
     value: fullName
   }];
 
-  const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
-    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
+  /* eslint-disable id-length */
+  const genderValueFor = {
+    F: COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE,
+    M: COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE,
+  };
+  /* eslint-enable id-length */
+
+  const genderValue = genderValueFor[gender];
 
   if (genderValue) {
     details.push({

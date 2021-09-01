@@ -5,14 +5,21 @@ module AppealConcern
 
   delegate :station_key, to: :regional_office
 
+  included do
+    if ancestors.include?(ApplicationRecord)
+      has_many :attorney_case_reviews, as: :appeal
+      has_many :judge_case_reviews, as: :appeal
+    end
+  end
+
   def regional_office
     return nil if regional_office_key.nil?
 
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
+                           RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
-                          end
+                         end
   end
 
   def regional_office_name
@@ -58,6 +65,12 @@ module AppealConcern
       name = "#{appellant_last_name}, #{appellant_first_name}"
       "#{name} #{appellant_middle_initial}." if appellant_middle_initial
     end
+  end
+
+  def appellant_or_veteran_name
+    return appellant_fullname_readable if appellant_is_not_veteran
+
+    veteran_full_name
   end
 
   def appellant_tz

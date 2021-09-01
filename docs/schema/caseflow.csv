@@ -58,6 +58,7 @@ appeals,establishment_error,string,,,,,,The error message if attempting to estab
 appeals,establishment_last_submitted_at,datetime,,,,,,Timestamp for when the the job is eligible to run (can be reset to restart the job).
 appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establishment has succeeded in processing.
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
+appeals,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
 appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
@@ -103,6 +104,8 @@ appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new ap
 appellant_substitutions,task_params,jsonb ∗,x,,,,,"JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
 appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
+attorney_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
+attorney_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
 attorney_case_reviews,document_id,string ∗,x,,,,,
@@ -111,7 +114,7 @@ attorney_case_reviews,id,integer PK,x,x,,,,
 attorney_case_reviews,note,text,,,,,,
 attorney_case_reviews,overtime,boolean,,,,,,
 attorney_case_reviews,reviewing_judge_id,integer FK,,,x,,,
-attorney_case_reviews,task_id,string ∗ FK,x,,x,,x,
+attorney_case_reviews,task_id,string ∗ FK,x,,x,,x,"Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
 attorney_case_reviews,untimely_evidence,boolean,,,,,,
 attorney_case_reviews,updated_at,datetime ∗,x,,,,x,
 attorney_case_reviews,work_product,string ∗,x,,,,,
@@ -193,6 +196,8 @@ cached_user_attributes,sattyid,string,,,,,,
 cached_user_attributes,sdomainid,string PK,x,x,,,x,
 cached_user_attributes,slogid,string ∗,x,,,,,
 cached_user_attributes,smemgrp,string (8),,,,,,
+cached_user_attributes,snamef,string,,,,,,User's First Name in VACOLS
+cached_user_attributes,snamel,string,,,,,,User's Last Name in VACOLS
 cached_user_attributes,stafkey,string ∗,x,,,,,
 cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
@@ -279,8 +284,8 @@ claim_establishments,task_id,integer FK,,,x,,,
 claim_establishments,updated_at,datetime ∗,x,,,,x,
 claimants,,,,,,,,This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews.
 claimants,created_at,datetime,,,,,,
-claimants,decision_review_id,integer (8) FK,,,x,,x,The ID of the decision review the claimant is on.
-claimants,decision_review_type,string,,,,,x,The type of decision review the claimant is on.
+claimants,decision_review_id,integer (8) ∗ FK,x,,x,,x,The ID of the decision review the claimant is on.
+claimants,decision_review_type,string ∗,x,,,,x,The type of decision review the claimant is on.
 claimants,id,integer (8) PK,x,x,,,,
 claimants,notes,text,,,,,,This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant.
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
@@ -298,19 +303,19 @@ claims_folder_searches,user_id,integer FK,,,x,,x,
 decision_documents,,,,,,,,
 decision_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
 decision_documents,appeal_type,string,,,,,,
-decision_documents,attempted_at,datetime,,,,,,
+decision_documents,attempted_at,datetime,,,,,,When the job ran
 decision_documents,canceled_at,datetime,,,,,,Timestamp when job was abandoned
-decision_documents,citation_number,string ∗,x,,,,x,
+decision_documents,citation_number,string ∗,x,,,,x,Unique identifier for decision document
 decision_documents,created_at,datetime ∗,x,,,,,
 decision_documents,decision_date,date ∗,x,,,,,
-decision_documents,error,string,,,,,,
+decision_documents,error,string,,,,,,Message captured from a failed attempt
 decision_documents,id,integer (8) PK,x,x,,,,
-decision_documents,last_submitted_at,datetime,,,,,,
-decision_documents,processed_at,datetime,,,,,,
+decision_documents,last_submitted_at,datetime,,,,,,When the job is eligible to run (can be reset to restart the job)
+decision_documents,processed_at,datetime,,,,,,When the job has concluded
 decision_documents,redacted_document_location,string ∗,x,,,,,
-decision_documents,submitted_at,datetime,,,,,,
+decision_documents,submitted_at,datetime,,,,,,When the job first became eligible to run
 decision_documents,updated_at,datetime ∗,x,,,,x,
-decision_documents,uploaded_to_vbms_at,datetime,,,,,,
+decision_documents,uploaded_to_vbms_at,datetime,,,,,,When document was successfully uploaded to VBMS
 decision_issues,,,,,,,,Issues that represent a decision made on a decision review.
 decision_issues,benefit_type,string,,,,,,"Classification of the benefit being decided on. Maps 1 to 1 to VA lines of business, and typically used to know which line of business the decision correlates to."
 decision_issues,caseflow_decision_date,date,,,,,,"This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
@@ -589,6 +594,16 @@ hearing_days,scheduled_for,date ∗,x,,,,,The date when all associated hearing
 hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this day
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
+hearing_email_recipients,,,,,,,,Recipients of hearings-related emails
+hearing_email_recipients,created_at,datetime ∗,x,,,,,
+hearing_email_recipients,email_address,string ∗,x,,,,,PII. The recipient's email address
+hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates if a notification email was sent to the recipient.
+hearing_email_recipients,hearing_id,integer (8) FK,,,x,,x,Associated hearing
+hearing_email_recipients,hearing_type,string,,,,,x,
+hearing_email_recipients,id,integer (8) PK,x,x,,,,
+hearing_email_recipients,timezone,string (50),,,,,,The recipient's timezone
+hearing_email_recipients,type,string,,,,,,The subclass name (i.e. AppellantHearingEmailRecipient)
+hearing_email_recipients,updated_at,datetime ∗,x,,,,,
 hearing_issue_notes,,,,,,,,
 hearing_issue_notes,allow,boolean,,,,,,
 hearing_issue_notes,created_at,datetime,,,,,,
@@ -639,6 +654,7 @@ higher_level_reviews,establishment_error,string,,,,,,The error captured for the 
 higher_level_reviews,establishment_last_submitted_at,datetime,,,,,,Timestamp for the latest attempt at establishing the End Products for the Decision Review.
 higher_level_reviews,establishment_processed_at,datetime,,,,,,Timestamp for when the End Product Establishments for the Decision Review successfully finished processing.
 higher_level_reviews,establishment_submitted_at,datetime,,,,,,Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.
+higher_level_reviews,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 higher_level_reviews,id,integer (8) PK,x,x,,,,
 higher_level_reviews,informal_conference,boolean,,,,,,Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS.
 higher_level_reviews,legacy_opt_in_approved,boolean,,,,,,"Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
@@ -682,6 +698,8 @@ job_notes,send_to_intake_user,boolean,,,,,,Should the note trigger a message to 
 job_notes,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at
 job_notes,user_id,integer (8) ∗ FK,x,,x,,x,The user who created the note
 judge_case_reviews,,,,,,,,
+judge_case_reviews,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this case review is associated with
+judge_case_reviews,appeal_type,string,,,,,x,The type of appeal this case review is associated with
 judge_case_reviews,areas_for_improvement,text,,,,,,
 judge_case_reviews,attorney_id,integer FK,,,x,,,
 judge_case_reviews,comment,text,,,,,,
@@ -694,7 +712,7 @@ judge_case_reviews,location,string ∗,x,,,,,
 judge_case_reviews,one_touch_initiative,boolean,,,,,,
 judge_case_reviews,positive_feedback,text,,,,,,
 judge_case_reviews,quality,string ∗,x,,,,,
-judge_case_reviews,task_id,string ∗ FK,x,,x,,,
+judge_case_reviews,task_id,string ∗ FK,x,,x,,,"Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
@@ -799,6 +817,8 @@ non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
+organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
+organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get AMA appeals when requesting more cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
@@ -981,14 +1001,23 @@ schedule_periods,start_date,date ∗,x,,,,,
 schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
+sent_hearing_admin_email_events,,,,,,,,
+sent_hearing_admin_email_events,created_at,datetime ∗,x,,,,,
+sent_hearing_admin_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email.
+sent_hearing_admin_email_events,id,integer (8) PK,x,x,,,,
+sent_hearing_admin_email_events,sent_hearing_email_event_id,integer (8) FK,,,x,,x,Associated sent hearing email event.
+sent_hearing_admin_email_events,updated_at,datetime ∗,x,,,,,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
 sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
+sent_hearing_email_events,email_recipient_id,integer (8) FK,,,x,,,Associated HearingEmailRecipient
 sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
 sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
 sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
 sent_hearing_email_events,hearing_type,string ∗,x,,,,x,'Hearing' or 'LegacyHearing'
 sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
+sent_hearing_email_events,send_successful,boolean,,,,,,This column keeps track of whether the email was sent or not
+sent_hearing_email_events,send_successful_checked_at,datetime,,,,,,The date the status was last checked/updated in the GovDelivery API
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
@@ -1038,6 +1067,7 @@ supplemental_claims,establishment_error,string,,,,,,The error captured for the m
 supplemental_claims,establishment_last_submitted_at,datetime,,,,,,Timestamp for the latest attempt at establishing the End Products for the Decision Review.
 supplemental_claims,establishment_processed_at,datetime,,,,,,Timestamp for when the End Product Establishments for the Decision Review successfully finished processing.
 supplemental_claims,establishment_submitted_at,datetime,,,,,,Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.
+supplemental_claims,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
 supplemental_claims,id,integer (8) PK,x,x,,,,
 supplemental_claims,legacy_opt_in_approved,boolean,,,,,,"Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
 supplemental_claims,receipt_date,date ∗,x,,,,,The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews.
@@ -1183,7 +1213,7 @@ veterans,updated_at,datetime,,,,,x,
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
-virtual_hearings,appellant_email,string ∗,x,,,,,Appellant's email address
+virtual_hearings,appellant_email,string,,,,,,Appellant's email address
 virtual_hearings,appellant_email_sent,boolean ∗,x,,,,,Determines whether or not a notification email was sent to the appellant
 virtual_hearings,appellant_reminder_sent_at,datetime,,,,,,The datetime the last reminder email was sent to the appellant.
 virtual_hearings,appellant_tz,string (50),,,,,,Stores appellant timezone

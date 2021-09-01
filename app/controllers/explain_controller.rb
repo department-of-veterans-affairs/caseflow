@@ -7,9 +7,10 @@
 class ExplainController < ApplicationController
   include ExplainAppealEventsConcern
   include ExplainTimelineConcern
+  include ExplainNetworkConcern
 
   def show
-    return render_access_error unless current_user.admin?
+    return render_access_error unless access_allowed?
 
     no_cache
 
@@ -27,12 +28,20 @@ class ExplainController < ApplicationController
 
   private
 
-  helper_method :legacy_appeal?, :appeal, :appeal_status,
-                :show_pii_query_param, :fields_query_param, :treee_fields,
+  def access_allowed?
+    current_user.admin? ||
+      BoardProductOwners.singleton.user_has_access?(current_user) ||
+      CaseflowSupport.singleton.user_has_access?(current_user)
+  end
+
+  helper_method :legacy_appeal?, :appeal,
+                :show_pii_query_param, :fields_query_param, :sections_query_param,
+                :treee_fields, :enabled_sections,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
                 :timeline_data,
+                :network_graph_data,
                 :sje
 
   def appeal_object_id
@@ -46,7 +55,8 @@ class ExplainController < ApplicationController
       intake_as_text,
       hearing_as_text,
       JSON.pretty_generate(event_table_data),
-      JSON.pretty_generate(timeline_data)
+      JSON.pretty_generate(timeline_data),
+      JSON.pretty_generate(network_graph_data)
     ].join("\n\n")
   end
 
@@ -124,10 +134,6 @@ class ExplainController < ApplicationController
     @appeal ||= fetch_appeal
   end
 
-  def appeal_status
-    @appeal.status.status unless legacy_appeal?
-  end
-
   def fetch_appeal
     if Appeal::UUID_REGEX.match?(appeal_id)
       Appeal.find_by(uuid: appeal_id)
@@ -146,6 +152,16 @@ class ExplainController < ApplicationController
 
   def fields_query_param
     request.query_parameters["fields"]
+  end
+
+  def sections_query_param
+    request.query_parameters["sections"]
+  end
+
+  def enabled_sections
+    return [] unless sections_query_param
+
+    sections_query_param.split(",").map(&:strip)
   end
 
   def render_access_error

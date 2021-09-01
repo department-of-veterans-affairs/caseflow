@@ -53,7 +53,7 @@ class WorkQueue::AppealSerializer
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
-  attribute(:hearings) { |object| hearings(object) }
+  attribute(:hearings) { |object, params| hearings(object, params) }
 
   attribute :withdrawn, &:withdrawn?
 
@@ -64,6 +64,8 @@ class WorkQueue::AppealSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location
+
+  attribute :distributed_to_a_judge, &:distributed_to_a_judge?
 
   attribute :completed_hearing_on_previous_appeal? do
     false
@@ -88,7 +90,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_suffix do |object|
-    object.claimant.is_a?(OtherClaimant) ? object.claimant&.suffix : nil
+    object.claimant&.suffix
+  end
+
+  attribute :appellant_date_of_birth do |object|
+    object.claimant&.date_of_birth
   end
 
   attribute :appellant_address do |object|
@@ -117,6 +123,10 @@ class WorkQueue::AppealSerializer
 
   attribute :unrecognized_appellant_id do |appeal|
     appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+  end
+
+  attribute :has_poa do |appeal|
+    appeal.claimant&.power_of_attorney
   end
 
   attribute :cavc_remand do |object|

@@ -2,6 +2,7 @@ import { uniq } from 'lodash';
 
 import {
   automatedTasks,
+  nonAutomatedTasksToHide,
   calculateEvidenceSubmissionEndDate,
   filterTasks,
   prepTaskDataForUi,
@@ -9,10 +10,12 @@ import {
   shouldDisable,
   shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks,
-} from 'app/queue/substituteAppellant/tasks/utils';
+  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
+  hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { isSameDay } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 describe('utility functions for task manipulation', () => {
   const nonDistributionTaskTypes = [
@@ -74,6 +77,52 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
+  describe('shouldDisableBasedOnTaskType', () => {
+    describe('when a ScheduleVeteranTask is selected', () => {
+      const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
+
+      const shouldDisables = [
+        'EvidenceSubmissionWindowTask',
+        'TranscriptionTask'
+      ];
+
+      const shouldNotDisables = [
+        'ScheduleHearingTask',
+        'ExampleTask'
+      ];
+
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+  });
+
+  describe('disabledTasksBasedOnSelections', () => {
+    const tasks = [
+      { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
+      { taskId: 2, type: 'ScheduleHearingTask' },
+      { taskId: 3, type: 'TranscriptionTask' }
+    ];
+
+    describe('when EvidenceSubmissionWindowTask is selected', () => {
+      const selectedTaskIds = [1];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
+          ])
+        );
+      });
+    });
+  });
+
   const poa = { ihp_allowed: true };
 
   describe('shouldHideBasedOnPoa', () => {
@@ -120,6 +169,30 @@ describe('utility functions for task manipulation', () => {
 
     describe('tasks in automatedTasks array', () => {
       it.each(automatedTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in nonAutomatedTasksToHide array', () => {
+      it.each(nonAutomatedTasksToHide)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in mailTasks array', () => {
+      it.each(mailTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, null, [])).toBe(true);
+      });
+    });
+
+    describe('tasks in hearingAdminActions array', () => {
+      it.each(hearingAdminActions)('should hide %s', (type) => {
         const task = { id: 1, type, assignedTo: { isOrganization: false } };
 
         expect(shouldHide(task, null, [])).toBe(true);
@@ -293,7 +366,7 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-04');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-04'))).toBe(true);
   });
 
   it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
@@ -304,6 +377,6 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-23');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-23'))).toBe(true);
   });
 });

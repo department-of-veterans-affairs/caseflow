@@ -3,7 +3,7 @@
 ##
 # SchedulePeriod represents data related to a schedule period for bulk assigning hearing days or assigning judges to
 # those hearing day. The record stores the start and end date, filename and whether or not it was
-# finalized by the user. SchedulePeriod can be a type of `RoSchedulePeriod` or `JudgeSchedulePeriod`.
+# finalized by the user. SchedulePeriod can be a type of `RoSchedulePeriod`
 # A User cannot upload a spreadsheet for a date period if they've already uploaded and confirmed the schedule. If
 # not confirmed, they can re-upload a spreadsheet.
 ##

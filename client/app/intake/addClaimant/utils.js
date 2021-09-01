@@ -3,16 +3,27 @@ import PropTypes from 'prop-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { sub } from 'date-fns';
 import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
+import { DOB_INVALID_ERRS } from 'app/../COPY';
+
+const { AGE_MIN_ERR, AGE_MAX_ERR } = DOB_INVALID_ERRS;
 
 const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
 };
 
+const yearsFromToday = (years) => {
+  return sub(new Date(), { years });
+};
+
 export const schema = yup.object().shape({
-  relationship: yup.string().required(),
+  relationship: yup.string().when(['$hideListedAttorney'], {
+    is: (hideListedAttorney) => !hideListedAttorney,
+    then: yup.string().required(),
+  }),
   partyType: yup.string().when(['listedAttorney', 'relationship'], {
     is: (listedAttorney, relationship) =>
       listedAttorney?.value === 'not_listed' || relationship === 'other',
@@ -26,6 +37,10 @@ export const schema = yup.object().shape({
   middleName: yup.string(),
   lastName: yup.string(),
   suffix: yup.string(),
+  dateOfBirth: yup.date().
+    nullable().
+    max(yearsFromToday(14), AGE_MIN_ERR).
+    min(yearsFromToday(118), AGE_MAX_ERR),
   name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
@@ -57,11 +72,11 @@ export const schema = yup.object().shape({
   emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
   poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
-    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm, 
+    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
     then: yup.string().required(),
   }),
-  listedAttorney: yup.object().when('relationship', {
-    is: 'attorney',
+  listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
+    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
 });
@@ -74,6 +89,7 @@ export const defaultFormValues = {
   middleName: '',
   lastName: '',
   suffix: '',
+  dateOfBirth: null,
   addressLine1: '',
   addressLine2: '',
   addressLine3: '',
@@ -87,13 +103,15 @@ export const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useClaimantForm = ({ defaultValues = defaultFormValues } = {}, hidePOAForm = false) => {
+export const useClaimantForm = ({ defaultValues = {} } = {}, hidePOAForm = false, hideListedAttorney = false) => {
+
   const methods = useForm({
     resolver: yupResolver(schema),
-    context: { hidePOAForm },
+    context: { hidePOAForm, hideListedAttorney },
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues
+    defaultValues: { ...defaultFormValues,
+      ...defaultValues }
   });
 
   return methods;

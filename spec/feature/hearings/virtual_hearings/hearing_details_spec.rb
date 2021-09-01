@@ -302,11 +302,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         end
 
         scenario "displays disabled virtual hearing link when changing emails" do
-          virtual_hearing.update(
-            appellant_email_sent: false,
-            representative_email_sent: false,
-            judge_email_sent: false
-          )
+          virtual_hearing.hearing.appellant_recipient.update!(email_sent: false)
+          virtual_hearing.hearing.representative_recipient.update!(email_sent: false)
+          virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
           visit "hearings/" + hearing.external_id.to_s + "/details"
           hearing.reload
           check_virtual_hearings_links(virtual_hearing, true)
@@ -465,7 +463,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
         expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-        click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+        click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON, wait: 5)
 
         expect(page).to have_content("Representative email does not appear to be a valid e-mail address")
       end
@@ -654,15 +652,78 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     end
   end
 
+  shared_examples "with existing email recipient" do
+    context "with existing appellant email only" do
+      before do
+        hearing.create_or_update_recipients(
+          type: AppellantHearingEmailRecipient,
+          email_address: fill_in_veteran_email
+        )
+      end
+
+      it "preloads the appellant email" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        click_dropdown(name: "hearingType", index: 0)
+        expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+        expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+        expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
+      end
+    end
+
+    context "with existing representative email only" do
+      before do
+        hearing.create_or_update_recipients(
+          type: RepresentativeHearingEmailRecipient,
+          email_address: fill_in_rep_email
+        )
+      end
+
+      it "preloads the representative email" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        click_dropdown(name: "hearingType", index: 0)
+        expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+        expect(page).to have_field("Veteran Email", with: pre_loaded_veteran_email)
+        expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      end
+    end
+
+    context "with existing representative and appellant emails" do
+      before do
+        hearing.create_or_update_recipients(
+          type: RepresentativeHearingEmailRecipient,
+          email_address: fill_in_rep_email
+        )
+
+        hearing.create_or_update_recipients(
+          type: AppellantHearingEmailRecipient,
+          email_address: fill_in_veteran_email
+        )
+      end
+
+      it "preloads the representative and appellant emails" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        click_dropdown(name: "hearingType", index: 0)
+        expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+        expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+        expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      end
+    end
+  end
+
   context "Initally a Video hearing" do
     let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
 
     include_examples "shared behaviors"
+    include_examples "with existing email recipient"
   end
 
   context "Initally a Central hearing " do
     let!(:hearing) { create(:hearing, :with_tasks) }
 
     include_examples "shared behaviors"
+    include_examples "with existing email recipient"
   end
 end

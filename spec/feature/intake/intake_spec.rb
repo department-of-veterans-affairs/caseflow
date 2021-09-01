@@ -179,7 +179,6 @@ feature "Intake", :all_dbs do
         safe_click ".cf-submit.usa-button"
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
-
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("You don't have permission to view this Veteran's information")
       end
@@ -632,6 +631,10 @@ feature "Intake", :all_dbs do
           expect(page).to have_current_path("/intake/review_request")
 
           fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+
+          within_fieldset("Was this form submitted through VA.gov?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
 
           within_fieldset("Which review option did the Veteran request?") do
             find("label", text: "Evidence Submission", match: :prefer_exact).click

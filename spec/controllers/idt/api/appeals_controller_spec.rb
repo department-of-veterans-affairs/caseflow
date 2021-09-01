@@ -193,6 +193,31 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           )
         end
 
+        def create_legacy_appeal_with_id(id)
+          vacols_case = create(:case,
+                               :status_active,
+                               :assigned,
+                               user: user,
+                               assigner: assigner2,
+                               document_id: "9876",
+                               bfdloout: 5.days.ago.to_date)
+          create(:legacy_appeal, id: id, vacols_case: vacols_case)
+        end
+        let!(:legacy_case_review1) do
+          # Find or create a LegacyAppeal with the same record id
+          legacy_appeal = LegacyAppeal.find_by_id(case_review1.appeal_id) ||
+                          create_legacy_appeal_with_id(case_review1.appeal_id)
+          vacols_id = legacy_appeal.vacols_id
+          created_at = VACOLS::Decass.where(defolder: vacols_id).first.deadtim
+          create(
+            :attorney_case_review,
+            created_at: Time.zone.now,
+            updated_at: Time.zone.now,
+            document_id: "17325093.1118",
+            task_id: "#{vacols_id}-#{created_at}"
+          )
+        end
+
         before do
           # cancel one, so it does not show up
           Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
@@ -202,6 +227,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         it "returns a list of active assigned appeals" do
+          # Expect 3 AttorneyCaseReviews with the same appeal_id but different appeal_type
+          # Only 2 of these are relevant to the AMA appeal.
+          # AttorneyCaseReviews affect the "documents" attribute, so only 2 documents are returned.
+          expect(AttorneyCaseReview.count).to eq 3
+          expect(AttorneyCaseReview.pluck(:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
+          expect(AttorneyCaseReview.pluck(:appeal_id).uniq.size).to eq 1
+
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
           get :list
@@ -225,6 +257,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
           expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
           expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
+          # Ensure the first document is the latest one (i.e., the same as the one shown in the Case Details page)
+          decision_doc_id = Appeal.find_by_uuid(ama_appeals.first["id"]).latest_attorney_case_review.document_id
+          expect(ama_appeals.first["attributes"]["documents"].first["document_id"]).to eq decision_doc_id
           expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
             .to eq case_review2.attorney.full_name
           expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
@@ -667,6 +702,26 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         expect(response_detail).to eq error_message
         expect(@raven_user[:css_id]).to eq(user.css_id)
+      end
+    end
+
+    context "when veteran file number doesn't match BGS file number" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { "123123123" }
+      end
+      it "throws an error" do
+        BvaDispatchTask.create_from_root_task(root_task)
+        post :outcode, params: params
+
+        expect(response.status).to eq(500)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        response_title = JSON.parse(response.body)["errors"][0]["title"]
+
+        error_message = "The veteran file number does not match the file number in VBMS"
+        error_title = "VBMS::FilenumberDoesNotExist"
+
+        expect(response_detail).to eq error_message
+        expect(response_title).to eq error_title
       end
     end
   end

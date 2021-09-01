@@ -2,6 +2,11 @@
 
 class JudgeAssignTasksController < TasksController
   def create
+    parent_task = parent_tasks_from_params.first
+    if parent_task.closed?
+      fail Caseflow::Error::ClosedTaskError
+    end
+
     queue_for_role = QueueForRole.new(user_role).create(user: current_user)
     tasks_to_return = (tasks + queue_for_role.tasks).uniq
 

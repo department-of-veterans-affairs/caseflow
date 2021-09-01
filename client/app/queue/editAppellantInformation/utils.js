@@ -2,14 +2,17 @@ import { lowerCase } from 'lodash';
 
 // Used to map form data from the form to the shape expected by the API
 export const mapAppellantDataToApi = (appellant) => {
-  return { unrecognized_appellant: {
+  return {
+    unrecognized_appellant: {
       relationship: appellant.relationship,
       unrecognized_party_detail: {
-        party_type: appellant.partyType,
-        name: appellant.partyType == "organization" ? appellant.name : appellant.firstName,
-        middle_name: appellant.middleName,
-        last_name: appellant.lastName,
+        party_type: (appellant.relationship === 'other' ||
+        appellant.relationship === 'attorney') ? appellant.partyType : 'individual',
+        name: appellant.partyType === 'organization' ? appellant.name : appellant.firstName,
+        middle_name: appellant.middleName || '',
+        last_name: appellant.lastName || '',
         suffix: appellant.suffix,
+        date_of_birth: appellant.dateOfBirth,
         address_line_1: appellant.addressLine1,
         address_line_2: appellant.addressLine2,
         address_line_3: appellant.addressLine3,
@@ -22,7 +25,7 @@ export const mapAppellantDataToApi = (appellant) => {
       }
     }
   };
-}
+};
 
 export const mapAppellantDataFromApi = (appeal) => {
   return {
@@ -33,6 +36,7 @@ export const mapAppellantDataFromApi = (appeal) => {
     middleName: appeal.appellantMiddleName,
     lastName: appeal.appellantLastName,
     suffix: appeal.appellantSuffix,
+    dateOfBirth: appeal.appellantDateOfBirth,
     addressLine1: appeal.appellantAddress.address_line_1,
     addressLine2: appeal.appellantAddress.address_line_2,
     addressLine3: appeal.appellantAddress.address_line_3,
@@ -41,6 +45,9 @@ export const mapAppellantDataFromApi = (appeal) => {
     zip: appeal.appellantAddress.zip,
     country: appeal.appellantAddress.country,
     phoneNumber: appeal.appellantPhoneNumber,
-    emailAddress: appeal.appellantEmailAddress
+    emailAddress: appeal.appellantEmailAddress,
+    listedAttorney: {
+      value: 'not_listed'
+    }
   };
 };

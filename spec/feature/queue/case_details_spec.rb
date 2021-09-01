@@ -192,6 +192,7 @@ RSpec.feature "Case details", :all_dbs do
 
   context "attorney case details view" do
     context "when Veteran is the appellant" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -200,7 +201,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -233,6 +234,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "when veteran is not in BGS" do
+      let(:veteran) { create(:veteran, sex: "F") }
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -241,7 +243,7 @@ RSpec.feature "Case details", :all_dbs do
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            bfcorlid: veteran.file_number
           )
         )
       end
@@ -256,10 +258,14 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(page).to have_content("About the Veteran")
         expect(page.has_no_content?("About the Appellant")).to eq(true)
-        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/1/1990")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to_not have_content("Regional Office")
+
+        # Veteran gender information comes from BGS so case details page will display no gender information when the
+        # Veteran is not in BGS.
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_MALE)
       end
     end
 
@@ -638,8 +644,7 @@ RSpec.feature "Case details", :all_dbs do
           vacols_case: create(
             :case,
             :assigned,
-            user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F")
+            user: attorney_user
           )
         )
       end
@@ -1214,7 +1219,6 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
       let!(:attorney_task) { create(:ama_attorney_task, parent: judge_task, assigned_to: user) }
-      let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
         FeatureToggle.enable!(:view_nod_date_updates)
@@ -1222,7 +1226,6 @@ RSpec.feature "Case details", :all_dbs do
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
         nod_date_update.update!(updated_at: "2019-01-05")
       end
@@ -1241,11 +1244,9 @@ RSpec.feature "Case details", :all_dbs do
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
-        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
-        expect(second_row_with_date).to have_content("03/01/2019")
-        expect(third_row_with_date).to have_content("02/01/2019")
-        expect(fourth_row_with_date).to have_content("01/05/2019")
+        expect(second_row_with_date).to have_content("02/01/2019")
+        expect(third_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
@@ -2136,6 +2137,19 @@ RSpec.feature "Case details", :all_dbs do
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+    let(:veteran) { create(:veteran) }
+    let(:higher_level_review) do
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+
+    let(:supplemental_claim) do
+      create(:supplemental_claim,
+             :with_end_product_establishment,
+             veteran_file_number: veteran.file_number)
+    end
+    let(:user) { create(:intake_user) }
 
     context "when the current user does not have high enough BGS sensitivity level" do
       before do
@@ -2198,6 +2212,30 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
             expect(page).to have_current_path(case_details_page_path)
           end
+        end
+      end
+    end
+
+    context "when the current user does not have sensitivity level for Veteran file" do
+      before do
+        User.authenticate!(user: user)
+        Fakes::BGSService.mark_veteran_not_accessible(higher_level_review.veteran_file_number)
+        Fakes::BGSService.mark_veteran_not_accessible(supplemental_claim.veteran_file_number)
+      end
+
+      context "when case is higher level review" do
+        it "renders 403 error page" do
+          visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
+        end
+      end
+
+      context "when case is supplemental claim" do
+        it "renders 403 error page" do
+          visit "/supplemental_claims/#{supplemental_claim.uuid}/edit"
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_TITLE)
+          expect(page).to have_content(COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL)
         end
       end
     end

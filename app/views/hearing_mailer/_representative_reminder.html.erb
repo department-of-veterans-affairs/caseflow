@@ -13,13 +13,11 @@
     <% end %>
   </p>
 
-  <% if @virtual_hearing.nil? %>
-    <h3><%= @hearing&.appeal&.appellant_name %></h3>
-    <p>
-      <a href="<%= caseflow_url(@hearing&.appeal) %>">View the case details</a>
-      (Note: You must be logged into the VA network to access case details.)
-    </p>
-  <% end %>
+  <h3><%= @hearing.appeal.appellant_or_veteran_name %></h3>
+  <p>
+    <a href="<%= caseflow_url(@hearing&.appeal) %>">View the case details</a>
+    (Note: You must be logged into the VA network to access case details.)
+  </p>
 <% end %>
 
 <%= content_for :date_time do %>

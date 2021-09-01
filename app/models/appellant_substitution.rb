@@ -7,6 +7,10 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
+  }
+
   validates :created_by, :source_appeal, :substitution_date,
             :claimant_type, # Claimant record type for the substitute
             :substitute_participant_id,
@@ -36,7 +40,11 @@ class AppellantSubstitution < CaseflowRecord
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
-      type: claimant_type
+      type: claimant_type,
+      # Setting the values here to 0 and '' because of the non-null constraint in the schema for claimant records.
+      # This will be corrected when `create_stream` is called.
+      decision_review_id: 0,
+      decision_review_type: ""
     )
 
     # To-do: Implement this and the DB schema once we understand the requirements for selecting a
@@ -73,8 +81,6 @@ class AppellantSubstitution < CaseflowRecord
       # It may be better to copy specific attributes, than duplicate everything.
       request_issue.dup.tap do |request_issue_copy|
         request_issue_copy.decision_review = target_appeal
-        # Do not copy decisions for new appeal
-        request_issue_copy.decision_date = nil
         request_issue_copy.save!
       end
     end

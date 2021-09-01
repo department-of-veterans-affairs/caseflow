@@ -119,19 +119,21 @@ module IntakeHelpers
     receipt_date: 1.day.ago,
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
-    no_claimant: false
+    no_claimant: false,
+    intake_user: User.authenticate!(roles: ["Mail Intake"])
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: claim_participant_id.present?
+      veteran_is_not_claimant: claim_participant_id.present?,
+      filed_by_va_gov: false
     )
 
     intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
-      user: User.authenticate!(roles: ["Mail Intake"]),
+      user: intake_user,
       started_at: 5.minutes.ago,
       detail: appeal
     )
@@ -166,6 +168,12 @@ module IntakeHelpers
         veteran,
         claim_participant_id: claim_participant_id,
         benefit_type: benefit_type,
+        no_claimant: no_claimant
+      )
+    elsif claim_review_type == :board_appeal
+      start_appeal(
+        veteran,
+        claim_participant_id: claim_participant_id,
         no_claimant: no_claimant
       )
     else
@@ -275,6 +283,33 @@ module IntakeHelpers
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
+    expect(page).to have_button(add_button_text, disabled: false)
+    safe_click ".add-issue"
+  end
+
+  def add_intake_vha_issue(
+    benefit_type: "Veterans Health Administration",
+    category: "Caregiver",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false
+  )
+    add_button_text = legacy_issues ? "Next" : "Add this issue"
+    expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
+    expect(page).to have_button(add_button_text, disabled: true)
+
+    # has_css will wait 5 seconds by default, and we want an instant decision.
+    # we can trust the modal is rendered because of the expect() calls above.
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+
+    fill_in "Issue category", with: category
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: description
+    find("#decision-date").set(date.strftime("%m/%d/%Y"))
+    safe_click "#decision-date"
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
