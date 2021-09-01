@@ -142,7 +142,8 @@ describe ExternalApi::GovDeliveryService do
   context "get message" do
     let(:message_subject) { "This is the message subject" }
     let(:body) do
-      "\u003c!DOCTYPE html\u003e\n\u003chtml\u003e\n This is the message body  <br\>Sincerly Yours \u003c/html\u003e"
+      "\u003c!DOCTYPE html\u003e\n\u003chtml\u003e\n This is the message body  " \
+      "\u003cbr\u003eSincerly Yours \u003c/html\u003e"
     end
     let(:sanitized_body) { " This is the message body\nSincerly Yours " }
     let(:response_body) { { "subject" => message_subject, "body" => body }.to_json }
