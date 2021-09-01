@@ -118,7 +118,8 @@ class InitialTasksFactory
       source_task.copy_with_ancestors_to_stream(
         @appeal,
         new_attributes: { end_date: evidence_submission_hold_end_date },
-        extra_excluded_attributes: excluded_attrs
+        extra_excluded_attributes: excluded_attrs,
+        skip_validation: false
       )
     else
       EvidenceSubmissionWindowTask.create!(

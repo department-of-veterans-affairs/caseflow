@@ -607,7 +607,12 @@ class Task < CaseflowRecord
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
 
   # This method is for copying a task and its ancestors to a new appeal stream
-  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [], new_attributes: {})
+  def copy_with_ancestors_to_stream(
+    new_appeal_stream,
+    extra_excluded_attributes: [],
+    new_attributes: {},
+    skip_validation: true
+  )
     return unless parent
 
     new_task_attributes = attributes
@@ -624,12 +629,16 @@ class Task < CaseflowRecord
 
     new_task_attributes["parent_id"] = new_parent.id
 
-    # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
-    new_stream_task = self.class.new(new_task_attributes)
-    # Note that if we also want to skip 'before_create', 'after_create', 'before_save', and 'after_save' callbacks
-    # (such as in TimedHoldTask) or even things like 'validate :status_is_valid_on_create on: :create',
-    # see SanitizedJsonImporter::SkipCallbacks for a possible solution.
-    new_stream_task.save(validate: false)
+    if skip_validation
+      # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+      new_stream_task = self.class.new(new_task_attributes)
+      # Note that if we also want to skip 'before_create', 'after_create', 'before_save', and 'after_save' callbacks
+      # (such as in TimedHoldTask) or even things like 'validate :status_is_valid_on_create on: :create',
+      # see SanitizedJsonImporter::SkipCallbacks for a possible solution.
+      new_stream_task.save(validate: false)
+    else
+      new_stream_task = self.class.create!(new_task_attributes)
+    end
 
     new_stream_task
   end
