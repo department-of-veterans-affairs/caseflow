@@ -115,10 +115,10 @@ class HearingRepository
                                                  legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
           set_vacols_values(hearing, vacols_record)
         rescue RegionalOffice::NotFoundError => error
-          Raven.capture_exception(error, extra: { legacy_hearing_vacols_id: vacols_record.hearing_pkseq })
+          Raven.capture_exception(error: error)
           next
         end
-      end.flatten.compact
+      end.flatten
     end
     # :nocov:
 
