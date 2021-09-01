@@ -54,6 +54,8 @@ class WorkQueue::AppealSerializer
   end
 
   attribute(:hearings) do |object, params|
+    # For substitution appeals after death dismissal, we need to show hearings from the source appeal 
+    # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
     associated_hearings = []
     if object.appellant_substitution && object.id != object.appellant_substitution.source_appeal.id
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
