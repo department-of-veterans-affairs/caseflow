@@ -504,11 +504,12 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
-    @latest_attorney_case_review ||= appeal.is_a?(Appeal) ?
-      appeal.latest_attorney_case_review : latest_attorney_case_review_for_legacy_appeal
+    @latest_attorney_case_review ||= appeal.latest_attorney_case_review if appeal.is_a?(Appeal)
+    @latest_attorney_case_review ||= latest_attorney_case_review_for_legacy_appeal if appeal.is_a?(LegacyAppeal)
   end
 
   def latest_attorney_case_review_for_legacy_appeal
+    # Retrieve AttorneyCaseReview via tasks because LegacyAppeal#attorney_case_reviews queries VACOLS
     AttorneyCaseReview.where(task_id: appeal.tasks.pluck(:id)).order(:created_at).last
   end
 
