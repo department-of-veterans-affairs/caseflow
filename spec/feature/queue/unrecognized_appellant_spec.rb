@@ -137,8 +137,14 @@ feature "Unrecognized appellants", :postgres do
   end
 
   context "with attorney unrecognized appellant poa" do
-    before { FeatureToggle.enable!(:edit_unrecognized_appellant_poa) }
-    after { FeatureToggle.disable!(:edit_unrecognized_appellant_poa) }
+    before do
+      FeatureToggle.enable!(:edit_unrecognized_appellant_poa)
+      FeatureToggle.enable!(:poa_button_refresh)
+    end
+    after do
+      FeatureToggle.disable!(:edit_unrecognized_appellant_poa)
+      FeatureToggle.disable!(:poa_button_refresh)
+    end
 
     it "should not show the edit information button if there's a POA already" do
       visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
