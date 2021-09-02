@@ -48,8 +48,6 @@ const config = {
       store: path.resolve('app/2.0/store'),
       screens: path.resolve('app/2.0/screens'),
       components: path.resolve('app/2.0/components'),
-      utils: path.resolve('app/2.0/utils'),
-      styles: path.resolve('app/2.0/styles'),
       test: path.resolve('test'),
     },
   },
