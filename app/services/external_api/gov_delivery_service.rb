@@ -27,7 +27,7 @@ class ExternalApi::GovDeliveryService
 
     def get_sent_status(external_message_id:)
       # assumes the email has only one recipient
-      get_recipients(external_message_id: external_message_id).first[STATUS_FIELD_NAME]
+      get_recipients(external_message_id: external_message_id).first&.dig(STATUS_FIELD_NAME)
     end
 
     def get_recipients(external_message_id:)
