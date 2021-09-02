@@ -2,13 +2,29 @@
 
 describe Hearings::SendSentStatusEmail do
   describe "call" do
-    let(:sent_hearing_email_event) { create(:sent_hearing_email_event) }
+    let(:original_recipient_email_address) { "test@caseflow.va.gov" }
+    let(:hearing_coordinator_email_address) { "another-test@caseflow.va.gov" }
+    let(:sent_by) { create(:user, email: hearing_coordinator_email_address) }
+    let(:sent_hearing_email_event) do
+      create(
+        :sent_hearing_email_event,
+        email_address: original_recipient_email_address,
+        sent_by: sent_by
+      )
+    end
     let(:sent_hearing_admin_email_event) do
       create(:sent_hearing_admin_email_event, sent_hearing_email_event: sent_hearing_email_event)
     end
     let(:sender) { described_class.new(sent_hearing_admin_email_event: sent_hearing_admin_email_event) }
     let(:external_message_id) { "id/123423423" }
     subject { sender.call }
+
+    it "will send to the hearing coordinator, not the original recipient" do
+      email = HearingEmailStatusMailer.notification(
+        sent_hearing_email_event: sent_hearing_email_event
+      )
+      expect(email.to.first).to eq(sent_by.email)
+    end
 
     it "sends a notification email" do
       # Ensure a call HearingEmailStatusMailer.notification()
@@ -23,7 +39,7 @@ describe Hearings::SendSentStatusEmail do
 
     it "fails to send when there is no email on the event" do
       # Remove the email address
-      sent_hearing_email_event.update(email_address: nil)
+      sent_by.update(email: nil)
       # Expect not to generate an email
       expect(HearingEmailStatusMailer).not_to receive(:notification)
       # Expect we logged the failure to Rails.logger
