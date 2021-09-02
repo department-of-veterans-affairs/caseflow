@@ -118,7 +118,7 @@ class HearingRepository
           Raven.capture_exception(error)
           next
         end
-      end.flatten
+      end.flatten.compact
     end
     # :nocov:
 
