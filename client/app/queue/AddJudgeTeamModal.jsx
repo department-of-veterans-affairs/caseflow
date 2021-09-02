@@ -10,8 +10,9 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { onReceiveNewJudgeTeam } from './teamManagement/actions';
 import {
   requestSave,
-  showErrorMessage
-} from './uiReducer/uiActions';
+  showErrorMessage,
+  resetErrorMessages,
+  resetSuccessMessages } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
 
@@ -23,6 +24,11 @@ class AddJudgeTeamModal extends React.Component {
       nonJudges: [],
       selectedJudge: null
     };
+  }
+
+  componentDidMount() {
+    resetErrorMessages();
+    resetSuccessMessages();
   }
 
   loadingPromise = () => {
@@ -75,7 +81,8 @@ const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveNewJudgeTeam,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages,
 }, dispatch);
 
 AddJudgeTeamModal.propTypes = {
