@@ -16,7 +16,7 @@ import {
 } from './selectors';
 import { pencilSymbol, clockIcon } from '../components/RenderFunctions';
 import { renderLegacyAppealType } from './utils';
-import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
+import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
 import COPY from '../../COPY';
 import CopyTextButton from '../components/CopyTextButton';
@@ -24,7 +24,7 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import Modal from '../components/Modal';
 import ReaderLink from './ReaderLink';
 import TextField from '../components/TextField';
-import { editAppeal, onReceiveAppealDetails } from './QueueActions';
+import { editAppeal } from './QueueActions';
 
 const editButton = css({
   float: 'right',
@@ -254,7 +254,6 @@ CaseTitleDetails.propTypes = {
   history: PropTypes.object,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
-  onReceiveAppealDetails: PropTypes.func,
   editAppeal: PropTypes.func,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
@@ -287,8 +286,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       requestPatch,
-      editAppeal,
-      onReceiveAppealDetails
+      editAppeal
     },
     dispatch
   );

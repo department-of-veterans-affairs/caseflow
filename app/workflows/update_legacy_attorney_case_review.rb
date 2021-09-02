@@ -78,7 +78,6 @@ class UpdateLegacyAttorneyCaseReview
   end
 
   def correct_format
-    # binding.pry
     return unless vacols_case_review
     return if valid_document_id?
 
