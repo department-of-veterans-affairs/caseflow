@@ -99,7 +99,7 @@ jobs:
           # Skipping VACOLS since Oracle DB is not set up
           # make erd-vacols
 
-      # The followin is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
+      # The following is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
       # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
       - name: Checkout wiki code

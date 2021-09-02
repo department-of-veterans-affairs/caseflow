@@ -71,6 +71,7 @@ local/vacols/build_facols/*
 # makefile
 Makefile
 
-# These files are automatically updated and push to the wiki by GitHub Action 'make-docs'
+# These files are automatically updated and pushed to the wiki by GitHub Action 'make-docs'
 docs/schema/*
 !docs/schema/.keep
+
