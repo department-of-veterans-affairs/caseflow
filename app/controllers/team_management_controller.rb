@@ -73,7 +73,9 @@ class TeamManagementController < ApplicationController
   private
 
   def update_params
-    params.require(:organization).permit(:name, :participant_id, :url, :accepts_priority_pushed_cases)
+    params.require(:organization).permit(
+      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request
+    )
   end
 
   def judge_teams
