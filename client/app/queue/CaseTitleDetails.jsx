@@ -24,7 +24,7 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import Modal from '../components/Modal';
 import ReaderLink from './ReaderLink';
 import TextField from '../components/TextField';
-import { onReceiveAppealDetails } from './QueueActions';
+import { editAppeal, onReceiveAppealDetails } from './QueueActions';
 
 const editButton = css({
   float: 'right',
@@ -83,19 +83,14 @@ export class CaseTitleDetails extends React.PureComponent {
       }
     };
 
-    // debugger;
-
     return this.props.
       requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
-      then((resp) => {
-        // console.log(this.props);
-        // this.props.onReceiveAppealDetails(resp.appeal);
+      then(() => {
+        this.props.editAppeal(this.props.appeal.externalId, { documentID: this.state.value });
 
         this.handleModalClose();
-        // window.location.reload();
       }).
       catch((error) => {
-        // console.log(error);
         const documentIdErrors = JSON.parse(error.message).errors;
 
         const documentIdErrorText = documentIdErrors && documentIdErrors[0].detail;
@@ -188,7 +183,7 @@ export class CaseTitleDetails extends React.PureComponent {
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
               <CopyTextButton
-                text={this.state.value || appeal.documentID}
+                text={appeal.documentID}
                 label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
               />
               {appeal.canEditDocumentId && (
@@ -260,6 +255,7 @@ CaseTitleDetails.propTypes = {
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
   onReceiveAppealDetails: PropTypes.func,
+  editAppeal: PropTypes.func,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
   userCanAccessReader: PropTypes.bool,
@@ -291,6 +287,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       requestPatch,
+      editAppeal,
       onReceiveAppealDetails
     },
     dispatch
