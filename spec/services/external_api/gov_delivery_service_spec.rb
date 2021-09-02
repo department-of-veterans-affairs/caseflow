@@ -51,6 +51,9 @@ describe ExternalApi::GovDeliveryService do
   let(:success_response) do
     HTTPI::Response.new(200, {}, response_body)
   end
+  let(:empty_response) do
+    HTTPI::Response.new(200, {}, [].to_json)
+  end
 
   context "get_recipients" do
     describe "#get_recipients_from_event" do
@@ -135,6 +138,14 @@ describe ExternalApi::GovDeliveryService do
         allow(HTTPI).to receive(:get).and_return(success_response)
 
         expect(subject).to eq event_status_sent
+      end
+
+      context "with an empty response" do
+        it "returns nil" do
+          allow(HTTPI).to receive(:get).and_return(empty_response)
+
+          expect(subject).to be_nil
+        end
       end
     end
   end
