@@ -25,12 +25,4 @@ describe('EditPOAInformation', () => {
 
     expect(container).toMatchSnapshot();
   });
-
-  // it('passes a11y testing', async () => {
-  //   const { container } = setup();
-
-  //   const results = await axe(container);
-
-  //   expect(results).toHaveNoViolations();
-  // });
 });
