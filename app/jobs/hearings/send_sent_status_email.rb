@@ -58,7 +58,7 @@ class Hearings::SendSentStatusEmail
   end
 
   def email_missing?
-    if @sent_hearing_email_event.email_address.blank?
+    if @sent_hearing_email_event.sent_by.email.blank?
       log("email missing")
       return true
     end
