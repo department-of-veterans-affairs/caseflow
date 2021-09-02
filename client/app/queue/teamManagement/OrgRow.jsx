@@ -105,7 +105,7 @@ const orgRowStyling = css({
 //             readOnly={!this.props.isRepresentative}
 //           />
 //         </td>
-//         { this.props.showPriorityPushToggles && <td>
+//         { this.props.showDistributionToggles && <td>
 //           <RadioField
 //             id={`priority-push-${this.props.id}`}
 //             options={priorityPushRadioOptions}
@@ -123,7 +123,7 @@ const orgRowStyling = css({
 //             readOnly={!this.props.isRepresentative}
 //           />
 //         </td> }
-//         { !this.props.isRepresentative && !this.props.showPriorityPushToggles && <td></td> }
+//         { !this.props.isRepresentative && !this.props.showDistributionToggles && <td></td> }
 //         <td>
 //           { this.props.isRepresentative &&
 //             <TextField
@@ -165,6 +165,10 @@ export const OrgRow = React.memo((props) => {
   const [priorityCaseDistribution, setPriorityCaseDistribution] = useState(null); // TODO: add logic for initial state
   const handlePriorityCaseDistribution = ({ value }) => {
     setPriorityCaseDistribution(value);
+  };
+  const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(null); // TODO: add logic for initial state
+  const handleRequestedCaseDistribution = ({ value }) => {
+    setRequestedCaseDistribution(value);
   };
 
   //   changePriorityPush = (judgeTeamId, priorityPush) => {
@@ -212,30 +216,52 @@ export const OrgRow = React.memo((props) => {
     { label: 'Unavailable', value: 'unavailable' }
   ];
 
+  const requestCasesOpts = [
+    { label: 'All cases', value: 'all' },
+    { label: 'AMA cases only', value: 'amaOnly' },
+  ];
+
   // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
   return (
     <tr {...orgRowStyling}>
       <td>
-        <TextField
-          name={`${TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${props.id}`}
-          label={false}
-          useAriaLabel
-          value={name}
-          onChange={setName}
-          readOnly={!props.isRepresentative}
-        />
-      </td>
-      {props.showPriorityPushToggles && (
-        <td>
-          <SearchableDropdown
-            name={`priorityCaseDistribution-${props.id}`}
-            hideLabel
-            options={priorityPushOpts}
-            readOnly={!props.current_user_can_toggle_priority_pushed_cases}
-            value={priorityCaseDistribution}
-            onChange={handlePriorityCaseDistribution}
+        {!props.isRepresentative && (
+          <span>{name || <em>Name not set</em>}</span>
+        )}
+
+        {props.isRepresentative && (
+          <TextField
+            name={`${TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${props.id}`}
+            label={false}
+            useAriaLabel
+            value={name}
+            onChange={setName}
           />
-        </td>
+        )}
+      </td>
+      {props.showDistributionToggles && (
+        <>
+          <td>
+            <SearchableDropdown
+              name={`priorityCaseDistribution-${props.id}`}
+              hideLabel
+              options={priorityPushOpts}
+              readOnly={!props.current_user_can_toggle_priority_pushed_cases}
+              value={priorityCaseDistribution}
+              onChange={handlePriorityCaseDistribution}
+            />
+          </td>
+          <td>
+            <SearchableDropdown
+              name={`requestedDistribution-${props.id}`}
+              hideLabel
+              options={requestCasesOpts}
+              readOnly={!props.current_user_can_toggle_priority_pushed_cases}
+              value={requestedCaseDistribution}
+              onChange={handleRequestedCaseDistribution}
+            />
+          </td>
+        </>
       )}
       {props.isRepresentative && (
         <td>
@@ -249,7 +275,7 @@ export const OrgRow = React.memo((props) => {
           />
         </td>
       )}
-      {!props.isRepresentative && !props.showPriorityPushToggles && (
+      {!props.isRepresentative && !props.showDistributionToggles && (
         <td />
       )}
       <td>
@@ -291,7 +317,7 @@ export const OrgRow = React.memo((props) => {
 
 OrgRow.defaultProps = {
   isRepresentative: false,
-  showPriorityPushToggles: false,
+  showDistributionToggles: false,
 };
 
 OrgRow.propTypes = {
@@ -301,7 +327,7 @@ OrgRow.propTypes = {
   name: PropTypes.string,
   participant_id: PropTypes.number,
   isRepresentative: PropTypes.bool,
-  showPriorityPushToggles: PropTypes.bool,
+  showDistributionToggles: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string,
   editableName: PropTypes.bool,

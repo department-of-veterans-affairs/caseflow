@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
-import { bindActionCreators } from 'redux';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { useHistory, withRouter } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -92,7 +91,7 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={handleAddJudgeTeam} />
               </span>
             </OrgHeader>
-            <OrgList orgs={judgeTeams} showPriorityPushToggles />
+            <OrgList orgs={judgeTeams} showDistributionToggles />
           </OrgSection> }
 
           { vsos && <OrgSection>

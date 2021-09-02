@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import {
   TEAM_MANAGEMENT_NAME_COLUMN_HEADING,
   TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING,
+  TEAM_MANAGEMENT_REQUESTED_DISTRIBUTION_COLUMN_HEADING,
   TEAM_MANAGEMENT_URL_COLUMN_HEADING,
   TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING
 } from 'app/../COPY';
@@ -15,13 +16,16 @@ const labelRowStyling = css({
 });
 
 export const OrgList = React.memo(
-  ({ isRepresentative, orgs, showPriorityPushToggles }) => {
+  ({ isRepresentative, orgs, showDistributionToggles }) => {
     return (
       <React.Fragment>
         <tr {...labelRowStyling}>
           <td>{TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
-          {showPriorityPushToggles && (
-            <td>{TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
+          {showDistributionToggles && (
+            <>
+              <td>{TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
+              <td>{TEAM_MANAGEMENT_REQUESTED_DISTRIBUTION_COLUMN_HEADING}</td>
+            </>
           )}
           {isRepresentative && (
             <td>{TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
@@ -38,7 +42,7 @@ export const OrgList = React.memo(
             {...org}
             key={org.id}
             isRepresentative={isRepresentative}
-            showPriorityPushToggles={showPriorityPushToggles}
+            showDistributionToggles={showDistributionToggles}
           />
         ))}
       </React.Fragment>
@@ -48,11 +52,11 @@ export const OrgList = React.memo(
 
 OrgList.defaultProps = {
   isRepresentative: false,
-  showPriorityPushToggles: false
+  showDistributionToggles: false
 };
 
 OrgList.propTypes = {
   orgs: PropTypes.array,
   isRepresentative: PropTypes.bool,
-  showPriorityPushToggles: PropTypes.bool
+  showDistributionToggles: PropTypes.bool
 };

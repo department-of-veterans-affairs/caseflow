@@ -17,7 +17,7 @@ export default {
   component: OrgRow,
   args: {
     ...judgeTeam,
-    showPriorityPushToggles: false
+    showDistributionToggles: false
   },
 };
 
@@ -33,12 +33,17 @@ export const Default = Template.bind({});
 
 export const JudgeTeam = Template.bind({});
 JudgeTeam.args = {
-  showPriorityPushToggles: true
+  showDistributionToggles: true
 };
 
 export const JudgeTeamUnprivileged = Template.bind({});
 JudgeTeamUnprivileged.args = {
-  showPriorityPushToggles: true,
+  showDistributionToggles: true,
   current_user_can_toggle_priority_pushed_cases: false
 };
 JudgeTeamUnprivileged.storyName = 'Judge Team (w/o Editing Privs)';
+
+export const Vso = Template.bind({});
+Vso.args = {
+  isRepresentative: true
+};
