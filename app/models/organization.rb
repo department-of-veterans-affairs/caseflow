@@ -10,7 +10,7 @@ class Organization < CaseflowRecord
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
-  # validates :participant_id, uniqueness: true
+  validates :participant_id, allow_blank: true, uniqueness: true
 
   before_save :clean_url
 
