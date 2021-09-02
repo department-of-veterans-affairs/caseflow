@@ -1,0 +1,135 @@
+name: Make-docs-to-wiki
+
+# Trigger running when a PR is closed
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  make_docs:
+    name: Update DB schema files in wiki
+    # Only run if the PR has been merged (rather than simply closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_DB: caseflow_certification_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports: ["5432:5432"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Since installing a client to Oracle DB is a pain and setting up the VACOLS DB is not necessary, let's skip it.
+      - name: Remove references to VACOLS Oracle DB
+        run: |
+          sed '/ruby-oci8/d' -i Gemfile
+          sed '/activerecord-oracle_enhanced-adapter/d' -i Gemfile
+
+          # Would like to run `bundle lock --update` to update Gemfile.lock without installing gems (to be done in next step)
+          # but bundler is not installed yet, so manually modify it:
+          sed '/ruby-oci8/d' -i Gemfile.lock
+          sed '/^    activerecord-oracle_enhanced-adapter/,/^    [a-z]/{/^    activerecord-oracle_enhanced-adapter/!{/^    [a-z]/!d}}' -i Gemfile.lock
+          sed '/activerecord-oracle_enhanced-adapter/d' -i Gemfile.lock
+          sed '/ruby-plsql/d' -i Gemfile.lock
+
+          # Remove VACOLS database configuration
+          # https://stackoverflow.com/questions/6287755/using-sed-to-delete-all-lines-between-two-matching-patterns
+          sed '/_vacols:$/,/^$/{/^_vacols:$/!{/^$/!d}}' -i config/database.yml
+
+          # Even though it won't be used in this script, Rails expects a 'test_vacols' configuration due to "#{Rails.env}_vacols"
+          echo '# Copied from demo_vacols configuration
+          test_vacols:
+            adapter: postgresql
+            pool: 1
+            timeout: 5000
+            database: test-vacols
+          ' >> config/database.yml
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Setup test database
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        run: |
+          echo "::group::Set up Caseflow DB"
+          bin/rails db:create && bin/rails db:schema:load
+          echo "::endgroup::"
+
+          echo "::group::Set up Caseflow ETL DB"
+          DB=etl bundle exec rake db:create db:schema:load
+          echo "::endgroup::"
+
+          # Skipping VACOLS since Oracle DB is not set up
+          # bundle exec rake spec:setup_vacols
+
+      # Need graphviz to create ERDs
+      - name: Setup Graphviz
+        uses: ts-graphviz/setup-graphviz@v1
+
+      - name: Create DB schema documentation
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          UPDATE_SCHEMA_ERD_IMAGES: true
+        run: |
+          ln -s Makefile.example Makefile
+          
+          echo "::group::Caseflow schema"
+          make erd-caseflow doc-schema-caseflow
+          echo "::endgroup::"
+
+          echo "::group::Caseflow ETL schema"
+          make erd-etl doc-schema-etl
+          echo "::endgroup::"
+
+          # Skipping VACOLS since Oracle DB is not set up
+          # make erd-vacols
+
+      # The following is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
+      # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
+      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
+      - name: Checkout wiki code
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki_checkout
+      - name: Push 'make docs' files to wiki
+        env:
+          WIKI_COMMIT_MESSAGE: '`make docs` - Automatically update DB schema documentation files'
+          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
+          WIKI_COMMIT_USER_NAME: 'yoomlam'
+        run: |
+          rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs"
+
+          cd wiki_checkout
+
+          echo "::group::Ignore files that change with every run"
+          rm -vf make_docs/schema/*-erd.pdf
+          echo "::endgroup::"
+
+          git add .
+          if git diff-index --quiet HEAD; then
+            echo "::group::No changes to schema"
+            ls -alR make_docs
+            echo "::endgroup::"
+          else
+            echo "::group::Pushing changes to wiki"
+            git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+            git config --local user.name "$WIKI_COMMIT_USER_NAME"
+            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+            echo "::endgroup::"
+          fi
