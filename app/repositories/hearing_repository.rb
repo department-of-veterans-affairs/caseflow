@@ -97,6 +97,7 @@ class HearingRepository
       hearing
     end
 
+    # :nocov:
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
@@ -114,11 +115,12 @@ class HearingRepository
                                                  legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
           set_vacols_values(hearing, vacols_record)
         rescue RegionalOffice::NotFoundError => error
-          Raven.capture_exception(error: error)
+          Raven.capture_exception(error)
           next
         end
       end.flatten
     end
+    # :nocov:
 
     # Get all hearings that *might* need to have a reminder email sent.
     #
