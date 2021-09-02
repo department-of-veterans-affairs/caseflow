@@ -71,10 +71,7 @@ local/vacols/build_facols/*
 # makefile
 Makefile
 
-# ERD diagrams are not checked in
-docs/schema/*-erd.pdf
-docs/schema/*_erd-*
-docs/schema/*_erd.*
-docs/schema/*-subclasses.*
-# Check in caseflow svg files
-!docs/schema/caseflow-*.svg
+# These files are automatically updated and pushed to the wiki by GitHub Action 'make-docs'
+docs/schema/*
+!docs/schema/.keep
+

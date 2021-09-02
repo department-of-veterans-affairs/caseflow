@@ -104,6 +104,11 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     within_fieldset("Was this form submitted through VA.gov?") do
+      expect(find_field("Yes", visible: false)).to_not be_checked
+      expect(find_field("No", visible: false)).to_not be_checked
+    end
+
+    within_fieldset("Was this form submitted through VA.gov?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
@@ -411,6 +416,10 @@ feature "Higher-Level Review", :all_dbs do
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
@@ -497,6 +506,7 @@ feature "Higher-Level Review", :all_dbs do
 
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
+      filed_by_va_gov: false,
       receipt_date: receipt_date,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",

@@ -13,7 +13,7 @@ def select_task_ids_in_ui(task_ids)
 
   click_on "+ Add Substitute"
 
-  fill_in("substitutionDate", with: "01/01/2021")
+  fill_in("substitutionDate", with: Time.zone.parse("2021-01-01"))
   find("label", text: "Bob Vance, Spouse").click
   click_on "Continue"
 
