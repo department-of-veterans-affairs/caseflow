@@ -26,9 +26,15 @@ class AddJudgeTeamModal extends React.Component {
     };
   }
 
+  resetAlerts = () => {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
   componentDidMount() {
-    resetErrorMessages();
-    resetSuccessMessages();
+    this.resetAlerts();
+  }
+  componentWillUnmount() {
+    this.resetAlerts();
   }
 
   loadingPromise = () => {
@@ -46,9 +52,7 @@ class AddJudgeTeamModal extends React.Component {
       value: user }));
 
   submit = () => this.props.requestSave(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).
-    then((resp) => this.props.onReceiveNewJudgeTeam(resp.body)).
-    catch((err) => this.props.showErrorMessage({ title: 'Error',
-      detail: err }));
+    then((resp) => this.props.onReceiveNewJudgeTeam(resp.body))
 
   render = () => {
     return <QueueFlowModal
@@ -83,12 +87,15 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   resetErrorMessages,
   resetSuccessMessages,
+  showErrorMessage
 }, dispatch);
 
 AddJudgeTeamModal.propTypes = {
   requestSave: PropTypes.func,
   onReceiveNewJudgeTeam: PropTypes.func,
-  showErrorMessage: PropTypes.func
+  showErrorMessage: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTeamModal));

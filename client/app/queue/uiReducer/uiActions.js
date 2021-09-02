@@ -114,10 +114,6 @@ const saveFailure = (err) => (dispatch) => {
 
   dispatch(showErrorMessage(uiErrorMessage));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
-  // the promise rejection below is also uncaught
-  // but this seems to be by design since that's the same as the frontend handling and throwing an error
-
-  return Promise.reject(response.text);
 };
 
 export const requestSave = (

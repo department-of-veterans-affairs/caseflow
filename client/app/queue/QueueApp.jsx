@@ -20,6 +20,8 @@ import {
   setUserIsVsoEmployee,
   setFeedbackUrl,
   setOrganizations,
+  resetErrorMessages,
+  resetSuccessMessages,
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -1158,6 +1160,8 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsVsoEmployee,
       setFeedbackUrl,
       setOrganizations,
+      resetSuccessMessages,
+      resetErrorMessages,
     },
     dispatch
   );
