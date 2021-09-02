@@ -831,8 +831,7 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content("Submit Draft Decision for Review")
           # these now should be preserved the next time the attorney checks out
           fill_in "Document ID:", with: valid_document_id
-          sleep 1
-          expect(page).to have_content(judge_user.full_name, wait: 10)
+          expect(page).to have_content("Submit to judge:", wait: 10)
           fill_in "notes", with: "all done"
           click_on "Continue"
 

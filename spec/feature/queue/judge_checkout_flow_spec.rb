@@ -56,8 +56,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       jdr_task.update(status: :assigned)
       appeal.request_issues.update_all(closed_at: nil)
       visit "queue/appeals/#{appeal.uuid}"
-      # Below sleep is needed so that the frontend will load with the required dropdown before the jdr task's status changes
-      sleep 1
+      # Below is needed so that the frontend will load the actions dropdown before the jdr task's status changes
+      expect(page).to have_content("Actions", wait: 10)
 
       # Restore JudgeDecisionReviewTask status from the first checkout
       jdr_task.update(status: :completed)
