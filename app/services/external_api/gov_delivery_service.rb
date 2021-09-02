@@ -17,15 +17,49 @@ class ExternalApi::GovDeliveryService
       get_recipients(external_message_id: email_event.external_message_id)
     end
 
+    def get_message_subject_and_body_from_event(email_event:)
+      get_message_subject_and_body(external_message_id: email_event.external_message_id)
+    end
+
+    def get_message_from_event(email_event:)
+      get_message(external_message_id: email_event.external_message_id)
+    end
+
     def get_sent_status(external_message_id:)
       # assumes the email has only one recipient
-      get_recipients(external_message_id: external_message_id).first[STATUS_FIELD_NAME]
+      get_recipients(external_message_id: external_message_id).first&.dig(STATUS_FIELD_NAME)
     end
 
     def get_recipients(external_message_id:)
       # Construct the endpoint from the email event
       path = "#{external_message_id}/recipients"
 
+      response = send_request_and_wrap_response(path)
+
+      response.body
+    end
+
+    def get_message_subject_and_body(external_message_id:)
+      message_details = get_message(external_message_id: external_message_id)
+
+      {
+        subject: message_details["subject"],
+        body: strip_html_and_format(message_details["body"])
+      }
+    end
+
+    def get_message(external_message_id:)
+      # Construct the endpoint from the email event
+      path = external_message_id
+
+      response = send_request_and_wrap_response(path)
+
+      response.body
+    end
+
+    private
+
+    def send_request_and_wrap_response(path)
       # Send the request to the gov delivery API
       response = send_gov_delivery_request(path, :get)
       return if response.nil?
@@ -34,11 +68,8 @@ class ExternalApi::GovDeliveryService
 
       fail gd_response.error if gd_response.error.present?
 
-      # Return the body of the GovDelivery Response
-      gd_response.body
+      gd_response
     end
-
-    private
 
     def send_gov_delivery_request(endpoint, method, body: nil)
       url = URI::DEFAULT_PARSER.escape("https://#{BASE_URL}#{endpoint}")
@@ -76,6 +107,12 @@ class ExternalApi::GovDeliveryService
 
       # Return the request object
       request
+    end
+
+    def strip_html_and_format(text)
+      # remove all HTML tags and newline characters, then replace any
+      # group of more than one space with a newline character
+      Rails::Html::FullSanitizer.new.sanitize(text).gsub(/(\n|\r)/, "").gsub(/[ ]{2,}/, "\n")
     end
   end
 end
