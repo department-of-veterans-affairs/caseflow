@@ -53,14 +53,17 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 
 const formFieldMapping = (props) => {
   const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
+  const renderBooleanValue = (propKey) => {
+    // eslint-disable-next-line no-undefined
+    return props[propKey] === null || props[propKey] === undefined ? null : props[propKey].toString();
+  };
   const renderVaGovValue = () => {
     // eslint-disable-next-line no-undefined
     if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
 
-    // eslint-disable-next-line no-undefined
-    return props.filedByVaGov === null || props.filedByVaGov === undefined ? null : props.filedByVaGov.toString();
+    return renderBooleanValue('filedByVaGov');
   };
 
   return ({
@@ -106,9 +109,7 @@ const formFieldMapping = (props) => {
         props.setInformalConference(convertStringToBoolean(value));
       }}
       errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.informalConference === null || props.informalConference === undefined ?
-        null : props.informalConference.toString()}
+      value={renderBooleanValue('informalConference')}
       inputRef={props.register}
     />,
     'same-office': <RadioField
@@ -121,8 +122,7 @@ const formFieldMapping = (props) => {
         props.setSameOffice(convertStringToBoolean(value));
       }}
       errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
+      value={renderBooleanValue('sameOffice')}
       inputRef={props.register}
     />,
     'filed-by-va-gov': <RadioField
