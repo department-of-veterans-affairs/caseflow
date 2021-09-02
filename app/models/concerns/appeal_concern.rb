@@ -5,14 +5,21 @@ module AppealConcern
 
   delegate :station_key, to: :regional_office
 
+  included do
+    if ancestors.include?(ApplicationRecord)
+      has_many :attorney_case_reviews, as: :appeal
+      has_many :judge_case_reviews, as: :appeal
+    end
+  end
+
   def regional_office
     return nil if regional_office_key.nil?
 
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
+                           RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
-                          end
+                         end
   end
 
   def regional_office_name

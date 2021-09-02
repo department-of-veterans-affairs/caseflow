@@ -32,6 +32,15 @@ class UnrecognizedAppellant < CaseflowRecord
     self
   end
 
+  def copy_with_details(updated_claimant: claimant)
+    dup.tap do |appellant|
+      appellant.claimant = updated_claimant
+      new_party_detail = unrecognized_party_detail.dup
+      appellant.unrecognized_party_detail = new_party_detail
+      appellant.save
+    end
+  end
+
   def update_with_versioning!(params, user)
     transaction do
       create_version
@@ -42,14 +51,21 @@ class UnrecognizedAppellant < CaseflowRecord
     false
   end
 
+  def update_power_of_attorney!(params)
+    poa_participant_id = params[:poa_participant_id]
+    if poa_participant_id
+      update(poa_participant_id: poa_participant_id)
+    else
+      update(unrecognized_power_of_attorney: UnrecognizedPartyDetail.new(params[:unrecognized_power_of_attorney]))
+    end
+  end
+
   private
 
   def create_version
     # Make a copy of self
-    version = dup
-    # Make a copy of self's unrecognized_party_detail
-    version_party_detail = unrecognized_party_detail.dup
+    version = copy_with_details
     # Point the copied self at the copy of unrecognized_party_detail and set current_version to self
-    version.update(unrecognized_party_detail: version_party_detail, current_version: self)
+    version.update(current_version: self)
   end
 end

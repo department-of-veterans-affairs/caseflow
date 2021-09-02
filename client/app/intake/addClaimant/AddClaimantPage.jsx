@@ -19,7 +19,7 @@ import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 
-export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
+export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureToggles }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
 
@@ -117,6 +117,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
           onBack={handleBack}
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}
+          dateOfBirthFieldToggle={featureToggles?.dateOfBirthField || false}
         />
         {confirmModal && (
           <AddClaimantConfirmationModal
@@ -130,5 +131,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   );
 };
 AddClaimantPage.propTypes = {
+  featureToggles: PropTypes.object,
   onAttorneySearch: PropTypes.func,
 };

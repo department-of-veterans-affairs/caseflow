@@ -1,0 +1,1798 @@
+{
+  "metadata": {
+    "exported_at": "2021-07-28 18:09:12 UTC",
+    "purpose": "backport for caseflow-1499"
+  },
+  "appeals": [
+    {
+      "id": 61110,
+      "veteran_file_number": "000543695",
+      "receipt_date": "2020-01-03",
+      "docket_type": "hearing",
+      "established_at": "2020-03-16 16:51:53 UTC",
+      "uuid": "b5eba21a-9baf-41a3-ac1c-08470c2b79c4",
+      "legacy_opt_in_approved": false,
+      "veteran_is_not_claimant": false,
+      "establishment_submitted_at": "2020-03-16 16:51:53 UTC",
+      "establishment_processed_at": "2020-03-16 16:51:54 UTC",
+      "establishment_attempted_at": "2020-03-16 16:51:54 UTC",
+      "establishment_error": null,
+      "establishment_last_submitted_at": "2020-03-16 16:51:53 UTC",
+      "target_decision_date": null,
+      "closest_regional_office": "C",
+      "establishment_canceled_at": null,
+      "docket_range_date": null,
+      "poa_participant_id": "44192997",
+      "created_at": "2020-03-16 16:50:43 UTC",
+      "updated_at": "2021-02-04 12:12:27 UTC",
+      "stream_docket_number": "200103-61110",
+      "stream_type": "original",
+      "aod_based_on_age": false,
+      "changed_hearing_request_type": null,
+      "original_hearing_request_type": null
+    }
+  ],
+  "veterans": [
+    {
+      "id": 366821,
+      "file_number": "000543695",
+      "participant_id": "4188784",
+      "first_name": "Danial",
+      "last_name": "Reynolds",
+      "middle_name": "R",
+      "name_suffix": null,
+      "closest_regional_office": null,
+      "ssn": "000543695",
+      "created_at": null,
+      "updated_at": "2021-07-15 18:52:02 UTC",
+      "date_of_death": "2020-11-16",
+      "date_of_death_reported_at": "2021-03-11 20:08:52 UTC",
+      "bgs_last_synced_at": "2021-07-15 18:52:02 UTC"
+    }
+  ],
+  "intakes": [
+    {
+      "id": 641499,
+      "detail_id": 61110,
+      "detail_type": "Appeal",
+      "user_id": 14043,
+      "veteran_file_number": "000543695",
+      "started_at": "2020-03-16 16:50:43 UTC",
+      "completed_at": "2020-03-16 16:51:53 UTC",
+      "completion_status": "success",
+      "error_code": null,
+      "type": "AppealIntake",
+      "cancel_reason": null,
+      "cancel_other": null,
+      "completion_started_at": "2020-03-16 16:51:52 UTC",
+      "created_at": "2020-03-16 16:50:43 UTC",
+      "updated_at": "2020-03-16 16:51:53 UTC"
+    }
+  ],
+  "decision_documents": [
+    {
+      "id": 154946,
+      "appeal_id": 61110,
+      "citation_number": "A00682697",
+      "decision_date": "2021-02-04",
+      "redacted_document_location": "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2102\\A21002697.txt",
+      "created_at": "2021-02-04 12:12:26 UTC",
+      "updated_at": "2021-02-04 12:12:30 UTC",
+      "submitted_at": "2021-02-04 12:12:26 UTC",
+      "attempted_at": "2021-02-04 12:12:27 UTC",
+      "processed_at": "2021-02-04 12:12:30 UTC",
+      "error": null,
+      "uploaded_to_vbms_at": "2021-02-04 12:12:30 UTC",
+      "last_submitted_at": "2021-02-04 12:12:26 UTC",
+      "appeal_type": "Appeal",
+      "canceled_at": null
+    }
+  ],
+  "claimants": [
+    {
+      "id": 502947,
+      "participant_id": "4188784",
+      "payee_code": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 61110,
+      "created_at": "2020-03-16 16:51:00 UTC",
+      "updated_at": "2021-01-21 15:28:06 UTC",
+      "type": "VeteranClaimant",
+      "notes": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": 758351,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "RootTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2020-03-16 16:51:53 UTC",
+      "started_at": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "updated_at": "2021-02-04 12:12:27 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-03-16 16:51:53 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": null,
+      "closed_at": "2021-02-04 12:12:27 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 758352,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "TrackVeteranTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 334,
+      "assigned_by_id": null,
+      "assigned_at": "2020-03-16 16:51:53 UTC",
+      "started_at": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "updated_at": "2021-02-04 12:12:27 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 758351,
+      "closed_at": "2021-02-04 12:12:27 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 758353,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "DistributionTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2021-01-31 00:30:30 UTC",
+      "started_at": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "updated_at": "2021-02-01 12:09:14 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-03-16 16:51:53 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758351,
+      "closed_at": "2021-02-01 12:09:14 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1429904,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "JudgeAssignTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2168,
+      "assigned_by_id": null,
+      "assigned_at": "2021-02-01 12:09:14 UTC",
+      "started_at": "2021-02-01 13:13:48 UTC",
+      "created_at": "2021-02-01 12:09:14 UTC",
+      "updated_at": "2021-02-01 13:17:22 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 758351,
+      "closed_at": "2021-02-01 13:17:22 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1430264,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "JudgeDecisionReviewTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2168,
+      "assigned_by_id": 932,
+      "assigned_at": "2021-02-02 14:58:21 UTC",
+      "started_at": "2021-02-02 17:52:34 UTC",
+      "created_at": "2021-02-01 13:17:22 UTC",
+      "updated_at": "2021-02-02 17:59:59 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-02-01 13:17:22 UTC",
+      "assigned_to_type": "User",
+      "parent_id": 758351,
+      "closed_at": "2021-02-02 17:59:59 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1435755,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "BvaDispatchTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 19,
+      "assigned_by_id": null,
+      "assigned_at": "2021-02-02 17:59:59 UTC",
+      "started_at": null,
+      "created_at": "2021-02-02 17:59:59 UTC",
+      "updated_at": "2021-02-04 12:12:26 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-02-02 17:59:59 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758351,
+      "closed_at": "2021-02-04 12:12:26 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1578850,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "ev"
+      ],
+      "assigned_to_id": 18,
+      "assigned_by_id": null,
+      "assigned_at": "2021-03-24 13:52:06 UTC",
+      "started_at": null,
+      "created_at": "2021-03-24 13:52:06 UTC",
+      "updated_at": "2021-03-24 17:15:02 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-03-24 13:52:06 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758351,
+      "closed_at": "2021-03-24 17:15:02 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1805324,
+      "appeal_id": 61110,
+      "status": "on_hold",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "Voluptatem et eligendi ex."
+      ],
+      "assigned_to_id": 18,
+      "assigned_by_id": null,
+      "assigned_at": "2021-06-28 16:38:07 UTC",
+      "started_at": null,
+      "created_at": "2021-06-28 16:38:07 UTC",
+      "updated_at": "2021-06-28 16:38:07 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-06-28 16:38:07 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758351,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 758354,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "HearingTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2020-03-16 16:51:53 UTC",
+      "started_at": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "updated_at": "2021-01-31 00:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-03-16 16:51:53 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758353,
+      "closed_at": "2021-01-31 00:30:30 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 786274,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "HearingRelatedMailTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 18,
+      "assigned_by_id": null,
+      "assigned_at": "2020-03-27 13:04:09 UTC",
+      "started_at": null,
+      "created_at": "2020-03-27 13:04:09 UTC",
+      "updated_at": "2020-07-08 14:34:32 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-03-27 13:04:09 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758353,
+      "closed_at": "2020-07-08 14:34:32 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1298868,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "HearingRelatedMailTask",
+      "instructions": [
+        "re he"
+      ],
+      "assigned_to_id": 18,
+      "assigned_by_id": null,
+      "assigned_at": "2020-12-09 18:35:02 UTC",
+      "started_at": null,
+      "created_at": "2020-12-09 18:35:02 UTC",
+      "updated_at": "2020-12-10 14:58:33 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-12-09 18:35:03 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758353,
+      "closed_at": "2020-12-10 14:58:33 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1430265,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "AttorneyTask",
+      "instructions": [
+        ""
+      ],
+      "assigned_to_id": 932,
+      "assigned_by_id": 2168,
+      "assigned_at": "2021-02-01 13:17:22 UTC",
+      "started_at": "2021-02-02 12:17:24 UTC",
+      "created_at": "2021-02-01 13:17:22 UTC",
+      "updated_at": "2021-02-02 14:58:20 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 1430264,
+      "closed_at": "2021-02-02 14:58:20 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1435756,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "BvaDispatchTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 12305,
+      "assigned_by_id": null,
+      "assigned_at": "2021-02-02 17:59:59 UTC",
+      "started_at": "2021-02-04 11:57:21 UTC",
+      "created_at": "2021-02-02 17:59:59 UTC",
+      "updated_at": "2021-02-04 12:12:26 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 1435755,
+      "closed_at": "2021-02-04 12:12:26 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1578851,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "ev"
+      ],
+      "assigned_to_id": 23,
+      "assigned_by_id": 16327,
+      "assigned_at": "2021-03-24 13:52:06 UTC",
+      "started_at": null,
+      "created_at": "2021-03-24 13:52:06 UTC",
+      "updated_at": "2021-03-24 17:15:02 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-03-24 13:52:06 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 1578850,
+      "closed_at": "2021-03-24 17:15:02 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1805325,
+      "appeal_id": 61110,
+      "status": "on_hold",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "Autem ratione nobis laboriosam."
+      ],
+      "assigned_to_id": 23,
+      "assigned_by_id": 462,
+      "assigned_at": "2021-06-28 16:38:07 UTC",
+      "started_at": null,
+      "created_at": "2021-06-28 16:38:07 UTC",
+      "updated_at": "2021-06-28 16:38:07 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-06-28 16:38:07 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 1805324,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 758355,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "ScheduleHearingTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2020-09-17 00:36:59 UTC",
+      "started_at": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "updated_at": "2020-10-01 16:01:04 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-09-13 01:02:18 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758354,
+      "closed_at": "2020-10-01 16:01:04 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 786275,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "HearingRelatedMailTask",
+      "instructions": [
+        "Et eos libero autem."
+      ],
+      "assigned_to_id": 225,
+      "assigned_by_id": 8931,
+      "assigned_at": "2020-03-27 13:04:09 UTC",
+      "started_at": null,
+      "created_at": "2020-03-27 13:04:09 UTC",
+      "updated_at": "2020-07-08 14:34:32 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 786274,
+      "closed_at": "2020-07-08 14:34:32 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1178199,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "AssignHearingDispositionTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2020-10-01 16:01:04 UTC",
+      "started_at": null,
+      "created_at": "2020-10-01 16:01:04 UTC",
+      "updated_at": "2021-01-31 00:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-11-04 05:03:08 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 758354,
+      "closed_at": "2021-01-31 00:30:30 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1298869,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "HearingRelatedMailTask",
+      "instructions": [
+        "re he"
+      ],
+      "assigned_to_id": 225,
+      "assigned_by_id": 1893,
+      "assigned_at": "2020-12-09 18:35:02 UTC",
+      "started_at": null,
+      "created_at": "2020-12-09 18:35:02 UTC",
+      "updated_at": "2020-12-10 14:58:33 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 1298868,
+      "closed_at": "2020-12-10 14:58:33 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1578852,
+      "appeal_id": 61110,
+      "status": "cancelled",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "ev",
+        "ev"
+      ],
+      "assigned_to_id": 7798,
+      "assigned_by_id": 16327,
+      "assigned_at": "2021-03-24 13:52:06 UTC",
+      "started_at": null,
+      "created_at": "2021-03-24 13:52:06 UTC",
+      "updated_at": "2021-03-24 17:07:44 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 1578851,
+      "closed_at": "2021-03-24 17:07:44 UTC",
+      "cancelled_by_id": 1888,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1580304,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "ev",
+        "ev",
+        "Co"
+      ],
+      "assigned_to_id": 1888,
+      "assigned_by_id": 1888,
+      "assigned_at": "2021-03-24 13:52:06 UTC",
+      "started_at": "2021-03-24 17:14:51 UTC",
+      "created_at": "2021-03-24 17:07:44 UTC",
+      "updated_at": "2021-03-24 17:15:02 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 1578851,
+      "closed_at": "2021-03-24 17:15:02 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1805326,
+      "appeal_id": 61110,
+      "status": "on_hold",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "Et eos libero autem."
+      ],
+      "assigned_to_id": 1626,
+      "assigned_by_id": 462,
+      "assigned_at": "2021-06-28 16:38:07 UTC",
+      "started_at": "2021-06-28 17:23:51 UTC",
+      "created_at": "2021-06-28 16:38:07 UTC",
+      "updated_at": "2021-06-28 17:40:57 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-06-28 17:40:57 UTC",
+      "assigned_to_type": "User",
+      "parent_id": 1805325,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1143838,
+      "appeal_id": 61110,
+      "status": "cancelled",
+      "type": "HearingAdminActionVerifyAddressTask",
+      "instructions": [
+        "Et nam et ipsam."
+      ],
+      "assigned_to_id": 20,
+      "assigned_by_id": null,
+      "assigned_at": "2020-09-13 01:02:18 UTC",
+      "started_at": null,
+      "created_at": "2020-09-13 01:02:18 UTC",
+      "updated_at": "2020-09-17 00:36:59 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 758355,
+      "closed_at": "2020-09-17 00:36:59 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1233993,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "TranscriptionTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 224,
+      "assigned_by_id": null,
+      "assigned_at": "2020-11-04 05:03:08 UTC",
+      "started_at": null,
+      "created_at": "2020-11-04 05:03:08 UTC",
+      "updated_at": "2020-12-22 14:20:00 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 1178199,
+      "closed_at": "2020-12-22 14:20:00 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1233994,
+      "appeal_id": 61110,
+      "status": "completed",
+      "type": "EvidenceSubmissionWindowTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 18,
+      "assigned_by_id": null,
+      "assigned_at": "2020-11-04 05:03:08 UTC",
+      "started_at": null,
+      "created_at": "2020-11-04 05:03:08 UTC",
+      "updated_at": "2021-01-31 00:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2020-11-17 16:31:25 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 1178199,
+      "closed_at": "2021-01-31 00:30:30 UTC",
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1805531,
+      "appeal_id": 61110,
+      "status": "on_hold",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "Porro iure quia voluptatum."
+      ],
+      "assigned_to_id": 202,
+      "assigned_by_id": 1626,
+      "assigned_at": "2021-06-28 17:40:57 UTC",
+      "started_at": null,
+      "created_at": "2021-06-28 17:40:57 UTC",
+      "updated_at": "2021-07-01 23:49:48 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-07-01 23:49:48 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 1805326,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1255555,
+      "appeal_id": 61110,
+      "status": "cancelled",
+      "type": "EvidenceSubmissionWindowTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 1868,
+      "assigned_by_id": 1619,
+      "assigned_at": "2020-11-17 16:31:25 UTC",
+      "started_at": null,
+      "created_at": "2020-11-17 16:31:25 UTC",
+      "updated_at": "2020-11-17 16:31:25 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "User",
+      "parent_id": 1233994,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 1816737,
+      "appeal_id": 61110,
+      "status": "assigned",
+      "type": "EvidenceOrArgumentMailTask",
+      "instructions": [
+        "Eius eos in nulla."
+      ],
+      "assigned_to_id": 224,
+      "assigned_by_id": 1515,
+      "assigned_at": "2021-07-01 23:49:48 UTC",
+      "started_at": null,
+      "created_at": "2021-07-01 23:49:48 UTC",
+      "updated_at": "2021-07-01 23:49:48 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 1805531,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    }
+  ],
+  "task_timers": [
+    {
+      "id": 42059,
+      "task_id": 1233994,
+      "created_at": "2020-11-04 05:03:11 UTC",
+      "updated_at": "2021-01-31 00:30:30 UTC",
+      "submitted_at": "2021-01-31 00:00:00 UTC",
+      "attempted_at": "2021-01-31 00:30:30 UTC",
+      "processed_at": "2021-01-31 00:30:30 UTC",
+      "error": null,
+      "last_submitted_at": "2021-01-30 21:01:00 UTC",
+      "canceled_at": "2021-01-31 00:30:30 UTC"
+    }
+  ],
+  "judge_case_reviews": [
+    {
+      "id": 207703,
+      "attorney_id": 932,
+      "judge_id": 2168,
+      "task_id": "1430264",
+      "complexity": "easy",
+      "quality": "exceeds_expectations",
+      "location": "bva_dispatch",
+      "comment": "De di",
+      "factors_not_considered": [
+
+      ],
+      "areas_for_improvement": [
+
+      ],
+      "created_at": "2021-02-02 17:59:59 UTC",
+      "updated_at": "2021-02-02 17:59:59 UTC",
+      "one_touch_initiative": false,
+      "positive_feedback": [
+
+      ]
+    }
+  ],
+  "attorney_case_reviews": [
+    {
+      "id": 237063,
+      "document_id": "00196-00000505",
+      "reviewing_judge_id": 2168,
+      "attorney_id": 932,
+      "work_product": "Decision",
+      "overtime": false,
+      "document_type": "draft_decision",
+      "note": null,
+      "created_at": "2021-02-02 14:58:20 UTC",
+      "updated_at": "2021-02-02 14:58:20 UTC",
+      "task_id": "1430265",
+      "untimely_evidence": false
+    }
+  ],
+  "decision_issues": [
+    {
+      "id": 1171726,
+      "disposition": "dismissed_death",
+      "description": "Th cl of en to an ef da ea th Ju 3, 30 fo th gr of a TD is di",
+      "participant_id": "4188784",
+      "rating_issue_reference_id": null,
+      "decision_text": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 61110,
+      "benefit_type": "compensation",
+      "end_product_last_action_date": null,
+      "diagnostic_code": null,
+      "caseflow_decision_date": "2021-02-04",
+      "created_at": "2021-02-02 17:59:59 UTC",
+      "deleted_at": null,
+      "rating_promulgation_date": null,
+      "rating_profile_date": null,
+      "updated_at": "2021-02-04 12:12:26 UTC",
+      "subject_text": null,
+      "percent_number": null
+    }
+  ],
+  "request_issues": [
+    {
+      "id": 947093,
+      "contention_reference_id": null,
+      "decision_date": "2019-10-24",
+      "end_product_establishment_id": null,
+      "rating_issue_associated_at": null,
+      "notes": "",
+      "is_unidentified": null,
+      "ineligible_due_to_id": null,
+      "untimely_exemption": null,
+      "untimely_exemption_notes": null,
+      "ineligible_reason": null,
+      "ramp_claim_id": null,
+      "decision_sync_submitted_at": null,
+      "decision_sync_attempted_at": null,
+      "decision_sync_processed_at": null,
+      "decision_sync_error": null,
+      "vacols_id": null,
+      "vacols_sequence_id": null,
+      "created_at": "2020-03-16 16:51:53 UTC",
+      "benefit_type": "compensation",
+      "contested_decision_issue_id": null,
+      "veteran_participant_id": "4188784",
+      "contested_rating_issue_diagnostic_code": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 61110,
+      "contested_rating_issue_reference_id": "90258616",
+      "contested_rating_issue_profile_date": "2019-10-18T05:44:42-05:00",
+      "contested_issue_description": "En to in un is gr ef Ju 3, 20",
+      "nonrating_issue_description": null,
+      "unidentified_issue_text": null,
+      "closed_at": "2021-02-04 12:12:27 UTC",
+      "closed_status": "decided",
+      "decision_sync_last_submitted_at": null,
+      "contention_removed_at": null,
+      "updated_at": "2021-02-04 12:12:27 UTC",
+      "nonrating_issue_category": null,
+      "decision_sync_canceled_at": null,
+      "edited_description": null,
+      "contention_updated_at": null,
+      "correction_type": null,
+      "corrected_by_request_issue_id": null,
+      "contested_rating_decision_reference_id": null,
+      "verified_unidentified_issue": null,
+      "covid_timeliness_exempt": null,
+      "type": "RequestIssue"
+    }
+  ],
+  "request_decision_issues": [
+    {
+      "id": 1167440,
+      "request_issue_id": 947093,
+      "decision_issue_id": 1171726,
+      "created_at": "2021-02-02 17:59:59 UTC",
+      "updated_at": "2021-02-02 17:59:59 UTC",
+      "deleted_at": null
+    }
+  ],
+  "cavc_remands": [
+
+  ],
+  "hearings": [
+    {
+      "id": 5013,
+      "uuid": "2d4f52bd-06de-49c1-beb3-be5efa5acd19",
+      "hearing_day_id": 6656,
+      "appeal_id": 61110,
+      "judge_id": 2168,
+      "evidence_window_waived": null,
+      "transcript_requested": null,
+      "notes": "Vi he 11",
+      "disposition": "held",
+      "witness": null,
+      "military_service": "M 01/01/1991 - 01/01/2000, Under Honorable Conditions",
+      "prepped": true,
+      "summary": null,
+      "scheduled_time": "2000-01-01 16:00:00 UTC",
+      "representative_name": null,
+      "bva_poc": "LETITIA SCHUSTER",
+      "room": "1",
+      "transcript_sent_date": null,
+      "created_at": "2020-10-01 16:01:04 UTC",
+      "updated_at": "2020-12-16 16:26:46 UTC",
+      "created_by_id": 14300,
+      "updated_by_id": 1601
+    }
+  ],
+  "hearing_days": [
+    {
+      "id": 6656,
+      "scheduled_for": "2020-11-02",
+      "request_type": "C",
+      "regional_office": null,
+      "judge_id": 2168,
+      "room": "1",
+      "created_at": "2020-08-21 12:56:18 UTC",
+      "updated_at": "2020-10-10 15:48:36 UTC",
+      "bva_poc": "LETITIA SCHUSTER",
+      "deleted_at": null,
+      "lock": true,
+      "notes": "",
+      "created_by_id": 1601,
+      "updated_by_id": 1881,
+      "number_of_slots": null,
+      "slot_length_minutes": null,
+      "first_slot_time": null
+    }
+  ],
+  "virtual_hearings": [
+    {
+      "id": 6100,
+      "hearing_type": "Hearing",
+      "hearing_id": 5013,
+      "conference_id": 9063365,
+      "alias": "1703282",
+      "guest_pin": null,
+      "host_pin": null,
+      "representative_email": "bradley@halvorson.info",
+      "representative_email_sent": true,
+      "conference_deleted": true,
+      "created_by_id": 14300,
+      "created_at": "2020-10-16 12:33:50 UTC",
+      "updated_at": "2020-11-03 02:33:31 UTC",
+      "judge_email": "lawana@halvorson.co",
+      "judge_email_sent": true,
+      "request_cancelled": false,
+      "updated_by_id": 14300,
+      "alias_with_host": "simon@labadie.net",
+      "guest_pin_long": "51626755376",
+      "host_pin_long": "67488877",
+      "appellant_email": "dulcie@pagac.name",
+      "appellant_email_sent": true,
+      "appellant_tz": "America/New_York",
+      "representative_tz": "America/New_York",
+      "appellant_reminder_sent_at": null,
+      "representative_reminder_sent_at": null,
+      "host_hearing_link": null,
+      "guest_hearing_link": null
+    }
+  ],
+  "hearing_task_associations": [
+    {
+      "id": 48805,
+      "hearing_type": "Hearing",
+      "hearing_id": 5013,
+      "hearing_task_id": 758354,
+      "created_at": "2020-10-01 16:01:04 UTC",
+      "updated_at": "2020-10-01 16:01:04 UTC"
+    }
+  ],
+  "users": [
+    {
+      "id": 462,
+      "station_id": "397",
+      "css_id": "BARNAMCL",
+      "full_name": "Dr. Sindy Mitchell",
+      "email": "rose.hodkiewicz@mckenzie.biz",
+      "roles": [
+        "Certify Appeal",
+        "Establish Claim",
+        "Mail Intake",
+        "RO ViewHearSched",
+        "Case Details"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 18:06:28 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 18:06:28 UTC",
+      "efolder_documents_fetched_at": "2021-07-27 01:35:37 UTC",
+      "status": "inactive",
+      "status_updated_at": "2021-07-15 13:18:33 UTC"
+    },
+    {
+      "id": 932,
+      "station_id": "101",
+      "css_id": "HSMITHBVAT",
+      "full_name": "Benny Herzog",
+      "email": "sherell.johnson@klein.net",
+      "roles": [
+        "Reader",
+        "Hearing Prep"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:04:41 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 17:04:41 UTC",
+      "efolder_documents_fetched_at": "2021-07-28 06:35:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1515,
+      "station_id": "101",
+      "css_id": "RETANBVAJ",
+      "full_name": "Buddy Tromp I",
+      "email": "ayako.hodkiewicz@hayes-larkin.io",
+      "roles": [
+        "Download eFolder",
+        "Reader"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:54:06 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 17:54:06 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 21:10:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1601,
+      "station_id": "101",
+      "css_id": "AMBRISVACO",
+      "full_name": "Gail Maggio V",
+      "email": "juli@stroman-kertzmann.net",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 14:00:10 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 14:00:10 UTC",
+      "efolder_documents_fetched_at": "2021-07-27 20:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1619,
+      "station_id": "101",
+      "css_id": "MBUTLERBVAI",
+      "full_name": "Jackie Lubowitz",
+      "email": "dominica@jast.co",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:19:54 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 17:19:54 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 20:35:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1626,
+      "station_id": "101",
+      "css_id": "DJOHNSONBVAA",
+      "full_name": "Jarod Christiansen",
+      "email": "shonta@kessler-lowe.io",
+      "roles": [
+        "Download eFolder",
+        "Reader"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-27 20:56:56 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-27 20:56:56 UTC",
+      "efolder_documents_fetched_at": "2021-07-27 07:25:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1868,
+      "station_id": "101",
+      "css_id": "BAKERBVAW",
+      "full_name": "Kris Huel",
+      "email": "loren_murray@homenick-torp.io",
+      "roles": [
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:55:04 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 17:55:04 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 18:20:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1881,
+      "station_id": "101",
+      "css_id": "OWENSBVAT",
+      "full_name": "Amb. Cherelle Crist",
+      "email": "marlin@davis.net",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-06-10 21:30:32 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-06-14 07:30:37 UTC",
+      "efolder_documents_fetched_at": "2021-06-14 07:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1888,
+      "station_id": "101",
+      "css_id": "BOOKEKVACO",
+      "full_name": "Gov. Christena Becker",
+      "email": "felton_rempel@greenfelder-herman.info",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 18:04:06 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 18:04:06 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 23:20:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1893,
+      "station_id": "101",
+      "css_id": "MURRELLBVAC",
+      "full_name": "Barbra Murazik Esq.",
+      "email": "willena_schoen@rolfson.org",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 14:18:37 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 14:18:37 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 17:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2168,
+      "station_id": "101",
+      "css_id": "ELEZEBVAV",
+      "full_name": "Herminia Doyle",
+      "email": "lawana@halvorson.co",
+      "roles": [
+        "Reader",
+        "Hearing Prep"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 18:08:07 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-07-28 18:08:07 UTC",
+      "efolder_documents_fetched_at": "2021-07-28 00:25:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 7798,
+      "station_id": "101",
+      "css_id": "WIGGIGVACO",
+      "full_name": "Gaston Hintz",
+      "email": "kelsey@bahringer.net",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:55:40 UTC",
+      "created_at": "2019-04-23 16:07:51 UTC",
+      "updated_at": "2021-07-28 17:55:40 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 16:55:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 8931,
+      "station_id": "101",
+      "css_id": "MCWILJVACO",
+      "full_name": "Richie Marquardt",
+      "email": "talitha@cartwright.net",
+      "roles": [
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-27 12:58:12 UTC",
+      "created_at": "2019-05-16 11:15:05 UTC",
+      "updated_at": "2021-07-27 12:58:12 UTC",
+      "efolder_documents_fetched_at": "2021-07-27 10:50:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 12305,
+      "station_id": "101",
+      "css_id": "MILLEK2VACO",
+      "full_name": "John Lakin",
+      "email": "ned_spinka@walsh-konopelski.name",
+      "roles": [
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:54:03 UTC",
+      "created_at": "2019-09-26 10:25:58 UTC",
+      "updated_at": "2021-07-28 17:54:03 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 12:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 14043,
+      "station_id": "101",
+      "css_id": "WEBBS1VACO",
+      "full_name": "Ashanti Auer",
+      "email": "reyes_fritsch@funk-bogisich.com",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-13 16:44:29 UTC",
+      "created_at": "2020-01-07 14:45:21 UTC",
+      "updated_at": "2021-07-17 03:15:37 UTC",
+      "efolder_documents_fetched_at": "2021-07-17 03:15:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 14300,
+      "station_id": "101",
+      "css_id": "THERIMVACO",
+      "full_name": "LETITIA SCHUSTER",
+      "email": "penny@hirthe.info",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 17:20:24 UTC",
+      "created_at": "2020-01-25 15:22:06 UTC",
+      "updated_at": "2021-07-28 17:20:24 UTC",
+      "efolder_documents_fetched_at": "2021-07-25 20:55:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 16327,
+      "station_id": "101",
+      "css_id": "CULVEDVACO",
+      "full_name": "Zackary Wiza",
+      "email": "shalanda@windler-jones.info",
+      "roles": [
+        "Reader",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-07-28 18:03:49 UTC",
+      "created_at": "2020-06-24 18:26:35 UTC",
+      "updated_at": "2021-07-28 18:03:49 UTC",
+      "efolder_documents_fetched_at": "2021-07-28 07:15:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    }
+  ],
+  "organizations_users": [
+    {
+      "id": 2042,
+      "organization_id": 225,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2019-02-19 19:24:51 UTC",
+      "updated_at": "2019-02-28 17:04:46 UTC"
+    },
+    {
+      "id": 6561,
+      "organization_id": 224,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 16:17:41 UTC",
+      "updated_at": "2020-03-18 16:17:44 UTC"
+    },
+    {
+      "id": 6795,
+      "organization_id": 330,
+      "user_id": 1868,
+      "admin": true,
+      "created_at": "2020-04-08 13:16:00 UTC",
+      "updated_at": "2021-05-28 12:37:19 UTC"
+    },
+    {
+      "id": 1166,
+      "organization_id": 137,
+      "user_id": 2168,
+      "admin": true,
+      "created_at": "2018-12-05 19:17:56 UTC",
+      "updated_at": "2018-12-05 19:17:56 UTC"
+    },
+    {
+      "id": 6699,
+      "organization_id": 225,
+      "user_id": 14300,
+      "admin": false,
+      "created_at": "2020-03-30 14:34:44 UTC",
+      "updated_at": "2020-03-30 14:34:44 UTC"
+    },
+    {
+      "id": 1437,
+      "organization_id": 163,
+      "user_id": 932,
+      "admin": false,
+      "created_at": "2018-12-05 19:17:59 UTC",
+      "updated_at": "2018-12-05 19:17:59 UTC"
+    },
+    {
+      "id": 11805,
+      "organization_id": 363,
+      "user_id": 2168,
+      "admin": false,
+      "created_at": "2021-06-29 13:21:16 UTC",
+      "updated_at": "2021-06-29 13:21:16 UTC"
+    },
+    {
+      "id": 6798,
+      "organization_id": 330,
+      "user_id": 8931,
+      "admin": true,
+      "created_at": "2020-04-08 13:17:14 UTC",
+      "updated_at": "2021-05-28 12:37:29 UTC"
+    },
+    {
+      "id": 1856,
+      "organization_id": 202,
+      "user_id": 1515,
+      "admin": true,
+      "created_at": "2019-01-04 16:29:57 UTC",
+      "updated_at": "2019-09-12 19:32:55 UTC"
+    },
+    {
+      "id": 1898,
+      "organization_id": 214,
+      "user_id": 1619,
+      "admin": true,
+      "created_at": "2019-01-18 21:58:30 UTC",
+      "updated_at": "2020-01-13 20:51:00 UTC"
+    },
+    {
+      "id": 1880,
+      "organization_id": 18,
+      "user_id": 1619,
+      "admin": true,
+      "created_at": "2019-01-18 17:18:27 UTC",
+      "updated_at": "2019-05-15 15:28:36 UTC"
+    },
+    {
+      "id": 6558,
+      "organization_id": 20,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 15:21:39 UTC",
+      "updated_at": "2020-03-18 15:21:54 UTC"
+    },
+    {
+      "id": 2050,
+      "organization_id": 224,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2019-02-19 19:32:17 UTC",
+      "updated_at": "2019-04-24 14:17:24 UTC"
+    },
+    {
+      "id": 1816,
+      "organization_id": 20,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2018-12-11 20:31:20 UTC",
+      "updated_at": "2019-02-28 17:04:11 UTC"
+    },
+    {
+      "id": 3413,
+      "organization_id": 23,
+      "user_id": 1888,
+      "admin": true,
+      "created_at": "2019-04-26 14:56:27 UTC",
+      "updated_at": "2019-04-26 14:56:29 UTC"
+    },
+    {
+      "id": 7119,
+      "organization_id": 461,
+      "user_id": 8931,
+      "admin": true,
+      "created_at": "2020-04-29 14:09:21 UTC",
+      "updated_at": "2021-05-28 12:36:57 UTC"
+    },
+    {
+      "id": 3205,
+      "organization_id": 18,
+      "user_id": 1868,
+      "admin": true,
+      "created_at": "2019-04-04 14:24:56 UTC",
+      "updated_at": "2021-06-11 12:55:10 UTC"
+    },
+    {
+      "id": 7124,
+      "organization_id": 461,
+      "user_id": 14043,
+      "admin": true,
+      "created_at": "2020-04-29 14:10:21 UTC",
+      "updated_at": "2021-05-28 12:36:53 UTC"
+    },
+    {
+      "id": 3773,
+      "organization_id": 23,
+      "user_id": 7798,
+      "admin": false,
+      "created_at": "2019-06-10 18:51:54 UTC",
+      "updated_at": "2020-03-02 18:32:41 UTC"
+    },
+    {
+      "id": 7128,
+      "organization_id": 461,
+      "user_id": 1619,
+      "admin": true,
+      "created_at": "2020-04-29 14:11:09 UTC",
+      "updated_at": "2020-05-01 10:53:41 UTC"
+    },
+    {
+      "id": 6794,
+      "organization_id": 330,
+      "user_id": 14043,
+      "admin": true,
+      "created_at": "2020-04-08 13:15:43 UTC",
+      "updated_at": "2021-05-28 12:37:38 UTC"
+    },
+    {
+      "id": 8271,
+      "organization_id": 363,
+      "user_id": 1888,
+      "admin": false,
+      "created_at": "2020-08-25 12:56:23 UTC",
+      "updated_at": "2020-08-25 12:56:23 UTC"
+    },
+    {
+      "id": 5271,
+      "organization_id": 363,
+      "user_id": 1601,
+      "admin": false,
+      "created_at": "2019-10-04 13:10:51 UTC",
+      "updated_at": "2019-10-04 13:10:51 UTC"
+    },
+    {
+      "id": 6204,
+      "organization_id": 224,
+      "user_id": 14300,
+      "admin": false,
+      "created_at": "2020-02-07 15:22:54 UTC",
+      "updated_at": "2020-02-07 15:22:54 UTC"
+    },
+    {
+      "id": 6425,
+      "organization_id": 20,
+      "user_id": 14300,
+      "admin": false,
+      "created_at": "2020-03-04 15:01:39 UTC",
+      "updated_at": "2020-03-04 15:01:39 UTC"
+    },
+    {
+      "id": 6823,
+      "organization_id": 18,
+      "user_id": 14043,
+      "admin": true,
+      "created_at": "2020-04-09 15:55:08 UTC",
+      "updated_at": "2021-06-11 12:55:18 UTC"
+    },
+    {
+      "id": 5591,
+      "organization_id": 330,
+      "user_id": 1619,
+      "admin": true,
+      "created_at": "2019-11-12 20:27:54 UTC",
+      "updated_at": "2021-07-01 19:55:15 UTC"
+    },
+    {
+      "id": 5909,
+      "organization_id": 19,
+      "user_id": 12305,
+      "admin": false,
+      "created_at": "2019-12-23 16:24:33 UTC",
+      "updated_at": "2019-12-23 16:24:33 UTC"
+    },
+    {
+      "id": 8485,
+      "organization_id": 469,
+      "user_id": 2168,
+      "admin": false,
+      "created_at": "2020-09-09 14:44:24 UTC",
+      "updated_at": "2020-09-09 14:44:24 UTC"
+    },
+    {
+      "id": 5749,
+      "organization_id": 18,
+      "user_id": 8931,
+      "admin": true,
+      "created_at": "2019-12-02 20:50:49 UTC",
+      "updated_at": "2021-06-11 12:55:57 UTC"
+    },
+    {
+      "id": 7665,
+      "organization_id": 18,
+      "user_id": 16327,
+      "admin": true,
+      "created_at": "2020-06-25 12:39:04 UTC",
+      "updated_at": "2021-06-11 12:55:58 UTC"
+    },
+    {
+      "id": 7103,
+      "organization_id": 461,
+      "user_id": 1868,
+      "admin": true,
+      "created_at": "2020-04-29 14:06:18 UTC",
+      "updated_at": "2021-05-28 12:36:29 UTC"
+    },
+    {
+      "id": 6734,
+      "organization_id": 18,
+      "user_id": 1893,
+      "admin": true,
+      "created_at": "2020-03-31 12:48:24 UTC",
+      "updated_at": "2021-06-11 12:56:41 UTC"
+    },
+    {
+      "id": 6560,
+      "organization_id": 225,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 16:17:21 UTC",
+      "updated_at": "2020-03-18 16:17:26 UTC"
+    },
+    {
+      "id": 9420,
+      "organization_id": 18,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2020-11-24 00:11:35 UTC",
+      "updated_at": "2021-06-11 12:56:46 UTC"
+    },
+    {
+      "id": 9021,
+      "organization_id": 23,
+      "user_id": 1626,
+      "admin": false,
+      "created_at": "2020-10-22 10:31:06 UTC",
+      "updated_at": "2021-07-12 11:53:53 UTC"
+    },
+    {
+      "id": 11086,
+      "organization_id": 137,
+      "user_id": 932,
+      "admin": false,
+      "created_at": "2021-04-21 20:40:52 UTC",
+      "updated_at": "2021-04-21 20:40:52 UTC"
+    }
+  ],
+  "organizations": [
+    {
+      "id": 2,
+      "type": "Bva",
+      "name": "Board of Veterans' Appeals",
+      "role": null,
+      "url": "bva",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 18,
+      "type": "MailTeam",
+      "name": "Mail",
+      "role": null,
+      "url": "mail",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 19,
+      "type": "BvaDispatch",
+      "name": "Board Dispatch",
+      "role": null,
+      "url": "board-dispatch",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 20,
+      "type": "HearingsManagement",
+      "name": "Hearings Management",
+      "role": null,
+      "url": "hearings-management",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 23,
+      "type": "Colocated",
+      "name": "VLJ Support Staff",
+      "role": null,
+      "url": "vlj-support-staff",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 137,
+      "type": "JudgeTeam",
+      "name": "BVAVELEZE",
+      "role": null,
+      "url": "bvaveleze",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": true
+    },
+    {
+      "id": 163,
+      "type": "JudgeTeam",
+      "name": "BVABBCOPELD",
+      "role": null,
+      "url": "bvabbcopeld",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2020-04-30 14:29:50 UTC",
+      "status": "inactive",
+      "status_updated_at": "2020-04-30 14:29:50 UTC",
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 202,
+      "type": "PrivacyTeam",
+      "name": "Privacy Team",
+      "role": null,
+      "url": "privacy",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 214,
+      "type": "Translation",
+      "name": "Translation",
+      "role": null,
+      "url": "translation",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 224,
+      "type": "TranscriptionTeam",
+      "name": "Transcription",
+      "role": null,
+      "url": "transcription",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 225,
+      "type": "HearingAdmin",
+      "name": "Hearing Admin",
+      "role": null,
+      "url": "hearing-admin",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 330,
+      "type": "CaseReview",
+      "name": "Case Review",
+      "role": null,
+      "url": "case-review",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2020-04-10 14:48:18 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 334,
+      "type": "PrivateBar",
+      "name": "Alexandra Jackson",
+      "role": "VSO",
+      "url": "alexandra-jackson",
+      "participant_id": "44192997",
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 363,
+      "type": "SpecialCaseMovementTeam",
+      "name": "Case Movement Team",
+      "role": null,
+      "url": "case-movement",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 461,
+      "type": "BvaIntake",
+      "name": "BVA Intake",
+      "role": null,
+      "url": "bva-intake",
+      "participant_id": null,
+      "created_at": "2020-04-10 16:59:42 UTC",
+      "updated_at": "2020-04-10 16:59:42 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 469,
+      "type": "DvcTeam",
+      "name": "BVARSCHARNB",
+      "role": null,
+      "url": "bvarscharnb-dvc-team",
+      "participant_id": null,
+      "created_at": "2020-09-08 14:00:21 UTC",
+      "updated_at": "2020-09-08 14:00:21 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    }
+  ],
+  "people": [
+    {
+      "id": 128113,
+      "participant_id": "4188784",
+      "date_of_birth": "1947-04-03",
+      "created_at": "2019-08-23 17:16:22 UTC",
+      "updated_at": "2020-06-25 20:21:43 UTC",
+      "first_name": "Shelba",
+      "last_name": "D'Amore",
+      "middle_name": "V",
+      "name_suffix": null,
+      "email_address": null,
+      "ssn": "000543695"
+    }
+  ]
+}

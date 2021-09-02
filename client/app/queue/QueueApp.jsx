@@ -97,6 +97,7 @@ import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionReq
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
+import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -175,6 +176,7 @@ class QueueApp extends React.PureComponent {
       userCanAccessReader={
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
+      hasVLJSupportRole={this.props.hasVLJSupportRole}
     />
   );
 
@@ -280,6 +282,10 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -348,6 +354,9 @@ class QueueApp extends React.PureComponent {
             appealId={props.match.params.appealId}
           >
             <ScheduleVeteran
+              userCanCollectVideoCentralEmails={
+                this.props.featureToggles.collect_video_and_central_emails
+              }
               userCanViewTimeSlots={
                 this.props.featureToggles.enable_hearing_time_slots
               }
@@ -358,6 +367,9 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran
+            userCanCollectVideoCentralEmails={
+              this.props.featureToggles.collect_video_and_central_emails
+            }
             userCanViewTimeSlots={
               this.props.featureToggles.enable_hearing_time_slots
             }
@@ -494,6 +506,13 @@ class QueueApp extends React.PureComponent {
 
   routedEditAppellantInformation = (props) => (
     <EditAppellantInformation
+      appealId={props.match.params.appealId}
+      {...props.match.params}
+    />
+  )
+
+  routedEditPOAInformation = (props) => (
+    <EditPOAInformation
       appealId={props.match.params.appealId}
       {...props.match.params}
     />
@@ -702,6 +721,13 @@ class QueueApp extends React.PureComponent {
             />
 
             <PageRoute
+              exact
+              path="/queue/appeals/:appealId/edit_poa_information"
+              title="Edit POA Information | Caseflow"
+              render={this.routedEditPOAInformation}
+            />
+
+            <PageRoute
               path="/team_management"
               title="Team Management | Caseflow"
               render={this.routedTeamManagement}
@@ -800,6 +826,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.ASSIGN_TO_TEAM.value
                 }`}
               render={this.routedAssignToTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -1095,6 +1127,7 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
+  hasVLJSupportRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,

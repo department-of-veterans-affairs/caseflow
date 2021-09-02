@@ -1137,6 +1137,8 @@ components:
         - Drill Pay Adjustments
         - Character of Discharge Determinations
         - Income/Net Worth (Pension)
+        - "Debt - Existence and amount"
+        - "Debt - Waiver"
         - Dependent Child - Adopted
         - Dependent Child - Stepchild
         - Dependent Child - Biological
@@ -1292,6 +1294,7 @@ components:
         - Beneficiary Travel | Mileage
         - Beneficiary Travel | Common Carrier
         - Beneficiary Travel | Special Mode
+        - Caregiver
         - Eligibility for Fee Basis Care
         - Indebtedness | Validity of Debt
         - Indebtedness | Waiver

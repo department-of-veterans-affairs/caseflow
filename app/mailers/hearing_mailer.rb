@@ -14,12 +14,13 @@ class HearingMailer < ActionMailer::Base
 
     @recipient = email_recipient
     @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing&.hearing
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
     mail(
       to: recipient.email,
-      subject: "Your Board hearing location has changed – Do Not Reply"
+      subject: cancellation_subject
     )
   end
 
@@ -49,7 +50,7 @@ class HearingMailer < ActionMailer::Base
     )
   end
 
-  def reminder(email_recipient:, virtual_hearing: nil, hearing: nil)
+  def reminder(email_recipient:, day_type:, virtual_hearing: nil, hearing: nil)
     # Guard to prevent reminder emails from sending to the judge
     return if email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
 
@@ -60,6 +61,7 @@ class HearingMailer < ActionMailer::Base
     @hearing = hearing || virtual_hearing.hearing
     @representative_reminder =
       virtual_hearing.nil? && email_recipient.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+    @reminder_type = day_type
 
     mail(
       to: recipient.email,
@@ -70,6 +72,16 @@ class HearingMailer < ActionMailer::Base
   private
 
   attr_reader :recipient, :virtual_hearing
+
+  def cancellation_subject
+    # :reek:RepeatedConditionals
+    case recipient.title
+    when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
+      "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+    when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
+      "#{appellant_name}’s hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+    end
+  end
 
   def confirmation_calendar_invite
     Hearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
@@ -108,6 +120,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def confirmation_subject
+    # :reek:RepeatedConditionals
     case recipient.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"

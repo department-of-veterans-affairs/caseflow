@@ -17,6 +17,7 @@
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Types",
+  "CASE_LIST_TABLE_OFFICE_COLUMN_TITLE": "Office",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
   "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting",
   "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
@@ -39,6 +40,11 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
+
+  "DOB_INVALID_ERRS": {
+    "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
+    "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
+  },
 
   "NULL_FILTER_LABEL": "<<blank>>",
 
@@ -127,6 +133,8 @@
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE": "Information Accuracy and Visibility Update",
   "CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE": "In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.",
   "FNOD_SOURCE": "VBMS",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_TITLE": "Permission Issue",
+  "VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL": "It looks like you don't have the necessary level of access to view this information. Please alert your manager if you need access to this information.",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -208,6 +216,7 @@
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
   "EDIT_APPELLANT_INFORMATION_LINK": "Edit Information",
+  "UP_DATE_POA_LINK": "Update POA",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
@@ -248,6 +257,8 @@
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
+  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGESS_TAB_TITLE": "In Progress Tasks",
+  "ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
@@ -367,6 +378,7 @@
   "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
   "HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL": "Start Date:",
   "HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL": "End Date:",
+  "HEARING_SCHEDULE_SUCCESSFULLY_ASSIGNED_JUDGES": "Successfully assigned judges to the provided hearing days",
 
   "ASSIGN_WIDGET_OTHER": "Other",
   "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
@@ -638,6 +650,8 @@
   "TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON": "+ Add Private Bar",
   "TEAM_MANAGEMENT_ADD_VSO_LABEL": "VSOs",
   "TEAM_MANAGEMENT_ADD_VSO_BUTTON": "+ Add VSO",
+  "TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL": "VHA Program Offices",
+  "TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL": "VISNs",
   "TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL": "Other teams",
   "TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE": "Create JudgeTeam",
   "TEAM_MANAGEMENT_ADD_DVC_TEAM_MODAL_TITLE": "Create DvcTeam",
@@ -842,6 +856,7 @@
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "ADD_CLAIMANT_POA_PAGE_DESCRIPTION": "Add the claimant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
   "EDIT_CLAIMANT_PAGE_DESCRIPTION": "Make any necessary changes to the information and click \"save\" to confirm your changes.",
+  "UPDATE_POA_PAGE_DESCRIPTION": "Add the appellant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
@@ -1106,5 +1121,10 @@
   "UNSCHEDULED_HEARING_TITLE": "Unscheduled hearing",
   "SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE": "You updated the notes for %s’s hearing",
   "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
-  "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT."
+  "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
+
+  "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
+  "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
+  "VHA_MODAL_BODY": "Provide instructions and context for this action.",
+  "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office"
 }

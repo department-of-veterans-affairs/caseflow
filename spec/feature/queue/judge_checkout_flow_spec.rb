@@ -63,6 +63,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       jdr_task.update(status: :completed)
       # Note that the judge can continue and complete checkout because frontend was loaded before jdr_task was complete
 
+      expect(page).to have_content("Select an action")
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
       # Special Issues page
       expect(page).to have_content("Select special issues")

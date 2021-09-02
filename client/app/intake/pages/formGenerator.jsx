@@ -16,6 +16,7 @@ import {
   setPayeeCode,
   setLegacyOptInApproved,
   setBenefitType,
+  setFiledByVaGov
 } from '../actions/decisionReview';
 import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
@@ -51,19 +52,36 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 }));
 
 const formFieldMapping = (props) => {
+  const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
+  const renderBooleanValue = (propKey) => {
+    // eslint-disable-next-line no-undefined
+    return props[propKey] === null || props[propKey] === undefined ? null : props[propKey].toString();
+  };
+  const renderVaGovValue = () => {
+    // eslint-disable-next-line no-undefined
+    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
+      return 'false';
+    }
+
+    return renderBooleanValue('filedByVaGov');
+  };
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
-    'docket-type': <RadioField
-      name="docket-type"
-      label="Which review option did the Veteran request?"
-      strongLabel
-      vertical
-      options={docketTypeRadioOptions}
-      onChange={props.setDocketType}
-      errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
-      value={props.docketType}
-      inputRef={props.register}
-    />,
+    'docket-type':
+    <div className="cf-docket-type" style={{ marginTop: '10px' }}>
+      <RadioField
+        name="docket-type"
+        label="Which review option did the Veteran request?"
+        strongLabel
+        vertical
+        options={docketTypeRadioOptions}
+        onChange={props.setDocketType}
+        errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
+        value={props.docketType}
+        inputRef={props.register}
+      />
+    </div>,
     'legacy-opt-in': <LegacyOptInApproved
       value={props.legacyOptInApproved}
       onChange={props.setLegacyOptInApproved}
@@ -91,9 +109,7 @@ const formFieldMapping = (props) => {
         props.setInformalConference(convertStringToBoolean(value));
       }}
       errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.informalConference === null || props.informalConference === undefined ?
-        null : props.informalConference.toString()}
+      value={renderBooleanValue('informalConference')}
       inputRef={props.register}
     />,
     'same-office': <RadioField
@@ -106,8 +122,20 @@ const formFieldMapping = (props) => {
         props.setSameOffice(convertStringToBoolean(value));
       }}
       errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
+      value={renderBooleanValue('sameOffice')}
+      inputRef={props.register}
+    />,
+    'filed-by-va-gov': <RadioField
+      name="filed-by-va-gov"
+      label={<span><b>Was this form submitted through VA.gov? </b>
+        (Indicated by a stamp at the top right corner of the form)</span>}
+      vertical
+      options={BOOLEAN_RADIO_OPTIONS}
+      onChange={(value) => {
+        props.setFiledByVaGov(convertStringToBoolean(value));
+      }}
+      errorMessage={props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message}
+      value={renderVaGovValue()}
       inputRef={props.register}
     />,
     'opt-in-election': <Fragment>
@@ -241,6 +269,8 @@ export default connect(
     intakeStatus: getIntakeStatus(state),
     receiptDate: state[props.formName].receiptDate,
     receiptDateError: state[props.formName].receiptDateError,
+    filedByVaGov: state[props.formName].filedByVaGov,
+    filedByVaGovError: state[props.formName].filedByVaGovError,
     docketType: state[props.formName].docketType,
     docketTypeError: state[props.formName].docketTypeError,
     legacyOptInApproved: state[props.formName].legacyOptInApproved,
@@ -270,6 +300,7 @@ export default connect(
     setBenefitType,
     setAppealDocket,
     confirmIneligibleForm,
-    setOptionSelected
+    setOptionSelected,
+    setFiledByVaGov
   }, dispatch)
 )(FormGenerator);

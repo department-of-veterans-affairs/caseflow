@@ -5,6 +5,7 @@ FactoryBot.define do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    filed_by_va_gov { false }
     sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
@@ -182,8 +183,10 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+        appeal.conditionally_set_aod_based_on_age # since claimants has changed
+      end
     end
 
     trait :active do
@@ -242,6 +245,19 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_evidence_submission_window_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_deceased_veteran do
+      after(:create) do |appeal, _evaluator|
+        appeal.veteran.update!(date_of_death: 1.month.ago)
       end
     end
 

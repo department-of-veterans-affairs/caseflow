@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
@@ -11,30 +11,32 @@ import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
-import _ from 'lodash';
+import { trim, escapeRegExp } from 'lodash';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
-export default class TestUsers extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentUser: props.currentUser,
-      userSelect: props.currentUser.id,
-      isSwitching: false,
-      isLoggingIn: false,
-      reseedingError: null,
-      isReseeding: false
-    };
-  }
+export default function TestUsers(props) {
 
-  handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
+  const [userSelect, setUserSelect] = useState(props.currentUser.id);
+  const [userId, setUserId] = useState('');
+  const [isSwitching, setIsSwitching] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [reseedingError, setReseedingError] = useState(null);
+  const [isReseeding, setIsReseeding] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
     catch((err) => {
       console.warn(err);
     });
-  handleUserSelect = ({ value }) => this.setState({ userSelect: value });
-  handleUserSwitch = () => {
-    this.setState({ isSwitching: true });
-    ApiUtil.post(`/test/set_user/${this.state.userSelect}`).then(() => {
+
+  const handleInputChange = (value) => setInputValue(value);
+  const handleUserSelect = ({ value }) => {
+    setUserSelect(value);
+  };
+
+  const handleUserSwitch = () => {
+    setIsSwitching(true);
+    ApiUtil.post(`/test/set_user/${userSelect}`).then(() => {
       window.location.reload();
     }).
       catch((err) => {
@@ -42,8 +44,8 @@ export default class TestUsers extends React.PureComponent {
       });
   };
 
-  userIdOnChange = (value) => this.setState({ userId: value });
-  featureToggleOnChange = (value, deletedValue) => {
+  const userIdOnChange = (value) => setUserId(value);
+  const featureToggleOnChange = (value, deletedValue) => {
     ApiUtil.post('/test/toggle_feature', { data: {
       enable: value,
       disable: deletedValue
@@ -51,109 +53,133 @@ export default class TestUsers extends React.PureComponent {
     }).then(() => {
       window.location.reload();
     });
-  }
+  };
 
-  handleLogInAsUser = () => {
-    this.setState({ isLoggingIn: true });
-    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}`).
+  const handleLogInAsUser = () => {
+    setIsLoggingIn(true);
+    ApiUtil.post(`/test/log_in_as_user?id=${userId}`).
       then(() => {
         window.location = '/help';
       }).
       catch((err) => {
-        this.setState(
-          { isLoggingIn: false,
-            userId: ''
-          });
+        setIsLoggingIn(false);
+        setUserId('');
         console.warn(err);
       });
-  }
+  };
 
-  reseed = () => {
-    this.setState({ isReseeding: true });
+  const reseed = () => {
+    setIsReseeding(true);
     ApiUtil.post('/test/reseed').then(() => {
-      this.setState({
-        reseedingError: null,
-        isReseeding: false
-      });
+      setReseedingError(null);
+      setIsReseeding(false);
     }, (err) => {
       console.warn(err);
-      this.setState({
-        reseedingError: err,
-        isReseeding: false
-      });
+      setReseedingError(err);
+      setIsReseeding(false);
     });
-  }
+  };
 
-  render() {
-    const userOptions = this.props.testUsersList.map((user) => ({
+  const filteredUserOptions = useMemo(() => {
+    const userOptions = props.testUsersList.map((user) => ({
       value: user.id,
       label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
     }));
 
-    const featureOptions = this.props.featuresList.map((feature) => ({
-      value: feature,
-      label: feature,
-      tagId: feature
-    }));
+    if (!inputValue) {
+      return userOptions;
+    }
 
-    const tabs = this.props.appSelectList.map((app) => {
-      let tab = {};
+    const matchByStart = [];
+    const matchByInclusion = [];
 
-      tab.disable = false;
-      tab.label = `${app.name}`;
+    const regByInclusion = new RegExp(escapeRegExp(inputValue), 'i');
+    const regByStart = new RegExp(`^${escapeRegExp(inputValue)}`, 'i');
 
-      tab.page = <div>
+    for (const option of userOptions) {
+      if (regByInclusion.test(option.label)) {
+        if (regByStart.test(option.label)) {
+          matchByStart.push(option);
+        } else {
+          matchByInclusion.push(option);
+        }
+      }
+    }
+
+    return [...matchByStart, ...matchByInclusion];
+  }, [inputValue]);
+
+  const slicedUserOptions = useMemo(
+    () => filteredUserOptions.slice(0, 500),
+    [filteredUserOptions]
+  );
+
+  const featureOptions = props.featuresList.map((feature) => ({
+    value: feature,
+    label: feature,
+    tagId: feature
+  }));
+
+  const tabs = props.appSelectList.map((app) => {
+    let tab = {};
+
+    tab.disable = false;
+    tab.label = `${app.name}`;
+
+    tab.page = <div>
+      <ul>
+        {Object.keys(app.links).map((name) => {
+          let readableName = StringUtil.snakeCaseToCapitalized(name);
+
+          return <li key={name} aria-labelledby={name}>
+            <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
+          </li>;
+        })}
+      </ul>
+      { app.name === 'Dispatch' && <div>
+        <p>
+                For Dispatch, we process different types of grants.
+                You can select which type you want to preload.</p>
         <ul>
-          {Object.keys(app.links).map((name) => {
-            return <li key={name}>
-              <a href={app.links[name]}>{StringUtil.snakeCaseToCapitalized(name)}</a>
+          { props.epTypes.map((type) => {
+            const label = `Seed ${type} grants`;
+
+            return <li key={type}>
+              <Button
+                onClick={() => handleEpSeed(type)}
+                name={label} />
             </li>;
           })}
         </ul>
-        { app.name === 'Dispatch' && <div>
-          <p>
-                For Dispatch, we process different types of grants.
-                You can select which type you want to preload.</p>
-          <ul>
-            { this.props.epTypes.map((type) => {
-              const label = `Seed ${type} grants`;
+      </div>
+      }
+    </div>;
 
-              return <li key={type}>
-                <Button
-                  onClick={() => this.handleEpSeed(type)}
-                  name={label} />
-              </li>;
-            })}
-          </ul>
-        </div>
-        }
-      </div>;
+    return tab;
+  });
 
-      return tab;
-    });
-
-    return <BrowserRouter>
-      <div>
-        <NavigationBar
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          appName="Test Users"
-          logoProps={{
-            accentColor: COLORS.GREY_DARK,
-            overlapColor: COLORS.GREY_DARK
-          }} />
-        <AppFrame>
-          <AppSegment filledBackground>
-            <h1>Welcome to the Caseflow admin page.</h1>
-            { this.props.userSession &&
+  return <BrowserRouter>
+    <div>
+      <NavigationBar
+        userDisplayName={props.userDisplayName}
+        dropdownUrls={props.dropdownUrls}
+        appName="Test Users"
+        logoProps={{
+          accentColor: COLORS.GREY_DARK,
+          overlapColor: COLORS.GREY_DARK
+        }} />
+      <AppFrame>
+        <AppSegment filledBackground>
+          <h1>Welcome to the Caseflow admin page.</h1>
+          { props.userSession &&
               <div>
                 <p>Your session</p>
-                <pre>{JSON.stringify(this.props.userSession, null, 2)}</pre>
+                <pre>{JSON.stringify(props.userSession, null, 2)}</pre>
                 <p>Server timezone</p>
-                <pre>{JSON.stringify(this.props.timezone, null, 2)}</pre>
+                <pre>{JSON.stringify(props.timezone, null, 2)}</pre>
               </div>
-            }
-            { this.props.dependenciesFaked &&
+          }
+          { props.dependenciesFaked &&
               <div>
                 <p>
                   Here you can test out different user stories by selecting
@@ -163,33 +189,38 @@ export default class TestUsers extends React.PureComponent {
                   <SearchableDropdown
                     name="Test user dropdown"
                     hideLabel
-                    options={userOptions} searchable
-                    onChange={this.handleUserSelect}
-                    value={this.state.userSelect} />
+                    onInputChange={handleInputChange}
+                    options={slicedUserOptions} searchable
+                    onChange={handleUserSelect}
+                    // Disable native filter
+                    filterOption={() => true}
+                    value={userSelect} />
                   <Button
-                    onClick={this.handleUserSwitch}
+                    onClick={handleUserSwitch}
                     name="Switch user"
-                    loading={this.state.isSwitching}
+                    loading={isSwitching}
                     loadingText="Switching users" />
                 </section>
                 <br />
                 <h3>App Selector:</h3>
                 <TabWindow
-                  tabs={tabs} />
+                  tabs={tabs}
+                  tabPanelTabIndex={-1}
+                />
                 <p>
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.
                   <br />This button reseeds the database with default values.</p>
-                {this.state.reseedingError &&
+                {reseedingError &&
                   <Alert
-                    message={this.state.reseedingError.toString()}
+                    message={reseedingError.toString()}
                     type="error"
                   />
                 }
                 <Button
-                  onClick={this.reseed}
+                  onClick={reseed}
                   name="Reseed the DB"
-                  loading={this.state.isReseeding}
+                  loading={isReseeding}
                   loadingText="Reseeding the DB" />
                 <br /> <br />
                 <h3>Global Feature Toggles Enabled:</h3>
@@ -202,8 +233,8 @@ export default class TestUsers extends React.PureComponent {
                   placeholder=""
                   value={featureOptions}
                   selfManageValueState
-                  onChange={this.featureToggleOnChange}
-                  creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${_.trim(tagName)}"` }}
+                  onChange={featureToggleOnChange}
+                  creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${trim(tagName)}"` }}
                 />
                 <div>
                   <h3>Local Veteran Records</h3>
@@ -213,26 +244,24 @@ export default class TestUsers extends React.PureComponent {
                   </p>
                 </div>
               </div> }
-            { this.props.isGlobalAdmin &&
+          { props.isGlobalAdmin &&
             <div>
               <strong>Log in as user:</strong>
               <TextField
                 label="User ID:"
                 name="userId"
-                value={this.state.userId}
-                onChange={this.userIdOnChange} />
+                value={userId}
+                onChange={userIdOnChange} />
               <Button
-                onClick={this.handleLogInAsUser}
+                onClick={handleLogInAsUser}
                 name="Log in as user"
-                loading={this.state.isLoggingIn}
+                loading={isLoggingIn}
                 loadingText="Logging in" />
             </div>}
-          </AppSegment>
-        </AppFrame>
-      </div>
-    </BrowserRouter>;
-  }
-
+        </AppSegment>
+      </AppFrame>
+    </div>
+  </BrowserRouter>;
 }
 
 TestUsers.propTypes = {
@@ -244,7 +273,7 @@ TestUsers.propTypes = {
   epTypes: PropTypes.array.isRequired,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
-  userSession: PropTypes.object.isRequired,
+  userSession: PropTypes.object,
   timezone: PropTypes.object,
   dependenciesFaked: PropTypes.bool
 };

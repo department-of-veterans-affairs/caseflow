@@ -10,7 +10,7 @@ module Hearings::CalendarTemplateHelper
     HEARING_TIME_DISPLAY_FORMAT = "%A, %-d %B %Y at %-l:%M%P %Z"
 
     def format_hearing_time(time)
-      time.strftime(HEARING_TIME_DISPLAY_FORMAT)
+      time.strftime("%A, %B #{time.day.ordinalize} %Y at %-l:%M%P %Z")
     end
 
     def central_office_display_time(hearing)
@@ -28,6 +28,11 @@ module Hearings::CalendarTemplateHelper
     # time_zone is a TZInfo::DataTimezone object; date_time_utc is a Time object
     def formatted_date_time_for_zone(time_zone, date_time_utc)
       time_zone.strftime(HEARING_TIME_DISPLAY_FORMAT, date_time_utc)
+    end
+
+    def hearing_date_only(hearing)
+      datetime = hearing.scheduled_for
+      datetime.strftime("%a, %b %I") #  Fri, Mar 26
     end
   end
 end

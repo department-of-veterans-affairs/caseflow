@@ -97,6 +97,7 @@ class HearingRepository
       hearing
     end
 
+    # :nocov:
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
@@ -108,47 +109,32 @@ class HearingRepository
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|
-        hearing = LegacyHearing
-          .assign_or_create_from_vacols_record(vacols_record,
-                                               legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
-        set_vacols_values(hearing, vacols_record)
-      end.flatten
+        begin
+          hearing = LegacyHearing
+            .assign_or_create_from_vacols_record(vacols_record,
+                                                 legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
+          set_vacols_values(hearing, vacols_record)
+        rescue RegionalOffice::NotFoundError => error
+          Raven.capture_exception(error, extra: { legacy_hearing_vacols_id: vacols_record.hearing_pkseq })
+          next
+        end
+      end.flatten.compact
     end
+    # :nocov:
 
-    # Get all virtual hearings that *might* need to have a reminder email sent.
+    # Get all hearings that *might* need to have a reminder email sent.
     #
     # @note The logic to determine whether or not a reminder email needs to be sent is
     #   complex enough that it's not worth putting in an SQL query for maintainability reasons.
-    #   This method will find all active virtual hearings that are occurring within the next 7
-    #   days.
+    #   This method will find all hearings that are occurring within the next 7 days.
     def maybe_ready_for_reminder_email
-      ama_ready = VirtualHearingRepository.joins_hearing_and_hearing_day(Hearing)
-        .not_cancelled
-        .where(
-          "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
-          non_active_hearing_dispositions: [:postponed, :cancelled]
-        )
-        .where(scheduled_within_seven_days)
+      ama_maybe_ready + legacy_maybe_ready
+    end
 
-      legacy_ready = []
-
-      # VACOLS can support a max of 1000 at a time which is the in_batches default
-      VirtualHearingRepository.joins_hearing_and_hearing_day(LegacyHearing)
-        .not_cancelled.where(scheduled_within_seven_days).in_batches do |vhs|
-          vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
-          # the subset of hearings that are postponed or cancelled in VACOLS
-          # default to [""] if empty so the NOT IN clause in the query below will work
-          selected_vacols_ids =
-            VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
-
-          legacy_ready << vhs
-            .where(
-              "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
-              postponed_or_cancelled_vacols_ids: selected_vacols_ids
-            ).to_a
-        end
-
-      ama_ready + legacy_ready.flatten
+    # Get all `SentHearingEmailEvent` objects that need their status to be checked
+    # against GovDelivery API.
+    def maybe_needs_email_sent_status_checked
+      ama_sent_hearing_email_events + legacy_sent_hearing_email_events
     end
 
     private
@@ -157,13 +143,111 @@ class HearingRepository
     # a given timeframe (in days).
     #
     # @note Requires a join with the `hearing_days` table.
-    def scheduled_within_seven_days
+    def scheduled_within_sixty_days
       <<-SQL
         DATE_PART(
         'day',
         hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
-        ) BETWEEN 1 AND 7
+        ) BETWEEN 1 AND 60
       SQL
+    end
+
+    # Returns a where clause that can be used to find all hearings that occur within
+    # in the future
+    #
+    # @note Requires a join with the `hearing_days` table.
+    def scheduled_for_future
+      <<-SQL
+        hearing_days.scheduled_for >= CURRENT_DATE
+      SQL
+    end
+
+    def hearings_and_hearing_days_join_clause
+      "INNER JOIN hearings on hearings.id = sent_hearing_email_events.hearing_id " \
+        "AND sent_hearing_email_events.hearing_type = 'Hearing'" \
+        "INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id"
+    end
+
+    def legacy_hearings_and_hearing_days_join_clause
+      "INNER JOIN legacy_hearings on legacy_hearings.id = sent_hearing_email_events.hearing_id " \
+        "AND sent_hearing_email_events.hearing_type = 'LegacyHearing'" \
+        "INNER JOIN hearing_days ON hearing_days.id = legacy_hearings.hearing_day_id"
+    end
+
+    # This exists to exclude hearing_days with the type :travel, while we don't have
+    # many of them, they do exist and we don't want to send reminders for them yet.
+    def hearing_day_types_to_send_reminders_for
+      [
+        HearingDay::REQUEST_TYPES[:virtual],
+        HearingDay::REQUEST_TYPES[:video],
+        HearingDay::REQUEST_TYPES[:central]
+      ]
+    end
+
+    def active_legacy_hearings_in_batch(vacols_hearings)
+      vacols_ids = vacols_hearings.pluck("legacy_hearings.vacols_id")
+      # the subset of hearings that are postponed or cancelled in VACOLS
+      # default to [""] if empty so the NOT IN clause in the query below will work
+      selected_vacols_ids =
+        VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
+
+      vacols_hearings.where(
+        "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
+        postponed_or_cancelled_vacols_ids: selected_vacols_ids
+      ).to_a
+    end
+
+    def ama_sent_hearing_email_events
+      SentHearingEmailEvent
+        .where(recipient_role: %w[veteran appellant representative], send_successful: nil)
+        .joins(hearings_and_hearing_days_join_clause)
+        .where(
+          "hearings.disposition NOT IN (:non_active_hearing_dispositions) " \
+          "OR hearings.disposition IS NULL", non_active_hearing_dispositions: [
+            :postponed, :cancelled, :scheduled_in_error
+          ]
+        )
+        .where(scheduled_for_future).order(HearingDay.arel_table[:scheduled_for].asc)
+    end
+
+    def legacy_sent_hearing_email_events
+      legacy_events = []
+
+      SentHearingEmailEvent
+        .where(recipient_role: %w[veteran appellant representative], send_successful: nil)
+        .joins(legacy_hearings_and_hearing_days_join_clause)
+        .where(scheduled_for_future).order(HearingDay.arel_table[:scheduled_for].asc)
+        .in_batches { |vhs| legacy_events << active_legacy_hearings_in_batch(vhs) }
+
+      legacy_events.flatten
+    end
+
+    def ama_maybe_ready
+      Hearing
+        .joins("INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
+        .where(
+          "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
+          non_active_hearing_dispositions: [:postponed, :cancelled, :scheduled_in_error]
+        )
+        .where(
+          "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
+        )
+        .where(scheduled_within_sixty_days)
+    end
+
+    def legacy_maybe_ready
+      legacy_maybe_ready = []
+      # VACOLS can support a max of 1000 at a time which is the in_batches default
+      LegacyHearing
+        .joins("INNER JOIN hearing_days ON hearing_days.id = legacy_hearings.hearing_day_id")
+        .where(
+          "hearing_days.request_type IN (:types)", types: hearing_day_types_to_send_reminders_for
+        )
+        .where(scheduled_within_sixty_days).in_batches do |vhs|
+          legacy_maybe_ready << active_legacy_hearings_in_batch(vhs)
+        end
+
+      legacy_maybe_ready.flatten
     end
 
     # Gets the regional office to use when mapping the VACOLS hearing date to

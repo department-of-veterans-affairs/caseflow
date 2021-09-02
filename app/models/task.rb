@@ -20,7 +20,10 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
-  belongs_to :appeal, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
+
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
@@ -94,6 +97,8 @@ class Task < CaseflowRecord
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
+
+  attr_accessor :skip_check_for_only_open_task_of_type
 
   ############################################################################################
   ## class methods
@@ -562,7 +567,7 @@ class Task < CaseflowRecord
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
-    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
+    @skip_check_for_only_open_task_of_type = true
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
@@ -573,10 +578,8 @@ class Task < CaseflowRecord
 
           task.save!
         end
-      # The ensure block guarantees that the thread-local variable check_for_open_task_type
-      # does not leak outside of this method
       ensure
-        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
+        @skip_check_for_only_open_task_of_type = nil
       end
     end
 
@@ -604,14 +607,17 @@ class Task < CaseflowRecord
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
 
   # This method is for copying a task and its ancestors to a new appeal stream
-  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [])
+  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [], new_attributes: {})
     return unless parent
 
-    new_task_attributes = attributes.except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+    new_task_attributes = attributes
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+      .merge(new_attributes)
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
-    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    # We reload the new_appeal_stream to ensure we are always working off an updated snapshot of task tree
+    existing_new_parent = new_appeal_stream.reload.tasks.find { |task| task.type == parent.type }
     new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
 
     # Do not copy orphaned branches
@@ -832,10 +838,6 @@ class Task < CaseflowRecord
     end
 
     true
-  end
-
-  def skip_check_for_only_open_task_of_type?
-    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
   end
 
   def only_open_task_of_type

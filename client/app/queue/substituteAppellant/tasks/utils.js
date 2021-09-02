@@ -15,6 +15,48 @@ export const automatedTasks = [
   'HearingTask'
 ];
 
+export const mailTasks = [
+  'AddressChangeMailTask',
+  'AodMotionMailTask',
+  'AppealWithdrawalMailTask',
+  'CavcCorrespondenceMailTask',
+  'ClearAndUnmistakeableErrorMailTask',
+  'CongressionalInterestMailTask',
+  'ControlledCorrespondenceMailTask',
+  'DeathCertificateMailTask',
+  'DocketSwitchMailTask',
+  'EvidenceOrArgumentMailTask',
+  'ExtensionRequestMailTask',
+  'FoiaRequestMailTask',
+  'HearingRelatedMailTask',
+  'OtherMotionMailTask',
+  'PowerOfAttorneyRelatedMailTask',
+  'PrivacyActRequestMailTask',
+  'PrivacyComplaintMailTask',
+  'ReconsiderationMotionMailTask',
+  'ReturnedUndeliverableCorrespondenceMailTask',
+  'StatusInquiryMailTask',
+  'VacateMotionMailTask',
+];
+
+export const hearingAdminActions = [
+  'HearingAdminActionContestedClaimantTask',
+  'HearingAdminActionFoiaPrivacyRequestTask',
+  'HearingAdminActionForeignVeteranCaseTask',
+  'HearingAdminActionIncarceratedVeteranTask',
+  'HearingAdminActionMissingFormsTask',
+  'HearingAdminActionOtherTask',
+  'HearingAdminActionVerifyAddressTask',
+  'HearingAdminActionVerifyPoaTask',
+];
+
+export const nonAutomatedTasksToHide = [
+  'AssignHearingDispositionTask',
+  'ChangeHearingDispositionTask',
+];
+
+export const tasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
+
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
 export const isDescendant = (
@@ -68,19 +110,50 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
   return isDescendant(tasksById, distributionTask, task, { id: 'taskId' });
 };
 
+export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
+  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
+};
+
+export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
+  const disablingTaskMap = {
+    ScheduleHearingTask: [
+      'EvidenceSubmissionWindowTask',
+      'TranscriptionTask',
+    ],
+    EvidenceSubmissionWindowTask: [
+      'ScheduleHearingTask',
+    ],
+    TranscriptionTask: [
+      'ScheduleHearingTask',
+    ],
+  };
+
+  return Object.entries(disablingTaskMap).some(([selectionType, toDisable]) => {
+    return selectedTaskTypes.includes(selectionType) && toDisable.includes(taskType);
+  });
+};
+
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
+
 export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
+};
+
+export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
+  const selectedTaskTypes = taskTypesSelected({ tasks, selectedTaskIds });
+
+  return tasks.map((task) => {
+    return ({
+      ...task,
+      disabled: shouldDisable(task) || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
+    });
+  });
 };
 
 export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
   // eslint-disable-next-line camelcase
   return taskInfo.type === 'InformalHearingPresentationTask' && !claimantPoa?.ihp_allowed;
-};
-
-export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
-  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
 };
 
 // We can have a case where a particular task's inclusion depends upon other tasks
@@ -97,7 +170,8 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
-  if (automatedTasks.includes(taskInfo.type)) {
+  // Some tasks should always be hidden, regardless of additional context
+  if (tasksToHide.includes(taskInfo.type)) {
     return true;
   }
 
@@ -152,7 +226,7 @@ export const prepTaskDataForUi = (taskData, claimantPoa) => {
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
-    disabled: shouldDisable(taskInfo, taskData),
+    disabled: shouldDisable(taskInfo),
     selected: shouldAutoSelect(taskInfo),
   }));
 };

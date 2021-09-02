@@ -54,6 +54,8 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             expect(task.parent.type).to eq JudgeDecisionReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
+
+            expect(AttorneyCaseReview.find_by(task: task).appeal_id).to eq task.appeal.id
           end
         end
 
@@ -190,6 +192,8 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             expect(quality_review_task.assigned_to).to eq(QualityReview.singleton) if quality_review_task
             dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
             expect(dispatch_task.assigned_to).to eq(BvaDispatch.singleton) if dispatch_task
+
+            expect(JudgeCaseReview.find_by(task: task).appeal_id).to eq task.appeal.id
           end
 
           context "when case is being QRed" do
