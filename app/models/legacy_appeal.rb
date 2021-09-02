@@ -840,7 +840,9 @@ class LegacyAppeal < CaseflowRecord
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
-  # How are these related to AttorneyCaseReview records?
+  # Q: How are these related to AttorneyCaseReview records?
+  # A: VACOLS is the record of truth for legacy appeals.
+  #    But Caseflow also capture similar info in AttorneyCaseReview.
   def attorney_case_reviews
     (das_assignments || []).reject { |t| t.document_id.nil? }
   end
