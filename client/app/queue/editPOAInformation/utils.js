@@ -3,23 +3,23 @@ export const mapPOADataToApi = (_poa) => {
     unrecognized_appellant: {
       poa_participant_id: null,
       unrecognized_power_of_attorney: {
-        party_type: _poa.partyType,
-        name: _poa.firstName,
         address_line_1: _poa.addressLine1,
         address_line_2: _poa.addressLine2,
         address_line_3: _poa.addressLine3,
+        party_type: _poa.partyType,
+        name: _poa.firstName,
         city: _poa.city,
         country: _poa.country,
         state: _poa.state,
-        zip: _poa.zip,
-        label: _poa.label,
-        value: _poa.value
+        zip: _poa.zip
       }
     }
   };
 
   if (_poa.listedAttorney.value !== 'not_listed') {
-    returnval.unrecognized_appellant.poa_participant_id = _poa.listedAttorney.value;
+    returnval.unrecognized_appellant = {
+      poa_participant_id: _poa.listedAttorney.value
+    };
   }
 
   return returnval;
@@ -40,9 +40,11 @@ export const mapPOADataFromApi = (appeal) => {
       addressLine3: poaAddress.address_line_3,
       city: poaAddress.city,
       country: poaAddress.country,
-      email: poa.representative_email_address,
+      emailAddress: poa.representative_email_address,
       name: poa.representative_name,
+      state: poaAddress.state,
       type: poa.representative_type,
+      zip: poaAddress.zip,
       zone: poa.representative_tz,
     };
   }
