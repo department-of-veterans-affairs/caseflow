@@ -16,7 +16,7 @@ import {
 } from './selectors';
 import { pencilSymbol, clockIcon } from '../components/RenderFunctions';
 import { renderLegacyAppealType } from './utils';
-import { requestPatch } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 import Button from '../components/Button';
 import COPY from '../../COPY';
 import CopyTextButton from '../components/CopyTextButton';
@@ -24,6 +24,7 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import Modal from '../components/Modal';
 import ReaderLink from './ReaderLink';
 import TextField from '../components/TextField';
+import { onReceiveAppealDetails } from './QueueActions';
 
 const editButton = css({
   float: 'right',
@@ -82,13 +83,19 @@ export class CaseTitleDetails extends React.PureComponent {
       }
     };
 
-    this.props.
+    // debugger;
+
+    return this.props.
       requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
-      then(() => {
+      then((resp) => {
+        // console.log(this.props);
+        // this.props.onReceiveAppealDetails(resp.appeal);
+
         this.handleModalClose();
-        window.location.reload();
+        // window.location.reload();
       }).
       catch((error) => {
+        // console.log(error);
         const documentIdErrors = JSON.parse(error.message).errors;
 
         const documentIdErrorText = documentIdErrors && documentIdErrors[0].detail;
@@ -252,6 +259,7 @@ CaseTitleDetails.propTypes = {
   history: PropTypes.object,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
+  onReceiveAppealDetails: PropTypes.func,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
   userCanAccessReader: PropTypes.bool,
@@ -282,7 +290,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      requestPatch
+      requestPatch,
+      onReceiveAppealDetails
     },
     dispatch
   );
