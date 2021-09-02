@@ -74,21 +74,21 @@ class WorkQueue::LegacyAppealSerializer
   end
 
   attribute :document_id do |object|
-    latest_attorney_case_review(object)&.document_id
+    latest_vacols_attorney_case_review(object)&.document_id
   end
 
   attribute :can_edit_document_id do |object, params|
     LegacyDocumentIdPolicy.new(
       user: params[:user],
-      case_review: latest_attorney_case_review(object)
+      case_review: latest_vacols_attorney_case_review(object)
     ).editable?
   end
 
   attribute :attorney_case_review_id do |object|
-    latest_attorney_case_review(object)&.vacols_id
+    latest_vacols_attorney_case_review(object)&.vacols_id
   end
 
-  def self.latest_attorney_case_review(object)
+  def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end
 end
