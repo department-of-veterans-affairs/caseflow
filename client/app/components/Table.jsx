@@ -295,7 +295,7 @@ Row.propTypes = {
   footer: PropTypes.bool,
   rowId: PropTypes.number,
   rowClassNames: PropTypes.func,
-  rowObject: PropTypes.object.isRequired
+  rowObject: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 BodyRows.propTypes = {
