@@ -12,11 +12,15 @@ module TimeableTask
       fail Caseflow::Error::MissingTimerMethod unless method_defined?(:timer_ends_at)
 
       super(args).tap do |task|
-        timer = TaskTimer.new(task: task)
-        timer.submit_for_processing!(delay: task.timer_ends_at)
-        # if timer_ends_at is in the past, we automatically trigger processing now.
-        timer.restart! if timer.expired_without_processing?
+        create_timer task
       end
+    end
+
+    def create_timer(task)
+      timer = TaskTimer.new(task: task)
+      timer.submit_for_processing!(delay: task.timer_ends_at)
+      # if timer_ends_at is in the past, we automatically trigger processing now.
+      timer.restart! if timer.expired_without_processing?
     end
   end
 end
