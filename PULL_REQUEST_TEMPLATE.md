@@ -36,7 +36,6 @@ Please explain the changes you made here.
 * [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)
 * [ ] Add appropriate indexes (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
 * [ ] Run `make check-fks`; add any missing foreign keys or add to `config/initializers/immigrant.rb`
-* [ ] Run `make docs` (after running `make migrate`) to update DB schema docs
 * [ ] Post this PR in #appeals-schema with a summary
 * [ ] Document any non-obvious semantics or logic useful for interpreting database data at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
 

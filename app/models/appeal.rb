@@ -347,6 +347,11 @@ class Appeal < DecisionReview
     !!appellant_substitution
   end
 
+  # Determine if we are on a separate substitution appeal (used in serializer)
+  def substitution_appeal?
+    appellant_substitution && id != appellant_substitution.source_appeal.id
+  end
+
   # This method allows the source appeal stream to access the appellant_substitution objects
   def substitutions
     AppellantSubstitution.where(source_appeal_id: id)
