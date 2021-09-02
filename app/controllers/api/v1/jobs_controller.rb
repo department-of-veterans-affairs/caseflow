@@ -13,6 +13,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "docket_range_job" => DocketRangeJob,
     "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,
     "etl_builder" => ETLBuilderJob,
+    "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
     "heartbeat" => HeartbeatTasksJob,
     "incomplete_distributions_job" => IncompleteDistributionsJob,
     "monthly_metrics" => MonthlyMetricsReportJob,

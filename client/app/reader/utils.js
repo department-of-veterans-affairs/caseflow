@@ -36,17 +36,13 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
   if (rotation === 0) {
-    return { x,
-      y };
+    return { x, y };
   } else if (rotation === 90) {
-    return { x: y,
-      y: container.width - x };
+    return { x: y, y: container.width - x };
   } else if (rotation === 180) {
-    return { x: container.width - x,
-      y: container.height - y };
+    return { x: container.width - x, y: container.height - y };
   } else if (rotation === 270) {
-    return { x: container.height - y,
-      y: x };
+    return { x: container.height - y, y: x };
   }
 
   return {
