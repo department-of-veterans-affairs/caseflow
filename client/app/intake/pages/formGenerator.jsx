@@ -52,6 +52,20 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 }));
 
 const formFieldMapping = (props) => {
+  const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
+  const renderBooleanValue = (propKey) => {
+    // eslint-disable-next-line no-undefined
+    return props[propKey] === null || props[propKey] === undefined ? null : props[propKey].toString();
+  };
+  const renderVaGovValue = () => {
+    // eslint-disable-next-line no-undefined
+    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
+      return 'false';
+    }
+
+    return renderBooleanValue('filedByVaGov');
+  };
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type':
@@ -95,9 +109,7 @@ const formFieldMapping = (props) => {
         props.setInformalConference(convertStringToBoolean(value));
       }}
       errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.informalConference === null || props.informalConference === undefined ?
-        null : props.informalConference.toString()}
+      value={renderBooleanValue('informalConference')}
       inputRef={props.register}
     />,
     'same-office': <RadioField
@@ -110,8 +122,7 @@ const formFieldMapping = (props) => {
         props.setSameOffice(convertStringToBoolean(value));
       }}
       errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
+      value={renderBooleanValue('sameOffice')}
       inputRef={props.register}
     />,
     'filed-by-va-gov': <RadioField
@@ -124,9 +135,7 @@ const formFieldMapping = (props) => {
         props.setFiledByVaGov(convertStringToBoolean(value));
       }}
       errorMessage={props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message}
-      // eslint-disable-next-line no-undefined
-      value={props.filedByVaGov === null || props.filedByVaGov === undefined ?
-        'false' : props.filedByVaGov.toString()}
+      value={renderVaGovValue()}
       inputRef={props.register}
     />,
     'opt-in-election': <Fragment>
