@@ -58,11 +58,7 @@ class WorkQueue::AppealSerializer
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
     associated_hearings = []
 
-    def substituted_appeal?(object)
-      object.appellant_substitution && object.id != object.appellant_substitution.source_appeal.id
-    end
-
-    if substituted_appeal?(object)
+    if object.substitution_appeal?
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
     end
 
