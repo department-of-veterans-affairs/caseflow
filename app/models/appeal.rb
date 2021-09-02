@@ -201,18 +201,6 @@ class Appeal < DecisionReview
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
 
-  def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
-
-    @latest_attorney_case_review = AttorneyCaseReview
-      .where(task_id: tasks.pluck(:id))
-      .order(:created_at).last
-  end
-
-  def latest_judge_case_review
-    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
-  end
-
   def reviewing_judge_name
     task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""

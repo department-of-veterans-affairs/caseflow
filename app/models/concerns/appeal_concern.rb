@@ -7,9 +7,17 @@ module AppealConcern
 
   included do
     if ancestors.include?(ApplicationRecord)
-      has_many :attorney_case_reviews, as: :appeal
-      has_many :judge_case_reviews, as: :appeal
+      has_many :attorney_case_reviews, -> { order(:created_at) }, as: :appeal
+      has_many :judge_case_reviews, -> { order(:created_at) }, as: :appeal
     end
+  end
+
+  def latest_attorney_case_review
+    @latest_attorney_case_review ||= attorney_case_reviews.last
+  end
+
+  def latest_judge_case_review
+    @latest_judge_case_review ||= judge_case_reviews.last
   end
 
   def regional_office
