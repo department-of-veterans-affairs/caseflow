@@ -268,7 +268,7 @@ describe FetchHearingLocationsForVeteransJob do
 
         it "records a geomatch error with actionable attribute = false" do
           expect(Raven).to receive(:capture_exception).with(nonactionable_error,
-                                                            hash_including(extra: { actionable: true,
+                                                            hash_including(extra: { actionable: false,
                                                                                     appeal_external_id: anything }))
 
           subject.perform
