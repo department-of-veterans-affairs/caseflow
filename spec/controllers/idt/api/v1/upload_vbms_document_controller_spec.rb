@@ -4,6 +4,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
+    let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
       { appeal_id: appeal.external_id,
@@ -22,6 +23,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         Idt::Token.activate_proposed_token(key, user.css_id)
         request.headers["TOKEN"] = t
         create(:staff, :attorney_role, sdomainid: user.css_id)
+        allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { file_number }
       end
 
       context "when document_type param is missing" do
@@ -75,11 +77,9 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
       end
 
       context "when veteran file number doesn't match in BGS" do
-        let(:file_number) { appeal.veteran.file_number }
-        let(:real_file_number) { file_number + "123" }
+        let(:file_number) { appeal.veteran.file_number + "123" }
 
         it "returns a HTTP 500 error" do
-          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { real_file_number }
           post :create, params: params
           expect(response).to have_attributes(status: 500)
           errors = JSON.parse(response.body)["errors"]
@@ -138,6 +138,11 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
         context "the appeal is a LegacyAppeal" do
           let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+          let(:veteran) { create(:veteran) }
+
+          before do
+            allow(appeal).to receive(:veteran) { veteran }
+          end
 
           it_behaves_like "success_with_valid_parameters"
         end
