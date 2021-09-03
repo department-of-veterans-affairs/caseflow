@@ -417,4 +417,13 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
+  # GovDelivery Errors
+  class GovDeliveryApiError < SerializableError; end
+  class GovDeliveryUnauthorizedError < GovDeliveryApiError; end
+  class GovDeliveryForbiddenError < GovDeliveryApiError; end
+  class GovDeliveryNotFoundError < GovDeliveryApiError; end
+  class GovDeliveryInternalServerError < GovDeliveryApiError; end
+  class GovDeliveryBadGatewayError < GovDeliveryApiError; end
+  class GovDeliveryServiceUnavailableError < GovDeliveryApiError; end
 end

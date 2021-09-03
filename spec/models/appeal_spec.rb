@@ -118,6 +118,51 @@ describe Appeal, :all_dbs do
         subject
       end
     end
+
+    context "when the appeal has only vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has vha and non-vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "education")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
   end
 
   context "#create_issues!" do
@@ -1290,6 +1335,50 @@ describe Appeal, :all_dbs do
         let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
 
         it { is_expected.to be nil }
+      end
+    end
+  end
+
+  describe "can_redistribute_appeal?" do
+    let!(:distributed_appeal_can_redistribute) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:distributed_appeal_cannot_redistribute) do
+      create(:appeal,
+             :with_schedule_hearing_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user,
+             associated_attorney: attorney_user)
+    end
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let(:attorney_user) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
+    let!(:attorney_on_judge_team) { judge_team.add_user(attorney_user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:docket) { DirectReviewDocket.new }
+    before do
+      distributed_appeal_can_redistribute.tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
+      past_distribution.completed!
+    end
+
+    context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
+      subject { distributed_appeal_can_redistribute.can_redistribute_appeal? }
+      it "returns true " do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has open tasks" do
+      subject { distributed_appeal_cannot_redistribute.can_redistribute_appeal? }
+      it "returns false" do
+        expect(subject).to be false
       end
     end
   end

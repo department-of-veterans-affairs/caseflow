@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         end
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
+        get 'legacy_appeals', to: "legacy_appeals#index"
       end
     end
     namespace :docs do
