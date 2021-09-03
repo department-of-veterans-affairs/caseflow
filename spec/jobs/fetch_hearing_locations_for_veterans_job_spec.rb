@@ -255,7 +255,7 @@ describe FetchHearingLocationsForVeteransJob do
             )
           end
           expect(Raven).to receive(:capture_exception).with(anything,
-                                                            hash_including(extra: { actionable: false,
+                                                            hash_including(extra: { actionable: true,
                                                                                     appeal_external_id: anything }))
 
           subject.perform
