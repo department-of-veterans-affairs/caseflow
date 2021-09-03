@@ -430,7 +430,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_on "Continue"
         issue_dispositions = page.find_all(
           ".cf-select__control",
-          text: "Select Dispositions",
+          text: "Select disposition",
           count: appeal.issues.length
         )
 
