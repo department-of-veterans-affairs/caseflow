@@ -99,7 +99,6 @@ const EditPOAInformation = ({ appealId }) => {
           Save
         </Button>
         <Button
-          role="button"
           onClick={goBack}
           classNames={['cf-right-side', 'usa-button-secondary']}
           styling={{ style: { marginRight: '1em' } }}

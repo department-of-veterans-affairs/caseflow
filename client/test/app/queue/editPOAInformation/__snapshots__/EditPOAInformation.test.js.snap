@@ -2048,69 +2048,69 @@ exports[`EditPOAInformation renders default state correctly 1`] = `
                 <br />
               </form>
             </ClaimantForm>
-          </section>
-        </AppSegment>
-        <Button
-          classNames={
-            Array [
-              "cf-right-side",
-            ]
-          }
-          disabled={false}
-          linkStyling={false}
-          loading={false}
-          name="Save"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          <span>
-            <button
-              className="cf-right-side usa-button"
+            <Button
+              classNames={
+                Array [
+                  "cf-right-side",
+                ]
+              }
               disabled={false}
-              id="button-Save"
+              linkStyling={false}
+              loading={false}
+              name="Save"
               onClick={[Function]}
               type="button"
+              willNeverBeLoading={false}
             >
-              Save
-            </button>
-          </span>
-        </Button>
-        <Button
-          classNames={
-            Array [
-              "cf-right-side",
-              "usa-button-secondary",
-            ]
-          }
-          linkStyling={false}
-          loading={false}
-          onClick={[Function]}
-          styling={
-            Object {
-              "style": Object {
-                "marginRight": "1em",
-              },
-            }
-          }
-          type="button"
-          willNeverBeLoading={false}
-        >
-          <span>
-            <button
-              className="cf-right-side usa-button-secondary usa-button"
+              <span>
+                <button
+                  className="cf-right-side usa-button"
+                  disabled={false}
+                  id="button-Save"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Save
+                </button>
+              </span>
+            </Button>
+            <Button
+              classNames={
+                Array [
+                  "cf-right-side",
+                  "usa-button-secondary",
+                ]
+              }
+              linkStyling={false}
+              loading={false}
               onClick={[Function]}
-              style={
+              styling={
                 Object {
-                  "marginRight": "1em",
+                  "style": Object {
+                    "marginRight": "1em",
+                  },
                 }
               }
               type="button"
+              willNeverBeLoading={false}
             >
-              Cancel
-            </button>
-          </span>
-        </Button>
+              <span>
+                <button
+                  className="cf-right-side usa-button-secondary usa-button"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "marginRight": "1em",
+                    }
+                  }
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </span>
+            </Button>
+          </section>
+        </AppSegment>
       </FormProvider>
     </div>
   </EditPOAInformation>
