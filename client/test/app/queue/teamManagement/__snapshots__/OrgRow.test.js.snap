@@ -12,8 +12,6 @@ exports[`OrgRow renders correctly 1`] = `
         </em>
       </span>
     </td>
-    <td />
-    <td />
     <td
       class="css-a2hn0y"
     />
@@ -34,8 +32,6 @@ exports[`OrgRow with JudgeTeam renders correctly 1`] = `
         </em>
       </span>
     </td>
-    <td />
-    <td />
     <td
       class="css-a2hn0y"
     />
