@@ -89,23 +89,24 @@ const EditPOAInformation = ({ appealId }) => {
           hidePOAForm
           POA
         />
+        <Button
+          onClick={handleSubmit(handleUpdate)}
+          classNames={['cf-right-side']}
+          loading={loading}
+          disabled={!isValid}
+          name="Save"
+        >
+          Save
+        </Button>
+        <Button
+          role="button"
+          onClick={goBack}
+          classNames={['cf-right-side', 'usa-button-secondary']}
+          styling={{ style: { marginRight: '1em' } }}
+        >
+          Cancel
+        </Button>
       </AppSegment>
-      <Button
-        onClick={handleSubmit(handleUpdate)}
-        classNames={['cf-right-side']}
-        loading={loading}
-        disabled={!isValid}
-        name="Save"
-      >
-        Save
-      </Button>
-      <Button
-        onClick={goBack}
-        classNames={['cf-right-side', 'usa-button-secondary']}
-        styling={{ style: { marginRight: '1em' } }}
-      >
-        Cancel
-      </Button>
     </FormProvider>
   </div>;
 };
