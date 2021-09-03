@@ -118,4 +118,22 @@ describe('RepresentativeSection', () => {
       text()).toMatch(amaHearing.representativeName);
     expect(representativeSection).toMatchSnapshot();
   });
+
+  test('Does not display address when formFieldsOnly = true', () => {
+    const representativeSection = mount(
+      <RepresentativeSection
+        formFieldsOnly
+        appellantTitle="Appellant"
+        virtualHearing={virtualHearing.virtualHearing}
+        hearing={defaultHearing}
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+      />
+    );
+
+    expect(representativeSection.find(ReadOnly)).toHaveLength(1);
+    expect(representativeSection.find(AddressLine)).toHaveLength(0);
+    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(representativeSection).toMatchSnapshot();
+  });
 });

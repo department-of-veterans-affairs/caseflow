@@ -65,7 +65,7 @@ export const HearingTypeConversionForm = ({
         <p dangerouslySetInnerHTML={{ __html: convertSubtitle }} />
         <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_2} />
         <AppellantSection {...sectionProps} />
-        <RepresentativeSection {...sectionProps} />
+        <RepresentativeSection {...sectionProps} showDivider />
       </AppSegment>
       <div {...marginTop(30)}>
         <Button
