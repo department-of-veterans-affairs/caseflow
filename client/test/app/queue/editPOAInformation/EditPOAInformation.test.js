@@ -1,24 +1,20 @@
 import React from 'react';
+import { axe } from 'jest-axe';
 import { mount } from 'enzyme';
-import {
-  render,
-} from '@testing-library/react';
-import EditPOAInformation from 'app/queue/EditPOAInformation/EditPOAInformation';
-import { queueWrapper } from 'test/data/stores/queueStore';
 
+import EditPOAInformation from 'app/queue/editPOAInformation/EditPOAInformation';
 import { amaAppeal } from '../../../data/appeals';
+import { queueWrapper } from 'test/data/stores/queueStore';
 
 describe('EditPOAInformation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  const setup = () => {
-    return mount(<EditPOAInformation appealId={amaAppeal.externalId} />,
-      {
-        wrappingComponent: queueWrapper,
-      });
-  };
+  const setup = () => mount(<EditPOAInformation appealId={amaAppeal.externalId} />,
+    {
+      wrappingComponent: queueWrapper,
+    });
 
   it('renders default state correctly', () => {
     const container = setup();
