@@ -127,7 +127,7 @@ describe AppellantSubstitution do
       shared_examples "new appeal does not have post-distribution tasks" do
         let(:expected_task_types) do
           %w[RootTask DistributionTask TrackVeteranTask InformalHearingPresentationTask
-             EvidenceSubmissionWindowTask ScheduleHearingTask]
+             EvidenceSubmissionWindowTask HearingTask ScheduleHearingTask]
         end
         it "doesn't create tasks typically created after DistributionTask is completed" do
           target_appeal = subject.target_appeal

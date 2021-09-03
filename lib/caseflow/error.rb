@@ -114,6 +114,15 @@ module Caseflow::Error
     end
   end
 
+  class ClosedTaskError < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 403
+      @title = "Task Error"
+      @message = args[:message] || "It looks like you can't take action on this task because it is closed. " \
+      "Please return to the case details page and hit refresh for updated task information."
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
@@ -301,6 +310,7 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate DVC Team error"
       @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
     end
   end
@@ -309,6 +319,7 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate Judge Team error"
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
     end
   end
@@ -408,4 +419,13 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
+  # GovDelivery Errors
+  class GovDeliveryApiError < SerializableError; end
+  class GovDeliveryUnauthorizedError < GovDeliveryApiError; end
+  class GovDeliveryForbiddenError < GovDeliveryApiError; end
+  class GovDeliveryNotFoundError < GovDeliveryApiError; end
+  class GovDeliveryInternalServerError < GovDeliveryApiError; end
+  class GovDeliveryBadGatewayError < GovDeliveryApiError; end
+  class GovDeliveryServiceUnavailableError < GovDeliveryApiError; end
 end

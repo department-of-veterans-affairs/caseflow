@@ -114,6 +114,14 @@ describe JudgeCaseReview, :all_dbs do
         expect(subject.valid?).to eq true
         expect(subject.location).to eq "bva_dispatch"
       end
+
+      it "should associate appeal to JudgeCaseReview" do
+        case_review = subject
+        expect(case_review.appeal_type).to eq "Appeal"
+        expect(case_review.appeal_id).to eq task.appeal.id
+        expect(task.appeal.judge_case_reviews).to eq [case_review]
+        expect(task.appeal.attorney_case_reviews).to eq []
+      end
     end
 
     context "when legacy case review" do
@@ -173,6 +181,10 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.areas_for_improvement).to eq ["process_violations"]
             expect(subject.judge).to eq judge
             expect(subject.attorney).to eq attorney
+
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+
             expect(decass.reload.demdusr).to eq "CFS456"
             expect(decass.defdiff).to eq "3"
             expect(decass.deoq).to eq "1"
@@ -244,6 +256,9 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.factors_not_considered).to eq %w[theory_contention relevant_records]
             expect(subject.areas_for_improvement).to eq ["process_violations"]
 
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+
             expect_decass_to_be_up_to_date(decass)
 
             vacols_case.reload
@@ -293,6 +308,9 @@ describe JudgeCaseReview, :all_dbs do
             expect(subject.location).to eq "omo_office"
             expect(subject.judge).to eq judge
             expect(subject.attorney).to eq attorney
+
+            expect(subject.appeal_type).to eq "LegacyAppeal"
+            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
 
             expect_decass_to_be_up_to_date(decass)
 

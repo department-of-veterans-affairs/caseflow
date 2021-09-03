@@ -2,6 +2,7 @@
   "HEARINGS": {
     "APP_NAME": "hearings",
     "VIRTUAL_HEARINGS_GROUP_NAME": "virtual_hearings",
-    "REMINDER_EMAILS_GROUP_NAME": "hearing_reminders"
+    "REMINDER_EMAILS_GROUP_NAME": "hearing_reminders",
+    "STATUS_EMAILS_GROUP_NAME": "send_status_emails"
   }
 }

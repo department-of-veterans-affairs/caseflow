@@ -23,13 +23,13 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
   describe "#call" do
     subject { described_class.new(etl_build: etl_build).call }
 
-    context "one decision document" do
+    context "a decision document for each appeal type" do
+      let!(:legacy_decision_document) { create(:decision_document, appeal: create(:legacy_appeal)) }
       it "syncs attributes" do
         expect(ETL::DecisionDocument.count).to eq(0)
 
         subject
-
-        expect(ETL::DecisionDocument.count).to eq(1)
+        expect(ETL::DecisionDocument.count).to eq(1) # skips legacy
 
         expect(ETL::DecisionDocument.first.decision_document_created_at)
           .to be_within(1.second).of(decision_document.created_at)
@@ -54,8 +54,8 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
             docs.citation_number AS "Citation nr.",
             docs.docket_number AS "Docket nr.",
             to_char(docs.decision_date, 'mm/dd/yy') AS "Decision Date",
-            CONCAT(judge.sattyid, ' ', judge.full_name) AS "VLJ number and name",
-            CONCAT(atty.sattyid, ' ', atty.full_name) AS "Attorney number and name",
+            CONCAT(judge.sattyid, CONCAT(' ', judge.full_name)) AS "VLJ number and name",
+            CONCAT(atty.sattyid, CONCAT(' ', atty.full_name)) AS "Attorney number and name",
             issue.disposition AS Disposition,
             issue.benefit_type AS "Program area desc",
             REPLACE(REPLACE(issue.description, CHR(13), ' '), CHR(10),'') AS "Issue code desc",
@@ -67,9 +67,9 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
             ON docs.appeal_id = issue.decision_review_id
             AND docs.appeal_type = issue.decision_review_type
           LEFT JOIN users AS judge
-            ON judge.id = docs.judge_user_id
+            ON judge.user_id = docs.judge_user_id
           LEFT JOIN users AS atty
-            ON atty.id = docs.attorney_user_id
+            ON atty.user_id = docs.attorney_user_id
         SQL
         result = connection.exec_query(query).to_a
         expect(result.size).to eq ETL::DecisionDocument.count * ETL::DecisionIssue.count
@@ -79,10 +79,9 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
           SELECT
             docs.appeal_id, docs.appeal_type,
             docs.docket_number AS "Docket nr.",
-            to_char(docs.decision_date, 'mm/dd/yy') AS "Decision Date",
             to_char(judge_cr.review_updated_at, 'mm/dd/yy') AS "Judge Case Review updated",
-            CONCAT(judge.sattyid, ' ', judge.full_name) AS "VLJ number and name",
-            CONCAT(atty.sattyid, ' ', atty.full_name) AS "Attorney number and name",
+            CONCAT(judge.sattyid, CONCAT(' ', judge.full_name)) AS "VLJ number and name",
+            CONCAT(atty.sattyid, CONCAT(' ', atty.full_name)) AS "Attorney number and name",
             atty_cr.overtime AS "Attorney overtime",
             COUNT(CASE WHEN issues.disposition IN ('denied','remanded','allowed') THEN 1 ELSE null END) AS "ard_issues",
             COUNT(CASE WHEN issues.disposition IN ('denied','remanded','allowed') THEN null ELSE 1 END) AS "other_issues"
@@ -98,9 +97,10 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
             ON docs.appeal_id = judge_cr.appeal_id
             AND docs.appeal_type = judge_cr.appeal_type
           LEFT JOIN users AS judge
-            ON judge.id = docs.judge_user_id
+            ON judge.user_id = docs.judge_user_id
           LEFT JOIN users AS atty
-            ON atty.id = docs.attorney_user_id
+            ON atty.user_id = docs.attorney_user_id
+          WHERE docs.appeal_type = 'Appeal'
           GROUP BY docs.appeal_id, docs.appeal_type,
             docs.docket_number, docs.decision_date,
             judge_cr.review_updated_at,

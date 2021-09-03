@@ -25,6 +25,8 @@ describe ETL::UserSyncer, :etl do
 
         expect(ETL::User.all.count).to eq(2)
         expect(ETL::User.find_by(user_id: user1.id)).to_not be_nil
+        expect(ETL::User.find_by(user_id: user1.id).sactive).to eq "A"
+
         expect(ETL::User.find_by(user_id: user3.id)).to_not be_nil
         expect(ETL::User.find_by(user_id: user3.id).sactive).to be_nil
       end
@@ -56,6 +58,10 @@ describe ETL::UserSyncer, :etl do
         expect(ETL::User.all.count).to eq(0)
 
         subject
+        expect(ETL::User.find_by(user_id: user1.id).svlj).to eq "J"
+        expect(ETL::User.find_by(user_id: user1.id).sattyid).to eq user1.vacols_user.sattyid
+        expect(ETL::User.find_by(user_id: user2.id).svlj).to eq "A"
+        expect(ETL::User.find_by(user_id: user2.id).sattyid).to eq user2.vacols_user.sattyid
 
         expect(ETL::User.all.count).to eq(3)
       end

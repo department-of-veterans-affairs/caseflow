@@ -6,8 +6,12 @@ class AppealHearingSerializer
   attribute :date, &:scheduled_for
   attribute :disposition
   attribute :external_id
-  attribute :held_by do |hearing|
-    hearing.judge.present? ? hearing.judge.full_name : ""
+  attribute :held_by do |hearing, params|
+    if params[:user]&.vso_employee?
+      nil
+    elsif hearing.judge.present?
+      hearing.judge.full_name
+    end
   end
   attribute :is_virtual, &:virtual?
   attribute :notes

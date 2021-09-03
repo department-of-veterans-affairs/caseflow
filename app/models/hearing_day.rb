@@ -30,6 +30,7 @@ class HearingDay < CaseflowRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
+  has_one :vacols_user, through: :judge
   has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -123,6 +124,7 @@ class HearingDay < CaseflowRecord
   end
 
   def to_hash
+    judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
                                            .new(HearingDay.where(id: id))
@@ -133,7 +135,10 @@ class HearingDay < CaseflowRecord
 
     ::HearingDaySerializer.new(
       self,
-      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+      params: {
+        video_hearing_days_request_types: video_hearing_days_request_types,
+        judge_names: judge_names
+      }
     ).serializable_hash[:data][:attributes]
   end
 

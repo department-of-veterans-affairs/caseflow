@@ -17,9 +17,9 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
   end
 
   context "VSO user view" do
-    let!(:judge_one) { create(:user, full_name: "Judge One") }
-    let!(:judge_two) { create(:user, full_name: "Judge Two") }
-    let!(:judge_three) { create(:user, full_name: "Judge Three") }
+    let!(:judge_one) { create(:user, :with_vacols_judge_record, full_name: "Judge One") }
+    let!(:judge_two) { create(:user, :with_vacols_judge_record, full_name: "Judge Two") }
+    let!(:judge_three) { create(:user, :with_vacols_judge_record, full_name: "Judge Three") }
     let!(:hearing_day_one) { create(:hearing_day, judge: judge_one) }
     let!(:hearing_day_two) { create(:hearing_day, judge: judge_two) }
     let!(:hearing_day_three) { create(:hearing_day, judge: judge_three) }
@@ -33,6 +33,7 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
+      CachedUser.sync_from_vacols
       stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = current_user
 

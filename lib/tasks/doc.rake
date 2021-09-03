@@ -113,9 +113,6 @@ namespace :doc do
   end
 
   namespace :belongs_to do
-    include ErdRecordAssociations
-    include ErdGraphStyling
-
     def record_classes
       return @record_classes if @record_classes
 
@@ -150,14 +147,24 @@ namespace :doc do
       target_dir = Rails.root.join("docs/schema/")
 
       save_dot_file(graph, target_dir.join("#{schema_name}-#{graph_filename}.dot"))
-      graph.save(
-        png: target_dir.join("#{schema_name}-#{graph_filename}.png"),
-        svg: target_dir.join("#{schema_name}-#{graph_filename}.svg")
-      )
+      if update_schema_images?
+        graph.save(
+          png: target_dir.join("#{schema_name}-#{graph_filename}.png"),
+          svg: target_dir.join("#{schema_name}-#{graph_filename}.svg")
+        )
+      end
+    end
+
+    def update_schema_images?
+      ENV.fetch("UPDATE_SCHEMA_ERD_IMAGES", nil)
     end
 
     desc "Generate belongs_to ERD"
     task erd: :prepare do
+      # `include`s should be within the `task` scope: https://stackoverflow.com/questions/17304110/
+      include ErdRecordAssociations
+      include ErdGraphStyling
+
       node_classes = exclude_verbose_classes(record_classes)
 
       # Subclasses ERD

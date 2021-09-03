@@ -41,7 +41,41 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_content("VSOs")
         expect(page).to have_content("Private Bar")
         expect(page).to have_content("VHA Program Offices")
+        expect(page).to have_content("VISNs")
         expect(page).to have_content("Other teams")
+      end
+
+      shared_examples "user cannot add another team" do |team_type|
+        before do
+          # Always return the same set of users in order to cause DuplicateJudgeTeam error
+          allow_any_instance_of(UserFinder).to receive(:users).and_return([user])
+        end
+        scenario "user cannot add another team" do
+          visit("/team_management")
+
+          find("button", text: "+ Add #{team_type}").click
+          click_dropdown(text: user.full_name)
+          find("button", text: "Submit").click
+          expect(page).to have_content("Success")
+
+          find("button", text: "+ Add #{team_type}").click
+          click_dropdown(text: user.full_name)
+          find("button", text: "Submit").click
+          expect(page).to have_content(error_message)
+
+          find("button", text: "Cancel").click
+          expect(page).not_to have_content(error_message)
+        end
+      end
+
+      context "when DvcTeam for the user already exists" do
+        let(:error_message) { "User #{user.id} already has a DvcTeam. Cannot create another DvcTeam for user." }
+        include_examples "user cannot add another team", "DVC Team"
+      end
+
+      context "when JudgeTeam for the judge already exists" do
+        let(:error_message) { "User #{user.id} already has a JudgeTeam. Cannot create another JudgeTeam for user." }
+        include_examples "user cannot add another team", "Judge Team"
       end
     end
 
@@ -66,6 +100,7 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_no_content("VSOs")
         expect(page).to have_no_content("Private Bar")
         expect(page).to have_no_content("VHA Program Offices")
+        expect(page).to have_no_content("VISNs")
         expect(page).to have_no_content("Other teams")
       end
     end

@@ -61,4 +61,15 @@ describe CachedUser, :all_dbs do
       end
     end
   end
+
+  describe ".full_name" do
+    it "formats the name as expected" do
+      create(:staff, snamef: "Isabelle", snamel: "Conway", sdomainid: "BVAICONWA")
+
+      described_class.sync_from_vacols
+
+      cached_user = CachedUser.find_by_sdomainid("BVAICONWA")
+      expect(cached_user.full_name).to eq("Isabelle Conway")
+    end
+  end
 end
