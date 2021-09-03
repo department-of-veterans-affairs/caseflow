@@ -199,7 +199,7 @@ OrgRow.propTypes = {
   current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
-  participant_id: PropTypes.number,
+  participant_id: PropTypes.string,
   isRepresentative: PropTypes.bool,
   showDistributionToggles: PropTypes.bool,
   url: PropTypes.string,

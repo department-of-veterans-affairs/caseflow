@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { vsoAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
@@ -37,6 +38,14 @@ class AddVsoModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
+  componentWillUnmount() {
+    this.props.resetErrorMessages();
+  }
+
   submit = () => {
     const options = {
       data: {
@@ -52,8 +61,7 @@ class AddVsoModal extends React.Component {
 
     return this.props.requestSave(endpoint, options).
       then((resp) => this.props.vsoAdded(resp.body?.org)).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err }));
+      catch();
   }
 
   changeName = (value) => this.setState({ name: value });
@@ -106,7 +114,15 @@ const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   vsoAdded,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 }, dispatch);
+
+AddVsoModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewVso: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddVsoModal));

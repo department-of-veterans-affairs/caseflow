@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { privateBarAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
@@ -23,6 +24,14 @@ class AddPrivateBarModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
+  componentWillUnmount() {
+    this.props.resetErrorMessages();
+  }
+
   submit = () => {
     const options = {
       data: {
@@ -36,8 +45,7 @@ class AddPrivateBarModal extends React.Component {
 
     return this.props.requestSave('/team_management/private_bar', options).
       then((resp) => this.props.privateBarAdded(resp.body?.org)).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err }));
+      catch();
   }
 
   changeName = (value) => this.setState({ name: value });
@@ -79,7 +87,15 @@ const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   privateBarAdded,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 }, dispatch);
+
+AddPrivateBarModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewPrivateBar: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddPrivateBarModal));
