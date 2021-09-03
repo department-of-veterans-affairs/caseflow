@@ -11,7 +11,6 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown,
 } from '../../components/DataDropdowns';
-import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
@@ -77,6 +76,7 @@ export const ScheduleVeteranForm = ({
     hearing,
     appellantTitle,
     userCanCollectVideoCentralEmails,
+    formFieldsOnly: true,
     showDivider: false,
     schedulingToVirtual: virtual,
     virtualHearing: hearing?.virtualHearing,
@@ -119,7 +119,7 @@ export const ScheduleVeteranForm = ({
   return (
     <div className="usa-width-one-whole schedule-veteran-details">
       <div className="usa-width-one-fourth schedule-veteran-appeal-info-container">
-        <AppealInformation appeal={appeal} />
+        <AppealInformation appeal={appeal} appellantTitle={appellantTitle} hearing={hearing} />
       </div>
       <div className="usa-width-one-half">
         <UnscheduledNotes
@@ -138,25 +138,9 @@ export const ScheduleVeteranForm = ({
             virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
-        <div className="cf-help-divider usa-width-one-whole" />
-        <div className="usa-width-one-whole">
-          {virtual ? (
+        <div className="usa-width-one-whole" {...marginTop(30)}>
+          {virtual && (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
-          ) : (
-            <ReadOnly
-              spacing={0}
-              label={`${appellantTitle} Address`}
-              text={
-                <AddressLine
-                  spacing={5}
-                  name={appeal?.appellantFullName}
-                  addressLine1={appeal?.appellantAddress?.address_line_1}
-                  addressState={appeal?.appellantAddress?.state}
-                  addressCity={appeal?.appellantAddress?.city}
-                  addressZip={appeal?.appellantAddress?.zip}
-                />
-              }
-            />
           )}
           <div {...marginTop(30)}>
             <RegionalOfficeDropdown
