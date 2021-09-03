@@ -49,7 +49,7 @@ class AddJudgeTeamModal extends React.Component {
 
   submit = () => this.props.requestSave(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).
     then((resp) => this.props.onReceiveNewJudgeTeam(resp.body)).
-    catch(()=> {});
+    catch();
 
   render = () => {
     return <QueueFlowModal
