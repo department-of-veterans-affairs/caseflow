@@ -57,9 +57,9 @@ RSpec.feature "Team management page", :postgres do
           click_dropdown(text: user.full_name)
           find("button", text: "Submit").click
           expect(page).to have_content("Success")
-
+          
           find("button", text: "+ Add #{team_type}").click
-          click_dropdown(text: user.full_name)
+          click_dropdown({text: user.full_name}, find('.cf-modal')) #specify container due to multiple dropdowns
           find("button", text: "Submit").click
           expect(page).to have_content(error_message)
 
