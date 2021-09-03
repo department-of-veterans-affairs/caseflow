@@ -5,14 +5,17 @@ describe HearingEmailStatusMailer do
     include Hearings::AppellantNameHelper
     include VirtualHearings::LinkHelper
 
-    let(:email_address) { "test@caseflow.va.gov" }
+    let(:original_recipient_email_address) { "test@caseflow.va.gov" }
+    let(:hearing_coordinator_email_address) { "another-test@caseflow.va.gov" }
     let(:email_type) { "confirmation" }
     let(:hearing) { create(:hearing, :video) }
+    let(:sent_by) { create(:user, email: hearing_coordinator_email_address) }
     let(:sent_hearing_email_event) do
       create(
         :sent_hearing_email_event,
+        sent_by: sent_by,
         hearing: hearing,
-        email_address: email_address,
+        email_address: original_recipient_email_address,
         email_type: email_type
       )
     end
@@ -20,7 +23,7 @@ describe HearingEmailStatusMailer do
 
     it "has the correct subject" do
       hearing_type = Constants::HEARING_REQUEST_TYPES.key(hearing.request_type).titleize
-      correct_subject = "#{hearing_type} #{email_type} email failed to send to #{email_address}"
+      correct_subject = "#{hearing_type} #{email_type} email failed to send to #{original_recipient_email_address}"
       expect(email.subject).to eq(correct_subject)
     end
 
@@ -32,8 +35,9 @@ describe HearingEmailStatusMailer do
       expect(email.body).to include(veteran_sentence_fragment)
     end
 
-    it "has the correct email address" do
-      email_sentence_fragment = "entered the #{sent_hearing_email_event.recipient_role} email #{email_address}"
+    it "has the correct email address for the original_recipient" do
+      email_sentence_fragment = "entered the #{sent_hearing_email_event.recipient_role} "\
+                                "email #{original_recipient_email_address}"
 
       expect(email.body).to include(email_sentence_fragment)
     end
