@@ -10,7 +10,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { onReceiveNewJudgeTeam } from './teamManagement/actions';
 import {
   requestSave,
-  showErrorMessage,
   resetErrorMessages,
   resetSuccessMessages } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
@@ -86,14 +85,12 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveNewJudgeTeam,
   requestSave,
   resetErrorMessages,
-  resetSuccessMessages,
-  showErrorMessage
+  resetSuccessMessages
 }, dispatch);
 
 AddJudgeTeamModal.propTypes = {
   requestSave: PropTypes.func,
   onReceiveNewJudgeTeam: PropTypes.func,
-  showErrorMessage: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   resetSuccessMessages: PropTypes.func
 };
