@@ -91,8 +91,12 @@ RSpec.feature "Team management page", :postgres do
         fill_in "Name", with: "Vso 2"
         fill_in "URL", with: "vso-2"
         fill_in "BGS Participant ID", with: "1234567"
-        binding.pry
         find("button", text: "Submit").click
+        error_message = "Participant ID 1234567 is already used for existing team 'Vso 1'. Cannot create another team"
+        expect(page).to have_content(error_message)
+
+        find("button", text: "Cancel").click
+        expect(page).not_to have_content(error_message)
       end
     end
 
