@@ -8,6 +8,10 @@ class Intake::HigherLevelReviewIntakeSerializer < Intake::ClaimReviewIntakeSeria
     object.detail.same_office
   end
 
+  attribute :filed_by_va_gov do |object|
+    object.detail&.filed_by_va_gov
+  end
+
   attribute :informal_conference do |object|
     object.detail.informal_conference
   end

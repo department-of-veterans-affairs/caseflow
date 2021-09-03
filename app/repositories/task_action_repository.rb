@@ -445,6 +445,31 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
+    def vha_assign_to_program_office_data(*)
+      {
+        options: organizations_to_options(VhaProgramOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
+    end
+
+    def vha_assign_to_regional_office_data(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        options: organizations_to_options(VhaRegionalOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task, user)
@@ -475,6 +500,15 @@ class TaskActionRepository
 
     def task_assigner_name(task)
       task.assigned_by&.full_name || "the assigner"
+    end
+
+    def organizations_to_options(organizations)
+      organizations&.map do |org|
+        {
+          label: org.name,
+          value: org.id
+        }
+      end
     end
 
     def users_to_options(users)

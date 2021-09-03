@@ -19,13 +19,6 @@ class Hearings::SendEmail
     # already been sent too.
     return if send_reminder
 
-    # Unless this is a reminder, still require a virtual hearing for all emails
-    # checking 'hearing.virtual?' doesnt work because some emails are 'cancellation's
-    # which means the virtual hearing has been cancelled and hearing.virtual? == false
-    # This is likely unnessecary, because we only pass virtual_hearings from all places
-    # other than send_reminder_emails_job
-    return if !hearing.virtual_hearing
-
     if !hearing.appellant_recipient.email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
@@ -34,7 +27,7 @@ class Hearings::SendEmail
       judge_recipient.update!(email_sent: send_email(judge_recipient_info))
     end
 
-    if hearing.representative_recipient.email_address.present? && !hearing.representative_recipient.email_sent
+    if hearing.representative_recipient&.email_address.present? && !hearing.representative_recipient.email_sent
       representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
@@ -53,20 +46,22 @@ class Hearings::SendEmail
   def send_reminder
     return false if !email_type_is_reminder?
 
-    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
-       send_email(appellant_recipient_info)
+    return true if try_sending_appellant_reminder?
 
-      return true
-    end
-
-    if reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
-       hearing.representative_recipient.email_address.present? &&
-       send_email(representative_recipient_info)
-
-      return true
-    end
+    return true if try_sending_representative_reminder?
 
     false
+  end
+
+  def try_sending_appellant_reminder?
+    reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
+      send_email(appellant_recipient_info)
+  end
+
+  def try_sending_representative_reminder?
+    reminder_info[:recipient] == HearingEmailRecipient::RECIPIENT_TITLES[:representative] &&
+      hearing.representative_recipient&.email_address.present? &&
+      send_email(representative_recipient_info)
   end
 
   def email_for_recipient(recipient_info)

@@ -5,7 +5,7 @@ describe Hearings::SendReminderEmailsJob do
     subject { Hearings::SendReminderEmailsJob.new.perform }
 
     shared_examples "send reminder emails" do
-      context "hearing date is 60 days out", skip: "will be unskipped when we enable feature" do
+      context "hearing date is 60 days out" do
         let(:hearing_date) { Time.zone.now + 59.days } # at most 60 days out
 
         it "sends reminder emails only to appellant", :aggregate_failures do
@@ -255,99 +255,6 @@ describe Hearings::SendReminderEmailsJob do
       end
     end
 
-    shared_examples "reminder emails logged but not sent" do
-      context "hearing date is 60 days out" do
-        let(:hearing_date) { Time.zone.now + 60.days }
-        let(:type) { "60 day" }
-
-        it "logs, but doesnt send reminder emails", :aggregate_failures do
-          expect(HearingMailer).not_to receive(:reminder)
-          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
-
-          subject
-          expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
-        end
-
-        it "logs, but doesnt create sent email events", :aggregate_failures do
-          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
-          subject
-
-          expect(SentHearingEmailEvent.count).to eq(0)
-          expect(SentHearingEmailEvent.is_reminder.count).to eq(0)
-        end
-      end
-
-      context "hearing date is 7 days out" do
-        let(:hearing_date) { Time.zone.now + 6.days }
-        let(:type) { "7 day" }
-
-        it "logs, but doesnt send reminder emails", :aggregate_failures do
-          expect(HearingMailer).not_to receive(:reminder)
-          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
-
-          subject
-          expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
-          expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
-        end
-
-        it "logs, but doesnt create sent email events", :aggregate_failures do
-          expect(Rails.logger).to receive(:info).twice.with(/Send #{type} reminder emails: /)
-          subject
-
-          expect(SentHearingEmailEvent.count).to eq(0)
-          expect(SentHearingEmailEvent.is_reminder.count).to eq(0)
-        end
-
-        context "representative email was already sent" do
-          let(:representative_reminder_sent_at) { hearing_date - 3.days }
-          let!(:representative_reminder) do
-            create(
-              :sent_hearing_email_event,
-              :reminder,
-              recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
-              sent_at: representative_reminder_sent_at,
-              email_recipient: hearing.representative_recipient
-            )
-          end
-
-          it "logs, but doesnt send reminder email for the appellant", :aggregate_failures do
-            expect(HearingMailer).not_to receive(:reminder)
-            expect(Rails.logger).to receive(:info).once.with(/Send #{type} reminder emails: /)
-
-            subject
-            expect(hearing.appellant_recipient&.reminder_sent_at).to be_nil
-            expect(hearing.representative_recipient&.reminder_sent_at).to(
-              be_within(1.second).of(representative_reminder_sent_at)
-            )
-          end
-        end
-
-        context "appellant email was already sent" do
-          let(:appellant_reminder_sent_at) { hearing_date - 4.days }
-          let!(:appellant_reminder) do
-            create(
-              :sent_hearing_email_event,
-              :reminder,
-              recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
-              sent_at: appellant_reminder_sent_at,
-              email_recipient: hearing.appellant_recipient
-            )
-          end
-
-          it "logs, but doesnt send reminder email for the representative", :aggregate_failures do
-            expect(HearingMailer).not_to receive(:reminder)
-            expect(Rails.logger).to receive(:info).once.with(/Send #{type} reminder emails: /)
-
-            subject
-            expect(hearing.appellant_recipient&.reminder_sent_at).to(
-              be_within(1.second).of(appellant_reminder_sent_at)
-            )
-            expect(hearing.representative_recipient&.reminder_sent_at).to be_nil
-          end
-        end
-      end
-    end
-
     context "when there is a virtual hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:ama_disposition) { nil }
@@ -427,12 +334,7 @@ describe Hearings::SendReminderEmailsJob do
         )
       end
 
-      # When we start sending the emails for video/central hearings:
-      # - Use this instead: include_examples "send reminder emails"
-      # - Delete the "reminder emails logged but not sent" shared_examples
-      # - Delete the "logs but doesn't send for type" shared_examples
-      # See reminder_service_spec as well
-      include_examples "reminder emails logged but not sent"
+      include_examples "send reminder emails"
     end
 
     context "when there is a central hearing" do
@@ -473,12 +375,7 @@ describe Hearings::SendReminderEmailsJob do
         )
       end
 
-      # When we start sending the emails for video/central hearings:
-      # - Use this instead: include_examples "send reminder emails"
-      # - Delete the "reminder emails logged but not sent" shared_examples
-      # - Delete the "logs but doesn't send for type" shared_examples
-      # See reminder_service_spec as well
-      include_examples "reminder emails logged but not sent"
+      include_examples "send reminder emails"
     end
   end
 end

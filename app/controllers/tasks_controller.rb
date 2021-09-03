@@ -13,6 +13,7 @@ class TasksController < ApplicationController
   # If a task type is not sent to the frontend via TaskActionRepository's `type` or `options` parameters,
   # then it doesn't need to be included here.
   TASK_CLASSES_LOOKUP = {
+    AssessDocumentationTask: AssessDocumentationTask,
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     AttorneyRewriteTask: AttorneyRewriteTask,

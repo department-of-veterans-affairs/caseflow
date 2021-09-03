@@ -62,7 +62,7 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   end
 
   def appellant_reminder_type(hearing)
-    return if hearing.appellant_recipient.email_address.blank?
+    return if hearing.appellant_recipient&.email_address.blank?
 
     reminder_type = Hearings::ReminderService
       .new(
@@ -77,7 +77,7 @@ class Hearings::SendReminderEmailsJob < ApplicationJob
   end
 
   def representative_reminder_type(hearing)
-    return if hearing.representative_recipient.email_address.blank?
+    return if hearing.representative_recipient&.email_address.blank?
 
     reminder_type = Hearings::ReminderService
       .new(
