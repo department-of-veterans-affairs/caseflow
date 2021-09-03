@@ -44,6 +44,7 @@ module IntakeHelpers
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
+      filed_by_va_gov: false,
       same_office: false,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
