@@ -25,15 +25,12 @@ class AddJudgeTeamModal extends React.Component {
     };
   }
 
-  resetAlerts = () => {
+  componentDidMount() {
     this.props.resetErrorMessages();
     this.props.resetSuccessMessages();
   }
-  componentDidMount() {
-    this.resetAlerts();
-  }
   componentWillUnmount() {
-    this.resetAlerts();
+    this.props.resetErrorMessages();
   }
 
   loadingPromise = () => {
