@@ -53,12 +53,12 @@ def add_comment_without_clicking_save(text)
   3.times do
     # Add a comment
     click_on "button-AddComment"
-    expect(page).to have_css(".canvas-cursor", visible: true)
+    expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
 
-    # text-${pageIndex} is the id of the first page's CommentLayer
+    # comment-layer-${pageIndex}-${fileName} is the id of the first page's CommentLayer
     page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
-    expect(page).to_not have_css(".canvas-cursor")
+    expect(page).to_not have_css(".cf-pdf-placing-comment")
 
     begin
       find("#addComment")
@@ -77,7 +77,6 @@ end
 
 RSpec.feature "Reader", :all_dbs do
   before do
-    FeatureToggle.enable!(:interface_version_2)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
@@ -324,7 +323,6 @@ RSpec.feature "Reader", :all_dbs do
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       expect(page).to have_content("CaseflowQueue")
-      expect(page).to have_content(Document.find(2).type)
 
       add_comment_without_clicking_save("text")
       page.find("body").click
@@ -336,10 +334,9 @@ RSpec.feature "Reader", :all_dbs do
 
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      find("h3", text: "Document information").click
-      expect(find(".cf-document-type")).to have_text("Form 9")
       find("#button-next").click
 
+      find("h3", text: "Document information").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
       find("#button-previous").click
       find("#button-previous").click
@@ -543,7 +540,7 @@ RSpec.feature "Reader", :all_dbs do
         click_on "Save"
 
         # Delete modal should appear.
-        expect(page).to have_css("#Delete-Comment-button-id-1")
+        expect(page).to have_css("#Delete-Comment-button-id-#{comment_id}")
       end
     end
 
@@ -615,13 +612,13 @@ RSpec.feature "Reader", :all_dbs do
 
       def element_position(selector)
         page.driver.evaluate_script <<-EOS
-        function() {
-          var rect = document.querySelector('#{selector}').getBoundingClientRect();
-          return {
-            top: rect.top,
-            left: rect.left
-          };
-        }();
+          function() {
+            var rect = document.querySelector('#{selector}').getBoundingClientRect();
+            return {
+              top: rect.top,
+              left: rect.left
+            };
+          }();
         EOS
       end
 
@@ -634,7 +631,7 @@ RSpec.feature "Reader", :all_dbs do
         assert_selector(".commentIcon-container", count: 7)
 
         def placing_annotation_icon_position
-          element_position "#canvas-cursor-0"
+          element_position "[data-placing-annotation-icon]"
         end
 
         orig_position = placing_annotation_icon_position
@@ -722,7 +719,7 @@ RSpec.feature "Reader", :all_dbs do
         original_scroll = scrolled_amount(element_class)
 
         # Click on the off screen comment (0 through 4 are on screen)
-        find("#comment-5").click
+        find("#comment5").click
         after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
@@ -954,89 +951,57 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".cf-modal")
     end
 
-    scenario "Sort order" do
+    scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # this will wait for the document count to display before expecting anything
-      find("div.num-of-documents", text: "#{documents.length} Documents")
+      def get_aria_labels(elems)
+        elems.map do |elem|
+          # I don't know why this is necessary, but it seems to trigger capybara to wait for the elements
+          # to have content in the correct way. Without this, we'll sometimes see an empty list of elements,
+          # but when we insert a quick sleep or inspect the browser, we see the full list. That means that
+          # capybara is not waiting properly.
+          elem["outerHTML"]
 
-      # confirm that the documents are sorted by receipt date ascending (oldest first)
-      sorted_documents = documents.sort_by(&:received_at).reverse!
-
-      sorted_documents.each_with_index do |doc, index|
-        selector = "#documents-table-body tr:nth-child(#{index + 1}) td.receipt-date-column"
-        expect(find(selector).text).to eq doc.received_at.strftime("%m/%d/%Y")
-      end
-    end
-
-    scenario "Categories" do
-      cats = {
-        procedural: "Procedural",
-        medical: "Medical",
-        other: "Other Evidence",
-        case_summary: "Case Summary"
-      }
-
-      def cats_in_row(row)
-        selector = "#documents-table-body tr:nth-child(#{row}) .categories-column .cf-no-styling-list"
-        all(selector).map { |elem| elem["aria-label"] }
+          elem["aria-label"]
+        end
       end
 
-      def cats_in_header
-        all(".cf-pdf-header .cf-pdf-doc-category-icons .cf-no-styling-list").map { |elem| elem["aria-label"] }
-      end
+      doc_0_categories =
+        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
+      expect(doc_0_categories).to eq(["Case Summary"])
 
-      step "visit the documents index" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      doc_1_categories =
+        get_aria_labels all("table tr:nth-child(2) .cf-document-category-icons li", count: 3)
+      expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
-        # this will wait for the document count to display before expecting anything
-        find("div.num-of-documents", text: "#{documents.length} Documents")
+      click_on documents[0].type
 
-        # these are the categories we expect the documents to have in the expected sort order
-        expect(cats_in_row(1)).to match_array [cats[:case_summary]]
-        expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
-        expect(cats_in_row(3)).to match_array [cats[:procedural], cats[:case_summary]]
-      end
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Procedural", "Case Summary"])
 
-      step "edit the BVA Decision document categories" do
-        click_on documents[0].type
+      find(".checkbox-wrapper-procedural").click
+      find(".checkbox-wrapper-medical").click
 
-        # this will wait for the document title to display before expecting anything
-        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "BVA Decision")
-        expect(cats_in_header).to match_array [cats[:procedural], cats[:case_summary]]
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Medical", "Case Summary"])
 
-        find(".checkbox-wrapper-procedural").click
-        find(".checkbox-wrapper-medical").click
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        # this will wait for the categories to update in the header before expecting anything
-        find(".cf-pdf-header li[aria-label='Medical']")
-        expect(cats_in_header).to match_array [cats[:medical], cats[:case_summary]]
-      end
+      doc_0_categories =
+        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
+      expect(doc_0_categories).to eq(["Case Summary"])
 
-      step "return to the index and view the Form 9 document" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on documents[1].type
 
-        # this will wait for the document count to display before expecting anything
-        find("div.num-of-documents", text: "#{documents.length} Documents")
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 3))).to eq(
+        ["Medical", "Other Evidence", "Case Summary"]
+      )
+      expect(find("#case_summary", visible: false).disabled?).to be true
 
-        click_on documents[1].type
+      find("#button-next").click
 
-        # this will wait for the document title to display before expecting anything
-        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "Form 9")
-        expect(cats_in_header).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
-        expect(find("#case_summary", visible: false).disabled?).to be true
-      end
-
-      step "view the previous document, NOD" do
-        find("#button-previous").click
-
-        # this will wait for the document title to display before expecting anything
-        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "NOD")
-        expect(find("#procedural", visible: false).checked?).to be false
-        expect(find("#medical", visible: false).checked?).to be false
-        expect(find("#other", visible: false).checked?).to be false
-        expect(find("#case_summary", visible: false).checked?).to be true
-      end
+      expect(find("#procedural", visible: false).checked?).to be false
+      expect(find("#medical", visible: false).checked?).to be true
+      expect(find("#case_summary", visible: false).checked?).to be true
+      expect(find("#other", visible: false).checked?).to be false
     end
 
     scenario "Claim Folder Details" do
@@ -1245,7 +1210,6 @@ RSpec.feature "Reader", :all_dbs do
 
       expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
 
-      search_input.click
       fill_in "search-ahead", with: "decision"
 
       expect(search_input.value).to eq("decision")
@@ -1281,14 +1245,14 @@ RSpec.feature "Reader", :all_dbs do
     scenario "Show and Hide Document Searchbar with Keyboard" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
 
-      expect(page).to have_content(Document.find(documents[0].id).type)
       find("body").send_keys [:meta, "f"]
+
       search_bar = find(".cf-search-bar")
       expect(search_bar).not_to match_css(".hidden")
 
       find("body").send_keys [:escape]
 
-      expect(page).not_to have_selector(".cf-search-bar")
+      expect(search_bar).to match_css(".hidden")
     end
 
     scenario "Navigating Search Results scrolls page" do
@@ -1310,8 +1274,7 @@ RSpec.feature "Reader", :all_dbs do
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scrolled_amount(elem_name)).to be <= first_match_scroll_top
-      expect(scrolled_amount(elem_name)).to be >= first_match_scroll_top - 5
+      expect(scrolled_amount(elem_name)).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do
@@ -1353,7 +1316,7 @@ RSpec.feature "Reader", :all_dbs do
       safe_click "#button-previous"
       click_on "Back"
 
-      expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
+      expect(find("#documents-table-body tr:nth-child(#{documents.count - 1})")).to have_css("#read-indicator")
     end
 
     scenario "Open a document and return to list", skip: true do

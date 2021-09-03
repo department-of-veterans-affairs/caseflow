@@ -12,8 +12,7 @@ const config = {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts'),
-    chunkFilename: '[name].[contenthash].webpack.chunk.js',
-    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : 'auto'
+    publicPath: 'http://localhost:3500/',
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
@@ -49,8 +48,6 @@ const config = {
       store: path.resolve('app/2.0/store'),
       screens: path.resolve('app/2.0/screens'),
       components: path.resolve('app/2.0/components'),
-      utils: path.resolve('app/2.0/utils'),
-      styles: path.resolve('app/2.0/styles'),
       test: path.resolve('test'),
     },
   },
