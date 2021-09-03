@@ -44,6 +44,7 @@ module IntakeHelpers
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
+      filed_by_va_gov: false,
       same_office: false,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
@@ -170,6 +171,12 @@ module IntakeHelpers
         benefit_type: benefit_type,
         no_claimant: no_claimant
       )
+    elsif claim_review_type == :board_appeal
+      start_appeal(
+        veteran,
+        claim_participant_id: claim_participant_id,
+        no_claimant: no_claimant
+      )
     else
       start_higher_level_review(
         veteran,
@@ -277,6 +284,33 @@ module IntakeHelpers
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
+    expect(page).to have_button(add_button_text, disabled: false)
+    safe_click ".add-issue"
+  end
+
+  def add_intake_vha_issue(
+    benefit_type: "Veterans Health Administration",
+    category: "Caregiver",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false
+  )
+    add_button_text = legacy_issues ? "Next" : "Add this issue"
+    expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
+    expect(page).to have_button(add_button_text, disabled: true)
+
+    # has_css will wait 5 seconds by default, and we want an instant decision.
+    # we can trust the modal is rendered because of the expect() calls above.
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+
+    fill_in "Issue category", with: category
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: description
+    find("#decision-date").set(date.strftime("%m/%d/%Y"))
+    safe_click "#decision-date"
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end

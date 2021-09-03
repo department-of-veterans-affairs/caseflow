@@ -6,4 +6,13 @@
 # will also need to move up the chain as well i.e. Regional -> Program etc.
 
 class AssessDocumentationTask < Task
+  TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+  ].freeze
+
+  def available_actions(user)
+    return [] unless assigned_to.user_has_access?(user)
+
+    TASK_ACTIONS
+  end
 end

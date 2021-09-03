@@ -320,6 +320,7 @@ feature "Appeal Edit issues", :all_dbs do
     end
 
     let!(:rating_request_issue) { nil }
+    let!(:nonrating_request_issue) { nil }
 
     scenario "adding an issue with a vbms benefit type" do
       visit "appeals/#{appeal.uuid}/edit/"

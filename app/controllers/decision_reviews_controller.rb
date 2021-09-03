@@ -55,10 +55,15 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
+  # :reek:FeatureEnvy
   def in_progress_tasks
     apply_task_serializer(
       business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
-        task.appeal.request_issues.active.any?
+        if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
+          task.appeal.request_issues.active.any? || task.is_a?(BoardGrantEffectuationTask)
+        else
+          task.appeal.request_issues.active.any?
+        end
       end
     )
   end
