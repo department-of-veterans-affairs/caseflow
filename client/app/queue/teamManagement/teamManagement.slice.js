@@ -41,6 +41,7 @@ const initialState = {
     vsos: [],
     privateBars: [],
     vhaProgramOffices: [],
+    vhaRegionalOffices: [],
     otherOrgs: []
   },
   loading: false,

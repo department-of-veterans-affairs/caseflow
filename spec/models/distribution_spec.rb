@@ -276,6 +276,48 @@ describe Distribution, :all_dbs do
         end
       end
 
+      context "when a nonpriority distribution of an AMA appeal with an existing distributed case is attempted" do
+        let!(:target_appeal) { due_direct_review_cases.first }
+        let(:past_distribution) { Distribution.create(judge: judge) }
+        let!(:past_distributed_case) do
+          DistributedCase.create!(
+            distribution: past_distribution,
+            ready_at: 6.months.ago,
+            docket: target_appeal.docket_type,
+            priority: false,
+            case_id: target_appeal.uuid,
+            task: target_appeal.tasks.of_type("DistributionTask").first,
+            genpop: false,
+            genpop_query: "not_genpop"
+          )
+        end
+        let(:current_distribution) do
+          past_distribution.completed!
+          Distribution.create!(judge: judge)
+        end
+        let!(:second_distribution_task) do
+          first_distribution_task = target_appeal.tasks.find_by(type: "DistributionTask")
+          first_distribution_task.completed!
+          create(:distribution_task, appeal: target_appeal, status: Constants.TASK_STATUSES.assigned)
+        end
+
+        before do
+          allow_any_instance_of(Distribution)
+            .to receive(:batch_size)
+            .and_return(400)
+
+          second_distribution_task.assigned!
+        end
+
+        subject { current_distribution.distribute! }
+
+        it "allows cases to be distributed" do
+          subject
+          expect(current_distribution.distributed_cases.pluck(:case_id)).to include(target_appeal.uuid)
+          expect(current_distribution.status).to eq("completed")
+        end
+      end
+
       context "when an illegit nonpriority legacy case re-distribution is attempted" do
         let(:case_id) { legacy_case.bfkey }
         let!(:previous_location) { legacy_case.bfcurloc }
@@ -442,6 +484,43 @@ describe Distribution, :all_dbs do
           expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(other_dockets_proportion)
           expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
           expect(subject.distributed_cases.count).to eq(15)
+        end
+      end
+
+      describe "JudgeTeam ama_only_request toggle" do
+        context "when the toggle is not set for a JudgeTeam (default case)" do
+          it "includes untied legacy cases" do
+            subject.distribute!
+
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases).to_not be_empty
+          end
+        end
+
+        context "when a JudgeTeam is AMA-only for requested distributions" do
+          before do
+            judge_team.update!(ama_only_request: true)
+            subject.distribute!
+          end
+
+          it "does distribute tied legacy cases" do
+            tied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query == "not_genpop"
+            end
+
+            expect(tied_legacy_docket_cases.count).to eq(2)
+          end
+
+          it "does not distribute any untied legacy cases" do
+            untied_legacy_docket_cases = subject.distributed_cases.filter do |dc|
+              dc.docket == "legacy" && dc.genpop_query != "not_genpop"
+            end
+
+            expect(untied_legacy_docket_cases.count).to eq(0)
+          end
         end
       end
     end

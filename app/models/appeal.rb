@@ -263,7 +263,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution_at
-    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+    tasks.select { |task| task.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
   def regional_office_key
@@ -347,6 +347,11 @@ class Appeal < DecisionReview
     !!appellant_substitution
   end
 
+  # Determine if we are on a separate substitution appeal (used in serializer)
+  def substitution_appeal?
+    appellant_substitution && id != appellant_substitution.source_appeal.id
+  end
+
   # This method allows the source appeal stream to access the appellant_substitution objects
   def substitutions
     AppellantSubstitution.where(source_appeal_id: id)
@@ -364,6 +369,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
+  # :reek:FeatureEnvy
   def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
@@ -553,6 +559,16 @@ class Appeal < DecisionReview
 
   def appellant_relationship
     appellant&.relationship
+  end
+
+  # :reek:FeatureEnvy
+  def can_redistribute_appeal?
+    relevant_tasks = tasks.reject do |task|
+      task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+    end
+    return false if relevant_tasks.any?(&:open?)
+    return true if relevant_tasks.all?(&:closed?)
   end
 
   private

@@ -25,6 +25,7 @@ import {
   TEAM_MANAGEMENT_ADD_PRIVATE_BAR_LABEL,
   TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON,
   TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL,
+  TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
@@ -129,6 +130,11 @@ export const TeamManagement = React.memo(({
             <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
 
+          { this.props.vhaRegionalOffices && <React.Fragment>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
+            <OrgList orgs={this.props.vhaRegionalOffices} />
+          </React.Fragment> }
+
           { otherOrgs && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={otherOrgs} statuses={statuses} />
@@ -152,6 +158,7 @@ TeamManagement.propTypes = {
   success: PropTypes.object,
   vsos: PropTypes.array,
   vhaProgramOffices: PropTypes.array,
+  vhaRegionalOffices: PropTypes.array,
   onAddDvcTeam: PropTypes.func,
   onAddJudgeTeam: PropTypes.func,
   onAddIhpWritingVso: PropTypes.func,
@@ -176,6 +183,7 @@ export const TeamManagementWrapper = () => {
     privateBars,
     vsos,
     vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -207,6 +215,7 @@ export const TeamManagementWrapper = () => {
     privateBars,
     vsos,
     vhaProgramOffices,
+    vhaRegionalOffices,
     otherOrgs,
     success,
     error,

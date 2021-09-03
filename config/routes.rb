@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         end
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
+        get 'legacy_appeals', to: "legacy_appeals#index"
       end
     end
     namespace :docs do
@@ -228,7 +229,9 @@ Rails.application.routes.draw do
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
-  resources :unrecognized_appellants, param: :unrecognized_appellant_id, only: [:update]
+  resources :unrecognized_appellants, only: [:update] do
+    resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney
+  end
 
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
