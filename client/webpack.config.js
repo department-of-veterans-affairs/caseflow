@@ -12,7 +12,6 @@ const config = {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts'),
-    chunkFilename: '[name].[contenthash].webpack.chunk.js',
     publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : 'auto'
   },
   plugins: [
