@@ -44,6 +44,7 @@ export const TeamManagement = React.memo(({
   vsos,
   privateBars,
   vhaProgramOffices,
+  vhaRegionalOffices,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -130,10 +131,10 @@ export const TeamManagement = React.memo(({
             <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
 
-          { this.props.vhaRegionalOffices && <React.Fragment>
+          { vhaRegionalOffices && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
-            <OrgList orgs={this.props.vhaRegionalOffices} />
-          </React.Fragment> }
+            <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
+          </OrgSection> }
 
           { otherOrgs && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
