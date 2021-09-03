@@ -74,6 +74,22 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
+      context "when veteran file number doesn't match in BGS" do
+        let(:file_number) { appeal.veteran.file_number }
+        let(:real_file_number) { file_number + "123" }
+
+        it "returns a HTTP 500 error" do
+          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { real_file_number }
+          post :create, params: params
+          expect(response).to have_attributes(status: 500)
+          errors = JSON.parse(response.body)["errors"]
+          expect(errors[0]).to include(
+            "title" => "VBMS::FilenumberDoesNotExist",
+            "detail" => "The veteran file number does not match the file number in VBMS"
+          )
+        end
+      end
+
       context "UploadDocumentToVbmsJob raises an error" do
         it "throws an error" do
           allow(UploadDocumentToVbmsJob).to receive(:perform_later).and_raise("job error")
