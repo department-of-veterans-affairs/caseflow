@@ -51,89 +51,134 @@ describe ExternalApi::GovDeliveryService do
   let(:success_response) do
     HTTPI::Response.new(200, {}, response_body)
   end
+  let(:empty_response) do
+    HTTPI::Response.new(200, {}, [].to_json)
+  end
 
-  describe "#get_recipients_from_event" do
-    subject { ExternalApi::GovDeliveryService.get_recipients_from_event(email_event: email_event) }
+  context "get_recipients" do
+    describe "#get_recipients_from_event" do
+      subject { ExternalApi::GovDeliveryService.get_recipients_from_event(email_event: email_event) }
 
-    it "returns a list of objects" do
-      allow(HTTPI).to receive(:get).and_return(success_response)
+      it "returns a list of objects" do
+        allow(HTTPI).to receive(:get).and_return(success_response)
 
-      expect(subject).to be_instance_of Array
-      expect(subject.length).to eq 1
-      expect(subject).to match_array JSON.parse(response_body)
+        expect(subject).to be_instance_of Array
+        expect(subject.length).to eq 1
+        expect(subject).to match_array JSON.parse(response_body)
+      end
+
+      context "response failure" do
+        let!(:error_code) { nil }
+
+        before do
+          allow(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request)
+            .and_return(HTTPI::Response.new(error_code, {}, {}.to_json))
+        end
+
+        context "fallback error code" do
+          it "throws Caseflow::Error::GovDeliveryApiError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryApiError
+          end
+        end
+
+        context "401" do
+          let!(:error_code) { 401 }
+
+          it "throws Caseflow::Error::GovDeliveryUnauthorizedError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryUnauthorizedError
+          end
+        end
+
+        context "403" do
+          let!(:error_code) { 403 }
+
+          it "throws Caseflow::Error::GovDeliveryForbiddenError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryForbiddenError
+          end
+        end
+
+        context "404" do
+          let!(:error_code) { 404 }
+
+          it "throws Caseflow::Error::GovDeliveryNotFoundError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryNotFoundError
+          end
+        end
+
+        context "500" do
+          let!(:error_code) { 500 }
+
+          it "throws Caseflow::Error::GovDeliveryInternalServerError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryInternalServerError
+          end
+        end
+
+        context "502" do
+          let!(:error_code) { 502 }
+
+          it "throws Caseflow::Error::GovDeliveryBadGatewayError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryBadGatewayError
+          end
+        end
+
+        context "503" do
+          let!(:error_code) { 503 }
+
+          it "throws Caseflow::Error::GovDeliveryServiceUnavailableError" do
+            expect { subject }.to raise_error Caseflow::Error::GovDeliveryServiceUnavailableError
+          end
+        end
+      end
     end
 
-    context "response failure" do
-      let!(:error_code) { nil }
+    describe "#get_sent_status_from_event" do
+      subject { ExternalApi::GovDeliveryService.get_sent_status_from_event(email_event: email_event) }
 
-      before do
-        allow(ExternalApi::GovDeliveryService).to receive(:send_gov_delivery_request)
-          .and_return(HTTPI::Response.new(error_code, {}, {}.to_json))
+      it "returns the expected value" do
+        allow(HTTPI).to receive(:get).and_return(success_response)
+
+        expect(subject).to eq event_status_sent
       end
 
-      context "fallback error code" do
-        it "throws Caseflow::Error::GovDeliveryApiError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryApiError
-        end
-      end
+      context "with an empty response" do
+        it "returns nil" do
+          allow(HTTPI).to receive(:get).and_return(empty_response)
 
-      context "401" do
-        let!(:error_code) { 401 }
-
-        it "throws Caseflow::Error::GovDeliveryUnauthorizedError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryUnauthorizedError
-        end
-      end
-
-      context "403" do
-        let!(:error_code) { 403 }
-
-        it "throws Caseflow::Error::GovDeliveryForbiddenError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryForbiddenError
-        end
-      end
-
-      context "404" do
-        let!(:error_code) { 404 }
-
-        it "throws Caseflow::Error::GovDeliveryNotFoundError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryNotFoundError
-        end
-      end
-
-      context "500" do
-        let!(:error_code) { 500 }
-
-        it "throws Caseflow::Error::GovDeliveryInternalServerError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryInternalServerError
-        end
-      end
-
-      context "502" do
-        let!(:error_code) { 502 }
-
-        it "throws Caseflow::Error::GovDeliveryBadGatewayError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryBadGatewayError
-        end
-      end
-
-      context "503" do
-        let!(:error_code) { 503 }
-
-        it "throws Caseflow::Error::GovDeliveryServiceUnavailableError" do
-          expect { subject }.to raise_error Caseflow::Error::GovDeliveryServiceUnavailableError
+          expect(subject).to be_nil
         end
       end
     end
   end
 
-  describe "#get_sent_status_from_event" do
-    subject { ExternalApi::GovDeliveryService.get_sent_status_from_event(email_event: email_event) }
+  context "get message" do
+    let(:message_subject) { "This is the message subject" }
+    let(:body) do
+      "\u003c!DOCTYPE html\u003e\n\u003chtml\u003e\n This is the message body  " \
+      "\u003cbr\u003eSincerly Yours \u003c/html\u003e"
+    end
+    let(:sanitized_body) { " This is the message body\nSincerly Yours " }
+    let(:response_body) { { "subject" => message_subject, "body" => body }.to_json }
 
-    it "returns the expected value" do
-      allow(HTTPI).to receive(:get).and_return(success_response)
+    describe "#get_message_subject_and_body_from_event" do
+      subject { ExternalApi::GovDeliveryService.get_message_subject_and_body_from_event(email_event: email_event) }
 
-      expect(subject).to eq event_status_sent
+      it "returns the expected value" do
+        allow(HTTPI).to receive(:get).and_return(success_response)
+
+        expect(subject[:subject]).to eq message_subject
+        expect(subject[:body]).to eq sanitized_body
+      end
+    end
+
+    describe "#get_message_from_event" do
+      subject { ExternalApi::GovDeliveryService.get_message_from_event(email_event: email_event) }
+
+      it "returns the expected value" do
+        allow(HTTPI).to receive(:get).and_return(success_response)
+
+        expect(subject["subject"]).to eq message_subject
+        expect(subject["body"]).to eq body
+      end
     end
   end
 end

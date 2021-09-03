@@ -22,7 +22,7 @@ class HearingEmailStatusMailer < ActionMailer::Base
     @hearing_date = Hearings::CalendarTemplateHelper.hearing_date_only(sent_hearing_email_event.hearing)
 
     mail(
-      to: @sent_hearing_email_event.email_address,
+      to: @sent_hearing_email_event.sent_by&.email,
       subject: notification_subject
     )
   end
