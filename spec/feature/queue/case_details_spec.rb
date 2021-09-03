@@ -2033,7 +2033,6 @@ RSpec.feature "Case details", :all_dbs do
         it "The 'Add CAVC Remand' button is shown" do
           visit "/queue/appeals/#{appeal.external_id}"
           wait_for_page_render
-          # binding.pry
           expect(page).to have_content(COPY::ADD_CAVC_BUTTON)
         end
       end
