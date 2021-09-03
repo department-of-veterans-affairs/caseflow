@@ -141,9 +141,9 @@ export const OrgRow = React.memo((props) => {
           />
         </td>
       )}
-      {/* {!props.isRepresentative && !props.showDistributionToggles && <td />} */}
-      <td>
-        {props.isRepresentative && (
+
+      {props.isRepresentative && (
+        <td>
           <TextField
             name={`${TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}-${
               props.id
@@ -153,18 +153,20 @@ export const OrgRow = React.memo((props) => {
             value={participantId}
             onChange={setParticipantId}
           />
-        )}
-      </td>
-      <td>
-        {props.isRepresentative && (
+        </td>
+      )}
+
+      {props.isRepresentative && (
+        <td>
           <Button
             name={TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
             id={`${props.id}`}
             classNames={['usa-button-secondary']}
             onClick={handleUpdate}
           />
-        )}
-      </td>
+        </td>
+      )}
+
       <td className={statusIndicator}>
         {props.status?.saved && <span className="success"><i className="fa fa-check-circle"></i> Saved</span>}
         {props.status?.loading && <span className="loading"><i className="fa fa-spinner fa-spin"></i> Saving</span>}
