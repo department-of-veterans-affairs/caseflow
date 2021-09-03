@@ -1,8 +1,9 @@
 import * as React from 'react';
-import COPY from '../../COPY.json';
+import PropTypes from 'prop-types';
+import COPY from 'app/../COPY';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { onReceiveNewPrivateBar } from './teamManagement/actions';
+import { privateBarAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
   showErrorMessage
@@ -34,7 +35,7 @@ class AddPrivateBarModal extends React.Component {
     };
 
     return this.props.requestSave('/team_management/private_bar', options).
-      then((resp) => this.props.onReceiveNewPrivateBar(resp.body)).
+      then((resp) => this.props.privateBarAdded(resp.body?.org)).
       catch((err) => this.props.showErrorMessage({ title: 'Error',
         detail: err }));
   }
@@ -67,11 +68,16 @@ class AddPrivateBarModal extends React.Component {
     </QueueFlowModal>;
   };
 }
+AddPrivateBarModal.propTypes = {
+  requestSave: PropTypes.func,
+  privateBarAdded: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+};
 
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewPrivateBar,
+  privateBarAdded,
   requestSave,
   showErrorMessage
 }, dispatch);

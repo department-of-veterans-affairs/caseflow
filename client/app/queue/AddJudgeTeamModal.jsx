@@ -1,12 +1,13 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY.json';
+import COPY from 'app/../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { onReceiveNewJudgeTeam } from './teamManagement/actions';
+import { judgeTeamAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
   showErrorMessage
@@ -39,7 +40,7 @@ class AddJudgeTeamModal extends React.Component {
       value: user }));
 
   submit = () => this.props.requestSave(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).
-    then((resp) => this.props.onReceiveNewJudgeTeam(resp.body)).
+    then((resp) => this.props.judgeTeamAdded(resp.body?.org)).
     catch((err) => this.props.showErrorMessage({ title: 'Error',
       detail: err }));
 
@@ -68,11 +69,16 @@ class AddJudgeTeamModal extends React.Component {
     </QueueFlowModal>;
   };
 }
+AddJudgeTeamModal.propTypes = {
+  requestSave: PropTypes.func,
+  judgeTeamAdded: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+};
 
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewJudgeTeam,
+  judgeTeamAdded,
   requestSave,
   showErrorMessage
 }, dispatch);

@@ -56,13 +56,38 @@ const teamManagementSlice = createSlice({
   reducers: {
     reset: resetState,
     clearStatus: (state, action) => {
-      console.log('clearStatus', action);
       state.statuses[action.payload.orgId] = {
         saved: false,
         loading: false,
         error: false
       };
-    }
+    },
+    orgAdded: (state, action) => {
+      const { type, org } = action.payload;
+
+      state.data[type] = [...state.data[type], org];
+    },
+    dvcTeamAdded: (state, action) => {
+      state.data.dvcTeams = [...state.data.dvcTeams, action.payload];
+    },
+    judgeTeamAdded: (state, action) => {
+      state.data.judgeTeams = [...state.data.judgeTeams, action.payload];
+    },
+    vsoAdded: (state, action) => {
+      state.data.vsos = [...state.data.vsos, action.payload];
+    },
+    privateBarAdded: (state, action) => {
+      state.data.privateBars = [...state.data.privateBars, action.payload];
+    },
+    vhaProgramOfficeAdded: (state, action) => {
+      state.data.vhaProgramOffices = [...state.data.vhaProgramOffices, action.payload];
+    },
+    vhaRegionalOfficeAdded: (state, action) => {
+      state.data.vhaRegionalOffices = [...state.data.vhaRegionalOffices, action.payload];
+    },
+    otherOrgAdded: (state, action) => {
+      state.data.otherOrgs = [...state.data.otherOrgs, action.payload];
+    },
   },
   extraReducers: {
     [fetchTeamManagement.pending]: (state) => {
@@ -114,7 +139,15 @@ const teamManagementSlice = createSlice({
 
 export const {
   reset,
-  clearStatus
+  clearStatus,
+  orgAdded,
+  dvcTeamAdded,
+  judgeTeamAdded,
+  vsoAdded,
+  privateBarAdded,
+  vhaProgramOfficeAdded,
+  vhaRegionalOfficeAdded,
+  otherOrgAdded,
 } = teamManagementSlice.actions;
 
 export default teamManagementSlice.reducer;
