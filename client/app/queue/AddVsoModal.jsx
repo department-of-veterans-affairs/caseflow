@@ -1,5 +1,5 @@
 import * as React from 'react';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import PropTypes from 'prop-types';
 import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';

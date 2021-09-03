@@ -1,11 +1,13 @@
 import * as React from 'react';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveNewPrivateBar } from './teamManagement/actions';
 import {
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
@@ -20,6 +22,14 @@ class AddPrivateBarModal extends React.Component {
       url: null,
       participant_id: null
     };
+  }
+
+  componentDidMount() {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
+  componentWillUnmount() {
+    this.props.resetErrorMessages();
   }
 
   submit = () => {
@@ -72,7 +82,15 @@ const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveNewPrivateBar,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 }, dispatch);
+
+AddPrivateBarModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewPrivateBar: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddPrivateBarModal));
