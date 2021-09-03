@@ -195,11 +195,11 @@ feature "Unrecognized appellants", :postgres do
         expect(appellant).to have_attributes(poa_participant_id: nil)
 
         expect(appellant.power_of_attorney).to have_attributes(
-          address_line_1: 'Address1',
-          city: 'City',
-          country: 'Country',
-          name: 'FirstName',
-          state: 'California'
+          address_line_1: "Address1",
+          city: "City",
+          country: "Country",
+          name: "FirstName",
+          state: "California"
         )
       end
 
