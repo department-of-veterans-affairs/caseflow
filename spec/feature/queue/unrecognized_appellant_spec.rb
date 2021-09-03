@@ -163,7 +163,7 @@ feature "Unrecognized appellants", :postgres do
         expect(page).to have_content("Update POA")
       end
 
-      fit "should successfully allow update, unlisted POA" do
+      it "should successfully allow update, unlisted POA" do
         allow(user).to receive(:vacols_roles).and_return(["colocated"])
         visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
 
