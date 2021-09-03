@@ -47,7 +47,9 @@ export const OrgRow = React.memo((props) => {
   const [url, setUrl] = useState(props.url);
   const [participantId, setParticipantId] = useState(props.participant_id);
   const [priorityCaseDistribution, setPriorityCaseDistribution] = useState(initialPriorityPushVal(props));
-  const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(props.ama_only_request ? 'amaOnly' : 'all');
+  const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(
+    props.ama_only_request ? 'amaOnly' : 'all'
+  );
 
   const handleUpdate = () => {
     const payload = {
@@ -87,7 +89,6 @@ export const OrgRow = React.memo((props) => {
     { label: 'AMA cases only', value: 'amaOnly' },
   ];
 
-  // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
   return (
     <tr {...orgRowStyling}>
       <td>

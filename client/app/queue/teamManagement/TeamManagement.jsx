@@ -195,7 +195,6 @@ export const TeamManagementWrapper = () => {
   const onLookupParticipantId = () => history.push('/team_management/lookup_participant_id');
 
   const onOrgUpdate = async ({ orgId, updates }) => {
-    console.log('onOrgUpdate', orgId, updates);
     dispatch(updateOrg({ orgId, updates })).then(() => {
       // Clear success message after delay
       setTimeout(() => dispatch(clearStatus({ orgId })), 3000);
