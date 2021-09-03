@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import { OrgRow } from 'app/queue/teamManagement/OrgRow';
-import { createJudgeTeam } from 'test/data/factory';
+import { createJudgeTeam } from 'test/data/teamManagement';
 
 describe('OrgRow', () => {
   const defaults = {};

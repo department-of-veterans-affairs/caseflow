@@ -11,8 +11,6 @@ import LoadingDataDisplay from 'app/components/LoadingDataDisplay';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
-import ApiUtil from 'app/util/ApiUtil';
-import { onReceiveTeamList } from './actions';
 import { OrgHeader } from './OrgHeader';
 import { OrgList } from './OrgList';
 
@@ -30,6 +28,7 @@ import {
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
+import { clearStatus, fetchTeamManagement, updateOrg } from './teamManagement.slice';
 
 const buttonStyling = css({
   marginLeft: '1rem'
@@ -50,12 +49,16 @@ export const TeamManagement = React.memo(({
   onAddIhpWritingVso,
   onAddPrivateBar,
   onLookupParticipantId,
+  onOrgUpdate,
+  statuses
 }) => {
   const handleAddDvcTeam = () => onAddDvcTeam?.();
   const handleAddJudgeTeam = () => onAddJudgeTeam?.();
   const handleAddIhpWritingVso = () => onAddIhpWritingVso?.();
   const handleAddPrivateBar = () => onAddPrivateBar?.();
   const handleLookupParticipantId = () => onLookupParticipantId?.();
+
+  const handleOrgUpdate = (orgId, updates) => onOrgUpdate?.({ orgId, updates });
 
   return (
     <LoadingDataDisplay
@@ -81,7 +84,7 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_DVC_BUTTON} onClick={handleAddDvcTeam} />
               </span>
             </OrgHeader>
-            <OrgList orgs={dvcTeams} />
+            <OrgList orgs={dvcTeams} statuses={statuses} />
           </OrgSection> }
 
           { judgeTeams && <OrgSection>
@@ -91,7 +94,7 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={handleAddJudgeTeam} />
               </span>
             </OrgHeader>
-            <OrgList orgs={judgeTeams} showDistributionToggles />
+            <OrgList orgs={judgeTeams} statuses={statuses} showDistributionToggles onUpdate={handleOrgUpdate} />
           </OrgSection> }
 
           { vsos && <OrgSection>
@@ -101,7 +104,7 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={handleAddIhpWritingVso} />
               </span>
             </OrgHeader>
-            <OrgList orgs={vsos} isRepresentative />
+            <OrgList orgs={vsos} statuses={statuses} isRepresentative onUpdate={handleOrgUpdate} />
           </OrgSection> }
 
           { privateBars && <OrgSection>
@@ -118,17 +121,17 @@ export const TeamManagement = React.memo(({
                 />
               </span>
             </OrgHeader>
-            <OrgList orgs={privateBars} isRepresentative />
+            <OrgList orgs={privateBars} statuses={statuses} isRepresentative onUpdate={handleOrgUpdate} />
           </OrgSection> }
 
           { vhaProgramOffices && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL}</OrgHeader>
-            <OrgList orgs={vhaProgramOffices} />
+            <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
 
           { otherOrgs && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
-            <OrgList orgs={otherOrgs} />
+            <OrgList orgs={otherOrgs} statuses={statuses} />
           </OrgSection> }
 
         </div>
@@ -154,6 +157,14 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
+  onOrgUpdate: PropTypes.func,
+  statuses: PropTypes.shape({
+    [PropTypes.string]: PropTypes.shape({
+      loading: PropTypes.object,
+      saved: PropTypes.object,
+      error: PropTypes.object
+    })
+  })
 };
 
 export const TeamManagementWrapper = () => {
@@ -166,10 +177,12 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     otherOrgs
-  } = useSelector((state) => state.teamManagement);
+  } = useSelector((state) => state.teamManagement.data);
+  const { statuses } = useSelector((state) => state.teamManagement);
+
   const { success, error } = useSelector((state) => state.ui.messages);
 
-  const loadingPromise = () => ApiUtil.get('/team_management').then((resp) => dispatch(onReceiveTeamList(resp.body)));
+  const loadingPromise = async () => await dispatch(fetchTeamManagement());
 
   const onAddJudgeTeam = () => history.push('/team_management/add_judge_team');
 
@@ -180,6 +193,14 @@ export const TeamManagementWrapper = () => {
   const onAddPrivateBar = () => history.push('/team_management/add_private_bar');
 
   const onLookupParticipantId = () => history.push('/team_management/lookup_participant_id');
+
+  const onOrgUpdate = async ({ orgId, updates }) => {
+    console.log('onOrgUpdate', orgId, updates);
+    dispatch(updateOrg({ orgId, updates })).then(() => {
+      // Clear success message after delay
+      setTimeout(() => dispatch(clearStatus({ orgId })), 3000);
+    });
+  };
 
   const props = {
     dvcTeams,
@@ -196,6 +217,8 @@ export const TeamManagementWrapper = () => {
     onAddIhpWritingVso,
     onAddPrivateBar,
     onLookupParticipantId,
+    onOrgUpdate,
+    statuses
   };
 
   return <TeamManagement {...props} />;

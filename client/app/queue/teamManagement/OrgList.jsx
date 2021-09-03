@@ -16,7 +16,7 @@ const labelRowStyling = css({
 });
 
 export const OrgList = React.memo(
-  ({ isRepresentative, orgs, showDistributionToggles }) => {
+  ({ isRepresentative, onUpdate, orgs, showDistributionToggles, statuses }) => {
     return (
       <React.Fragment>
         <tr {...labelRowStyling}>
@@ -27,13 +27,8 @@ export const OrgList = React.memo(
               <td>{TEAM_MANAGEMENT_REQUESTED_DISTRIBUTION_COLUMN_HEADING}</td>
             </>
           )}
-          {isRepresentative && (
-            <td>{TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-          )}
-          <td>
-            {isRepresentative &&
-                TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}
-          </td>
+          {isRepresentative && <td>{TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>}
+          {isRepresentative && <td>{TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>}
           <td />
           <td />
         </tr>
@@ -43,6 +38,8 @@ export const OrgList = React.memo(
             key={org.id}
             isRepresentative={isRepresentative}
             showDistributionToggles={showDistributionToggles}
+            onUpdate={onUpdate}
+            status={statuses?.[org.id]}
           />
         ))}
       </React.Fragment>
@@ -58,5 +55,13 @@ OrgList.defaultProps = {
 OrgList.propTypes = {
   orgs: PropTypes.array,
   isRepresentative: PropTypes.bool,
-  showDistributionToggles: PropTypes.bool
+  showDistributionToggles: PropTypes.bool,
+  onUpdate: PropTypes.func,
+  statuses: PropTypes.shape({
+    [PropTypes.string]: PropTypes.shape({
+      loading: PropTypes.object,
+      saved: PropTypes.object,
+      error: PropTypes.object
+    })
+  })
 };

@@ -6,23 +6,17 @@ exports[`OrgRow renders correctly 1`] = `
     data-css-156syk=""
   >
     <td>
-      <div
-        class="cf-form-textinput   "
-      >
-        <input
-          aria-label="Name-undefined"
-          class="cf-form-textinput"
-          id="Name-undefined"
-          name="Name-undefined"
-          readonly=""
-          type="text"
-          value=""
-        />
-      </div>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
     </td>
     <td />
     <td />
-    <td />
+    <td
+      class="css-a2hn0y"
+    />
     <td />
   </tr>
 </div>
@@ -34,23 +28,17 @@ exports[`OrgRow with JudgeTeam renders correctly 1`] = `
     data-css-156syk=""
   >
     <td>
-      <div
-        class="cf-form-textinput   "
-      >
-        <input
-          aria-label="Name-undefined"
-          class="cf-form-textinput"
-          id="Name-undefined"
-          name="Name-undefined"
-          readonly=""
-          type="text"
-          value=""
-        />
-      </div>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
     </td>
     <td />
     <td />
-    <td />
+    <td
+      class="css-a2hn0y"
+    />
     <td />
   </tr>
 </div>
