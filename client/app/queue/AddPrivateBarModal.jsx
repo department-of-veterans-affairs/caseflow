@@ -35,8 +35,7 @@ class AddPrivateBarModal extends React.Component {
 
     return this.props.requestSave('/team_management/private_bar', options).
       then((resp) => this.props.onReceiveNewPrivateBar(resp.body)).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err }));
+      catch();
   }
 
   changeName = (value) => this.setState({ name: value });

@@ -51,8 +51,7 @@ class AddVsoModal extends React.Component {
 
     return this.props.requestSave(endpoint, options).
       then((resp) => this.props.onReceiveNewVso(resp.body)).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err }));
+      catch();
   }
 
   changeName = (value) => this.setState({ name: value });
