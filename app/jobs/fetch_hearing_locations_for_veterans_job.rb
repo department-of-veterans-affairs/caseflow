@@ -72,7 +72,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
           break
         rescue StandardError => error
-          actionable = NONACTIONABLE_ERRORS.include?(error.class)
+          actionable = !NONACTIONABLE_ERRORS.include?(error.class)
           capture_exception(error: error, extra: { appeal_external_id: appeal.external_id, actionable: actionable })
 
           # For unknown errors, we capture the exeception in Sentry. This error could represent
