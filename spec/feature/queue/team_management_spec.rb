@@ -81,7 +81,7 @@ RSpec.feature "Team management page", :postgres do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
         expect(page).to have_field("priority-case-distribution-#{judge_team.id}", visible: false, disabled: true)
-        
+
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
 
@@ -89,7 +89,7 @@ RSpec.feature "Team management page", :postgres do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
         expect(page).to have_field("requested-distribution-#{judge_team.id}", visible: false, disabled: true)
-        
+
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
     end
@@ -104,7 +104,7 @@ RSpec.feature "Team management page", :postgres do
       scenario "user can toggle priority push availablity" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
-        
+
         # Should be true by default
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
 
@@ -112,7 +112,7 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_field("priority-case-distribution-#{judge_team.id}", visible: false, disabled: false)
         find(".dropdown-priorityCaseDistribution-#{judge_team.id} .cf-select__control").click
         find("div", class: "cf-select__option", text: "Unavailable").click
-        
+
         # Wait for save, then check that value has updated to false
         expect(page).to have_content "Saved"
         expect(judge_team.reload.accepts_priority_pushed_cases).to be false
@@ -121,17 +121,17 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_field("priority-case-distribution-#{judge_team.id}", visible: false, disabled: false)
         find(".dropdown-priorityCaseDistribution-#{judge_team.id} .cf-select__control").click
         find("div", class: "cf-select__option", text: "AMA cases only").click
-        
+
         # Wait for save, then check that both relevant values have updated to true
         expect(page).to have_content "Saved"
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
-        expect(judge_team.reload.ama_only_push).to be true        
+        expect(judge_team.reload.ama_only_push).to be true
       end
 
       scenario "user can toggle AMA-only setting for requested distribution" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
-        
+
         # Should be false by default
         expect(judge_team.reload.ama_only_request).to be false
 
@@ -139,7 +139,7 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_field("requested-distribution-#{judge_team.id}", visible: false, disabled: false)
         find(".dropdown-requestedDistribution-#{judge_team.id} .cf-select__control").click
         find("div", class: "cf-select__option", text: "AMA cases only").click
-        
+
         # Wait for save, then check that value has updated to true
         expect(page).to have_content "Saved"
         expect(judge_team.reload.ama_only_request).to be true
