@@ -119,5 +119,4 @@ AddVsoModal.propTypes = {
   resetSuccessMessages: PropTypes.func
 };
 
-
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddVsoModal));
