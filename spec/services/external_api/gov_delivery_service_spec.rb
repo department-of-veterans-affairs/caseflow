@@ -171,6 +171,7 @@ describe ExternalApi::GovDeliveryService do
     end
 
     describe "#get_message_from_event" do
+      subject { ExternalApi::GovDeliveryService.get_message_from_event(email_event: email_event) }
 
       it "returns the expected value" do
         allow(HTTPI).to receive(:get).and_return(success_response)
