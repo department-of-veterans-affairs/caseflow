@@ -32,11 +32,14 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
 
-# Mimic GitHub Pages' settings
+
+# Mimic GitHub Pages' settings that cannot be changed
 # https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#configuring-jekyll-in-your-github-pages-site
+# https://jekyllrb.com/docs/configuration/options/
 lsi: false
 safe: true
-incremental: false
+# source: [your repo's top level directory]
+# incremental: false
 highlighter: rouge
 gist:
   noscript: false
@@ -51,7 +54,6 @@ plugins:
   - jekyll-remote-theme
 
 
-include: gh-pages/
 exclude:
   - Makefile
   - app

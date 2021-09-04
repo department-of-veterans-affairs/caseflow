@@ -68,43 +68,45 @@ docs/schema/*
 
 # Ignore all these files from the main branch
 
-Dangerfile
-Dockerfile
-Gemfile
-Gemfile.lock
-Guardfile
-Jenkinsfile
-LICENSE.md
+#Dangerfile
+#Dockerfile
+# Gemfile
+# Gemfile.lock
+#Guardfile
+#Jenkinsfile
+#LICENSE.md
 
-Makefile.example
-PULL_REQUEST_TEMPLATE.md
-Procfile
-README.md
-Rakefile
-app
-bin
-browserstack-logo.png
-certification-screenshot.png
-ci-bin
-client
-config
-config.ru
-coverage
-db
-docker-bin
-docker-compose.yml
-docs
-lib
-local
-log
-newrelic.yml
-node_modules
-pre-commit-hook
-public
-reports
-scripts
-spec
-yarn.lock
+# Makefile.example
+# PULL_REQUEST_TEMPLATE.md
+# Procfile
+# README.md
+# Rakefile
+#app
+#bin
+# browserstack-logo.png
+# certification-screenshot.png
+# ci-bin
+#client
+# config
+# config.ru
+#coverage
+# db
+# docker-bin
+# docker-compose.yml
+#docs
+# lib
+#local
+#log
+# newrelic.yml
+#node_modules
+# pre-commit-hook
+#public
+#reports
+# scripts
+#spec
+# yarn.lock
+
+!.ruby-version
 
 # GitHub Pages
 _site
