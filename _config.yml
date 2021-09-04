@@ -32,6 +32,8 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
 
+# Output to a directory ignored by main branch
+destination: tmp/_site
 
 # Mimic GitHub Pages' settings that cannot be changed
 # https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#configuring-jekyll-in-your-github-pages-site
