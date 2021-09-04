@@ -37,6 +37,24 @@ remote_theme: pages-themes/modernist@v0.2.0
 plugins:
   - jekyll-remote-theme
 
+
+include: gh-pages/
+exclude:
+  - Makefile
+  - app
+  - client
+  - coverage
+  - docs
+  - local
+  - log
+  - node_modules
+  - public
+  - reports
+  - spec
+  - tmp
+  - Gemfile
+  - Gemfile.lock
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
