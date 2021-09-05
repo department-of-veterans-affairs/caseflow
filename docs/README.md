@@ -1,4 +1,6 @@
-# GitHub Pages for Caseflow
+# README
+
+[GitHub Pages](https://pages.github.com/) for [Caseflow](https://github.com/department-of-veterans-affairs/caseflow)
 
 ## Purpose of the `gh-pages` branch
 
