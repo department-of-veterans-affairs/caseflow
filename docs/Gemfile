@@ -16,6 +16,7 @@ gem "github-pages", group: :jekyll_plugins
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   # gem "jekyll-feed", "~> 0.12"
+  gem "just-the-docs" # theme: https://github.com/pmarsceill/just-the-docs
 
   # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
   gem "jekyll-coffeescript"

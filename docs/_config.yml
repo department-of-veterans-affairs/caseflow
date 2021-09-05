@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Caseflow GH-Pages
+title: Caseflow Docs
 email: ""
 
 # Write an awesome description for your new site here. You can edit this
@@ -39,7 +39,8 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 defaults:
   -
     scope:
-      path: "" # an empty string here means all files in the project
+      # Note gotcha: https://github.com/pmarsceill/just-the-docs/issues/472
+      path: "docs" # an empty string here means all files in the project
     values:
       layout: "default"
 
@@ -59,6 +60,7 @@ kramdown:
 
 
 # Build settings
+remote_theme: pmarsceill/just-the-docs # https://pmarsceill.github.io/just-the-docs/docs/configuration/
 # remote_theme: pages-themes/modernist@v0.2.0
 plugins:
   - jekyll-remote-theme
@@ -70,9 +72,14 @@ plugins:
   - jekyll-github-metadata
   - jekyll-optional-front-matter
   - jekyll-paginate
-  # - jekyll-readme-index
+  - jekyll-readme-index
   - jekyll-titles-from-headings
   - jekyll-relative-links
+
+readme_index:
+  enabled:          true
+  remove_originals: true
+  with_frontmatter: false
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -93,5 +100,3 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
-
-theme: jekyll-theme-leap-day
