@@ -32,10 +32,8 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
 
-# Output to a directory ignored by main branch
-# destination: tmp/_site
 
-# Set defaults for Jekyll Front Matter so we don't have to include `layout: default` for each md file.
+# ----- Set defaults for Jekyll Front Matter so we don't have to include `layout: default` for each md file.
 defaults:
   -
     scope:
@@ -44,7 +42,7 @@ defaults:
     values:
       layout: "default"
 
-# Mimic GitHub Pages' settings that cannot be changed
+# ----- Mimic GitHub Pages' settings that cannot be changed
 # https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#configuring-jekyll-in-your-github-pages-site
 # https://jekyllrb.com/docs/configuration/options/
 lsi: false
@@ -62,6 +60,31 @@ kramdown:
 # Build settings
 remote_theme: pmarsceill/just-the-docs # https://pmarsceill.github.io/just-the-docs/docs/configuration/
 # remote_theme: pages-themes/modernist@v0.2.0
+
+# ----- just-the-docs theme configuration ----
+# https://pmarsceill.github.io/just-the-docs/docs/configuration/
+
+# Aux links for the upper right navigation
+aux_links:
+  "Caseflow on GitHub":
+    - "//github.com/department-of-veterans-affairs/caseflow"
+
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: false
+
+# Footer last edited timestamp
+last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
+last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
+
+# Footer "Edit this page on GitHub" link text
+gh_edit_link: true # show or hide edit this page link
+gh_edit_link_text: "Edit this page"
+gh_edit_repository: "https://github.com/department-of-veterans-affairs/caseflow" # the github URL for your repo
+gh_edit_branch: "gh-pages" # the branch that your docs is served from
+gh_edit_source: docs # the source that your files originate from
+gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into the editor immediately
+
+# -------------------------------------------
 plugins:
   - jekyll-remote-theme
 
@@ -76,12 +99,13 @@ plugins:
   - jekyll-titles-from-headings
   - jekyll-relative-links
 
+# ----- plugin configuration
 readme_index:
   enabled:          true
   remove_originals: true
   with_frontmatter: false
 
-# Exclude from processing.
+# ----- Exclude from processing
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
 # the internal "default list".
