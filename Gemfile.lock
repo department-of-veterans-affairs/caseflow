@@ -272,6 +272,15 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
+  jekyll-coffeescript
+  jekyll-default-layout
+  jekyll-gist
+  jekyll-github-metadata
+  jekyll-optional-front-matter
+  jekyll-paginate
+  jekyll-readme-index
+  jekyll-relative-links
+  jekyll-titles-from-headings
   tzinfo (~> 1.2)
   tzinfo-data
   wdm (~> 0.1.1)

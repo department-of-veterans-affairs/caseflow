@@ -16,6 +16,17 @@ gem "github-pages", group: :jekyll_plugins
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   # gem "jekyll-feed", "~> 0.12"
+
+  # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
+  gem "jekyll-coffeescript"
+  gem "jekyll-default-layout"
+  gem "jekyll-gist"
+  gem "jekyll-github-metadata"
+  gem "jekyll-optional-front-matter"
+  gem "jekyll-paginate"
+  gem "jekyll-readme-index"
+  gem "jekyll-titles-from-headings"
+  gem "jekyll-relative-links"
 end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
