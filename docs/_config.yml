@@ -87,6 +87,7 @@ gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into t
 # -------------------------------------------
 plugins:
   - jekyll-remote-theme
+  - jekyll-diagrams
 
   # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
   - jekyll-coffeescript
