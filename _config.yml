@@ -31,6 +31,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
+markdown: kramdown
 
 # Output to a directory ignored by main branch
 destination: tmp/_site
@@ -67,7 +68,6 @@ plugins:
   - jekyll-titles-from-headings
   - jekyll-relative-links
 
-
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
@@ -92,7 +92,6 @@ exclude:
   - app
   - client
   - coverage
-  - docs
   - local
   - log
   - node_modules
