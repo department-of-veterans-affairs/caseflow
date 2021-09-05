@@ -52,10 +52,10 @@ kramdown:
 
 
 # Build settings
-theme: jekyll-theme-modernist
-# remote_theme: pages-themes/modernist@v0.2.0
+# theme: jekyll-theme-modernist
+remote_theme: pages-themes/modernist@v0.2.0
 plugins:
-  # - jekyll-remote-theme
+  - jekyll-remote-theme
 
   # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
   - jekyll-coffeescript
