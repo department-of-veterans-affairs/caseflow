@@ -99,3 +99,5 @@ exclude:
   - reports
   - spec
   - tmp
+
+theme: jekyll-theme-leap-day
