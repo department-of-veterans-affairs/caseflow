@@ -248,15 +248,19 @@ class SanitizedJsonImporter
       next nil unless (fieldnames - klass.column_names).blank? # in case a fieldname is not a column
 
       uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]] }.to_h
+
+      # Don't search using the unique index if the values are nil
+      next nil if uniq_attributes.compact.blank?
+
       klass.find_by(uniq_attributes)
-    end.compact
+    end.compact.uniq
 
     return nil if found_records.blank?
 
     puts "Found #{klass.name} record(s) by unique index: #{found_records}" if @verbosity > 5
     return found_records.first if found_records.size == 1
 
-    fail "Found multiple records for #{klass.name}: #{found_records}"
+    fail "Found multiple records (#{found_records.size}) for #{klass.name}: #{found_records}"
   end
 
   def find_existing_record(klass, obj_hash)

@@ -77,6 +77,44 @@ RSpec.feature "Team management page", :postgres do
         let(:error_message) { "User #{user.id} already has a JudgeTeam. Cannot create another JudgeTeam for user." }
         include_examples "user cannot add another team", "Judge Team"
       end
+
+      scenario "user cannot create VSO or PrivateBar with the same participant_id" do
+        participant_id = "1234567"
+        error_message = "Participant ID #{participant_id} is already used for existing team 'Vso 1'. Cannot create"
+
+        step "add a VSO" do
+          visit("/team_management")
+          find("button", text: "+ Add VSO").click
+          fill_in "Name", with: "Vso 1"
+          fill_in "URL", with: "vso-1"
+          fill_in "BGS Participant ID", with: participant_id
+          find("button", text: "Submit").click
+        end
+
+        step "try to add another VSO with the same participant id" do
+          find("button", text: "+ Add VSO").click
+          fill_in "Name", with: "Vso 2"
+          fill_in "URL", with: "vso-2"
+          fill_in "BGS Participant ID", with: participant_id
+          find("button", text: "Submit").click
+          expect(page).to have_content(error_message)
+
+          find("button", text: "Cancel").click
+          expect(page).not_to have_content(error_message)
+        end
+
+        step "try to add a Private Bar with the same participant id" do
+          find("button", text: "+ Add Private Bar").click
+          fill_in "Name", with: "Private Bar 1"
+          fill_in "URL", with: "pb-1"
+          fill_in "BGS Participant ID", with: participant_id
+          find("button", text: "Submit").click
+          expect(page).to have_content(error_message)
+
+          find("button", text: "Cancel").click
+          expect(page).not_to have_content(error_message)
+        end
+      end
     end
 
     context "when user is a dvc" do
