@@ -201,6 +201,7 @@ export const REVIEW_DATA_FIELDS = {
     same_office: { key: 'sameOffice', required: true },
     benefit_type: { key: 'benefitType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
+    filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },

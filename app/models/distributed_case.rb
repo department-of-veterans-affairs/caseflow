@@ -16,6 +16,13 @@ class DistributedCase < CaseflowRecord
     update!(case_id: "#{case_id}-redistributed-#{ymd}")
   end
 
+  def flag_redistribution(task)
+    Rails.logger.error("A distributed case, id #{id}, "\
+      "\n already exists for appeal of uuid #{task.appeal.uuid}.")
+    Raven.capture_message("A distributed case, id #{id}, "\
+        "\n already exists for appeal of uuid #{task.appeal.uuid}.")
+  end
+
   private
 
   def docket_has_hearing_option

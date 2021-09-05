@@ -24,6 +24,7 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import Modal from '../components/Modal';
 import ReaderLink from './ReaderLink';
 import TextField from '../components/TextField';
+import { editAppeal } from './QueueActions';
 
 const editButton = css({
   float: 'right',
@@ -82,9 +83,11 @@ export class CaseTitleDetails extends React.PureComponent {
       }
     };
 
-    this.props.
+    return this.props.
       requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
       then(() => {
+        this.props.editAppeal(this.props.appeal.externalId, { documentID: this.state.value });
+
         this.handleModalClose();
       }).
       catch((error) => {
@@ -180,7 +183,7 @@ export class CaseTitleDetails extends React.PureComponent {
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
               <CopyTextButton
-                text={this.state.value || appeal.documentID}
+                text={appeal.documentID}
                 label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
               />
               {appeal.canEditDocumentId && (
@@ -197,7 +200,7 @@ export class CaseTitleDetails extends React.PureComponent {
                   {
                     classNames: ['usa-button'],
                     name: 'Save',
-                    disabled: !this.state.value,
+                    disabled: !this.state.value || this.state.value === appeal.documentID,
                     onClick: this.submitForm(appeal.caseReviewId, appeal.isLegacyAppeal)
                   }
                 ]}
@@ -207,8 +210,7 @@ export class CaseTitleDetails extends React.PureComponent {
                 <TextField
                   errorMessage={highlightModal ? documentIdError : null}
                   name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
-                  placeholder={appeal.documentID}
-                  value={this.state.value}
+                  value={this.state.value || appeal.documentID}
                   onChange={this.changeButtonState}
                   autoComplete="off"
                   required
@@ -252,6 +254,7 @@ CaseTitleDetails.propTypes = {
   history: PropTypes.object,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
+  editAppeal: PropTypes.func,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
   userCanAccessReader: PropTypes.bool,
@@ -282,7 +285,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      requestPatch
+      requestPatch,
+      editAppeal
     },
     dispatch
   );
