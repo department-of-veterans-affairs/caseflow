@@ -31,10 +31,17 @@ baseurl: "/caseflow" # required for themes to work in GH Pages for this repo
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
-markdown: kramdown
 
 # Output to a directory ignored by main branch
 # destination: tmp/_site
+
+# Set defaults for Jekyll Front Matter so we don't have to include `layout: default` for each md file.
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+    values:
+      layout: "default"
 
 # Mimic GitHub Pages' settings that cannot be changed
 # https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#configuring-jekyll-in-your-github-pages-site
@@ -63,7 +70,7 @@ plugins:
   - jekyll-github-metadata
   - jekyll-optional-front-matter
   - jekyll-paginate
-  - jekyll-readme-index
+  # - jekyll-readme-index
   - jekyll-titles-from-headings
   - jekyll-relative-links
 
