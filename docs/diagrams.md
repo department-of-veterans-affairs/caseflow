@@ -1,12 +1,19 @@
----
-nav_exclude: true
----
-
 # Diagrams
 
 Testing https://github.com/zhustec/jekyll-diagrams
 
-**TODO:** create GH Action to commit generated html; remove sidebar and footer
+## **TODO:**
+1. create GH Action for branches ending with `gh-pages` to commit generated html to gh-pages branch
+```
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/site
+```
+2. get diagrams working
+3. import some wiki pages as collections
 
 ## blockdiag
 {% blockdiag %}
