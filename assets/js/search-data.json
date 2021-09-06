@@ -1,0 +1,68 @@
+{"0": {
+    "doc": "README",
+    "title": "README",
+    "content": "GitHub Pages for Caseflow . ",
+    "url": "/caseflow/docs/README.html",
+    "relUrl": "/docs/README.html"
+  },"1": {
+    "doc": "README",
+    "title": "Purpose of the gh-pages branch",
+    "content": "This branch (gh-pages) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Not that it has a completely separate commit history from the main branch. For more info, see … . This branch has files for documentation. Some are automatically generated (e.g., by a GitHub Action); others are manually created. Why not wiki? . ",
+    "url": "/caseflow/docs/README.html#purpose-of-the-gh-pages-branch",
+    "relUrl": "/docs/README.html#purpose-of-the-gh-pages-branch"
+  },"2": {
+    "doc": "README",
+    "title": "Viewing",
+    "content": "It can be viewed . | with GitHub Pages http://department-of-veterans-affairs.github.io/caseflow/ | without GitHub Pages enabled: https://htmlpreview.github.io/?https://github.com/department-of-veterans-affairs/caseflow/blob/gh-pages/gh-pages/schema/index.html | . ",
+    "url": "/caseflow/docs/README.html#viewing",
+    "relUrl": "/docs/README.html#viewing"
+  },"3": {
+    "doc": "README",
+    "title": "Cloning / Checkout",
+    "content": " ",
+    "url": "/caseflow/docs/README.html#cloning--checkout",
+    "relUrl": "/docs/README.html#cloning--checkout"
+  },"4": {
+    "doc": "README",
+    "title": "Committing changes",
+    "content": "Anyone can commit to this branch without a peer-review, just like the Caseflow wiki page. Instead of committing directly to this branch, create a development branch and do a squash-merge when you are satisfied with the changes, just like what is done in the main branch. ",
+    "url": "/caseflow/docs/README.html#committing-changes",
+    "relUrl": "/docs/README.html#committing-changes"
+  },"5": {
+    "doc": "Contents",
+    "title": "Contents",
+    "content": "Preview dark theme . ",
+    "url": "/caseflow/index",
+    "relUrl": "/index"
+  },"6": {
+    "doc": "Contents",
+    "title": "Database",
+    "content": ". | Caseflow DB schema (created via Jailer) | . ",
+    "url": "/caseflow/index#database",
+    "relUrl": "/index#database"
+  },"7": {
+    "doc": "Jekyll",
+    "title": "Jekyll",
+    "content": "This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at jekyllrb.com . | Minima theme | Jekyll at GitHub | . ",
+    "url": "/caseflow/docs/jekyll.html",
+    "relUrl": "/docs/jekyll.html"
+  },"8": {
+    "doc": "Jekyll",
+    "title": "Minima theme",
+    "content": "You can find the source code for Minima at GitHub: jekyll / minima . ",
+    "url": "/caseflow/docs/jekyll.html#minima-theme",
+    "relUrl": "/docs/jekyll.html#minima-theme"
+  },"9": {
+    "doc": "Jekyll",
+    "title": "Jekyll at GitHub",
+    "content": "You can find the source code for Jekyll at GitHub: jekyll / jekyll . ",
+    "url": "/caseflow/docs/jekyll.html#jekyll-at-github",
+    "relUrl": "/docs/jekyll.html#jekyll-at-github"
+  },"10": {
+    "doc": "Diagrams",
+    "title": "Diagrams",
+    "content": "# Diagrams Testing https://github.com/zhustec/jekyll-diagrams ## **TODO:** 1. create GH Action for branches ending with `gh-pages` to commit generated html to gh-pages branch ``` - name: Publish to GitHub Pages uses: peaceiris/actions-gh-pages@v3 with: github_token: ${{ secrets.GITHUB_TOKEN }} publish_dir: build/site ``` 2. get diagrams working 3. import some wiki pages as collections ## blockdiag {% blockdiag %} blockdiag { A -> B -> C -> D; A -> E -> F -> G; } {% endblockdiag %} ## seqdiag {% seqdiag %} seqdiag { browser -> webserver [label = \"GET /index.html\"]; browser webserver [label = \"POST /blog/comment\"]; webserver -> database [label = \"INSERT comment\"]; webserver A [label=a]; S -> B [label=b]; A -> D [label=c]; B -> D [label=d]; } {% endgraphviz %} ## mermaid {% mermaid %} sequenceDiagram participant John participant Alice Alice->>John: Hello John, how are you? John-->>Alice: Great! {% endmermaid %} ",
+    "url": "/caseflow/docs/diagrams.html",
+    "relUrl": "/docs/diagrams.html"
+  }
+}
