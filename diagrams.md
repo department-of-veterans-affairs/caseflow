@@ -2,9 +2,6 @@
 
 Testing https://github.com/zhustec/jekyll-diagrams
 
-## **TODO:**
-3. import some wiki pages as collections
-
 ## blockdiag
 {% blockdiag %}
 blockdiag {
@@ -24,24 +21,6 @@ seqdiag {
   browser <-- webserver;
 }
 {% endseqdiag %}
-
-## erd
-{% erd %}
-[Person]
-*name
-height
-weight
-`birth date`
-+birth_place_id
-
-[`Birth Place`]
-*id
-`birth city`
-'birth state'
-"birth country"
-
-Person *--1 `Birth Place`
-{% enderd %}
 
 ## graphviz
 {% graphviz %}

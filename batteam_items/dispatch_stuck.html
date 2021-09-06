@@ -1,0 +1,34 @@
+<h1 id="dispatch-claim-being-stuck">Dispatch claim being “stuck”</h1>
+<p>
+  If I receive a support issue regarding Caseflow Dispatch claim being “stuck”.
+</p>
+<ol>
+  <li>
+    Look for a Sentry error in
+    <code class="language-plaintext highlighter-rouge">#appeals-dispatch</code>
+    channel.
+  </li>
+  <li>
+    If the error is related to
+    <code class="language-plaintext highlighter-rouge"
+      >AASM::InvalidTransition</code
+    >, that means the state transition is invalid.
+  </li>
+  <li>
+    Find the associated dispatch task in the
+    <code class="language-plaintext highlighter-rouge">dispatch_tasks</code>
+    table.
+  </li>
+  <li>
+    Choose the appropriate state for the task by referencing the
+    <code class="language-plaintext highlighter-rouge">aasm</code> machine in
+    <code class="language-plaintext highlighter-rouge">Dispatch::Task</code>
+    model and update the task manually using production console.
+  </li>
+  <li>
+    Example of a similar problem can be found
+    <a href="https://dsva.slack.com/archives/CHX8FMP28/p1561996067122700"
+      >here</a
+    >.
+  </li>
+</ol>
