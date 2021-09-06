@@ -25,6 +25,24 @@ seqdiag {
 }
 {% endseqdiag %}
 
+## erd
+{% erd %}
+[Person]
+*name
+height
+weight
+`birth date`
++birth_place_id
+
+[`Birth Place`]
+*id
+`birth city`
+'birth state'
+"birth country"
+
+Person *--1 `Birth Place`
+{% enderd %}
+
 ## graphviz
 {% graphviz %}
 digraph {
@@ -73,6 +91,19 @@ sequenceDiagram
 
 [<actor>Sailor] - [<usecase>shiver me;timbers]
 {% endnomnoml %}
+
+## plantuml
+
+{% plantuml %}
+@startuml
+class Car
+
+Driver - Car : drives >
+Car *- Wheel : have 4 >
+Car -- Person : < owns
+
+@enduml
+{% endplantuml %}
 
 ## smcat
 {% smcat %}
