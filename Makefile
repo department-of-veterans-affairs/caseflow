@@ -5,6 +5,7 @@ build_subsites: build_help_subdir
 
 build_help_subdir:
 	cp favicon.ico __help/
-	bundle exec jekyll build --verbose --config __help/_config.yml
+	# Specify _subsite_config.yml first so that __help/_config.yml can override its settings
+	bundle exec jekyll build --verbose --config "_subsite_config.yml,__help/_config.yml"
 
 
