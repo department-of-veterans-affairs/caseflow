@@ -7,7 +7,7 @@
   },"1": {
     "doc": "README",
     "title": "Purpose of the gh-pages branch",
-    "content": "This branch (gh-pages) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Not that it has a completely separate commit history from the main branch. For more info, see … . This branch has files for documentation. Some are automatically generated (e.g., by a GitHub Action); others are manually created. Why not wiki? . ",
+    "content": "This branch (gh-pages) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Note that it has a completely separate commit history from the main branch. For more info, see … . This branch has files for documentation. Some are automatically generated (e.g., Caseflow DB schema by a GitHub Action); others are manually created (e.g., Bat Team Remedies). Why not wiki? . ",
     "url": "/caseflow/README.html#purpose-of-the-gh-pages-branch",
     "relUrl": "/README.html#purpose-of-the-gh-pages-branch"
   },"2": {
@@ -37,28 +37,10 @@
   },"6": {
     "doc": "Contents",
     "title": "Database",
-    "content": ". | Caseflow DB schema (created via Jailer) | . ",
+    "content": ". | Caseflow DB schema (created via Jailer) | Help . | Jekyll | . | . ",
     "url": "/caseflow/index#database",
     "relUrl": "/index#database"
   },"7": {
-    "doc": "Jekyll",
-    "title": "Jekyll",
-    "content": "This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at jekyllrb.com . | Minima theme | Jekyll at GitHub | . ",
-    "url": "/caseflow/jekyll.html",
-    "relUrl": "/jekyll.html"
-  },"8": {
-    "doc": "Jekyll",
-    "title": "Minima theme",
-    "content": "You can find the source code for Minima at GitHub: jekyll / minima . ",
-    "url": "/caseflow/jekyll.html#minima-theme",
-    "relUrl": "/jekyll.html#minima-theme"
-  },"9": {
-    "doc": "Jekyll",
-    "title": "Jekyll at GitHub",
-    "content": "You can find the source code for Jekyll at GitHub: jekyll / jekyll . ",
-    "url": "/caseflow/jekyll.html#jekyll-at-github",
-    "relUrl": "/jekyll.html#jekyll-at-github"
-  },"10": {
     "doc": "Diagrams",
     "title": "Diagrams",
     "content": "# Diagrams Testing https://github.com/zhustec/jekyll-diagrams ## **TODO:** 1. create GH Action for branches ending with `gh-pages` to commit generated html to gh-pages branch ``` - name: Publish to GitHub Pages uses: peaceiris/actions-gh-pages@v3 with: github_token: ${{ secrets.GITHUB_TOKEN }} publish_dir: build/site ``` 2. get diagrams working 3. import some wiki pages as collections ## blockdiag {% blockdiag %} blockdiag { A -> B -> C -> D; A -> E -> F -> G; } {% endblockdiag %} ## seqdiag {% seqdiag %} seqdiag { browser -> webserver [label = \"GET /index.html\"]; browser webserver [label = \"POST /blog/comment\"]; webserver -> database [label = \"INSERT comment\"]; webserver A [label=a]; S -> B [label=b]; A -> D [label=c]; B -> D [label=d]; } {% endgraphviz %} ## mermaid {% mermaid %} sequenceDiagram participant John participant Alice Alice->>John: Hello John, how are you? John-->>Alice: Great! {% endmermaid %} ",
