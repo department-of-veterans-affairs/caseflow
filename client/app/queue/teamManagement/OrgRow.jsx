@@ -169,9 +169,15 @@ export const OrgRow = React.memo((props) => {
       )}
 
       <td className={statusIndicator}>
-        {props.status?.saved && <span className="success"><i className="fa fa-check-circle"></i> Saved</span>}
-        {props.status?.loading && <span className="loading"><i className="fa fa-spinner fa-spin"></i> Saving</span>}
-        {props.status?.error && <span className="error"><i className="fa fa-times"></i> Error</span>}
+        {props.status?.saved && (
+          <span className="success" role="status"><i className="fa fa-check-circle"></i> Saved</span>
+        )}
+        {props.status?.loading && (
+          <span className="loading" role="status"><i className="fa fa-spinner fa-spin"></i> Saving</span>
+        )}
+        {props.status?.error && (
+          <span className="error" role="status"><i className="fa fa-times"></i> Error</span>
+        )}
       </td>
       <td>
         {url && props.user_admin_path && (

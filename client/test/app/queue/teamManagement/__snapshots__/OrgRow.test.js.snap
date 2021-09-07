@@ -20,6 +20,126 @@ exports[`OrgRow renders correctly 1`] = `
 </div>
 `;
 
+exports[`OrgRow status indicators  status: error renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
+    </td>
+    <td
+      class="css-a2hn0y"
+    >
+      <span
+        class="error"
+        role="status"
+      >
+        <i
+          class="fa fa-times"
+        />
+         Error
+      </span>
+    </td>
+    <td />
+  </tr>
+</div>
+`;
+
+exports[`OrgRow status indicators  status: loading renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
+    </td>
+    <td
+      class="css-a2hn0y"
+    >
+      <span
+        class="loading"
+        role="status"
+      >
+        <i
+          class="fa fa-spinner fa-spin"
+        />
+         Saving
+      </span>
+    </td>
+    <td />
+  </tr>
+</div>
+`;
+
+exports[`OrgRow status indicators  status: saved renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
+    </td>
+    <td
+      class="css-a2hn0y"
+    >
+      <span
+        class="success"
+        role="status"
+      >
+        <i
+          class="fa fa-check-circle"
+        />
+         Saved
+      </span>
+    </td>
+    <td />
+  </tr>
+</div>
+`;
+
+exports[`OrgRow status indicators saving renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <span>
+        <em>
+          Name not set
+        </em>
+      </span>
+    </td>
+    <td
+      class="css-a2hn0y"
+    >
+      <span
+        class="loading"
+        role="status"
+      >
+        <i
+          class="fa fa-spinner fa-spin"
+        />
+         Saving
+      </span>
+    </td>
+    <td />
+  </tr>
+</div>
+`;
+
 exports[`OrgRow with JudgeTeam renders correctly 1`] = `
 <div>
   <tr
@@ -30,6 +150,72 @@ exports[`OrgRow with JudgeTeam renders correctly 1`] = `
         <em>
           Name not set
         </em>
+      </span>
+    </td>
+    <td
+      class="css-a2hn0y"
+    />
+    <td />
+  </tr>
+</div>
+`;
+
+exports[`OrgRow with VSO renders correctly 1`] = `
+<div>
+  <tr
+    data-css-156syk=""
+  >
+    <td>
+      <div
+        class="cf-form-textinput   "
+      >
+        <input
+          aria-label="Name-undefined"
+          class="cf-form-textinput"
+          id="Name-undefined"
+          name="Name-undefined"
+          type="text"
+          value=""
+        />
+      </div>
+    </td>
+    <td>
+      <div
+        class="cf-form-textinput   "
+      >
+        <input
+          aria-label="URL-undefined"
+          class="cf-form-textinput"
+          id="URL-undefined"
+          name="URL-undefined"
+          type="text"
+          value=""
+        />
+      </div>
+    </td>
+    <td>
+      <div
+        class="cf-form-textinput   "
+      >
+        <input
+          aria-label="BGS Participant ID-undefined"
+          class="cf-form-textinput"
+          id="BGS Participant ID-undefined"
+          name="BGS Participant ID-undefined"
+          type="text"
+          value=""
+        />
+      </div>
+    </td>
+    <td>
+      <span>
+        <button
+          class="usa-button-secondary usa-button"
+          id="undefined"
+          type="button"
+        >
+          Update
+        </button>
       </span>
     </td>
     <td
