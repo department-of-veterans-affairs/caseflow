@@ -74,7 +74,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
-import TeamManagement from './TeamManagement';
+import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
