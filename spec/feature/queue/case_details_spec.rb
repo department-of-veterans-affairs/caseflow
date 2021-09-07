@@ -1892,7 +1892,6 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "substitute appellant" do
-
       describe "The 'Add Substitute' button" do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
