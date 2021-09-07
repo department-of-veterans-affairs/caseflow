@@ -296,6 +296,74 @@ describe Docket, :all_dbs do
     end
   end
 
+  context "an appeal has already been distributed" do
+    subject { DirectReviewDocket.new.distribute_appeals(current_distribution, limit: 3) }
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:current_distribution) do
+      past_distribution.completed!
+      Distribution.create!(judge: judge_user)
+    end
+
+    let!(:distributed_appeal) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:distributed_case) do
+      DistributedCase.create!(
+        distribution: past_distribution,
+        ready_at: 6.months.ago,
+        docket: distributed_appeal.docket_type,
+        priority: false,
+        case_id: distributed_appeal.uuid,
+        task: distributed_appeal.tasks.of_type("DistributionTask").first
+      )
+    end
+    let!(:second_distribution_task) do
+      create(:distribution_task, appeal: distributed_appeal, status: Constants.TASK_STATUSES.assigned)
+    end
+    let!(:appeal_second) do
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:appeal_third) do
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+
+    before do
+      judge_assign_task = JudgeAssignTask.find_by(appeal_id: distributed_appeal.id)
+      judge_assign_task.cancelled!
+      second_distribution_task.assigned!
+    end
+
+    it "distributes appeals including the one that has been distributed" do
+      expect(current_distribution.distributed_cases.length).to eq(0)
+      result = subject
+
+      expect(current_distribution.distributed_cases.length).to eq(3)
+      expect(result[0].class).to eq(DistributedCase)
+      expect(result[1].class).to eq(DistributedCase)
+      expect(result[2].class).to eq(DistributedCase)
+    end
+
+    it "sets the case ids when a redistribution occurs" do
+      distributed_case.id
+      ymd = Time.zone.today.strftime("%F")
+      result = subject
+
+      expect(DistributedCase.find(distributed_case.id).case_id).to eq("#{distributed_appeal.uuid}-redistributed-#{ymd}")
+      expect(result[0].case_id).to eq(distributed_appeal.uuid)
+    end
+  end
+
   context "distribute_appeals" do
     let!(:appeals) do
       (1..10).map do

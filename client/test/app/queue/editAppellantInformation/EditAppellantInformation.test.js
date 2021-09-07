@@ -17,6 +17,6 @@ describe('EditAppellantInformation', () => {
   it('renders default state correctly', () => {
     const container = setup();
 
-    expect(container).toMatchSnapshot()
+    expect(container).toMatchSnapshot();
   });
 });
