@@ -45,7 +45,6 @@ note = "This test is only used to aid manual testing/demonstration."
 RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: note do
   describe "Substitute Appellant appeal creation" do
     before do
-      FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
       FeatureToggle.enable!(:hearings_substitution_death_dismissal)
 
       cob_user = create(:user, css_id: "COB_USER", station_id: "101")
@@ -55,7 +54,6 @@ RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: no
     end
 
     after do
-      FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
       FeatureToggle.disable!(:hearings_substitution_death_dismissal)
     end
 
