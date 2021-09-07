@@ -74,7 +74,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
-import TeamManagement from './TeamManagement';
+import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -283,6 +283,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedAssignToVhaRegionalOffice = (props) => (
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
@@ -832,6 +836,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaRegionalOffice}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
