@@ -34,6 +34,17 @@ const statusIndicator = css({
   '& span.success': { color: '#2E8540' }
 });
 
+export const priorityPushOpts = [
+  { label: 'All cases', value: 'all' },
+  { label: 'AMA cases only', value: 'amaOnly' },
+  { label: 'Unavailable', value: 'unavailable' },
+];
+
+export const requestCasesOpts = [
+  { label: 'All cases', value: 'all' },
+  { label: 'AMA cases only', value: 'amaOnly' },
+];
+
 const initialPriorityPushVal = (props) => {
   if (!props.accepts_priority_pushed_cases) {
     return 'unavailable';
@@ -77,17 +88,6 @@ export const OrgRow = React.memo((props) => {
 
     props.onUpdate?.(props.id, payload);
   };
-
-  const priorityPushOpts = [
-    { label: 'All cases', value: 'all' },
-    { label: 'AMA cases only', value: 'amaOnly' },
-    { label: 'Unavailable', value: 'unavailable' },
-  ];
-
-  const requestCasesOpts = [
-    { label: 'All cases', value: 'all' },
-    { label: 'AMA cases only', value: 'amaOnly' },
-  ];
 
   return (
     <tr {...orgRowStyling}>

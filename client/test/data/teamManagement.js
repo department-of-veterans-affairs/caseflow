@@ -42,36 +42,3 @@ export const createVso = (count = 1, values = {}) => {
     ...values
   });
 };
-
-export const judgeTeams = [
-  {
-    accepts_priority_pushed_cases: true,
-    id: 1,
-    name: 'Aaron Judge Hearings And Cases Abshire',
-    participant_id: null,
-    type: 'JudgeTeam',
-    url: 'bvaaabshire',
-    user_admin_path: null,
-    current_user_can_toggle_priority_pushed_cases: true
-  },
-  {
-    accepts_priority_pushed_cases: true,
-    id: 2,
-    name: 'Kris Acting Vlj Avlj Merle',
-    participant_id: null,
-    type: 'JudgeTeam',
-    url: 'bvaacting',
-    user_admin_path: null,
-    current_user_can_toggle_priority_pushed_cases: true
-  },
-  {
-    accepts_priority_pushed_cases: true,
-    id: 3,
-    name: 'Apurva Judge Case At Dispatch Wakefield',
-    participant_id: null,
-    type: 'JudgeTeam',
-    url: 'bvaawakefield',
-    user_admin_path: null,
-    current_user_can_toggle_priority_pushed_cases: true
-  },
-];
