@@ -1,10 +1,10 @@
 import * as React from 'react';
-import COPY from '../../COPY';
 import PropTypes from 'prop-types';
+import COPY from 'app/../COPY';
 import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { onReceiveNewVso } from './teamManagement/actions';
+import { vsoAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
   resetErrorMessages,
@@ -60,7 +60,7 @@ class AddVsoModal extends React.Component {
     const endpoint = `/team_management/${configForVsoClasses[this.state.classification].endpoint}`;
 
     return this.props.requestSave(endpoint, options).
-      then((resp) => this.props.onReceiveNewVso(resp.body)).
+      then((resp) => this.props.vsoAdded(resp.body?.org)).
       catch();
   }
 
@@ -103,10 +103,16 @@ class AddVsoModal extends React.Component {
   };
 }
 
+AddVsoModal.propTypes = {
+  requestSave: PropTypes.func,
+  vsoAdded: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+};
+
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewVso,
+  vsoAdded,
   requestSave,
   resetErrorMessages,
   resetSuccessMessages

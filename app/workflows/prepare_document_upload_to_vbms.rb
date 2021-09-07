@@ -6,6 +6,8 @@ class PrepareDocumentUploadToVbms
   validates :appeal, :file, presence: true
   validate :valid_document_type
 
+  delegate :veteran, to: :appeal
+
   def initialize(params, user)
     @params = params.slice(:appeal_id, :document_type, :file)
     @document_type = @params[:document_type]
@@ -15,6 +17,7 @@ class PrepareDocumentUploadToVbms
   def call
     success = valid?
     if success
+      throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
         UploadDocumentToVbmsJob.perform_later(document_id: document.id, initiator_css_id: user.css_id)
@@ -56,5 +59,14 @@ class PrepareDocumentUploadToVbms
     {
       message: errors.full_messages.join(", ")
     }
+  end
+
+  def throw_error_if_file_number_not_match_bgs
+    unless veteran.file_number == BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
+      fail(
+        Caseflow::Error::BgsFileNumberMismatch,
+        appeal_id: appeal.id, user_id: user.id
+      )
+    end
   end
 end
