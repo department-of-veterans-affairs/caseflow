@@ -42,7 +42,7 @@ namespace :emails do
         hearing: hearing
       )
 
-      recipients = [
+      recipient_infos = [
         EmailRecipientInfo.new(
           name: "Appellant", # Can't create a fake appellant without saving to the DB
           hearing_email_recipient: appellant_recipient,
@@ -60,7 +60,7 @@ namespace :emails do
         )
       ]
 
-      recipients.each do |recipient|
+      recipient_infos.each do |recipient_info|
         [
           :confirmation,
           :updated_time_confirmation,
@@ -68,10 +68,10 @@ namespace :emails do
         ].each do |func|
           email = HearingMailer.send(
             func,
-            email_recipient: recipient,
+            email_recipient_info: recipient_info,
             virtual_hearing: hearing.virtual_hearing
           )
-          file_name = "#{func}_#{recipient.title}.html"
+          file_name = "#{func}_#{recipient_info.title}.html"
           write_output_to_file(file_name, email)
         end
       end
@@ -140,7 +140,7 @@ namespace :emails do
         hearing: hearing
       )
 
-      recipients = [
+      recipient_infos = [
         EmailRecipientInfo.new(
           name: "Appellant Full Name", # Can't create a fake appellant without saving to the DB
           hearing_email_recipient: hearing.appellant_recipient,
@@ -158,15 +158,15 @@ namespace :emails do
         )
       ]
 
-      recipients.each do |recipient|
+      recipient_infos.each do |recipient_info|
         email = HearingMailer.send(
           :reminder,
           day_type: args.reminder_type.to_sym,
           hearing: (args.request_type != :virtual) ? hearing : nil,
-          email_recipient: recipient,
+          email_recipient_info: recipient_info,
           virtual_hearing: virtual_hearing
         )
-        file_name = "reminder_#{recipient.title}.html"
+        file_name = "reminder_#{recipient_info.title}.html"
         write_output_to_file(file_name, email)
       end
     end
