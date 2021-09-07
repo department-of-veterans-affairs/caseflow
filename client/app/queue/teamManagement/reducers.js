@@ -1,3 +1,6 @@
+// To-do: This file is deprecated and can likely be removed.
+// It has been superceded by teamManagement.slice.js
+
 import { ACTIONS } from './constants';
 import { update } from '../../util/ReducerUtil';
 
