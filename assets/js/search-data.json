@@ -44,15 +44,21 @@
     "doc": "Dispatch claim being “stuck”",
     "title": "Dispatch claim being “stuck”",
     "content": "If I receive a support issue regarding Caseflow Dispatch claim being “stuck”. | Look for a Sentry error in #appeals-dispatch channel. | If the error is related to AASM::InvalidTransition, that means the state transition is invalid. | Find the associated dispatch task in the dispatch_tasks table. | Choose the appropriate state for the task by referencing the aasm machine in Dispatch::Task model and update the task manually using production console. | Example of a similar problem can be found here. | . ",
-    "url": "/caseflow/batteam/dispatch_stuck.html",
-    "relUrl": "/batteam/dispatch_stuck.html"
+    "url": "/caseflow/batteam/dispatch/dispatch_stuck.html",
+    "relUrl": "/batteam/dispatch/dispatch_stuck.html"
   },"8": {
+    "doc": "Caseflow Dispatch",
+    "title": "Caseflow Dispatch",
+    "content": "Caseflow Dispatch . ",
+    "url": "/caseflow/batteam/dispatch/",
+    "relUrl": "/batteam/dispatch/"
+  },"9": {
     "doc": "Bat Team",
     "title": "Bat Team",
     "content": "Bat Team . ",
     "url": "/caseflow/batteam/",
     "relUrl": "/batteam/"
-  },"9": {
+  },"10": {
     "doc": "Diagrams",
     "title": "Diagrams",
     "content": "# Diagrams Testing https://github.com/zhustec/jekyll-diagrams ## blockdiag {% blockdiag %} blockdiag { A -> B -> C -> D; A -> E -> F -> G; } {% endblockdiag %} ## seqdiag {% seqdiag %} seqdiag { browser -> webserver [label = \"GET /index.html\"]; browser webserver [label = \"POST /blog/comment\"]; webserver -> database [label = \"INSERT comment\"]; webserver A [label=a]; S -> B [label=b]; A -> D [label=c]; B -> D [label=d]; } {% endgraphviz %} ## mermaid {% mermaid %} sequenceDiagram participant John participant Alice Alice->>John: Hello John, how are you? John-->>Alice: Great! {% endmermaid %} ## nomnoml {% nomnoml %} [Pirate|eyeCount: Int|raid();pillage()| [beard]--[parrot] [beard]-:>[foul mouth] ] [Marauder][Pirate] [jollyness]->[rum] [jollyness]->[singing] [Pirate]-> *[rum|tastiness: Int|swig()] [Pirate]->[singing] [singing][rum] [st]->[plunder] [plunder]->[more loot] [more loot]->[st] [more loot] no ->[e] [Sailor] - [shiver me;timbers] {% endnomnoml %} ## plantuml {% plantuml %} @startuml class Car Driver - Car : drives > Car *- Wheel : have 4 > Car -- Person : playing : play; playing => stopped : stop; playing => paused : pause; paused => playing : pause; paused => stopped : stop; }; initial => \"tape player off\"; \"tape player off\" => stopped : power; \"tape player on\" => \"tape player off\" : power; {% endsmcat %} ## wavedrom {% wavedrom %} {signal: [ {name: 'clk', wave: 'p.....|...'}, {name: 'dat', wave: 'x.345x|=.x', data: ['head', 'body', 'tail', 'data']}, {name: 'req', wave: '0.1..0|1.0'}, {name: 'ack', wave: '1.....|01.'} ]} {% endwavedrom %} ",

@@ -22,22 +22,22 @@
     ></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Begin Jekyll SEO tag v2.7.1 -->
-    <title>Dispatch claim being “stuck” | Caseflow Docs</title>
+    <title>Caseflow Dispatch | Caseflow Docs</title>
     <meta name="generator" content="Jekyll v3.9.0" />
-    <meta property="og:title" content="Dispatch claim being “stuck”" />
+    <meta property="og:title" content="Caseflow Dispatch" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="Documentation for Caseflow" />
     <meta property="og:description" content="Documentation for Caseflow" />
-    <link rel="canonical" href="/caseflow/batteam/dispatch_stuck.html" />
-    <meta property="og:url" content="/caseflow/batteam/dispatch_stuck.html" />
+    <link rel="canonical" href="/caseflow/batteam/dispatch/" />
+    <meta property="og:url" content="/caseflow/batteam/dispatch/" />
     <meta property="og:site_name" content="Caseflow Docs" />
     <meta name="twitter:card" content="summary" />
-    <meta property="twitter:title" content="Dispatch claim being “stuck”" />
+    <meta property="twitter:title" content="Caseflow Dispatch" />
     <script type="application/ld+json">
       {
         "description": "Documentation for Caseflow",
-        "headline": "Dispatch claim being “stuck”",
-        "url": "/caseflow/batteam/dispatch_stuck.html",
+        "headline": "Caseflow Dispatch",
+        "url": "/caseflow/batteam/dispatch/",
         "@type": "WebPage",
         "@context": "https://schema.org"
       }
@@ -164,11 +164,23 @@
             ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
             <ul class="nav-list">
               <li class="nav-list-item active">
-                <a
-                  href="/caseflow/batteam/dispatch_stuck.html"
+                <a href="#" class="nav-list-expander"
+                  ><svg viewBox="0 0 24 24">
+                    <use xlink:href="#svg-arrow-right"></use></svg></a
+                ><a
+                  href="/caseflow/batteam/dispatch/"
                   class="nav-list-link active"
-                  >Dispatch claim being “stuck”</a
+                  >Caseflow Dispatch</a
                 >
+                <ul class="nav-list">
+                  <li class="nav-list-item">
+                    <a
+                      href="/caseflow/batteam/dispatch/dispatch_stuck.html"
+                      class="nav-list-link"
+                      >Dispatch claim being “stuck”</a
+                    >
+                  </li>
+                </ul>
               </li>
             </ul>
           </li>
@@ -223,70 +235,31 @@
               <a href="/caseflow/batteam/">Bat Team</a>
             </li>
             <li class="breadcrumb-nav-list-item">
-              <span>Dispatch claim being “stuck”</span>
+              <a href="/caseflow/batteam/dispatch/">Bat Team</a>
+            </li>
+            <li class="breadcrumb-nav-list-item">
+              <span>Caseflow Dispatch</span>
             </li>
           </ol>
         </nav>
         <div id="main-content" class="main-content" role="main">
-          <h1 id="dispatch-claim-being-stuck">
-            <a
-              href="#dispatch-claim-being-stuck"
-              class="anchor-heading"
-              aria-labelledby="dispatch-claim-being-stuck"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Dispatch claim being “stuck”
-          </h1>
-          <p>
-            If I receive a support issue regarding Caseflow Dispatch claim being
-            “stuck”.
-          </p>
-          <ol>
+          <p>Caseflow Dispatch</p>
+          <hr />
+          <h2 class="text-delta">Table of contents</h2>
+          <ul>
             <li>
-              Look for a Sentry error in
-              <code class="language-plaintext highlighter-rouge"
-                >#appeals-dispatch</code
+              <a href="/caseflow/batteam/dispatch/dispatch_stuck.html"
+                >Dispatch claim being “stuck”</a
               >
-              channel.
             </li>
-            <li>
-              If the error is related to
-              <code class="language-plaintext highlighter-rouge"
-                >AASM::InvalidTransition</code
-              >, that means the state transition is invalid.
-            </li>
-            <li>
-              Find the associated dispatch task in the
-              <code class="language-plaintext highlighter-rouge"
-                >dispatch_tasks</code
-              >
-              table.
-            </li>
-            <li>
-              Choose the appropriate state for the task by referencing the
-              <code class="language-plaintext highlighter-rouge">aasm</code>
-              machine in
-              <code class="language-plaintext highlighter-rouge"
-                >Dispatch::Task</code
-              >
-              model and update the task manually using production console.
-            </li>
-            <li>
-              Example of a similar problem can be found
-              <a
-                href="https://dsva.slack.com/archives/CHX8FMP28/p1561996067122700"
-                >here</a
-              >.
-            </li>
-          </ol>
+          </ul>
           <hr />
           <footer>
             <a href="#top" id="back-to-top">Back to top</a>
             <div class="d-flex mt-2">
               <p class="text-small text-grey-dk-000 mb-0">
                 <a
-                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/batteam/dispatch_stuck.md"
+                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/batteam/dispatch/index.md"
                   id="edit-this-page"
                   >Edit this page</a
                 >
