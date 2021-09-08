@@ -123,23 +123,23 @@ describe HearingMailer do
   end
 
   shared_context "cancellation_email" do
-    subject { HearingMailer.cancellation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.cancellation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "confirmation_email" do
-    subject { HearingMailer.confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "updated_time_confirmation_email" do
     subject do
-      HearingMailer.updated_time_confirmation(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
+      HearingMailer.updated_time_confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing)
     end
   end
 
   shared_context "virtual_reminder_email" do
     subject do
       HearingMailer.reminder(
-        email_recipient: recipient_info,
+        email_recipient_info: recipient_info,
         virtual_hearing: virtual_hearing,
         day_type: reminder_type
       )
@@ -149,7 +149,7 @@ describe HearingMailer do
   shared_context "non_virtual_reminder_email" do
     subject do
       HearingMailer.reminder(
-        email_recipient: recipient_info,
+        email_recipient_info: recipient_info,
         virtual_hearing: nil,
         hearing: hearing,
         day_type: reminder_type

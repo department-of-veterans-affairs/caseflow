@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { onReceiveNewDvcTeam } from './teamManagement/actions';
+import { dvcTeamAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
   resetErrorMessages,
@@ -46,7 +46,7 @@ export const AddDvcTeamModal = (props) => {
       value: user }));
 
   const submit = () => props.requestSave(`/team_management/dvc_team/${selectedDvc.value.id}`).
-    then((resp) => props.onReceiveNewDvcTeam(resp.body)).
+    then((resp) => props.dvcTeamAdded(resp.body?.org)).
     catch();
 
   return (
@@ -76,7 +76,7 @@ export const AddDvcTeamModal = (props) => {
 };
 
 AddDvcTeamModal.propTypes = {
-  onReceiveNewDvcTeam: PropTypes.func,
+  dvcTeamAdded: PropTypes.func,
   requestSave: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
@@ -86,7 +86,7 @@ AddDvcTeamModal.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewDvcTeam,
+  dvcTeamAdded,
   requestSave,
   resetErrorMessages,
   resetSuccessMessages,
