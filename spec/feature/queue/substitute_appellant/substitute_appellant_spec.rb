@@ -18,7 +18,6 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
 
     context "as COTB user" do
       include_context "with Clerk of the Board user"
-      include_context "with recognized_granted_substitution_after_dd feature toggle"
       include_context "with existing relationships"
 
       context "with evidence submission docket" do
