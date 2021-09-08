@@ -4,8 +4,8 @@ name: Build and deploy to GH Pages
 
 on:
   push:
-    # branches:
-    #   - main-gh-pages
+    branches:
+      - main-gh-pages
 
 jobs:
   build-gh-pages:
