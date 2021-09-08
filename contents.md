@@ -22,6 +22,15 @@ nav_exclude: true
   </script>
 </p>
 
+* [Bat Team Quick Ref](batteam_quick_ref.md)
+{% for batteam in site.batteam_items %}
+  - <a href="{{ site.baseurl }}{{ batteam.url }}">{{ batteam.title }},
+      {{ batteam.name }}, {{ batteam.my_var }}
+    </a>
+    <br/>tags: {{ batteam.tags | array_to_sentence_string }}
+{% endfor %}
+
 ## Database
 * [Caseflow DB schema](schema/index.html) (created via [Jailer](https://github.com/Wisser/Jailer))
-
+* [Help](help/index.html)
+  - [Jekyll](help/jekyll.html)

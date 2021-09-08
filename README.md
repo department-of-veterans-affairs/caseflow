@@ -8,9 +8,9 @@ nav_order: 0
 
 ## Purpose of the `gh-pages` branch
 
-This branch ([`gh-pages`](https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages)) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Not that it has a completely separate commit history from the main branch. For more info, see ...
+This branch ([`gh-pages`](https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages)) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Note that it has a completely separate commit history from the main branch. For more info, see ...
 
-This branch has files for documentation. Some are automatically generated (e.g., by a GitHub Action); others are manually created.
+This branch has files for documentation. Some are automatically generated (e.g., [Caseflow DB schema](schema/index.html) by a GitHub Action); others are manually created (e.g., [Bat Team Remedies](batteam/index.html)).
 
 Why not wiki?
 

@@ -1,0 +1,10 @@
+# See _subsite_config.yml for default settings
+
+title: Help
+
+description: "Help Documentation for Caseflow"
+baseurl: "/caseflow/help" # required for themes to work in GH Pages for this repo
+source: __help
+destination: _site/help
+
+# remote_theme: pages-themes/modernist@v0.2.0

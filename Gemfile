@@ -15,7 +15,7 @@ source "https://rubygems.org"
 gem "github-pages", group: :jekyll_plugins
 # If you have any plugins, put them here!
 group :jekyll_plugins do
-  # gem "jekyll-feed", "~> 0.12"
+  gem "jekyll-remote-theme"
   gem "just-the-docs" # theme: https://github.com/pmarsceill/just-the-docs
   gem "jekyll-diagrams"
 
@@ -29,6 +29,9 @@ group :jekyll_plugins do
   gem "jekyll-readme-index"
   gem "jekyll-titles-from-headings"
   gem "jekyll-relative-links"
+
+  # Needed for build-gh-pages GitHub Action
+  gem "jekyll-seo-tag"
 end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem

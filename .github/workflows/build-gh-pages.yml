@@ -1,0 +1,97 @@
+# Adapted from https://github.com/limjh16/jekyll-action-ts
+
+name: Build and deploy to GH Pages
+
+on:
+  push:
+    # branches:
+    #   - main-gh-pages
+
+jobs:
+  build-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "📂 Checkout branch"
+        uses: actions/checkout@v2
+
+        # include the lines below if you are using jekyll-last-modified-at
+        # or if you would otherwise need to fetch the full commit history
+        # however this may be very slow for large repositories!
+        # with:
+        #   fetch-depth: '0'
+
+      - name: "💎 Setup ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.3
+
+      # ----- Install various dependencies for https://github.com/zhustec/jekyll-diagrams
+      # Java is needed for plantuml
+      - name: "Setup Java"
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      # Also provides node12, which is needed by mermaid
+      # node12 is also used by https://github.com/limjh16/jekyll-action-ts/blob/master/action.yml#L32
+      - name: "Install Graphviz"
+        uses: ts-graphviz/setup-graphviz@v1
+      # node is needed by mermaid and is provided by ts-graphviz, so don't need to explicitly setup-node
+      # - uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '12'
+      - name: 'Install Node diagramming tools'
+        run: |
+          npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
+      - name: "Setup Python"
+        uses: actions/setup-python@v1
+      - name: "Install Python diagramming tools"
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            blockdiag
+            seqdiag
+            nwdiag
+
+      - name: "🔨 Build Jekyll site"
+        uses: limjh16/jekyll-action-ts@v2
+        with:
+          ### Enables caching. Similar to https://github.com/actions/cache.
+          enable_cache: true
+
+          ### Uses prettier https://prettier.io to format jekyll output HTML.
+          format_output: true
+
+          ### Sets prettier options (in JSON) to format output HTML. For example, output tabs over spaces.
+          ### Possible options are outlined in https://prettier.io/docs/en/options.html
+          # prettier_opts: '{ "useTabs": true }'
+
+          ### If the jekyll website source is not in root, specify the directory.
+          jekyll_src: .
+
+          ### In cases where you want to specify the cache key
+          ### Follows the format here https://github.com/actions/cache
+          # key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          # restore-keys: ${{ runner.os }}-gems-
+
+          ### If you need to specify any Jekyll build options, enable the above input
+          ### Flags accepted can be found here https://jekyllrb.com/docs/configuration/options/#build-command-options
+          # custom_opts: '--drafts --future'
+          custom_opts: '--verbose'
+      - name: "🔨 Build Jekyll subsites"
+        run: |
+          # README.md for https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages
+          cp README.md _site/
+
+          #
+          make build_subsites
+
+      - name: "🚀 Deploy to gh-pages"
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          # if the repo you are deploying to is <username>.github.io, uncomment the line below.
+          # if you are including the line below, make sure your source files are NOT in the master branch:
+          publish_branch: gh-pages
+          commit_message: ${{ github.event.head_commit.message }}

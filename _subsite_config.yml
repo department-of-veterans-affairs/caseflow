@@ -1,0 +1,58 @@
+# Instructions for new Jekyll subsite called SUBSITE:
+# 1. Create subdirectory SUBSITE
+# 2. Create a new SUBSITE/_config.yml
+# 3. Add a new entry in Makefile to build the html files into _site/SUBSITE.
+#
+# You can use any static site generator besides Jekyll -- adapte instructions accordingly.
+
+
+title: SUBSITE
+# email: ""
+
+description: "SUBSITE Documentation for Caseflow"
+baseurl: "/caseflow/SUBSITE" # required for themes to work in GH Pages for this repo
+source: __SUBSITE
+destination: _site/SUBSITE
+# Since we're building using a subdirectory, explicitly set `repository`
+# https://talk.jekyllrb.com/t/error-your-site-could-not-be-built-no-repo-name-found/5688/5
+repository: department-of-veterans-affairs/caseflow
+
+# url: "http://department-of-veterans-affairs.github.io/caseflow" # the base hostname & protocol for your site, e.g. http://example.com
+
+# ----- Mimic GitHub Pages' settings
+# https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#configuring-jekyll-in-your-github-pages-site
+# https://jekyllrb.com/docs/configuration/options/
+lsi: false
+safe: true
+# source: [your repo's top level directory]
+# incremental: false
+highlighter: rouge
+gist:
+  noscript: false
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+
+theme: minima
+# remote_theme: pages-themes/modernist@v0.2.0
+
+# -------------------------------------------
+plugins:
+  - jekyll-remote-theme
+  - jekyll-diagrams
+  # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
+  - jekyll-coffeescript
+  - jekyll-default-layout
+  - jekyll-gist
+  - jekyll-github-metadata
+  - jekyll-optional-front-matter
+  - jekyll-paginate
+  - jekyll-readme-index
+  - jekyll-titles-from-headings
+  - jekyll-relative-links
+
+# ----- plugin configuration
+readme_index:
+  enabled:          true
+  remove_originals: true
+  with_frontmatter: false
