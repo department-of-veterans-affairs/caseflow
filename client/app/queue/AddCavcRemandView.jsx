@@ -417,7 +417,6 @@ AddCavcRemandView.propTypes = {
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
   featureToggles: PropTypes.shape({
-    cavc_remand: PropTypes.bool,
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
     dismissal_cavc_remand: PropTypes.bool
