@@ -243,25 +243,34 @@
               >Caseflow</a
             >
           </p>
-          <h2 id="purpose-of-the-gh-pages-branch">
+          <p>
+            Caseflow’s GitHub Pages can be viewed at
+            http://department-of-veterans-affairs.github.io/caseflow/
+          </p>
+          <h2 id="purpose-of-the-gh-pages-and-main-gh-pages-branches">
             <a
-              href="#purpose-of-the-gh-pages-branch"
+              href="#purpose-of-the-gh-pages-and-main-gh-pages-branches"
               class="anchor-heading"
-              aria-labelledby="purpose-of-the-gh-pages-branch"
+              aria-labelledby="purpose-of-the-gh-pages-and-main-gh-pages-branches"
               ><svg viewBox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Purpose of the
             <code class="language-plaintext highlighter-rouge">gh-pages</code>
-            branch
+            and
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branches
           </h2>
           <p>
-            This branch (<a
+            The (<a
               href="https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages"
               ><code class="language-plaintext highlighter-rouge"
                 >gh-pages</code
-              ></a
-            >) is used by GitHub Pages. This branch is not intended to be merged
+              >
+              branch</a
+            >) is used by GitHub Pages. The branch is not intended to be merged
             in the main branch. Note that it has a completely separate commit
             history from the main branch. For more info, see …
           </p>
@@ -272,25 +281,34 @@
             GitHub Action); others are manually created (e.g.,
             <a href="batteam/index.html">Bat Team Remedies</a>).
           </p>
-          <p>Why not wiki?</p>
-          <h2 id="viewing">
-            <a href="#viewing" class="anchor-heading" aria-labelledby="viewing"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Viewing
-          </h2>
-          <p>It can be viewed</p>
-          <ul>
-            <li>
-              with GitHub Pages
-              http://department-of-veterans-affairs.github.io/caseflow/
-            </li>
-            <li>
-              without GitHub Pages enabled:
-              https://htmlpreview.github.io/?https://github.com/department-of-veterans-affairs/caseflow/blob/gh-pages/gh-pages/schema/index.html
-            </li>
-          </ul>
+          <p>
+            The
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch is updated by a
+            <code class="language-plaintext highlighter-rouge"
+              >build-gh-pages</code
+            >
+            GitHub Action that uses files from the
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch to generate
+            <code class="language-plaintext highlighter-rouge">html</code> and
+            asset files, which are pushed to the
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch. You should not modify the
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch directly. Any commit to the
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch will trigger the GitHub Action, which can be seen
+            <a
+              href="https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml"
+              >here</a
+            >. See <a href="committing-changes">Committing changes</a> for how
+            to make changes.
+          </p>
           <h2 id="cloning--checkout">
             <a
               href="#cloning--checkout"
@@ -301,6 +319,56 @@
             ></a>
             Cloning / Checkout
           </h2>
+          <p>
+            Even though
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            is another branch in the Caseflow repo, it is highly encouraged to
+            check out the
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch in a separate because it has no common files with Caseflow’s
+            <code class="language-plaintext highlighter-rouge">master</code>
+            branch.
+          </p>
+          <p>
+            To checkout to a
+            <code class="language-plaintext highlighter-rouge"
+              >caseflow-gh-pages</code
+            >
+            directory as a sibling of your
+            <code class="language-plaintext highlighter-rouge">caseflow</code>
+            directory:
+          </p>
+          <div class="language-plaintext highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code>cd YOUR_PATH_TO/caseflow
+cd ..
+git clone -b gh-pages https://github.com/department-of-veterans-affairs/caseflow.git caseflow-gh-pages
+</code></pre>
+            </div>
+          </div>
+          <h2 id="making-changes">
+            <a
+              href="#making-changes"
+              class="anchor-heading"
+              aria-labelledby="making-changes"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Making changes
+          </h2>
+          <p>
+            For small changes, most pages can be modified by clicking on the
+            <code class="language-plaintext highlighter-rouge"
+              >Edit this page</code
+            >
+            link at the bottom of the page, modifying the
+            <code class="language-plaintext highlighter-rouge">md</code> file,
+            and committing the change.
+          </p>
           <h2 id="committing-changes">
             <a
               href="#committing-changes"
@@ -312,11 +380,84 @@
             Committing changes
           </h2>
           <p>
-            Anyone can commit to this branch without a peer-review, just like
-            the Caseflow wiki page. Instead of committing directly to this
-            branch, create a development branch and do a squash-merge when you
-            are satisfied with the changes, just like what is done in the main
+            Treat the
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch like Caseflow’s
+            <code class="language-plaintext highlighter-rouge">master</code>
+            branch. A difference is that anyone can commit to
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            without a peer-review, just like the Caseflow wiki page. However for
+            significant changes, it is encouraged to create a development branch
+            and do a squash-merge when you are satisfied with the changes, just
+            like what is done in Caseflow’s
+            <code class="language-plaintext highlighter-rouge">master</code>
             branch.
+          </p>
+          <h2 id="previewing-changes">
+            <a
+              href="#previewing-changes"
+              class="anchor-heading"
+              aria-labelledby="previewing-changes"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Previewing changes
+          </h2>
+          <p>
+            To preview changes locally, run the website generators locally as
+            follows:
+          </p>
+          <div class="language-plaintext highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code>...
+bundle exec jekyll serve
+</code></pre>
+            </div>
+          </div>
+          <h2 id="faq">
+            <a href="#faq" class="anchor-heading" aria-labelledby="faq"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            FAQ
+          </h2>
+          <h3 id="why-not-use-the-github-wiki">
+            <a
+              href="#why-not-use-the-github-wiki"
+              class="anchor-heading"
+              aria-labelledby="why-not-use-the-github-wiki"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Why not use the GitHub Wiki?
+          </h3>
+          <p>GitHub Wiki has the following limitations:</p>
+          <ul>
+            <li>no table of content generation</li>
+            <li>cannot reflect organization of wiki pages as folders</li>
+            <li>…</li>
+          </ul>
+          <p>Benefits of GitHub Pages</p>
+          <ul>
+            <li>more control over web page organization</li>
+            <li>…</li>
+          </ul>
+          <h3 id="why-not-use-the-basic-github-pages">
+            <a
+              href="#why-not-use-the-basic-github-pages"
+              class="anchor-heading"
+              aria-labelledby="why-not-use-the-basic-github-pages"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Why not use the basic GitHub Pages?
+          </h3>
+          <p>
+            https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll
           </p>
           <hr />
           <footer>

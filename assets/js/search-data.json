@@ -1,64 +1,76 @@
 {"0": {
     "doc": "README",
     "title": "README",
-    "content": "GitHub Pages for Caseflow . ",
+    "content": "GitHub Pages for Caseflow . Caseflow’s GitHub Pages can be viewed at http://department-of-veterans-affairs.github.io/caseflow/ . ",
     "url": "/caseflow/README.html",
     "relUrl": "/README.html"
   },"1": {
     "doc": "README",
-    "title": "Purpose of the gh-pages branch",
-    "content": "This branch (gh-pages) is used by GitHub Pages. This branch is not intended to be merged in the main branch. Note that it has a completely separate commit history from the main branch. For more info, see … . This branch has files for documentation. Some are automatically generated (e.g., Caseflow DB schema by a GitHub Action); others are manually created (e.g., Bat Team Remedies). Why not wiki? . ",
-    "url": "/caseflow/README.html#purpose-of-the-gh-pages-branch",
-    "relUrl": "/README.html#purpose-of-the-gh-pages-branch"
+    "title": "Purpose of the gh-pages and main-gh-pages branches",
+    "content": "The (gh-pages branch) is used by GitHub Pages. The branch is not intended to be merged in the main branch. Note that it has a completely separate commit history from the main branch. For more info, see … . This branch has files for documentation. Some are automatically generated (e.g., Caseflow DB schema by a GitHub Action); others are manually created (e.g., Bat Team Remedies). The gh-pages branch is updated by a build-gh-pages GitHub Action that uses files from the main-gh-pages branch to generate html and asset files, which are pushed to the gh-pages branch. You should not modify the gh-pages branch directly. Any commit to the main-gh-pages branch will trigger the GitHub Action, which can be seen here. See Committing changes for how to make changes. ",
+    "url": "/caseflow/README.html#purpose-of-the-gh-pages-and-main-gh-pages-branches",
+    "relUrl": "/README.html#purpose-of-the-gh-pages-and-main-gh-pages-branches"
   },"2": {
     "doc": "README",
-    "title": "Viewing",
-    "content": "It can be viewed . | with GitHub Pages http://department-of-veterans-affairs.github.io/caseflow/ | without GitHub Pages enabled: https://htmlpreview.github.io/?https://github.com/department-of-veterans-affairs/caseflow/blob/gh-pages/gh-pages/schema/index.html | . ",
-    "url": "/caseflow/README.html#viewing",
-    "relUrl": "/README.html#viewing"
-  },"3": {
-    "doc": "README",
     "title": "Cloning / Checkout",
-    "content": " ",
+    "content": "Even though main-gh-pages is another branch in the Caseflow repo, it is highly encouraged to check out the main-gh-pages branch in a separate because it has no common files with Caseflow’s master branch. To checkout to a caseflow-gh-pages directory as a sibling of your caseflow directory: . cd YOUR_PATH_TO/caseflow cd .. git clone -b gh-pages https://github.com/department-of-veterans-affairs/caseflow.git caseflow-gh-pages . ",
     "url": "/caseflow/README.html#cloning--checkout",
     "relUrl": "/README.html#cloning--checkout"
+  },"3": {
+    "doc": "README",
+    "title": "Making changes",
+    "content": "For small changes, most pages can be modified by clicking on the Edit this page link at the bottom of the page, modifying the md file, and committing the change. ",
+    "url": "/caseflow/README.html#making-changes",
+    "relUrl": "/README.html#making-changes"
   },"4": {
     "doc": "README",
     "title": "Committing changes",
-    "content": "Anyone can commit to this branch without a peer-review, just like the Caseflow wiki page. Instead of committing directly to this branch, create a development branch and do a squash-merge when you are satisfied with the changes, just like what is done in the main branch. ",
+    "content": "Treat the main-gh-pages branch like Caseflow’s master branch. A difference is that anyone can commit to main-gh-pages without a peer-review, just like the Caseflow wiki page. However for significant changes, it is encouraged to create a development branch and do a squash-merge when you are satisfied with the changes, just like what is done in Caseflow’s master branch. ",
     "url": "/caseflow/README.html#committing-changes",
     "relUrl": "/README.html#committing-changes"
   },"5": {
+    "doc": "README",
+    "title": "Previewing changes",
+    "content": "To preview changes locally, run the website generators locally as follows: ... bundle exec jekyll serve . ",
+    "url": "/caseflow/README.html#previewing-changes",
+    "relUrl": "/README.html#previewing-changes"
+  },"6": {
+    "doc": "README",
+    "title": "FAQ",
+    "content": "Why not use the GitHub Wiki? . GitHub Wiki has the following limitations: . | no table of content generation | cannot reflect organization of wiki pages as folders | … | . Benefits of GitHub Pages . | more control over web page organization | … | . Why not use the basic GitHub Pages? . https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll . ",
+    "url": "/caseflow/README.html#faq",
+    "relUrl": "/README.html#faq"
+  },"7": {
     "doc": "Contents",
     "title": "Contents",
     "content": "Preview dark theme . | Bat Team Quick Ref . | Dispatch_stuck, , ok tags: batteam, dispatch”, and stuck . | Bat Team, , tags: . | . | . ",
     "url": "/caseflow/index",
     "relUrl": "/index"
-  },"6": {
+  },"8": {
     "doc": "Contents",
     "title": "Database",
     "content": ". | Caseflow DB schema (created via Jailer) | Help . | Jekyll | . | . ",
     "url": "/caseflow/index#database",
     "relUrl": "/index#database"
-  },"7": {
+  },"9": {
     "doc": "Dispatch claim being “stuck”",
     "title": "Dispatch claim being “stuck”",
     "content": "If I receive a support issue regarding Caseflow Dispatch claim being “stuck”. | Look for a Sentry error in #appeals-dispatch channel. | If the error is related to AASM::InvalidTransition, that means the state transition is invalid. | Find the associated dispatch task in the dispatch_tasks table. | Choose the appropriate state for the task by referencing the aasm machine in Dispatch::Task model and update the task manually using production console. | Example of a similar problem can be found here. | . ",
     "url": "/caseflow/batteam/dispatch/dispatch_stuck.html",
     "relUrl": "/batteam/dispatch/dispatch_stuck.html"
-  },"8": {
+  },"10": {
     "doc": "Caseflow Dispatch",
     "title": "Caseflow Dispatch",
     "content": "Caseflow Dispatch . ",
     "url": "/caseflow/batteam/dispatch/",
     "relUrl": "/batteam/dispatch/"
-  },"9": {
+  },"11": {
     "doc": "Bat Team",
     "title": "Bat Team",
     "content": "Bat Team . ",
     "url": "/caseflow/batteam/",
     "relUrl": "/batteam/"
-  },"10": {
+  },"12": {
     "doc": "Diagrams",
     "title": "Diagrams",
     "content": "# Diagrams Testing https://github.com/zhustec/jekyll-diagrams ## blockdiag {% blockdiag %} blockdiag { A -> B -> C -> D; A -> E -> F -> G; } {% endblockdiag %} ## seqdiag {% seqdiag %} seqdiag { browser -> webserver [label = \"GET /index.html\"]; browser webserver [label = \"POST /blog/comment\"]; webserver -> database [label = \"INSERT comment\"]; webserver A [label=a]; S -> B [label=b]; A -> D [label=c]; B -> D [label=d]; } {% endgraphviz %} ## mermaid {% mermaid %} sequenceDiagram participant John participant Alice Alice->>John: Hello John, how are you? John-->>Alice: Great! {% endmermaid %} ## nomnoml {% nomnoml %} [Pirate|eyeCount: Int|raid();pillage()| [beard]--[parrot] [beard]-:>[foul mouth] ] [Marauder][Pirate] [jollyness]->[rum] [jollyness]->[singing] [Pirate]-> *[rum|tastiness: Int|swig()] [Pirate]->[singing] [singing][rum] [st]->[plunder] [plunder]->[more loot] [more loot]->[st] [more loot] no ->[e] [Sailor] - [shiver me;timbers] {% endnomnoml %} ## plantuml {% plantuml %} @startuml class Car Driver - Car : drives > Car *- Wheel : have 4 > Car -- Person : playing : play; playing => stopped : stop; playing => paused : pause; paused => playing : pause; paused => stopped : stop; }; initial => \"tape player off\"; \"tape player off\" => stopped : power; \"tape player on\" => \"tape player off\" : power; {% endsmcat %} ## wavedrom {% wavedrom %} {signal: [ {name: 'clk', wave: 'p.....|...'}, {name: 'dat', wave: 'x.345x|=.x', data: ['head', 'body', 'tail', 'data']}, {name: 'req', wave: '0.1..0|1.0'}, {name: 'ack', wave: '1.....|01.'} ]} {% endwavedrom %} ",
