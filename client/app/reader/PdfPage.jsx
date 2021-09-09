@@ -106,7 +106,7 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = true;
 
     const currentScale = this.props.scale;
-    const viewport = page.getViewport(this.props.scale);
+    const viewport = page.getViewport({ scale: this.props.scale });
 
     // We need to set the width and heights of everything based on
     // the width and height of the viewport.
@@ -121,7 +121,7 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.then(() => {
+    return this.renderTask.promise.then(() => {
       this.isDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -185,7 +185,7 @@ export class PdfPage extends React.PureComponent {
       return;
     }
 
-    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+    const viewport = page.getViewport({ scale: PAGE_DIMENSION_SCALE });
 
     this.textLayer.innerHTML = '';
 
