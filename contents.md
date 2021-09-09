@@ -31,6 +31,6 @@ nav_exclude: true
 {% endfor %}
 
 ## Database
-* [Caseflow DB schema](schema/index.html) (created via [Jailer](https://github.com/Wisser/Jailer))
+* [Caseflow DB schema](schema/html/index.html) (created via [Jailer](https://github.com/Wisser/Jailer))
 * [Help](help/index.html)
   - [Jekyll](help/jekyll.html)

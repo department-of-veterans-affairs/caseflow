@@ -41,7 +41,7 @@ Note that there may be some other GitHub Action that updates the `gh-pages` bran
 
 ## The `main-gh-pages` branch
 
-The `main-gh-pages` branch has files for documentation. Some are automatically generated (e.g., [Caseflow DB schema](schema/index.html) by a GitHub Action); others are manually created (e.g., [Bat Team Remedies](batteam/index.html)).
+The `main-gh-pages` branch has files for documentation. Some are automatically generated (e.g., [Caseflow DB schema](schema/html/index.html) by a GitHub Action); others are manually created (e.g., [Bat Team Remedies](batteam/index.html)).
 
 ## Checking out the branch
 
@@ -137,7 +137,7 @@ GitHub Pages provides more control over web page organization and presentation -
 GitHub Pages employs the Jekyll static site generator to convert `md` files into `html` files, all without any additional configuration -- see [GitHub Pages setup documentation](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll).
 
 To enable additional website features and documentation presentation capabilities, a GitHub Action runs Jekyll and potentially other tools to generate the `html` files for GitHub Pages. The additional capabilities include:
-- incorporating sets of generated `html` files, like [Caseflow DB schema](schema/index.html) created via [Jailer](https://github.com/Wisser/Jailer)
+- incorporating sets of generated `html` files, like [Caseflow DB schema](schema/html/index.html) created via [Jailer](https://github.com/Wisser/Jailer)
 - generating table of contents and site navigation menu
 - using markup syntax to generate diagrams, like [diagrams.md](diagrams.md)
 - enabling subsites with different website themes/layouts, like [help/jekyll.md](help/jekyll)
