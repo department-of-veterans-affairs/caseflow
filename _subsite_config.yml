@@ -1,11 +1,3 @@
-# Instructions for new Jekyll subsite called SUBSITE:
-# 1. Create subdirectory SUBSITE
-# 2. Create a new SUBSITE/_config.yml
-# 3. Add a new entry in Makefile to build the html files into _site/SUBSITE.
-#
-# You can use any static site generator besides Jekyll -- adapte instructions accordingly.
-
-
 title: SUBSITE
 # email: ""
 

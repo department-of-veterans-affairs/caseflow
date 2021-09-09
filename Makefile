@@ -11,6 +11,8 @@ build_help_subdir:
 # Has only been tested on MacOS.
 # See https://github.com/zhustec/jekyll-diagrams or .github/workflows/build-gh-pages.yml for linux commands.
 install_jekyll_diagram_dependencies:
+	brew install graphviz
+
 	# Assumes npm is installed. Install globally so jekyll can call it using the default $PATH.
 	npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
 	# Skipping packages b/c they are not working: vega vega-cli vega-lite
@@ -22,3 +24,6 @@ install_jekyll_diagram_dependencies:
 
 	# Assumes cargo is installed: https://doc.rust-lang.org/cargo/getting-started/installation.html
 	cargo install svgbob_cli
+
+run: build_subsites
+	bundle exec jekyll serve
