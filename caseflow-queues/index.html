@@ -22,28 +22,22 @@
     ></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Begin Jekyll SEO tag v2.7.1 -->
-    <title>Dispatch claim being “stuck” | Caseflow Docs</title>
+    <title>Caseflow Queue | Caseflow Docs</title>
     <meta name="generator" content="Jekyll v3.9.0" />
-    <meta property="og:title" content="Dispatch claim being “stuck”" />
+    <meta property="og:title" content="Caseflow Queue" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="Documentation for Caseflow" />
     <meta property="og:description" content="Documentation for Caseflow" />
-    <link
-      rel="canonical"
-      href="/caseflow/batteam/dispatch/dispatch_stuck.html"
-    />
-    <meta
-      property="og:url"
-      content="/caseflow/batteam/dispatch/dispatch_stuck.html"
-    />
+    <link rel="canonical" href="/caseflow/caseflow-queues/" />
+    <meta property="og:url" content="/caseflow/caseflow-queues/" />
     <meta property="og:site_name" content="Caseflow Docs" />
     <meta name="twitter:card" content="summary" />
-    <meta property="twitter:title" content="Dispatch claim being “stuck”" />
+    <meta property="twitter:title" content="Caseflow Queue" />
     <script type="application/ld+json">
       {
         "description": "Documentation for Caseflow",
-        "headline": "Dispatch claim being “stuck”",
-        "url": "/caseflow/batteam/dispatch/dispatch_stuck.html",
+        "headline": "Caseflow Queue",
+        "url": "/caseflow/caseflow-queues/",
         "@type": "WebPage",
         "@context": "https://schema.org"
       }
@@ -163,13 +157,13 @@
           <li class="nav-list-item">
             <a href="/caseflow/README.html" class="nav-list-link">README</a>
           </li>
-          <li class="nav-list-item active">
+          <li class="nav-list-item">
             <a href="#" class="nav-list-expander"
               ><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
             ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
             <ul class="nav-list">
-              <li class="nav-list-item active">
+              <li class="nav-list-item">
                 <a href="#" class="nav-list-expander"
                   ><svg viewBox="0 0 24 24">
                     <use xlink:href="#svg-arrow-right"></use></svg></a
@@ -177,10 +171,10 @@
                   >Caseflow Dispatch</a
                 >
                 <ul class="nav-list">
-                  <li class="nav-list-item active">
+                  <li class="nav-list-item">
                     <a
                       href="/caseflow/batteam/dispatch/dispatch_stuck.html"
-                      class="nav-list-link active"
+                      class="nav-list-link"
                       >Dispatch claim being “stuck”</a
                     >
                   </li>
@@ -188,11 +182,11 @@
               </li>
             </ul>
           </li>
-          <li class="nav-list-item">
+          <li class="nav-list-item active">
             <a href="#" class="nav-list-expander"
               ><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
-            ><a href="/caseflow/caseflow-queues/" class="nav-list-link"
+            ><a href="/caseflow/caseflow-queues/" class="nav-list-link active"
               >Caseflow Queue</a
             >
             <ul class="nav-list"></ul>
@@ -242,79 +236,227 @@
         </nav>
       </div>
       <div id="main-content-wrap" class="main-content-wrap">
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-          <ol class="breadcrumb-nav-list">
-            <li class="breadcrumb-nav-list-item">
-              <a href="/caseflow/batteam/">Bat Team</a>
-            </li>
-            <li class="breadcrumb-nav-list-item">
-              <a href="/caseflow/batteam/dispatch/">Caseflow Dispatch</a>
-            </li>
-            <li class="breadcrumb-nav-list-item">
-              <span>Dispatch claim being “stuck”</span>
-            </li>
-          </ol>
-        </nav>
         <div id="main-content" class="main-content" role="main">
-          <h1 id="dispatch-claim-being-stuck">
+          <h1 id="about-queue">
             <a
-              href="#dispatch-claim-being-stuck"
+              href="#about-queue"
               class="anchor-heading"
-              aria-labelledby="dispatch-claim-being-stuck"
+              aria-labelledby="about-queue"
               ><svg viewBox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
-            Dispatch claim being “stuck”
+            About Queue
           </h1>
           <p>
-            If I receive a support issue regarding Caseflow Dispatch claim being
-            “stuck”.
+            Caseflow Queue is a workflow management tool that will allow BVA
+            employees process legacy and AMA appeals at the Board. It’s also the
+            entry point for Caseflow Reader; users navigate to Reader from
+            Queue.
           </p>
-          <ol>
+          <h2 id="definitions-and-term-usage">
+            <a
+              href="#definitions-and-term-usage"
+              class="anchor-heading"
+              aria-labelledby="definitions-and-term-usage"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            <a
+              href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Queue-data-dictionary"
+              >Definitions and term-usage</a
+            >
+          </h2>
+          <h2 id="features">
+            <a
+              href="#features"
+              class="anchor-heading"
+              aria-labelledby="features"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Features
+          </h2>
+          <p>It contains the following high level features:</p>
+          <ul>
             <li>
-              Look for a Sentry error in
-              <code class="language-plaintext highlighter-rouge"
-                >#appeals-dispatch</code
-              >
-              channel.
-            </li>
-            <li>
-              If the error is related to
-              <code class="language-plaintext highlighter-rouge"
-                >AASM::InvalidTransition</code
-              >, that means the state transition is invalid.
-            </li>
-            <li>
-              Find the associated dispatch task in the
-              <code class="language-plaintext highlighter-rouge"
-                >dispatch_tasks</code
-              >
-              table.
-            </li>
-            <li>
-              Choose the appropriate state for the task by referencing the
-              <code class="language-plaintext highlighter-rouge">aasm</code>
-              machine in
-              <code class="language-plaintext highlighter-rouge"
-                >Dispatch::Task</code
-              >
-              model and update the task manually using production console.
-            </li>
-            <li>
-              Example of a similar problem can be found
               <a
-                href="https://dsva.slack.com/archives/CHX8FMP28/p1561996067122700"
-                >here</a
-              >.
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Table"
+                >Queue table</a
+              >: Allowing users to view their work (cases with tasks assigned to
+              them) in a table form
             </li>
-          </ol>
+            <li>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Case-details"
+                >Case details</a
+              >: Allowing users to view data about the appeal and Veteran
+            </li>
+            <li>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Editing-AMA-issues"
+                >Add/Remove/Edit issues</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Automatic-Case-Distribution"
+                >Automatic case distribution</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Organizations"
+                >Organizations</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Tasks"
+                >Tasks</a
+              >
+            </li>
+            <li>Case timeline</li>
+            <li>Case search</li>
+            <li>[[Post Decision Motions]]</li>
+          </ul>
+          <h2 id="user-groups">
+            <a
+              href="#user-groups"
+              class="anchor-heading"
+              aria-labelledby="user-groups"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            User groups
+          </h2>
+          <p>
+            All Board teams use Caseflow Queue to view and complete their tasks.
+            Some branches also use other Caseflow products and features, like
+            the Hearing Branch uses Caseflow Hearings to schedule hearings.
+          </p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Primary Caseflow functionality</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Case Review</td>
+                  <td>
+                    Caseflow Intake<br />Caseflow Queue<br />Caseflow Reader<br />Issues
+                  </td>
+                </tr>
+                <tr>
+                  <td>Mail</td>
+                  <td>Caseflow Queue</td>
+                </tr>
+                <tr>
+                  <td>Translation</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Hearing Branch</td>
+                  <td>Caseflow Queue<br />Caseflow Hearings</td>
+                </tr>
+                <tr>
+                  <td>Privacy Team</td>
+                  <td>Caseflow Queue<br />eFolder Express</td>
+                </tr>
+                <tr>
+                  <td>Decision-drafting attorneys</td>
+                  <td>Caseflow Queue<br />Caseflow Reader<br />Issues</td>
+                </tr>
+                <tr>
+                  <td>Judges &amp; acting judges</td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow
+                    Hearings<br />Issues<br />Automatic Case Distribution
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/VLJ-Support"
+                      >VLJ Support Staff</a
+                    >
+                  </td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/BVA-Dispatch"
+                      >BVA Dispatch</a
+                    >
+                  </td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Interactive
+                    Decision Template
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Quality-Review"
+                      >Quality Review</a
+                    >
+                  </td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Litigation Support</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Advanced on the Docket (AOD)</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/VSOs"
+                      >VSOs</a
+                    >
+                  </td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow Hearings
+                  </td>
+                </tr>
+                <tr>
+                  <td>Private attorneys and claims agents</td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow Hearings
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 id="other-va">
+            <a
+              href="#other-va"
+              class="anchor-heading"
+              aria-labelledby="other-va"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Other VA
+          </h3>
+          <ul>
+            <li>VA call center</li>
+          </ul>
+          <hr />
+          <h2 class="text-delta">Table of contents</h2>
+          <ul></ul>
           <hr />
           <footer>
             <a href="#top" id="back-to-top">Back to top</a>
             <div class="d-flex mt-2">
               <p class="text-small text-grey-dk-000 mb-0">
                 <a
-                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/batteam/dispatch/dispatch_stuck.md"
+                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/caseflow-queues/index.md"
                   id="edit-this-page"
                   >Edit this page</a
                 >
