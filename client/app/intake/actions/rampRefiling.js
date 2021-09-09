@@ -1,7 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
-import _ from 'lodash';
 
 const analytics = true;
 
@@ -29,10 +28,11 @@ export const confirmIneligibleForm = (intakeId) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/${intakeId}/error`, { data }, ENDPOINT_NAMES.ERROR_INTAKE).
     then(
-      () => dispatch({
-        type: ACTIONS.START_NEW_INTAKE,
-        meta: { analytics }
-      }),
+      () =>
+        dispatch({
+          type: ACTIONS.START_NEW_INTAKE,
+          meta: { analytics }
+        }),
       (error) => {
         dispatch({
           type: ACTIONS.SUBMIT_ERROR_FAIL,
@@ -94,7 +94,7 @@ export const setOutsideCaseflowStepsConfirmed = (isConfirmed) => ({
 export const processFinishError = () => ({ type: ACTIONS.PROCESS_FINISH_ERROR });
 
 const validateSelectedIssues = (rampRefiling) =>
-  rampRefiling.hasIneligibleIssue || _.some(rampRefiling.issues, 'isSelected');
+  rampRefiling.hasIneligibleIssue || rampRefiling.issues.some((issue) => issue.isSelected);
 
 export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
   let hasError = false;
@@ -128,10 +128,7 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     has_ineligible_issue: rampRefiling.hasIneligibleIssue,
-    issue_ids: _(rampRefiling.issues).
-      filter('isSelected').
-      map('id').
-      value()
+    issue_ids: rampRefiling.issues.filter((issue) => issue.isSelected).map((issue) => issue.id)
   };
 
   return submitIntakeCompleteRequest(intakeId, { data })(dispatch);

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
+import { compact } from 'lodash';
 import classNames from 'classnames';
 
 import { clearAllFilters } from '../reader/DocumentList/DocumentListActions';
@@ -13,15 +13,12 @@ class HeaderFilterMessage extends React.PureComponent {
     const props = this.props;
 
     // returns the number of truthy values in an object
-    const getTruthyCount = (obj) => _(obj).
-      values().
-      compact().
-      size();
+    const getTruthyCount = (obj) => compact(Object.values(obj)).length;
 
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
 
-    const filteredCategories = _.compact([
+    const filteredCategories = compact([
       categoryCount && `Categories (${categoryCount})`,
       tagCount && `Issue tags (${tagCount})`
     ]).join(', ');

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { differenceWith, size } from 'lodash';
 import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
@@ -86,16 +86,14 @@ export const addNewTag = (doc, tags) =>
   (dispatch) => {
     const currentTags = doc.tags;
 
-    const newTags = _(tags).
-      differenceWith(currentTags, (tag, currentTag) => tag.value === currentTag.text).
+    const newTags = differenceWith(tags, currentTags, (tag, currentTag) => tag.value === currentTag.text).
       map((tag) => ({
         text: tag.label,
         id: uuid.v4(),
         temporaryId: true
-      })).
-      value();
+      }));
 
-    if (_.size(newTags)) {
+    if (size(newTags)) {
       dispatch(hideErrorMessage('tag'));
       dispatch({
         type: Constants.REQUEST_NEW_TAG_CREATION,

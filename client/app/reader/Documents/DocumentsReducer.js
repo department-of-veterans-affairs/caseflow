@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { differenceBy, fromPairs, get, isNil, pick, reject } from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
@@ -10,16 +10,17 @@ const documentsReducer = (state = initialState, action = {}) => {
   case Constants.ASSIGN_DOCUMENTS:
     return Object.assign({}, action.payload.documents);
   case Constants.RECEIVE_DOCUMENTS:
-    return _(action.payload.documents).map((doc) => [
-      doc.id, {
-        ...doc,
-        receivedAt: doc.received_at,
-        listComments: false,
-        wasUpdated: !_.isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
-      }
-    ]).
-      fromPairs().
-      value();
+    return fromPairs(
+      action.payload.documents.map((doc) => [
+        doc.id,
+        {
+          ...doc,
+          receivedAt: doc.received_at,
+          listComments: false,
+          wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
+        }
+      ])
+    );
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
     return update(state, {
       [action.payload.docId]: {
@@ -44,11 +45,10 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.ROTATE_PDF_DOCUMENT:
-  {
-    const rotation = (_.get(state, [
-      action.payload.docId, 'rotation'
-    ], 0) + Constants.ROTATION_INCREMENTS) % Constants.COMPLETE_ROTATION;
+  case Constants.ROTATE_PDF_DOCUMENT: {
+    const rotation =
+        (get(state, [action.payload.docId, 'rotation'], 0) + Constants.ROTATION_INCREMENTS) %
+        Constants.COMPLETE_ROTATION;
 
     return update(state, {
       [action.payload.docId]: {
@@ -78,7 +78,7 @@ const documentsReducer = (state = initialState, action = {}) => {
     return update(state, {
       [action.payload.docId]: {
         tags: {
-          $apply: (tags) => _.differenceBy(tags, action.payload.tagsThatWereAttemptedToBeCreated, 'text')
+          $apply: (tags) => differenceBy(tags, action.payload.tagsThatWereAttemptedToBeCreated, 'text')
         }
       }
     });
@@ -88,37 +88,38 @@ const documentsReducer = (state = initialState, action = {}) => {
         tags: {
 
           /**
-           * We can't just `$set: action.payload.createdTags` here, because that may wipe out additional tags
-           * that have been created on the client since this new tag was created. Consider the following sequence
-           * of events:
-           *
-           *  1) REQUEST_NEW_TAG_CREATION (newTag = 'first')
-           *  2) REQUEST_NEW_TAG_CREATION (newTag = 'second')
-           *  3) REQUEST_NEW_TAG_CREATION_SUCCESS (newTag = 'first')
-           *
-           * At this point, the doc tags are [{text: 'first'}, {text: 'second'}].
-           * Action (3) gives us [{text: 'first}]. If we just do a `$set`, we'll end up with:
-           *
-           *  [{text: 'first'}]
-           *
-           * and we've erroneously erased {text: 'second'}. To fix this, we'll do a merge instead. If we have tags
-           * that have not yet been saved on the server, but we see those tags in action.payload.createdTags, we'll
-           * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
-           * we'll leave it be.
-           */
-          $apply: (docTags) => _.map(docTags, (docTag) => {
-            if (!docTag.temporaryId) {
+             * We can't just `$set: action.payload.createdTags` here, because that may wipe out additional tags
+             * that have been created on the client since this new tag was created. Consider the following sequence
+             * of events:
+             *
+             *  1) REQUEST_NEW_TAG_CREATION (newTag = 'first')
+             *  2) REQUEST_NEW_TAG_CREATION (newTag = 'second')
+             *  3) REQUEST_NEW_TAG_CREATION_SUCCESS (newTag = 'first')
+             *
+             * At this point, the doc tags are [{text: 'first'}, {text: 'second'}].
+             * Action (3) gives us [{text: 'first}]. If we just do a `$set`, we'll end up with:
+             *
+             *  [{text: 'first'}]
+             *
+             * and we've erroneously erased {text: 'second'}. To fix this, we'll do a merge instead. If we have tags
+             * that have not yet been saved on the server, but we see those tags in action.payload.createdTags, we'll
+             * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
+             * we'll leave it be.
+             */
+          $apply: (docTags) =>
+            docTags.map((docTag) => {
+              if (!docTag.temporaryId) {
+                return docTag;
+              }
+
+              const createdTag = action.payload.createdTags.find((tag) => docTag.text === tag.text);
+
+              if (createdTag) {
+                return createdTag;
+              }
+
               return docTag;
-            }
-
-            const createdTag = _.find(action.payload.createdTags, _.pick(docTag, 'text'));
-
-            if (createdTag) {
-              return createdTag;
-            }
-
-            return docTag;
-          })
+            })
         }
       }
     });
@@ -127,7 +128,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+            const removedTagIndex = tags.findIndex((tag) => tag.id === action.payload.tagId);
 
             return update(tags, {
               [removedTagIndex]: {
@@ -144,7 +145,7 @@ const documentsReducer = (state = initialState, action = {}) => {
     return update(state, {
       [action.payload.docId]: {
         tags: {
-          $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
+          $apply: (tags) => reject(tags, { id: action.payload.tagId })
         }
       }
     });
@@ -153,7 +154,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+            const removedTagIndex = tags.findIndex((tag) => tag.id === action.payload.tagId);
 
             return update(tags, {
               [removedTagIndex]: {

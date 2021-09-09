@@ -69,14 +69,12 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
       state,
       {
         annotations: {
-          $set: _(action.payload.annotations).
+          $set: keyBy(action.payload.annotations.
             map((annotation) => ({
               documentId: annotation.document_id,
               uuid: annotation.id,
               ...annotation
-            })).
-            keyBy('id').
-            value()
+            })), 'id')
         }
       }
     );

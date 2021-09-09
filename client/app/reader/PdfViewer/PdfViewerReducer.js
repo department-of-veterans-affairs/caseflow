@@ -1,5 +1,5 @@
 import * as Constants from './actionTypes';
-import _ from 'lodash';
+import { isEqual, random, union } from 'lodash';
 import { update } from '../../util/ReducerUtil';
 import { START_PLACING_ANNOTATION } from '../AnnotationLayer/actionTypes';
 
@@ -29,7 +29,7 @@ export const initialState = {
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
   scale: 1,
-  windowingOverscan: _.random(5, 10)
+  windowingOverscan: random(5, 10)
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -80,12 +80,8 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
-    allTags = Array.prototype.concat.apply([], _(action.payload).
-      map((doc) => {
-        return doc.tags ? doc.tags : [];
-      }).
-      value());
-    uniqueTags = _.uniqWith(allTags, _.isEqual);
+    allTags = action.payload.map((doc) => doc.tags ? doc.tags : []);
+    uniqueTags = uniqWith(allTags, isEqual);
 
     return update(state, {
       tagOptions: {
@@ -103,7 +99,7 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
   case START_PLACING_ANNOTATION:
     return update(state, {
       openedAccordionSections: {
-        $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
+        $apply: (sectionKeys) => union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
       }
     });
 

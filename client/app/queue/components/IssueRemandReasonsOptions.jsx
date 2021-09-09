@@ -1,7 +1,16 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import {
+  compact,
+  defaults,
+  every,
+  flatten,
+  fromPairs,
+  isNull,
+  last,
+  zip,
+} from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
@@ -46,16 +55,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = _.flatten(_.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
-    const pairs = _.zip(
-      _.map(options, 'id'),
-      _.map(options, () => ({
+    const options = flatten(Object.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
+    const pairs = zip(
+      options.map((option) => option.id),
+      options.map(() => ({
         checked: false,
         post_aoj: null
       }))
     );
 
-    this.state = _.fromPairs(pairs);
+    this.state = fromPairs(pairs);
   }
 
   updateIssue = (remandReasons) => {
@@ -63,17 +72,17 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
-      ..._.find(issues, (issue) => issue.id === issueId),
+      ...issues.find((issue) => issue.id === issueId),
       remand_reasons: remandReasons
     };
   };
 
-  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
+  getChosenOptions = () => this.state.filter((val) => val.checked);
 
   validate = () => {
     const chosenOptions = this.getChosenOptions();
 
-    return chosenOptions.length >= 1 && _.every(chosenOptions, (opt) => !_.isNull(opt.post_aoj));
+    return chosenOptions.length >= 1 && every(chosenOptions, (opt) => !isNull(opt.post_aoj));
   };
 
   // todo: make scrollTo util function that also sets focus
@@ -81,7 +90,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   scrollTo = (dest = this, opts) =>
     scrollToComponent(
       dest,
-      _.defaults(opts, {
+      defaults(opts, {
         align: 'top',
         duration: 1500,
         ease: 'outCube',
@@ -95,7 +104,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issues
     } = this.props;
 
-    _.each(remandReasons, (reason) =>
+    remandReasons.map((reason) =>
       this.setState({
         [reason.code]: {
           checked: true,
@@ -104,7 +113,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       })
     );
 
-    if (_.map(issues, 'id').indexOf(issueId) > 0) {
+    if (issues.map((issue) => issue.id).indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -115,7 +124,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     //   {"code": "AB", "post_aoj": true},
     //   {"code": "AC", "post_aoj": false}
     // ]
-    const remandReasons = _(this.state).
+    const remandReasons = compact(this.state.
       map((val, key) => {
         if (!val.checked) {
           return false;
@@ -125,9 +134,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           code: key,
           post_aoj: val.post_aoj === 'true'
         };
-      }).
-      compact().
-      value();
+      }));
 
     return this.updateIssue(remandReasons);
   };
@@ -163,7 +170,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         <Checkbox name={rowOptId} onChange={onChange} value={values[option.id].checked} label={option.label} unpadded />
         {values[option.id].checked && (
           <RadioField
-            errorMessage={this.props.highlight && _.isNull(this.state[option.id].post_aoj) && 'Choose one'}
+            errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) && 'Choose one'}
             styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
             name={rowOptId}
             vertical
@@ -288,7 +295,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         {appeal.isLegacyAppeal && (
           <React.Fragment>
             <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}</div>
+            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}</div>
             <div {...smallBottomMargin} ref={(node) => (this.elTopOfWarning = node)}>
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
@@ -312,10 +319,10 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) =>
+    issues: issues.filter((issue) =>
       [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED].includes(issue.disposition)
     ),
-    issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
+    issue: issues.find((issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };

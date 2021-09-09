@@ -13,6 +13,7 @@ module.exports = function(api) {
   ];
 
   const plugins = [
+    'babel-plugin-lodash',
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
     '@babel/plugin-proposal-class-properties',
