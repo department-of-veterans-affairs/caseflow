@@ -1,3 +1,9 @@
+---
+title: Tasks
+parent: Caseflow Queue
+nav_order: 3
+___
+
 ## What are tasks?
 See all Caseflow tasks' source code [here](https://github.com/department-of-veterans-affairs/caseflow/tree/master/app/models/tasks).
 
@@ -6,7 +12,7 @@ Tasks are how Caseflow records who has responsibility for taking action on an ap
 2. **Assignee**. Who is supposed to take the action. The assignee can be a person, a team of people, or an abstract organization used as a placeholder for some automated action that will be taken on the appeal.
 3. **Type**. The type of task implies the action that is supposed to be taken.
 
-![image](/assets/images/currently-active-tasks.png)
+![image](/caseflow/assets/images/currently-active-tasks.png)
 
 * Each appeal is associated with a root task. All required tasks for the appeal will be children of this root task.
 * Actions or task state change can cause new tasks to be associated with the root task or its descendant tasks.

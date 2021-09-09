@@ -1,7 +1,7 @@
 ---
 title: Caseflow Queue
 has_children: true
-nav_order: 10
+nav_order: 1
 ---
 
 # About Queue
