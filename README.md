@@ -17,7 +17,7 @@ For larger changes, checkout the `main-gh-pages` branch, make local modification
 
 The ([`gh-pages` branch](https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages)) contains the `html` and asset files displayed by GitHub Pages. The branch is not intended to be merged in the `master` branch. Note that it has a completely separate commit history from the Caseflow application `master` branch. For more info, see the [FAQ](#how-was-the-gh-pages-branch-created-without-a-commit-history).
 
-The `gh-pages` branch is updated by a `build-gh-pages` GitHub Action that uses files from the `main-gh-pages` branch to generate `html` and asset files, which are pushed to the `gh-pages` branch. You should not modify the `gh-pages` branch directly. Any commit to the `main-gh-pages` branch will trigger the GitHub Action, which can be seen [here](https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml). See [Committing changes](committing-changes) for how to make changes.
+The `gh-pages` branch is updated by a `build-gh-pages` GitHub Action that uses files from the `main-gh-pages` branch to generate `html` and asset files, which are pushed to the `gh-pages` branch. You should not modify the `gh-pages` branch directly, so you don't need to `git checkout` the branch. Any commit to the `main-gh-pages` branch will trigger the GitHub Action, which can be seen [here](https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml). See [Committing changes](committing-changes) for how to make changes.
 
 {% blockdiag %}
 blockdiag {
@@ -41,7 +41,7 @@ Note that there may be some other GitHub Action that updates the `gh-pages` bran
 
 ## The `main-gh-pages` branch
 
-The `main-gh-pages` branch has files for documentation. Some are automatically generated (e.g., [Caseflow DB schema](schema/index.html) by a GitHub Action); others are manually created (e.g., [Bat Team Remedies](batteam/index.html)).
+The `main-gh-pages` branch has files for documentation. Some are automatically generated (e.g., [Caseflow DB schema](schema/html/index.html) by a GitHub Action); others are manually created (e.g., [Bat Team Remedies](batteam/index.html)).
 
 ## Checking out the branch
 
@@ -137,7 +137,7 @@ GitHub Pages provides more control over web page organization and presentation -
 GitHub Pages employs the Jekyll static site generator to convert `md` files into `html` files, all without any additional configuration -- see [GitHub Pages setup documentation](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll).
 
 To enable additional website features and documentation presentation capabilities, a GitHub Action runs Jekyll and potentially other tools to generate the `html` files for GitHub Pages. The additional capabilities include:
-- incorporating sets of generated `html` files, like [Caseflow DB schema](schema/index.html) created via [Jailer](https://github.com/Wisser/Jailer)
+- incorporating sets of generated `html` files, like [Caseflow DB schema](schema/html/index.html) created via [Jailer](https://github.com/Wisser/Jailer)
 - generating table of contents and site navigation menu
 - using markup syntax to generate diagrams, like [diagrams.md](diagrams.md)
 - enabling subsites with different website themes/layouts, like [help/jekyll.md](help/jekyll)

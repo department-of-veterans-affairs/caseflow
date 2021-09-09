@@ -347,7 +347,11 @@
             <code class="language-plaintext highlighter-rouge">gh-pages</code>
             branch. You should not modify the
             <code class="language-plaintext highlighter-rouge">gh-pages</code>
-            branch directly. Any commit to the
+            branch directly, so you don’t need to
+            <code class="language-plaintext highlighter-rouge"
+              >git checkout</code
+            >
+            the branch. Any commit to the
             <code class="language-plaintext highlighter-rouge"
               >main-gh-pages</code
             >
@@ -618,8 +622,8 @@
             >
             branch has files for documentation. Some are automatically generated
             (e.g.,
-            <a href="/caseflow/schema/index.html">Caseflow DB schema</a> by a
-            GitHub Action); others are manually created (e.g.,
+            <a href="/caseflow/schema/html/index.html">Caseflow DB schema</a> by
+            a GitHub Action); others are manually created (e.g.,
             <a href="batteam/index.html">Bat Team Remedies</a>).
           </p>
           <h2 id="checking-out-the-branch">
@@ -929,7 +933,7 @@ git checkout master
               incorporating sets of generated
               <code class="language-plaintext highlighter-rouge">html</code>
               files, like
-              <a href="/caseflow/schema/index.html">Caseflow DB schema</a>
+              <a href="/caseflow/schema/html/index.html">Caseflow DB schema</a>
               created via <a href="https://github.com/Wisser/Jailer">Jailer</a>
             </li>
             <li>generating table of contents and site navigation menu</li>
