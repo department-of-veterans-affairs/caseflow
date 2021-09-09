@@ -92,9 +92,10 @@ make install_jekyll_diagram_dependencies # only needed to view diagrams locally
 A *subsite* is useful for presenting documentation using a different theme or layout.
 
 To create a new Jekyll subsite called SUBSITE:
-1. Create subdirectory `__SUBSITE` (prefixed with 2 underscores)
+1. Create subdirectory `__SUBSITE` (prefixed with 2 underscores); the underscore prefix is needed so that Jekyll doesn't process it when building the main site
 2. Create a new `__SUBSITE/_config.yml` to override the defaults set in `__subsite_config.yml`
 3. Add a new entry in `Makefile` to build the `html` files into destination directory `_site/SUBSITE`
+4. Add `SUBSITE` to the `keep_files` configuration setting in `_config.yml` so that Jekyll doesn't delete the `_site/SUBSITE` directory when building the main site
 
 Refer to the `__help` directory as an example.
 

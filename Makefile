@@ -1,12 +1,16 @@
 
 #
 
-build_subsites: build_help_subdir
+build_subsites: build_subsite_help build_subsite_tasktrees
 
-build_help_subdir:
+build_subsite_help:
 	# cp favicon.ico __help/
 	# Specify _subsite_config.yml first so that __help/_config.yml can override its settings
 	bundle exec jekyll build --verbose --config "_subsite_config.yml,__help/_config.yml"
+
+build_subsite_tasktrees:
+	# Specify _subsite_config.yml first so that __help/_config.yml can override its settings
+	bundle exec jekyll build --verbose --config "_subsite_config.yml,__tasktrees/_config.yml"
 
 # Has only been tested on MacOS.
 # See https://github.com/zhustec/jekyll-diagrams or .github/workflows/build-gh-pages.yml for linux commands.
@@ -26,4 +30,4 @@ install_jekyll_diagram_dependencies:
 	cargo install svgbob_cli
 
 run: build_subsites
-	bundle exec jekyll serve
+	bundle exec jekyll serve --incremental
