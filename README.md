@@ -17,7 +17,7 @@ For larger changes, checkout the `main-gh-pages` branch, make local modification
 
 The ([`gh-pages` branch](https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages)) contains the `html` and asset files displayed by GitHub Pages. The branch is not intended to be merged in the `master` branch. Note that it has a completely separate commit history from the Caseflow application `master` branch. For more info, see the [FAQ](#how-was-the-gh-pages-branch-created-without-a-commit-history).
 
-The `gh-pages` branch is updated by a `build-gh-pages` GitHub Action that uses files from the `main-gh-pages` branch to generate `html` and asset files, which are pushed to the `gh-pages` branch. You should not modify the `gh-pages` branch directly. Any commit to the `main-gh-pages` branch will trigger the GitHub Action, which can be seen [here](https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml). See [Committing changes](committing-changes) for how to make changes.
+The `gh-pages` branch is updated by a `build-gh-pages` GitHub Action that uses files from the `main-gh-pages` branch to generate `html` and asset files, which are pushed to the `gh-pages` branch. You should not modify the `gh-pages` branch directly, so you don't need to `git checkout` the branch. Any commit to the `main-gh-pages` branch will trigger the GitHub Action, which can be seen [here](https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml). See [Committing changes](committing-changes) for how to make changes.
 
 {% blockdiag %}
 blockdiag {
