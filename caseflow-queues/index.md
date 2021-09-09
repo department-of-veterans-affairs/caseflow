@@ -1,7 +1,6 @@
 ---
 title: Caseflow Queue
 has_children: true
-has_toc: false
 nav_order: 15
 ---
 
@@ -11,8 +10,8 @@ Caseflow Queue is a workflow management tool that will allow BVA employees proce
 ## [Definitions and term-usage](https://github.com/department-of-veterans-affairs/caseflow/wiki/Queue-data-dictionary)
 
 ## Features
-It contains the following high level features:
-- {:toc}
+Please see the TOC below for a list of high lever features
+
 ## User groups
 All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings.
 
