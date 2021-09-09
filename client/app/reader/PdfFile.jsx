@@ -15,7 +15,7 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
@@ -40,7 +40,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    PDFJS.workerSrc = this.props.pdfWorker;
+    PDFJS.GlobalWorkerOptions.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {
       cache: true,
@@ -57,8 +57,10 @@ export class PdfFile extends React.PureComponent {
     // different domain (eFolder), and still need to pass our credentials to authenticate.
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        this.loadingTask = PDFJS.getDocument({ data: resp.body });
-
+        this.loadingTask = PDFJS.getDocument({ data: resp.body }).promise;
+        console.log("Post PDFJS.getDocument().promise");
+        console.log(resp);
+        console.log(this.loadingTask);
         return this.loadingTask;
       }).
       then((pdfDocument) => {

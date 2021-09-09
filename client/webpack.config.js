@@ -50,10 +50,6 @@ const config = {
       components: path.resolve('app/2.0/components'),
       test: path.resolve('test'),
     },
-    fallback: {
-      "os": false,
-      "path": false,
-    }
   },
   module: {
     rules: [
