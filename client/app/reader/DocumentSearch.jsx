@@ -24,7 +24,7 @@ export class DocumentSearch extends React.PureComponent {
 
   getText = () => {
     if (this.props.pdfDocument &&
-        !this.props.pdfDocument.transport.destroyed &&
+        !this.props.pdfDocument._transport.destroyed &&
         !this.sentAction[this.props.file] &&
         !_.isEmpty(this.searchTerm) &&
         _.isEmpty(this.props.pdfText)) {

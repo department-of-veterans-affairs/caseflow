@@ -57,13 +57,12 @@ export class PdfFile extends React.PureComponent {
     // different domain (eFolder), and still need to pass our credentials to authenticate.
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        this.loadingTask = PDFJS.getDocument({ data: resp.body }).promise;
-        console.log("Post PDFJS.getDocument().promise");
-        console.log(resp);
-        console.log(this.loadingTask);
-        return this.loadingTask;
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+
+        return this.loadingTask.promise;
       }).
       then((pdfDocument) => {
+
         this.setPageDimensions(pdfDocument);
 
         if (this.loadingTask.destroyed) {
@@ -81,13 +80,14 @@ export class PdfFile extends React.PureComponent {
   }
 
   setPageDimensions = (pdfDocument) => {
-    const promises = _.range(0, pdfDocument.pdfInfo.numPages).map((index) => {
+    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
     Promise.all(promises).then((pages) => {
       const viewports = pages.map((page) => {
-        return _.pick(page.getViewport(PAGE_DIMENSION_SCALE), ['width', 'height']);
+        return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
       });
 
       this.props.setPageDimensions(this.props.file, viewports);
@@ -130,7 +130,7 @@ export class PdfFile extends React.PureComponent {
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
-    if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+    if (pageIndex >= this.props.pdfDocument._pdfInfo.numPages) {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
@@ -176,7 +176,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getColumnWidth = () => {
-    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages).
+    const maxPageWidth = _.range(0, this.props.pdfDocument._pdfInfo.numPages).
       reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
 
     return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
@@ -324,7 +324,7 @@ export class PdfFile extends React.PureComponent {
       let minIndex = 0;
       let minDistance = Infinity;
 
-      _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
+      _.range(0, this.props.pdfDocument._pdfInfo.numPages).forEach((index) => {
         const offset = this.getOffsetForPageIndex(index, 'center');
         const distance = Math.abs(offset.scrollTop - scrollTop);
 
@@ -434,7 +434,7 @@ export class PdfFile extends React.PureComponent {
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -446,7 +446,7 @@ export class PdfFile extends React.PureComponent {
           }
 
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
-            this.props.pdfDocument.pdfInfo.numPages);
+            this.props.pdfDocument._pdfInfo.numPages);
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
@@ -464,7 +464,7 @@ export class PdfFile extends React.PureComponent {
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onScroll={this.onScroll}
             height={height}
-            rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
+            rowCount={Math.ceil(this.props.pdfDocument._pdfInfo.numPages / this.columnCount)}
             rowHeight={this.getRowHeight}
             cellRenderer={this.getPage}
             scrollToAlignment="start"

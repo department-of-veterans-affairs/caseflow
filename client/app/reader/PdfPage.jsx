@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN
 } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -208,7 +208,7 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         this.page = page;
 
@@ -225,7 +225,7 @@ export class PdfPage extends React.PureComponent {
             attrs: {
               overscan: this.props.windowingOverscan,
               documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.pdfInfo.numPages
+              pageCount: this.props.pdfDocument._pdfInfo.numPages
             }
           });
         });

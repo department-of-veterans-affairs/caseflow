@@ -333,7 +333,7 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const pdfDocument = _.get(state.pdf.pdfDocuments, [props.doc.content_url]);
-  const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
+  const numPages = pdfDocument ? pdfDocument._pdfInfo.numPages : null;
 
   return {
     ..._.pick(state.documentList, 'filteredDocIds'),
