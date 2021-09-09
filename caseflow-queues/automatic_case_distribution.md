@@ -2,7 +2,7 @@
 title: Automatic Case Distribution
 parent: Caseflow Queue
 nav_order: 2
-___
+---
 
 # Presentations
 - [May 2020 Case Distribution Overview](https://docs.google.com/presentation/d/143KwMEkw55YoKRxPL3vumVFGPR3X2n23eqxrcy1tDyM/edit#slide=id.g54fd333abc_0_70)
