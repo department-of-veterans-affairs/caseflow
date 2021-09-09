@@ -1,6 +1,7 @@
 ---
 title: Caseflow Queue
 has_children: true
+has_toc: false
 nav_order: 15
 ---
 
@@ -11,16 +12,7 @@ Caseflow Queue is a workflow management tool that will allow BVA employees proce
 
 ## Features
 It contains the following high level features:
-- [Queue table](https://github.com/department-of-veterans-affairs/caseflow/wiki/Table): Allowing users to view their work (cases with tasks assigned to them) in a table form
-- [Case details](https://github.com/department-of-veterans-affairs/caseflow/wiki/Case-details): Allowing users to view data about the appeal and Veteran
-- [Add/Remove/Edit issues](https://github.com/department-of-veterans-affairs/caseflow/wiki/Editing-AMA-issues)
-- [Automatic case distribution](https://github.com/department-of-veterans-affairs/caseflow/wiki/Automatic-Case-Distribution)
-- [Organizations](https://github.com/department-of-veterans-affairs/caseflow/wiki/Organizations)
-- [Tasks](https://github.com/department-of-veterans-affairs/caseflow/wiki/Tasks)
-- Case timeline
-- Case search
-- [[Post Decision Motions]]
-
+- {:toc}
 ## User groups
 All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings.
 
