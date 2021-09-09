@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_07_174359) do
+ActiveRecord::Schema.define(version: 2021_09_09_151937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1218,6 +1218,8 @@ ActiveRecord::Schema.define(version: 2021_09_07_174359) do
     t.datetime "deleted_at"
     t.integer "request_issue_id", comment: "The ID of the request issue."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
+    t.index ["decision_issue_id", "request_issue_id"], name: "index_on_decision_issue_id_and_request_issue_id", unique: true
+    t.index ["deleted_at"], name: "index_request_decision_issues_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
     t.index ["updated_at"], name: "index_request_decision_issues_on_updated_at"
   end
