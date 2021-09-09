@@ -208,6 +208,7 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
+    // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         this.page = page;
@@ -225,7 +226,7 @@ export class PdfPage extends React.PureComponent {
             attrs: {
               overscan: this.props.windowingOverscan,
               documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument._pdfInfo.numPages
+              pageCount: this.props.pdfDocument.numPages
             }
           });
         });
@@ -321,13 +322,33 @@ export class PdfPage extends React.PureComponent {
 }
 
 PdfPage.propTypes = {
+  currentMatchIndex: PropTypes.any,
   documentId: PropTypes.number,
+  documentType: PropTypes.any,
   file: PropTypes.string,
-  pageIndex: PropTypes.number,
+  isDrawing: PropTypes.any,
   isFileVisible: PropTypes.bool,
-  scale: PropTypes.number,
+  isPageVisible: PropTypes.any,
+  isPlacingAnnotation: PropTypes.any,
+  matchesPerPage: PropTypes.shape({
+    length: PropTypes.any
+  }),
+  page: PropTypes.shape({
+    cleanup: PropTypes.func
+  }),
+  pageDimensions: PropTypes.any,
+  pageIndex: PropTypes.number,
+  pageIndexWithMatch: PropTypes.any,
+  pdfDocument: PropTypes.object,
+  relativeIndex: PropTypes.any,
   rotate: PropTypes.number,
-  pdfDocument: PropTypes.object
+  rotation: PropTypes.number,
+  scale: PropTypes.number,
+  searchBarHidden: PropTypes.any,
+  searchText: PropTypes.any,
+  setDocScrollPosition: PropTypes.func,
+  setSearchIndexToHighlight: PropTypes.func,
+  windowingOverscan: PropTypes.any
 };
 
 const mapDispatchToProps = (dispatch) => ({
