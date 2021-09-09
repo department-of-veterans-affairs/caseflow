@@ -228,7 +228,6 @@ export class PdfViewer extends React.Component {
           <PdfUI
             doc={doc}
             prefetchFiles={this.getPrefetchFiles()}
-            pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             prevDocId={this.getPrevDocId()}
@@ -331,7 +330,6 @@ PdfViewer.propTypes = {
   onJumpToComment: PropTypes.func,
   onScrollToComment: PropTypes.func,
   pageDimensions: PropTypes.object,
-  pdfWorker: PropTypes.string,
   placingAnnotationIconPageCoords: PropTypes.object,
   scrollToComment: PropTypes.shape({
     id: PropTypes.number

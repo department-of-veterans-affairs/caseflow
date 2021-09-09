@@ -72,7 +72,6 @@ export class Pdf extends React.PureComponent {
   render() {
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
-        pdfWorker={this.props.pdfWorker}
         documentId={this.props.documentId}
         key={`${file}`}
         file={file}
@@ -130,7 +129,6 @@ Pdf.propTypes = {
   selectedAnnotationId: PropTypes.number,
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
   onIconMoved: PropTypes.func,

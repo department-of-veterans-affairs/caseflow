@@ -22,6 +22,9 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+
+PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -40,7 +43,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    PDFJS.GlobalWorkerOptions.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {
       cache: true,
@@ -435,7 +437,7 @@ export class PdfFile extends React.PureComponent {
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
     // eslint-disable-next-line no-underscore-dangle
-    if (this.props.pdfDocument && !this.props._transport.destroyed) {
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -500,7 +502,6 @@ PdfFile.propTypes = {
   onScrollToComment: PropTypes.func,
   pageDimensions: PropTypes.func,
   pdfDocument: PropTypes.object,
-  pdfWorker: PropTypes.string,
   resetJumpToPage: PropTypes.func,
   rotation: PropTypes.number,
   scale: PropTypes.number,
