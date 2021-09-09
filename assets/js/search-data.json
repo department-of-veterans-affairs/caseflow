@@ -223,13 +223,13 @@
   },"37": {
     "doc": "Caseflow Queue",
     "title": "Features",
-    "content": "It contains the following high level features: . | ",
+    "content": "Please see the TOC below for a list of high lever features . ",
     "url": "/caseflow/caseflow-queues/#features",
     "relUrl": "/caseflow-queues/#features"
   },"38": {
     "doc": "Caseflow Queue",
     "title": "User groups",
-    "content": "All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings. | . | Team | Primary Caseflow functionality | . | Case Review | Caseflow IntakeCaseflow QueueCaseflow ReaderIssues | . | Mail | Caseflow Queue | . | Translation | Caseflow QueueCaseflow Reader | . | Hearing Branch | Caseflow QueueCaseflow Hearings | . | Privacy Team | Caseflow QueueeFolder Express | . | Decision-drafting attorneys | Caseflow QueueCaseflow ReaderIssues | . | Judges &amp; acting judges | Caseflow QueueCaseflow ReaderCaseflow HearingsIssuesAutomatic Case Distribution | . | VLJ Support Staff | Caseflow QueueCaseflow Reader | . | BVA Dispatch | Caseflow QueueCaseflow ReaderInteractive Decision Template | . | Quality Review | Caseflow QueueCaseflow Reader | . | Litigation Support | Caseflow QueueCaseflow Reader | . | Advanced on the Docket (AOD) | Caseflow QueueCaseflow Reader | . | VSOs | Caseflow QueueCaseflow ReaderCaseflow Hearings | . | Private attorneys and claims agents | Caseflow QueueCaseflow ReaderCaseflow Hearings | . Other VA . | VA call center | . ",
+    "content": "All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings. | Team | Primary Caseflow functionality | . | Case Review | Caseflow IntakeCaseflow QueueCaseflow ReaderIssues | . | Mail | Caseflow Queue | . | Translation | Caseflow QueueCaseflow Reader | . | Hearing Branch | Caseflow QueueCaseflow Hearings | . | Privacy Team | Caseflow QueueeFolder Express | . | Decision-drafting attorneys | Caseflow QueueCaseflow ReaderIssues | . | Judges &amp; acting judges | Caseflow QueueCaseflow ReaderCaseflow HearingsIssuesAutomatic Case Distribution | . | VLJ Support Staff | Caseflow QueueCaseflow Reader | . | BVA Dispatch | Caseflow QueueCaseflow ReaderInteractive Decision Template | . | Quality Review | Caseflow QueueCaseflow Reader | . | Litigation Support | Caseflow QueueCaseflow Reader | . | Advanced on the Docket (AOD) | Caseflow QueueCaseflow Reader | . | VSOs | Caseflow QueueCaseflow ReaderCaseflow Hearings | . | Private attorneys and claims agents | Caseflow QueueCaseflow ReaderCaseflow Hearings | . Other VA . | VA call center | . ",
     "url": "/caseflow/caseflow-queues/#user-groups",
     "relUrl": "/caseflow-queues/#user-groups"
   },"39": {
