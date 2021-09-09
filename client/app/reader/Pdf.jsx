@@ -126,13 +126,26 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
-  selectedAnnotationId: PropTypes.number,
   documentId: PropTypes.number.isRequired,
+  documentPathBase: PropTypes.any,
+  documentType: PropTypes.any,
   file: PropTypes.string.isRequired,
-  scale: PropTypes.number,
-  onPageChange: PropTypes.func,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  isPlacingAnnotation: PropTypes.any,
   onIconMoved: PropTypes.func,
+  onPageChange: PropTypes.func,
+  placeAnnotation: PropTypes.func,
+  placingAnnotationIconPageCoords: PropTypes.shape({
+    pageIndex: PropTypes.any,
+    x: PropTypes.any,
+    y: PropTypes.any
+  }),
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   rotation: PropTypes.number,
+  scale: PropTypes.number,
+  selectedAnnotationId: PropTypes.number,
+  stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func
 };

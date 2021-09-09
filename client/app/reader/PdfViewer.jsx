@@ -163,7 +163,7 @@ export class PdfViewer extends React.Component {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
   }
-  /* eslint-enable "camelcase" */
+  /* eslint-enable camelcase */
 
   selectedDocIndex = () => (
     _.findIndex(this.props.documents, { id: this.selectedDocId() })
