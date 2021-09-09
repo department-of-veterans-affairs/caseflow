@@ -1,3 +1,9 @@
+---
+title: Caseflow Queue
+has_children: true
+nav_order: 10
+---
+
 # About Queue
 Caseflow Queue is a workflow management tool that will allow BVA employees process legacy and AMA appeals at the Board. It's also the entry point for Caseflow Reader; users navigate to Reader from Queue. 
 
