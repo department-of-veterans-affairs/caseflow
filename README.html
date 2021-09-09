@@ -238,14 +238,43 @@
             README
           </h1>
           <p>
+            Welcome to the
             <a href="https://pages.github.com/">GitHub Pages</a> for
             <a href="https://github.com/department-of-veterans-affairs/caseflow"
               >Caseflow</a
+            >! The webpage can be viewed at
+            <a href="http://department-of-veterans-affairs.github.io/caseflow/"
+              >http://department-of-veterans-affairs.github.io/caseflow/</a
+            >.
+          </p>
+          <h2 id="making-changes">
+            <a
+              href="#making-changes"
+              class="anchor-heading"
+              aria-labelledby="making-changes"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Making changes
+          </h2>
+          <p>
+            For small changes, most pages can be modified by clicking on the
+            <code class="language-plaintext highlighter-rouge"
+              >Edit this page</code
             >
+            link at the bottom of the page, modifying the
+            <code class="language-plaintext highlighter-rouge">md</code> file,
+            and committing the change.
           </p>
           <p>
-            Caseflow’s GitHub Pages can be viewed at
-            http://department-of-veterans-affairs.github.io/caseflow/
+            For larger changes, checkout the
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch, make local modifications, and push your changes. This will
+            trigger an update to the
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch used by GitHub Pages.
           </p>
           <h2 id="purpose-of-the-gh-pages-and-main-gh-pages-branches">
             <a
@@ -270,16 +299,19 @@
                 >gh-pages</code
               >
               branch</a
-            >) is used by GitHub Pages. The branch is not intended to be merged
-            in the main branch. Note that it has a completely separate commit
-            history from the main branch. For more info, see …
-          </p>
-          <p>
-            This branch has files for documentation. Some are automatically
-            generated (e.g.,
-            <a href="/caseflow/schema/index.html">Caseflow DB schema</a> by a
-            GitHub Action); others are manually created (e.g.,
-            <a href="batteam/index.html">Bat Team Remedies</a>).
+            >) contains the
+            <code class="language-plaintext highlighter-rouge">html</code> and
+            asset files displayed by GitHub Pages. The branch is not intended to
+            be merged in the
+            <code class="language-plaintext highlighter-rouge">master</code>
+            branch. Note that it has a completely separate commit history from
+            the Caseflow application
+            <code class="language-plaintext highlighter-rouge">master</code>
+            branch. For more info, see the
+            <a
+              href="#how-was-the-gh-pages-branch-created-without-a-commit-history"
+              >FAQ</a
+            >.
           </p>
           <p>
             The
@@ -309,15 +341,279 @@
             >. See <a href="committing-changes">Committing changes</a> for how
             to make changes.
           </p>
-          <h2 id="cloning--checkout">
+          <div class="jekyll-diagrams diagrams blockdiag">
+            <svg
+              viewBox="0 0 832 200"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+            >
+              <defs id="defs_block">
+                <filter
+                  height="1.504"
+                  id="filter_blur"
+                  inkspace:collect="always"
+                  width="1.1575"
+                  x="-0.07875"
+                  y="-0.252"
+                >
+                  <feGaussianBlur
+                    id="feGaussianBlur3780"
+                    inkspace:collect="always"
+                    stdDeviation="4.2"
+                  />
+                </filter>
+              </defs>
+              <title>blockdiag</title>
+              <desc>
+                blockdiag { class branch [color=lightblue, shape=note];
+                main-gh-pages [class=branch, label="main-gh-pages branch"]
+                gh-pages [class=branch, label="gh-pages branch"] class ghAction
+                [shape=ellipse] build-gh-pages [class=ghAction] website
+                [shape=cloud] main-gh-pages -&gt; build-gh-pages -&gt; gh-pages
+                -&gt; website; any-branch [class=branch, label="any branch"]
+                any-action [class=ghAction, label="some Action"] any-branch
+                -&gt; any-action -&gt; gh-pages; }
+              </desc>
+              <polygon
+                fill="rgb(0,0,0)"
+                points="67,46 179,46 195,62 195,86 67,86 67,46"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="451,46 563,46 579,62 579,86 451,86 451,46"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <ellipse
+                cx="323"
+                cy="66"
+                fill="rgb(0,0,0)"
+                rx="64.0"
+                ry="20.0"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <ellipse
+                cx="323"
+                cy="146"
+                fill="rgb(0,0,0)"
+                rx="64.0"
+                ry="20.0"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <path
+                d="M 663 62 A20,8 0 0 1 683 54 A20,6 0 0 1 733 54 A20,8 0 0 1 753 62 A20,8 0 0 1 753 78 A20,20 0 0 1 723 78 A20,20 0 0 1 693 78 A20,20 0 0 1 663 78 A20,8 0 0 1 663 62"
+                fill="rgb(0,0,0)"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="67,126 179,126 195,142 195,166 67,166 67,126"
+                stroke="rgb(0,0,0)"
+                style="filter: url(#filter_blur); opacity: 0.7; fill-opacity: 1"
+              />
+              <polygon
+                fill="rgb(173,216,230)"
+                points="64,40 176,40 192,56 192,80 64,80 64,40"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 176 40 L 176 56" fill="none" stroke="rgb(0,0,0)" />
+              <path d="M 176 56 L 192 56" fill="none" stroke="rgb(0,0,0)" />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="120"
+                x="128.0"
+                y="66"
+              >
+                main-gh-pages branch
+              </text>
+              <polygon
+                fill="rgb(173,216,230)"
+                points="448,40 560,40 576,56 576,80 448,80 448,40"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 560 40 L 560 56" fill="none" stroke="rgb(0,0,0)" />
+              <path d="M 560 56 L 576 56" fill="none" stroke="rgb(0,0,0)" />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="90"
+                x="512.0"
+                y="66"
+              >
+                gh-pages branch
+              </text>
+              <ellipse
+                cx="320"
+                cy="60"
+                fill="rgb(255,255,255)"
+                rx="64.0"
+                ry="20.0"
+                stroke="rgb(0,0,0)"
+              />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="84"
+                x="320.0"
+                y="66"
+              >
+                build-gh-pages
+              </text>
+              <ellipse
+                cx="320"
+                cy="140"
+                fill="rgb(255,255,255)"
+                rx="64.0"
+                ry="20.0"
+                stroke="rgb(0,0,0)"
+              />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="66"
+                x="320.0"
+                y="146"
+              >
+                some Action
+              </text>
+              <path
+                d="M 660 56 A20,8 0 0 1 680 48 A20,6 0 0 1 730 48 A20,8 0 0 1 750 56 A20,8 0 0 1 750 72 A20,20 0 0 1 720 72 A20,20 0 0 1 690 72 A20,20 0 0 1 660 72 A20,8 0 0 1 660 56"
+                fill="rgb(255,255,255)"
+                stroke="rgb(0,0,0)"
+              />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="42"
+                x="705.0"
+                y="66"
+              >
+                website
+              </text>
+              <polygon
+                fill="rgb(173,216,230)"
+                points="64,120 176,120 192,136 192,160 64,160 64,120"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 176 120 L 176 136" fill="none" stroke="rgb(0,0,0)" />
+              <path d="M 176 136 L 192 136" fill="none" stroke="rgb(0,0,0)" />
+              <text
+                fill="rgb(0,0,0)"
+                font-family="sans-serif"
+                font-size="11"
+                font-style="normal"
+                font-weight="normal"
+                text-anchor="middle"
+                textLength="60"
+                x="128.0"
+                y="146"
+              >
+                any branch
+              </text>
+              <path d="M 192 60 L 248 60" fill="none" stroke="rgb(0,0,0)" />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="255,60 248,56 248,64 255,60"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 576 60 L 632 60" fill="none" stroke="rgb(0,0,0)" />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="639,60 632,56 632,64 639,60"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 384 60 L 440 60" fill="none" stroke="rgb(0,0,0)" />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="447,60 440,56 440,64 447,60"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 192 140 L 248 140" fill="none" stroke="rgb(0,0,0)" />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="255,140 248,136 248,144 255,140"
+                stroke="rgb(0,0,0)"
+              />
+              <path d="M 384 140 L 432 140" fill="none" stroke="rgb(0,0,0)" />
+              <path d="M 432 140 L 432 60" fill="none" stroke="rgb(0,0,0)" />
+              <path d="M 432 60 L 440 60" fill="none" stroke="rgb(0,0,0)" />
+              <polygon
+                fill="rgb(0,0,0)"
+                points="447,60 440,56 440,64 447,60"
+                stroke="rgb(0,0,0)"
+              />
+            </svg>
+          </div>
+          <p>
+            Note that there may be some other GitHub Action that updates the
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch, so make sure to not cause folder or file name collisions
+            when updating
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >.
+          </p>
+          <h2 id="the-main-gh-pages-branch">
             <a
-              href="#cloning--checkout"
+              href="#the-main-gh-pages-branch"
               class="anchor-heading"
-              aria-labelledby="cloning--checkout"
+              aria-labelledby="the-main-gh-pages-branch"
               ><svg viewBox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
-            Cloning / Checkout
+            The
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch
+          </h2>
+          <p>
+            The
+            <code class="language-plaintext highlighter-rouge"
+              >main-gh-pages</code
+            >
+            branch has files for documentation. Some are automatically generated
+            (e.g.,
+            <a href="/caseflow/schema/index.html">Caseflow DB schema</a> by a
+            GitHub Action); others are manually created (e.g.,
+            <a href="batteam/index.html">Bat Team Remedies</a>).
+          </p>
+          <h2 id="checking-out-the-branch">
+            <a
+              href="#checking-out-the-branch"
+              class="anchor-heading"
+              aria-labelledby="checking-out-the-branch"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Checking out the branch
           </h2>
           <p>
             Even though
@@ -329,9 +625,11 @@
             <code class="language-plaintext highlighter-rouge"
               >main-gh-pages</code
             >
-            branch in a separate because it has no common files with Caseflow’s
+            branch in a separate directory because it has no common files with
+            Caseflow’s
             <code class="language-plaintext highlighter-rouge">master</code>
-            branch.
+            branch to avoid accidentally deleting git-ignored files in your
+            development branches.
           </p>
           <p>
             To checkout to a
@@ -346,29 +644,10 @@
             <div class="highlight">
               <pre class="highlight"><code>cd YOUR_PATH_TO/caseflow
 cd ..
-git clone -b gh-pages https://github.com/department-of-veterans-affairs/caseflow.git caseflow-gh-pages
+git clone -b gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git caseflow-gh-pages
 </code></pre>
             </div>
           </div>
-          <h2 id="making-changes">
-            <a
-              href="#making-changes"
-              class="anchor-heading"
-              aria-labelledby="making-changes"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Making changes
-          </h2>
-          <p>
-            For small changes, most pages can be modified by clicking on the
-            <code class="language-plaintext highlighter-rouge"
-              >Edit this page</code
-            >
-            link at the bottom of the page, modifying the
-            <code class="language-plaintext highlighter-rouge">md</code> file,
-            and committing the change.
-          </p>
           <h2 id="committing-changes">
             <a
               href="#committing-changes"
@@ -390,13 +669,31 @@ git clone -b gh-pages https://github.com/department-of-veterans-affairs/caseflow
             <code class="language-plaintext highlighter-rouge"
               >main-gh-pages</code
             >
-            without a peer-review, just like the Caseflow wiki page. However for
-            significant changes, it is encouraged to create a development branch
-            and do a squash-merge when you are satisfied with the changes, just
-            like what is done in Caseflow’s
+            without a peer-review (just like the Caseflow wiki page). However
+            for significant changes, it is encouraged to create a development
+            branch and do a squash-merge when you are satisfied with the
+            changes, just like what is done in Caseflow’s
             <code class="language-plaintext highlighter-rouge">master</code>
             branch.
           </p>
+          <div class="language-plaintext highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code>cd caseflow-gh-pages
+git checkout -b my/add-amazing-new-page
+# Make modifications, preview changes, and commit
+git add .
+git commit
+
+# Once ready to merge
+git checkout main-gh-pages
+git merge --squash my/add-amazing-new-page
+git commit
+
+# Push to GitHub repo
+git push
+</code></pre>
+            </div>
+          </div>
           <h2 id="previewing-changes">
             <a
               href="#previewing-changes"
@@ -413,11 +710,103 @@ git clone -b gh-pages https://github.com/department-of-veterans-affairs/caseflow
           </p>
           <div class="language-plaintext highlighter-rouge">
             <div class="highlight">
-              <pre class="highlight"><code>...
-bundle exec jekyll serve
+              <pre class="highlight"><code>make run
 </code></pre>
             </div>
           </div>
+          <p>If it’s the first time running it, install some tools:</p>
+          <div class="language-plaintext highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code>bundle install
+make install_jekyll_diagram_dependencies # only needed to view diagrams locally
+</code></pre>
+            </div>
+          </div>
+          <h2 id="subsites">
+            <a
+              href="#subsites"
+              class="anchor-heading"
+              aria-labelledby="subsites"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Subsites
+          </h2>
+          <p>
+            A <em>subsite</em> is useful for presenting documentation using a
+            different theme or layout.
+          </p>
+          <p>To create a new Jekyll subsite called SUBSITE:</p>
+          <ol>
+            <li>
+              Create subdirectory
+              <code class="language-plaintext highlighter-rouge"
+                >__SUBSITE</code
+              >
+              (prefixed with 2 underscores)
+            </li>
+            <li>
+              Create a new
+              <code class="language-plaintext highlighter-rouge"
+                >__SUBSITE/_config.yml</code
+              >
+              to override the defaults set in
+              <code class="language-plaintext highlighter-rouge"
+                >__subsite_config.yml</code
+              >
+            </li>
+            <li>
+              Add a new entry in
+              <code class="language-plaintext highlighter-rouge">Makefile</code>
+              to build the
+              <code class="language-plaintext highlighter-rouge">html</code>
+              files into destination directory
+              <code class="language-plaintext highlighter-rouge"
+                >_site/SUBSITE</code
+              >
+            </li>
+          </ol>
+          <p>
+            Refer to the
+            <code class="language-plaintext highlighter-rouge">__help</code>
+            directory as an example.
+          </p>
+          <p>
+            Note that any
+            <a
+              href="https://www.netlify.com/blog/2020/04/14/what-is-a-static-site-generator-and-3-ways-to-find-the-best-one/"
+              >static site generator</a
+            >
+            besides Jekyll can be used, such as Hugo, Gatsby, and Pelican –
+            adapt the instructions accordingly.
+          </p>
+          <h2 id="jekyll">
+            <a href="#jekyll" class="anchor-heading" aria-labelledby="jekyll"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Jekyll
+          </h2>
+          <p>
+            This site uses the Jekyll theme
+            <a href="https://pmarsceill.github.io/just-the-docs/"
+              >Just the Docs</a
+            >. The <a href="help/jekyll">help/jekyll.md</a> subsite uses a
+            different Jekyll theme, specified in
+            <code class="language-plaintext highlighter-rouge"
+              >__help/_config.yml</code
+            >.
+          </p>
+          <p>
+            Jekyll can be
+            <a href="https://jekyllrb.com/docs/configuration/">configured</a> to
+            use <a href="https://jekyllrb.com/docs/plugins/">plugins</a>. Each
+            <code class="language-plaintext highlighter-rouge">md</code> file
+            can define
+            <a href="https://jekyllrb.com/docs/front-matter/">front matter</a>
+            to specify how the corresponding page should be treated or
+            visualized by the Jekyll theme.
+          </p>
           <h2 id="faq">
             <a href="#faq" class="anchor-heading" aria-labelledby="faq"
               ><svg viewBox="0 0 16 16" aria-hidden="true">
@@ -425,6 +814,41 @@ bundle exec jekyll serve
             ></a>
             FAQ
           </h2>
+          <h3 id="how-was-the-gh-pages-branch-created-without-a-commit-history">
+            <a
+              href="#how-was-the-gh-pages-branch-created-without-a-commit-history"
+              class="anchor-heading"
+              aria-labelledby="how-was-the-gh-pages-branch-created-without-a-commit-history"
+              ><svg viewBox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            How was the
+            <code class="language-plaintext highlighter-rouge">gh-pages</code>
+            branch created without a commit history?
+          </h3>
+          <div class="language-plaintext highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code>git checkout --orphan gh-pages
+git reset --hard
+git commit --allow-empty -m "Initializing gh-pages branch"
+git push origin gh-pages
+git checkout master
+</code></pre>
+            </div>
+          </div>
+          <p>
+            (<a
+              href="https://jiafulow.github.io/blog/2020/07/09/create-gh-pages-branch-in-existing-repo/"
+              >reference</a
+            >)
+          </p>
+          <p>
+            Also see
+            <a
+              href="https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/creating-a-github-pages-site-with-jekyll#creating-your-site"
+              >GitHub’s “Creating your site” instructions</a
+            >.
+          </p>
           <h3 id="why-not-use-the-github-wiki">
             <a
               href="#why-not-use-the-github-wiki"
@@ -437,27 +861,80 @@ bundle exec jekyll serve
           </h3>
           <p>GitHub Wiki has the following limitations:</p>
           <ul>
-            <li>no table of content generation</li>
-            <li>cannot reflect organization of wiki pages as folders</li>
-            <li>…</li>
+            <li>
+              Cannot serve up
+              <code class="language-plaintext highlighter-rouge">html</code>
+              content or files, along with referenced
+              <code class="language-plaintext highlighter-rouge">css</code>
+              files
+            </li>
+            <li>No table of content generation</li>
+            <li>No built-in diagramming markup language</li>
+            <li>
+              While the wiki context can be organized into folder, the wiki
+              presentation doesn’t reflect the organization
+            </li>
           </ul>
-          <p>Benefits of GitHub Pages</p>
-          <ul>
-            <li>more control over web page organization</li>
-            <li>…</li>
-          </ul>
-          <h3 id="why-not-use-the-basic-github-pages">
+          <p>
+            GitHub Pages provides more control over web page organization and
+            presentation – see next section.
+          </p>
+          <h3 id="why-not-use-the-basic-github-pages-without-github-actions">
             <a
-              href="#why-not-use-the-basic-github-pages"
+              href="#why-not-use-the-basic-github-pages-without-github-actions"
               class="anchor-heading"
-              aria-labelledby="why-not-use-the-basic-github-pages"
+              aria-labelledby="why-not-use-the-basic-github-pages-without-github-actions"
               ><svg viewBox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
-            Why not use the basic GitHub Pages?
+            Why not use the basic GitHub Pages (without GitHub Actions)?
           </h3>
           <p>
-            https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll
+            GitHub Pages employs the Jekyll static site generator to convert
+            <code class="language-plaintext highlighter-rouge">md</code> files
+            into
+            <code class="language-plaintext highlighter-rouge">html</code>
+            files, all without any additional configuration – see
+            <a
+              href="https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll"
+              >GitHub Pages setup documentation</a
+            >.
+          </p>
+          <p>
+            To enable additional website features and documentation presentation
+            capabilities, a GitHub Action runs Jekyll and potentially other
+            tools to generate the
+            <code class="language-plaintext highlighter-rouge">html</code> files
+            for GitHub Pages. The additional capabilities include:
+          </p>
+          <ul>
+            <li>
+              incorporating sets of generated
+              <code class="language-plaintext highlighter-rouge">html</code>
+              files, like
+              <a href="/caseflow/schema/index.html">Caseflow DB schema</a>
+              created via <a href="https://github.com/Wisser/Jailer">Jailer</a>
+            </li>
+            <li>generating table of contents and site navigation menu</li>
+            <li>
+              using markup syntax to generate diagrams, like
+              <a href="/caseflow/diagrams.html">diagrams.md</a>
+            </li>
+            <li>
+              enabling subsites with different website themes/layouts, like
+              <a href="help/jekyll">help/jekyll.md</a>
+            </li>
+            <li>
+              quick text search (provided by the
+              <a href="https://pmarsceill.github.io/just-the-docs/"
+                >Just the Docs theme</a
+              >)
+            </li>
+          </ul>
+          <p>
+            These capabilities open up opportunities for enhanced presentation
+            of Caseflow documentation, which aims to make information easier to
+            find and understand.
           </p>
           <hr />
           <footer>
