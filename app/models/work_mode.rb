@@ -3,7 +3,7 @@
 # Model to represent the mode in which a user (e.g., an attorney) is working on a case.
 # Specifically, the `overtime` field captures whether the appeal is being worked as overtime for the attorney.
 
-class WorkMode < ApplicationRecord
+class WorkMode < CaseflowRecord
   include HasAppealUpdatedSince
 
   belongs_to :appeal, polymorphic: true
