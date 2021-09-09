@@ -15,13 +15,16 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+
+PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -40,7 +43,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    PDFJS.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {
       cache: true,
@@ -59,9 +61,10 @@ export class PdfFile extends React.PureComponent {
       then((resp) => {
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
-        return this.loadingTask;
+        return this.loadingTask.promise;
       }).
       then((pdfDocument) => {
+
         this.setPageDimensions(pdfDocument);
 
         if (this.loadingTask.destroyed) {
@@ -79,13 +82,14 @@ export class PdfFile extends React.PureComponent {
   }
 
   setPageDimensions = (pdfDocument) => {
-    const promises = _.range(0, pdfDocument.pdfInfo.numPages).map((index) => {
+    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
     Promise.all(promises).then((pages) => {
       const viewports = pages.map((page) => {
-        return _.pick(page.getViewport(PAGE_DIMENSION_SCALE), ['width', 'height']);
+        return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
       });
 
       this.props.setPageDimensions(this.props.file, viewports);
@@ -128,7 +132,7 @@ export class PdfFile extends React.PureComponent {
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
-    if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+    if (pageIndex >= this.props.pdfDocument.numPages) {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
@@ -174,7 +178,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getColumnWidth = () => {
-    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages).
+    const maxPageWidth = _.range(0, this.props.pdfDocument.numPages).
       reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
 
     return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
@@ -322,7 +326,7 @@ export class PdfFile extends React.PureComponent {
       let minIndex = 0;
       let minDistance = Infinity;
 
-      _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
+      _.range(0, this.props.pdfDocument.numPages).forEach((index) => {
         const offset = this.getOffsetForPageIndex(index, 'center');
         const distance = Math.abs(offset.scrollTop - scrollTop);
 
@@ -432,7 +436,8 @@ export class PdfFile extends React.PureComponent {
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+    // eslint-disable-next-line no-underscore-dangle
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -444,7 +449,7 @@ export class PdfFile extends React.PureComponent {
           }
 
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
-            this.props.pdfDocument.pdfInfo.numPages);
+            this.props.pdfDocument.numPages);
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
@@ -462,7 +467,7 @@ export class PdfFile extends React.PureComponent {
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onScroll={this.onScroll}
             height={height}
-            rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
+            rowCount={Math.ceil(this.props.pdfDocument.numPages / this.columnCount)}
             rowHeight={this.getRowHeight}
             cellRenderer={this.getPage}
             scrollToAlignment="start"
@@ -482,6 +487,7 @@ export class PdfFile extends React.PureComponent {
 }
 
 PdfFile.propTypes = {
+  _transport: PropTypes.object,
   clearDocumentLoadError: PropTypes.object,
   clearPdfDocument: PropTypes.object,
   currentMatchIndex: PropTypes.object,
@@ -496,7 +502,6 @@ PdfFile.propTypes = {
   onScrollToComment: PropTypes.func,
   pageDimensions: PropTypes.func,
   pdfDocument: PropTypes.object,
-  pdfWorker: PropTypes.string,
   resetJumpToPage: PropTypes.func,
   rotation: PropTypes.number,
   scale: PropTypes.number,
