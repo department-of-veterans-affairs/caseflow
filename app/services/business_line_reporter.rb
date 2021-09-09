@@ -12,7 +12,9 @@ class BusinessLineReporter
   end
 
   def tasks
-    business_line.tasks.completed.includes([:assigned_to, :appeal]).order(id: :asc)
+    business_line.tasks.completed.includes(
+      [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+    ).order(id: :asc)
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -26,8 +28,8 @@ class BusinessLineReporter
           task.appeal_id,
           task.appeal_type,
           task.appeal.claimant&.name,
-          task.appeal.request_issues&.count,
-          task.appeal.decision_issues&.count,
+          task.appeal.request_issues.size,
+          task.appeal.decision_issues.size,
           task.appeal.veteran_file_number,
           task.appeal.intake&.user&.css_id,
           task.type,
