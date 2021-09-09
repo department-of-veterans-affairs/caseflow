@@ -94,7 +94,7 @@
     "moment-timezone": "^0.5.27",
     "node-sass": "^4.13.1",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.10.97",
+    "pdfjs-dist": "2.10.377",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.11.8",
@@ -137,7 +137,7 @@
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.4",
     "vis-timeline": "^7.4.9",
-    "webpack": "^4.42.1",
+    "webpack": "^5.52.0",
     "webpack-cli": "^3.3.11",
     "yup": "^0.32.9"
   },
