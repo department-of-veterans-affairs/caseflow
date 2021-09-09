@@ -1,3 +1,9 @@
+---
+title: Automatic Case Distribution
+parent: Caseflow Queue
+nav_order: 2
+___
+
 # Presentations
 - [May 2020 Case Distribution Overview](https://docs.google.com/presentation/d/143KwMEkw55YoKRxPL3vumVFGPR3X2n23eqxrcy1tDyM/edit#slide=id.g54fd333abc_0_70)
 - [November 2018 Presentation with cute robots describing how Automatic Case Distribution works](https://github.com/department-of-veterans-affairs/caseflow/files/2971837/2018-11-14.Automatic.Case.Distribution.UPDATED.pdf)
@@ -131,7 +137,7 @@ Unlike the other dockets, cases on the Direct Review docket are distributed base
 
 However, this proportion would remain at zero for nearly a year, waiting for cases to become due, and this is contrary to the Board's goal of beginning to work these cases immediately. So we will also calculate an [interpolated minimum direct review proportion](https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L73). We use the rate at which Direct Reviews are arriving to calculate a pacesetting proportion, or the proportion of nonpriority decision capacity that would need to go to the Direct Review docket in order to keep pace with what's arriving. We will then interpolate between 0 and the pacesetting proportion based on the age of the oldest Direct Review in the system. Finally, to accelerate the curve out, we multiply this interpolated figure by the [interpolated direct review proportion adjustment](https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L10). This gives us a curve out of the direct review proportion that would look something like the following:
 
-![](/assets/images/distribution-from-direct-docket.png)
+![](/caseflow/assets/images/distribution-from-direct-docket.png)
 
 The "jolt" in this chart shows when the calculation switched from using the interpolated minimum to using the standard due proportion.
 
