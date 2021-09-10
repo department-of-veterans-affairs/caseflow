@@ -9,9 +9,16 @@ const SPACE_DELIMITER = ' ';
 
 const categoriesOfDocument = (document) =>
   sortBy(
-    Constants.documentCategories.filter(
-      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
-    ),
+    Object.keys(Constants.documentCategories).reduce((list, name) => {
+      if (document[categoryFieldNameOfCategoryName(name)]) {
+        return {
+          ...list,
+          [name]: Constants.documentCategories[name]
+        };
+      }
+
+      return list;
+    }, {}),
     'renderOrder'
   );
 

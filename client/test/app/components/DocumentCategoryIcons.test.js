@@ -70,6 +70,5 @@ describe('DocumentCategoryIcons', () => {
     expect(listItems.childNodes[1]).toHaveAttribute('aria-label', expect.stringContaining('Medical'));
     expect(listItems.childNodes[2]).toHaveAttribute('aria-label', expect.stringContaining('Other Evidence'));
     expect(listItems.childNodes[3]).toHaveAttribute('aria-label', expect.stringContaining('Case Summary'));
-
   });
 });
