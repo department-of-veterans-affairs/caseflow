@@ -10,6 +10,7 @@ class Organization < CaseflowRecord
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
+  validates :participant_id, allow_blank: true, uniqueness: true
 
   before_save :clean_url
 
@@ -139,6 +140,8 @@ class Organization < CaseflowRecord
   def serialize
     {
       accepts_priority_pushed_cases: accepts_priority_pushed_cases,
+      ama_only_push: ama_only_push,
+      ama_only_request: ama_only_request,
       id: id,
       name: name,
       participant_id: participant_id,
