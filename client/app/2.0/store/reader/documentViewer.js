@@ -1,7 +1,8 @@
+/* eslint-disable max-lines */
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { random, range, difference } from 'lodash';
-import * as PDF from 'pdfjs';
-import pdfjsWorker from 'pdfjs/build/pdf.worker.entry';
+import * as PDF from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import Mark from 'mark.js';
 
 // Local Dependencies
@@ -582,3 +583,5 @@ export const {
 
 // Default export the reducer
 export default documentViewerSlice.reducer;
+
+/* eslint-enable max-lines */

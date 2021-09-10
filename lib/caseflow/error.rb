@@ -310,6 +310,7 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate DVC Team error"
       @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
     end
   end
@@ -318,7 +319,21 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate Judge Team error"
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
+    end
+  end
+
+  class DuplicateParticipantIdOrganization < SerializableError
+    # :reek:FeatureEnvy
+    def initialize(args)
+      participant_id = args[:participant_id]
+      organization = args[:organization]
+      @code = args[:code] || 400
+      @title = "Participant ID error"
+      @message = args[:message] ||
+                 "Participant ID #{participant_id} is already used for existing team '#{organization.name}'. " \
+                 "Cannot create another team with the same participant ID."
     end
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_26_145249) do
+ActiveRecord::Schema.define(version: 2021_09_09_151937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1083,6 +1083,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
     t.index ["accepts_priority_pushed_cases"], name: "index_organizations_on_accepts_priority_pushed_cases"
+    t.index ["participant_id"], name: "index_organizations_on_participant_id", unique: true
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
@@ -1217,6 +1218,8 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "deleted_at"
     t.integer "request_issue_id", comment: "The ID of the request issue."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
+    t.index ["decision_issue_id", "request_issue_id"], name: "index_on_decision_issue_id_and_request_issue_id", unique: true
+    t.index ["deleted_at"], name: "index_request_decision_issues_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
     t.index ["updated_at"], name: "index_request_decision_issues_on_updated_at"
   end
@@ -1534,6 +1537,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["css_id"], name: "index_users_on_css_id", unique: true
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
   end

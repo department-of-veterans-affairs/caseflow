@@ -115,6 +115,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Appellant"
     showDivider={true}
@@ -193,7 +194,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Appellant Email"
+          label="Appellant Email (for these notifications only)"
           optional={false}
           required={true}
           type="change_to_virtual"
@@ -205,7 +206,7 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Appellant Email"
+            name="Appellant Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
@@ -218,16 +219,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Appellant Email"
+                htmlFor="Appellant Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Appellant Email"
+                    name="Appellant Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Appellant Email
+                      Appellant Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -243,8 +244,8 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Appellant Email"
-                name="Appellant Email"
+                id="Appellant Email (for these notifications only)"
+                name="Appellant Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="Bob.Smith@test.com"
@@ -252,12 +253,12 @@ SAN FRANCISCO, CA 94103
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
@@ -372,6 +373,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -435,7 +437,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email={null}
           emailType="appellantEmail"
-          label="Veteran Email"
+          label="Veteran Email (for these notifications only)"
           optional={false}
           readOnly={true}
           required={true}
@@ -443,14 +445,14 @@ SAN FRANCISCO, CA 94103
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
+            label="Veteran Email (for these notifications only)"
             text="None"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
                 None
@@ -588,6 +590,7 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
   virtualHearing={Object {}}
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -650,7 +653,7 @@ SAN FRANCISCO, CA 94103
       >
         <VirtualHearingEmail
           emailType="appellantEmail"
-          label="Veteran Email"
+          label="Veteran Email (for these notifications only)"
           optional={false}
           readOnly={true}
           required={true}
@@ -658,14 +661,14 @@ SAN FRANCISCO, CA 94103
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
+            label="Veteran Email (for these notifications only)"
             text="None"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
                 None
@@ -818,6 +821,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -16990,7 +16994,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Email"
+          label="Veteran Email (for these notifications only)"
           optional={false}
           required={true}
           type="change_to_virtual"
@@ -17002,7 +17006,7 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Veteran Email"
+            name="Veteran Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
@@ -17015,16 +17019,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Email"
+                htmlFor="Veteran Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Email"
+                    name="Veteran Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -17040,8 +17044,8 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Veteran Email"
-                name="Veteran Email"
+                id="Veteran Email (for these notifications only)"
+                name="Veteran Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="Bob.Smith@test.com"
@@ -17049,12 +17053,12 @@ SAN FRANCISCO, CA 94103
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
@@ -17180,6 +17184,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -17243,7 +17248,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Email"
+          label="Veteran Email (for these notifications only)"
           optional={false}
           readOnly={true}
           required={true}
@@ -17251,20 +17256,232 @@ SAN FRANCISCO, CA 94103
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
+            label="Veteran Email (for these notifications only)"
             text="Bob.Smith@test.com"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
                 Bob.Smith@test.com
               </pre>
             </div>
           </ReadOnly>
+        </VirtualHearingEmail>
+      </div>
+    </div>
+  </VirtualHearingSection>
+</AppellantSection>
+`;
+
+exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
+<AppellantSection
+  appellantTitle="Appellant"
+  formFieldsOnly={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "caseType": "Original",
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "poaName": "AMERICAN LEGION",
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  schedulingToVirtual={true}
+  type="change_to_virtual"
+  update={[MockFunction]}
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <VirtualHearingSection
+    formFieldsOnly={true}
+    hide={false}
+    label="Appellant"
+    showDivider={true}
+  >
+    <div
+      className="cf-help-divider"
+    />
+    <strong>
+       
+      Appellant
+    </strong>
+    <div
+      className="usa-grid css-1jfbwxw"
+      id="email-section"
+    >
+      <div
+        className="usa-width-one-half"
+      >
+        <VirtualHearingEmail
+          email="Bob.Smith@test.com"
+          emailType="appellantEmail"
+          label="Appellant Email (for these notifications only)"
+          optional={false}
+          required={true}
+          type="change_to_virtual"
+          update={[MockFunction]}
+        >
+          <TextField
+            className={
+              Array [
+                "cf-form-textinput cf-inline-field",
+              ]
+            }
+            name="Appellant Email (for these notifications only)"
+            onChange={[Function]}
+            optional={false}
+            required={true}
+            strongLabel={true}
+            type="text"
+            useAriaLabel={false}
+            value="Bob.Smith@test.com"
+          >
+            <div
+              className="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                htmlFor="Appellant Email (for these notifications only)"
+              >
+                <strong>
+                  <FormLabel
+                    name="Appellant Email (for these notifications only)"
+                    optional={false}
+                    required={true}
+                  >
+                    <span>
+                      Appellant Email (for these notifications only)
+                      <span
+                        className="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </FormLabel>
+                </strong>
+              </label>
+              <input
+                className={
+                  Array [
+                    "cf-form-textinput cf-inline-field",
+                  ]
+                }
+                id="Appellant Email (for these notifications only)"
+                name="Appellant Email (for these notifications only)"
+                onChange={[Function]}
+                type="text"
+                value="Bob.Smith@test.com"
+              />
+            </div>
+          </TextField>
+          <HelperText
+            label="This email address will be used to send notifications for this hearing only."
+          >
+            <div
+              className="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </HelperText>
         </VirtualHearingEmail>
       </div>
     </div>
@@ -17387,6 +17604,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -17450,7 +17668,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Email"
+          label="Veteran Email (for these notifications only)"
           optional={false}
           required={true}
           type="change_to_virtual"
@@ -17462,7 +17680,7 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Veteran Email"
+            name="Veteran Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
@@ -17475,16 +17693,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Email"
+                htmlFor="Veteran Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Email"
+                    name="Veteran Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -17500,8 +17718,8 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Veteran Email"
-                name="Veteran Email"
+                id="Veteran Email (for these notifications only)"
+                name="Veteran Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
                 value="Bob.Smith@test.com"
@@ -17509,12 +17727,12 @@ SAN FRANCISCO, CA 94103
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
         </VirtualHearingEmail>
