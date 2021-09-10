@@ -179,7 +179,7 @@ class AssignHearingModal extends React.PureComponent {
     const { hearingDay } = this.props;
 
     return {
-      initialHearingDate: hearingDay.hearingDate,
+      initialHearingDay: hearingDay,
       initialRegionalOffice: this.getRO()
     };
   };
