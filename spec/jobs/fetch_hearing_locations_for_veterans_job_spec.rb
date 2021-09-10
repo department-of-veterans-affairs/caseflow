@@ -80,7 +80,9 @@ describe FetchHearingLocationsForVeteransJob do
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
         let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
         # Travel board case without an appeal:
-        let!(:travel_board_case) { create(:case, :travel_board_hearing, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let!(:travel_board_case) do
+          create(:case, :travel_board_hearing, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+        end
 
         # should not be returned
         before do
