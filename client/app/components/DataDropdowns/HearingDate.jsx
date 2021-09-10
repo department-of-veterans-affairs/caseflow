@@ -88,6 +88,10 @@ export const HearingDateDropdown = (props) => {
     // ex `hearingDatesForRO17`
     const dropdownKeyForRo = `hearingDatesFor${regionalOffice}`;
 
+    if (!hearingDates?.isFetching && hearingDateOptions && !hearingDateOptions?.length && regionalOffice) {
+      props.onDropdownError(dropdownKeyForRo, 'There are no upcoming hearing dates for this regional office.');
+    }
+
     // no need to fetch
     if (hearingDateOptions || hearingDates?.isFetching) {
       return;
@@ -104,44 +108,30 @@ export const HearingDateDropdown = (props) => {
         // sort dates in ascending order
         dateOptionsForRO?.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
 
-        // add empty value as the first item on list
-        dateOptionsForRO?.unshift(
-          {
-            label: ' ',
-            value: {
-              hearingId: null,
-              hearingDate: null
-            }
-          }
-        );
-
         props.onReceiveDropdownData(dropdownKeyForRo, dateOptionsForRO);
 
-        if (dateOptionsForRO && dateOptionsForRO.length === 1) {
-          props.onDropdownError(dropdownKeyForRo, 'There are no upcoming hearing dates for this regional office.');
-        } else {
+        if (dateOptionsForRO) {
           props.onDropdownError(dropdownKeyForRo, null);
+        } else {
+          props.onDropdownError(dropdownKeyForRo, 'There are no upcoming hearing dates for this regional office.');
         }
       });
   };
 
   // return the last selected hearing date for RO
   const getSelectedOption = () => {
+    const dateOptions = hearingDateOptions?.map((opt) => opt.value.hearingDate);
+
     // no history of date selection, return first item on list
-    if (!value) {
+    if (!value || !dateOptions?.includes(value?.hearingDate)) {
       return hearingDateOptions ? hearingDateOptions[0] : {};
     }
 
-    let comparison;
-
-    // determine if any selection was made
-    if (typeof (value) === 'string') {
-      comparison = (opt) => opt?.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
-    } else if (value.hearingDate) {
-      comparison = (opt) => opt?.value.hearingDate === value.hearingDate;
-    } else {
-      comparison = (opt) => opt?.value === value;
-    }
+    const hearingIds = hearingDateOptions?.map((opt) => opt.value.hearingId);
+    const comparison = (opt) =>
+      value?.hearingId && hearingIds.includes(value?.hearingId) ?
+        opt?.value?.hearingId === value?.hearingId :
+        opt?.value.hearingDate === value.hearingDate;
 
     // find which date was selected from list of hearing dates
     return find(hearingDateOptions, comparison);
@@ -149,15 +139,14 @@ export const HearingDateDropdown = (props) => {
 
   // on mount and if new RO is selected
   useEffect(() => {
-    setTimeout(() => getHearingDates(), 0);
-  }, [regionalOffice]);
+    if (!hearingDateOptions?.length) {
+      getHearingDates();
+    }
 
-  // only if there's new set of hearingDateOptions, triggered by a RO change
-  useEffect(() => {
     const option = getSelectedOption() || {};
 
     onChange(option.value, option.label);
-  }, [hearingDateOptions]);
+  }, [regionalOffice, hearingDateOptions]);
 
   return (
     <React.Fragment>
