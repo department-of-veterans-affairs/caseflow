@@ -79,6 +79,8 @@ describe FetchHearingLocationsForVeteransJob do
         let!(:veteran_3) { create(:veteran, file_number: "000000000") }
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
         let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
+        # Travel board case without an appeal:
+        let!(:travel_board_case) { create(:case, :travel_board_hearing, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
 
         # should not be returned
         before do
@@ -91,7 +93,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "returns only appeals with scheduled hearings tasks without an admin action or who are in location 57" do
           job.create_schedule_hearing_tasks
           expect(job.appeals.pluck(:id)).to contain_exactly(
-            legacy_appeal.id, legacy_appeal_2.id, appeal.id
+            legacy_appeal.id, legacy_appeal_2.id, appeal.id, LegacyAppeal.last.id
           )
         end
       end
