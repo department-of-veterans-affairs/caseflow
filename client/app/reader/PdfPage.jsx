@@ -337,7 +337,7 @@ PdfPage.propTypes = {
   isDrawing: PropTypes.bool,
   isPlacingAnnotation: PropTypes.bool,
   rotation: PropTypes.number,
-  pageDimensions: PropTypes.object.shape({
+  pageDimensions: PropTypes.shape({
     width: PropTypes.number,
     height: PropTypes.number
   }),
