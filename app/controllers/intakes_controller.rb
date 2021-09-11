@@ -156,6 +156,7 @@ class IntakesController < ApplicationController
     @new_intake ||= Intake.build(
       user: current_user,
       veteran_file_number: veteran_file_number,
+      veteran_id: veteran&.id,
       form_type: params[:form_type]
     )
   end
@@ -168,9 +169,12 @@ class IntakesController < ApplicationController
     @detail ||= intake&.detail
   end
 
-  def veteran_file_number
+  def veteran
     # param could be file number or SSN. Make sure we return file number.
-    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
+    @veteran ||= Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
+  end
+
+  def veteran_file_number
     veteran ? veteran.file_number : params[:file_number]
   end
 

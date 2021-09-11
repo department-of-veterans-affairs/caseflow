@@ -66,13 +66,14 @@ class Intake < CaseflowRecord
       where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
     end
 
-    def build(form_type:, veteran_file_number:, user:)
+    def build(form_type:, veteran_file_number:, veteran_id:, user:)
       intake_classname = FORM_TYPES[form_type.to_sym]
 
       fail FormTypeNotSupported unless intake_classname
 
       intake_classname.constantize.new(
         veteran_file_number: veteran_file_number.strip,
+        veteran_id: veteran_id,
         user: user
       )
     end
@@ -188,8 +189,13 @@ class Intake < CaseflowRecord
     !error_code
   end
 
+  # Turn this into an ordinary ActiveRecord association once veteran_id is fully populated
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+    @veteran ||= if veteran_id.present?
+                   Veteran.find(veteran_id)
+                 else
+                   Veteran.find_or_create_by_file_number(veteran_file_number)
+                 end
   end
 
   def ui_hash
