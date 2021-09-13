@@ -130,7 +130,7 @@ jobs:
           cd main-gh-pages_checkout
 
           echo "::group::Ignore files that change with every run"
-          rm -vf make_docs/*-erd.pdf
+          rm -vf schema/make_docs/*-erd.pdf
           echo "::endgroup::"
 
           git add .
