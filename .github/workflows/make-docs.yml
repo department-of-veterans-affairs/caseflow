@@ -109,6 +109,9 @@ jobs:
         with:
           ref: main-gh-pages
           path: main-gh-pages_checkout
+      - name: Copy results of `make docs` to checkout of main-gh-pages
+        run: |
+          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
       - name: Update Jailer-generated DB schema docs for Caseflow
         run: |
           CASEFLOW_HOME=`pwd`
@@ -120,8 +123,6 @@ jobs:
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
-          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
-
           cd main-gh-pages_checkout
 
           echo "::group::Ignore files that change with every run"
