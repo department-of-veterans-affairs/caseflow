@@ -2,9 +2,11 @@
 
 CASEFLOW_HOME=$1
 
+# In Caseflow, `make doc-schema-caseflow` creates $CASEFLOW_HOME/docs/schema/caseflow-jailer_polymorphic_associations.csv
+POLYMOPHIC_CSV_FILE="$2"
+
 [ -d "$CASEFLOW_HOME" ] || { echo "ERROR: Cannot find Caseflow directory: '$CASEFLOW_HOME'"; exit 1; }
 
-POLYMOPHIC_CSV_FILE="$CASEFLOW_HOME/docs/schema/caseflow-jailer_polymorphic_associations.csv"
 [ -f "$POLYMOPHIC_CSV_FILE" ] || {
 	echo "ERROR: Cannot find Caseflow's polymorphic association csv file: '$POLYMOPHIC_CSV_FILE'"
 	exit 2
