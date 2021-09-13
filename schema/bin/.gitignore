@@ -1,0 +1,6 @@
+# Created by Jailer
+caseflow-schema/
+render/
+jailer.log
+sql.log
+export.log

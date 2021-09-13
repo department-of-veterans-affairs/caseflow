@@ -158,6 +158,7 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+  - schema/bin/
   - __*
 
 # Don't delete these files in the destination directory.
