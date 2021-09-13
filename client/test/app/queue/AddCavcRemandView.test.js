@@ -24,7 +24,6 @@ describe('AddCavcRemandView', () => {
         wrappingComponentProps: {
           ui: {
             featureToggles: {
-              cavc_remand: true,
               mdr_cavc_remand: mdrToggled,
               reversal_cavc_remand: reversalToggled,
               dismissal_cavc_remand: dismissalToggled
