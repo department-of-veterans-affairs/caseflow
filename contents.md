@@ -1,5 +1,6 @@
 ---
 nav_order: 0
+has_children: true
 permalink: "index"
 ---
 
@@ -21,7 +22,15 @@ permalink: "index"
   </script>
 </p>
 
-* [Bat Team Quick Ref](batteam_quick_ref.md)
+{% assign doclist = site.html_pages | where_exp:"item", "item.title != nil" | where_exp:"item", "item.nav_order != nil" | sort: 'nav_order'  %}
+<ol>
+{% for item in doclist %}
+    <li><a href="{{ site.url }}{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+{% endfor %}
+</ol>
+
+
+## Bat Team Items (Jekyll collection test)
 {% for batteam in site.batteam_items %}
   - <a href="{{ site.baseurl }}{{ batteam.url }}">{{ batteam.title }},
       {{ batteam.name }}, {{ batteam.my_var }}
@@ -30,6 +39,9 @@ permalink: "index"
 {% endfor %}
 
 ## Database
-* [Caseflow DB schema](schema/html/index.html) (created via [Jailer](https://github.com/Wisser/Jailer))
-* [Help](help/index.html)
-  - [Jekyll](help/jekyll.html)
+* [Caseflow DB schema](schema/db_schema)
+  - [Table associations](schema/html/) (created via [Jailer](https://github.com/Wisser/Jailer))
+* [Task trees](task_trees/index.html)
+* [Help subsite](help/index.html)
+  - [Diagram examples](help/diagrams)
+  - [Jekyll](help/jekyll)

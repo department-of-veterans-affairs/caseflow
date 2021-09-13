@@ -1,0 +1,88 @@
+@startuml
+skinparam {
+  ObjectBorderColor #555
+  ObjectBorderThickness 0
+  ObjectFontStyle bold
+  ObjectFontSize 14
+  ObjectAttributeFontColor #333
+  ObjectAttributeFontSize 12
+}
+  object 0.RootTask #8dd3c7 {
+Organization
+}
+  object 1.TrackVeteranTask #bebada {
+Organization
+}
+  object 2.DistributionTask #ffffb3 {
+Organization
+}
+  object 3.TranslationTask #bebada {
+Organization
+}
+  object 4.TranslationTask #bebada {
+User
+}
+0.RootTask -- 3.TranslationTask
+3.TranslationTask -- 4.TranslationTask
+
+  object 4.ScheduleHearingTask #80b1d3 {
+Organization
+}
+
+  object 5.HearingAdminActionVerifyAddressTask #ffed6f {
+Organization
+}
+  object 6.HearingAdminActionVerifyAddressTask #ffed6f {
+User
+}
+4.ScheduleHearingTask -- 5.HearingAdminActionVerifyAddressTask
+5.HearingAdminActionVerifyAddressTask -- 6.HearingAdminActionVerifyAddressTask
+
+  object 8.HearingAdminActionFoiaPrivacyRequestTask #ffed6f {
+Organization
+}
+  object 9.HearingAdminActionFoiaPrivacyRequestTask #ffed6f {
+User
+}
+4.ScheduleHearingTask -- 8.HearingAdminActionFoiaPrivacyRequestTask
+8.HearingAdminActionFoiaPrivacyRequestTask -- 9.HearingAdminActionFoiaPrivacyRequestTask
+
+  object 4.HearingTask #fb8072 {
+Organization
+}
+  object 5.AssignHearingDispositionTask #8dd3c7 {
+Organization
+}
+
+  object 6.ChangeHearingDispositionTask #d9d9d9 {
+Organization
+}
+  object 7.TranscriptionTask #fb8072 {
+Organization
+}
+  object 8.EvidenceSubmissionWindowTask #fccde5 {
+Organization
+}
+4.HearingTask -- 6.ChangeHearingDispositionTask
+6.ChangeHearingDispositionTask -- 7.TranscriptionTask
+6.ChangeHearingDispositionTask -- 8.EvidenceSubmissionWindowTask
+
+  object 6.NoShowHearingTask #b3de69 {
+Organization
+}
+  object 7.TimedHoldTask #fccde5 {
+Organization
+}
+  object 8.NoShowHearingTask #b3de69 {
+User
+}
+5.AssignHearingDispositionTask -- 6.NoShowHearingTask
+6.NoShowHearingTask -- 7.TimedHoldTask
+6.NoShowHearingTask -- 8.NoShowHearingTask
+
+0.RootTask -- 1.TrackVeteranTask
+0.RootTask -- 2.DistributionTask
+4.HearingTask -- 4.ScheduleHearingTask
+2.DistributionTask -- 4.HearingTask
+4.HearingTask -- 5.AssignHearingDispositionTask
+@enduml

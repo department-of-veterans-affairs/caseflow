@@ -1,0 +1,47 @@
+main.container {
+    max-width: unset;
+    margin: 0 auto;
+}
+
+table.parentChildTable {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+
+
+  th:first-of-type {
+    width: 40%;
+  }
+  th:nth-of-type(2) {
+    width: 40%;
+  }
+  td:first-of-type {
+    white-space:normal;
+    word-wrap:break-word;
+  }
+  td:nth-of-type(2) {
+    white-space:normal;
+    word-wrap:break-word;
+  }
+}
+
+li {
+  word-wrap:break-word;
+}
+
+
+.book-menu nav ul li {
+  margin: 5px 0px;
+}
+.book-menu a {
+  padding: 5px;
+}
+.book-menu a.active {
+  color: black;
+  background-color: #FAF884;
+}
+
+.mermaid svg {
+  // without this, there's extra top and bottom space for large diagrams
+  height: fit-content;
+}

@@ -1,0 +1,41 @@
+@startuml
+skinparam {
+  ObjectBorderColor #555
+  ObjectBorderThickness 0
+  ObjectFontStyle bold
+  ObjectFontSize 14
+  ObjectAttributeFontColor #333
+  ObjectAttributeFontSize 12
+}
+  object 0.RootTask #8dd3c7 {
+Organization
+}
+  object 6.BvaDispatchTask #b3de69 {
+Organization
+}
+  object 7.BvaDispatchTask #b3de69 {
+User
+}
+  object 8.JudgeDispatchReturnTask #ffffb3 {
+User
+}
+  object 9.AttorneyDispatchReturnTask #fccde5 {
+User
+}
+  object 10.OtherColocatedTask #80b1d3 {
+Organization
+}
+  object 11.OtherColocatedTask #80b1d3 {
+User
+}
+  object 12.OtherColocatedTask #80b1d3 {
+User
+}
+0.RootTask -- 6.BvaDispatchTask
+6.BvaDispatchTask -- 7.BvaDispatchTask
+7.BvaDispatchTask -- 8.JudgeDispatchReturnTask
+8.JudgeDispatchReturnTask -- 9.AttorneyDispatchReturnTask
+9.AttorneyDispatchReturnTask -- 10.OtherColocatedTask
+10.OtherColocatedTask -- 11.OtherColocatedTask
+10.OtherColocatedTask -- 12.OtherColocatedTask
+@enduml

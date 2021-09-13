@@ -8,3 +8,5 @@ source: __help
 destination: _site/help
 
 # remote_theme: pages-themes/modernist@v0.2.0
+plugins:
+  - jekyll-diagrams

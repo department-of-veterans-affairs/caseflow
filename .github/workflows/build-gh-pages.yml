@@ -20,18 +20,18 @@ jobs:
         # with:
         #   fetch-depth: '0'
 
-      - name: "💎 Setup ruby"
+      - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.3
 
       # ----- Install various dependencies for https://github.com/zhustec/jekyll-diagrams
-      # Java is needed for plantuml
-      - name: "Setup Java"
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
+      # Java is needed for plantuml, but it seems to be working without needing to install Java explicitly
+      # - name: "Setup Java"
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'zulu'
+      #     java-version: '11'
       # Also provides node12, which is needed by mermaid
       # node12 is also used by https://github.com/limjh16/jekyll-action-ts/blob/master/action.yml#L32
       - name: "Install Graphviz"
@@ -44,7 +44,9 @@ jobs:
         run: |
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
       - name: "Setup Python"
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
       - name: "Install Python diagramming tools"
         uses: BSFishy/pip-action@v1
         with:
@@ -78,15 +80,43 @@ jobs:
           ### Flags accepted can be found here https://jekyllrb.com/docs/configuration/options/#build-command-options
           # custom_opts: '--drafts --future'
           custom_opts: '--verbose'
-      - name: "🔨 Build Jekyll subsites"
+
+      - name: "📂 Checkout Caseflow code for task_trees subsite"
+        uses: actions/checkout@v2
+        with:
+          # repository: ${{github.repository}}
+          ref: "master"
+          path: "__tmp_caseflow_checkout"
+      - name: "✏️ Update task_trees subsite with Caseflow code comments"
+        env:
+          WIKI_COMMIT_MESSAGE: '`comments_to_descriptions.py` - automatic update of task_trees docs with Caseflow code comments'
+          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
+          WIKI_COMMIT_USER_NAME: 'yoomlam'
+        run: |
+          MY_HOME=`pwd`
+          cd __task_trees/content/trees
+          ./comments_to_descriptions.py "$MY_HOME/__tmp_caseflow_checkout"
+
+          # Check in changes to main-gh-pages
+          git add .
+          if git diff-index --quiet HEAD; then
+            echo "::group::No changes to schema"
+            ls -alR task_descr
+            echo "::endgroup::"
+          else
+            echo "::group::Pushing changes to main-gh-pages"
+            git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+            git config --local user.name "$WIKI_COMMIT_USER_NAME"
+            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+            echo "::endgroup::"
+          fi
+      - name: "🔨 Build subsites"
         run: |
           # README.md for https://github.com/department-of-veterans-affairs/caseflow/tree/gh-pages
           cp README.md _site/
-
-          #
           make build_subsites
 
-      - name: "🚀 Deploy to gh-pages"
+      - name: "🚀 Deploy to gh-pages branch"
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

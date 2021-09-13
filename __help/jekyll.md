@@ -1,5 +1,6 @@
 ---
 nav_order: 99
+parent: Help
 ---
 
 # Jekyll
