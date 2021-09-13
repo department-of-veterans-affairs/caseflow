@@ -20,13 +20,13 @@ RSpec.describe IntakesController, :postgres do
     it "should search by Veteran file number" do
       post :create, params: { file_number: file_number, form_type: "higher_level_review" }
       expect(response.status).to eq(200)
-      expect(Intake.last.veteran_file_number).to eq(file_number)
+      expect(Intake.last).to have_attributes(veteran_file_number: file_number, veteran_id: veteran.id)
     end
 
     it "should search by SSN" do
       post :create, params: { file_number: ssn, form_type: "higher_level_review" }
       expect(response.status).to eq(200)
-      expect(Intake.last.veteran_file_number).to eq(file_number)
+      expect(Intake.last).to have_attributes(veteran_file_number: file_number, veteran_id: veteran.id)
     end
 
     context "veteran name is out of sync with BGS" do
