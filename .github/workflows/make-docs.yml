@@ -113,6 +113,10 @@ jobs:
         run: |
           rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
       - name: Update Jailer-generated DB schema docs for Caseflow
+        env:
+          POSTGRES_DB: caseflow_certification_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
         run: |
           CASEFLOW_HOME=`pwd`
           cd main-gh-pages_checkout/schema/bin
