@@ -66,14 +66,13 @@ class Intake < CaseflowRecord
       where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
     end
 
-    def build(form_type:, veteran_file_number:, veteran_id:, user:)
+    def build(form_type:, veteran_file_number:, user:)
       intake_classname = FORM_TYPES[form_type.to_sym]
 
       fail FormTypeNotSupported unless intake_classname
 
       intake_classname.constantize.new(
         veteran_file_number: veteran_file_number.strip,
-        veteran_id: veteran_id,
         user: user
       )
     end
@@ -104,6 +103,7 @@ class Intake < CaseflowRecord
 
   def start!
     preload_intake_data!
+    preload_veteran_data!
 
     if validate_start
       self.class.close_expired_intakes!
@@ -162,6 +162,11 @@ class Intake < CaseflowRecord
   # Optional step to load data into the Caseflow DB that will be used for the intake
   def preload_intake_data!
     nil
+  end
+
+  def preload_veteran_data!
+    vet = Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number, sync_name: true)
+    update(veteran_file_number: vet.file_number, veteran_id: vet.id) if vet.present?
   end
 
   def start_completion!

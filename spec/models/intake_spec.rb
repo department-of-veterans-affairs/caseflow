@@ -65,7 +65,7 @@ describe Intake, :postgres do
   let(:completion_started_at) { nil }
 
   context ".build" do
-    subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, veteran_id: nil, user: user) }
+    subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, user: user) }
 
     context "when form_type is supported" do
       let(:form_type) { "ramp_election" }
