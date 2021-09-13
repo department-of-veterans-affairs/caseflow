@@ -105,7 +105,7 @@ module HearingRequestTypeConcern
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def format_hearing_request_type(request_type)
-    return nil if request_type.nil?
+    return nil if request_type.nil? || request_type == :none
 
     case request_type
     when HearingDay::REQUEST_TYPES[:central], :central_office, :central
