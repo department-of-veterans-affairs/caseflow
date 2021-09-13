@@ -116,7 +116,7 @@ jobs:
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
       - name: Commit 'make docs' files to main-gh-pages
         env:
-          WIKI_COMMIT_MESSAGE: '`make docs` - Automatically update DB schema documentation files'
+          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
