@@ -166,7 +166,10 @@ class Intake < CaseflowRecord
 
   def preload_veteran_data!
     vet = Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number, sync_name: true)
-    update(veteran_file_number: vet.file_number, veteran_id: vet.id) if vet.present?
+    if vet.present?
+      self.veteran_file_number = vet.file_number
+      self.veteran_id = vet.id
+    end
   end
 
   def start_completion!
