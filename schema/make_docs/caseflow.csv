@@ -822,7 +822,7 @@ organizations,ama_only_request,boolean,,,,,,whether a JudgeTeam should only get 
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
-organizations,participant_id,string,,,,,,Organizations BGS partipant id
+organizations,participant_id,string U,,,,x,x,Organizations BGS partipant id
 organizations,role,string,,,,,,"Role users in organization must have, if present"
 organizations,status,string,,,,,x,"Whether organization is active, inactive, or in some other Status."
 organizations,status_updated_at,datetime,,,,,,Track when organization status last changed.
@@ -923,7 +923,7 @@ remand_reasons,updated_at,datetime ∗,x,,,,x,
 request_decision_issues,,,,,,,,Join table for the has and belongs to many to many relationship between request issues and decision issues.
 request_decision_issues,created_at,datetime ∗,x,,,,,Automatic timestamp when row was created.
 request_decision_issues,decision_issue_id,integer FK,,,x,,x,The ID of the decision issue.
-request_decision_issues,deleted_at,datetime,,,,,,
+request_decision_issues,deleted_at,datetime,,,,,x,
 request_decision_issues,id,integer (8) PK,x,x,,,,
 request_decision_issues,request_issue_id,integer FK,,,x,,x,The ID of the request issue.
 request_decision_issues,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
@@ -1162,7 +1162,7 @@ unrecognized_party_details,updated_at,datetime ∗,x,,,,,
 unrecognized_party_details,zip,string ∗,x,,,,,
 users,,,,,,,,Authenticated Caseflow users
 users,created_at,datetime,,,,,,
-users,css_id,string ∗,x,,,,,
+users,css_id,string ∗,x,,,,x,
 users,efolder_documents_fetched_at,datetime,,,,,,Date when efolder documents were cached in s3 for this user
 users,email,string,,,,,,
 users,full_name,string,,,,,,
@@ -1256,6 +1256,13 @@ vso_configs,id,integer (8) PK,x,x,,,,
 vso_configs,ihp_dockets,string,,,,,,
 vso_configs,organization_id,integer FK,,,x,,x,
 vso_configs,updated_at,datetime ∗,x,,,,x,
+work_modes,,,,,,,,Captures user's current work mode for appeals being worked
+work_modes,appeal_id,integer ∗ FK,x,,x,,x,Appeal ID -- use as FK to AMA appeals and legacy appeals
+work_modes,appeal_type,string ∗,x,,,,x,Whether appeal_id is for AMA or legacy appeals
+work_modes,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+work_modes,id,integer (8) PK,x,x,,,,
+work_modes,overtime,boolean,,,,,,Whether the appeal is currently marked as being worked as overtime
+work_modes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 worksheet_issues,,,,,,,,
 worksheet_issues,allow,boolean,,,,,,
 worksheet_issues,appeal_id,integer FK,,,x,,x,

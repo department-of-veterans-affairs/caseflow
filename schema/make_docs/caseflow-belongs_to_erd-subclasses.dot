@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,3988.5,3960.9",
+	graph [bb="0,0,3988.5,4113.9",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -913,6 +913,11 @@ digraph belongs_to_erd_subclasses {
 		label=VsoConfig,
 		];
 	VsoConfig -> Organization	[label=organization,
+		];
+	WorkMode	[
+		label=WorkMode,
+		];
+	WorkMode -> appeal_type	[label=appeal,
 		];
 	WorksheetIssue	[fillcolor="#66ccff",
 		label=WorksheetIssue,
