@@ -45,7 +45,6 @@ Once an Appeal has been certified, the information on a Form8 form will be sent 
 * `hearing_held`: `nil` if `hearing_requested` set to `No`
 * `certification_date`
 * `soc_date`
-
 * `power_of_attorney` information pulled from [BGS](https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why)
 
 ### LegacyAppeals
@@ -66,7 +65,7 @@ In the diagram below you will see the `certifications` table's `id` is stored on
 
 The `form8s` table connects with the `certifications` table through the `certification_date`, `representative_name`, `representative_type`, and `vacols_id`, which also connects it with the `legacy_appeals` table. It is connected with a Veteran by storing the `veteran_file_number`. 
 
-<br/>[<img src=https://user-images.githubusercontent.com/63597932/116123748-6468f180-a691-11eb-86bd-9dc6012f7be9.png>](https://user-images.githubusercontent.com/63597932/116123748-6468f180-a691-11eb-86bd-9dc6012f7be9.png)
+<img src="https://user-images.githubusercontent.com/63597932/116123748-6468f180-a691-11eb-86bd-9dc6012f7be9.png">
 
 
 ## eFolder Express
@@ -92,7 +91,7 @@ When a user searches for the Veteran they are looking for in EE, they are presen
 ### Relationships
 In the diagram below you can see that every `FileDownload` will store a `manifest_id`, as well as every `ManifestSource`. This makes sense given the fact that a `Manifest` is a collection of `ManifestSources`, with each `ManifestSource` containing a `Record`. The files indirectly referenced by a `Manifest` can be downloaded as many times as needed. 
 
-  <br/>[<img src="https://user-images.githubusercontent.com/63597932/101203241-64137f80-3638-11eb-98b7-ebdc95a39533.png" width=800>](https://user-images.githubusercontent.com/63597932/101203241-64137f80-3638-11eb-98b7-ebdc95a39533.png)
+<img src="https://user-images.githubusercontent.com/63597932/101203241-64137f80-3638-11eb-98b7-ebdc95a39533.png" width=800>
 
 
 ## Caseflow Dispatch
@@ -118,7 +117,7 @@ Caseflow [tasks](https://github.com/department-of-veterans-affairs/caseflow/wiki
 ### Relationships
 In the diagram below, you will see that the `dispatch_tasks` tables stores the `id` of the `user` assigned to the task as well as the `id` of the `legacy_appeal`. The `legacy_appeals` tables does not store any `dispatch_task` `ids` because each appeal can have many `dispatch_tasks`.
 
-<br/>[<img src="https://user-images.githubusercontent.com/63597932/116123231-c2e1a000-a690-11eb-9097-a8f48d223a0b.png" width=800>](https://user-images.githubusercontent.com/63597932/116123231-c2e1a000-a690-11eb-9097-a8f48d223a0b.png
+<img src="https://user-images.githubusercontent.com/63597932/116123231-c2e1a000-a690-11eb-9097-a8f48d223a0b.png" width=800>
 
 
 ## Caseflow Intake
@@ -160,7 +159,7 @@ In the diagram below you can see that the `appeals`, `supplemental_claims`, and 
 
 Also note that the `request_issues` table's `id` is referenced by the `end_product_establishments` table. The `end_product_establishments` table's `source_type` is the same as the `request_issues` table's `decision_review_type`.
 
-  <br/>[<img src="https://user-images.githubusercontent.com/63597932/116121937-223eb080-a68f-11eb-9625-fa9cca7c9201.png" width=800>](https://user-images.githubusercontent.com/63597932/116121937-223eb080-a68f-11eb-9625-fa9cca7c9201.png)
+<img src="https://user-images.githubusercontent.com/63597932/116121937-223eb080-a68f-11eb-9625-fa9cca7c9201.png" width=800>
 
 
 ## Caseflow Hearings
@@ -210,7 +209,7 @@ In the diagram below you can see the following relationships between various hea
 * The `hearings` and `legacy_hearings` table's `hearing_day_id` corresponds with the `hearing_days` table's `id`.
 * The `hearings_tasks_assocations` table's hearing_task_id corresponds with the `tasks` table's `id`.
 
-<br/>[<img src="https://user-images.githubusercontent.com/63597932/105734269-760af380-5f00-11eb-8766-cc8fea5ba437.png">](https://user-images.githubusercontent.com/63597932/105734269-760af380-5f00-11eb-8766-cc8fea5ba437.png)
+<img src="https://user-images.githubusercontent.com/63597932/105734269-760af380-5f00-11eb-8766-cc8fea5ba437.png">
 
 
 ## Caseflow Queue
@@ -238,8 +237,9 @@ In the following diagram, you can see that an `id` on an AMA or Legacy appeal wi
 
 An `assigned_by_id` or `assigned_to_id` will correspond with the `id` of the user who has either assigned or been assigned a task
 
-Finally, `organization_users` is representative of a users relationship to a particular type of organization.  Therefore the users table's `id` will correspond with the `user_id` and the organizations table's `id` will correspond with the `organization_id`. 
-  <br/>[<img src="https://user-images.githubusercontent.com/63597932/116123110-9c236980-a690-11eb-9482-add90c31e4f9.png">](https://user-images.githubusercontent.com/63597932/116123110-9c236980-a690-11eb-9482-add90c31e4f9.png)
+Finally, `organization_users` is representative of a users relationship to a particular type of organization.  Therefore the users table's `id` will correspond with the `user_id` and the organizations table's `id` will correspond with the `organization_id`.
+
+<img src="https://user-images.githubusercontent.com/63597932/116123110-9c236980-a690-11eb-9482-add90c31e4f9.png">
 
 
 ## Caseflow Reader
@@ -265,7 +265,7 @@ To track which document a comment/annotation is created for, the `id` from the `
 
 To track when a document has been viewed by a user we have the `document_views` table, the `id` from the `documents` table corresponds with the `document_id` in the `document_views` table, and the `user_id` refers to the `id` in the `users` table.
 
-<br/>[<img src="https://user-images.githubusercontent.com/55255674/97455894-54509f00-1906-11eb-8104-b409bc4d777a.png" height="600">](https://user-images.githubusercontent.com/55255674/97455894-54509f00-1906-11eb-8104-b409bc4d777a.png)
+<img src="https://user-images.githubusercontent.com/55255674/97455894-54509f00-1906-11eb-8104-b409bc4d777a.png" height="600">
 
 # By workflow
 
@@ -316,7 +316,7 @@ To track when a document has been viewed by a user we have the `document_views` 
 ## Case Details page
 
 ### Power of Attorney
-* [[Power of Attorney (POA)]]
+* [Power of Attorney (POA)](https://github.com/department-of-veterans-affairs/caseflow/wiki/Power-of-Attorney-%28POA%29)
 
 Trace of POA lookup for LegacyAppeal
 * First set `RequestStore.store[:application] == "queue"` because [POA lookup is different for different Caseflow apps](https://github.com/department-of-veterans-affairs/caseflow/blob/fde62ed5fe0a7410d2ed2cb8ff990f782d4455dd/app/models/legacy_appeal_representative.rb#L73-L78)
@@ -328,7 +328,3 @@ Trace of POA lookup for LegacyAppeal
       * `sanitized_vbms_id` calls `LegacyAppeal.veteran_file_number_from_bfcorlid(vbms_id)`
     * `claimant_participant_id` comes from `LegacyAppeal#claimant_participant_id`, which
       * checks `appellant_ssn` (from VACOLS `case_record.correspondent.ssn`), then looks up Person `Person.find_or_create_by_ssn(appellant_ssn)` for their `participant_id`.
-
-
-
-
