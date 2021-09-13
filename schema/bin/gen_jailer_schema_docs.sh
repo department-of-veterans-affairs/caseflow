@@ -14,10 +14,15 @@ POLYMOPHIC_CSV_FILE="$2"
 
 [ -d "caseflow-schema" ] && rm -rf caseflow-schema
 
+[ "$POSTGRES_DB" ] || { echo "ERROR: Environment variable POSTGRES_DB is not set"; exit 10; }
+[ "$POSTGRES_USER" ] || { echo "ERROR: Environment variable POSTGRES_USER is not set"; exit 11; }
+[ "$POSTGRES_PASSWORD" ] || { echo "ERROR: Environment variable POSTGRES_PASSWORD is not set"; exit 12; }
+
+echo "Querying DB: $POSTGRES_DB as user $POSTGRES_USER"
 # Build Jailer models of Caseflow's DB in the Jailer installation directory
 sh jailer.sh build-model -jdbcjar lib/postgresql-42.2.16.jar \
   -datamodel caseflow-schema org.postgresql.Driver \
-  jdbc:postgresql://localhost:5432/caseflow_certification_development postgres postgres
+  "jdbc:postgresql://localhost:5432/$POSTGRES_DB" "$POSTGRES_USER" "$POSTGRES_PASSWORD"
 
 [ -f "caseflow-schema/association.csv" ] || {
 	echo "ERROR: Jailer didn't create file: 'caseflow-schema/association.csv'"
