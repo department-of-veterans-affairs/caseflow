@@ -38,7 +38,7 @@ jobs:
         with:
           # Location of global npm modules
           path: /var/cache/apt/archives
-          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
+          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v2
           restore-keys: |
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
