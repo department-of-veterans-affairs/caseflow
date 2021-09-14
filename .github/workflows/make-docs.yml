@@ -116,7 +116,7 @@ jobs:
       - name: Copy results of `make docs` to checkout of main-gh-pages
         run: |
           rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
-      - name: Update Jailer-generated DB schema docs for Caseflow
+      - name: Update Jailer-generated DB schema docs for Caseflow using results of `make docs`
         env:
           POSTGRES_DB: caseflow_certification_test
           POSTGRES_PASSWORD: postgres
@@ -125,7 +125,7 @@ jobs:
           CASEFLOW_HOME=`pwd`
           cd main-gh-pages_checkout/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
-      - name: Compare 'make docs' output files to main-gh-pages branch
+      - name: Compare generated docs against main-gh-pages branch
         id: compare_docs
         run: |
           cd main-gh-pages_checkout
@@ -133,6 +133,8 @@ jobs:
           echo "::group::Ignore files that change with every run"
           rm -vf schema/make_docs/*-erd.pdf
           echo "::endgroup::"
+
+          echo "<!-- TEMPORARY -->" >> schema/html/index.html
 
           git add .
           if git diff-index --quiet HEAD; then
@@ -143,7 +145,7 @@ jobs:
           else
             echo "::set-output name=changes_docs::true"
           fi
-      - name: Create/Update PR for main-gh-pages base branch
+      - name: Create/Update PR to merge into main-gh-pages
         if: steps.compare_docs.outputs.changes_docs == 'true'
         env:
           WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
