@@ -2,8 +2,6 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
-  # TEMPORARY for testing
-  push:
   pull_request:
     types: [ closed ]
 
@@ -11,7 +9,7 @@ jobs:
   make_docs:
     name: Update DB schema files in webpage
     # Only run if the PR has been merged (rather than simply closed)
-    # TEMPORARY if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       postgres:
