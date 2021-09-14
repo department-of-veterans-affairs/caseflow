@@ -9,3 +9,9 @@
 	  margin-left: 264px;
 	}
 }
+
+// Don't uppercase diagram labels
+.jekyll-diagrams .label {
+	text-transform: unset;
+	text-align: center;
+}

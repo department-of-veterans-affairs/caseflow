@@ -28,6 +28,8 @@ seqdiag {
 {% endseqdiag %}
 
 ## graphviz
+[Graphviz online editor](http://magjac.com/graphviz-visual-editor/)
+
 {% graphviz %}
 digraph {
   node [shape=circle, style=filled];
@@ -44,6 +46,9 @@ digraph {
 {% endgraphviz %}
 
 ## mermaid
+
+[Mermaid online editor](https://mermaid-js.github.io/mermaid-live-editor/edit)
+
 {% mermaid %}
 sequenceDiagram
     participant John
@@ -79,6 +84,7 @@ sequenceDiagram
 ## plantuml
 
 [PlantUML language specification](https://plantuml.com/sitemap-language-specification)
+[PlantUML online editor](http://www.plantuml.com/plantuml/uml)
 
 1
 {% plantuml %}
