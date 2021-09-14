@@ -24,7 +24,6 @@ describe AppealDecisionIssuesPolicy, :postgres do
 
           it "can be seen" do
             expect(result[0].id).to eq(appeal.decision_issues[0].id)
-            expect(result[1].id).to eq(appeal.decision_issues[1].id)
           end
 
           it "its issue description is not visible" do
