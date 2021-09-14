@@ -25,7 +25,7 @@ jobs:
         env:
           cache-name: cache-global-node-modules
         with:
-          # Location of global npm modules in Debian
+          # Location of global npm modules
           path: ~/.npm-global
           key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
           restore-keys: |
