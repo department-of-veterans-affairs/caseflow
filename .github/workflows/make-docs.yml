@@ -164,15 +164,14 @@ jobs:
           echo "::endgroup::"
       - name: Create/Update PR to merge into main-gh-pages
         if: steps.compare_docs.outputs.changes_docs == 'true'
-        uses: gr2m/create-or-update-pull-request-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: peter-evans/create-pull-request@v3
         with:
+          path: "main-gh-pages_checkout/"
+          base: "main-gh-pages"
+          branch: "gh-actions/make_docs-update_docs"
+          delete-branch: true # when closing PR
+          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
-          branch: "main-gh-pages"
-          path: "main-gh-pages_checkout/"
-          author: 'GitHub Action make_docs <yoomlam@navapbc.com>'
           labels: "Type: Documentation"
           assignees: yoomlam
-          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
