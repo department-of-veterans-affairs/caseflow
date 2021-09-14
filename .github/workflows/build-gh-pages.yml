@@ -20,6 +20,16 @@ jobs:
         # with:
         #   fetch-depth: '0'
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-global-node-modules
+        with:
+          path: /usr/local
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-v1
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
         with:
