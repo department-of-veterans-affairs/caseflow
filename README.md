@@ -173,22 +173,26 @@ The following GitHub Actions are employed to create this website:
   1. Deploys the files generated in `_site` to the `gh-pages` branch, which is displayed by GH Pages
 - [`make_docs`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/.github/workflows/make-docs.yml) in the main (`master`) branch
   1. Triggered when a PR is merged to the main branch
-  1. Updates Caseflow database documentation files in the `main-gh-pages` branch
+  1. Generates Caseflow database documentation files
     * Sets up Caseflow test database
     * Executes a subset of commands run by `make docs`
     * Runs `gen_jailer_schema_docs.sh` to bootstrap and run Jailer
+  1. Creates a PR to updates Caseflow database documentation files in the `main-gh-pages` branch
     * Commits updated files to the `main-gh-pages` branch (this will not trigger the `build-gh-pages` GitHub Action to run: "[An action in a workflow run can’t trigger a new workflow run](https://github.community/t/triggering-a-new-workflow-from-another-workflow/16250)")
+    * Creates or updates a PR for the `gh-actions/make_docs-update_docs` branch. This PR accumulates documentation changes until it is manually merged into the `main-gh-pages` branch, which will trigger the `build-gh-pages` GitHub Action.
 
 Their execution can be seen under the [Actions tab](https://github.com/department-of-veterans-affairs/caseflow/actions).
 
 {% mermaid %}
 graph TD
 pr("some<br/>PullRequest") -->|merges into| main["master<br/>Branch"]
-main -->|"make_docs<br/>Action"| main_gh_pages["main_gh_pages<br/>Branch"]
+main -->|"make_docs<br/>Action"| update_docs_pr("update_docs<br/>PullRequest")
+update_docs_pr -->|merges into| main_gh_pages["main_gh_pages<br/>Branch"]
 main_gh_pages -->|"build-gh-pages<br/>Action"| gh_pages["gh_pages<br/>Branch"]
 gh_pages --> website(("Caseflow<br/>GitHub Pages"))
 
 teamMember("Team Member") -->|creates| pr
+teamMember -->|squash &amp; merges| update_docs_pr
 teamMember -->|makes| doc_update
 doc_update("documentation<br/>update") -->|commit| main_gh_pages
 
