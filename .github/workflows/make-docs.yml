@@ -145,12 +145,23 @@ jobs:
           else
             echo "::set-output name=changes_docs::true"
           fi
-      - name: Changes to DB documentation
+
+      - name: Commit changes to DB documentation
         if: steps.compare_docs.outputs.changes_docs == 'true'
         working-directory: main-gh-pages_checkout
+        env:
+          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
+          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
+          WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
           git status
           git diff
+
+          echo "::group::Pushing changes to main-gh-pages"
+          git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+          git config --local user.name "$WIKI_COMMIT_USER_NAME"
+          git commit -m "$WIKI_COMMIT_MESSAGE"
+          echo "::endgroup::"
       - name: Create/Update PR to merge into main-gh-pages
         if: steps.compare_docs.outputs.changes_docs == 'true'
         uses: gr2m/create-or-update-pull-request-action@v1
