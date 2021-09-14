@@ -891,7 +891,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
     t.datetime "updated_at"
     t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
     t.string "veteran_file_number", comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
-    t.bigint "veteran_id", comment: "The ID of the veteran associated with this intake"
+    t.bigint "veteran_id", comment: "The ID of the veteran record associated with this intake"
     t.index ["detail_type", "detail_id"], name: "index_intakes_on_detail_type_and_detail_id"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
@@ -899,6 +899,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
     t.index ["user_id"], name: "index_intakes_on_user_id"
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
+    t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
   create_table "job_notes", force: :cascade do |t|
@@ -1732,6 +1733,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
+  add_foreign_key "intakes", "veterans"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

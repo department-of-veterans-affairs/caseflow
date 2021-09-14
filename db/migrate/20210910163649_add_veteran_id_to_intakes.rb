@@ -1,5 +1,8 @@
 class AddVeteranIdToIntakes < Caseflow::Migration
+  disable_ddl_transaction!
+
   def change
-    add_column :intakes, :veteran_id, :bigint, comment: "The ID of the veteran associated with this intake"
+    add_reference :intakes, :veteran, foreign_key: true, comment: "The ID of the veteran record associated with this intake", index: false
+    add_index :intakes, :veteran_id, algorithm: :concurrently
   end
 end
