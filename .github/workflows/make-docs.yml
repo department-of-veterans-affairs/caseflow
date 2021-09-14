@@ -2,6 +2,9 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
+  push: # TEMP
+    branches:
+      - yoom/make-docs_create-update-docs-pr
   pull_request:
     types: [ closed ]
 
@@ -9,8 +12,11 @@ jobs:
   make_docs:
     name: Update DB schema files in webpage
     # Only run if the PR has been merged (rather than simply closed)
-    if: github.event.pull_request.merged == true
+    # TEMP if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      changes_docs: ${{ steps.compare_docs.outputs.changes_docs }}
     services:
       postgres:
         image: postgres:11
@@ -120,10 +126,7 @@ jobs:
           cd main-gh-pages_checkout/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
       - name: Commit 'make docs' files to main-gh-pages
-        env:
-          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
-          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
-          WIKI_COMMIT_USER_NAME: 'yoomlam'
+        id: compare_docs
         run: |
           cd main-gh-pages_checkout
 
@@ -133,13 +136,36 @@ jobs:
 
           git add .
           if git diff-index --quiet HEAD; then
+            echo "::set-output name=changes_docs::false"
             echo "::group::No changes to make_docs"
             ls -alR schema/make_docs
             echo "::endgroup::"
           else
-            echo "::group::Pushing changes to main-gh-pages"
-            git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
-            git config --local user.name "$WIKI_COMMIT_USER_NAME"
-            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
-            echo "::endgroup::"
+            echo "::set-output name=changes_docs::true"
           fi
+  update_docs_pr:
+    name: Create or add to PR to update DB documentation
+    needs: make_docs
+    # Be aware: https://github.com/actions/runner/issues/491
+    # TEMP if: needs.make_docs.outputs.changes_docs == 'true'
+    steps:
+      - run: |
+          echo "From `make_docs` job, changes_docs=${{needs.make_docs.outputs.changes_docs}}"
+          echo "${{ toJSON(needs) }}"
+      - name: Create/Update PR for main-gh-pages base branch
+        id: compare_docs
+        env:
+          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
+          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
+          WIKI_COMMIT_USER_NAME: 'yoomlam'
+        run: |
+          ls -al
+          cd main-gh-pages_checkout
+
+          git add .
+          git status
+          echo "::group::Pushing changes to main-gh-pages"
+          # git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+          # git config --local user.name "$WIKI_COMMIT_USER_NAME"
+          # git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+          echo "::endgroup::"
