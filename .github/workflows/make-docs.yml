@@ -125,7 +125,7 @@ jobs:
           CASEFLOW_HOME=`pwd`
           cd main-gh-pages_checkout/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
-      - name: Commit 'make docs' files to main-gh-pages
+      - name: Compare 'make docs' output files to main-gh-pages branch
         id: compare_docs
         run: |
           cd main-gh-pages_checkout
@@ -143,27 +143,16 @@ jobs:
           else
             echo "::set-output name=changes_docs::true"
           fi
-  update_docs_pr:
-    name: Create or add to PR to update DB documentation
-    needs: make_docs
-    # Be aware: https://github.com/actions/runner/issues/491
-    # TEMP if: needs.make_docs.outputs.changes_docs == 'true'
-    steps:
-      - run: |
-          echo "From `make_docs` job, changes_docs=${{needs.make_docs.outputs.changes_docs}}"
-          echo "${{ toJSON(needs) }}"
       - name: Create/Update PR for main-gh-pages base branch
-        id: compare_docs
+        if: steps.compare_docs.outputs.changes_docs == 'true'
         env:
           WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
-          ls -al
           cd main-gh-pages_checkout
-
-          git add .
           git status
+
           echo "::group::Pushing changes to main-gh-pages"
           # git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
           # git config --local user.name "$WIKI_COMMIT_USER_NAME"
