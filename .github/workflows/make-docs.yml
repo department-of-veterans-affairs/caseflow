@@ -125,44 +125,40 @@ jobs:
           CASEFLOW_HOME=`pwd`
           cd main-gh-pages_checkout/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
-      - name: Compare generated docs against main-gh-pages branch
+      - name: Compare (and locally commit) generated docs against main-gh-pages branch
         id: compare_docs
-        run: |
-          cd main-gh-pages_checkout
-
-          echo "::group::Ignore files that change with every run"
-          rm -vf schema/make_docs/*-erd.pdf
-          echo "::endgroup::"
-
-          echo "<!-- TEMPORARY -->" >> schema/html/index.html
-
-          git add .
-          if git diff-index --quiet HEAD; then
-            echo "::set-output name=changes_docs::false"
-            echo "::group::No changes to make_docs"
-            ls -alR schema/make_docs
-            echo "::endgroup::"
-          else
-            echo "::set-output name=changes_docs::true"
-          fi
-
-      - name: Commit changes to DB documentation
-        if: steps.compare_docs.outputs.changes_docs == 'true'
-        working-directory: main-gh-pages_checkout
         env:
           WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
-          git status
-          git diff
+          cd main-gh-pages_checkout
 
-          echo "::group::Pushing changes to main-gh-pages"
-          git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
-          git config --local user.name "$WIKI_COMMIT_USER_NAME"
-          git commit -m "$WIKI_COMMIT_MESSAGE"
+          echo "::group::Remove files that change with every run"
+          rm -vf schema/make_docs/*-erd.pdf
           echo "::endgroup::"
+
+          echo "<!-- TEMPORARY 2 -->" >> schema/html/index.html
+
+          git add .
+          if git diff-index --quiet HEAD; then
+            echo "::set-output name=changes_docs::false"
+
+            echo "::group::No changes to make_docs"
+            ls -alR schema/make_docs
+            echo "::endgroup::"
+          else
+            echo "::set-output name=changes_docs::true"
+
+            echo "::group::Committing changes locally"
+            git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
+            git config --local user.name "$WIKI_COMMIT_USER_NAME"
+            git commit -m "$WIKI_COMMIT_MESSAGE"
+            echo "::endgroup::"
+          fi
+
       - name: Create/Update PR to merge into main-gh-pages
+        id: create_pr
         if: steps.compare_docs.outputs.changes_docs == 'true'
         uses: peter-evans/create-pull-request@v3
         with:
@@ -175,3 +171,8 @@ jobs:
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
           assignees: yoomlam
+      - name: PR info
+        if: steps.create_pr.outcome == 'success'
+        run: |
+          echo "Pull Request Number - ${{ steps.create_pr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.create_pr.outputs.pull-request-url }}"
