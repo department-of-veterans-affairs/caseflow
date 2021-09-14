@@ -134,7 +134,7 @@ jobs:
           git add .
           if git diff-index --quiet HEAD; then
             echo "::group::No changes to make_docs"
-            ls -alR make_docs
+            ls -alR schema/make_docs
             echo "::endgroup::"
           else
             echo "::group::Pushing changes to main-gh-pages"
