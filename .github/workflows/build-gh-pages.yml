@@ -53,6 +53,7 @@ jobs:
       #     node-version: '12'
       - name: 'Install Node diagramming tools'
         run: |
+          ls -ltr /var/cache/apt/archives # Checking apt-get downloads from the previous command.
           mkdir -p ~/.npm-global
           npm config set prefix '~/.npm-global'
           echo '~/.npm-global' >> $GITHUB_PATH
