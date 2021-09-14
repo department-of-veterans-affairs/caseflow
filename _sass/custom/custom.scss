@@ -1,0 +1,11 @@
+
+// For wide media (when the sidebar is shown), use the whole width
+@media (min-width: 50rem) {
+	.side-bar {
+	  width: 264px;
+	}
+	.main {
+	  max-width: unset;
+	  margin-left: 264px;
+	}
+}
