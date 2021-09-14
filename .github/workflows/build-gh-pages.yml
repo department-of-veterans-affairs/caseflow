@@ -26,10 +26,10 @@ jobs:
           cache-name: cache-global-node-modules
         with:
           # Location of global npm modules in Debian
-          path: /usr/local/lib/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-v1
+          path: ~/.npm-global
+          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-docs-${{ env.cache-name }}-
 
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
@@ -53,6 +53,9 @@ jobs:
       #     node-version: '12'
       - name: 'Install Node diagramming tools'
         run: |
+          mkdir ~/.npm-global
+          npm config set prefix '~/.npm-global'
+          echo '~/.npm-global' >> $GITHUB_PATH
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
       - name: "Setup Python"
         uses: actions/setup-python@v2
