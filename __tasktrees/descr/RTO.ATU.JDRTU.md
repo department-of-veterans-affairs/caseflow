@@ -1,2 +1,0 @@
-# RTO.ATU.JDRTU Description
-

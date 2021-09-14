@@ -1,2 +1,0 @@
-# DTO.VRRO.JATU Description
-

@@ -1,2 +1,0 @@
-# IHPTO.DTO Description
-

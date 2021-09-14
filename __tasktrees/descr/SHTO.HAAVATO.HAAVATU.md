@@ -1,2 +1,0 @@
-# SHTO.HAAVATO.HAAVATU Description
-

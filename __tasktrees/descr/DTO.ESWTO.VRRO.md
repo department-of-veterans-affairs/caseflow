@@ -1,2 +1,0 @@
-# DTO.ESWTO.VRRO Description
-

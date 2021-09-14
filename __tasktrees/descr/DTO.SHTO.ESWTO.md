@@ -1,2 +1,0 @@
-# DTO.SHTO.ESWTO Description
-

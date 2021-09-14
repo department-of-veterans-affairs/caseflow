@@ -1,2 +1,0 @@
-# HAAOTO.HAAOTU Description
-

@@ -1,2 +1,0 @@
-# SHTO.DSMTO.DSMTU Description
-

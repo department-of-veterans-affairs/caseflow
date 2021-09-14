@@ -1,2 +1,0 @@
-# DTO.IHPTO.AMMTO.AMMTO Description
-

@@ -1,2 +1,0 @@
-# IHPTO.ATU.ICTO Description
-

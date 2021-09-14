@@ -1,2 +1,0 @@
-# SHTO.CIMTO.CIMTO.CIMTU Description
-

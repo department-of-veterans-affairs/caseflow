@@ -1,2 +1,0 @@
-# RTO.SHTO.DTO Description
-

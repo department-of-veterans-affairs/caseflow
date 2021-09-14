@@ -1,2 +1,0 @@
-# DTO.DSMTO Description
-

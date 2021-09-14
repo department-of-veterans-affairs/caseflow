@@ -1,2 +1,0 @@
-# RTO.DTO.ATU Description
-

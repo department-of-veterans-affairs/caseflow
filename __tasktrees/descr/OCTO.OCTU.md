@@ -1,2 +1,0 @@
-# OCTO.OCTU Description
-

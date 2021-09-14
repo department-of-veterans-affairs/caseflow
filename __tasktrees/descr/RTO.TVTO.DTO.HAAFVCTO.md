@@ -1,2 +1,0 @@
-# RTO.TVTO.DTO.HAAFVCTO Description
-

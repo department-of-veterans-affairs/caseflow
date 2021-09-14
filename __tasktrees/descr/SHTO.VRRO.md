@@ -1,2 +1,0 @@
-# SHTO.VRRO Description
-

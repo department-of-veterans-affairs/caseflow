@@ -1,2 +1,0 @@
-# DTO.CTO.SCRPLTO.SCRPLTU Description
-

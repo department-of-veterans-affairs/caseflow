@@ -1,2 +1,0 @@
-# EOAMTO.DSMTO.DSMTU Description
-

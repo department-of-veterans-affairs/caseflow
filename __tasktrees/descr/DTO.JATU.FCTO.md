@@ -1,2 +1,0 @@
-# DTO.JATU.FCTO Description
-

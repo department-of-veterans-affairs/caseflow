@@ -1,2 +1,0 @@
-# DTO.JATU.OCTO Description
-

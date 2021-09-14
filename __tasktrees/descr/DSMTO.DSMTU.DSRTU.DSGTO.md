@@ -1,2 +1,0 @@
-# DSMTO.DSMTU.DSRTU.DSGTO Description
-
