@@ -1,4 +1,4 @@
-name: Make-docs-to-wiki
+name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   make_docs:
-    name: Update DB schema files in wiki
+    name: Update DB schema files in webpage
     # Only run if the PR has been merged (rather than simply closed)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
           UPDATE_SCHEMA_ERD_IMAGES: true
         run: |
           ln -s Makefile.example Makefile
-          
+
           echo "::group::Caseflow schema"
           make erd-caseflow doc-schema-caseflow
           echo "::endgroup::"
@@ -102,32 +102,42 @@ jobs:
       # The following is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
       # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
-      - name: Checkout wiki code
+      - name: Checkout branch main-gh-pages
         uses: actions/checkout@v2
         with:
-          repository: ${{github.repository}}.wiki
-          path: wiki_checkout
-      - name: Push 'make docs' files to wiki
+          ref: main-gh-pages
+          path: main-gh-pages_checkout
+      - name: Copy results of `make docs` to checkout of main-gh-pages
+        run: |
+          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
+      - name: Update Jailer-generated DB schema docs for Caseflow
         env:
-          WIKI_COMMIT_MESSAGE: '`make docs` - Automatically update DB schema documentation files'
+          POSTGRES_DB: caseflow_certification_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        run: |
+          CASEFLOW_HOME=`pwd`
+          cd main-gh-pages_checkout/schema/bin
+          sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
+      - name: Commit 'make docs' files to main-gh-pages
+        env:
+          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
           WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
           WIKI_COMMIT_USER_NAME: 'yoomlam'
         run: |
-          rsync -av --exclude .git "docs/schema" "wiki_checkout/make_docs"
-
-          cd wiki_checkout
+          cd main-gh-pages_checkout
 
           echo "::group::Ignore files that change with every run"
-          rm -vf make_docs/schema/*-erd.pdf
+          rm -vf schema/make_docs/*-erd.pdf
           echo "::endgroup::"
 
           git add .
           if git diff-index --quiet HEAD; then
-            echo "::group::No changes to schema"
+            echo "::group::No changes to make_docs"
             ls -alR make_docs
             echo "::endgroup::"
           else
-            echo "::group::Pushing changes to wiki"
+            echo "::group::Pushing changes to main-gh-pages"
             git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
             git config --local user.name "$WIKI_COMMIT_USER_NAME"
             git commit -m "$WIKI_COMMIT_MESSAGE" && git push
