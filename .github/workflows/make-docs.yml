@@ -2,9 +2,6 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
-  push: # TEMP
-    branches:
-      - yoom/make-docs_create-update-docs-pr
   pull_request:
     types: [ closed ]
 
@@ -12,7 +9,7 @@ jobs:
   make_docs:
     name: Update DB schema files in webpage
     # Only run if the PR has been merged (rather than simply closed)
-    # TEMP if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
@@ -138,8 +135,6 @@ jobs:
           rm -vf schema/make_docs/*-erd.pdf
           echo "::endgroup::"
 
-          echo "<!-- TEMPORARY 2 -->" >> schema/html/index.html
-
           git add .
           if git diff-index --quiet HEAD; then
             echo "::set-output name=changes_docs::false"
@@ -174,5 +169,6 @@ jobs:
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
+          echo "PR ${{ steps.create_pr.outputs.pull-request-operation }}"
           echo "Pull Request Number - ${{ steps.create_pr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.create_pr.outputs.pull-request-url }}"
