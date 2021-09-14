@@ -235,9 +235,9 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.status_active?
   end
 
-  # This mirrors the .active scope
+  # This mirrors the logic of the .active scope
   def active?
-    ineligible_reason == nil && closed_at == nil
+    ineligible_reason.nil? && closed_at.nil?
   end
 
   def rating?
