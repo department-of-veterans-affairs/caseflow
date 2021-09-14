@@ -80,6 +80,11 @@ class AppellantSubstitution < CaseflowRecord
       # This block of code may be a source of bugs as new columns are added to request_issues.
       # It may be better to copy specific attributes, than duplicate everything.
       request_issue.dup.tap do |request_issue_copy|
+        # Death-dismissed issues should be reopened
+        if request_issue.death_dismissed?
+          request_issue_copy.closed_status = nil
+          request_issue_copy.closed_at = nil
+        end
         request_issue_copy.decision_review = target_appeal
         request_issue_copy.save!
       end

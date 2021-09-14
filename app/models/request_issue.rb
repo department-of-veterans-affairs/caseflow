@@ -598,6 +598,10 @@ class RequestIssue < CaseflowRecord
     !contention_connected_to_rating?
   end
 
+  def death_dismissed?
+    decision_issues.any? { |di| di.disposition === "dismissed_death" }
+  end
+
   def remanded?
     # if this request issue is a correction for a decision issue from a remand supplemental claim,
     # consider it a remanded request issue regardless of the decision issue disposition
