@@ -20,16 +20,16 @@ jobs:
         # with:
         #   fetch-depth: '0'
 
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-global-node-modules
-        with:
-          # Location of global npm modules
-          path: ~/.npm-global
-          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
-          restore-keys: |
-            ${{ runner.os }}-docs-${{ env.cache-name }}-
+      # - name: Cache node modules
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-global-node-modules
+      #   with:
+      #     # Location of global npm modules
+      #     path: ~/.npm-global
+      #     key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
+      #     restore-keys: |
+      #       ${{ runner.os }}-docs-${{ env.cache-name }}-
 
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
@@ -54,9 +54,9 @@ jobs:
       - name: 'Install Node diagramming tools'
         run: |
           ls -ltr /var/cache/apt/archives # Checking apt-get downloads from the previous command.
-          mkdir -p ~/.npm-global
-          npm config set prefix '~/.npm-global'
-          echo '~/.npm-global' >> $GITHUB_PATH
+          # mkdir -p ~/.npm-global
+          # npm config set prefix '~/.npm-global'
+          # echo '~/.npm-global' >> $GITHUB_PATH
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
       - name: "Setup Python"
         uses: actions/setup-python@v2
