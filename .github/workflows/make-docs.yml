@@ -170,7 +170,7 @@ jobs:
         with:
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
-          branch: "gh-actions/make_docs-update_docs"
+          branch: "main-gh-pages"
           path: "main-gh-pages_checkout/"
           author: 'GitHub Action make_docs <yoomlam@navapbc.com>'
           labels: "Type: Documentation"
