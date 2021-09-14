@@ -53,7 +53,7 @@ jobs:
       #     node-version: '12'
       - name: 'Install Node diagramming tools'
         run: |
-          mkdir ~/.npm-global
+          mkdir -p ~/.npm-global
           npm config set prefix '~/.npm-global'
           echo '~/.npm-global' >> $GITHUB_PATH
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
