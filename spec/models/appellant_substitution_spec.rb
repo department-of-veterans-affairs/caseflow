@@ -296,7 +296,7 @@ describe AppellantSubstitution do
 
           it "copies request issues but not decision issues to new appeal" do
             expect(source_appeal.request_issues.count).to be > 0
-  
+
             appellant_substitution = subject
             target_appeal = appellant_substitution.target_appeal
             expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
@@ -307,10 +307,10 @@ describe AppellantSubstitution do
             expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
             expect(target_appeal.request_issues.pluck(:decision_date))
               .to eq source_appeal.request_issues.pluck(:decision_date)
-  
+
             # new request issues should not maintain decided status
             expect(target_appeal.request_issues.any? { |ri| ri.closed_status || ri.closed_at }).to eql(false)
-  
+
             # There should not be any decision issues copied
             expect(target_appeal.decision_issues.count).to eq 0
           end
