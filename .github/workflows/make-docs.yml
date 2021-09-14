@@ -11,9 +11,6 @@ jobs:
     # Only run if the PR has been merged (rather than simply closed)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      changes_docs: ${{ steps.compare_docs.outputs.changes_docs }}
     services:
       postgres:
         image: postgres:11
