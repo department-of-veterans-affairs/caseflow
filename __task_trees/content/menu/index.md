@@ -3,10 +3,7 @@ headless = true
 +++
 
 - <a href="/caseflow/">(Back to Caseflow)</a>
-- Workflow diagrams
-  - [Appeal workflow]({{< relref "/intro/appeal-workflow" >}})
-  - [Intake workflow]({{< relref "/intro/intake-workflow" >}})
-  - [Hearing workflow]({{< relref "/intro/hearing-workflow" >}})
+- [README]({{< relref "/intro/README" >}})
 - [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
 - [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
 - [All tasks]({{< relref "/trees/alltasks" >}})

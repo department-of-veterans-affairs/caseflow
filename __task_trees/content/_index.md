@@ -5,10 +5,6 @@ title: Welcome
 # Welcome
 
 - [README](intro/README)
-- Workflow diagrams
-  - [Appeal workflow]({{< relref "/intro/appeal-workflow" >}})
-  - [Intake workflow]({{< relref "/intro/intake-workflow" >}})
-  - [Hearing workflow]({{< relref "/intro/hearing-workflow" >}})
 - [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
 - [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
 - [All tasks]({{< relref "/trees/alltasks" >}})

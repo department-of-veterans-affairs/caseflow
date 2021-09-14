@@ -1,7 +1,8 @@
 ---
-BookToC: false
+parent: Workflows
+nav_order: 2
+tags: ["workflow", "intake"]
 ---
-
 # Intake Workflow
 
 Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
@@ -12,7 +13,7 @@ It helps present data to veterans in the same way they already view decision rev
 
 ## Mail Intake
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 
 claim --> claim_decision
@@ -46,16 +47,16 @@ EvidenceSubmissionWindowTask --> ACD
 BvaMail --> TrackVeteranTask
 VSO -.- TrackVeteranTask
 VSO --> |if IHP-writing VSO| IHPTask
-{{< /mermaid >}}
+{% endmermaid %}
 
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 validate[Validate form]
 validate --> add_issues[add issues from veteran's decision review]
 add_issues --> |match to| decision
 add_issues --> |same issue as| legacy
-{{< /mermaid >}}
+{% endmermaid %}
 
 ## Business Lines
 
@@ -78,7 +79,7 @@ Once Intake is done, there are 3 major flows for AMA decision review:
 * Unidentified issues should be resolved before making decisions on them.
   Otherwise, they will be considered ineligible.
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 bizlines{business lines}
 mailPortal[Mail Portal]
@@ -89,11 +90,11 @@ bizlines --> |small volume| manual[NCA, Fiduciary, VHA, Loan Guaranty, Eudcation
 
 bizlines --> |performs| record_request
 record_request --> |document| bizlines
-{{< /mermaid >}}
+{% endmermaid %}
 
 ## Decision Review Lanes
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 decision_review_lanes --> SC
 decision_review_lanes --> HLR
@@ -105,11 +106,11 @@ form --> |specifies| decision_review_lanes
 form --> Intake[Intake within 24 hrs]
 Intake --> intake_complete
 Intake --> intake_cancelled
-{{< /mermaid >}}
+{% endmermaid %}
 
 ## Caseflow and EPs
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 EP --> |has| request_issue
 request_issue --> |can result in many| decision_issue
@@ -133,20 +134,20 @@ Caseflow_sync_VBMS_decision_review --> |creates| decision_issue
 Caseflow_sync_VBMS_decision_review --> dtaError{DTA error?}
 dtaError --> |yes| auto_create_SC
 auto_create_SC --> SupplementalClaim
-{{< /mermaid >}}
+{% endmermaid %}
 
 ## After Dispatched
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 board_grants --> |notified during outcode| bizline
 bizline --> |confirms in Caseflow| grant_effectuation
 grant_effectuation --> bizlineUsesVBMS{bizline uses VBMS?}
 bizlineUsesVBMS --> |yes| Caseflow_creates_effectuation_EP
 bizlineUsesVBMS --> |no| Caseflow_uses_task
-{{< /mermaid >}}
+{% endmermaid %}
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 
 Dispatch --> |dispatched| outcode
@@ -166,7 +167,7 @@ bizline --> |Non-compensation| NonCompen_SupplementalClaim
 subgraph Other bizline worked in CaseflowIntake
     NonCompen_SupplementalClaim
 end
-{{< /mermaid >}}
+{% endmermaid %}
 
 ## Intake Models
 [Intake Data Model](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model)
@@ -177,7 +178,7 @@ end
   * Veteran can choose to close the VACOLS legacy issue with a disposition designating
     that it's been opted into the AMA process.
 
-{{< mermaid >}}
+{% mermaid %}
 graph TD
 
 Veteran -.- Rating
@@ -197,4 +198,4 @@ Appeal --> |inherits| DecisionReview
 
 Appeal --> |has multiple| DecisionDocument
 DecisionDocument -.- BoardGrantEffectuation
-{{< /mermaid >}}
+{% endmermaid %}
