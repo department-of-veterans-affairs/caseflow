@@ -145,18 +145,23 @@ jobs:
           else
             echo "::set-output name=changes_docs::true"
           fi
+      - name: Changes to DB documentation
+        if: steps.compare_docs.outputs.changes_docs == 'true'
+        working-directory: main-gh-pages_checkout
+        run: |
+          git status
+          git diff
       - name: Create/Update PR to merge into main-gh-pages
         if: steps.compare_docs.outputs.changes_docs == 'true'
+        uses: gr2m/create-or-update-pull-request-action@v1
         env:
-          WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
-          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
-          WIKI_COMMIT_USER_NAME: 'yoomlam'
-        run: |
-          cd main-gh-pages_checkout
-          git status
-
-          echo "::group::Pushing changes to main-gh-pages"
-          # git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
-          # git config --local user.name "$WIKI_COMMIT_USER_NAME"
-          # git commit -m "$WIKI_COMMIT_MESSAGE" && git push
-          echo "::endgroup::"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: "GH Action: update DB documentation"
+          body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
+          branch: "gh-actions/make_docs-update_docs"
+          path: "main-gh-pages_checkout/"
+          author: 'GitHub Action make_docs <yoomlam@navapbc.com>'
+          labels: "Type: Documentation"
+          assignees: yoomlam
+          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
