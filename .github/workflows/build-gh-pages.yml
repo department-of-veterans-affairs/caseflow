@@ -31,7 +31,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
-      - name: Cache node modules
+      - name: Cache apt-get files
         uses: actions/cache@v2
         env:
           cache-name: cache-apt-get-files
@@ -64,7 +64,6 @@ jobs:
       #     node-version: '12'
       - name: 'Install Node diagramming tools'
         run: |
-          ls -ltr /var/cache/apt/archives # Checking apt-get downloads from the previous command.
           mkdir -p ~/.npm-global
           npm config set prefix '~/.npm-global'
           echo '~/.npm-global/bin' >> $GITHUB_PATH
