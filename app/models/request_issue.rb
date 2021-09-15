@@ -599,7 +599,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def death_dismissed?
-    decision_issues.any? { |di| ["dismissed_death"].include?(di.disposition) }
+    decision_issues.where(disposition: "dismissed_death").any?
   end
 
   def remanded?
