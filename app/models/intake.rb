@@ -66,15 +66,13 @@ class Intake < CaseflowRecord
       where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
     end
 
-    def build(form_type:, veteran_file_number:, user:)
+    def build(form_type:, search_term:, user:)
       intake_classname = FORM_TYPES[form_type.to_sym]
 
       fail FormTypeNotSupported unless intake_classname
 
-      intake_classname.constantize.new(
-        veteran_file_number: veteran_file_number.strip,
-        user: user
-      )
+      intake_classname.constantize.new(user: user)
+        .tap { |intake| intake.preload_veteran_data!(search_term.strip) }
     end
 
     def close_expired_intakes!
@@ -103,7 +101,6 @@ class Intake < CaseflowRecord
 
   def start!
     preload_intake_data!
-    preload_veteran_data!
 
     if validate_start
       self.class.close_expired_intakes!
@@ -159,19 +156,21 @@ class Intake < CaseflowRecord
   end
   # :nocov:
 
-  # Optional step to load data into the Caseflow DB that will be used for the intake
-  def preload_intake_data!
-    nil
-  end
-
-  def preload_veteran_data!
-    vet = Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number, sync_name: true)
+  def preload_veteran_data!(file_number)
+    vet = Veteran.find_or_create_by_file_number_or_ssn(file_number, sync_name: true)
     if vet.present?
       # veteran_file_number may be an SSN when this Intake model is initialized, but we always
       # prefer to store the non-SSN file number if the Veteran record has one.
       self.veteran_file_number = vet.file_number
       self.veteran_id = vet.id
+    else
+      self.veteran_file_number = file_number
     end
+  end
+
+  # Optional step to load data into the Caseflow DB that will be used for the intake
+  def preload_intake_data!
+    nil
   end
 
   def start_completion!
