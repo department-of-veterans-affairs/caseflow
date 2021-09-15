@@ -4,7 +4,7 @@ import Mark from 'mark.js';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
-import { get, noop, sum } from 'lodash';
+import { get, noop, sum, filter, map } from 'lodash';
 import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
@@ -86,7 +86,7 @@ export class PdfPage extends React.PureComponent {
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
     // get sum of matches from pages below pageIndex
-    return sum(this.props.matchesPerPage.filter((page) => page.pageIndex < pageIndex).map((page) => page.matches));
+    return sum(map(filter(this.props.matchesPerPage, (page) => page.pageIndex < pageIndex), (page) => page.matches));
   };
 
   onClick = () => {

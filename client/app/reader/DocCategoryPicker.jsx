@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortBy, toPairs } from 'lodash';
+import { sortBy, toPairs, map } from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
 import { css } from 'glamor';
@@ -84,7 +84,7 @@ const DocCategoryPicker = ({
   return (
     <ul {...docCategoryPickerStyle} {...dropdownFilterViewListStyle}>
       {// eslint-disable-next-line no-unused-vars
-        sortBy(toPairs(Constants.documentCategories), ([name, category]) => category.renderOrder).map(
+        map(sortBy(toPairs(Constants.documentCategories), ([name, category]) => category.renderOrder),
           ([categoryName, category]) => (
             <li key={categoryName} {...dropdownFilterViewListItemStyle}>
               <CategorySelector

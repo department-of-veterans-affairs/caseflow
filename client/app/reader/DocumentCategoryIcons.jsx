@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { size, sortBy } from 'lodash';
+import { size, sortBy, map } from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import * as Constants from '../reader/constants';
 
@@ -37,7 +37,7 @@ class DocumentCategoryIcons extends React.Component {
 
     return (
       <ul className="cf-document-category-icons" aria-label="document categories">
-        {categories.map((category) => (
+        {map(categories, (category) => (
           <li
             className={
               searchCategoryHighlights[getCategoryName(category.humanName)] ?

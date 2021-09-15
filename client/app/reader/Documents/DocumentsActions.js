@@ -1,4 +1,4 @@
-import { differenceWith, size } from 'lodash';
+import { differenceWith, size, map } from 'lodash';
 import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
@@ -86,12 +86,18 @@ export const addNewTag = (doc, tags) =>
   (dispatch) => {
     const currentTags = doc.tags;
 
-    const newTags = differenceWith(tags, currentTags, (tag, currentTag) => tag.value === currentTag.text).
-      map((tag) => ({
+    const newTags = map(
+      differenceWith(
+        tags,
+        currentTags,
+        (tag, currentTag) => tag.value === currentTag.text
+      ),
+      (tag) => ({
         text: tag.label,
         id: uuid.v4(),
-        temporaryId: true
-      }));
+        temporaryId: true,
+      })
+    );
 
     if (size(newTags)) {
       dispatch(hideErrorMessage('tag'));

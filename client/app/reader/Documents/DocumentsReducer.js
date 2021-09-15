@@ -1,4 +1,4 @@
-import { differenceBy, fromPairs, get, isNil, pick, reject } from 'lodash';
+import { findIndex, differenceBy, fromPairs, get, isNil, map, reject } from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
@@ -10,16 +10,15 @@ const documentsReducer = (state = initialState, action = {}) => {
   case Constants.ASSIGN_DOCUMENTS:
     return Object.assign({}, action.payload.documents);
   case Constants.RECEIVE_DOCUMENTS:
-    return fromPairs(
-      action.payload.documents.map((doc) => [
-        doc.id,
-        {
-          ...doc,
-          receivedAt: doc.received_at,
-          listComments: false,
-          wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
-        }
-      ])
+    return fromPairs(map(action.payload.documents, (doc) => [
+      doc.id,
+      {
+        ...doc,
+        receivedAt: doc.received_at,
+        listComments: false,
+        wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
+      }
+    ])
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
     return update(state, {
@@ -106,20 +105,19 @@ const documentsReducer = (state = initialState, action = {}) => {
              * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
              * we'll leave it be.
              */
-          $apply: (docTags) =>
-            docTags.map((docTag) => {
-              if (!docTag.temporaryId) {
-                return docTag;
-              }
-
-              const createdTag = action.payload.createdTags.find((tag) => docTag.text === tag.text);
-
-              if (createdTag) {
-                return createdTag;
-              }
-
+          $apply: (docTags) => map(docTags, (docTag) => {
+            if (!docTag.temporaryId) {
               return docTag;
-            })
+            }
+
+            const createdTag = find(action.payload.createdTags, (tag) => docTag.text === tag.text);
+
+            if (createdTag) {
+              return createdTag;
+            }
+
+            return docTag;
+          })
         }
       }
     });
@@ -128,7 +126,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = tags.findIndex((tag) => tag.id === action.payload.tagId);
+            const removedTagIndex = findIndex(tags, (tag) => tag.id === action.payload.tagId);
 
             return update(tags, {
               [removedTagIndex]: {
@@ -154,7 +152,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = tags.findIndex((tag) => tag.id === action.payload.tagId);
+            const removedTagIndex = findIndex(tags, (tag) => tag.id === action.payload.tagId);
 
             return update(tags, {
               [removedTagIndex]: {

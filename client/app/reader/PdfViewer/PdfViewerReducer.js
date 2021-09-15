@@ -1,5 +1,5 @@
 import * as Constants from './actionTypes';
-import { isEqual, random, union } from 'lodash';
+import { isEqual, random, union, map, uniqWith } from 'lodash';
 import { update } from '../../util/ReducerUtil';
 import { START_PLACING_ANNOTATION } from '../AnnotationLayer/actionTypes';
 
@@ -80,7 +80,7 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
-    allTags = action.payload.map((doc) => doc.tags ? doc.tags : []);
+    allTags = map(action.payload, (doc) => doc.tags ? doc.tags : []);
     uniqueTags = uniqWith(allTags, isEqual);
 
     return update(state, {

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { reject, first, pick, size } from 'lodash';
+import { reject, first, pick, size, map, find } from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -13,7 +13,7 @@ class SideBarIssueTags extends PureComponent {
     const { doc } = this.props;
 
     let generateOptionsFromTags = (tags) =>
-      reject(tags, 'pendingRemoval').map((tag) => ({
+      map(reject(tags, 'pendingRemoval'), (tag) => ({
         value: tag.text,
         label: tag.text,
         tagId: tag.id
@@ -22,7 +22,7 @@ class SideBarIssueTags extends PureComponent {
     let onChange = (values, deletedValue) => {
       if (size(deletedValue)) {
         const tagValue = first(deletedValue).label;
-        const result = doc.tags.find((tag) => tagValue === tag.text);
+        const result = find(doc.tags, (tag) => tagValue === tag.text);
 
         this.props.removeTag(doc, result);
       } else if (values && values.length) {

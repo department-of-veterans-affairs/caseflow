@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { keyBy, memoize, reject, sum, uniqBy } from 'lodash';
+import { keyBy, memoize, reject, sum, uniqBy, map, mapValues, filter } from 'lodash';
 
 const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -7,7 +7,10 @@ const getAllDocs = (state) => state.documents;
 export const getFilteredDocuments = createSelector(
   [getFilteredDocIds, getAllDocs],
   // eslint-disable-next-line no-confusing-arrow
-  (filteredDocIds, allDocs) => (filteredDocIds ? filteredDocIds.map((docId) => allDocs[docId]) : Object.values(allDocs))
+  (filteredDocIds, allDocs) =>
+    filteredDocIds ?
+      map(filteredDocIds, (docId) => allDocs[docId]) :
+      Object.values(allDocs)
 );
 
 const getEditingAnnotations = (state) => state.annotationLayer.editingAnnotations;
@@ -41,7 +44,7 @@ export const makeGetAnnotationsByDocumentId = createSelector(
 export const getAnnotationsPerDocument = createSelector(
   [getFilteredDocuments, makeGetAnnotationsByDocumentId],
   (documents, getAnnotationsByDocumentId) =>
-    Object.values(keyBy(documents, 'id')).map((doc) => getAnnotationsByDocumentId(doc.id))
+    mapValues(keyBy(documents, 'id'), (doc) => getAnnotationsByDocumentId(doc.id))
 );
 
 const getDocFilterCriteria = (state) => state.documentList.docFilterCriteria;
@@ -69,7 +72,7 @@ const getFile = (state, props) => props.file;
 
 export const getTextForFile = createSelector(
   [getExtractedText, getFile],
-  (extractedText, file) => extractedText.filter((pageText) => pageText.file === file)
+  (extractedText, file) => filter(extractedText, (pageText) => pageText.file === file)
 );
 
 export const getMatchesPerPageInFile = createSelector(
@@ -97,7 +100,7 @@ export const getMatchesPerPageInFile = createSelector(
 
 export const getTotalMatchesInFile = createSelector(
   [getMatchesPerPageInFile],
-  (matches) => sum(matches.map((match) => match.matches))
+  (matches) => sum(map(matches, (match) => match.matches))
 );
 
 const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;

@@ -1,4 +1,4 @@
-import { get, pickBy, sortBy, toPairs } from 'lodash';
+import { get, pickBy, sortBy, toPairs, map, forEach, some, find } from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
@@ -21,20 +21,31 @@ export const getUpdatedFilteredResults = (state) => {
 
   // ensure we have a deep clone so we are not mutating the original state
 
-  const filteredIds = sortBy(
-    updatedNextState.documents.
-      filter(
-        (doc) => !activeCategoryFilters.length || activeCategoryFilters.some((categoryFieldName) => doc[categoryFieldName])
-      ).
-      filter(
-        (doc) => !activeTagFilters.length || activeTagFilters.some((tagText) => doc.tags.find((tag) => tag.text === tagText))
-      ).
-      filter(searchString(searchQuery, updatedNextState)),
-    docFilterCriteria.sort.sortBy
-  ).map((doc) => doc.id);
+  const filteredIds = map(
+    sortBy(
+      updatedNextState.documents.
+        filter(
+          (doc) =>
+            !activeCategoryFilters.length ||
+            activeCategoryFilters.some(
+              (categoryFieldName) => doc[categoryFieldName]
+            )
+        ).
+        filter(
+          (doc) =>
+            !activeTagFilters.length ||
+            some(activeTagFilters, (tagText) =>
+              find(doc.tags, { text: tagText })
+            )
+        ).
+        filter(searchString(searchQuery, updatedNextState)),
+      docFilterCriteria.sort.sortBy
+    ),
+    'id'
+  );
 
   // looping through all the documents to update category highlights and expanding comments
-  updatedNextState.documents.forEach((doc) => {
+  forEach(updatedNextState.documents, (doc) => {
     const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
 
     // getting all the truthy values from the object
