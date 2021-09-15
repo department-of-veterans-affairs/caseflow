@@ -31,16 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-apt-get-files
-        with:
-          # Location of global npm modules
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v2
-          restore-keys: |
-            ${{ runner.os }}-docs-${{ env.cache-name }}-
-
       - name: "Install Graphviz"
         uses: ts-graphviz/setup-graphviz@v1
 
