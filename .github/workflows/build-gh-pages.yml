@@ -34,7 +34,7 @@ jobs:
       - name: Cache deb files
         uses: actions/cache@v2
         env:
-          cache-name: cache-global-deb-files
+          cache-name: cache-deb-package-files
         with:
           # Location of global npm modules
           path: ~/apt-get-archive
