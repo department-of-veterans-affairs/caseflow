@@ -14,7 +14,7 @@ build_subsites: build_subsite_help build_subsite_task_trees
 build_subsite_help:
 	# cp favicon.ico __help/
 	# Specify _subsite_config.yml first so that __help/_config.yml can override its settings
-	bundle exec jekyll build --verbose --config "_subsite_config.yml,__help/_config.yml"
+	bundle exec jekyll build --profile --config "_subsite_config.yml,__help/_config.yml"
 
 build_subsite_task_trees:
 	cd __task_trees && ./hugow
