@@ -161,7 +161,7 @@ namespace :doc do
     end
 
     def update_schema_images?
-      ENV.fetch("UPDATE_SCHEMA_ERD_IMAGES", nil)
+      ActiveModel::Type::Boolean.new.cast(ENV.fetch("UPDATE_SCHEMA_ERD_IMAGES", true))
     end
 
     desc "Generate belongs_to ERD"

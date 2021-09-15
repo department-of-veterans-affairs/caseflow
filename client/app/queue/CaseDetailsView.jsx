@@ -164,7 +164,7 @@ export const CaseDetailsView = (props) => {
   !appeal.hasPOA && props.hasVLJSupportRole && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
+  currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
   const hasSubstitution = appeal.substitutions?.length;
   const supportSubstituteAppellant = shouldSupportSubstituteAppellant({

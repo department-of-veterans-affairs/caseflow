@@ -11,7 +11,7 @@ import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '..
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -106,7 +106,7 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = true;
 
     const currentScale = this.props.scale;
-    const viewport = page.getViewport(this.props.scale);
+    const viewport = page.getViewport({ scale: this.props.scale });
 
     // We need to set the width and heights of everything based on
     // the width and height of the viewport.
@@ -121,15 +121,14 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.
-      then(() => {
-        this.isDrawing = false;
+    return this.renderTask.promise.then(() => {
+      this.isDrawing = false;
 
-        // If the scale has changed, draw the page again at the latest scale.
-        if (currentScale !== this.props.scale && page) {
-          return this.drawPage(page);
-        }
-      }).
+      // If the scale has changed, draw the page again at the latest scale.
+      if (currentScale !== this.props.scale && page) {
+        return this.drawPage(page);
+      }
+    }).
       catch(() => {
         // We might need to do something else here.
         this.isDrawing = false;
@@ -186,7 +185,7 @@ export class PdfPage extends React.PureComponent {
       return;
     }
 
-    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+    const viewport = page.getViewport({ scale: PAGE_DIMENSION_SCALE });
 
     this.textLayer.innerHTML = '';
 
@@ -209,7 +208,8 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+    // eslint-disable-next-line no-underscore-dangle
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       this.props.pdfDocument.
         getPage(pageNumberOfPageIndex(this.props.pageIndex)).
         then((page) => {
@@ -326,36 +326,37 @@ export class PdfPage extends React.PureComponent {
 }
 
 PdfPage.propTypes = {
+  currentMatchIndex: PropTypes.any,
   documentId: PropTypes.number,
+  documentType: PropTypes.any,
   file: PropTypes.string,
-  pageIndex: PropTypes.number,
-  isFileVisible: PropTypes.bool,
-  scale: PropTypes.number,
-  rotate: PropTypes.number,
-  pdfDocument: PropTypes.object,
-  documentType: PropTypes.string,
-  isDrawing: PropTypes.bool,
-  isPlacingAnnotation: PropTypes.bool,
-  rotation: PropTypes.number,
-  pageDimensions: PropTypes.shape({
-    width: PropTypes.number,
-    height: PropTypes.number
-  }),
-  windowingOverscan: PropTypes.string,
-  searchBarHidden: PropTypes.bool,
-  searchText: PropTypes.string,
-  matchesPerPage: PropTypes.array,
-  pageIndexWithMatch: PropTypes.number,
-  isVisible: PropTypes.bool,
   getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
+  isDrawing: PropTypes.any,
+  isFileVisible: PropTypes.bool,
+  isPageVisible: PropTypes.any,
+  isPlacingAnnotation: PropTypes.any,
+  isVisible: PropTypes.bool,
+  matchesPerPage: PropTypes.shape({
+    length: PropTypes.any
+  }),
+  page: PropTypes.shape({
+    cleanup: PropTypes.func
+  }),
+  pageDimensions: PropTypes.any,
+  pageIndex: PropTypes.number,
+  pageIndexWithMatch: PropTypes.any,
+  pdfDocument: PropTypes.object,
   placingAnnotationIconPageCoords: PropTypes.object,
-  relativeIndex: PropTypes.number,
-  isPageVisible: PropTypes.bool,
-  page: PropTypes.object,
+  relativeIndex: PropTypes.any,
+  rotate: PropTypes.number,
+  rotation: PropTypes.number,
+  scale: PropTypes.number,
+  searchBarHidden: PropTypes.bool,
+  searchText: PropTypes.string,
+  setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  currentMatchIndex: PropTypes.number,
-  setDocScrollPosition: PropTypes.func
+  windowingOverscan: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => ({

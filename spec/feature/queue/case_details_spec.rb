@@ -2010,7 +2010,6 @@ RSpec.feature "Case details", :all_dbs do
       before do
         CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
-        FeatureToggle.enable!(:cavc_remand)
       end
 
       shared_examples "the button is not shown" do
