@@ -31,7 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
-      - name: Cache apt-get files
         uses: actions/cache@v2
         env:
           cache-name: cache-apt-get-files
@@ -43,10 +42,7 @@ jobs:
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
       - name: "Install Graphviz"
-        # uses: ts-graphviz/setup-graphviz@v1
-        run: |
-          sudo apt-get update
-          sudo apt-get install graphviz libgraphviz-dev pkg-config
+        uses: ts-graphviz/setup-graphviz@v1
 
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
@@ -108,7 +104,7 @@ jobs:
           ### If you need to specify any Jekyll build options, enable the above input
           ### Flags accepted can be found here https://jekyllrb.com/docs/configuration/options/#build-command-options
           # custom_opts: '--drafts --future'
-          custom_opts: '--verbose'
+          custom_opts: '--verbose --profile'
 
       - name: "📂 Checkout Caseflow code for task_trees subsite"
         uses: actions/checkout@v2
