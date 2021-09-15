@@ -42,6 +42,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
+      - name: "Install Graphviz"
+        # uses: ts-graphviz/setup-graphviz@v1
+        run: |
+          apt-get update
+          apt-get install graphviz libgraphviz-dev pkg-config
+
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
         with:
@@ -56,11 +62,6 @@ jobs:
       #     java-version: '11'
       # Also provides node12, which is needed by mermaid
       # node12 is also used by https://github.com/limjh16/jekyll-action-ts/blob/master/action.yml#L32
-      - name: "Install Graphviz"
-        # uses: ts-graphviz/setup-graphviz@v1
-        run: |
-          apt-get update
-          apt-get install graphviz libgraphviz-dev pkg-config
       # node is needed by mermaid and is provided by ts-graphviz, so don't need to explicitly setup-node
       # - uses: actions/setup-node@v2
       #   with:
