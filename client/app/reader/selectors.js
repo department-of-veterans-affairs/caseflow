@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { keyBy, memoize, reject, sum, uniqBy, map, mapValues, filter } from 'lodash';
+import { keyBy, memoize, reject, sum, uniqBy, map, mapValues, filter, size } from 'lodash';
 
 const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -55,7 +55,7 @@ export const docListIsFiltered = createSelector(
   [getAllDocs, getFilteredDocIds, getDocFilterCriteria],
   (documents, filteredDocIds, docFilterCriteria) =>
     Boolean(
-      documents.length !== filteredDocIds.length ||
+      size(documents) !== filteredDocIds.length ||
         docFilterCriteria.searchQuery ||
         Object.values(docFilterCriteria.category).length ||
         Object.values(docFilterCriteria.tag).length

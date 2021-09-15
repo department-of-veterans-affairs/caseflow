@@ -1,4 +1,4 @@
-import { findIndex, differenceBy, fromPairs, get, isNil, map, reject } from 'lodash';
+import { find, pick, findIndex, differenceBy, fromPairs, get, isNil, map, reject } from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
@@ -110,7 +110,7 @@ const documentsReducer = (state = initialState, action = {}) => {
               return docTag;
             }
 
-            const createdTag = find(action.payload.createdTags, (tag) => docTag.text === tag.text);
+            const createdTag = find(action.payload.createdTags, pick(docTag, 'text'));
 
             if (createdTag) {
               return createdTag;
@@ -126,7 +126,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = findIndex(tags, (tag) => tag.id === action.payload.tagId);
+            const removedTagIndex = findIndex(tags, { id: action.payload.tagId });
 
             return update(tags, {
               [removedTagIndex]: {
@@ -152,7 +152,7 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = findIndex(tags, (tag) => tag.id === action.payload.tagId);
+            const removedTagIndex = findIndex(tags, { id: action.payload.tagId });
 
             return update(tags, {
               [removedTagIndex]: {
