@@ -13,7 +13,6 @@ module.exports = function(api) {
   ];
 
   const plugins = [
-    'babel-plugin-lodash',
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
     '@babel/plugin-proposal-class-properties',
@@ -48,7 +47,10 @@ module.exports = function(api) {
     plugins,
     env: {
       development: {
-        plugins: ['react-docgen']
+        plugins: ['react-docgen', 'babel-plugin-lodash']
+      },
+      production: {
+        plugins: ['babel-plugin-lodash']
       },
       test: {
         presets: [
