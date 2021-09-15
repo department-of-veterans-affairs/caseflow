@@ -59,7 +59,7 @@ describe BelongsToPolymorphicAppealConcern do
             fields = DecisionDocument.column_names.map { |n| DecisionDocument.table_name + "." + n } +
                      DecisionIssue.column_names.map { |n| DecisionIssue.table_name + "." + n }
             hash_result = query.pluck_to_hash(*fields.uniq) # sensible column names as long as they're unique
-            expect(hash_result.size).to eq 10
+            expect(hash_result.size).to eq 5
             expect(hash_result.sample.size).to eq fields.size # ensure result has all requested fields
           end
 
