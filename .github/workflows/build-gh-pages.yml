@@ -44,7 +44,7 @@ jobs:
 
       - name: "Install Graphviz"
         # uses: ts-graphviz/setup-graphviz@v1
-        runs: |
+        run: |
           sudo apt-get update
           sudo apt-get install -o Dir::Cache="~/apt-get-archive" \
                                -o Dir::Cache::archives="./" \
