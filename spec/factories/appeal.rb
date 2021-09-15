@@ -461,12 +461,14 @@ FactoryBot.define do
 
     trait :with_decision_issue do
       after(:create) do |appeal, evaluator|
-        create(:decision_issue,
+        create(
+          :decision_issue,
           :rating,
           decision_review: appeal,
           disposition: evaluator.disposition,
           description: "Issue description",
-          decision_text: "Decision text")
+          decision_text: "Decision text"
+        )
       end
     end
 
