@@ -1,0 +1,34 @@
+
+
+{{ $url :=  index .Params "url" }}
+{{ $tableClass :=  index .Params "cssClass" }}
+{{ $colNames :=  split (trim .Inner " \n") "," }}
+{{ $csvData := getCSV "," $url }}
+<!-- build the dictionary of columnName to index -->
+{{ $scratch := newScratch }}
+{{ $scratch.Set "csvColDict" dict }}
+{{ range $index, $col := (index $csvData 0) }}
+  {{ $scratch.Set "csvColDict" (merge ($scratch.Get "csvColDict") (dict $col $index)) }}
+{{ end }}
+{{ $csvColDict :=  ($scratch.Get "csvColDict") }}
+
+Source: <a href={{ $url }}>{{ $url }}</a>
+<!-- if colNames.empty?, show all colNames; else create a col=>index map -->
+<table class="{{ $tableClass }}">
+  <thead>
+    <tr>
+      {{ range $colNames }}
+        <th class="{{ . }}">{{ . }}</th>
+      {{ end }}
+    </tr>
+  </thead>
+  <tbody>
+  {{ range $i, $r := (after 1 $csvData) }}
+    <tr>
+      {{ range $colNames }}
+        <td class="{{ . }}">{{ index $r (index $csvColDict .)}}</td>
+      {{ end }}
+    </tr>
+  {{ end }}
+  </tbody>
+</table>

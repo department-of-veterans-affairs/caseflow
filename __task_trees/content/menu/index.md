@@ -4,6 +4,9 @@ headless = true
 
 - <a href="/caseflow/">(Back to Caseflow)</a>
 - [README]({{< relref "/intro/README" >}})
+- Schema CSVs
+  + [Caseflow Schema CSV]({{< relref "/schema/caseflow_schema_csv" >}})
+  + [ETL Schema CSV]({{< relref "/schema/etl_schema_csv" >}})
 - [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
 - [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
 - [All tasks]({{< relref "/trees/alltasks" >}})
