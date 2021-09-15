@@ -65,7 +65,6 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - name: 'Install Node diagramming tools'
         run: |
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
