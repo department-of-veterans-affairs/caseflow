@@ -51,6 +51,8 @@ jobs:
           sudo apt-get install -o Dir::Cache="$PWD/apt-get-archive" \
                                -o Dir::Cache::archives="$PWD/apt-get-archive" \
                                graphviz libgraphviz-dev pkg-config
+          sudo rm -r ~/apt-get-archive/partial
+          sudo rm ~/apt-get-archive/lock
 
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
