@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "mermaid.cli": "^0.5.1",
+    "nomnoml": "^1.4.0",
+    "state-machine-cat": "^9.1.0",
+    "wavedrom-cli": "^2.6.8"
+  }
+}

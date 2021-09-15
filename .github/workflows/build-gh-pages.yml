@@ -43,16 +43,7 @@ jobs:
             ${{ runner.os }}-docs-${{ env.cache-name }}-
 
       - name: "Install Graphviz"
-        # uses: ts-graphviz/setup-graphviz@v1
-        run: |
-          cd ~
-          mkdir -p ~/apt-get-archive/partial
-          sudo apt-get update
-          sudo apt-get install -o Dir::Cache="$PWD/apt-get-archive" \
-                               -o Dir::Cache::archives="$PWD/apt-get-archive" \
-                               graphviz libgraphviz-dev pkg-config
-          sudo rm -r ~/apt-get-archive/partial
-          sudo rm ~/apt-get-archive/lock
+        uses: ts-graphviz/setup-graphviz@v1
 
       - name: "Setup ruby for Jekyll"
         uses: ruby/setup-ruby@v1
@@ -69,14 +60,14 @@ jobs:
       # Also provides node12, which is needed by mermaid
       # node12 is also used by https://github.com/limjh16/jekyll-action-ts/blob/master/action.yml#L32
       # node is needed by mermaid and is provided by ts-graphviz, so don't need to explicitly setup-node
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '12'
+      - name: Install Node 12
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: 'Install Node diagramming tools'
         run: |
-          mkdir -p ~/.npm-global
-          npm config set prefix '~/.npm-global'
-          echo '~/.npm-global/bin' >> $GITHUB_PATH
           npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
       - name: "Setup Python"
         uses: actions/setup-python@v2
