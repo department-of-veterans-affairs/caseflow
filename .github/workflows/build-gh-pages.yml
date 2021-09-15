@@ -47,6 +47,9 @@ jobs:
       - name: 'Install Node diagramming tools'
         run: |
           npm install
+      - name: Add node packages to path
+        run: |
+          echo "$PWD/node_modules/.bin >> $GITHUB_PATH
       - name: "Setup Python"
         uses: actions/setup-python@v2
         with:
