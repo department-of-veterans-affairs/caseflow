@@ -1,6 +1,6 @@
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
+import { keyBy } from 'lodash';
 import { moveModel } from '../utils';
 
 const toggleAnnotationDeleteModalFor = (state, annotationId) =>
