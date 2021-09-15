@@ -20,28 +20,6 @@ jobs:
         # with:
         #   fetch-depth: '0'
 
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-global-node-modules
-        with:
-          # Location of global npm modules
-          path: ~/.npm-global
-          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
-          restore-keys: |
-            ${{ runner.os }}-docs-${{ env.cache-name }}-
-
-      - name: Cache deb files
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-deb-package-files
-        with:
-          # Using custom apt cache
-          path: ~/apt-get-archive
-          key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
-          restore-keys: |
-            ${{ runner.os }}-docs-${{ env.cache-name }}-
-
       - name: "Install Graphviz"
         uses: ts-graphviz/setup-graphviz@v1
 
@@ -65,9 +43,10 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: 'Install Node diagramming tools'
         run: |
-          npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
+          npm install
       - name: "Setup Python"
         uses: actions/setup-python@v2
         with:
