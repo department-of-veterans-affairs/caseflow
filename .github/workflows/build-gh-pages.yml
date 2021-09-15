@@ -36,7 +36,7 @@ jobs:
         env:
           cache-name: cache-deb-package-files
         with:
-          # Location of global npm modules
+          # Using custom apt cache
           path: ~/apt-get-archive
           key: ${{ runner.os }}-docs-${{ env.cache-name }}-v1
           restore-keys: |
