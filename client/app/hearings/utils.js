@@ -19,6 +19,7 @@ import {
   compact,
   sortBy,
   get,
+  map
 } from 'lodash';
 
 import ExponentialPolling from '../components/ExponentialPolling';
@@ -73,7 +74,7 @@ export const sortHearings = (hearings) =>
   );
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
-  omitBy(pickBy(issues, { appeal_id: appealId }), '_destroy');
+  pickBy(omitBy(issues, '_destroy'), { appeal_id: appealId });
 
 // assumes objects have identical properties
 export const deepDiff = (firstObj, secondObj) => {
@@ -269,7 +270,7 @@ export const getChanges = (first, second) => {
  * @param {function} transformer -- Transforms the values of the object into options
  */
 export const getOptionsFromObject = (object, noneOption, transformer) =>
-  concat(Object.values(object).map(transformer), [noneOption]);
+  concat(map(Object.values(object), transformer), [noneOption]);
 
 /**
  * Method to normalize the Regional Office Timezone names

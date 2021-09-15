@@ -10,6 +10,10 @@ import {
   isNull,
   last,
   zip,
+  map,
+  filter,
+  each,
+  find
 } from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
@@ -57,8 +61,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const options = flatten(Object.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
     const pairs = zip(
-      options.map((option) => option.id),
-      options.map(() => ({
+      map(options, 'id'),
+      map(options, () => ({
         checked: false,
         post_aoj: null
       }))
@@ -72,12 +76,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
-      ...issues.find((issue) => issue.id === issueId),
+      ...find(issues, (issue) => issue.id === issueId),
       remand_reasons: remandReasons
     };
   };
 
-  getChosenOptions = () => this.state.filter((val) => val.checked);
+  getChosenOptions = () => filter(this.state, (val) => val.checked);
 
   validate = () => {
     const chosenOptions = this.getChosenOptions();
@@ -104,7 +108,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issues
     } = this.props;
 
-    remandReasons.map((reason) =>
+    each(remandReasons, (reason) =>
       this.setState({
         [reason.code]: {
           checked: true,
@@ -113,7 +117,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       })
     );
 
-    if (issues.map((issue) => issue.id).indexOf(issueId) > 0) {
+    if (map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -124,17 +128,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     //   {"code": "AB", "post_aoj": true},
     //   {"code": "AC", "post_aoj": false}
     // ]
-    const remandReasons = compact(this.state.
-      map((val, key) => {
-        if (!val.checked) {
-          return false;
-        }
+    const remandReasons = compact(map(this.state, (val, key) => {
+      if (!val.checked) {
+        return false;
+      }
 
-        return {
-          code: key,
-          post_aoj: val.post_aoj === 'true'
-        };
-      }));
+      return {
+        code: key,
+        post_aoj: val.post_aoj === 'true'
+      };
+    }));
 
     return this.updateIssue(remandReasons);
   };
@@ -319,10 +322,10 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: issues.filter((issue) =>
+    issues: filter(issues, (issue) =>
       [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED].includes(issue.disposition)
     ),
-    issue: issues.find((issue) => issue.id === ownProps.issueId),
+    issue: find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };

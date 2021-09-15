@@ -1,4 +1,4 @@
-import { capitalize } from 'lodash';
+import { capitalize, words, map } from 'lodash';
 import React from 'react';
 import DOMPurify from 'dompurify';
 
@@ -48,10 +48,7 @@ const StringUtil = {
   },
 
   titleCase(string) {
-    return string.
-      words().
-      map(capitalize).
-      join(' ');
+    return map(words(string), capitalize).join(' ');
   },
 
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase

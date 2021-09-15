@@ -1,6 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
+import { some, filter, map } from 'lodash';
 
 const analytics = true;
 
@@ -94,7 +95,7 @@ export const setOutsideCaseflowStepsConfirmed = (isConfirmed) => ({
 export const processFinishError = () => ({ type: ACTIONS.PROCESS_FINISH_ERROR });
 
 const validateSelectedIssues = (rampRefiling) =>
-  rampRefiling.hasIneligibleIssue || rampRefiling.issues.some((issue) => issue.isSelected);
+  rampRefiling.hasIneligibleIssue || some(rampRefiling.issues, 'isSelected');
 
 export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
   let hasError = false;
@@ -128,7 +129,7 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     has_ineligible_issue: rampRefiling.hasIneligibleIssue,
-    issue_ids: rampRefiling.issues.filter((issue) => issue.isSelected).map((issue) => issue.id)
+    issue_ids: map(filter(rampRefiling.issues, (issue) => issue.isSelected), 'id')
   };
 
   return submitIntakeCompleteRequest(intakeId, { data })(dispatch);
