@@ -167,6 +167,8 @@ class Intake < CaseflowRecord
   def preload_veteran_data!
     vet = Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number, sync_name: true)
     if vet.present?
+      # veteran_file_number may be an SSN when this Intake model is initialized, but we always
+      # prefer to store the non-SSN file number if the Veteran record has one.
       self.veteran_file_number = vet.file_number
       self.veteran_id = vet.id
     end
