@@ -45,9 +45,10 @@ jobs:
       - name: "Install Graphviz"
         # uses: ts-graphviz/setup-graphviz@v1
         run: |
+          cd ~
           sudo apt-get update
-          sudo apt-get install -o Dir::Cache="~/apt-get-archive" \
-                               -o Dir::Cache::archives="./" \
+          sudo apt-get install -o Dir::Cache="$PWD/apt-get-archive" \
+                               -o Dir::Cache::archives="$PWD/apt-get-archive" \
                                graphviz libgraphviz-dev pkg-config
 
       - name: "Setup ruby for Jekyll"
