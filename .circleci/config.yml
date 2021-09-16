@@ -375,10 +375,35 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_workspace
-      - demo
+      - build_workspace:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+      - demo:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
       - rspec:
           requires:
             - build_workspace
-      - js_tests
-      - lint
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+      - js_tests:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+      - lint:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
