@@ -2,6 +2,7 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
+  push:
   pull_request:
     types: [ closed ]
 
@@ -9,7 +10,7 @@ jobs:
   make_docs:
     name: Update DB schema files in webpage
     # Only run if the PR has been merged (rather than simply closed)
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -149,6 +150,12 @@ jobs:
             echo "::endgroup::"
           fi
 
+      - name: Debugging info
+        run: |
+          env
+          echo "-------- $GITHUB_EVENT_PATH --------------"
+          cat $GITHUB_EVENT_PATH
+
       - name: Create/Update PR to merge into main-gh-pages
         id: create_pr
         if: steps.compare_docs.outputs.changes_docs == 'true'
@@ -163,7 +170,6 @@ jobs:
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
           assignees: yoomlam
-          reviewers: ${{ github.actor }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
