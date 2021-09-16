@@ -980,6 +980,19 @@ describe Appeal, :all_dbs do
         task2.cancelled!
         expect(subject).to eq attorney
       end
+
+      context "when there is a more recent DocketSwitch attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
+        let(:root_task) { create(:root_task, appeal: appeal) }
+        let!(:ds_task) do
+          create(:docket_switch_denied_task, parent: root_task, assigned_to: attorney,
+                 assigned_by: judge, appeal: appeal, created_at: 1.minute.ago)
+        end
+
+        it "ignores the attorney assigned to the DocketSwitch attorney task" do
+          expect(subject).to eq attorney2
+        end
+      end
     end
 
     context ".assigned_judge" do
