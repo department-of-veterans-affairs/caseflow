@@ -21,7 +21,7 @@ It is expected that other uses of this documentation will arise as more domain i
 
 When new task types are added or task tree structures change, this documentation can be readily regenerated to maintain up-to-date documentation.
 
-## How to use and interpret this documentation
+### Contents
 
 Actual task trees from AMA appeals were used to generate this documentation.
 
@@ -40,6 +40,9 @@ AMA appeals are handled by BVA according to their assigned docket. Since there a
 You can start using the documentation by clicking on one of the above task listing links (no one should need to directly view the files in any of the `docs-*` subdirectories).
 Each task listing page linked above presents a list of tasks relevant to the particular docket.
 Each task has its own page (i.e., an `md` file).
+
+### Task Page
+
 Each task page has the following sections:
 
 - A link to a description page, which should be manually filled with relevant information such as description of the task, scenarios where it is created, and other information to help understand the context and motivation for the task. See [task descriptions](https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Types) for source material.
@@ -58,7 +61,7 @@ Each task page has the following sections:
 
 On the task listing pages and all the task pages, the content is presented by order of occurrence counts so that the most common tasks or TCSs (Task Creation Sequences) are presented first. Task trees with few occurrences may indicate unusual or undesirable appeal states, which is relevant to the Data Integrity and Bat Team.
 
-Notes:
+### Notes
 
 - The Graphviz code used to generate the graph on each task page can be combined to show multi-hop/indirect relationships. For example, the following graph shows the task creation order pulled from the `RootTask_Organization`, `DistributionTask_Organization`, `EvidenceSubmissionWindowTask_Organization` task pages. From this, we can surmise that `JudgeAssignTask_User` is always created after `DistributionTask_Organization`.
 
@@ -88,4 +91,5 @@ digraph G {
 
 ![RTO.DTO.ESWTO](RTO.DTO.ESWTO.dot.png)
 
-- Manually-added content is kept in the `task_descr` subdirectory. Generated files are placed in the `docs-*` subdirectories, which can be deleted and replaced with updated files. To regenerate the files, use the `gen_ttdocs.py` and `createPngs.sh` scripts in the [trees directory](https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees).
+- Manually-added content is kept in the `task_descr` subdirectory. 
+- Generated files are placed in the `docs-*` subdirectories, which can be deleted and regenerated. To regenerate the files, use the `gen_ttdocs.py` and `createPngs.sh` scripts in the [trees directory](https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees).
