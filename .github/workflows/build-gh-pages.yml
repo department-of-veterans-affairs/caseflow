@@ -88,10 +88,9 @@ jobs:
           # custom_opts: '--drafts --future --verbose'
           custom_opts: '--profile'
 
-      - name: "📂 Checkout Caseflow code for task_trees subsite"
+      - name: "📂 Checkout Caseflow code (for task_trees subsite)"
         uses: actions/checkout@v2
         with:
-          # repository: ${{github.repository}}
           ref: "master"
           path: "__tmp_caseflow_checkout"
       - name: "✏️ Update task_trees subsite with Caseflow code comments"

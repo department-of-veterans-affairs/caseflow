@@ -91,6 +91,12 @@ bundle install
 make install_jekyll_diagram_dependencies # only needed to view diagrams locally
 ```
 
+To update the subsites:
+```
+make build_subsites
+```
+which puts the subsites as subdirectories under the `_site` directory.
+
 ## Jekyll
 
 This top-level site uses the Jekyll theme [Just the Docs](https://pmarsceill.github.io/just-the-docs/).

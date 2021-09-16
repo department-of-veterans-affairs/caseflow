@@ -4,10 +4,16 @@ parent: Help
 ---
 
 # Diagram examples
+{: .no_toc }
 
-Enabled by:
-- https://github.com/jeffreytse/jekyll-spaceship
-- https://github.com/kui/jekyll-graphviz
+Enabled by these Jekyll plugins:
+- [jekyll-graphviz](https://github.com/kui/jekyll-graphviz)
+- [jekyll-spaceship](https://github.com/jeffreytse/jekyll-spaceship)
+
+
+**Sections**
+* TOC
+{:toc}
 
 ## graphviz
 [Graphviz online editor](http://magjac.com/graphviz-visual-editor/)
@@ -26,6 +32,86 @@ digraph {
   B -> D [label=d];
 }
 {% endgraphviz %}
+
+## emojis :clap:
+
+:bowtie: I give this plugin two :+1:!
+
+[Emojis](https://www.webfx.com/tools/emoji-cheat-sheet/)
+
+## table
+
+- Cells spanning multiple rows
+
+|              Stage | Direct Products | ATP Yields |
+| -----------------: | --------------: | ---------: |
+|         Glycolysis |          2 ATP              ||
+| ^^                 |          2 NADH |   3--5 ATP |
+| Pyruvaye oxidation |          2 NADH |      5 ATP |
+|  Citric acid cycle |          2 ATP              ||
+| ^^                 |          6 NADH |     15 ATP |
+| ^^                 |          2 FADH |      3 ATP |
+|                               30--32 ATP        |||
+
+| :    Easy Multiline   : |||
+| :----- | :----- | :------ |
+| Apple  | Banana | Orange  \
+| Apple  | Banana | Orange  \
+| Apple  | Banana | Orange
+| Apple  | Banana | Orange  \
+| Apple  | Banana | Orange  |
+| Apple  | Banana | Orange  |
+
+- Table header not required
+
+|--|--|--|--|--|--|--|--|
+|♜| |♝|♛|♚|♝|♞|♜|
+| |♟|♟|♟| |♟|♟|♟|
+|♟| |♞| | | | | |
+| |♗| | |♟| | | |
+| | | | |♙| | | |
+| | | | | |♘| | |
+|♙|♙|♙|♙| |♙|♙|♙|
+|♖|♘|♗|♕|♔| | |♖|
+
+
+- Cells spanning multiple columns
+- Cells text align separately
+
+| :        Fruits \|\| Food       : |||
+| :--------- | :-------- | :--------  |
+| Apple      | : Apple : | Apple      \
+| Banana     |   Banana  | Banana     \
+| Orange     |   Orange  | Orange     |
+| :   Rowspan is 4    : || How's it?  |
+|^^    A. Peach         ||   1. Fine :|
+|^^    B. Orange        ||^^ 2. Bad   |
+|^^    C. Banana        ||  It's OK!  |
+
+
+- make markown syntax possible inside a cell
+
+| :                   MathJax \|\| Image                 : |||
+| :------------ | :-------- | :----------------------------- |
+| Apple         | : Apple : | Apple                          \
+| Banana        | Banana    | Banana                         \
+| Orange        | Orange    | Orange                         |
+| :     Rowspan is 4     : || :        How's it?           : |
+| ^^     A. Peach          ||    1. ![example][cell-image]   |
+| ^^     B. Orange         || ^^ 2. $I = \int \rho R^{2} dV$ |
+| ^^     C. Banana         || **It's OK!**                   |
+
+[cell-image]: https://jekyllrb.com/img/octojekyll.png "An exemplary image"
+
+See more features at [spaceship-table-usage](https://github.com/jeffreytse/jekyll-spaceship#1-table-usage)
+
+## math
+
+$ a * b = c ^ b $
+
+$ 2^{\frac{n-1}{3}} $
+
+$ \int\_a^b f(x)\,dx. $
 
 ## mermaid
 
@@ -251,7 +337,7 @@ endlegend
 @endgantt
 @enduml
 
-11 Math
+## math in uml
 @startuml
 :<math>int_0^1f(x)dx</math>;
 :<math>x^2+y_1+z_12^34</math>;
@@ -261,3 +347,7 @@ Try also
 <math>P(y|bb"x") or f(bb"x")+epsilon</math>
 end note
 @enduml
+
+## youtube
+
+![](https://www.youtube.com/watch?v=T1itpPvFWHI&list=PLLAZ4kZ9dFpOPV5C5Ay0pHaa0RJFhcmcB?width=800&height=500)
