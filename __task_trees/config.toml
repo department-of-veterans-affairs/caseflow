@@ -16,6 +16,9 @@ uglyURLs = true
 
 ignoreFiles = ['appeals-tasks.json', '\.py$', '\.sh$']
 
+# Ignore error-remote-getcsv in case Github Pages is not serving the CSV file yet
+ignoreErrors = ["error-remote-getcsv"]
+
 theme = "hugo-book"
 
 [params]

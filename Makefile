@@ -17,8 +17,10 @@ build_subsite_help:
 	bundle exec jekyll build --profile --config "_subsite_config.yml,__help/_config.yml"
 
 build_subsite_task_trees:
+	if [ -d _site/task_trees ]; then rm -rf _site/task_trees; fi
+	[ -d _site ] || mkdir _site
+
 	cd __task_trees && ./hugow
-	rm -rf _site/task_trees
 	mv __task_trees/public _site/task_trees
 
 # Has only been tested on MacOS.
