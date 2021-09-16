@@ -5,7 +5,9 @@ parent: Help
 
 # Diagram examples
 
-Testing https://github.com/zhustec/jekyll-diagrams
+Enabled by:
+- https://github.com/jeffreytse/jekyll-spaceship
+- https://github.com/kui/jekyll-graphviz
 
 ## graphviz
 [Graphviz online editor](http://magjac.com/graphviz-visual-editor/)
@@ -171,6 +173,7 @@ State2 --> [*]
 @enduml
 
 8
+@startuml
 @startwbs
 + Project
  + Part One
@@ -184,8 +187,28 @@ State2 --> [*]
    -_ Task 2.2.2 To the Left boxless
    +_ Task 2.2.3 To the right boxless
 @endwbs
+@enduml
 
 9
+@startuml
+@startmindmap
+* Debian
+** Ubuntu
+*** Linux Mint
+*** Kubuntu
+*** Lubuntu
+*** KDE Neon
+** LMDE
+** SolydXK
+** SteamOS
+** Raspbian with a very long name
+*** <s>Raspmbc</s> => OSMC
+*** <s>Raspyfi</s> => Volumio
+@endmindmap
+@enduml
+
+
+@startuml
 @startmindmap
 caption figure 1
 title My super title
@@ -214,8 +237,10 @@ legend right
   legend
 endlegend
 @endmindmap
+@enduml
 
 10
+@startuml
 @startgantt
 [Prototype design] lasts 13 days and is colored in Lavender/LightBlue
 [Test prototype] lasts 9 days and is colored in Coral/Green and starts 3 days after [Prototype design]'s end
@@ -224,6 +249,7 @@ endlegend
 [Init and write tests report] is colored in Coral/Green
 [Init and write tests report] starts 1 day before [Test prototype]'s start and ends at [Test prototype]'s end
 @endgantt
+@enduml
 
 11 Math
 @startuml

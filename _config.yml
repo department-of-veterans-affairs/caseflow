@@ -120,6 +120,7 @@ just_the_docs:
 plugins:
   - jekyll-remote-theme
   # - jekyll-diagrams
+  - jekyll-graphviz
   - jekyll-spaceship
   # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
   - jekyll-coffeescript

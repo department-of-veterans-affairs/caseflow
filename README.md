@@ -32,8 +32,8 @@ main_gh_pages -->|"build-gh-pages<br/>Action"| gh_pages["gh_pages<br/>Branch"]
 any_branch -->|"some<br/>Action"| gh_pages["gh_pages<br/>Branch"]
 gh_pages --> website(("Caseflow<br/>GitHub Pages"))
 
-teamMember -->|makes| doc_update
-doc_update[/"documentation <br/>update"/] -->|commit| main_gh_pages
+teamMember("Team Member") -->|makes| doc_update
+doc_update("documentation <br/>update") -->|commit| main_gh_pages
 
 style teamMember fill:#0d0
 style doc_update fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
@@ -193,7 +193,7 @@ graph TD
   teamMember("Team Member") -->|creates| pr
   teamMember -->|squash & merges| update_docs_pr
   teamMember -->|makes| doc_update
-  doc_update("documentation<br/>update") -->|commit| main_gh_pages
+  doc_update("documentation <br/>update") -->|commit| main_gh_pages
   
   style teamMember fill:#0d0
   style pr fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
