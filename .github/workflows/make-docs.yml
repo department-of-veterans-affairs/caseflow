@@ -28,9 +28,8 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
+          # prints GITHUB_CONTEXT env variable
           env
-          echo "-------- GITHUB_CONTEXT --------------"
-          echo $GITHUB_CONTEXT
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -172,8 +171,8 @@ jobs:
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
-          assignees: yoomlam
-          reviewers: ${{ github.event.commits[0].committer.username }}
+          reviewers: yoomlam
+          assignees: ${{ github.event.commits[0].committer.username }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
