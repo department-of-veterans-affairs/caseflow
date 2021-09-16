@@ -80,7 +80,7 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
-    allTags = map(action.payload, (doc) => doc.tags ? doc.tags : []);
+    allTags = Array.prototype.concat.apply([], map(action.payload, (doc) => doc.tags ? doc.tags : []));
     uniqueTags = uniqWith(allTags, isEqual);
 
     return update(state, {

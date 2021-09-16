@@ -129,7 +129,7 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     has_ineligible_issue: rampRefiling.hasIneligibleIssue,
-    issue_ids: map(filter(rampRefiling.issues, (issue) => issue.isSelected), 'id')
+    issue_ids: map(filter(rampRefiling.issues, 'isSelected'), 'id')
   };
 
   return submitIntakeCompleteRequest(intakeId, { data })(dispatch);

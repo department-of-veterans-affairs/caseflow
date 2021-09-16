@@ -1,4 +1,4 @@
-import { clamp, compact, get, isEmpty, sortBy } from 'lodash';
+import { clamp, compact, get, isEmpty, sortBy, some } from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
@@ -110,7 +110,7 @@ export const isValidWholeNumber = (number) => {
 export const sortAnnotations = (annotations) => compact(sortBy(annotations, 'page', 'y'));
 
 export const isUserEditingText = () =>
-  document.querySelectorAll('input,textarea').some((elem) => document.activeElement === elem);
+  some(document.querySelectorAll('input,textarea'), (elem) => document.activeElement === elem);
 
 export const getHearingWorksheetLink = (hearings) => {
   return (

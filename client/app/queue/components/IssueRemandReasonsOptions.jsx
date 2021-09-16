@@ -13,7 +13,8 @@ import {
   map,
   filter,
   each,
-  find
+  find,
+  values
 } from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
@@ -59,7 +60,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = flatten(Object.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
+    const options = flatten(values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
     const pairs = zip(
       map(options, 'id'),
       map(options, () => ({
@@ -163,38 +164,50 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
-  getCheckbox = (option, onChange, values) => {
+  getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
     const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return (
       <React.Fragment key={option.id}>
-        <Checkbox name={rowOptId} onChange={onChange} value={values[option.id].checked} label={option.label} unpadded />
-        {values[option.id].checked && (
+        <Checkbox
+          name={rowOptId}
+          onChange={onChange}
+          value={checkboxValues[option.id].checked}
+          label={option.label}
+          unpadded
+        />
+        {checkboxValues[option.id].checked && (
           <RadioField
-            errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) && 'Choose one'}
+            errorMessage={
+              this.props.highlight &&
+              isNull(this.state[option.id].post_aoj) &&
+              'Choose one'
+            }
             styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
             name={rowOptId}
             vertical
             hideLabel
             options={[
               {
-                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-                value: 'false'
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
+                value: 'false',
               },
               {
-                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-                value: 'true'
-              }
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
+                value: 'true',
+              },
             ]}
             value={this.state[option.id].post_aoj}
             onChange={(postAoj) =>
               this.setState({
                 [option.id]: {
                   checked: true,
-                  post_aoj: postAoj
-                }
+                  post_aoj: postAoj,
+                },
               })
             }
           />
