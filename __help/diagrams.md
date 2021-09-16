@@ -1,19 +1,15 @@
 ---
+layout: single
 nav_order: 1
-parent: Help
+toc: true
+toc_sticky: true
+title: Diagram examples
 ---
-
-# Diagram examples
-{: .no_toc }
 
 Enabled by these Jekyll plugins:
 - [jekyll-graphviz](https://github.com/kui/jekyll-graphviz)
 - [jekyll-spaceship](https://github.com/jeffreytse/jekyll-spaceship)
 
-
-**Sections**
-* TOC
-{:toc}
 
 ## graphviz
 [Graphviz online editor](http://magjac.com/graphviz-visual-editor/)

@@ -26,23 +26,22 @@ kramdown:
   math_engine: mathjax
   syntax_highlighter: rouge
 
-# theme: minima
-remote_theme: pages-themes/modernist@v0.2.0
+# remote_theme: pages-themes/modernist@v0.2.0
 
 # -------------------------------------------
 plugins:
-  - jekyll-remote-theme
+  # - jekyll-remote-theme
   # - jekyll-diagrams
   # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
-  - jekyll-coffeescript
-  - jekyll-default-layout
-  - jekyll-gist
-  - jekyll-github-metadata
-  - jekyll-optional-front-matter
-  - jekyll-paginate
-  - jekyll-readme-index
-  - jekyll-titles-from-headings
-  - jekyll-relative-links
+  # - jekyll-coffeescript
+  # - jekyll-default-layout
+  # - jekyll-gist
+  # - jekyll-github-metadata
+  # - jekyll-optional-front-matter
+  # - jekyll-paginate
+  # - jekyll-readme-index
+  # - jekyll-titles-from-headings
+  # - jekyll-relative-links
 
 # ----- plugin configuration
 readme_index:

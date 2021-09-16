@@ -7,6 +7,23 @@ baseurl: "/caseflow/help" # required for themes to work in GH Pages for this rep
 source: __help
 destination: _site/help
 
-# remote_theme: pages-themes/modernist@v0.2.0
-plugins:
-  # - jekyll-spaceship
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+
+# -------- minimal-mistakes-jekyll configuration
+# https://github.com/mmistakes/minimal-mistakes/blob/master/_config.yml
+minimal_mistakes_skin: air
+locale: "en-US"
+breadcrumbs: true
+search: true
+search_full_content: true
+# Sass/SCSS
+sass:
+  sass_dir: _sass
+  style: compressed # https://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
+sidebar:
+  - title: "Title"
+    text: "Some text here."
+  - title: "Another Title"
+    text: "More text here."
+atom_feed:
+  hide: true

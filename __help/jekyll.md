@@ -1,12 +1,10 @@
 ---
+title: Jekyll
+layout: single
 nav_order: 99
-parent: Help
 ---
 
-# Jekyll
-{: .no_toc }
-
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
 
 {: .no_toc .text-delta }
 

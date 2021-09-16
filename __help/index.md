@@ -1,12 +1,7 @@
 ---
-title: Help
-nav_order: 0
-has_children: true
+layout: splash
+title: Help subsite
 ---
-
-# Help
-
-Acting as example for subsite
 
 <a href="/caseflow/">(Back to Caseflow)</a>
 
