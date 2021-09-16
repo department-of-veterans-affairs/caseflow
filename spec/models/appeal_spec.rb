@@ -967,7 +967,8 @@ describe Appeal, :all_dbs do
       end
       let!(:task2) do
         task.completed!
-        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2, appeal: appeal)
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2,
+                                   appeal: appeal, created_at: 1.hour.ago)
       end
 
       subject { appeal.assigned_attorney }
@@ -985,8 +986,8 @@ describe Appeal, :all_dbs do
         let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
         let(:root_task) { create(:root_task, appeal: appeal) }
         let!(:ds_task) do
-          create(:docket_switch_denied_task, parent: root_task, assigned_to: attorney,
-                 assigned_by: judge, appeal: appeal, created_at: 1.minute.ago)
+          create(:docket_switch_denied_task, parent: root_task, appeal: appeal, assigned_to: attorney,
+                                             assigned_by: judge, created_at: 1.minute.ago)
         end
 
         it "ignores the attorney assigned to the DocketSwitch attorney task" do
