@@ -3,7 +3,11 @@
 title: Help
 
 description: "Help Documentation for Caseflow"
+
+# https://mmistakes.github.io/minimal-mistakes/docs/configuration/#site-base-url
+url: "https://department-of-veterans-affairs.github.io"
 baseurl: "/caseflow/help" # required for themes to work in GH Pages for this repo
+
 source: __help
 destination: _site/help
 
