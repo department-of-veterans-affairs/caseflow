@@ -347,7 +347,3 @@ Try also
 <math>P(y|bb"x") or f(bb"x")+epsilon</math>
 end note
 @enduml
-
-## youtube
-
-![](https://www.youtube.com/watch?v=T1itpPvFWHI&list=PLLAZ4kZ9dFpOPV5C5Ay0pHaa0RJFhcmcB?width=800&height=500)
