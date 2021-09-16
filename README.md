@@ -50,11 +50,11 @@ The `main-gh-pages` branch has files for documentation. Some are automatically g
 
 Even though `main-gh-pages` is another branch in the Caseflow repo, it is highly encouraged to check out the `main-gh-pages` branch in a directory separate from `caseflow` because it has no common files with Caseflow's `master` branch and to avoid accidentally deleting git-ignored files in your development branches.
 
-To checkout to a `caseflow-gh-pages` directory as a sibling of your `caseflow` directory:
+To checkout to a `main-gh-pages` directory as a sibling of your `caseflow` directory:
 ```
 cd $YOUR_PATH_TO/caseflow
 cd ..
-git clone -b gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git caseflow-gh-pages
+git clone -b main-gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git main-gh-pages
 ```
 
 ## Committing big changes
@@ -62,7 +62,7 @@ git clone -b gh-pages --single-branch https://github.com/department-of-veterans-
 Treat the `main-gh-pages` branch like Caseflow's `master` branch. A difference is that anyone can commit to `main-gh-pages` without a peer-review (just like the Caseflow wiki page). However for significant changes, it is encouraged to create a development branch and do a squash-merge when you are satisfied with the changes, just like what is done in Caseflow's `master` branch.
 
 ```
-cd caseflow-gh-pages
+cd main-gh-pages
 git checkout -b my/add-amazing-new-page
 # Make modifications, preview changes, and commit
 git add .
