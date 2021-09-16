@@ -158,11 +158,12 @@ jobs:
           base: "main-gh-pages"
           branch: "gh-actions/make_docs-update_docs"
           delete-branch: true # when closing PR
-          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
+          commit-message: '${{ github.actor }} - `make docs` GH Action: automatically update DB schema documentation files'
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
           assignees: yoomlam
+          reviewers: ${{ github.actor }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
