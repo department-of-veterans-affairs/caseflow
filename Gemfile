@@ -83,7 +83,7 @@ end
 
 group :test, :development, :demo do
   # Security scanners
-  gem "brakeman", "~> 4.10"
+  gem "brakeman", "~> 5"
   gem "bullet"
   gem "bundler-audit"
   # Testing tools
