@@ -118,6 +118,10 @@ Refer to the `__help` directory as an example.
 
 Note that any [static site generator](https://www.netlify.com/blog/2020/04/14/what-is-a-static-site-generator-and-3-ways-to-find-the-best-one/) besides Jekyll can be used, such as Hugo, Gatsby, and Pelican -- adapt the instructions accordingly.
 
+### Jekyll subsite
+
+The [Help subsite](help/) demonstrates how to create a subsite using [Jekyll](https://jekyllrb.com/).
+
 ### Hugo subsite
 
 The [Task trees subsite](task_trees/) uses [Hugo](https://gohugo.io/) for its speed in processing the hundreds of task `md` files, among other features. The subsite source files are under the `__task_trees` folder and follows [Hugo's folder structure](https://gohugo.io/getting-started/directory-structure/).

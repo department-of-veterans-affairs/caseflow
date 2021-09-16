@@ -20,7 +20,7 @@ This documentation is useful for the following:
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.e9e2a8fa9a90325bf677f9cd0350cc741e3b4bf1976ffbabe91bf962c8b61d8f.js" integrity="sha256-6eKo&#43;pqQMlv2d/nNA1DMdB47S/GXb/ur6Rv5Ysi2HY8=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.0e8b33f880e6da489341f71a87c76931f0307afeff030601e5907f48043fc866.js" integrity="sha256-Dosz&#43;IDm2kiTQfcah8dpMfAwev7/AwYB5ZB/SAQ/yGY=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -201,9 +201,11 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#data-driven-documentation-of-task-trees">Data-Driven Documentation of Task Trees</a>
       <ul>
         <li><a href="#purpose-and-uses">Purpose and uses</a></li>
+        <li><a href="#contents">Contents</a></li>
+        <li><a href="#task-page">Task Page</a></li>
+        <li><a href="#notes">Notes</a></li>
       </ul>
     </li>
-    <li><a href="#how-to-use-and-interpret-this-documentation">How to use and interpret this documentation</a></li>
   </ul>
 </nav>
 
@@ -244,10 +246,10 @@ This documentation expands on the
 </ul>
 <p>It is expected that other uses of this documentation will arise as more domain information is manually added.</p>
 <p>When new task types are added or task tree structures change, this documentation can be readily regenerated to maintain up-to-date documentation.</p>
-<h2 id="how-to-use-and-interpret-this-documentation">
-  How to use and interpret this documentation
-  <a class="anchor" href="#how-to-use-and-interpret-this-documentation">#</a>
-</h2>
+<h3 id="contents">
+  Contents
+  <a class="anchor" href="#contents">#</a>
+</h3>
 <p>Actual task trees from AMA appeals were used to generate this documentation.</p>
 <ul>
 <li>
@@ -316,8 +318,12 @@ This documentation expands on the
 </ul>
 <p>You can start using the documentation by clicking on one of the above task listing links (no one should need to directly view the files in any of the <code>docs-*</code> subdirectories).
 Each task listing page linked above presents a list of tasks relevant to the particular docket.
-Each task has its own page (i.e., an <code>md</code> file).
-Each task page has the following sections:</p>
+Each task has its own page (i.e., an <code>md</code> file).</p>
+<h3 id="task-page">
+  Task Page
+  <a class="anchor" href="#task-page">#</a>
+</h3>
+<p>Each task page has the following sections:</p>
 <ul>
 <li>A link to a description page, which should be manually filled with relevant information such as description of the task, scenarios where it is created, and other information to help understand the context and motivation for the task. See 
 
@@ -351,7 +357,10 @@ Each task page has the following sections:</p>
 </li>
 </ul>
 <p>On the task listing pages and all the task pages, the content is presented by order of occurrence counts so that the most common tasks or TCSs (Task Creation Sequences) are presented first. Task trees with few occurrences may indicate unusual or undesirable appeal states, which is relevant to the Data Integrity and Bat Team.</p>
-<p>Notes:</p>
+<h3 id="notes">
+  Notes
+  <a class="anchor" href="#notes">#</a>
+</h3>
 <ul>
 <li>The Graphviz code used to generate the graph on each task page can be combined to show multi-hop/indirect relationships. For example, the following graph shows the task creation order pulled from the <code>RootTask_Organization</code>, <code>DistributionTask_Organization</code>, <code>EvidenceSubmissionWindowTask_Organization</code> task pages. From this, we can surmise that <code>JudgeAssignTask_User</code> is always created after <code>DistributionTask_Organization</code>.</li>
 </ul>
@@ -377,7 +386,8 @@ Each task page has the following sections:</p>
 </code></pre></details>
 <p><img src="RTO.DTO.ESWTO.dot.png" alt="RTO.DTO.ESWTO" /></p>
 <ul>
-<li>Manually-added content is kept in the <code>task_descr</code> subdirectory. Generated files are placed in the <code>docs-*</code> subdirectories, which can be deleted and replaced with updated files. To regenerate the files, use the <code>gen_ttdocs.py</code> and <code>createPngs.sh</code> scripts in the 
+<li>Manually-added content is kept in the <code>task_descr</code> subdirectory.</li>
+<li>Generated files are placed in the <code>docs-*</code> subdirectories, which can be deleted and regenerated. To regenerate the files, use the <code>gen_ttdocs.py</code> and <code>createPngs.sh</code> scripts in the 
 
 
 <a href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees" target="_blank">trees directory</a>
@@ -434,9 +444,11 @@ Each task page has the following sections:</p>
     <li><a href="#data-driven-documentation-of-task-trees">Data-Driven Documentation of Task Trees</a>
       <ul>
         <li><a href="#purpose-and-uses">Purpose and uses</a></li>
+        <li><a href="#contents">Contents</a></li>
+        <li><a href="#task-page">Task Page</a></li>
+        <li><a href="#notes">Notes</a></li>
       </ul>
     </li>
-    <li><a href="#how-to-use-and-interpret-this-documentation">How to use and interpret this documentation</a></li>
   </ul>
 </nav>
 
