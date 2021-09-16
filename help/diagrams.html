@@ -22,7 +22,7 @@
 <!-- End Jekyll SEO tag -->
 
 
-    <link rel="stylesheet" href="/caseflow/help/assets/css/style.css?v=4f33c46e5e902838906e303d794b9fa3bf1b83b0">
+    <link rel="stylesheet" href="/caseflow/help/assets/css/style.css?v=105003b5de7e776e97145b7aaf065a118f4a0ba6">
     <script src="/caseflow/help/assets/js/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -41,7 +41,8 @@
 
 <!-- end custom head snippets -->
 
-  </head>
+  <script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
   <body>
     <div class="wrapper">
       <header>
@@ -57,12 +58,24 @@
       </header>
       <section>
 
-      <h1 id="diagram-examples">Diagram examples</h1>
+      <h1 class="no_toc" id="diagram-examples">Diagram examples</h1>
 
-<p>Enabled by:</p>
+<p>Enabled by these Jekyll plugins:</p>
 <ul>
-  <li>https://github.com/jeffreytse/jekyll-spaceship</li>
-  <li>https://github.com/kui/jekyll-graphviz</li>
+  <li><a href="https://github.com/kui/jekyll-graphviz">jekyll-graphviz</a></li>
+  <li><a href="https://github.com/jeffreytse/jekyll-spaceship">jekyll-spaceship</a></li>
+</ul>
+
+<p><strong>Sections</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#graphviz" id="markdown-toc-graphviz">graphviz</a></li>
+  <li><a href="#emojis-clap" id="markdown-toc-emojis-clap">emojis<img class="emoji" title=":clap:" alt=":clap:" raw="👏" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44f.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))"></a></li>
+  <li><a href="#table" id="markdown-toc-table">table</a></li>
+  <li><a href="#math" id="markdown-toc-math">math</a></li>
+  <li><a href="#mermaid" id="markdown-toc-mermaid">mermaid</a></li>
+  <li><a href="#plantuml" id="markdown-toc-plantuml">plantuml</a></li>
+  <li><a href="#math-in-uml" id="markdown-toc-math-in-uml">math in uml</a></li>
+  <li><a href="#youtube" id="markdown-toc-youtube">youtube</a></li>
 </ul>
 
 <h2 id="graphviz">graphviz</h2>
@@ -156,6 +169,355 @@ digraph {
 </svg>
 </div>
 
+<h2 id="emojis-clap">emojis<img class="emoji" title=":clap:" alt=":clap:" raw="👏" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44f.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">
+</h2>
+
+<p><img class="emoji" title=":bowtie:" alt=":bowtie:" raw="" src="https://github.githubassets.com/images/icons/emoji/bowtie.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">I give this plugin two<img class="emoji" title=":+1:" alt=":+1:" raw="👍" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">!</p>
+
+<p><a href="https://www.webfx.com/tools/emoji-cheat-sheet/">Emojis</a></p>
+
+<h2 id="table">table</h2>
+
+<ul>
+  <li>Cells spanning multiple rows</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right">Stage</th>
+      <th style="text-align: right">Direct Products</th>
+      <th style="text-align: right">ATP Yields</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right" rowspan="2">Glycolysis
+<br>
+</td>
+      <td style="text-align: right" colspan="2">2 ATP</td>
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: right">2 NADH</td>
+      <td style="text-align: right">3–5 ATP</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Pyruvaye oxidation</td>
+      <td style="text-align: right">2 NADH</td>
+      <td style="text-align: right">5 ATP</td>
+    </tr>
+    <tr>
+      <td style="text-align: right" rowspan="3">Citric acid cycle
+<br><br>
+</td>
+      <td style="text-align: right" colspan="2">2 ATP</td>
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: right">6 NADH</td>
+      <td style="text-align: right">15 ATP</td>
+    </tr>
+    <tr>
+      
+      <td style="text-align: right">2 FADH</td>
+      <td style="text-align: right">3 ATP</td>
+    </tr>
+    <tr>
+      <td style="text-align: right" colspan="3">30–32 ATP</td>
+      
+      
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center" colspan="3">Easy Multiline</th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Apple
+<br>
+Apple
+<br>
+Apple</td>
+      <td style="text-align: left">Banana
+<br>
+Banana
+<br>
+Banana</td>
+      <td style="text-align: left">Orange
+<br>
+Orange
+<br>
+Orange</td>
+    </tr>
+    
+    
+    <tr>
+      <td style="text-align: left">Apple
+<br>
+Apple</td>
+      <td style="text-align: left">Banana
+<br>
+Banana</td>
+      <td style="text-align: left">Orange
+<br>
+Orange</td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left">Apple</td>
+      <td style="text-align: left">Banana</td>
+      <td style="text-align: left">Orange</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>Table header not required</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td>♜</td>
+      <td> </td>
+      <td>♝</td>
+      <td>♛</td>
+      <td>♚</td>
+      <td>♝</td>
+      <td>♞</td>
+      <td>♜</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>♟</td>
+      <td>♟</td>
+      <td>♟</td>
+      <td> </td>
+      <td>♟</td>
+      <td>♟</td>
+      <td>♟</td>
+    </tr>
+    <tr>
+      <td>♟</td>
+      <td> </td>
+      <td>♞</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>♗</td>
+      <td> </td>
+      <td> </td>
+      <td>♟</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>♙</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>♘</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>♙</td>
+      <td>♙</td>
+      <td>♙</td>
+      <td>♙</td>
+      <td> </td>
+      <td>♙</td>
+      <td>♙</td>
+      <td>♙</td>
+    </tr>
+    <tr>
+      <td>♖</td>
+      <td>♘</td>
+      <td>♗</td>
+      <td>♕</td>
+      <td>♔</td>
+      <td> </td>
+      <td> </td>
+      <td>♖</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>Cells spanning multiple columns</li>
+  <li>Cells text align separately</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center" colspan="3">Fruits || Food</th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Apple
+<br>
+Banana
+<br>
+Orange</td>
+      <td style="text-align: center">Apple
+<br>
+Banana
+<br>
+Orange</td>
+      <td style="text-align: left">Apple
+<br>
+Banana
+<br>
+Orange</td>
+    </tr>
+    
+    
+    <tr>
+      <td style="text-align: center" colspan="2" rowspan="4">Rowspan is 4
+<br>
+A. Peach
+<br>
+B. Orange
+<br>
+C. Banana</td>
+      <td style="text-align: left">How’s it?</td>
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: right" rowspan="2">
+<ol>
+  <li>Fine
+<br>
+</li>
+  <li>Bad</li>
+</ol>
+</td>
+      
+    </tr>
+    <tr>
+      
+      
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: left">It’s OK!</td>
+      
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>make markown syntax possible inside a cell</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center" colspan="3">MathJax || Image</th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Apple
+<br>
+Banana
+<br>
+Orange</td>
+      <td style="text-align: center">Apple
+<br>
+Banana
+<br>
+Orange</td>
+      <td style="text-align: left">Apple
+<br>
+Banana
+<br>
+Orange</td>
+    </tr>
+    
+    
+    <tr>
+      <td style="text-align: center" colspan="2" rowspan="4">Rowspan is 4
+<br>
+A. Peach
+<br>
+B. Orange
+<br>
+C. Banana</td>
+      <td style="text-align: center">How’s it?</td>
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: left" rowspan="2">
+<ol>
+  <li>
+<img src="https://jekyllrb.com/img/octojekyll.png" alt="example" title="An exemplary image">
+<br>
+</li>
+  <li>$I = \int \rho R^{2} dV$</li>
+</ol>
+</td>
+      
+    </tr>
+    <tr>
+      
+      
+      
+    </tr>
+    <tr>
+      
+      <td style="text-align: left"><strong>It’s OK!</strong></td>
+      
+    </tr>
+  </tbody>
+</table>
+
+<p>See more features at <a href="https://github.com/jeffreytse/jekyll-spaceship#1-table-usage">spaceship-table-usage</a></p>
+
+<h2 id="math">math</h2>
+
+<p>$ a * b = c ^ b $</p>
+
+<p>$ 2^{\frac{n-1}{3}} $</p>
+
+<p>$ \int_a^b f(x)\,dx. $</p>
+
 <h2 id="mermaid">mermaid</h2>
 
 <p><a href="https://mermaid-js.github.io/mermaid-live-editor/edit">Mermaid online editor</a></p>
@@ -199,8 +561,12 @@ digraph {
 <p>10
 <img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0a40737461727467616e74740a5b50726f746f747970652064657369676e5d206c61737473203133206461797320616e6420697320636f6c6f72656420696e204c6176656e6465722f4c69676874426c75650a5b546573742070726f746f747970655d206c617374732039206461797320616e6420697320636f6c6f72656420696e20436f72616c2f477265656e20616e642073746172747320332064617973206166746572205b50726f746f747970652064657369676e5d277320656e640a5b57726974652074657374735d206c617374732035206461797320616e6420656e6473206174205b50726f746f747970652064657369676e5d277320656e640a5b4869726520746573747320777269746572735d206c617374732036206461797320616e6420656e6473206174205b57726974652074657374735d27732073746172740a5b496e697420616e64207772697465207465737473207265706f72745d20697320636f6c6f72656420696e20436f72616c2f477265656e0a5b496e697420616e64207772697465207465737473207265706f72745d20737461727473203120646179206265666f7265205b546573742070726f746f747970655d277320737461727420616e6420656e6473206174205b546573742070726f746f747970655d277320656e640a40656e6467616e74740a40656e64756d6c"></p>
 
-<p>11 Math
-<img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0a3a3c6d6174683e696e745f305e316628782964783c2f6d6174683e3b0a3a3c6d6174683e785e322b795f312b7a5f31325e33343c2f6d6174683e3b0a6e6f74652072696768740a54727920616c736f0a3c6d6174683e642f6478662878293d6c696d5f28682d3e3029286628782b68292d66287829292f683c2f6d6174683e0a3c6d6174683e505c28797c62625c22785c2229206f7220665c2862625c22785c22292b657073696c6f6e3c2f6d6174683e0a656e64206e6f74650a40656e64756d6c"></p>
+<h2 id="math-in-uml">math in uml</h2>
+<p><img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0a3a3c6d6174683e696e745f305e316628782964783c2f6d6174683e3b0a3a3c6d6174683e785e322b795f312b7a5f31325e33343c2f6d6174683e3b0a6e6f74652072696768740a54727920616c736f0a3c6d6174683e642f6478662878293d6c696d5f28682d3e3029286628782b68292d66287829292f683c2f6d6174683e0a3c6d6174683e505c28797c62625c22785c2229206f7220665c2862625c22785c22292b657073696c6f6e3c2f6d6174683e0a656e64206e6f74650a40656e64756d6c"></p>
+
+<h2 id="youtube">youtube</h2>
+
+<p><iframe id="media-T1itpPvFWHI" class="media" src="https://www.youtube.com/embed/T1itpPvFWHI?list=PLLAZ4kZ9dFpOPV5C5Ay0pHaa0RJFhcmcB%3Fwidth%3D800&height=500" title="" width="100%" height="500" style="max-width: 600px;outline: none" allow="encrypted-media; picture-in-picture" frameborder="0" allowfullscreen></iframe></p>
 
 
       </section>
