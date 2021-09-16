@@ -23,6 +23,17 @@ jobs:
         ports: ["5432:5432"]
 
     steps:
+      - name: Debugging info
+        # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#pull_request
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          env
+          echo "-------- $GITHUB_CONTEXT --------------"
+          echo $GITHUB_CONTEXT
+          echo "-------- $GITHUB_EVENT_PATH --------------"
+          cat $GITHUB_EVENT_PATH
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -149,17 +160,6 @@ jobs:
             git commit -m "$WIKI_COMMIT_MESSAGE"
             echo "::endgroup::"
           fi
-
-      - name: Debugging info
-        # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#pull_request
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          env
-          echo "-------- $GITHUB_CONTEXT --------------"
-          cat $GITHUB_CONTEXT
-          echo "-------- $GITHUB_EVENT_PATH --------------"
-          echo $GITHUB_EVENT_PATH
 
       - name: Create/Update PR to merge into main-gh-pages
         id: create_pr
