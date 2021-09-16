@@ -29,10 +29,8 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           env
-          echo "-------- $GITHUB_CONTEXT --------------"
+          echo "-------- GITHUB_CONTEXT --------------"
           echo $GITHUB_CONTEXT
-          echo "-------- $GITHUB_EVENT_PATH --------------"
-          cat $GITHUB_EVENT_PATH
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -175,7 +173,7 @@ jobs:
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
           assignees: yoomlam
-          reviewers: ${{ github.event.pull_request.head_commit.username }}
+          reviewers: ${{ github.event.commits[0].committer.username }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
