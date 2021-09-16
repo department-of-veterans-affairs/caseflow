@@ -130,7 +130,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         click_on("Add issue")
         find(".cf-select", text: "Select or enter").click
         find(".cf-select__option", text: "Unknown Issue Category").click
-        fill_in "decision-date", with: "08192020"
+        fill_in "decision-date", with: (DateTime.now - 1.month).strftime("%m%d%Y") # Best guess 'always timely'
         fill_in "Issue description", with: "this is a description"
         click_on("Add this issue")
 
