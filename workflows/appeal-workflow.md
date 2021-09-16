@@ -6,7 +6,7 @@ tags: ["workflow"]
 
 # Appeal Workflow
 
-{% mermaid %}
+```mermaid!
 graph TD
 
 V[Veteran] -->|claim| firstRO[DRO]
@@ -65,11 +65,11 @@ QR --> D
 D --> |decision| VSat{Veteran satisfied?}
 VSat --> |yes| Enact
 VSat --> |no| repeat[SC, CAVC, MTV, reconsider]
-{% endmermaid %}
+```
 
 ## Appeal States
 
-{% mermaid %}
+```mermaid!
 graph TD
 Vet_choosing
 Vet_choosing --> forms_at_VBA
@@ -91,4 +91,4 @@ at_Dispatch --> Dispatched
 Dispatched --> Vet_dissatisfied[dissatisfied, restart]
 Dispatched --> Enacted
 Enacted --> Closed
-{% endmermaid %}
+```

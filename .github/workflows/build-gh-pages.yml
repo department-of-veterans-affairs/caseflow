@@ -38,15 +38,15 @@ jobs:
       # Also provides node12, which is needed by mermaid
       # node12 is also used by https://github.com/limjh16/jekyll-action-ts/blob/master/action.yml#L32
       # node is needed by mermaid and is provided by ts-graphviz, so don't need to explicitly setup-node
-      - name: Install Node 12
-        uses: actions/setup-node@v2
-        with:
-          node-version: '12'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      - name: 'Install Node diagramming tools'
-        run: |
-          npm install
+      # - name: Install Node 12
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '12'
+      #     cache: 'npm'
+      #     cache-dependency-path: package-lock.json
+      # - name: 'Install Node diagramming tools'
+      #   run: |
+      #     npm install
       - name: Add node packages to path
         run: |
           echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
@@ -54,13 +54,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: "Install Python diagramming tools"
-        uses: BSFishy/pip-action@v1
-        with:
-          packages: |
-            blockdiag
-            seqdiag
-            nwdiag
+      # - name: "Install Python diagramming tools"
+      #   uses: BSFishy/pip-action@v1
+      #   with:
+      #     packages: |
+      #       blockdiag
+      #       seqdiag
+      #       nwdiag
 
       - name: "🔨 Build Jekyll site"
         uses: limjh16/jekyll-action-ts@v2

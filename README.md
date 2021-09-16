@@ -23,23 +23,22 @@ The ([`gh-pages` branch](https://github.com/department-of-veterans-affairs/casef
 
 The `gh-pages` branch is updated by a `build-gh-pages` GitHub Action that uses files from the `main-gh-pages` branch to generate `html` and asset files, which are pushed to the `gh-pages` branch. You should not modify the `gh-pages` branch directly, so you don't need to `git checkout` the branch. Any commit to the `main-gh-pages` branch will trigger the GitHub Action, which can be seen [here](https://github.com/department-of-veterans-affairs/caseflow/actions/workflows/build-gh-pages.yml). See [Committing changes](committing-changes) for how to make changes.
 
-{% blockdiag %}
-blockdiag {
-  class branch [color=lightblue, shape=note];
-  main-gh-pages [class=branch, label="main-gh-pages branch"]
-  gh-pages [class=branch, label="gh-pages branch"]
 
-  class ghAction [shape=ellipse]
-  build-gh-pages [class=ghAction]
-  website [shape=cloud]
+```mermaid!
+graph LR
+main_gh_pages["main_gh_pages<br/>Branch"]
+any_branch["any<br/>Branch"]
+main_gh_pages -->|"build-gh-pages<br/>Action"| gh_pages["gh_pages<br/>Branch"]
+any_branch -->|"some<br/>Action"| gh_pages["gh_pages<br/>Branch"]
+gh_pages --> website(("Caseflow<br/>GitHub Pages"))
 
-  main-gh-pages -> build-gh-pages -> gh-pages -> website;
+teamMember -->|makes| doc_update
+doc_update[/"documentation <br/>update"/] -->|commit| main_gh_pages
 
-  any-branch [class=branch, label="any branch"]
-  any-action [class=ghAction, label="some Action"]
-  any-branch -> any-action -> gh-pages;
-}
-{% endblockdiag %}
+style teamMember fill:#0d0
+style doc_update fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
+style website fill:#0ff
+```
 
 Note that there may be some other GitHub Action that updates the `gh-pages` branch, so make sure to not cause folder or file name collisions when updating `main-gh-pages`.
 
@@ -183,21 +182,21 @@ The following GitHub Actions are employed to create this website:
 
 Their execution can be seen under the [Actions tab](https://github.com/department-of-veterans-affairs/caseflow/actions).
 
-{% mermaid %}
+```mermaid!
 graph TD
-pr("some<br/>PullRequest") -->|merges into| main["master<br/>Branch"]
-main -->|"make_docs<br/>Action"| update_docs_pr("update_docs<br/>PullRequest")
-update_docs_pr -->|merges into| main_gh_pages["main_gh_pages<br/>Branch"]
-main_gh_pages -->|"build-gh-pages<br/>Action"| gh_pages["gh_pages<br/>Branch"]
-gh_pages --> website(("Caseflow<br/>GitHub Pages"))
-
-teamMember("Team Member") -->|creates| pr
-teamMember -->|squash &amp; merges| update_docs_pr
-teamMember -->|makes| doc_update
-doc_update("documentation<br/>update") -->|commit| main_gh_pages
-
-style teamMember fill:#0d0
-style pr fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
-style doc_update fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
-style website fill:#0ff
-{% endmermaid %}
+  pr("a<br/>PullRequest") -->|merges into| main["master<br/>Branch"]
+  main -->|"make_docs<br/>Action"| update_docs_pr("update_docs<br/>PullRequest")
+  update_docs_pr -->|merges into| main_gh_pages["main_gh_pages<br/>Branch"]
+  main_gh_pages -->|"build-gh-pages<br/>Action"| gh_pages["gh_pages<br/>Branch"]
+  gh_pages --> website(("Caseflow<br/>GitHub Pages"))
+  
+  teamMember("Team Member") -->|creates| pr
+  teamMember -->|squash & merges| update_docs_pr
+  teamMember -->|makes| doc_update
+  doc_update("documentation<br/>update") -->|commit| main_gh_pages
+  
+  style teamMember fill:#0d0
+  style pr fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
+  style doc_update fill:#0f0,stroke:#0d0,stroke-width:2px,stroke-dasharray: 5 5
+  style website fill:#0ff
+```

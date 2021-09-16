@@ -7,26 +7,6 @@ parent: Help
 
 Testing https://github.com/zhustec/jekyll-diagrams
 
-## blockdiag
-{% blockdiag %}
-blockdiag {
-   A -> B -> C -> D;
-   A -> E -> F -> G;
-}
-{% endblockdiag %}
-
-## seqdiag
-{% seqdiag %}
-seqdiag {
-  browser  -> webserver [label = "GET /index.html"];
-  browser <-- webserver;
-  browser  -> webserver [label = "POST /blog/comment"];
-              webserver  -> database [label = "INSERT comment"];
-              webserver <-- database;
-  browser <-- webserver;
-}
-{% endseqdiag %}
-
 ## graphviz
 [Graphviz online editor](http://magjac.com/graphviz-visual-editor/)
 
@@ -49,37 +29,13 @@ digraph {
 
 [Mermaid online editor](https://mermaid-js.github.io/mermaid-live-editor/edit)
 
-{% mermaid %}
+```mermaid!
 sequenceDiagram
     participant John
     participant Alice
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
-{% endmermaid %}
-
-## nomnoml
-{% nomnoml %}
-[Pirate|eyeCount: Int|raid();pillage()|
-  [beard]--[parrot]
-  [beard]-:>[foul mouth]
-]
-
-[<abstract>Marauder]<:--[Pirate]
-[Pirate]- 0..7[mischief]
-[jollyness]->[Pirate]
-[jollyness]->[rum]
-[jollyness]->[singing]
-[Pirate]-> *[rum|tastiness: Int|swig()]
-[Pirate]->[singing]
-[singing]<->[rum]
-
-[<start>st]->[<state>plunder]
-[plunder]->[<choice>more loot]
-[more loot]->[st]
-[more loot] no ->[<end>e]
-
-[<actor>Sailor] - [<usecase>shiver me;timbers]
-{% endnomnoml %}
+```
 
 ## plantuml
 
@@ -87,7 +43,6 @@ sequenceDiagram
 [PlantUML online editor](http://www.plantuml.com/plantuml/uml)
 
 1
-{% plantuml %}
 @startuml
 class Car
 
@@ -96,10 +51,8 @@ Car *- Wheel : have 4 >
 Car -- Person : < owns
 
 @enduml
-{% endplantuml %}
 
 2
-{% plantuml %}
 @startuml
 Alice -> Bob: Authentication Request
 Bob --> Alice: Authentication Response
@@ -108,10 +61,8 @@ Alice -> Bob: Another authentication Request
 Alice <-- Bob: Another authentication Response
 Alice --> Bob: <math>x = (-b+-sqrt(b^2-4ac))/(2a)</math>
 @enduml
-{% endplantuml %}
 
 3
-{% plantuml %}
 @startuml
 participant Participant as Foo
 actor       Actor       as Foo1
@@ -129,10 +80,8 @@ Foo -> Foo5 : To database
 Foo -> Foo6 : To collections
 Foo -> Foo7: To queue
 @enduml
-{% endplantuml %}
 
 4
-{% plantuml %}
 @startuml
 actor Bob #red
 ' The only difference between actor
@@ -147,10 +96,8 @@ Alice->Bob: Authentication Request
 Bob->Alice: Authentication Response
 Bob->L: Log transaction
 @enduml
-{% endplantuml %}
 
 5
-{% plantuml %}
 @startuml
 Alice -> Bob: Authentication Request
 
@@ -175,10 +122,8 @@ else Another type of failure
 
 end
 @enduml
-{% endplantuml %}
 
 6
-{% plantuml %}
 @startuml
 
 package "Some Group" {
@@ -211,10 +156,8 @@ database "MySql" {
 [Folder 3] --> [Frame 4]
 
 @enduml
-{% endplantuml %}
 
 7
-{% plantuml %}
 @startuml
 
 [*] --> State1
@@ -226,10 +169,8 @@ State1 -> State2
 State2 --> [*]
 
 @enduml
-{% endplantuml %}
 
 8
-{% plantuml %}
 @startwbs
 + Project
  + Part One
@@ -243,10 +184,8 @@ State2 --> [*]
    -_ Task 2.2.2 To the Left boxless
    +_ Task 2.2.3 To the right boxless
 @endwbs
-{% endplantuml %}
 
 9
-{% plantuml %}
 @startmindmap
 caption figure 1
 title My super title
@@ -275,10 +214,8 @@ legend right
   legend
 endlegend
 @endmindmap
-{% endplantuml %}
 
 10
-{% plantuml %}
 @startgantt
 [Prototype design] lasts 13 days and is colored in Lavender/LightBlue
 [Test prototype] lasts 9 days and is colored in Coral/Green and starts 3 days after [Prototype design]'s end
@@ -287,10 +224,8 @@ endlegend
 [Init and write tests report] is colored in Coral/Green
 [Init and write tests report] starts 1 day before [Test prototype]'s start and ends at [Test prototype]'s end
 @endgantt
-{% endplantuml %}
 
 11 Math
-{% plantuml %}
 @startuml
 :<math>int_0^1f(x)dx</math>;
 :<math>x^2+y_1+z_12^34</math>;
@@ -300,32 +235,3 @@ Try also
 <math>P(y|bb"x") or f(bb"x")+epsilon</math>
 end note
 @enduml
-{% endplantuml %}
-
-
-## smcat
-{% smcat %}
-initial,
-"tape player off",
-"tape player on" {
-  stopped => playing : play;
-  playing => stopped : stop;
-  playing => paused  : pause;
-  paused  => playing : pause;
-  paused  => stopped : stop;
-};
-
-initial           => "tape player off";
-"tape player off" => stopped           : power;
-"tape player on"  => "tape player off" : power;
-{% endsmcat %}
-
-## wavedrom
-{% wavedrom %}
-{signal: [
-  {name: 'clk', wave: 'p.....|...'},
-  {name: 'dat', wave: 'x.345x|=.x', data: ['head', 'body', 'tail', 'data']},
-  {name: 'req', wave: '0.1..0|1.0'},
-  {name: 'ack', wave: '1.....|01.'}
-]}
-{% endwavedrom %}

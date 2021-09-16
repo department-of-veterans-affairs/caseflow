@@ -8,7 +8,7 @@ tags: ["workflow", "hearings"]
 * [Caseflow Hearings](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings)
 * [HearingTask](task_descr/HearingTask_Organization.md)
 
-{% mermaid %}
+```mermaid!
 graph TD
 
 docket --> |if H| admin_actions{need hearing admin actions?}
@@ -42,7 +42,7 @@ no_show_opt --> |wait to distribute| 90dayEvidenceSubmissionWindowTask
 
 disposition --> |no disposition within 48hrs| ChangeHearingDispositionTask
 ChangeHearingDispositionTask --> disposition
-{% endmermaid %}
+```
 
 
 ## AMA Hearing

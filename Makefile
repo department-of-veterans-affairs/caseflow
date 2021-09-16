@@ -27,7 +27,7 @@ install_jekyll_diagram_dependencies:
 	brew install graphviz
 
 	# Assumes npm is installed. Install globally so jekyll can call it using the default $PATH.
-	npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
+	# npm install -g mermaid.cli nomnoml state-machine-cat wavedrom-cli
 	# Skipping packages b/c they are not working: vega vega-cli vega-lite
 
 	# Skipping erd due to erd requiring ActiveRecord
@@ -36,7 +36,7 @@ install_jekyll_diagram_dependencies:
 	# cabal update && cabal install erd
 
 	# Assumes cargo is installed: https://doc.rust-lang.org/cargo/getting-started/installation.html
-	cargo install svgbob_cli
+	# cargo install svgbob_cli
 
 run:
 	bundle exec jekyll serve --incremental

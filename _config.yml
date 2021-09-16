@@ -117,11 +117,11 @@ just_the_docs:
     #   search_exclude: false
 
 # -------------------------------------------
-# Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
 plugins:
   - jekyll-remote-theme
-  - jekyll-diagrams
-  - jekyll-seo-tag
+  # - jekyll-diagrams
+  - jekyll-spaceship
+  # Mimic GH Pages: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
   - jekyll-coffeescript
   - jekyll-default-layout
   - jekyll-gist
