@@ -33,7 +33,7 @@ export const ScheduleVeteranForm = ({
   hearing,
   errors,
   initialRegionalOffice,
-  initialHearingDate,
+  initialHearingDay,
   convertToVirtual,
   userCanViewTimeSlots,
   hearingTask,
@@ -176,7 +176,7 @@ export const ScheduleVeteranForm = ({
                   errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
                   regionalOffice={ro}
-                  value={hearing.hearingDay || initialHearingDate}
+                  value={hearing.hearingDay || initialHearingDay}
                   onChange={(hearingDay) => {
                     // Call fetch scheduled hearings only if passed
                     fetchScheduledHearings(hearingDay)(dispatch);
@@ -227,7 +227,7 @@ ScheduleVeteranForm.propTypes = {
   errors: PropTypes.object,
   hearing: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  initialHearingDate: PropTypes.string,
+  initialHearingDay: PropTypes.object,
   appellantTitle: PropTypes.string,
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,

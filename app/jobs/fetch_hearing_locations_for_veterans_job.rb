@@ -36,7 +36,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                      LegacyAppeal,
                      select_fields: [:vacols_id]
                    ).first(QUERY_LIMIT / 2)
+
                    ama_appeals = find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
+
                    travel_board_appeals = find_travel_board_appeals_ready_for_geomatching(
                      legacy_appeals.map(&:vacols_id)
                    ).first(QUERY_TRAVEL_BOARD_LIMIT)
@@ -118,7 +120,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def find_travel_board_appeals_ready_for_geomatching(exclude_ids)
     VACOLS::Case
       .where(
-        # Travle Board Hearing Request
+        # Travel Board Hearing Request
         bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
         # Current Location
         bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
@@ -128,6 +130,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         bfddec: nil
       )
       .where.not(bfkey: exclude_ids)
+      .includes(:correspondent, :folder, :case_issues)
       .map do |vacols_case|
         AppealRepository.build_appeal(vacols_case, true)
       end
