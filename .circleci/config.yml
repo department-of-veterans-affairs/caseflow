@@ -375,13 +375,13 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_workspace
+      - build_workspace:
           filters:
             branches:
               ignore:
                 - gh-pages
                 - main-gh-pages
-      - demo
+      - demo:
           filters:
             branches:
               ignore:
@@ -395,13 +395,13 @@ workflows:
               ignore:
                 - gh-pages
                 - main-gh-pages
-      - js_tests
+      - js_tests:
           filters:
             branches:
               ignore:
                 - gh-pages
                 - main-gh-pages
-      - lint
+      - lint:
           filters:
             branches:
               ignore:
