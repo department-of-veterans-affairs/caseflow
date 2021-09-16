@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | hearing Tasks |
+HearingTask_Organization for hearing #   HearingTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 59980 -- ScheduleHearingTask_Organization HearingTask_Organization -- 8881 -- AssignHearingDispositionTask_Organization HearingTask_Organization -- 1134 -- EvidenceSubmissionWindowTask_Organization HearingTask_Organization -- 747 -- ChangeHearingDispositionTask_Organization HearingTask_Organization -- 3 -- ChangeHearingDispositionTask_User HearingTask_Organization -- 1 -- ScheduleHearingTask_User HearingTask_Organization -- 1 -- InformalHearingPresentationTask_Organization DistributionTask_Organization -- 62094 -- HearingTask_Organization JudgeDecisionReviewTask_User -- 3 -- HearingTask_Organization RootTask_Organization -- 2 -- HearingTask_Organization DistributionTask_User -- 1 -- HearingTask_Organization AttorneyTask_User -- 1 -- HearingTask_Organization Parent Tasks:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | hearing Tasks |
+HearingTask_Organization for hearing #   HearingTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 59980 -- ScheduleHearingTask_Organization HearingTask_Organization -- 8881 -- AssignHearingDispositionTask_Organization HearingTask_Organization -- 1134 -- EvidenceSubmissionWindowTask_Organization HearingTask_Organization -- 747 -- ChangeHearingDispositionTask_Organization HearingTask_Organization -- 3 -- ChangeHearingDispositionTask_User HearingTask_Organization -- 1 -- ScheduleHearingTask_User HearingTask_Organization -- 1 -- InformalHearingPresentationTask_Organization DistributionTask_Organization -- 62094 -- HearingTask_Organization JudgeDecisionReviewTask_User -- 3 -- HearingTask_Organization RootTask_Organization -- 2 -- HearingTask_Organization DistributionTask_User -- 1 -- HearingTask_Organization AttorneyTask_User -- 1 -- HearingTask_Organization Parent Tasks:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Hearing Task Organization | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Hearing Task Organization</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtotvtodtohto">RTO.TVTO.DTO.HTO</a></li>
+        <li><a href="#rtodtohto">RTO.DTO.HTO</a></li>
+        <li><a href="#rtotvtodtoshtohto">RTO.TVTO.DTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtohto">RTO.DTO.SHTO.HTO</a></li>
+        <li><a href="#rtotvtodtoshtoshtohto">RTO.TVTO.DTO.SHTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtotvtohto">RTO.DTO.SHTO.TVTO.HTO</a></li>
+        <li><a href="#dtohto">DTO.HTO</a></li>
+        <li><a href="#rtotvtotvtodtohto">RTO.TVTO.TVTO.DTO.HTO</a></li>
+        <li><a href="#rtodtoshtoshtohto">RTO.DTO.SHTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtotvtoshtohto">RTO.DTO.SHTO.TVTO.SHTO.HTO</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">hearing Tasks</a>
+ |</p>
+<h1 id="hearingtask_organization-for-hearing">
+  HearingTask_Organization for hearing
+  <a class="anchor" href="#hearingtask_organization-for-hearing">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/HearingTask_Organization.html">HearingTask_Organization description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+HearingTask_Organization -- 59980 --> ScheduleHearingTask_Organization
+HearingTask_Organization -- 8881 --> AssignHearingDispositionTask_Organization
+HearingTask_Organization -- 1134 --> EvidenceSubmissionWindowTask_Organization
+HearingTask_Organization -- 747 --> ChangeHearingDispositionTask_Organization
+HearingTask_Organization -- 3 --> ChangeHearingDispositionTask_User
+HearingTask_Organization -- 1 --> ScheduleHearingTask_User
+HearingTask_Organization -- 1 --> InformalHearingPresentationTask_Organization
+DistributionTask_Organization -- 62094 --> HearingTask_Organization
+JudgeDecisionReviewTask_User -- 3 --> HearingTask_Organization
+RootTask_Organization -- 2 --> HearingTask_Organization
+DistributionTask_User -- 1 --> HearingTask_Organization
+AttorneyTask_User -- 1 --> HearingTask_Organization
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a>
+: 62094 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_User.html">DistributionTask_User</a>
+: 1 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a>
+: 59980 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a>
+: 8881 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>
+: 1134 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_Organization.html">ChangeHearingDispositionTask_Organization</a>
+: 747 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_User.html">ChangeHearingDispositionTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_User.html">ScheduleHearingTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/InformalHearingPresentationTask_Organization.html">InformalHearingPresentationTask_Organization</a>
+: 1 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+HearingTask_Organization -- 59974 --> ScheduleHearingTask_Organization
+HearingTask_Organization -- 1114 --> AssignHearingDispositionTask_Organization
+HearingTask_Organization -- 630 --> EvidenceSubmissionWindowTask_Organization
+HearingTask_Organization -- 102 --> AppealWithdrawalMailTask_Organization
+HearingTask_Organization -- 79 --> HearingRelatedMailTask_Organization
+HearingTask_Organization -- 50 --> TrackVeteranTask_Organization
+HearingTask_Organization -- 35 --> EvidenceOrArgumentMailTask_Organization
+HearingTask_Organization -- 27 --> DeathCertificateMailTask_Organization
+HearingTask_Organization -- 17 --> AodMotionMailTask_Organization
+HearingTask_Organization -- 14 --> ChangeHearingDispositionTask_Organization
+HearingTask_Organization -- 12 --> HearingAdminActionVerifyAddressTask_Organization
+HearingTask_Organization -- 10 --> StatusInquiryMailTask_Organization
+HearingTask_Organization -- 10 --> HearingAdminActionOtherTask_Organization
+HearingTask_Organization -- 6 --> ExtensionRequestMailTask_Organization
+HearingTask_Organization -- 5 --> FoiaRequestMailTask_Organization
+HearingTask_Organization -- 4 --> HearingAdminActionIncarceratedVeteranTask_Organization
+HearingTask_Organization -- 3 --> VeteranRecordRequest_Organization
+HearingTask_Organization -- 3 --> TimedHoldTask_Organization
+HearingTask_Organization -- 2 --> PrivacyActRequestMailTask_Organization
+HearingTask_Organization -- 2 --> HearingAdminActionForeignVeteranCaseTask_Organization
+HearingTask_Organization -- 2 --> DistributionTask_Organization
+HearingTask_Organization -- 2 --> CongressionalInterestMailTask_Organization
+HearingTask_Organization -- 1 --> TranslationTask_Organization
+HearingTask_Organization -- 1 --> ScheduleHearingTask_User
+HearingTask_Organization -- 1 --> ReturnedUndeliverableCorrespondenceMailTask_Organization
+HearingTask_Organization -- 1 --> PowerOfAttorneyRelatedMailTask_Organization
+HearingTask_Organization -- 1 --> OtherMotionMailTask_Organization
+HearingTask_Organization -- 1 --> JudgeAssignTask_User
+HearingTask_Organization -- 1 --> DocketSwitchMailTask_Organization
+HearingTask_Organization -- 1 --> DocketSwitchGrantedTask_User
+HearingTask_Organization -- 1 --> ClearAndUnmistakeableErrorMailTask_Organization
+HearingTask_Organization -- 1 --> ChangeHearingRequestTypeTask_User
+HearingTask_Organization -- 1 --> AppealWithdrawalMailTask_User
+HearingTask_Organization -- 1 --> AddressChangeMailTask_Organization
+DistributionTask_Organization -- 58801 --> HearingTask_Organization
+ScheduleHearingTask_Organization -- 2566 --> HearingTask_Organization
+TrackVeteranTask_Organization -- 222 --> HearingTask_Organization
+HearingRelatedMailTask_Organization -- 88 --> HearingTask_Organization
+AssignHearingDispositionTask_Organization -- 81 --> HearingTask_Organization
+EvidenceOrArgumentMailTask_Organization -- 50 --> HearingTask_Organization
+ChangeHearingRequestTypeTask_User -- 47 --> HearingTask_Organization
+AodMotionMailTask_User -- 33 --> HearingTask_Organization
+ScheduleHearingColocatedTask_Organization -- 31 --> HearingTask_Organization
+NoShowHearingTask_User -- 23 --> HearingTask_Organization
+TimedHoldTask_Organization -- 21 --> HearingTask_Organization
+EvidenceOrArgumentMailTask_User -- 21 --> HearingTask_Organization
+CongressionalInterestMailTask_Organization -- 15 --> HearingTask_Organization
+HearingAdminActionOtherTask_User -- 14 --> HearingTask_Organization
+EvidenceSubmissionWindowTask_Organization -- 12 --> HearingTask_Organization
+StatusInquiryMailTask_User -- 9 --> HearingTask_Organization
+NoShowHearingTask_Organization -- 8 --> HearingTask_Organization
+TimedHoldTask_User -- 7 --> HearingTask_Organization
+PowerOfAttorneyRelatedMailTask_Organization -- 7 --> HearingTask_Organization
+VeteranRecordRequest_Organization -- 5 --> HearingTask_Organization
+HearingRelatedMailTask_User -- 5 --> HearingTask_Organization
+HearingAdminActionForeignVeteranCaseTask_Organization -- 4 --> HearingTask_Organization
+TranslationTask_User -- 3 --> HearingTask_Organization
+PrivacyActRequestMailTask_User -- 3 --> HearingTask_Organization
+OtherMotionMailTask_User -- 3 --> HearingTask_Organization
+HearingAdminActionVerifyAddressTask_User -- 3 --> HearingTask_Organization
+FoiaRequestMailTask_User -- 3 --> HearingTask_Organization
+FoiaRequestMailTask_Organization -- 3 --> HearingTask_Organization
+StatusInquiryMailTask_Organization -- 2 --> HearingTask_Organization
+ExtensionRequestMailTask_User -- 2 --> HearingTask_Organization
+DocketSwitchGrantedTask_User -- 2 --> HearingTask_Organization
+AppealWithdrawalMailTask_Organization -- 2 --> HearingTask_Organization
+AodMotionMailTask_Organization -- 2 --> HearingTask_Organization
+Task_Organization -- 1 --> HearingTask_Organization
+ScheduleHearingColocatedTask_User -- 1 --> HearingTask_Organization
+ReturnedUndeliverableCorrespondenceMailTask_Organization -- 1 --> HearingTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> HearingTask_Organization
+HearingAdminActionMissingFormsTask_User -- 1 --> HearingTask_Organization
+HearingAdminActionForeignVeteranCaseTask_User -- 1 --> HearingTask_Organization
+ExtensionRequestMailTask_Organization -- 1 --> HearingTask_Organization
+DistributionTask_User -- 1 --> HearingTask_Organization
+BvaDispatchTask_User -- 1 --> HearingTask_Organization
+AttorneyTask_User -- 1 --> HearingTask_Organization
+AppealWithdrawalMailTask_User -- 1 --> HearingTask_Organization
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a>
+: 58801 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a>
+: 2566 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
+: 222 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a>
+: 88 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a>
+: 81 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
+: 50 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingRequestTypeTask_User.html">ChangeHearingRequestTypeTask_User</a>
+: 47 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_User.html">AodMotionMailTask_User</a>
+: 33 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>
+: 31 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/NoShowHearingTask_User.html">NoShowHearingTask_User</a>
+: 23 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_User.html">EvidenceOrArgumentMailTask_User</a>
+: 21 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_Organization.html">TimedHoldTask_Organization</a>
+: 21 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a>
+: 15 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionOtherTask_User.html">HearingAdminActionOtherTask_User</a>
+: 14 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>
+: 12 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_User.html">StatusInquiryMailTask_User</a>
+: 9 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/NoShowHearingTask_Organization.html">NoShowHearingTask_Organization</a>
+: 8 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_User.html">HearingRelatedMailTask_User</a>
+: 5 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>
+: 5 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionForeignVeteranCaseTask_Organization.html">HearingAdminActionForeignVeteranCaseTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_User.html">FoiaRequestMailTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherMotionMailTask_User.html">OtherMotionMailTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TranslationTask_User.html">TranslationTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionVerifyAddressTask_User.html">HearingAdminActionVerifyAddressTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PrivacyActRequestMailTask_User.html">PrivacyActRequestMailTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DocketSwitchGrantedTask_User.html">DocketSwitchGrantedTask_User</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_User.html">ExtensionRequestMailTask_User</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_User.html">AppealWithdrawalMailTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingColocatedTask_User.html">ScheduleHearingColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_User.html">DistributionTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ReturnedUndeliverableCorrespondenceMailTask_Organization.html">ReturnedUndeliverableCorrespondenceMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/BvaDispatchTask_User.html">BvaDispatchTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionMissingFormsTask_User.html">HearingAdminActionMissingFormsTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionForeignVeteranCaseTask_User.html">HearingAdminActionForeignVeteranCaseTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/Task_Organization.html">Task_Organization</a>
+: 1 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a>
+: 59974 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a>
+: 1114 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>
+: 630 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a>
+: 102 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a>
+: 79 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
+: 50 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
+: 35 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DeathCertificateMailTask_Organization.html">DeathCertificateMailTask_Organization</a>
+: 27 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a>
+: 17 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_Organization.html">ChangeHearingDispositionTask_Organization</a>
+: 14 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionVerifyAddressTask_Organization.html">HearingAdminActionVerifyAddressTask_Organization</a>
+: 12 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a>
+: 10 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionOtherTask_Organization.html">HearingAdminActionOtherTask_Organization</a>
+: 10 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a>
+: 5 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionIncarceratedVeteranTask_Organization.html">HearingAdminActionIncarceratedVeteranTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_Organization.html">TimedHoldTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PrivacyActRequestMailTask_Organization.html">PrivacyActRequestMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionForeignVeteranCaseTask_Organization.html">HearingAdminActionForeignVeteranCaseTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ReturnedUndeliverableCorrespondenceMailTask_Organization.html">ReturnedUndeliverableCorrespondenceMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_User.html">AppealWithdrawalMailTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeAssignTask_User.html">JudgeAssignTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_User.html">ScheduleHearingTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DocketSwitchGrantedTask_User.html">DocketSwitchGrantedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ClearAndUnmistakeableErrorMailTask_Organization.html">ClearAndUnmistakeableErrorMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingRequestTypeTask_User.html">ChangeHearingRequestTypeTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/DocketSwitchMailTask_Organization.html">DocketSwitchMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TranslationTask_Organization.html">TranslationTask_Organization</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 62115 total occurrences of HearingTask_Organization among appeals in the hearing docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to HearingTask_Organization, sorted by frequency.</p>
+<h3 id="rtotvtodtohto">
+  RTO.TVTO.DTO.HTO
+  <a class="anchor" href="#rtotvtodtohto">#</a>
+</h3>
+<p>43044 (69%) occurrences (example appeal IDs: [153077, 153073, 21950, 45141, 64575])</p>
+<p>Task Tree for appeal with ID 153077
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.TrackVeteranTask
+</p>
+</p>
+<h3 id="rtodtohto">
+  RTO.DTO.HTO
+  <a class="anchor" href="#rtodtohto">#</a>
+</h3>
+<p>15445 (25%) occurrences (example appeal IDs: [223, 128299, 153076, 18150, 28484])</p>
+<p>Task Tree for appeal with ID 223
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  1.InformalHearingPresentationTask[/"1.InformalHearingPresentationTask\n(organization)"\]
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  7.TranscriptionTask["7.TranscriptionTask\n(organization)"]
+style 8.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  8.EvidenceSubmissionWindowTask[/"8.EvidenceSubmissionWindowTask\n(organization)"/]
+style 9.TranscriptionTask fill:#cfcfcf
+  9.TranscriptionTask["9.TranscriptionTask\n(user)"]
+style 10.EvidenceSubmissionWindowTask fill:#8de5a1
+  10.EvidenceSubmissionWindowTask[/"10.EvidenceSubmissionWindowTask\n(user)"/]
+style 11.TranscriptionTask fill:#cfcfcf
+  11.TranscriptionTask["11.TranscriptionTask\n(user)"]
+style 12.JudgeAssignTask fill:#b3b3b3
+  12.JudgeAssignTask[\"12.JudgeAssignTask\n(user)"/]
+style 13.JudgeDecisionReviewTask fill:#e5c494
+  13.JudgeDecisionReviewTask[["13.JudgeDecisionReviewTask\n(user)"]]
+style 14.AttorneyTask fill:#ffb482
+  14.AttorneyTask["14.AttorneyTask\n(user)"]
+style 15.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  15.BvaDispatchTask{{"15.BvaDispatchTask\n(organization)"}}
+style 16.BvaDispatchTask fill:#e78ac3
+  16.BvaDispatchTask{{"16.BvaDispatchTask\n(user)"}}
+
+2.DistributionTask --> 1.InformalHearingPresentationTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.TrackVeteranTask
+3.HearingTask --> 6.AssignHearingDispositionTask
+6.AssignHearingDispositionTask --> 7.TranscriptionTask
+6.AssignHearingDispositionTask --> 8.EvidenceSubmissionWindowTask
+7.TranscriptionTask --> 9.TranscriptionTask
+8.EvidenceSubmissionWindowTask --> 10.EvidenceSubmissionWindowTask
+7.TranscriptionTask --> 11.TranscriptionTask
+0.RootTask --> 12.JudgeAssignTask
+0.RootTask --> 13.JudgeDecisionReviewTask
+13.JudgeDecisionReviewTask --> 14.AttorneyTask
+0.RootTask --> 15.BvaDispatchTask
+15.BvaDispatchTask --> 16.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoshtohto">
+  RTO.TVTO.DTO.SHTO.HTO
+  <a class="anchor" href="#rtotvtodtoshtohto">#</a>
+</h3>
+<p>1491 (2%) occurrences (example appeal IDs: [62318, 57026, 28586, 44299, 21574])</p>
+<p>Task Tree for appeal with ID 62318
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  5.AssignHearingDispositionTask["5.AssignHearingDispositionTask\n(organization)"]
+style 6.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  6.HearingTask[["6.HearingTask\n(organization)"]]
+style 7.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  7.AssignHearingDispositionTask["7.AssignHearingDispositionTask\n(organization)"]
+style 8.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  8.HearingTask[["8.HearingTask\n(organization)"]]
+style 9.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  9.ScheduleHearingTask["9.ScheduleHearingTask\n(organization)"]
+style 10.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  10.AssignHearingDispositionTask["10.AssignHearingDispositionTask\n(organization)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+3.HearingTask --> 5.AssignHearingDispositionTask
+2.DistributionTask --> 6.HearingTask
+6.HearingTask --> 7.AssignHearingDispositionTask
+2.DistributionTask --> 8.HearingTask
+8.HearingTask --> 9.ScheduleHearingTask
+8.HearingTask --> 10.AssignHearingDispositionTask
+</p>
+</p>
+<h3 id="rtodtoshtohto">
+  RTO.DTO.SHTO.HTO
+  <a class="anchor" href="#rtodtoshtohto">#</a>
+</h3>
+<p>519 (1%) occurrences (example appeal IDs: [54177, 56233, 22831, 57567, 3191])</p>
+<p>Task Tree for appeal with ID 54177
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  2.HearingTask[["2.HearingTask\n(organization)"]]
+style 3.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  3.ScheduleHearingTask["3.ScheduleHearingTask\n(organization)"]
+style 4.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  4.AssignHearingDispositionTask["4.AssignHearingDispositionTask\n(organization)"]
+style 5.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  5.HearingTask[["5.HearingTask\n(organization)"]]
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  7.HearingTask[["7.HearingTask\n(organization)"]]
+style 8.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  8.AssignHearingDispositionTask["8.AssignHearingDispositionTask\n(organization)"]
+style 9.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  9.TranscriptionTask["9.TranscriptionTask\n(organization)"]
+style 10.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  10.EvidenceSubmissionWindowTask[/"10.EvidenceSubmissionWindowTask\n(organization)"/]
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.HearingTask
+2.HearingTask --> 3.ScheduleHearingTask
+2.HearingTask --> 4.AssignHearingDispositionTask
+1.DistributionTask --> 5.HearingTask
+5.HearingTask --> 6.AssignHearingDispositionTask
+1.DistributionTask --> 7.HearingTask
+7.HearingTask --> 8.AssignHearingDispositionTask
+8.AssignHearingDispositionTask --> 9.TranscriptionTask
+8.AssignHearingDispositionTask --> 10.EvidenceSubmissionWindowTask
+</p>
+</p>
+<h3 id="rtotvtodtoshtoshtohto">
+  RTO.TVTO.DTO.SHTO.SHTO.HTO
+  <a class="anchor" href="#rtotvtodtoshtoshtohto">#</a>
+</h3>
+<p>262 (0%) occurrences (example appeal IDs: [36197, 76609, 62365, 50392, 87764])</p>
+<p>Task Tree for appeal with ID 36197
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  5.HearingAdminActionVerifyAddressTask["5.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  7.HearingTask[["7.HearingTask\n(organization)"]]
+style 8.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  8.ScheduleHearingTask["8.ScheduleHearingTask\n(organization)"]
+style 9.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  9.AssignHearingDispositionTask["9.AssignHearingDispositionTask\n(organization)"]
+style 10.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  10.HearingTask[["10.HearingTask\n(organization)"]]
+style 11.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  11.AssignHearingDispositionTask["11.AssignHearingDispositionTask\n(organization)"]
+style 12.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  12.TranscriptionTask["12.TranscriptionTask\n(organization)"]
+style 13.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  13.EvidenceSubmissionWindowTask[/"13.EvidenceSubmissionWindowTask\n(organization)"/]
+style 14.JudgeAssignTask fill:#b3b3b3
+  14.JudgeAssignTask[\"14.JudgeAssignTask\n(user)"/]
+style 15.JudgeDecisionReviewTask fill:#e5c494
+  15.JudgeDecisionReviewTask[["15.JudgeDecisionReviewTask\n(user)"]]
+style 16.AttorneyTask fill:#ffb482
+  16.AttorneyTask["16.AttorneyTask\n(user)"]
+style 17.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  17.BvaDispatchTask{{"17.BvaDispatchTask\n(organization)"}}
+style 18.BvaDispatchTask fill:#e78ac3
+  18.BvaDispatchTask{{"18.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+4.ScheduleHearingTask --> 5.HearingAdminActionVerifyAddressTask
+3.HearingTask --> 6.AssignHearingDispositionTask
+2.DistributionTask --> 7.HearingTask
+7.HearingTask --> 8.ScheduleHearingTask
+7.HearingTask --> 9.AssignHearingDispositionTask
+2.DistributionTask --> 10.HearingTask
+10.HearingTask --> 11.AssignHearingDispositionTask
+11.AssignHearingDispositionTask --> 12.TranscriptionTask
+11.AssignHearingDispositionTask --> 13.EvidenceSubmissionWindowTask
+0.RootTask --> 14.JudgeAssignTask
+0.RootTask --> 15.JudgeDecisionReviewTask
+15.JudgeDecisionReviewTask --> 16.AttorneyTask
+0.RootTask --> 17.BvaDispatchTask
+17.BvaDispatchTask --> 18.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoshtotvtohto">
+  RTO.DTO.SHTO.TVTO.HTO
+  <a class="anchor" href="#rtodtoshtotvtohto">#</a>
+</h3>
+<p>184 (0%) occurrences (example appeal IDs: [30091, 318, 6231, 56860, 6671])</p>
+<p>Task Tree for appeal with ID 30091
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  6.HearingAdminActionVerifyAddressTask["6.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 7.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  7.AssignHearingDispositionTask["7.AssignHearingDispositionTask\n(organization)"]
+style 8.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  8.HearingTask[["8.HearingTask\n(organization)"]]
+style 9.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  9.AssignHearingDispositionTask["9.AssignHearingDispositionTask\n(organization)"]
+style 10.ChangeHearingDispositionTask fill:#d88b32,stroke-dasharray: 5 5
+  10.ChangeHearingDispositionTask["10.ChangeHearingDispositionTask\n(organization)"]
+style 11.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  11.EvidenceSubmissionWindowTask[/"11.EvidenceSubmissionWindowTask\n(organization)"/]
+style 12.EvidenceSubmissionWindowTask fill:#8de5a1
+  12.EvidenceSubmissionWindowTask[/"12.EvidenceSubmissionWindowTask\n(user)"/]
+style 13.JudgeAssignTask fill:#b3b3b3
+  13.JudgeAssignTask[\"13.JudgeAssignTask\n(user)"/]
+style 14.JudgeDecisionReviewTask fill:#e5c494
+  14.JudgeDecisionReviewTask[["14.JudgeDecisionReviewTask\n(user)"]]
+style 15.AttorneyTask fill:#ffb482
+  15.AttorneyTask["15.AttorneyTask\n(user)"]
+style 16.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  16.BvaDispatchTask{{"16.BvaDispatchTask\n(organization)"}}
+style 17.BvaDispatchTask fill:#e78ac3
+  17.BvaDispatchTask{{"17.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.TrackVeteranTask
+4.ScheduleHearingTask --> 6.HearingAdminActionVerifyAddressTask
+3.HearingTask --> 7.AssignHearingDispositionTask
+2.DistributionTask --> 8.HearingTask
+8.HearingTask --> 9.AssignHearingDispositionTask
+8.HearingTask --> 10.ChangeHearingDispositionTask
+2.DistributionTask --> 11.EvidenceSubmissionWindowTask
+11.EvidenceSubmissionWindowTask --> 12.EvidenceSubmissionWindowTask
+0.RootTask --> 13.JudgeAssignTask
+0.RootTask --> 14.JudgeDecisionReviewTask
+14.JudgeDecisionReviewTask --> 15.AttorneyTask
+0.RootTask --> 16.BvaDispatchTask
+16.BvaDispatchTask --> 17.BvaDispatchTask
+</p>
+</p>
+<h3 id="dtohto">
+  DTO.HTO
+  <a class="anchor" href="#dtohto">#</a>
+</h3>
+<p>93 (0%) occurrences (example appeal IDs: [27371, 57615, 33123, 17211, 4394])</p>
+<p>Task Tree for appeal with ID 27371
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  5.HearingAdminActionVerifyAddressTask["5.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  7.TranscriptionTask["7.TranscriptionTask\n(organization)"]
+style 8.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  8.EvidenceSubmissionWindowTask[/"8.EvidenceSubmissionWindowTask\n(organization)"/]
+style 9.JudgeAssignTask fill:#b3b3b3
+  9.JudgeAssignTask[\"9.JudgeAssignTask\n(user)"/]
+style 10.JudgeDecisionReviewTask fill:#e5c494
+  10.JudgeDecisionReviewTask[["10.JudgeDecisionReviewTask\n(user)"]]
+style 11.AttorneyTask fill:#ffb482
+  11.AttorneyTask["11.AttorneyTask\n(user)"]
+style 12.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  12.OtherColocatedTask["12.OtherColocatedTask\n(organization)"]
+style 13.OtherColocatedTask fill:#f77189
+  13.OtherColocatedTask["13.OtherColocatedTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+4.ScheduleHearingTask --> 5.HearingAdminActionVerifyAddressTask
+3.HearingTask --> 6.AssignHearingDispositionTask
+6.AssignHearingDispositionTask --> 7.TranscriptionTask
+6.AssignHearingDispositionTask --> 8.EvidenceSubmissionWindowTask
+0.RootTask --> 9.JudgeAssignTask
+0.RootTask --> 10.JudgeDecisionReviewTask
+10.JudgeDecisionReviewTask --> 11.AttorneyTask
+11.AttorneyTask --> 12.OtherColocatedTask
+12.OtherColocatedTask --> 13.OtherColocatedTask
+</p>
+</p>
+<h3 id="rtotvtotvtodtohto">
+  RTO.TVTO.TVTO.DTO.HTO
+  <a class="anchor" href="#rtotvtotvtodtohto">#</a>
+</h3>
+<p>65 (0%) occurrences (example appeal IDs: [181275, 167406, 181304, 156136, 169725])</p>
+<p>Task Tree for appeal with ID 181275
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  2.TrackVeteranTask(["2.TrackVeteranTask\n(organization)"])
+style 3.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  3.DistributionTask>"3.DistributionTask\n(organization)"]
+style 4.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  4.HearingTask[["4.HearingTask\n(organization)"]]
+style 5.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  5.ScheduleHearingTask["5.ScheduleHearingTask\n(organization)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.TrackVeteranTask
+0.RootTask --> 3.DistributionTask
+3.DistributionTask --> 4.HearingTask
+4.HearingTask --> 5.ScheduleHearingTask
+</p>
+</p>
+<h3 id="rtodtoshtoshtohto">
+  RTO.DTO.SHTO.SHTO.HTO
+  <a class="anchor" href="#rtodtoshtoshtohto">#</a>
+</h3>
+<p>64 (0%) occurrences (example appeal IDs: [19694, 19772, 78385, 7070, 50067])</p>
+<p>Task Tree for appeal with ID 19694
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  5.HearingAdminActionVerifyAddressTask["5.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 6.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  6.TrackVeteranTask(["6.TrackVeteranTask\n(organization)"])
+style 7.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  7.AssignHearingDispositionTask["7.AssignHearingDispositionTask\n(organization)"]
+style 8.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  8.HearingTask[["8.HearingTask\n(organization)"]]
+style 9.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  9.AssignHearingDispositionTask["9.AssignHearingDispositionTask\n(organization)"]
+style 10.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  10.HearingTask[["10.HearingTask\n(organization)"]]
+style 11.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  11.ScheduleHearingTask["11.ScheduleHearingTask\n(organization)"]
+style 12.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  12.AssignHearingDispositionTask["12.AssignHearingDispositionTask\n(organization)"]
+style 13.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  13.HearingTask[["13.HearingTask\n(organization)"]]
+style 14.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  14.ScheduleHearingTask["14.ScheduleHearingTask\n(organization)"]
+style 15.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  15.TrackVeteranTask(["15.TrackVeteranTask\n(organization)"])
+style 16.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  16.AssignHearingDispositionTask["16.AssignHearingDispositionTask\n(organization)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+4.ScheduleHearingTask --> 5.HearingAdminActionVerifyAddressTask
+0.RootTask --> 6.TrackVeteranTask
+3.HearingTask --> 7.AssignHearingDispositionTask
+2.DistributionTask --> 8.HearingTask
+8.HearingTask --> 9.AssignHearingDispositionTask
+2.DistributionTask --> 10.HearingTask
+10.HearingTask --> 11.ScheduleHearingTask
+10.HearingTask --> 12.AssignHearingDispositionTask
+2.DistributionTask --> 13.HearingTask
+13.HearingTask --> 14.ScheduleHearingTask
+0.RootTask --> 15.TrackVeteranTask
+13.HearingTask --> 16.AssignHearingDispositionTask
+</p>
+</p>
+<h3 id="rtodtoshtotvtoshtohto">
+  RTO.DTO.SHTO.TVTO.SHTO.HTO
+  <a class="anchor" href="#rtodtoshtotvtoshtohto">#</a>
+</h3>
+<p>41 (0%) occurrences (example appeal IDs: [4256, 1403, 21500, 455, 24093])</p>
+<p>Task Tree for appeal with ID 4256
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  7.HearingTask[["7.HearingTask\n(organization)"]]
+style 8.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  8.ScheduleHearingTask["8.ScheduleHearingTask\n(organization)"]
+style 9.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  9.AssignHearingDispositionTask["9.AssignHearingDispositionTask\n(organization)"]
+style 10.HearingTask fill:#a6d854,stroke-dasharray: 5 5,stroke:#00f,stroke-width:4px
+  10.HearingTask[["10.HearingTask\n(organization)"]]
+style 11.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  11.ScheduleHearingTask["11.ScheduleHearingTask\n(organization)"]
+style 12.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  12.AssignHearingDispositionTask["12.AssignHearingDispositionTask\n(organization)"]
+style 13.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  13.TranscriptionTask["13.TranscriptionTask\n(organization)"]
+style 14.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  14.EvidenceSubmissionWindowTask[/"14.EvidenceSubmissionWindowTask\n(organization)"/]
+style 15.JudgeAssignTask fill:#b3b3b3
+  15.JudgeAssignTask[\"15.JudgeAssignTask\n(user)"/]
+style 16.JudgeAssignTask fill:#b3b3b3
+  16.JudgeAssignTask[\"16.JudgeAssignTask\n(user)"/]
+style 17.JudgeDecisionReviewTask fill:#e5c494
+  17.JudgeDecisionReviewTask[["17.JudgeDecisionReviewTask\n(user)"]]
+style 18.AttorneyTask fill:#ffb482
+  18.AttorneyTask["18.AttorneyTask\n(user)"]
+style 19.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  19.BvaDispatchTask{{"19.BvaDispatchTask\n(organization)"}}
+style 20.BvaDispatchTask fill:#e78ac3
+  20.BvaDispatchTask{{"20.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.TrackVeteranTask
+3.HearingTask --> 6.AssignHearingDispositionTask
+2.DistributionTask --> 7.HearingTask
+7.HearingTask --> 8.ScheduleHearingTask
+7.HearingTask --> 9.AssignHearingDispositionTask
+2.DistributionTask --> 10.HearingTask
+10.HearingTask --> 11.ScheduleHearingTask
+10.HearingTask --> 12.AssignHearingDispositionTask
+12.AssignHearingDispositionTask --> 13.TranscriptionTask
+12.AssignHearingDispositionTask --> 14.EvidenceSubmissionWindowTask
+0.RootTask --> 15.JudgeAssignTask
+0.RootTask --> 16.JudgeAssignTask
+0.RootTask --> 17.JudgeDecisionReviewTask
+17.JudgeDecisionReviewTask --> 18.AttorneyTask
+0.RootTask --> 19.BvaDispatchTask
+19.BvaDispatchTask --> 20.BvaDispatchTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-H/HearingTask_Organization.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtotvtodtohto">RTO.TVTO.DTO.HTO</a></li>
+        <li><a href="#rtodtohto">RTO.DTO.HTO</a></li>
+        <li><a href="#rtotvtodtoshtohto">RTO.TVTO.DTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtohto">RTO.DTO.SHTO.HTO</a></li>
+        <li><a href="#rtotvtodtoshtoshtohto">RTO.TVTO.DTO.SHTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtotvtohto">RTO.DTO.SHTO.TVTO.HTO</a></li>
+        <li><a href="#dtohto">DTO.HTO</a></li>
+        <li><a href="#rtotvtotvtodtohto">RTO.TVTO.TVTO.DTO.HTO</a></li>
+        <li><a href="#rtodtoshtoshtohto">RTO.DTO.SHTO.SHTO.HTO</a></li>
+        <li><a href="#rtodtoshtotvtoshtohto">RTO.DTO.SHTO.TVTO.SHTO.HTO</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

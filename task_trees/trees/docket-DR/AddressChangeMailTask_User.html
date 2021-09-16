@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | direct_review Tasks |
+AddressChangeMailTask_User for direct_review #   AddressChangeMailTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR AddressChangeMailTask_User -- 1 -- TimedHoldTask_User AddressChangeMailTask_Organization -- 34 -- AddressChangeMailTask_User Parent Tasks:
+  AddressChangeMailTask_Organization : 34 times  Child Tasks:
+  TimedHoldTask_User : 1 times  Tasks Created Before and After #   flowchart LR AddressChangeMailTask_User -- 6 -- TrackVeteranTask_Organization AddressChangeMailTask_User -- 4 -- JudgeAssignTask_User AddressChangeMailTask_User -- 2 -- BvaDispatchTask_Organization AddressChangeMailTask_User -- 1 -- TimedHoldTask_User AddressChangeMailTask_User -- 1 -- PowerOfAttorneyRelatedMailTask_Organization AddressChangeMailTask_User -- 1 -- OtherMotionMailTask_Organization AddressChangeMailTask_User -- 1 -- InformalHearingPresentationTask_User AddressChangeMailTask_User -- 1 -- AodMotionMailTask_Organization AddressChangeMailTask_User -- 1 -- AddressChangeMailTask_Organization AddressChangeMailTask_Organization -- 31 -- AddressChangeMailTask_User TimedHoldTask_User -- 1 -- AddressChangeMailTask_User Task_Organization -- 1 -- AddressChangeMailTask_User BvaDispatchTask_User -- 1 -- AddressChangeMailTask_User Before:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | direct_review Tasks |
+AddressChangeMailTask_User for direct_review #   AddressChangeMailTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR AddressChangeMailTask_User -- 1 -- TimedHoldTask_User AddressChangeMailTask_Organization -- 34 -- AddressChangeMailTask_User Parent Tasks:
+  AddressChangeMailTask_Organization : 34 times  Child Tasks:
+  TimedHoldTask_User : 1 times  Tasks Created Before and After #   flowchart LR AddressChangeMailTask_User -- 6 -- TrackVeteranTask_Organization AddressChangeMailTask_User -- 4 -- JudgeAssignTask_User AddressChangeMailTask_User -- 2 -- BvaDispatchTask_Organization AddressChangeMailTask_User -- 1 -- TimedHoldTask_User AddressChangeMailTask_User -- 1 -- PowerOfAttorneyRelatedMailTask_Organization AddressChangeMailTask_User -- 1 -- OtherMotionMailTask_Organization AddressChangeMailTask_User -- 1 -- InformalHearingPresentationTask_User AddressChangeMailTask_User -- 1 -- AodMotionMailTask_Organization AddressChangeMailTask_User -- 1 -- AddressChangeMailTask_Organization AddressChangeMailTask_Organization -- 31 -- AddressChangeMailTask_User TimedHoldTask_User -- 1 -- AddressChangeMailTask_User Task_Organization -- 1 -- AddressChangeMailTask_User BvaDispatchTask_User -- 1 -- AddressChangeMailTask_User Before:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-DR/AddressChangeMailTask_User.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Address Change Mail Task User | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Address Change Mail Task User</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtoacmtoacmtoacmtu">RTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoacmtoacmtoacmtu">RTO.TVTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtotvtoacmtoacmtoacmtu">RTO.TVTO.DTO.TVTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoihptoacmtoacmtoacmtu">RTO.TVTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtotvtodtoacmtoacmtoacmtu">RTO.TVTO.TVTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptuacmtoacmtoacmtu">RTO.TVTO.DTO.IHPTO.IHPTU.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtodtoacmtoacmtotoacmtu">RTO.DTO.ACMTO.ACMTO.TO.ACMTU</a></li>
+        <li><a href="#rtodtoihptoacmtoacmtoacmtu">RTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtojatujdrtuatuacmtoacmtoacmtu">RTO.TVTO.DTO.JATU.JDRTU.ATU.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtojatujdrtuatubdtobdtuacmtoacmtoacmtu">RTO.TVTO.DTO.JATU.JDRTU.ATU.BDTO.BDTU.ACMTO.ACMTO.ACMTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">direct_review Tasks</a>
+ |</p>
+<h1 id="addresschangemailtask_user-for-direct_review">
+  AddressChangeMailTask_User for direct_review
+  <a class="anchor" href="#addresschangemailtask_user-for-direct_review">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/AddressChangeMailTask_User.html">AddressChangeMailTask_User description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+AddressChangeMailTask_User -- 1 --> TimedHoldTask_User
+AddressChangeMailTask_Organization -- 34 --> AddressChangeMailTask_User
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a>
+: 34 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 1 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+AddressChangeMailTask_User -- 6 --> TrackVeteranTask_Organization
+AddressChangeMailTask_User -- 4 --> JudgeAssignTask_User
+AddressChangeMailTask_User -- 2 --> BvaDispatchTask_Organization
+AddressChangeMailTask_User -- 1 --> TimedHoldTask_User
+AddressChangeMailTask_User -- 1 --> PowerOfAttorneyRelatedMailTask_Organization
+AddressChangeMailTask_User -- 1 --> OtherMotionMailTask_Organization
+AddressChangeMailTask_User -- 1 --> InformalHearingPresentationTask_User
+AddressChangeMailTask_User -- 1 --> AodMotionMailTask_Organization
+AddressChangeMailTask_User -- 1 --> AddressChangeMailTask_Organization
+AddressChangeMailTask_Organization -- 31 --> AddressChangeMailTask_User
+TimedHoldTask_User -- 1 --> AddressChangeMailTask_User
+Task_Organization -- 1 --> AddressChangeMailTask_User
+BvaDispatchTask_User -- 1 --> AddressChangeMailTask_User
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a>
+: 31 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/BvaDispatchTask_User.html">BvaDispatchTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/Task_Organization.html">Task_Organization</a>
+: 1 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/JudgeAssignTask_User.html">JudgeAssignTask_User</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/BvaDispatchTask_Organization.html">BvaDispatchTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/InformalHearingPresentationTask_User.html">InformalHearingPresentationTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 34 total occurrences of AddressChangeMailTask_User among appeals in the direct_review docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to AddressChangeMailTask_User, sorted by frequency.</p>
+<h3 id="rtodtoacmtoacmtoacmtu">
+  RTO.DTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtodtoacmtoacmtoacmtu">#</a>
+</h3>
+<p>6 (18%) occurrences (example appeal IDs: [156770, 144039, 158552, 163661, 167245])</p>
+<p>Task Tree for appeal with ID 156770
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  2.AddressChangeMailTask["2.AddressChangeMailTask\n(organization)"]
+style 3.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  3.AddressChangeMailTask["3.AddressChangeMailTask\n(organization)"]
+style 4.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(user)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  6.InformalHearingPresentationTask[/"6.InformalHearingPresentationTask\n(organization)"\]
+style 7.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  7.TrackVeteranTask(["7.TrackVeteranTask\n(organization)"])
+
+0.RootTask --> 1.DistributionTask
+0.RootTask --> 2.AddressChangeMailTask
+2.AddressChangeMailTask --> 3.AddressChangeMailTask
+3.AddressChangeMailTask --> 4.AddressChangeMailTask
+0.RootTask --> 5.TrackVeteranTask
+1.DistributionTask --> 6.InformalHearingPresentationTask
+0.RootTask --> 7.TrackVeteranTask
+</p>
+</p>
+<h3 id="rtotvtodtoacmtoacmtoacmtu">
+  RTO.TVTO.DTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtoacmtoacmtoacmtu">#</a>
+</h3>
+<p>5 (15%) occurrences (example appeal IDs: [65689, 112047, 170151, 172431, 137569])</p>
+<p>Task Tree for appeal with ID 65689
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  3.AddressChangeMailTask["3.AddressChangeMailTask\n(organization)"]
+style 4.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(organization)"]
+style 5.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  5.AddressChangeMailTask["5.AddressChangeMailTask\n(user)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.JudgeAssignTask fill:#b3b3b3
+  7.JudgeAssignTask[\"7.JudgeAssignTask\n(user)"/]
+style 8.JudgeDecisionReviewTask fill:#e5c494
+  8.JudgeDecisionReviewTask[["8.JudgeDecisionReviewTask\n(user)"]]
+style 9.AttorneyTask fill:#ffb482
+  9.AttorneyTask["9.AttorneyTask\n(user)"]
+style 10.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(organization)"}}
+style 11.BvaDispatchTask fill:#e78ac3
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.AddressChangeMailTask
+3.AddressChangeMailTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.AddressChangeMailTask
+4.AddressChangeMailTask --> 6.AddressChangeMailTask
+0.RootTask --> 7.JudgeAssignTask
+0.RootTask --> 8.JudgeDecisionReviewTask
+8.JudgeDecisionReviewTask --> 9.AttorneyTask
+0.RootTask --> 10.BvaDispatchTask
+10.BvaDispatchTask --> 11.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtotvtoacmtoacmtoacmtu">
+  RTO.TVTO.DTO.TVTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtotvtoacmtoacmtoacmtu">#</a>
+</h3>
+<p>5 (15%) occurrences (example appeal IDs: [83234, 91425, 101239, 101340, 152281])</p>
+<p>Task Tree for appeal with ID 83234
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  3.TrackVeteranTask(["3.TrackVeteranTask\n(organization)"])
+style 4.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(organization)"]
+style 5.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  5.AddressChangeMailTask["5.AddressChangeMailTask\n(organization)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  7.AddressChangeMailTask["7.AddressChangeMailTask\n(user)"]
+style 8.JudgeAssignTask fill:#b3b3b3
+  8.JudgeAssignTask[\"8.JudgeAssignTask\n(user)"/]
+style 9.JudgeDecisionReviewTask fill:#e5c494
+  9.JudgeDecisionReviewTask[["9.JudgeDecisionReviewTask\n(user)"]]
+style 10.AttorneyTask fill:#ffb482
+  10.AttorneyTask["10.AttorneyTask\n(user)"]
+style 11.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(organization)"}}
+style 12.BvaDispatchTask fill:#e78ac3
+  12.BvaDispatchTask{{"12.BvaDispatchTask\n(user)"}}
+style 13.BvaDispatchTask fill:#e78ac3
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.TrackVeteranTask
+0.RootTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.AddressChangeMailTask
+5.AddressChangeMailTask --> 6.AddressChangeMailTask
+5.AddressChangeMailTask --> 7.AddressChangeMailTask
+0.RootTask --> 8.JudgeAssignTask
+0.RootTask --> 9.JudgeDecisionReviewTask
+9.JudgeDecisionReviewTask --> 10.AttorneyTask
+0.RootTask --> 11.BvaDispatchTask
+11.BvaDispatchTask --> 12.BvaDispatchTask
+11.BvaDispatchTask --> 13.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptoacmtoacmtoacmtu">
+  RTO.TVTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtoihptoacmtoacmtoacmtu">#</a>
+</h3>
+<p>4 (12%) occurrences (example appeal IDs: [166915, 107555, 107702, 126380])</p>
+<p>Task Tree for appeal with ID 166915
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(organization)"]
+style 5.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  5.AddressChangeMailTask["5.AddressChangeMailTask\n(organization)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  7.AddressChangeMailTask["7.AddressChangeMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+0.RootTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.AddressChangeMailTask
+5.AddressChangeMailTask --> 6.AddressChangeMailTask
+5.AddressChangeMailTask --> 7.AddressChangeMailTask
+</p>
+</p>
+<h3 id="rtotvtotvtodtoacmtoacmtoacmtu">
+  RTO.TVTO.TVTO.DTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtotvtodtoacmtoacmtoacmtu">#</a>
+</h3>
+<p>3 (9%) occurrences (example appeal IDs: [164133, 172436, 172864])</p>
+<p>Task Tree for appeal with ID 164133
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  2.TrackVeteranTask(["2.TrackVeteranTask\n(organization)"])
+style 3.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  3.DistributionTask>"3.DistributionTask\n(organization)"]
+style 4.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(organization)"]
+style 5.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  5.AddressChangeMailTask["5.AddressChangeMailTask\n(organization)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  7.AddressChangeMailTask["7.AddressChangeMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.TrackVeteranTask
+0.RootTask --> 3.DistributionTask
+0.RootTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.AddressChangeMailTask
+5.AddressChangeMailTask --> 6.AddressChangeMailTask
+5.AddressChangeMailTask --> 7.AddressChangeMailTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptoihptuacmtoacmtoacmtu">
+  RTO.TVTO.DTO.IHPTO.IHPTU.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtoihptoihptuacmtoacmtoacmtu">#</a>
+</h3>
+<p>2 (6%) occurrences (example appeal IDs: [104673, 124236])</p>
+<p>Task Tree for appeal with ID 104673
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.InformalHearingPresentationTask fill:#a1c9f4
+  4.InformalHearingPresentationTask[/"4.InformalHearingPresentationTask\n(user)"\]
+style 5.InformalHearingPresentationTask fill:#a1c9f4
+  5.InformalHearingPresentationTask[/"5.InformalHearingPresentationTask\n(user)"\]
+style 6.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(organization)"]
+style 7.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  7.AddressChangeMailTask["7.AddressChangeMailTask\n(organization)"]
+style 8.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  8.AddressChangeMailTask["8.AddressChangeMailTask\n(user)"]
+style 9.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  9.AddressChangeMailTask["9.AddressChangeMailTask\n(user)"]
+style 10.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  10.TrackVeteranTask(["10.TrackVeteranTask\n(organization)"])
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+3.InformalHearingPresentationTask --> 4.InformalHearingPresentationTask
+3.InformalHearingPresentationTask --> 5.InformalHearingPresentationTask
+0.RootTask --> 6.AddressChangeMailTask
+6.AddressChangeMailTask --> 7.AddressChangeMailTask
+7.AddressChangeMailTask --> 8.AddressChangeMailTask
+7.AddressChangeMailTask --> 9.AddressChangeMailTask
+0.RootTask --> 10.TrackVeteranTask
+</p>
+</p>
+<h3 id="rtodtoacmtoacmtotoacmtu">
+  RTO.DTO.ACMTO.ACMTO.TO.ACMTU
+  <a class="anchor" href="#rtodtoacmtoacmtotoacmtu">#</a>
+</h3>
+<p>1 (3%) occurrences (example appeal IDs: [35658])</p>
+<p>Task Tree for appeal with ID 35658
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  2.AddressChangeMailTask["2.AddressChangeMailTask\n(organization)"]
+style 3.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  3.AddressChangeMailTask["3.AddressChangeMailTask\n(organization)"]
+style 4.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(user)"]
+style 5.Task fill:#9e8ef4,stroke-dasharray: 5 5
+  5.Task["5.Task\n(organization)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.JudgeAssignTask fill:#b3b3b3
+  7.JudgeAssignTask[\"7.JudgeAssignTask\n(user)"/]
+style 8.JudgeDecisionReviewTask fill:#e5c494
+  8.JudgeDecisionReviewTask[["8.JudgeDecisionReviewTask\n(user)"]]
+style 9.AttorneyTask fill:#ffb482
+  9.AttorneyTask["9.AttorneyTask\n(user)"]
+style 10.JudgeAssignTask fill:#b3b3b3
+  10.JudgeAssignTask[\"10.JudgeAssignTask\n(user)"/]
+style 11.JudgeAssignTask fill:#b3b3b3
+  11.JudgeAssignTask[\"11.JudgeAssignTask\n(user)"/]
+style 12.JudgeAssignTask fill:#b3b3b3
+  12.JudgeAssignTask[\"12.JudgeAssignTask\n(user)"/]
+style 13.JudgeDecisionReviewTask fill:#e5c494
+  13.JudgeDecisionReviewTask[["13.JudgeDecisionReviewTask\n(user)"]]
+style 14.AttorneyTask fill:#ffb482
+  14.AttorneyTask["14.AttorneyTask\n(user)"]
+style 15.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  15.BvaDispatchTask{{"15.BvaDispatchTask\n(organization)"}}
+style 16.BvaDispatchTask fill:#e78ac3
+  16.BvaDispatchTask{{"16.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+0.RootTask --> 2.AddressChangeMailTask
+2.AddressChangeMailTask --> 3.AddressChangeMailTask
+3.AddressChangeMailTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.Task
+3.AddressChangeMailTask --> 6.AddressChangeMailTask
+0.RootTask --> 7.JudgeAssignTask
+0.RootTask --> 8.JudgeDecisionReviewTask
+8.JudgeDecisionReviewTask --> 9.AttorneyTask
+0.RootTask --> 10.JudgeAssignTask
+0.RootTask --> 11.JudgeAssignTask
+0.RootTask --> 12.JudgeAssignTask
+0.RootTask --> 13.JudgeDecisionReviewTask
+13.JudgeDecisionReviewTask --> 14.AttorneyTask
+0.RootTask --> 15.BvaDispatchTask
+15.BvaDispatchTask --> 16.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoihptoacmtoacmtoacmtu">
+  RTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtodtoihptoacmtoacmtoacmtu">#</a>
+</h3>
+<p>1 (3%) occurrences (example appeal IDs: [120105])</p>
+<p>Task Tree for appeal with ID 120105
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  4.AddressChangeMailTask["4.AddressChangeMailTask\n(organization)"]
+style 5.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  5.AddressChangeMailTask["5.AddressChangeMailTask\n(organization)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(user)"]
+style 7.OtherMotionMailTask fill:#b69a32,stroke-dasharray: 5 5
+  7.OtherMotionMailTask["7.OtherMotionMailTask\n(organization)"]
+style 8.OtherMotionMailTask fill:#b69a32,stroke-dasharray: 5 5
+  8.OtherMotionMailTask["8.OtherMotionMailTask\n(organization)"]
+style 9.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  9.TrackVeteranTask(["9.TrackVeteranTask\n(organization)"])
+style 10.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  10.TrackVeteranTask(["10.TrackVeteranTask\n(organization)"])
+style 11.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  11.TrackVeteranTask(["11.TrackVeteranTask\n(organization)"])
+style 12.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  12.TrackVeteranTask(["12.TrackVeteranTask\n(organization)"])
+style 13.OtherMotionMailTask fill:#b69a32
+  13.OtherMotionMailTask["13.OtherMotionMailTask\n(user)"]
+style 14.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  14.EvidenceOrArgumentMailTask["14.EvidenceOrArgumentMailTask\n(organization)"]
+style 15.EvidenceOrArgumentMailTask fill:#ff9f9b
+  15.EvidenceOrArgumentMailTask["15.EvidenceOrArgumentMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+0.RootTask --> 4.AddressChangeMailTask
+4.AddressChangeMailTask --> 5.AddressChangeMailTask
+5.AddressChangeMailTask --> 6.AddressChangeMailTask
+0.RootTask --> 7.OtherMotionMailTask
+7.OtherMotionMailTask --> 8.OtherMotionMailTask
+0.RootTask --> 9.TrackVeteranTask
+0.RootTask --> 10.TrackVeteranTask
+0.RootTask --> 11.TrackVeteranTask
+0.RootTask --> 12.TrackVeteranTask
+8.OtherMotionMailTask --> 13.OtherMotionMailTask
+0.RootTask --> 14.EvidenceOrArgumentMailTask
+14.EvidenceOrArgumentMailTask --> 15.EvidenceOrArgumentMailTask
+</p>
+</p>
+<h3 id="rtotvtodtojatujdrtuatuacmtoacmtoacmtu">
+  RTO.TVTO.DTO.JATU.JDRTU.ATU.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtojatujdrtuatuacmtoacmtoacmtu">#</a>
+</h3>
+<p>1 (3%) occurrences (example appeal IDs: [44409])</p>
+<p>Task Tree for appeal with ID 44409
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  6.AddressChangeMailTask["6.AddressChangeMailTask\n(organization)"]
+style 7.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  7.AddressChangeMailTask["7.AddressChangeMailTask\n(organization)"]
+style 8.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  8.AddressChangeMailTask["8.AddressChangeMailTask\n(user)"]
+style 9.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  9.AddressChangeMailTask["9.AddressChangeMailTask\n(organization)"]
+style 10.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  10.AddressChangeMailTask["10.AddressChangeMailTask\n(organization)"]
+style 11.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  11.AddressChangeMailTask["11.AddressChangeMailTask\n(user)"]
+style 12.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  12.AddressChangeMailTask["12.AddressChangeMailTask\n(user)"]
+style 13.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(organization)"}}
+style 14.BvaDispatchTask fill:#e78ac3
+  14.BvaDispatchTask{{"14.BvaDispatchTask\n(user)"}}
+style 15.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  15.EvidenceOrArgumentMailTask["15.EvidenceOrArgumentMailTask\n(organization)"]
+style 16.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  16.EvidenceOrArgumentMailTask["16.EvidenceOrArgumentMailTask\n(organization)"]
+style 17.EvidenceOrArgumentMailTask fill:#ff9f9b
+  17.EvidenceOrArgumentMailTask["17.EvidenceOrArgumentMailTask\n(user)"]
+style 18.EvidenceOrArgumentMailTask fill:#ff9f9b
+  18.EvidenceOrArgumentMailTask["18.EvidenceOrArgumentMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+0.RootTask --> 6.AddressChangeMailTask
+6.AddressChangeMailTask --> 7.AddressChangeMailTask
+7.AddressChangeMailTask --> 8.AddressChangeMailTask
+0.RootTask --> 9.AddressChangeMailTask
+9.AddressChangeMailTask --> 10.AddressChangeMailTask
+10.AddressChangeMailTask --> 11.AddressChangeMailTask
+10.AddressChangeMailTask --> 12.AddressChangeMailTask
+0.RootTask --> 13.BvaDispatchTask
+13.BvaDispatchTask --> 14.BvaDispatchTask
+0.RootTask --> 15.EvidenceOrArgumentMailTask
+15.EvidenceOrArgumentMailTask --> 16.EvidenceOrArgumentMailTask
+16.EvidenceOrArgumentMailTask --> 17.EvidenceOrArgumentMailTask
+16.EvidenceOrArgumentMailTask --> 18.EvidenceOrArgumentMailTask
+</p>
+</p>
+<h3 id="rtotvtodtojatujdrtuatubdtobdtuacmtoacmtoacmtu">
+  RTO.TVTO.DTO.JATU.JDRTU.ATU.BDTO.BDTU.ACMTO.ACMTO.ACMTU
+  <a class="anchor" href="#rtotvtodtojatujdrtuatubdtobdtuacmtoacmtoacmtu">#</a>
+</h3>
+<p>1 (3%) occurrences (example appeal IDs: [15689])</p>
+<p>Task Tree for appeal with ID 15689
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.JudgeAssignTask fill:#b3b3b3
+  5.JudgeAssignTask[\"5.JudgeAssignTask\n(user)"/]
+style 6.JudgeAssignTask fill:#b3b3b3
+  6.JudgeAssignTask[\"6.JudgeAssignTask\n(user)"/]
+style 7.JudgeDecisionReviewTask fill:#e5c494
+  7.JudgeDecisionReviewTask[["7.JudgeDecisionReviewTask\n(user)"]]
+style 8.AttorneyTask fill:#ffb482
+  8.AttorneyTask["8.AttorneyTask\n(user)"]
+style 9.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  9.BvaDispatchTask{{"9.BvaDispatchTask\n(organization)"}}
+style 10.BvaDispatchTask fill:#e78ac3
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(user)"}}
+style 11.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  11.AddressChangeMailTask["11.AddressChangeMailTask\n(organization)"]
+style 12.AddressChangeMailTask fill:#a4a031,stroke-dasharray: 5 5
+  12.AddressChangeMailTask["12.AddressChangeMailTask\n(organization)"]
+style 13.AddressChangeMailTask fill:#a4a031,stroke:#00f,stroke-width:4px
+  13.AddressChangeMailTask["13.AddressChangeMailTask\n(user)"]
+style 14.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  14.TrackVeteranTask(["14.TrackVeteranTask\n(organization)"])
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeAssignTask
+0.RootTask --> 5.JudgeAssignTask
+0.RootTask --> 6.JudgeAssignTask
+0.RootTask --> 7.JudgeDecisionReviewTask
+7.JudgeDecisionReviewTask --> 8.AttorneyTask
+0.RootTask --> 9.BvaDispatchTask
+9.BvaDispatchTask --> 10.BvaDispatchTask
+0.RootTask --> 11.AddressChangeMailTask
+11.AddressChangeMailTask --> 12.AddressChangeMailTask
+12.AddressChangeMailTask --> 13.AddressChangeMailTask
+0.RootTask --> 14.TrackVeteranTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-DR/AddressChangeMailTask_User.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtoacmtoacmtoacmtu">RTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoacmtoacmtoacmtu">RTO.TVTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtotvtoacmtoacmtoacmtu">RTO.TVTO.DTO.TVTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoihptoacmtoacmtoacmtu">RTO.TVTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtotvtodtoacmtoacmtoacmtu">RTO.TVTO.TVTO.DTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptuacmtoacmtoacmtu">RTO.TVTO.DTO.IHPTO.IHPTU.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtodtoacmtoacmtotoacmtu">RTO.DTO.ACMTO.ACMTO.TO.ACMTU</a></li>
+        <li><a href="#rtodtoihptoacmtoacmtoacmtu">RTO.DTO.IHPTO.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtojatujdrtuatuacmtoacmtoacmtu">RTO.TVTO.DTO.JATU.JDRTU.ATU.ACMTO.ACMTO.ACMTU</a></li>
+        <li><a href="#rtotvtodtojatujdrtuatubdtobdtuacmtoacmtoacmtu">RTO.TVTO.DTO.JATU.JDRTU.ATU.BDTO.BDTU.ACMTO.ACMTO.ACMTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

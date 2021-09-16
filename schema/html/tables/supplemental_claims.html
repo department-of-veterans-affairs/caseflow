@@ -6,15 +6,13 @@
     <link href="styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <a href="../">Back to Table list</a>
+    <br />
+
     <h1 style="font-style: italic">
       <small><a href="../index.html">Table supplemental_claims</a></small>
     </h1>
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -414,7 +412,7 @@
                             style="vertical-align: top; width: 1px"
                             class="highlightedrow"
                           >
-                            &nbsp;&nbsp;legacy_opt_in_approved
+                            &nbsp;&nbsp;filed_by_va_gov
                           </td>
                           <td
                             style="vertical-align: top; width: 10px"
@@ -450,12 +448,47 @@
                             <br />
                           </td>
                           <td style="vertical-align: top; width: 1px">
-                            &nbsp;&nbsp;receipt_date
+                            &nbsp;&nbsp;legacy_opt_in_approved
                           </td>
                           <td style="vertical-align: top; width: 10px">
                             <br />
                           </td>
                           <td style="vertical-align: top; width: 1px">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br />
+                          </td>
+                          <td
+                            style="
+                              vertical-align: top;
+                              width: 1px;
+                              color: rgb(120, 0, 0);
+                            "
+                          >
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 100%">
+                            <br />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="vertical-align: top; width: 1px">
+                            <br />
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 1px"
+                            class="highlightedrow"
+                          >
+                            &nbsp;&nbsp;receipt_date
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 10px"
+                            class="highlightedrow"
+                          >
+                            <br />
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 1px"
+                            class="highlightedrow"
+                          >
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;date<br />
                           </td>
                           <td
@@ -464,10 +497,14 @@
                               width: 1px;
                               color: rgb(120, 0, 0);
                             "
+                            class="highlightedrow"
                           >
                             <br />
                           </td>
-                          <td style="vertical-align: top; width: 100%">
+                          <td
+                            style="vertical-align: top; width: 100%"
+                            class="highlightedrow"
+                          >
                             <br />
                           </td>
                         </tr>
@@ -475,22 +512,13 @@
                           <td style="vertical-align: top; width: 1px">
                             <br />
                           </td>
-                          <td
-                            style="vertical-align: top; width: 1px"
-                            class="highlightedrow"
-                          >
+                          <td style="vertical-align: top; width: 1px">
                             &nbsp;&nbsp;updated_at
                           </td>
-                          <td
-                            style="vertical-align: top; width: 10px"
-                            class="highlightedrow"
-                          >
+                          <td style="vertical-align: top; width: 10px">
                             <br />
                           </td>
-                          <td
-                            style="vertical-align: top; width: 1px"
-                            class="highlightedrow"
-                          >
+                          <td style="vertical-align: top; width: 1px">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br />
                           </td>
                           <td
@@ -499,36 +527,6 @@
                               width: 1px;
                               color: rgb(120, 0, 0);
                             "
-                            class="highlightedrow"
-                          >
-                            <br />
-                          </td>
-                          <td
-                            style="vertical-align: top; width: 100%"
-                            class="highlightedrow"
-                          >
-                            <br />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="vertical-align: top; width: 1px">
-                            <br />
-                          </td>
-                          <td style="vertical-align: top; width: 1px">
-                            &nbsp;&nbsp;uuid
-                          </td>
-                          <td style="vertical-align: top; width: 10px">
-                            <br />
-                          </td>
-                          <td style="vertical-align: top; width: 1px">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uuid<br />
-                          </td>
-                          <td
-                            style="
-                              vertical-align: top;
-                              width: 1px;
-                              color: rgb(120, 0, 0);
-                            "
                           >
                             <br />
                           </td>
@@ -544,7 +542,7 @@
                             style="vertical-align: top; width: 1px"
                             class="highlightedrow"
                           >
-                            &nbsp;&nbsp;veteran_file_number
+                            &nbsp;&nbsp;uuid
                           </td>
                           <td
                             style="vertical-align: top; width: 10px"
@@ -556,7 +554,7 @@
                             style="vertical-align: top; width: 1px"
                             class="highlightedrow"
                           >
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uuid<br />
                           </td>
                           <td
                             style="
@@ -580,13 +578,13 @@
                             <br />
                           </td>
                           <td style="vertical-align: top; width: 1px">
-                            &nbsp;&nbsp;veteran_is_not_claimant
+                            &nbsp;&nbsp;veteran_file_number
                           </td>
                           <td style="vertical-align: top; width: 10px">
                             <br />
                           </td>
                           <td style="vertical-align: top; width: 1px">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br />
                           </td>
                           <td
                             style="
@@ -609,7 +607,7 @@
                             style="vertical-align: top; width: 1px"
                             class="highlightedrow"
                           >
-                            &nbsp;&nbsp;filed_by_va_gov
+                            &nbsp;&nbsp;veteran_is_not_claimant
                           </td>
                           <td
                             style="vertical-align: top; width: 10px"
@@ -653,12 +651,7 @@
 
     <br />
 
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -1283,12 +1276,7 @@
 
     <br />
 
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -1453,6 +1441,9 @@
                             <a href="appellant_substitutions.html"
                               >appellant_substitutions</a
                             >,
+                            <a href="attorney_case_reviews.html"
+                              >attorney_case_reviews</a
+                            >,
                             <a href="available_hearing_locations.html"
                               >available_hearing_locations</a
                             >,
@@ -1473,6 +1464,9 @@
                               >hearing_issue_notes</a
                             >, <a href="hearings.html">hearings</a>,
                             <a href="ihp_drafts.html">ihp_drafts</a>,
+                            <a href="judge_case_reviews.html"
+                              >judge_case_reviews</a
+                            >,
                             <a href="legacy_issue_optins.html"
                               >legacy_issue_optins</a
                             >, <a href="legacy_issues.html">legacy_issues</a>,
@@ -1541,9 +1535,7 @@
                             class="highlightedrow"
                           >
                             <a href="annotations.html">annotations</a>,
-                            <a href="attorney_case_reviews.html"
-                              >attorney_case_reviews</a
-                            >, <a href="certifications.html">certifications</a>,
+                            <a href="certifications.html">certifications</a>,
                             <a href="dispatch_tasks.html">dispatch_tasks</a>,
                             <a href="distributed_cases.html"
                               >distributed_cases</a
@@ -1559,9 +1551,7 @@
                             <a href="hearing_task_associations.html"
                               >hearing_task_associations</a
                             >, <a href="hearing_views.html">hearing_views</a>,
-                            <a href="judge_case_reviews.html"
-                              >judge_case_reviews</a
-                            >, <a href="legacy_appeals.html">legacy_appeals</a>,
+                            <a href="legacy_appeals.html">legacy_appeals</a>,
                             <a href="legacy_hearings.html">legacy_hearings</a>,
                             <a href="organizations.html">organizations</a>,
                             <a href="organizations_users.html"
@@ -1623,6 +1613,9 @@
                             >,
                             <a href="non_availabilities.html"
                               >non_availabilities</a
+                            >,
+                            <a href="sent_hearing_admin_email_events.html"
+                              >sent_hearing_admin_email_events</a
                             >, <a href="team_quotas.html">team_quotas</a>,
                             <a href="virtual_hearing_establishments.html"
                               >virtual_hearing_establishments</a

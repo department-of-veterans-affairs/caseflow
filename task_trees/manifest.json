@@ -1,0 +1,15 @@
+{
+  "name": "Task Trees",
+  "short_name": "Task Trees",
+  "start_url": "/caseflow/task_trees/",
+  "scope": "/caseflow/task_trees/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/caseflow/task_trees/favicon.svg",
+      "sizes": "512x512"
+    }
+  ]
+}

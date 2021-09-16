@@ -6,15 +6,13 @@
     <link href="styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <a href="../">Back to Table list</a>
+    <br />
+
     <h1 style="font-style: italic">
       <small><a href="../index.html">Table sent_hearing_email_events</a></small>
     </h1>
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -320,6 +318,71 @@
                             <br />
                           </td>
                           <td style="vertical-align: top; width: 1px">
+                            &nbsp;&nbsp;send_successful
+                          </td>
+                          <td style="vertical-align: top; width: 10px">
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 1px">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br />
+                          </td>
+                          <td
+                            style="
+                              vertical-align: top;
+                              width: 1px;
+                              color: rgb(120, 0, 0);
+                            "
+                          >
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 100%">
+                            <br />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="vertical-align: top; width: 1px">
+                            <br />
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 1px"
+                            class="highlightedrow"
+                          >
+                            &nbsp;&nbsp;send_successful_checked_at
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 10px"
+                            class="highlightedrow"
+                          >
+                            <br />
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 1px"
+                            class="highlightedrow"
+                          >
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br />
+                          </td>
+                          <td
+                            style="
+                              vertical-align: top;
+                              width: 1px;
+                              color: rgb(120, 0, 0);
+                            "
+                            class="highlightedrow"
+                          >
+                            <br />
+                          </td>
+                          <td
+                            style="vertical-align: top; width: 100%"
+                            class="highlightedrow"
+                          >
+                            <br />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="vertical-align: top; width: 1px">
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 1px">
                             &nbsp;&nbsp;sent_at
                           </td>
                           <td style="vertical-align: top; width: 10px">
@@ -393,12 +456,7 @@
 
     <br />
 
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -543,6 +601,63 @@
                           >
                             <small
                               ><small>&nbsp;<br /></small></small
+                            >has&nbsp;dependent
+                          </td>
+                          <td style="vertical-align: top; width: 100%">
+                            <br />
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td style="vertical-align: top; width: 1px">
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 1px">
+                            &nbsp;&nbsp;<a
+                              href="sent_hearing_admin_email_events.html"
+                              >sent_hearing_admin_email_events</a
+                            >
+                          </td>
+                          <td style="vertical-align: top; width: 10px">
+                            <br />
+                          </td>
+                          <td style="vertical-align: top; width: 1px">
+                            &nbsp;&nbsp;1:n<br />
+                          </td>
+                          <td
+                            style="
+                              vertical-align: top;
+                              width: 1px;
+                              color: rgb(120, 0, 0);
+                            "
+                          >
+                            &nbsp;on&nbsp;<br />
+                          </td>
+                          <td style="vertical-align: top; width: 100%">
+                            <a href="sent_hearing_admin_email_events.html"
+                              >sent_hearing_admin_email_events</a
+                            >.sent_hearing_email_event_id=<a
+                              href="sent_hearing_email_events.html"
+                              >sent_hearing_email_events</a
+                            >.id<br />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="vertical-align: top; width: 1px">
+                            <br />
+                          </td>
+                          <td
+                            colspan="4"
+                            rowspan="1"
+                            style="
+                              vertical-align: top;
+                              width: 1px;
+                              font-style: italic;
+                              color: rgb(180, 0, 0);
+                            "
+                          >
+                            <small
+                              ><small>&nbsp;<br /></small></small
                             >is&nbsp;associated&nbsp;with
                           </td>
                           <td style="vertical-align: top; width: 100%">
@@ -643,12 +758,7 @@
 
     <br />
 
-    <table
-      style="width: 100%; text-align: left"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-    >
+    <table style="text-align: left" border="0" cellpadding="0" cellspacing="0">
       <tbody>
         <tr>
           <td style="width: 1px"></td>
@@ -760,7 +870,9 @@
                               >hearing_email_recipients</a
                             >, <a href="hearings.html">hearings</a>,
                             <a href="legacy_hearings.html">legacy_hearings</a>,
-                            <a href="users.html">users</a><br />
+                            <a href="sent_hearing_admin_email_events.html"
+                              >sent_hearing_admin_email_events</a
+                            >, <a href="users.html">users</a><br />
                           </td>
                         </tr>
                         <tr>

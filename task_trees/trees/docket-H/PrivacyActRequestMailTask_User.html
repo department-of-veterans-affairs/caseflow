@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | hearing Tasks |
+PrivacyActRequestMailTask_User for hearing #   PrivacyActRequestMailTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR PrivacyActRequestMailTask_User -- 3 -- TimedHoldTask_User PrivacyActRequestMailTask_Organization -- 26 -- PrivacyActRequestMailTask_User Parent Tasks:
+  PrivacyActRequestMailTask_Organization : 26 times  Child Tasks:
+  TimedHoldTask_User : 3 times  Tasks Created Before and After #   flowchart LR PrivacyActRequestMailTask_User -- 3 -- TimedHoldTask_User PrivacyActRequestMailTask_User -- 3 -- HearingTask_Organization PrivacyActRequestMailTask_User -- 2 -- TranscriptionTask_Organization PrivacyActRequestMailTask_User -- 2 -- ChangeHearingDispositionTask_Organization PrivacyActRequestMailTask_User -- 1 -- TranscriptionTask_User PrivacyActRequestMailTask_User -- 1 -- HearingRelatedMailTask_Organization PrivacyActRequestMailTask_Organization -- 24 -- PrivacyActRequestMailTask_User EvidenceOrArgumentMailTask_User -- 1 -- PrivacyActRequestMailTask_User AodMotionMailTask_User -- 1 -- PrivacyActRequestMailTask_User Before:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | hearing Tasks |
+PrivacyActRequestMailTask_User for hearing #   PrivacyActRequestMailTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR PrivacyActRequestMailTask_User -- 3 -- TimedHoldTask_User PrivacyActRequestMailTask_Organization -- 26 -- PrivacyActRequestMailTask_User Parent Tasks:
+  PrivacyActRequestMailTask_Organization : 26 times  Child Tasks:
+  TimedHoldTask_User : 3 times  Tasks Created Before and After #   flowchart LR PrivacyActRequestMailTask_User -- 3 -- TimedHoldTask_User PrivacyActRequestMailTask_User -- 3 -- HearingTask_Organization PrivacyActRequestMailTask_User -- 2 -- TranscriptionTask_Organization PrivacyActRequestMailTask_User -- 2 -- ChangeHearingDispositionTask_Organization PrivacyActRequestMailTask_User -- 1 -- TranscriptionTask_User PrivacyActRequestMailTask_User -- 1 -- HearingRelatedMailTask_Organization PrivacyActRequestMailTask_Organization -- 24 -- PrivacyActRequestMailTask_User EvidenceOrArgumentMailTask_User -- 1 -- PrivacyActRequestMailTask_User AodMotionMailTask_User -- 1 -- PrivacyActRequestMailTask_User Before:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-H/PrivacyActRequestMailTask_User.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Privacy Act Request Mail Task User | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Privacy Act Request Mail Task User</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtohtoshtoparmtoparmtoparmtu">RTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtohtoparmtoparmtoparmtu">RTO.DTO.HTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtoshtoparmtoparmtoparmtu">RTO.DTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtoshtotvtoparmtoparmtoparmtu">RTO.DTO.SHTO.TVTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtohtoshtoahdtoparmtoparmtoparmtu">RTO.TVTO.DTO.HTO.SHTO.AHDTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtoparmtoparmtoammtoammtoammtuparmtu">RTO.TVTO.DTO.SHTO.PARMTO.PARMTO.AMMTO.AMMTO.AMMTU.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtoshtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.SHTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtohtoshtotvtosimtosimtosimtuparmtoparmtoparmtu">RTO.DTO.HTO.SHTO.TVTO.SIMTO.SIMTO.SIMTU.PARMTO.PARMTO.PARMTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">hearing Tasks</a>
+ |</p>
+<h1 id="privacyactrequestmailtask_user-for-hearing">
+  PrivacyActRequestMailTask_User for hearing
+  <a class="anchor" href="#privacyactrequestmailtask_user-for-hearing">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/PrivacyActRequestMailTask_User.html">PrivacyActRequestMailTask_User description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+PrivacyActRequestMailTask_User -- 3 --> TimedHoldTask_User
+PrivacyActRequestMailTask_Organization -- 26 --> PrivacyActRequestMailTask_User
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PrivacyActRequestMailTask_Organization.html">PrivacyActRequestMailTask_Organization</a>
+: 26 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 3 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+PrivacyActRequestMailTask_User -- 3 --> TimedHoldTask_User
+PrivacyActRequestMailTask_User -- 3 --> HearingTask_Organization
+PrivacyActRequestMailTask_User -- 2 --> TranscriptionTask_Organization
+PrivacyActRequestMailTask_User -- 2 --> ChangeHearingDispositionTask_Organization
+PrivacyActRequestMailTask_User -- 1 --> TranscriptionTask_User
+PrivacyActRequestMailTask_User -- 1 --> HearingRelatedMailTask_Organization
+PrivacyActRequestMailTask_Organization -- 24 --> PrivacyActRequestMailTask_User
+EvidenceOrArgumentMailTask_User -- 1 --> PrivacyActRequestMailTask_User
+AodMotionMailTask_User -- 1 --> PrivacyActRequestMailTask_User
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/PrivacyActRequestMailTask_Organization.html">PrivacyActRequestMailTask_Organization</a>
+: 24 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_User.html">EvidenceOrArgumentMailTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_User.html">AodMotionMailTask_User</a>
+: 1 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_Organization.html">ChangeHearingDispositionTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_Organization.html">TranscriptionTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_User.html">TranscriptionTask_User</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 26 total occurrences of PrivacyActRequestMailTask_User among appeals in the hearing docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to PrivacyActRequestMailTask_User, sorted by frequency.</p>
+<h3 id="rtodtohtoshtoparmtoparmtoparmtu">
+  RTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtodtohtoshtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>9 (35%) occurrences (example appeal IDs: [177136, 176745, 70573, 68099, 98170])</p>
+<p>Task Tree for appeal with ID 177136
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  2.HearingTask[["2.HearingTask\n(organization)"]]
+style 3.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  3.ScheduleHearingTask["3.ScheduleHearingTask\n(organization)"]
+style 4.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  4.PrivacyActRequestMailTask["4.PrivacyActRequestMailTask\n(organization)"]
+style 5.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  5.PrivacyActRequestMailTask["5.PrivacyActRequestMailTask\n(organization)"]
+style 6.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  6.PrivacyActRequestMailTask["6.PrivacyActRequestMailTask\n(user)"]
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.HearingTask
+2.HearingTask --> 3.ScheduleHearingTask
+1.DistributionTask --> 4.PrivacyActRequestMailTask
+4.PrivacyActRequestMailTask --> 5.PrivacyActRequestMailTask
+5.PrivacyActRequestMailTask --> 6.PrivacyActRequestMailTask
+</p>
+</p>
+<h3 id="rtodtohtoparmtoparmtoparmtu">
+  RTO.DTO.HTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtodtohtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>2 (8%) occurrences (example appeal IDs: [36160, 2590])</p>
+<p>Task Tree for appeal with ID 36160
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  2.HearingTask[["2.HearingTask\n(organization)"]]
+style 3.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  3.ScheduleHearingTask["3.ScheduleHearingTask\n(organization)"]
+style 4.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  4.HearingAdminActionVerifyAddressTask["4.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 5.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  5.PrivacyActRequestMailTask["5.PrivacyActRequestMailTask\n(organization)"]
+style 6.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  6.PrivacyActRequestMailTask["6.PrivacyActRequestMailTask\n(organization)"]
+style 7.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  7.PrivacyActRequestMailTask["7.PrivacyActRequestMailTask\n(user)"]
+style 8.HearingRelatedMailTask fill:#ff7f0e,stroke-dasharray: 5 5
+  8.HearingRelatedMailTask["8.HearingRelatedMailTask\n(organization)"]
+style 9.HearingRelatedMailTask fill:#ff7f0e,stroke-dasharray: 5 5
+  9.HearingRelatedMailTask["9.HearingRelatedMailTask\n(organization)"]
+style 10.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  10.EvidenceSubmissionWindowTask[/"10.EvidenceSubmissionWindowTask\n(organization)"/]
+style 11.JudgeAssignTask fill:#b3b3b3
+  11.JudgeAssignTask[\"11.JudgeAssignTask\n(user)"/]
+style 12.JudgeDecisionReviewTask fill:#e5c494
+  12.JudgeDecisionReviewTask[["12.JudgeDecisionReviewTask\n(user)"]]
+style 13.AttorneyTask fill:#ffb482
+  13.AttorneyTask["13.AttorneyTask\n(user)"]
+style 14.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  14.BvaDispatchTask{{"14.BvaDispatchTask\n(organization)"}}
+style 15.BvaDispatchTask fill:#e78ac3
+  15.BvaDispatchTask{{"15.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.HearingTask
+2.HearingTask --> 3.ScheduleHearingTask
+3.ScheduleHearingTask --> 4.HearingAdminActionVerifyAddressTask
+1.DistributionTask --> 5.PrivacyActRequestMailTask
+5.PrivacyActRequestMailTask --> 6.PrivacyActRequestMailTask
+6.PrivacyActRequestMailTask --> 7.PrivacyActRequestMailTask
+1.DistributionTask --> 8.HearingRelatedMailTask
+8.HearingRelatedMailTask --> 9.HearingRelatedMailTask
+2.HearingTask --> 10.EvidenceSubmissionWindowTask
+0.RootTask --> 11.JudgeAssignTask
+0.RootTask --> 12.JudgeDecisionReviewTask
+12.JudgeDecisionReviewTask --> 13.AttorneyTask
+0.RootTask --> 14.BvaDispatchTask
+14.BvaDispatchTask --> 15.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtohtoshtoparmtoparmtoparmtu">
+  RTO.TVTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtotvtodtohtoshtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>2 (8%) occurrences (example appeal IDs: [160063, 37511])</p>
+<p>Task Tree for appeal with ID 160063
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.ReconsiderationMotionMailTask fill:#e08632,stroke-dasharray: 5 5
+  5.ReconsiderationMotionMailTask["5.ReconsiderationMotionMailTask\n(organization)"]
+style 6.ReconsiderationMotionMailTask fill:#e08632,stroke-dasharray: 5 5
+  6.ReconsiderationMotionMailTask["6.ReconsiderationMotionMailTask\n(organization)"]
+style 7.ReconsiderationMotionMailTask fill:#e08632
+  7.ReconsiderationMotionMailTask["7.ReconsiderationMotionMailTask\n(user)"]
+style 8.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  8.PrivacyActRequestMailTask["8.PrivacyActRequestMailTask\n(organization)"]
+style 9.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  9.PrivacyActRequestMailTask["9.PrivacyActRequestMailTask\n(organization)"]
+style 10.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  10.PrivacyActRequestMailTask["10.PrivacyActRequestMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.ReconsiderationMotionMailTask
+5.ReconsiderationMotionMailTask --> 6.ReconsiderationMotionMailTask
+6.ReconsiderationMotionMailTask --> 7.ReconsiderationMotionMailTask
+2.DistributionTask --> 8.PrivacyActRequestMailTask
+8.PrivacyActRequestMailTask --> 9.PrivacyActRequestMailTask
+9.PrivacyActRequestMailTask --> 10.PrivacyActRequestMailTask
+</p>
+</p>
+<h3 id="rtodtoshtoparmtoparmtoparmtu">
+  RTO.DTO.SHTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtodtoshtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [2589])</p>
+<p>Task Tree for appeal with ID 2589
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  2.HearingTask[["2.HearingTask\n(organization)"]]
+style 3.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  3.ScheduleHearingTask["3.ScheduleHearingTask\n(organization)"]
+style 4.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  4.AssignHearingDispositionTask["4.AssignHearingDispositionTask\n(organization)"]
+style 5.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  5.PrivacyActRequestMailTask["5.PrivacyActRequestMailTask\n(organization)"]
+style 6.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  6.PrivacyActRequestMailTask["6.PrivacyActRequestMailTask\n(organization)"]
+style 7.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  7.PrivacyActRequestMailTask["7.PrivacyActRequestMailTask\n(user)"]
+style 8.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  8.HearingTask[["8.HearingTask\n(organization)"]]
+style 9.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  9.ScheduleHearingTask["9.ScheduleHearingTask\n(organization)"]
+style 10.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  10.HearingAdminActionVerifyAddressTask["10.HearingAdminActionVerifyAddressTask\n(organization)"]
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.HearingTask
+2.HearingTask --> 3.ScheduleHearingTask
+2.HearingTask --> 4.AssignHearingDispositionTask
+1.DistributionTask --> 5.PrivacyActRequestMailTask
+5.PrivacyActRequestMailTask --> 6.PrivacyActRequestMailTask
+6.PrivacyActRequestMailTask --> 7.PrivacyActRequestMailTask
+1.DistributionTask --> 8.HearingTask
+8.HearingTask --> 9.ScheduleHearingTask
+9.ScheduleHearingTask --> 10.HearingAdminActionVerifyAddressTask
+</p>
+</p>
+<h3 id="rtodtoshtotvtoparmtoparmtoparmtu">
+  RTO.DTO.SHTO.TVTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtodtoshtotvtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [36351])</p>
+<p>Task Tree for appeal with ID 36351
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  2.HearingTask[["2.HearingTask\n(organization)"]]
+style 3.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  3.ScheduleHearingTask["3.ScheduleHearingTask\n(organization)"]
+style 4.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  4.HearingAdminActionVerifyAddressTask["4.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  7.PrivacyActRequestMailTask["7.PrivacyActRequestMailTask\n(organization)"]
+style 8.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  8.PrivacyActRequestMailTask["8.PrivacyActRequestMailTask\n(organization)"]
+style 9.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  9.PrivacyActRequestMailTask["9.PrivacyActRequestMailTask\n(user)"]
+style 10.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  10.HearingTask[["10.HearingTask\n(organization)"]]
+style 11.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  11.ScheduleHearingTask["11.ScheduleHearingTask\n(organization)"]
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.HearingTask
+2.HearingTask --> 3.ScheduleHearingTask
+3.ScheduleHearingTask --> 4.HearingAdminActionVerifyAddressTask
+0.RootTask --> 5.TrackVeteranTask
+2.HearingTask --> 6.AssignHearingDispositionTask
+1.DistributionTask --> 7.PrivacyActRequestMailTask
+7.PrivacyActRequestMailTask --> 8.PrivacyActRequestMailTask
+8.PrivacyActRequestMailTask --> 9.PrivacyActRequestMailTask
+1.DistributionTask --> 10.HearingTask
+10.HearingTask --> 11.ScheduleHearingTask
+</p>
+</p>
+<h3 id="rtotvtodtoshtohtoshtoparmtoparmtoparmtu">
+  RTO.TVTO.DTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtotvtodtoshtohtoshtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [63627])</p>
+<p>Task Tree for appeal with ID 63627
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  5.AssignHearingDispositionTask["5.AssignHearingDispositionTask\n(organization)"]
+style 6.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  6.HearingTask[["6.HearingTask\n(organization)"]]
+style 7.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  7.ScheduleHearingTask["7.ScheduleHearingTask\n(organization)"]
+style 8.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  8.PrivacyActRequestMailTask["8.PrivacyActRequestMailTask\n(organization)"]
+style 9.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  9.PrivacyActRequestMailTask["9.PrivacyActRequestMailTask\n(organization)"]
+style 10.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  10.PrivacyActRequestMailTask["10.PrivacyActRequestMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+3.HearingTask --> 5.AssignHearingDispositionTask
+2.DistributionTask --> 6.HearingTask
+6.HearingTask --> 7.ScheduleHearingTask
+2.DistributionTask --> 8.PrivacyActRequestMailTask
+8.PrivacyActRequestMailTask --> 9.PrivacyActRequestMailTask
+9.PrivacyActRequestMailTask --> 10.PrivacyActRequestMailTask
+</p>
+</p>
+<h3 id="rtotvtodtohtoshtoahdtoparmtoparmtoparmtu">
+  RTO.TVTO.DTO.HTO.SHTO.AHDTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtotvtodtohtoshtoahdtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [87216])</p>
+<p>Task Tree for appeal with ID 87216
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.HearingAdminActionVerifyAddressTask fill:#d0bbff,stroke-dasharray: 5 5
+  5.HearingAdminActionVerifyAddressTask["5.HearingAdminActionVerifyAddressTask\n(organization)"]
+style 6.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  6.AssignHearingDispositionTask["6.AssignHearingDispositionTask\n(organization)"]
+style 7.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  7.PrivacyActRequestMailTask["7.PrivacyActRequestMailTask\n(organization)"]
+style 8.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  8.PrivacyActRequestMailTask["8.PrivacyActRequestMailTask\n(organization)"]
+style 9.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  9.PrivacyActRequestMailTask["9.PrivacyActRequestMailTask\n(user)"]
+style 10.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  10.TranscriptionTask["10.TranscriptionTask\n(organization)"]
+style 11.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  11.EvidenceSubmissionWindowTask[/"11.EvidenceSubmissionWindowTask\n(organization)"/]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+4.ScheduleHearingTask --> 5.HearingAdminActionVerifyAddressTask
+3.HearingTask --> 6.AssignHearingDispositionTask
+2.DistributionTask --> 7.PrivacyActRequestMailTask
+7.PrivacyActRequestMailTask --> 8.PrivacyActRequestMailTask
+8.PrivacyActRequestMailTask --> 9.PrivacyActRequestMailTask
+6.AssignHearingDispositionTask --> 10.TranscriptionTask
+6.AssignHearingDispositionTask --> 11.EvidenceSubmissionWindowTask
+</p>
+</p>
+<h3 id="rtotvtodtoshtoparmtoparmtoammtoammtoammtuparmtu">
+  RTO.TVTO.DTO.SHTO.PARMTO.PARMTO.AMMTO.AMMTO.AMMTU.PARMTU
+  <a class="anchor" href="#rtotvtodtoshtoparmtoparmtoammtoammtoammtuparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [24722])</p>
+<p>Task Tree for appeal with ID 24722
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  5.PrivacyActRequestMailTask["5.PrivacyActRequestMailTask\n(organization)"]
+style 6.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  6.PrivacyActRequestMailTask["6.PrivacyActRequestMailTask\n(organization)"]
+style 7.AodMotionMailTask fill:#fffea3,stroke-dasharray: 5 5
+  7.AodMotionMailTask["7.AodMotionMailTask\n(organization)"]
+style 8.AodMotionMailTask fill:#fffea3,stroke-dasharray: 5 5
+  8.AodMotionMailTask["8.AodMotionMailTask\n(organization)"]
+style 9.AodMotionMailTask fill:#fffea3
+  9.AodMotionMailTask["9.AodMotionMailTask\n(user)"]
+style 10.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  10.PrivacyActRequestMailTask["10.PrivacyActRequestMailTask\n(user)"]
+style 11.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  11.AssignHearingDispositionTask["11.AssignHearingDispositionTask\n(organization)"]
+style 12.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  12.HearingTask[["12.HearingTask\n(organization)"]]
+style 13.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  13.AssignHearingDispositionTask["13.AssignHearingDispositionTask\n(organization)"]
+style 14.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  14.HearingTask[["14.HearingTask\n(organization)"]]
+style 15.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  15.AssignHearingDispositionTask["15.AssignHearingDispositionTask\n(organization)"]
+style 16.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  16.HearingTask[["16.HearingTask\n(organization)"]]
+style 17.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  17.AssignHearingDispositionTask["17.AssignHearingDispositionTask\n(organization)"]
+style 18.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  18.HearingTask[["18.HearingTask\n(organization)"]]
+style 19.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  19.AssignHearingDispositionTask["19.AssignHearingDispositionTask\n(organization)"]
+style 20.ChangeHearingDispositionTask fill:#d88b32,stroke-dasharray: 5 5
+  20.ChangeHearingDispositionTask["20.ChangeHearingDispositionTask\n(organization)"]
+style 21.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  21.TranscriptionTask["21.TranscriptionTask\n(organization)"]
+style 22.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  22.EvidenceSubmissionWindowTask[/"22.EvidenceSubmissionWindowTask\n(organization)"/]
+style 23.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  23.InformalHearingPresentationTask[/"23.InformalHearingPresentationTask\n(organization)"\]
+style 24.CongressionalInterestMailTask fill:#f7755b,stroke-dasharray: 5 5
+  24.CongressionalInterestMailTask["24.CongressionalInterestMailTask\n(organization)"]
+style 25.CongressionalInterestMailTask fill:#f7755b,stroke-dasharray: 5 5
+  25.CongressionalInterestMailTask["25.CongressionalInterestMailTask\n(organization)"]
+style 26.JudgeAssignTask fill:#b3b3b3
+  26.JudgeAssignTask[\"26.JudgeAssignTask\n(user)"/]
+style 27.JudgeDecisionReviewTask fill:#e5c494
+  27.JudgeDecisionReviewTask[["27.JudgeDecisionReviewTask\n(user)"]]
+style 28.AttorneyTask fill:#ffb482
+  28.AttorneyTask["28.AttorneyTask\n(user)"]
+style 29.JudgeAssignTask fill:#b3b3b3
+  29.JudgeAssignTask[\"29.JudgeAssignTask\n(user)"/]
+style 30.JudgeAssignTask fill:#b3b3b3
+  30.JudgeAssignTask[\"30.JudgeAssignTask\n(user)"/]
+style 31.JudgeAssignTask fill:#b3b3b3
+  31.JudgeAssignTask[\"31.JudgeAssignTask\n(user)"/]
+style 32.JudgeDecisionReviewTask fill:#e5c494
+  32.JudgeDecisionReviewTask[["32.JudgeDecisionReviewTask\n(user)"]]
+style 33.AttorneyTask fill:#ffb482
+  33.AttorneyTask["33.AttorneyTask\n(user)"]
+style 34.JudgeAssignTask fill:#b3b3b3
+  34.JudgeAssignTask[\"34.JudgeAssignTask\n(user)"/]
+style 35.JudgeDecisionReviewTask fill:#e5c494
+  35.JudgeDecisionReviewTask[["35.JudgeDecisionReviewTask\n(user)"]]
+style 36.AttorneyTask fill:#ffb482
+  36.AttorneyTask["36.AttorneyTask\n(user)"]
+style 37.MissingHearingTranscriptsColocatedTask fill:#3ba3ea,stroke-dasharray: 5 5
+  37.MissingHearingTranscriptsColocatedTask["37.MissingHearingTranscriptsColocatedTask\n(organization)"]
+style 38.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
+  38.TranscriptionTask["38.TranscriptionTask\n(organization)"]
+style 39.AttorneyRewriteTask fill:#17becf
+  39.AttorneyRewriteTask["39.AttorneyRewriteTask\n(user)"]
+style 40.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  40.BvaDispatchTask{{"40.BvaDispatchTask\n(organization)"}}
+style 41.BvaDispatchTask fill:#e78ac3
+  41.BvaDispatchTask{{"41.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+2.DistributionTask --> 5.PrivacyActRequestMailTask
+5.PrivacyActRequestMailTask --> 6.PrivacyActRequestMailTask
+0.RootTask --> 7.AodMotionMailTask
+7.AodMotionMailTask --> 8.AodMotionMailTask
+8.AodMotionMailTask --> 9.AodMotionMailTask
+6.PrivacyActRequestMailTask --> 10.PrivacyActRequestMailTask
+3.HearingTask --> 11.AssignHearingDispositionTask
+2.DistributionTask --> 12.HearingTask
+12.HearingTask --> 13.AssignHearingDispositionTask
+2.DistributionTask --> 14.HearingTask
+14.HearingTask --> 15.AssignHearingDispositionTask
+2.DistributionTask --> 16.HearingTask
+16.HearingTask --> 17.AssignHearingDispositionTask
+2.DistributionTask --> 18.HearingTask
+18.HearingTask --> 19.AssignHearingDispositionTask
+18.HearingTask --> 20.ChangeHearingDispositionTask
+20.ChangeHearingDispositionTask --> 21.TranscriptionTask
+20.ChangeHearingDispositionTask --> 22.EvidenceSubmissionWindowTask
+2.DistributionTask --> 23.InformalHearingPresentationTask
+2.DistributionTask --> 24.CongressionalInterestMailTask
+24.CongressionalInterestMailTask --> 25.CongressionalInterestMailTask
+0.RootTask --> 26.JudgeAssignTask
+0.RootTask --> 27.JudgeDecisionReviewTask
+27.JudgeDecisionReviewTask --> 28.AttorneyTask
+0.RootTask --> 29.JudgeAssignTask
+0.RootTask --> 30.JudgeAssignTask
+0.RootTask --> 31.JudgeAssignTask
+0.RootTask --> 32.JudgeDecisionReviewTask
+32.JudgeDecisionReviewTask --> 33.AttorneyTask
+0.RootTask --> 34.JudgeAssignTask
+0.RootTask --> 35.JudgeDecisionReviewTask
+35.JudgeDecisionReviewTask --> 36.AttorneyTask
+36.AttorneyTask --> 37.MissingHearingTranscriptsColocatedTask
+37.MissingHearingTranscriptsColocatedTask --> 38.TranscriptionTask
+35.JudgeDecisionReviewTask --> 39.AttorneyRewriteTask
+0.RootTask --> 40.BvaDispatchTask
+40.BvaDispatchTask --> 41.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoshtoshtohtoshtoparmtoparmtoparmtu">
+  RTO.TVTO.DTO.SHTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtotvtodtoshtoshtohtoshtoparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [39296])</p>
+<p>Task Tree for appeal with ID 39296
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  5.AssignHearingDispositionTask["5.AssignHearingDispositionTask\n(organization)"]
+style 6.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  6.HearingTask[["6.HearingTask\n(organization)"]]
+style 7.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  7.ScheduleHearingTask["7.ScheduleHearingTask\n(organization)"]
+style 8.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
+  8.AssignHearingDispositionTask["8.AssignHearingDispositionTask\n(organization)"]
+style 9.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  9.HearingTask[["9.HearingTask\n(organization)"]]
+style 10.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  10.ScheduleHearingTask["10.ScheduleHearingTask\n(organization)"]
+style 11.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  11.PrivacyActRequestMailTask["11.PrivacyActRequestMailTask\n(organization)"]
+style 12.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  12.PrivacyActRequestMailTask["12.PrivacyActRequestMailTask\n(organization)"]
+style 13.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  13.PrivacyActRequestMailTask["13.PrivacyActRequestMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+3.HearingTask --> 5.AssignHearingDispositionTask
+2.DistributionTask --> 6.HearingTask
+6.HearingTask --> 7.ScheduleHearingTask
+6.HearingTask --> 8.AssignHearingDispositionTask
+2.DistributionTask --> 9.HearingTask
+9.HearingTask --> 10.ScheduleHearingTask
+2.DistributionTask --> 11.PrivacyActRequestMailTask
+11.PrivacyActRequestMailTask --> 12.PrivacyActRequestMailTask
+12.PrivacyActRequestMailTask --> 13.PrivacyActRequestMailTask
+</p>
+</p>
+<h3 id="rtodtohtoshtotvtosimtosimtosimtuparmtoparmtoparmtu">
+  RTO.DTO.HTO.SHTO.TVTO.SIMTO.SIMTO.SIMTU.PARMTO.PARMTO.PARMTU
+  <a class="anchor" href="#rtodtohtoshtotvtosimtosimtosimtuparmtoparmtoparmtu">#</a>
+</h3>
+<p>1 (4%) occurrences (example appeal IDs: [67650])</p>
+<p>Task Tree for appeal with ID 67650
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.HearingTask fill:#a6d854,stroke-dasharray: 5 5
+  3.HearingTask[["3.HearingTask\n(organization)"]]
+style 4.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5
+  4.ScheduleHearingTask["4.ScheduleHearingTask\n(organization)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.StatusInquiryMailTask fill:#e377c2,stroke-dasharray: 5 5
+  6.StatusInquiryMailTask["6.StatusInquiryMailTask\n(organization)"]
+style 7.StatusInquiryMailTask fill:#e377c2,stroke-dasharray: 5 5
+  7.StatusInquiryMailTask["7.StatusInquiryMailTask\n(organization)"]
+style 8.StatusInquiryMailTask fill:#e377c2
+  8.StatusInquiryMailTask["8.StatusInquiryMailTask\n(user)"]
+style 9.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  9.PrivacyActRequestMailTask["9.PrivacyActRequestMailTask\n(organization)"]
+style 10.PrivacyActRequestMailTask fill:#3ca2f1,stroke-dasharray: 5 5
+  10.PrivacyActRequestMailTask["10.PrivacyActRequestMailTask\n(organization)"]
+style 11.PrivacyActRequestMailTask fill:#3ca2f1,stroke:#00f,stroke-width:4px
+  11.PrivacyActRequestMailTask["11.PrivacyActRequestMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.HearingTask
+3.HearingTask --> 4.ScheduleHearingTask
+0.RootTask --> 5.TrackVeteranTask
+0.RootTask --> 6.StatusInquiryMailTask
+6.StatusInquiryMailTask --> 7.StatusInquiryMailTask
+7.StatusInquiryMailTask --> 8.StatusInquiryMailTask
+2.DistributionTask --> 9.PrivacyActRequestMailTask
+9.PrivacyActRequestMailTask --> 10.PrivacyActRequestMailTask
+10.PrivacyActRequestMailTask --> 11.PrivacyActRequestMailTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-H/PrivacyActRequestMailTask_User.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtohtoshtoparmtoparmtoparmtu">RTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtohtoparmtoparmtoparmtu">RTO.DTO.HTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtoshtoparmtoparmtoparmtu">RTO.DTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtoshtotvtoparmtoparmtoparmtu">RTO.DTO.SHTO.TVTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtohtoshtoahdtoparmtoparmtoparmtu">RTO.TVTO.DTO.HTO.SHTO.AHDTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtoparmtoparmtoammtoammtoammtuparmtu">RTO.TVTO.DTO.SHTO.PARMTO.PARMTO.AMMTO.AMMTO.AMMTU.PARMTU</a></li>
+        <li><a href="#rtotvtodtoshtoshtohtoshtoparmtoparmtoparmtu">RTO.TVTO.DTO.SHTO.SHTO.HTO.SHTO.PARMTO.PARMTO.PARMTU</a></li>
+        <li><a href="#rtodtohtoshtotvtosimtosimtosimtuparmtoparmtoparmtu">RTO.DTO.HTO.SHTO.TVTO.SIMTO.SIMTO.SIMTU.PARMTO.PARMTO.PARMTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

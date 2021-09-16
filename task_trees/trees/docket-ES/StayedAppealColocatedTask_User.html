@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | evidence_submission Tasks |
+StayedAppealColocatedTask_User for evidence_submission #   StayedAppealColocatedTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR StayedAppealColocatedTask_User -- 3 -- TimedHoldTask_User StayedAppealColocatedTask_Organization -- 14 -- StayedAppealColocatedTask_User Parent Tasks:
+  StayedAppealColocatedTask_Organization : 14 times  Child Tasks:
+  TimedHoldTask_User : 3 times  Tasks Created Before and After #   flowchart LR StayedAppealColocatedTask_User -- 4 -- JudgeDecisionReviewTask_User StayedAppealColocatedTask_User -- 3 -- TimedHoldTask_User StayedAppealColocatedTask_User -- 3 -- BvaDispatchTask_Organization StayedAppealColocatedTask_User -- 1 -- StayedAppealColocatedTask_Organization StayedAppealColocatedTask_User -- 1 -- QualityReviewTask_Organization StayedAppealColocatedTask_User -- 1 -- JudgeAssignTask_User StayedAppealColocatedTask_User -- 1 -- EvidenceOrArgumentMailTask_Organization StayedAppealColocatedTask_Organization -- 14 -- StayedAppealColocatedTask_User Before:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | evidence_submission Tasks |
+StayedAppealColocatedTask_User for evidence_submission #   StayedAppealColocatedTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR StayedAppealColocatedTask_User -- 3 -- TimedHoldTask_User StayedAppealColocatedTask_Organization -- 14 -- StayedAppealColocatedTask_User Parent Tasks:
+  StayedAppealColocatedTask_Organization : 14 times  Child Tasks:
+  TimedHoldTask_User : 3 times  Tasks Created Before and After #   flowchart LR StayedAppealColocatedTask_User -- 4 -- JudgeDecisionReviewTask_User StayedAppealColocatedTask_User -- 3 -- TimedHoldTask_User StayedAppealColocatedTask_User -- 3 -- BvaDispatchTask_Organization StayedAppealColocatedTask_User -- 1 -- StayedAppealColocatedTask_Organization StayedAppealColocatedTask_User -- 1 -- QualityReviewTask_Organization StayedAppealColocatedTask_User -- 1 -- JudgeAssignTask_User StayedAppealColocatedTask_User -- 1 -- EvidenceOrArgumentMailTask_Organization StayedAppealColocatedTask_Organization -- 14 -- StayedAppealColocatedTask_User Before:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-ES/StayedAppealColocatedTask_User.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Stayed Appeal Colocated Task User | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Stayed Appeal Colocated Task User</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtoeswtojatujdrtuatusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatuatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatusactosactu">RTO.DTO.ESWTO.JATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatuatusactosactu">RTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatujdrtuatuartusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.ARTU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatujdrtuatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtoihptojatuatusactosactu">RTO.TVTO.DTO.ESWTO.IHPTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatujdrtuatusactosactusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU.SACTO.SACTU</a></li>
+        <li><a href="#rtoihptodtoeswtotvtojatujdrtuatusactosactu">RTO.IHPTO.DTO.ESWTO.TVTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a>
+ |</p>
+<h1 id="stayedappealcolocatedtask_user-for-evidence_submission">
+  StayedAppealColocatedTask_User for evidence_submission
+  <a class="anchor" href="#stayedappealcolocatedtask_user-for-evidence_submission">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/StayedAppealColocatedTask_User.html">StayedAppealColocatedTask_User description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+StayedAppealColocatedTask_User -- 3 --> TimedHoldTask_User
+StayedAppealColocatedTask_Organization -- 14 --> StayedAppealColocatedTask_User
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/StayedAppealColocatedTask_Organization.html">StayedAppealColocatedTask_Organization</a>
+: 14 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 3 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+StayedAppealColocatedTask_User -- 4 --> JudgeDecisionReviewTask_User
+StayedAppealColocatedTask_User -- 3 --> TimedHoldTask_User
+StayedAppealColocatedTask_User -- 3 --> BvaDispatchTask_Organization
+StayedAppealColocatedTask_User -- 1 --> StayedAppealColocatedTask_Organization
+StayedAppealColocatedTask_User -- 1 --> QualityReviewTask_Organization
+StayedAppealColocatedTask_User -- 1 --> JudgeAssignTask_User
+StayedAppealColocatedTask_User -- 1 --> EvidenceOrArgumentMailTask_Organization
+StayedAppealColocatedTask_Organization -- 14 --> StayedAppealColocatedTask_User
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/StayedAppealColocatedTask_Organization.html">StayedAppealColocatedTask_Organization</a>
+: 14 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/BvaDispatchTask_Organization.html">BvaDispatchTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/StayedAppealColocatedTask_Organization.html">StayedAppealColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/JudgeAssignTask_User.html">JudgeAssignTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/QualityReviewTask_Organization.html">QualityReviewTask_Organization</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 14 total occurrences of StayedAppealColocatedTask_User among appeals in the evidence_submission docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to StayedAppealColocatedTask_User, sorted by frequency.</p>
+<h3 id="rtodtoeswtojatujdrtuatusactosactu">
+  RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtodtoeswtojatujdrtuatusactosactu">#</a>
+</h3>
+<p>3 (21%) occurrences (example appeal IDs: [62500, 36251, 55250])</p>
+<p>Task Tree for appeal with ID 62500
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  2.EvidenceSubmissionWindowTask[/"2.EvidenceSubmissionWindowTask\n(organization)"/]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  6.StayedAppealColocatedTask["6.StayedAppealColocatedTask\n(organization)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(user)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(user)"]
+style 9.TimedHoldTask fill:#fab0e4
+  9.TimedHoldTask["9.TimedHoldTask\n(user)"]
+style 10.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  10.OtherColocatedTask["10.OtherColocatedTask\n(organization)"]
+style 11.OtherColocatedTask fill:#f77189
+  11.OtherColocatedTask["11.OtherColocatedTask\n(user)"]
+style 12.TimedHoldTask fill:#fab0e4
+  12.TimedHoldTask["12.TimedHoldTask\n(user)"]
+style 13.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(organization)"}}
+style 14.BvaDispatchTask fill:#e78ac3
+  14.BvaDispatchTask{{"14.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.EvidenceSubmissionWindowTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+5.AttorneyTask --> 6.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 7.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 8.StayedAppealColocatedTask
+8.StayedAppealColocatedTask --> 9.TimedHoldTask
+5.AttorneyTask --> 10.OtherColocatedTask
+10.OtherColocatedTask --> 11.OtherColocatedTask
+11.OtherColocatedTask --> 12.TimedHoldTask
+0.RootTask --> 13.BvaDispatchTask
+13.BvaDispatchTask --> 14.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoeswtojatuatusactosactu">
+  RTO.TVTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtotvtodtoeswtojatuatusactosactu">#</a>
+</h3>
+<p>2 (14%) occurrences (example appeal IDs: [6823, 151936])</p>
+<p>Task Tree for appeal with ID 6823
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.JudgeDecisionReviewTask fill:#e5c494
+  5.JudgeDecisionReviewTask[["5.JudgeDecisionReviewTask\n(user)"]]
+style 6.AttorneyTask fill:#ffb482
+  6.AttorneyTask["6.AttorneyTask\n(user)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(organization)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(user)"]
+style 9.TimedHoldTask fill:#fab0e4
+  9.TimedHoldTask["9.TimedHoldTask\n(user)"]
+style 10.JudgeDecisionReviewTask fill:#e5c494
+  10.JudgeDecisionReviewTask[["10.JudgeDecisionReviewTask\n(user)"]]
+style 11.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(organization)"}}
+style 12.BvaDispatchTask fill:#e78ac3
+  12.BvaDispatchTask{{"12.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+0.RootTask --> 4.JudgeAssignTask
+0.RootTask --> 5.JudgeDecisionReviewTask
+10.JudgeDecisionReviewTask --> 6.AttorneyTask
+6.AttorneyTask --> 7.StayedAppealColocatedTask
+7.StayedAppealColocatedTask --> 8.StayedAppealColocatedTask
+8.StayedAppealColocatedTask --> 9.TimedHoldTask
+0.RootTask --> 10.JudgeDecisionReviewTask
+0.RootTask --> 11.BvaDispatchTask
+11.BvaDispatchTask --> 12.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoeswtojatusactosactu">
+  RTO.DTO.ESWTO.JATU.SACTO.SACTU
+  <a class="anchor" href="#rtodtoeswtojatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [14906])</p>
+<p>Task Tree for appeal with ID 14906
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  2.EvidenceSubmissionWindowTask[/"2.EvidenceSubmissionWindowTask\n(organization)"/]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  6.StayedAppealColocatedTask["6.StayedAppealColocatedTask\n(organization)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(user)"]
+style 8.TimedHoldTask fill:#fab0e4
+  8.TimedHoldTask["8.TimedHoldTask\n(user)"]
+style 9.JudgeAssignTask fill:#b3b3b3
+  9.JudgeAssignTask[\"9.JudgeAssignTask\n(user)"/]
+style 10.JudgeDecisionReviewTask fill:#e5c494
+  10.JudgeDecisionReviewTask[["10.JudgeDecisionReviewTask\n(user)"]]
+style 11.AttorneyTask fill:#ffb482
+  11.AttorneyTask["11.AttorneyTask\n(user)"]
+style 12.AttorneyRewriteTask fill:#17becf
+  12.AttorneyRewriteTask["12.AttorneyRewriteTask\n(user)"]
+style 13.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  13.OtherColocatedTask["13.OtherColocatedTask\n(organization)"]
+style 14.OtherColocatedTask fill:#f77189
+  14.OtherColocatedTask["14.OtherColocatedTask\n(user)"]
+style 15.TimedHoldTask fill:#fab0e4
+  15.TimedHoldTask["15.TimedHoldTask\n(user)"]
+style 16.JudgeAssignTask fill:#b3b3b3
+  16.JudgeAssignTask[\"16.JudgeAssignTask\n(user)"/]
+style 17.JudgeDecisionReviewTask fill:#e5c494
+  17.JudgeDecisionReviewTask[["17.JudgeDecisionReviewTask\n(user)"]]
+style 18.AttorneyTask fill:#ffb482
+  18.AttorneyTask["18.AttorneyTask\n(user)"]
+style 19.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  19.BvaDispatchTask{{"19.BvaDispatchTask\n(organization)"}}
+style 20.BvaDispatchTask fill:#e78ac3
+  20.BvaDispatchTask{{"20.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.EvidenceSubmissionWindowTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+5.AttorneyTask --> 6.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 7.StayedAppealColocatedTask
+7.StayedAppealColocatedTask --> 8.TimedHoldTask
+0.RootTask --> 9.JudgeAssignTask
+0.RootTask --> 10.JudgeDecisionReviewTask
+10.JudgeDecisionReviewTask --> 11.AttorneyTask
+10.JudgeDecisionReviewTask --> 12.AttorneyRewriteTask
+12.AttorneyRewriteTask --> 13.OtherColocatedTask
+13.OtherColocatedTask --> 14.OtherColocatedTask
+14.OtherColocatedTask --> 15.TimedHoldTask
+0.RootTask --> 16.JudgeAssignTask
+0.RootTask --> 17.JudgeDecisionReviewTask
+17.JudgeDecisionReviewTask --> 18.AttorneyTask
+0.RootTask --> 19.BvaDispatchTask
+19.BvaDispatchTask --> 20.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoeswtojatuatusactosactu">
+  RTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtodtoeswtojatuatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [41057])</p>
+<p>Task Tree for appeal with ID 41057
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  2.EvidenceSubmissionWindowTask[/"2.EvidenceSubmissionWindowTask\n(organization)"/]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  6.StayedAppealColocatedTask["6.StayedAppealColocatedTask\n(organization)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(user)"]
+style 8.TimedHoldTask fill:#fab0e4
+  8.TimedHoldTask["8.TimedHoldTask\n(user)"]
+style 9.JudgeDecisionReviewTask fill:#e5c494
+  9.JudgeDecisionReviewTask[["9.JudgeDecisionReviewTask\n(user)"]]
+style 10.JudgeDecisionReviewTask fill:#e5c494
+  10.JudgeDecisionReviewTask[["10.JudgeDecisionReviewTask\n(user)"]]
+style 11.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(organization)"}}
+style 12.BvaDispatchTask fill:#e78ac3
+  12.BvaDispatchTask{{"12.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.EvidenceSubmissionWindowTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+10.JudgeDecisionReviewTask --> 5.AttorneyTask
+5.AttorneyTask --> 6.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 7.StayedAppealColocatedTask
+7.StayedAppealColocatedTask --> 8.TimedHoldTask
+0.RootTask --> 9.JudgeDecisionReviewTask
+0.RootTask --> 10.JudgeDecisionReviewTask
+0.RootTask --> 11.BvaDispatchTask
+11.BvaDispatchTask --> 12.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoeswtojatusactosactu">
+  RTO.TVTO.DTO.ESWTO.JATU.SACTO.SACTU
+  <a class="anchor" href="#rtotvtodtoeswtojatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [2285])</p>
+<p>Task Tree for appeal with ID 2285
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  5.StayedAppealColocatedTask["5.StayedAppealColocatedTask\n(organization)"]
+style 6.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  6.StayedAppealColocatedTask["6.StayedAppealColocatedTask\n(user)"]
+style 7.TimedHoldTask fill:#fab0e4
+  7.TimedHoldTask["7.TimedHoldTask\n(user)"]
+style 8.JudgeDecisionReviewTask fill:#e5c494
+  8.JudgeDecisionReviewTask[["8.JudgeDecisionReviewTask\n(user)"]]
+style 9.AttorneyTask fill:#ffb482
+  9.AttorneyTask["9.AttorneyTask\n(user)"]
+style 10.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(organization)"}}
+style 11.BvaDispatchTask fill:#e78ac3
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+0.RootTask --> 4.JudgeAssignTask
+4.JudgeAssignTask --> 5.StayedAppealColocatedTask
+5.StayedAppealColocatedTask --> 6.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 7.TimedHoldTask
+0.RootTask --> 8.JudgeDecisionReviewTask
+8.JudgeDecisionReviewTask --> 9.AttorneyTask
+0.RootTask --> 10.BvaDispatchTask
+10.BvaDispatchTask --> 11.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoeswtojatujdrtuatuartusactosactu">
+  RTO.DTO.ESWTO.JATU.JDRTU.ATU.ARTU.SACTO.SACTU
+  <a class="anchor" href="#rtodtoeswtojatujdrtuatuartusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [2608])</p>
+<p>Task Tree for appeal with ID 2608
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  4.InformalHearingPresentationTask[/"4.InformalHearingPresentationTask\n(organization)"\]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  6.InformalHearingPresentationTask[/"6.InformalHearingPresentationTask\n(organization)"\]
+style 7.JudgeAssignTask fill:#b3b3b3
+  7.JudgeAssignTask[\"7.JudgeAssignTask\n(user)"/]
+style 8.JudgeDecisionReviewTask fill:#e5c494
+  8.JudgeDecisionReviewTask[["8.JudgeDecisionReviewTask\n(user)"]]
+style 9.AttorneyTask fill:#ffb482
+  9.AttorneyTask["9.AttorneyTask\n(user)"]
+style 10.AttorneyRewriteTask fill:#17becf
+  10.AttorneyRewriteTask["10.AttorneyRewriteTask\n(user)"]
+style 11.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  11.StayedAppealColocatedTask["11.StayedAppealColocatedTask\n(organization)"]
+style 12.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  12.StayedAppealColocatedTask["12.StayedAppealColocatedTask\n(user)"]
+style 13.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(organization)"}}
+style 14.BvaDispatchTask fill:#e78ac3
+  14.BvaDispatchTask{{"14.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+2.DistributionTask --> 4.InformalHearingPresentationTask
+0.RootTask --> 5.TrackVeteranTask
+0.RootTask --> 6.InformalHearingPresentationTask
+0.RootTask --> 7.JudgeAssignTask
+0.RootTask --> 8.JudgeDecisionReviewTask
+8.JudgeDecisionReviewTask --> 9.AttorneyTask
+8.JudgeDecisionReviewTask --> 10.AttorneyRewriteTask
+10.AttorneyRewriteTask --> 11.StayedAppealColocatedTask
+11.StayedAppealColocatedTask --> 12.StayedAppealColocatedTask
+0.RootTask --> 13.BvaDispatchTask
+13.BvaDispatchTask --> 14.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoeswtojatujdrtuatusactosactu">
+  RTO.TVTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtotvtodtoeswtojatujdrtuatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [54863])</p>
+<p>Task Tree for appeal with ID 54863
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.JudgeDecisionReviewTask fill:#e5c494
+  5.JudgeDecisionReviewTask[["5.JudgeDecisionReviewTask\n(user)"]]
+style 6.AttorneyTask fill:#ffb482
+  6.AttorneyTask["6.AttorneyTask\n(user)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(organization)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(user)"]
+style 9.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  9.BvaDispatchTask{{"9.BvaDispatchTask\n(organization)"}}
+style 10.BvaDispatchTask fill:#e78ac3
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+0.RootTask --> 4.JudgeAssignTask
+0.RootTask --> 5.JudgeDecisionReviewTask
+5.JudgeDecisionReviewTask --> 6.AttorneyTask
+6.AttorneyTask --> 7.StayedAppealColocatedTask
+7.StayedAppealColocatedTask --> 8.StayedAppealColocatedTask
+0.RootTask --> 9.BvaDispatchTask
+9.BvaDispatchTask --> 10.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoeswtoihptojatuatusactosactu">
+  RTO.TVTO.DTO.ESWTO.IHPTO.JATU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtotvtodtoeswtoihptojatuatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [25119])</p>
+<p>Task Tree for appeal with ID 25119
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  4.InformalHearingPresentationTask[/"4.InformalHearingPresentationTask\n(organization)"\]
+style 5.JudgeAssignTask fill:#b3b3b3
+  5.JudgeAssignTask[\"5.JudgeAssignTask\n(user)"/]
+style 6.JudgeDecisionReviewTask fill:#e5c494
+  6.JudgeDecisionReviewTask[["6.JudgeDecisionReviewTask\n(user)"]]
+style 7.AttorneyTask fill:#ffb482
+  7.AttorneyTask["7.AttorneyTask\n(user)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(organization)"]
+style 9.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  9.StayedAppealColocatedTask["9.StayedAppealColocatedTask\n(user)"]
+style 10.JudgeDecisionReviewTask fill:#e5c494
+  10.JudgeDecisionReviewTask[["10.JudgeDecisionReviewTask\n(user)"]]
+style 11.JudgeDecisionReviewTask fill:#e5c494
+  11.JudgeDecisionReviewTask[["11.JudgeDecisionReviewTask\n(user)"]]
+style 12.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  12.BvaDispatchTask{{"12.BvaDispatchTask\n(organization)"}}
+style 13.BvaDispatchTask fill:#e78ac3
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+2.DistributionTask --> 4.InformalHearingPresentationTask
+0.RootTask --> 5.JudgeAssignTask
+0.RootTask --> 6.JudgeDecisionReviewTask
+11.JudgeDecisionReviewTask --> 7.AttorneyTask
+7.AttorneyTask --> 8.StayedAppealColocatedTask
+8.StayedAppealColocatedTask --> 9.StayedAppealColocatedTask
+0.RootTask --> 10.JudgeDecisionReviewTask
+0.RootTask --> 11.JudgeDecisionReviewTask
+0.RootTask --> 12.BvaDispatchTask
+12.BvaDispatchTask --> 13.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtoeswtojatujdrtuatusactosactusactosactu">
+  RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU.SACTO.SACTU
+  <a class="anchor" href="#rtodtoeswtojatujdrtuatusactosactusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [36251])</p>
+<p>Task Tree for appeal with ID 36251
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  2.EvidenceSubmissionWindowTask[/"2.EvidenceSubmissionWindowTask\n(organization)"/]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  6.StayedAppealColocatedTask["6.StayedAppealColocatedTask\n(organization)"]
+style 7.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  7.StayedAppealColocatedTask["7.StayedAppealColocatedTask\n(user)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(organization)"]
+style 9.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  9.StayedAppealColocatedTask["9.StayedAppealColocatedTask\n(user)"]
+style 10.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  10.EvidenceOrArgumentMailTask["10.EvidenceOrArgumentMailTask\n(organization)"]
+style 11.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  11.EvidenceOrArgumentMailTask["11.EvidenceOrArgumentMailTask\n(organization)"]
+style 12.EvidenceOrArgumentMailTask fill:#ff9f9b
+  12.EvidenceOrArgumentMailTask["12.EvidenceOrArgumentMailTask\n(user)"]
+style 13.EvidenceOrArgumentMailTask fill:#ff9f9b
+  13.EvidenceOrArgumentMailTask["13.EvidenceOrArgumentMailTask\n(user)"]
+style 14.AttorneyRewriteTask fill:#17becf
+  14.AttorneyRewriteTask["14.AttorneyRewriteTask\n(user)"]
+style 15.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  15.BvaDispatchTask{{"15.BvaDispatchTask\n(organization)"}}
+style 16.BvaDispatchTask fill:#e78ac3
+  16.BvaDispatchTask{{"16.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+1.DistributionTask --> 2.EvidenceSubmissionWindowTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+5.AttorneyTask --> 6.StayedAppealColocatedTask
+6.StayedAppealColocatedTask --> 7.StayedAppealColocatedTask
+5.AttorneyTask --> 8.StayedAppealColocatedTask
+8.StayedAppealColocatedTask --> 9.StayedAppealColocatedTask
+0.RootTask --> 10.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 11.EvidenceOrArgumentMailTask
+11.EvidenceOrArgumentMailTask --> 12.EvidenceOrArgumentMailTask
+11.EvidenceOrArgumentMailTask --> 13.EvidenceOrArgumentMailTask
+4.JudgeDecisionReviewTask --> 14.AttorneyRewriteTask
+0.RootTask --> 15.BvaDispatchTask
+15.BvaDispatchTask --> 16.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtoihptodtoeswtotvtojatujdrtuatusactosactu">
+  RTO.IHPTO.DTO.ESWTO.TVTO.JATU.JDRTU.ATU.SACTO.SACTU
+  <a class="anchor" href="#rtoihptodtoeswtotvtojatujdrtuatusactosactu">#</a>
+</h3>
+<p>1 (7%) occurrences (example appeal IDs: [900])</p>
+<p>Task Tree for appeal with ID 900
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  1.InformalHearingPresentationTask[/"1.InformalHearingPresentationTask\n(organization)"\]
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.EvidenceSubmissionWindowTask fill:#8de5a1,stroke-dasharray: 5 5
+  3.EvidenceSubmissionWindowTask[/"3.EvidenceSubmissionWindowTask\n(organization)"/]
+style 4.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  4.TrackVeteranTask(["4.TrackVeteranTask\n(organization)"])
+style 5.JudgeAssignTask fill:#b3b3b3
+  5.JudgeAssignTask[\"5.JudgeAssignTask\n(user)"/]
+style 6.JudgeDecisionReviewTask fill:#e5c494
+  6.JudgeDecisionReviewTask[["6.JudgeDecisionReviewTask\n(user)"]]
+style 7.AttorneyTask fill:#ffb482
+  7.AttorneyTask["7.AttorneyTask\n(user)"]
+style 8.StayedAppealColocatedTask fill:#3ba4e4,stroke-dasharray: 5 5
+  8.StayedAppealColocatedTask["8.StayedAppealColocatedTask\n(organization)"]
+style 9.StayedAppealColocatedTask fill:#3ba4e4,stroke:#00f,stroke-width:4px
+  9.StayedAppealColocatedTask["9.StayedAppealColocatedTask\n(user)"]
+style 10.TimedHoldTask fill:#fab0e4
+  10.TimedHoldTask["10.TimedHoldTask\n(user)"]
+style 11.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(organization)"}}
+style 12.BvaDispatchTask fill:#e78ac3
+  12.BvaDispatchTask{{"12.BvaDispatchTask\n(user)"}}
+style 13.BvaDispatchTask fill:#e78ac3
+  13.BvaDispatchTask{{"13.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.InformalHearingPresentationTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.EvidenceSubmissionWindowTask
+0.RootTask --> 4.TrackVeteranTask
+0.RootTask --> 5.JudgeAssignTask
+0.RootTask --> 6.JudgeDecisionReviewTask
+6.JudgeDecisionReviewTask --> 7.AttorneyTask
+7.AttorneyTask --> 8.StayedAppealColocatedTask
+8.StayedAppealColocatedTask --> 9.StayedAppealColocatedTask
+9.StayedAppealColocatedTask --> 10.TimedHoldTask
+0.RootTask --> 11.BvaDispatchTask
+11.BvaDispatchTask --> 12.BvaDispatchTask
+11.BvaDispatchTask --> 13.BvaDispatchTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-ES/StayedAppealColocatedTask_User.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtodtoeswtojatujdrtuatusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatuatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatusactosactu">RTO.DTO.ESWTO.JATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatuatusactosactu">RTO.DTO.ESWTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatujdrtuatuartusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.ARTU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtojatujdrtuatusactosactu">RTO.TVTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtotvtodtoeswtoihptojatuatusactosactu">RTO.TVTO.DTO.ESWTO.IHPTO.JATU.ATU.SACTO.SACTU</a></li>
+        <li><a href="#rtodtoeswtojatujdrtuatusactosactusactosactu">RTO.DTO.ESWTO.JATU.JDRTU.ATU.SACTO.SACTU.SACTO.SACTU</a></li>
+        <li><a href="#rtoihptodtoeswtotvtojatujdrtuatusactosactu">RTO.IHPTO.DTO.ESWTO.TVTO.JATU.JDRTU.ATU.SACTO.SACTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

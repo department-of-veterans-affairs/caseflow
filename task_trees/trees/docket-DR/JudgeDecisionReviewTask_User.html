@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | direct_review Tasks |
+JudgeDecisionReviewTask_User for direct_review #   JudgeDecisionReviewTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR JudgeDecisionReviewTask_User -- 27620 -- AttorneyTask_User JudgeDecisionReviewTask_User -- 3242 -- AttorneyRewriteTask_User JudgeDecisionReviewTask_User -- 60 -- IhpColocatedTask_Organization JudgeDecisionReviewTask_User -- 30 -- TimedHoldTask_User JudgeDecisionReviewTask_User -- 25 -- OtherColocatedTask_Organization JudgeDecisionReviewTask_User -- 21 -- FoiaColocatedTask_Organization JudgeDecisionReviewTask_User -- 6 -- PoaClarificationColocatedTask_Organization JudgeDecisionReviewTask_User -- 4 -- MissingRecordsColocatedTask_Organization JudgeDecisionReviewTask_User -- 2 -- StayedAppealColocatedTask_Organization JudgeDecisionReviewTask_User -- 2 -- HearingClarificationColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- TranslationColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- ScheduleHearingColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- PreRoutingFoiaColocatedTask_Organization RootTask_Organization -- 27594 -- JudgeDecisionReviewTask_User Parent Tasks:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | direct_review Tasks |
+JudgeDecisionReviewTask_User for direct_review #   JudgeDecisionReviewTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR JudgeDecisionReviewTask_User -- 27620 -- AttorneyTask_User JudgeDecisionReviewTask_User -- 3242 -- AttorneyRewriteTask_User JudgeDecisionReviewTask_User -- 60 -- IhpColocatedTask_Organization JudgeDecisionReviewTask_User -- 30 -- TimedHoldTask_User JudgeDecisionReviewTask_User -- 25 -- OtherColocatedTask_Organization JudgeDecisionReviewTask_User -- 21 -- FoiaColocatedTask_Organization JudgeDecisionReviewTask_User -- 6 -- PoaClarificationColocatedTask_Organization JudgeDecisionReviewTask_User -- 4 -- MissingRecordsColocatedTask_Organization JudgeDecisionReviewTask_User -- 2 -- StayedAppealColocatedTask_Organization JudgeDecisionReviewTask_User -- 2 -- HearingClarificationColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- TranslationColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- ScheduleHearingColocatedTask_Organization JudgeDecisionReviewTask_User -- 1 -- PreRoutingFoiaColocatedTask_Organization RootTask_Organization -- 27594 -- JudgeDecisionReviewTask_User Parent Tasks:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-DR/JudgeDecisionReviewTask_User.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Judge Decision Review Task User | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Judge Decision Review Task User</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtotvtodtojatujdrtu">RTO.TVTO.DTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptujatujdrtu">RTO.TVTO.DTO.IHPTO.IHPTU.JATU.JDRTU</a></li>
+        <li><a href="#rtodtojatujdrtu">RTO.DTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptojatujdrtu">RTO.TVTO.DTO.IHPTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtojatuatujdrtu">RTO.TVTO.DTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptujatuatujdrtu">RTO.TVTO.DTO.IHPTO.IHPTU.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtodtojatuatujdrtu">RTO.DTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtodtotvtojatujdrtu">RTO.DTO.TVTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptojatuatujdrtu">RTO.TVTO.DTO.IHPTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtojdrtu">RTO.JDRTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">direct_review Tasks</a>
+ |</p>
+<h1 id="judgedecisionreviewtask_user-for-direct_review">
+  JudgeDecisionReviewTask_User for direct_review
+  <a class="anchor" href="#judgedecisionreviewtask_user-for-direct_review">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+JudgeDecisionReviewTask_User -- 27620 --> AttorneyTask_User
+JudgeDecisionReviewTask_User -- 3242 --> AttorneyRewriteTask_User
+JudgeDecisionReviewTask_User -- 60 --> IhpColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 30 --> TimedHoldTask_User
+JudgeDecisionReviewTask_User -- 25 --> OtherColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 21 --> FoiaColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 6 --> PoaClarificationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 4 --> MissingRecordsColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 2 --> StayedAppealColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 2 --> HearingClarificationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> TranslationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> ScheduleHearingColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> PreRoutingFoiaColocatedTask_Organization
+RootTask_Organization -- 27594 --> JudgeDecisionReviewTask_User
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/RootTask_Organization.html">RootTask_Organization</a>
+: 27594 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyTask_User.html">AttorneyTask_User</a>
+: 27620 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyRewriteTask_User.html">AttorneyRewriteTask_User</a>
+: 3242 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/IhpColocatedTask_Organization.html">IhpColocatedTask_Organization</a>
+: 60 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 30 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a>
+: 25 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/FoiaColocatedTask_Organization.html">FoiaColocatedTask_Organization</a>
+: 21 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PoaClarificationColocatedTask_Organization.html">PoaClarificationColocatedTask_Organization</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/MissingRecordsColocatedTask_Organization.html">MissingRecordsColocatedTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/HearingClarificationColocatedTask_Organization.html">HearingClarificationColocatedTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StayedAppealColocatedTask_Organization.html">StayedAppealColocatedTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PreRoutingFoiaColocatedTask_Organization.html">PreRoutingFoiaColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>
+: 1 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+JudgeDecisionReviewTask_User -- 23678 --> AttorneyTask_User
+JudgeDecisionReviewTask_User -- 3156 --> BvaDispatchTask_Organization
+JudgeDecisionReviewTask_User -- 355 --> AttorneyRewriteTask_User
+JudgeDecisionReviewTask_User -- 272 --> QualityReviewTask_Organization
+JudgeDecisionReviewTask_User -- 26 --> IhpColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 14 --> FoiaColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 12 --> TrackVeteranTask_Organization
+JudgeDecisionReviewTask_User -- 11 --> OtherColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 7 --> TimedHoldTask_User
+JudgeDecisionReviewTask_User -- 5 --> PoaClarificationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 4 --> EvidenceOrArgumentMailTask_Organization
+JudgeDecisionReviewTask_User -- 2 --> MissingRecordsColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 2 --> AodMotionMailTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> TranslationTask_User
+JudgeDecisionReviewTask_User -- 1 --> TranslationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> StayedAppealColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> StatusInquiryMailTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> ScheduleHearingColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> PowerOfAttorneyRelatedMailTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> MissingHearingTranscriptsColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> JudgeQualityReviewTask_User
+JudgeDecisionReviewTask_User -- 1 --> HearingClarificationColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> ExtensionColocatedTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> EvidenceOrArgumentMailTask_User
+JudgeDecisionReviewTask_User -- 1 --> AppealWithdrawalMailTask_Organization
+JudgeDecisionReviewTask_User -- 1 --> AodMotionMailTask_User
+JudgeAssignTask_User -- 22710 --> JudgeDecisionReviewTask_User
+AttorneyTask_User -- 3354 --> JudgeDecisionReviewTask_User
+TimedHoldTask_User -- 271 --> JudgeDecisionReviewTask_User
+RootTask_Organization -- 234 --> JudgeDecisionReviewTask_User
+TrackVeteranTask_Organization -- 180 --> JudgeDecisionReviewTask_User
+DistributionTask_Organization -- 172 --> JudgeDecisionReviewTask_User
+AttorneyRewriteTask_User -- 150 --> JudgeDecisionReviewTask_User
+InformalHearingPresentationTask_Organization -- 134 --> JudgeDecisionReviewTask_User
+IhpColocatedTask_User -- 98 --> JudgeDecisionReviewTask_User
+FoiaTask_User -- 71 --> JudgeDecisionReviewTask_User
+EvidenceOrArgumentMailTask_User -- 40 --> JudgeDecisionReviewTask_User
+OtherColocatedTask_User -- 32 --> JudgeDecisionReviewTask_User
+EvidenceOrArgumentMailTask_Organization -- 23 --> JudgeDecisionReviewTask_User
+InformalHearingPresentationTask_User -- 20 --> JudgeDecisionReviewTask_User
+AodMotionMailTask_User -- 20 --> JudgeDecisionReviewTask_User
+TranslationTask_User -- 12 --> JudgeDecisionReviewTask_User
+AodMotionMailTask_Organization -- 9 --> JudgeDecisionReviewTask_User
+FoiaTask_Organization -- 8 --> JudgeDecisionReviewTask_User
+AppealWithdrawalMailTask_User -- 8 --> JudgeDecisionReviewTask_User
+StatusInquiryMailTask_User -- 7 --> JudgeDecisionReviewTask_User
+MissingRecordsColocatedTask_User -- 7 --> JudgeDecisionReviewTask_User
+AppealWithdrawalMailTask_Organization -- 7 --> JudgeDecisionReviewTask_User
+PowerOfAttorneyRelatedMailTask_User -- 6 --> JudgeDecisionReviewTask_User
+PoaClarificationColocatedTask_User -- 6 --> JudgeDecisionReviewTask_User
+AddressVerificationColocatedTask_User -- 6 --> JudgeDecisionReviewTask_User
+StayedAppealColocatedTask_User -- 5 --> JudgeDecisionReviewTask_User
+TranslationTask_Organization -- 4 --> JudgeDecisionReviewTask_User
+CongressionalInterestMailTask_Organization -- 4 --> JudgeDecisionReviewTask_User
+ExtensionColocatedTask_User -- 3 --> JudgeDecisionReviewTask_User
+DeathCertificateMailTask_User -- 3 --> JudgeDecisionReviewTask_User
+PrivacyActTask_User -- 2 --> JudgeDecisionReviewTask_User
+VeteranRecordRequest_Organization -- 1 --> JudgeDecisionReviewTask_User
+UnaccreditedRepColocatedTask_User -- 1 --> JudgeDecisionReviewTask_User
+StatusInquiryMailTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+RetiredVljColocatedTask_User -- 1 --> JudgeDecisionReviewTask_User
+PrivacyActTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+PowerOfAttorneyRelatedMailTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+OtherMotionMailTask_User -- 1 --> JudgeDecisionReviewTask_User
+OtherMotionMailTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+HearingRelatedMailTask_User -- 1 --> JudgeDecisionReviewTask_User
+HearingClarificationColocatedTask_User -- 1 --> JudgeDecisionReviewTask_User
+FoiaRequestMailTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+ArnesonColocatedTask_User -- 1 --> JudgeDecisionReviewTask_User
+AojColocatedTask_User -- 1 --> JudgeDecisionReviewTask_User
+AddressChangeMailTask_Organization -- 1 --> JudgeDecisionReviewTask_User
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/JudgeAssignTask_User.html">JudgeAssignTask_User</a>
+: 22710 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyTask_User.html">AttorneyTask_User</a>
+: 3354 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 271 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/RootTask_Organization.html">RootTask_Organization</a>
+: 234 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
+: 180 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/DistributionTask_Organization.html">DistributionTask_Organization</a>
+: 172 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyRewriteTask_User.html">AttorneyRewriteTask_User</a>
+: 150 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/InformalHearingPresentationTask_Organization.html">InformalHearingPresentationTask_Organization</a>
+: 134 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/IhpColocatedTask_User.html">IhpColocatedTask_User</a>
+: 98 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/FoiaTask_User.html">FoiaTask_User</a>
+: 71 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/EvidenceOrArgumentMailTask_User.html">EvidenceOrArgumentMailTask_User</a>
+: 40 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherColocatedTask_User.html">OtherColocatedTask_User</a>
+: 32 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
+: 23 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AodMotionMailTask_User.html">AodMotionMailTask_User</a>
+: 20 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/InformalHearingPresentationTask_User.html">InformalHearingPresentationTask_User</a>
+: 20 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TranslationTask_User.html">TranslationTask_User</a>
+: 12 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a>
+: 9 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/FoiaTask_Organization.html">FoiaTask_Organization</a>
+: 8 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AppealWithdrawalMailTask_User.html">AppealWithdrawalMailTask_User</a>
+: 8 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/MissingRecordsColocatedTask_User.html">MissingRecordsColocatedTask_User</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StatusInquiryMailTask_User.html">StatusInquiryMailTask_User</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PowerOfAttorneyRelatedMailTask_User.html">PowerOfAttorneyRelatedMailTask_User</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AddressVerificationColocatedTask_User.html">AddressVerificationColocatedTask_User</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PoaClarificationColocatedTask_User.html">PoaClarificationColocatedTask_User</a>
+: 6 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StayedAppealColocatedTask_User.html">StayedAppealColocatedTask_User</a>
+: 5 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TranslationTask_Organization.html">TranslationTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/ExtensionColocatedTask_User.html">ExtensionColocatedTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/DeathCertificateMailTask_User.html">DeathCertificateMailTask_User</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PrivacyActTask_User.html">PrivacyActTask_User</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/HearingClarificationColocatedTask_User.html">HearingClarificationColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/HearingRelatedMailTask_User.html">HearingRelatedMailTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PrivacyActTask_Organization.html">PrivacyActTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AojColocatedTask_User.html">AojColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/UnaccreditedRepColocatedTask_User.html">UnaccreditedRepColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/RetiredVljColocatedTask_User.html">RetiredVljColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/ArnesonColocatedTask_User.html">ArnesonColocatedTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherMotionMailTask_User.html">OtherMotionMailTask_User</a>
+: 1 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyTask_User.html">AttorneyTask_User</a>
+: 23678 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/BvaDispatchTask_Organization.html">BvaDispatchTask_Organization</a>
+: 3156 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AttorneyRewriteTask_User.html">AttorneyRewriteTask_User</a>
+: 355 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/QualityReviewTask_Organization.html">QualityReviewTask_Organization</a>
+: 272 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/IhpColocatedTask_Organization.html">IhpColocatedTask_Organization</a>
+: 26 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/FoiaColocatedTask_Organization.html">FoiaColocatedTask_Organization</a>
+: 14 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
+: 12 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a>
+: 11 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 7 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PoaClarificationColocatedTask_Organization.html">PoaClarificationColocatedTask_Organization</a>
+: 5 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
+: 4 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/MissingRecordsColocatedTask_Organization.html">MissingRecordsColocatedTask_Organization</a>
+: 2 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/JudgeQualityReviewTask_User.html">JudgeQualityReviewTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/HearingClarificationColocatedTask_Organization.html">HearingClarificationColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StayedAppealColocatedTask_Organization.html">StayedAppealColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TranslationTask_User.html">TranslationTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/ExtensionColocatedTask_Organization.html">ExtensionColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/AodMotionMailTask_User.html">AodMotionMailTask_User</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/MissingHearingTranscriptsColocatedTask_Organization.html">MissingHearingTranscriptsColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/EvidenceOrArgumentMailTask_User.html">EvidenceOrArgumentMailTask_User</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 27621 total occurrences of JudgeDecisionReviewTask_User among appeals in the direct_review docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to JudgeDecisionReviewTask_User, sorted by frequency.</p>
+<h3 id="rtotvtodtojatujdrtu">
+  RTO.TVTO.DTO.JATU.JDRTU
+  <a class="anchor" href="#rtotvtodtojatujdrtu">#</a>
+</h3>
+<p>5904 (21%) occurrences (example appeal IDs: [27731, 11195, 62539, 143200, 57934])</p>
+<p>Task Tree for appeal with ID 27731
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  6.BvaDispatchTask{{"6.BvaDispatchTask\n(organization)"}}
+style 7.BvaDispatchTask fill:#e78ac3
+  7.BvaDispatchTask{{"7.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+0.RootTask --> 6.BvaDispatchTask
+6.BvaDispatchTask --> 7.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptoihptujatujdrtu">
+  RTO.TVTO.DTO.IHPTO.IHPTU.JATU.JDRTU
+  <a class="anchor" href="#rtotvtodtoihptoihptujatujdrtu">#</a>
+</h3>
+<p>5788 (21%) occurrences (example appeal IDs: [30161, 50472, 31680, 43758, 46929])</p>
+<p>Task Tree for appeal with ID 30161
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.VeteranRecordRequest fill:#f7736e,stroke-dasharray: 5 5
+  4.VeteranRecordRequest["4.VeteranRecordRequest\n(organization)"]
+style 5.InformalHearingPresentationTask fill:#a1c9f4
+  5.InformalHearingPresentationTask[/"5.InformalHearingPresentationTask\n(user)"\]
+style 6.InformalHearingPresentationTask fill:#a1c9f4
+  6.InformalHearingPresentationTask[/"6.InformalHearingPresentationTask\n(user)"\]
+style 7.JudgeAssignTask fill:#b3b3b3
+  7.JudgeAssignTask[\"7.JudgeAssignTask\n(user)"/]
+style 8.JudgeAssignTask fill:#b3b3b3
+  8.JudgeAssignTask[\"8.JudgeAssignTask\n(user)"/]
+style 9.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  9.JudgeDecisionReviewTask[["9.JudgeDecisionReviewTask\n(user)"]]
+style 10.AttorneyTask fill:#ffb482
+  10.AttorneyTask["10.AttorneyTask\n(user)"]
+style 11.AttorneyRewriteTask fill:#17becf
+  11.AttorneyRewriteTask["11.AttorneyRewriteTask\n(user)"]
+style 12.NewRepArgumentsColocatedTask fill:#649df4,stroke-dasharray: 5 5
+  12.NewRepArgumentsColocatedTask["12.NewRepArgumentsColocatedTask\n(organization)"]
+style 13.NewRepArgumentsColocatedTask fill:#649df4
+  13.NewRepArgumentsColocatedTask["13.NewRepArgumentsColocatedTask\n(user)"]
+style 14.QualityReviewTask fill:#b9f2f0,stroke-dasharray: 5 5
+  14.QualityReviewTask[\"14.QualityReviewTask\n(organization)"\]
+style 15.QualityReviewTask fill:#b9f2f0
+  15.QualityReviewTask[\"15.QualityReviewTask\n(user)"\]
+style 16.JudgeQualityReviewTask fill:#b09c32
+  16.JudgeQualityReviewTask["16.JudgeQualityReviewTask\n(user)"]
+style 17.AttorneyQualityReviewTask fill:#9ea231
+  17.AttorneyQualityReviewTask["17.AttorneyQualityReviewTask\n(user)"]
+style 18.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  18.OtherColocatedTask["18.OtherColocatedTask\n(organization)"]
+style 19.OtherColocatedTask fill:#f77189
+  19.OtherColocatedTask["19.OtherColocatedTask\n(user)"]
+style 20.OtherColocatedTask fill:#f77189
+  20.OtherColocatedTask["20.OtherColocatedTask\n(user)"]
+style 21.JudgeAssignTask fill:#b3b3b3
+  21.JudgeAssignTask[\"21.JudgeAssignTask\n(user)"/]
+style 22.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  22.JudgeDecisionReviewTask[["22.JudgeDecisionReviewTask\n(user)"]]
+style 23.AttorneyTask fill:#ffb482
+  23.AttorneyTask["23.AttorneyTask\n(user)"]
+style 24.JudgeQualityReviewTask fill:#b09c32
+  24.JudgeQualityReviewTask["24.JudgeQualityReviewTask\n(user)"]
+style 25.MissingRecordsColocatedTask fill:#ea8032,stroke-dasharray: 5 5
+  25.MissingRecordsColocatedTask["25.MissingRecordsColocatedTask\n(organization)"]
+style 26.MissingRecordsColocatedTask fill:#ea8032
+  26.MissingRecordsColocatedTask["26.MissingRecordsColocatedTask\n(user)"]
+style 27.TimedHoldTask fill:#fab0e4
+  27.TimedHoldTask["27.TimedHoldTask\n(user)"]
+style 28.TimedHoldTask fill:#fab0e4
+  28.TimedHoldTask["28.TimedHoldTask\n(user)"]
+style 29.TimedHoldTask fill:#fab0e4
+  29.TimedHoldTask["29.TimedHoldTask\n(user)"]
+style 30.TimedHoldTask fill:#fab0e4
+  30.TimedHoldTask["30.TimedHoldTask\n(user)"]
+style 31.TimedHoldTask fill:#fab0e4
+  31.TimedHoldTask["31.TimedHoldTask\n(user)"]
+style 32.AttorneyTask fill:#ffb482
+  32.AttorneyTask["32.AttorneyTask\n(user)"]
+style 33.AttorneyTask fill:#ffb482
+  33.AttorneyTask["33.AttorneyTask\n(user)"]
+style 34.AttorneyQualityReviewTask fill:#9ea231
+  34.AttorneyQualityReviewTask["34.AttorneyQualityReviewTask\n(user)"]
+style 35.AttorneyRewriteTask fill:#17becf
+  35.AttorneyRewriteTask["35.AttorneyRewriteTask\n(user)"]
+style 36.AttorneyRewriteTask fill:#17becf
+  36.AttorneyRewriteTask["36.AttorneyRewriteTask\n(user)"]
+style 37.AttorneyRewriteTask fill:#17becf
+  37.AttorneyRewriteTask["37.AttorneyRewriteTask\n(user)"]
+style 38.AttorneyRewriteTask fill:#17becf
+  38.AttorneyRewriteTask["38.AttorneyRewriteTask\n(user)"]
+style 39.AttorneyRewriteTask fill:#17becf
+  39.AttorneyRewriteTask["39.AttorneyRewriteTask\n(user)"]
+style 40.AttorneyQualityReviewTask fill:#9ea231
+  40.AttorneyQualityReviewTask["40.AttorneyQualityReviewTask\n(user)"]
+style 41.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  41.BvaDispatchTask{{"41.BvaDispatchTask\n(organization)"}}
+style 42.BvaDispatchTask fill:#e78ac3
+  42.BvaDispatchTask{{"42.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+0.RootTask --> 4.VeteranRecordRequest
+3.InformalHearingPresentationTask --> 5.InformalHearingPresentationTask
+3.InformalHearingPresentationTask --> 6.InformalHearingPresentationTask
+0.RootTask --> 7.JudgeAssignTask
+0.RootTask --> 8.JudgeAssignTask
+0.RootTask --> 9.JudgeDecisionReviewTask
+9.JudgeDecisionReviewTask --> 10.AttorneyTask
+9.JudgeDecisionReviewTask --> 11.AttorneyRewriteTask
+11.AttorneyRewriteTask --> 12.NewRepArgumentsColocatedTask
+12.NewRepArgumentsColocatedTask --> 13.NewRepArgumentsColocatedTask
+0.RootTask --> 14.QualityReviewTask
+14.QualityReviewTask --> 15.QualityReviewTask
+15.QualityReviewTask --> 16.JudgeQualityReviewTask
+16.JudgeQualityReviewTask --> 17.AttorneyQualityReviewTask
+17.AttorneyQualityReviewTask --> 18.OtherColocatedTask
+18.OtherColocatedTask --> 19.OtherColocatedTask
+18.OtherColocatedTask --> 20.OtherColocatedTask
+0.RootTask --> 21.JudgeAssignTask
+0.RootTask --> 22.JudgeDecisionReviewTask
+22.JudgeDecisionReviewTask --> 23.AttorneyTask
+15.QualityReviewTask --> 24.JudgeQualityReviewTask
+24.JudgeQualityReviewTask --> 25.MissingRecordsColocatedTask
+25.MissingRecordsColocatedTask --> 26.MissingRecordsColocatedTask
+26.MissingRecordsColocatedTask --> 27.TimedHoldTask
+26.MissingRecordsColocatedTask --> 28.TimedHoldTask
+26.MissingRecordsColocatedTask --> 29.TimedHoldTask
+26.MissingRecordsColocatedTask --> 30.TimedHoldTask
+26.MissingRecordsColocatedTask --> 31.TimedHoldTask
+22.JudgeDecisionReviewTask --> 32.AttorneyTask
+22.JudgeDecisionReviewTask --> 33.AttorneyTask
+24.JudgeQualityReviewTask --> 34.AttorneyQualityReviewTask
+22.JudgeDecisionReviewTask --> 35.AttorneyRewriteTask
+22.JudgeDecisionReviewTask --> 36.AttorneyRewriteTask
+22.JudgeDecisionReviewTask --> 37.AttorneyRewriteTask
+22.JudgeDecisionReviewTask --> 38.AttorneyRewriteTask
+22.JudgeDecisionReviewTask --> 39.AttorneyRewriteTask
+24.JudgeQualityReviewTask --> 40.AttorneyQualityReviewTask
+0.RootTask --> 41.BvaDispatchTask
+41.BvaDispatchTask --> 42.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtojatujdrtu">
+  RTO.DTO.JATU.JDRTU
+  <a class="anchor" href="#rtodtojatujdrtu">#</a>
+</h3>
+<p>5104 (18%) occurrences (example appeal IDs: [145995, 153079, 5995, 59535, 84276])</p>
+<p>Task Tree for appeal with ID 145995
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.JudgeAssignTask fill:#b3b3b3
+  2.JudgeAssignTask[\"2.JudgeAssignTask\n(user)"/]
+style 3.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  3.JudgeDecisionReviewTask[["3.JudgeDecisionReviewTask\n(user)"]]
+style 4.AttorneyTask fill:#ffb482
+  4.AttorneyTask["4.AttorneyTask\n(user)"]
+style 5.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  5.BvaDispatchTask{{"5.BvaDispatchTask\n(organization)"}}
+style 6.BvaDispatchTask fill:#e78ac3
+  6.BvaDispatchTask{{"6.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+0.RootTask --> 2.JudgeAssignTask
+0.RootTask --> 3.JudgeDecisionReviewTask
+3.JudgeDecisionReviewTask --> 4.AttorneyTask
+0.RootTask --> 5.BvaDispatchTask
+5.BvaDispatchTask --> 6.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptojatujdrtu">
+  RTO.TVTO.DTO.IHPTO.JATU.JDRTU
+  <a class="anchor" href="#rtotvtodtoihptojatujdrtu">#</a>
+</h3>
+<p>2067 (7%) occurrences (example appeal IDs: [13689, 10346, 8703, 43863, 57951])</p>
+<p>Task Tree for appeal with ID 13689
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  5.JudgeDecisionReviewTask[["5.JudgeDecisionReviewTask\n(user)"]]
+style 6.AttorneyTask fill:#ffb482
+  6.AttorneyTask["6.AttorneyTask\n(user)"]
+style 7.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  7.BvaDispatchTask{{"7.BvaDispatchTask\n(organization)"}}
+style 8.BvaDispatchTask fill:#e78ac3
+  8.BvaDispatchTask{{"8.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+0.RootTask --> 4.JudgeAssignTask
+0.RootTask --> 5.JudgeDecisionReviewTask
+5.JudgeDecisionReviewTask --> 6.AttorneyTask
+0.RootTask --> 7.BvaDispatchTask
+7.BvaDispatchTask --> 8.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtojatuatujdrtu">
+  RTO.TVTO.DTO.JATU.ATU.JDRTU
+  <a class="anchor" href="#rtotvtodtojatuatujdrtu">#</a>
+</h3>
+<p>904 (3%) occurrences (example appeal IDs: [154655, 153147, 11909, 78074, 57333])</p>
+<p>Task Tree for appeal with ID 154655
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  6.JudgeDecisionReviewTask[["6.JudgeDecisionReviewTask\n(user)"]]
+style 7.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  7.BvaDispatchTask{{"7.BvaDispatchTask\n(organization)"}}
+style 8.BvaDispatchTask fill:#e78ac3
+  8.BvaDispatchTask{{"8.BvaDispatchTask\n(user)"}}
+style 9.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  9.EvidenceOrArgumentMailTask["9.EvidenceOrArgumentMailTask\n(organization)"]
+style 10.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  10.EvidenceOrArgumentMailTask["10.EvidenceOrArgumentMailTask\n(organization)"]
+style 11.EvidenceOrArgumentMailTask fill:#ff9f9b
+  11.EvidenceOrArgumentMailTask["11.EvidenceOrArgumentMailTask\n(user)"]
+style 12.EvidenceOrArgumentMailTask fill:#ff9f9b
+  12.EvidenceOrArgumentMailTask["12.EvidenceOrArgumentMailTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+6.JudgeDecisionReviewTask --> 5.AttorneyTask
+0.RootTask --> 6.JudgeDecisionReviewTask
+0.RootTask --> 7.BvaDispatchTask
+7.BvaDispatchTask --> 8.BvaDispatchTask
+0.RootTask --> 9.EvidenceOrArgumentMailTask
+9.EvidenceOrArgumentMailTask --> 10.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 11.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 12.EvidenceOrArgumentMailTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptoihptujatuatujdrtu">
+  RTO.TVTO.DTO.IHPTO.IHPTU.JATU.ATU.JDRTU
+  <a class="anchor" href="#rtotvtodtoihptoihptujatuatujdrtu">#</a>
+</h3>
+<p>881 (3%) occurrences (example appeal IDs: [60937, 106369, 7591, 49534, 56091])</p>
+<p>Task Tree for appeal with ID 60937
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.InformalHearingPresentationTask fill:#a1c9f4
+  4.InformalHearingPresentationTask[/"4.InformalHearingPresentationTask\n(user)"\]
+style 5.InformalHearingPresentationTask fill:#a1c9f4
+  5.InformalHearingPresentationTask[/"5.InformalHearingPresentationTask\n(user)"\]
+style 6.JudgeAssignTask fill:#b3b3b3
+  6.JudgeAssignTask[\"6.JudgeAssignTask\n(user)"/]
+style 7.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  7.JudgeDecisionReviewTask[["7.JudgeDecisionReviewTask\n(user)"]]
+style 8.AttorneyTask fill:#ffb482
+  8.AttorneyTask["8.AttorneyTask\n(user)"]
+style 9.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  9.JudgeDecisionReviewTask[["9.JudgeDecisionReviewTask\n(user)"]]
+style 10.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(organization)"}}
+style 11.BvaDispatchTask fill:#e78ac3
+  11.BvaDispatchTask{{"11.BvaDispatchTask\n(user)"}}
+style 12.JudgeDispatchReturnTask fill:#d08f32
+  12.JudgeDispatchReturnTask["12.JudgeDispatchReturnTask\n(user)"]
+style 13.JudgeDispatchReturnTask fill:#d08f32
+  13.JudgeDispatchReturnTask["13.JudgeDispatchReturnTask\n(user)"]
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+3.InformalHearingPresentationTask --> 4.InformalHearingPresentationTask
+3.InformalHearingPresentationTask --> 5.InformalHearingPresentationTask
+0.RootTask --> 6.JudgeAssignTask
+0.RootTask --> 7.JudgeDecisionReviewTask
+9.JudgeDecisionReviewTask --> 8.AttorneyTask
+0.RootTask --> 9.JudgeDecisionReviewTask
+0.RootTask --> 10.BvaDispatchTask
+10.BvaDispatchTask --> 11.BvaDispatchTask
+11.BvaDispatchTask --> 12.JudgeDispatchReturnTask
+11.BvaDispatchTask --> 13.JudgeDispatchReturnTask
+</p>
+</p>
+<h3 id="rtodtojatuatujdrtu">
+  RTO.DTO.JATU.ATU.JDRTU
+  <a class="anchor" href="#rtodtojatuatujdrtu">#</a>
+</h3>
+<p>728 (3%) occurrences (example appeal IDs: [27543, 153169, 66456, 7994, 67124])</p>
+<p>Task Tree for appeal with ID 27543
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.JudgeAssignTask fill:#b3b3b3
+  2.JudgeAssignTask[\"2.JudgeAssignTask\n(user)"/]
+style 3.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  3.JudgeDecisionReviewTask[["3.JudgeDecisionReviewTask\n(user)"]]
+style 4.AttorneyTask fill:#ffb482
+  4.AttorneyTask["4.AttorneyTask\n(user)"]
+style 5.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  5.JudgeDecisionReviewTask[["5.JudgeDecisionReviewTask\n(user)"]]
+style 6.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  6.BvaDispatchTask{{"6.BvaDispatchTask\n(organization)"}}
+style 7.BvaDispatchTask fill:#e78ac3
+  7.BvaDispatchTask{{"7.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+0.RootTask --> 2.JudgeAssignTask
+0.RootTask --> 3.JudgeDecisionReviewTask
+5.JudgeDecisionReviewTask --> 4.AttorneyTask
+0.RootTask --> 5.JudgeDecisionReviewTask
+0.RootTask --> 6.BvaDispatchTask
+6.BvaDispatchTask --> 7.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtodtotvtojatujdrtu">
+  RTO.DTO.TVTO.JATU.JDRTU
+  <a class="anchor" href="#rtodtotvtojatujdrtu">#</a>
+</h3>
+<p>480 (2%) occurrences (example appeal IDs: [28080, 43634, 38299, 37475, 3782])</p>
+<p>Task Tree for appeal with ID 28080
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  1.DistributionTask>"1.DistributionTask\n(organization)"]
+style 2.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  2.TrackVeteranTask(["2.TrackVeteranTask\n(organization)"])
+style 3.JudgeAssignTask fill:#b3b3b3
+  3.JudgeAssignTask[\"3.JudgeAssignTask\n(user)"/]
+style 4.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  4.JudgeDecisionReviewTask[["4.JudgeDecisionReviewTask\n(user)"]]
+style 5.AttorneyTask fill:#ffb482
+  5.AttorneyTask["5.AttorneyTask\n(user)"]
+style 6.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  6.BvaDispatchTask{{"6.BvaDispatchTask\n(organization)"}}
+style 7.BvaDispatchTask fill:#e78ac3
+  7.BvaDispatchTask{{"7.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.DistributionTask
+0.RootTask --> 2.TrackVeteranTask
+0.RootTask --> 3.JudgeAssignTask
+0.RootTask --> 4.JudgeDecisionReviewTask
+4.JudgeDecisionReviewTask --> 5.AttorneyTask
+0.RootTask --> 6.BvaDispatchTask
+6.BvaDispatchTask --> 7.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtotvtodtoihptojatuatujdrtu">
+  RTO.TVTO.DTO.IHPTO.JATU.ATU.JDRTU
+  <a class="anchor" href="#rtotvtodtoihptojatuatujdrtu">#</a>
+</h3>
+<p>304 (1%) occurrences (example appeal IDs: [60935, 55384, 56619, 56904, 55453])</p>
+<p>Task Tree for appeal with ID 60935
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  1.TrackVeteranTask(["1.TrackVeteranTask\n(organization)"])
+style 2.DistributionTask fill:#dddddd,stroke-dasharray: 5 5
+  2.DistributionTask>"2.DistributionTask\n(organization)"]
+style 3.InformalHearingPresentationTask fill:#a1c9f4,stroke-dasharray: 5 5
+  3.InformalHearingPresentationTask[/"3.InformalHearingPresentationTask\n(organization)"\]
+style 4.JudgeAssignTask fill:#b3b3b3
+  4.JudgeAssignTask[\"4.JudgeAssignTask\n(user)"/]
+style 5.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  5.JudgeDecisionReviewTask[["5.JudgeDecisionReviewTask\n(user)"]]
+style 6.AttorneyTask fill:#ffb482
+  6.AttorneyTask["6.AttorneyTask\n(user)"]
+style 7.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  7.JudgeDecisionReviewTask[["7.JudgeDecisionReviewTask\n(user)"]]
+style 8.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  8.JudgeDecisionReviewTask[["8.JudgeDecisionReviewTask\n(user)"]]
+style 9.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  9.BvaDispatchTask{{"9.BvaDispatchTask\n(organization)"}}
+style 10.BvaDispatchTask fill:#e78ac3
+  10.BvaDispatchTask{{"10.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.TrackVeteranTask
+0.RootTask --> 2.DistributionTask
+2.DistributionTask --> 3.InformalHearingPresentationTask
+0.RootTask --> 4.JudgeAssignTask
+0.RootTask --> 5.JudgeDecisionReviewTask
+8.JudgeDecisionReviewTask --> 6.AttorneyTask
+0.RootTask --> 7.JudgeDecisionReviewTask
+0.RootTask --> 8.JudgeDecisionReviewTask
+0.RootTask --> 9.BvaDispatchTask
+9.BvaDispatchTask --> 10.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtojdrtu">
+  RTO.JDRTU
+  <a class="anchor" href="#rtojdrtu">#</a>
+</h3>
+<p>234 (1%) occurrences (example appeal IDs: [183, 650, 728, 499, 265])</p>
+<p>Task Tree for appeal with ID 183
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494,stroke:#00f,stroke-width:4px
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.QualityReviewTask fill:#b9f2f0,stroke-dasharray: 5 5
+  3.QualityReviewTask[\"3.QualityReviewTask\n(organization)"\]
+style 4.QualityReviewTask fill:#b9f2f0
+  4.QualityReviewTask[\"4.QualityReviewTask\n(user)"\]
+style 5.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  5.BvaDispatchTask{{"5.BvaDispatchTask\n(organization)"}}
+style 6.BvaDispatchTask fill:#e78ac3
+  6.BvaDispatchTask{{"6.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+0.RootTask --> 3.QualityReviewTask
+3.QualityReviewTask --> 4.QualityReviewTask
+0.RootTask --> 5.BvaDispatchTask
+5.BvaDispatchTask --> 6.BvaDispatchTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-DR/JudgeDecisionReviewTask_User.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtotvtodtojatujdrtu">RTO.TVTO.DTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptujatujdrtu">RTO.TVTO.DTO.IHPTO.IHPTU.JATU.JDRTU</a></li>
+        <li><a href="#rtodtojatujdrtu">RTO.DTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptojatujdrtu">RTO.TVTO.DTO.IHPTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtojatuatujdrtu">RTO.TVTO.DTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptoihptujatuatujdrtu">RTO.TVTO.DTO.IHPTO.IHPTU.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtodtojatuatujdrtu">RTO.DTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtodtotvtojatujdrtu">RTO.DTO.TVTO.JATU.JDRTU</a></li>
+        <li><a href="#rtotvtodtoihptojatuatujdrtu">RTO.TVTO.DTO.IHPTO.JATU.ATU.JDRTU</a></li>
+        <li><a href="#rtojdrtu">RTO.JDRTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

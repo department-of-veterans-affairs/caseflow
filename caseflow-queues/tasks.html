@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Tasks - Caseflow Docs</title>
     <link
       rel="shortcut icon"
       href="/caseflow/favicon.ico"
@@ -35,8 +37,8 @@
     <meta property="twitter:title" content="Tasks" />
     <script type="application/ld+json">
       {
-        "description": "Documentation for Caseflow",
         "headline": "Tasks",
+        "description": "Documentation for Caseflow",
         "url": "/caseflow/caseflow-queues/tasks.html",
         "@type": "WebPage",
         "@context": "https://schema.org"
@@ -46,13 +48,13 @@
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
-      <symbol id="svg-link" viewBox="0 0 24 24">
+      <symbol id="svg-link" viewbox="0 0 24 24">
         <title>Link</title>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          viewBox="0 0 24 24"
+          viewbox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -68,13 +70,13 @@
           ></path>
         </svg>
       </symbol>
-      <symbol id="svg-search" viewBox="0 0 24 24">
+      <symbol id="svg-search" viewbox="0 0 24 24">
         <title>Search</title>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          viewBox="0 0 24 24"
+          viewbox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -86,13 +88,13 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </symbol>
-      <symbol id="svg-menu" viewBox="0 0 24 24">
+      <symbol id="svg-menu" viewbox="0 0 24 24">
         <title>Menu</title>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          viewBox="0 0 24 24"
+          viewbox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -105,13 +107,13 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </symbol>
-      <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+      <symbol id="svg-arrow-right" viewbox="0 0 24 24">
         <title>Expand</title>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          viewBox="0 0 24 24"
+          viewbox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -122,13 +124,13 @@
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </symbol>
-      <symbol id="svg-doc" viewBox="0 0 24 24">
+      <symbol id="svg-doc" viewbox="0 0 24 24">
         <title>Document</title>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          viewBox="0 0 24 24"
+          viewbox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -147,7 +149,7 @@
       <div class="site-header">
         <a href="/caseflow/" class="site-title lh-tight"> Caseflow Docs </a>
         <a href="#" id="menu-button" class="site-button">
-          <svg viewBox="0 0 24 24" class="icon">
+          <svg viewbox="0 0 24 24" class="icon">
             <use xlink:href="#svg-menu"></use>
           </svg>
         </a>
@@ -162,32 +164,60 @@
           </li>
           <li class="nav-list-item">
             <a href="#" class="nav-list-expander"
-              ><svg viewBox="0 0 24 24">
+              ><svg viewbox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
-            ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
+            ><a href="/caseflow/workflows/" class="nav-list-link">Workflows</a>
             <ul class="nav-list">
               <li class="nav-list-item">
-                <a href="#" class="nav-list-expander"
-                  ><svg viewBox="0 0 24 24">
-                    <use xlink:href="#svg-arrow-right"></use></svg></a
-                ><a href="/caseflow/batteam/dispatch/" class="nav-list-link"
-                  >Caseflow Dispatch</a
+                <a
+                  href="/caseflow/workflows/appeal-workflow.html"
+                  class="nav-list-link"
+                  >Appeal Workflow</a
                 >
-                <ul class="nav-list">
-                  <li class="nav-list-item">
-                    <a
-                      href="/caseflow/batteam/dispatch/dispatch_stuck.html"
-                      class="nav-list-link"
-                      >Dispatch claim being “stuck”</a
-                    >
-                  </li>
-                </ul>
+              </li>
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/workflows/intake-workflow.html"
+                  class="nav-list-link"
+                  >Intake Workflow</a
+                >
+              </li>
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/workflows/hearing-workflow.html"
+                  class="nav-list-link"
+                  >Hearing Workflow</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="nav-list-item">
+            <a href="#" class="nav-list-expander"
+              ><svg viewbox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use></svg></a
+            ><a href="/caseflow/schema/db_schema.html" class="nav-list-link"
+              >DB Schema</a
+            >
+            <ul class="nav-list">
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/schema/schema_diagrams.html"
+                  class="nav-list-link"
+                  >Schema Diagrams</a
+                >
+              </li>
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/schema/model_and_dict.html"
+                  class="nav-list-link"
+                  >Data Model &amp; Dictionary</a
+                >
               </li>
             </ul>
           </li>
           <li class="nav-list-item active">
             <a href="#" class="nav-list-expander"
-              ><svg viewBox="0 0 24 24">
+              ><svg viewbox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
             ><a href="/caseflow/caseflow-queues/" class="nav-list-link"
               >Caseflow Queue</a
@@ -210,7 +240,29 @@
             </ul>
           </li>
           <li class="nav-list-item">
-            <a href="/caseflow/diagrams.html" class="nav-list-link">Diagrams</a>
+            <a href="#" class="nav-list-expander"
+              ><svg viewbox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use></svg></a
+            ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
+            <ul class="nav-list">
+              <li class="nav-list-item">
+                <a href="#" class="nav-list-expander"
+                  ><svg viewbox="0 0 24 24">
+                    <use xlink:href="#svg-arrow-right"></use></svg></a
+                ><a href="/caseflow/batteam/dispatch/" class="nav-list-link"
+                  >Caseflow Dispatch</a
+                >
+                <ul class="nav-list">
+                  <li class="nav-list-item">
+                    <a
+                      href="/caseflow/batteam/dispatch/dispatch_stuck.html"
+                      class="nav-list-link"
+                      >Dispatch claim being “stuck”</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
@@ -234,7 +286,7 @@
               autocomplete="off"
             />
             <label for="search-input" class="search-label"
-              ><svg viewBox="0 0 24 24" class="search-icon">
+              ><svg viewbox="0 0 24 24" class="search-icon">
                 <use xlink:href="#svg-search"></use></svg
             ></label>
           </div>
@@ -421,7 +473,7 @@
               href="#what-are-tasks"
               class="anchor-heading"
               aria-labelledby="what-are-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What are tasks?
@@ -522,7 +574,7 @@
               href="#task-status"
               class="anchor-heading"
               aria-labelledby="task-status"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Task status
@@ -610,7 +662,7 @@
               href="#cancellation-reason"
               class="anchor-heading"
               aria-labelledby="cancellation-reason"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Cancellation reason
@@ -682,7 +734,7 @@
               href="#how-do-tasks-map-to-the-appeals-process"
               class="anchor-heading"
               aria-labelledby="how-do-tasks-map-to-the-appeals-process"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             How do tasks map to the appeals process?
@@ -708,7 +760,7 @@
               href="#task-timestamps"
               class="anchor-heading"
               aria-labelledby="task-timestamps"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Task timestamps
@@ -819,7 +871,7 @@
               href="#what-are-task-actions"
               class="anchor-heading"
               aria-labelledby="what-are-task-actions"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What are task actions?
@@ -845,7 +897,7 @@
               href="#how-do-tasks-and-organizations-interact"
               class="anchor-heading"
               aria-labelledby="how-do-tasks-and-organizations-interact"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             How do tasks and organizations interact?
@@ -854,7 +906,7 @@
             For a more complete look into how tasks and organizations interact,
             please view this
             <a
-              href="https://zoom.us/recording/play/DheNbQYEm5Bwy3hE5sBdQ0a1Xcl44Gs573fp72-UoHNnOvAEGLQDFKcGUZpwkKN_?continueMode=true&amp;startTime=1556124159000&amp;autoplay=true"
+              href="https://zoom.us/recording/play/DheNbQYEm5Bwy3hE5sBdQ0a1Xcl44Gs573fp72-UoHNnOvAEGLQDFKcGUZpwkKN_?continueMode=true&startTime=1556124159000&autoplay=true"
               >video recording of a presentation on the subject</a
             >.
           </p>
@@ -863,7 +915,7 @@
               href="#how-do-i-recover-if-the-task-tree-is-in-a-bad-state"
               class="anchor-heading"
               aria-labelledby="how-do-i-recover-if-the-task-tree-is-in-a-bad-state"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             How do I recover if the task tree is in a bad state?
@@ -884,7 +936,7 @@
               href="#what-are-timed-tasks"
               class="anchor-heading"
               aria-labelledby="what-are-timed-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What are Timed Tasks?
@@ -906,7 +958,7 @@
               href="#what-are-engineering-tasks"
               class="anchor-heading"
               aria-labelledby="what-are-engineering-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What are Engineering Tasks?
@@ -954,7 +1006,7 @@
               href="#what-are-blocking-tasks"
               class="anchor-heading"
               aria-labelledby="what-are-blocking-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What are Blocking Tasks?
@@ -964,7 +1016,7 @@
               href="#what-blocking-means"
               class="anchor-heading"
               aria-labelledby="what-blocking-means"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             What Blocking Means
@@ -1020,7 +1072,7 @@
               href="#non-blocking"
               class="anchor-heading"
               aria-labelledby="non-blocking"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Non blocking
@@ -1037,7 +1089,7 @@
               href="#the-root-task"
               class="anchor-heading"
               aria-labelledby="the-root-task"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             The Root Task
@@ -1061,7 +1113,7 @@
               href="#mail-tasks"
               class="anchor-heading"
               aria-labelledby="mail-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Mail Tasks
@@ -1107,7 +1159,7 @@
               href="#exceptions"
               class="anchor-heading"
               aria-labelledby="exceptions"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Exceptions
@@ -1139,7 +1191,7 @@
               href="#docket-switch-tasks"
               class="anchor-heading"
               aria-labelledby="docket-switch-tasks"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Docket Switch Tasks
@@ -1149,7 +1201,7 @@
               href="#task-behavior"
               class="anchor-heading"
               aria-labelledby="task-behavior"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Task Behavior
@@ -1202,7 +1254,7 @@
               href="#docket-switch-granted-task-tree"
               class="anchor-heading"
               aria-labelledby="docket-switch-granted-task-tree"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Docket Switch Granted Task Tree
@@ -1228,7 +1280,7 @@
               href="#docket-switch-denied-task-tree"
               class="anchor-heading"
               aria-labelledby="docket-switch-denied-task-tree"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Docket Switch Denied Task Tree
@@ -1254,7 +1306,7 @@
               href="#task-creation"
               class="anchor-heading"
               aria-labelledby="task-creation"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Task Creation
@@ -1346,7 +1398,7 @@
               href="#tasks-ineligible-to-switch-dockets"
               class="anchor-heading"
               aria-labelledby="tasks-ineligible-to-switch-dockets"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Tasks ineligible to switch dockets
@@ -1396,7 +1448,7 @@
               href="#tasks-that-should-have-only-one-open-at-a-time"
               class="anchor-heading"
               aria-labelledby="tasks-that-should-have-only-one-open-at-a-time"
-              ><svg viewBox="0 0 16 16" aria-hidden="true">
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
                 <use xlink:href="#svg-link"></use></svg
             ></a>
             Tasks that should have only one open at a time

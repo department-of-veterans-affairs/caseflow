@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| All Tasks | evidence_submission Tasks |
+PreRoutingTranslationColocatedTask_User for evidence_submission #   PreRoutingTranslationColocatedTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 2 -- TimedHoldTask_User PreRoutingTranslationColocatedTask_Organization -- 5 -- PreRoutingTranslationColocatedTask_User Parent Tasks:
+  PreRoutingTranslationColocatedTask_Organization : 5 times  Child Tasks:
+  TranslationTask_Organization : 3 times  TimedHoldTask_User : 2 times  Tasks Created Before and After #   flowchart LR PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 1 -- TimedHoldTask_User PreRoutingTranslationColocatedTask_User -- 1 -- PreRoutingTranslationColocatedTask_Organization PreRoutingTranslationColocatedTask_Organization -- 5 -- PreRoutingTranslationColocatedTask_User Before:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| All Tasks | evidence_submission Tasks |
+PreRoutingTranslationColocatedTask_User for evidence_submission #   PreRoutingTranslationColocatedTask_User description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 2 -- TimedHoldTask_User PreRoutingTranslationColocatedTask_Organization -- 5 -- PreRoutingTranslationColocatedTask_User Parent Tasks:
+  PreRoutingTranslationColocatedTask_Organization : 5 times  Child Tasks:
+  TranslationTask_Organization : 3 times  TimedHoldTask_User : 2 times  Tasks Created Before and After #   flowchart LR PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 1 -- TimedHoldTask_User PreRoutingTranslationColocatedTask_User -- 1 -- PreRoutingTranslationColocatedTask_Organization PreRoutingTranslationColocatedTask_Organization -- 5 -- PreRoutingTranslationColocatedTask_User Before:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_User.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Pre Routing Translation Colocated Task User | Task Trees</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.7ef01a4ac8f45f8434ad5582a9c51ce3e56c78738b5a33e3dcce0e94e3364805.js" integrity="sha256-fvAaSsj0X4Q0rVWCqcUc4&#43;VseHOLWjPj3M4OlOM2SAU=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+<li>
+
+
+<a href="/caseflow/task_trees/intro/README.html">README</a>
+</li>
+<li>Schema CSVs
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
+</li>
+</ul>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
+</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Pre Routing Translation Colocated Task User</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtoprtctoprtctu">RTO.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtoprtctoprtctuttottueoamtoeoamtoeoamtoeoamtoprtctomrctomrctuthtuthtuprtctoprtctu">RTO.PRTCTO.PRTCTU.TTO.TTU.EOAMTO.EOAMTO.EOAMTO.EOAMTO.PRTCTO.MRCTO.MRCTU.THTU.THTU.PRTCTO.PRTCTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| 
+
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
+ | 
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a>
+ |</p>
+<h1 id="preroutingtranslationcolocatedtask_user-for-evidence_submission">
+  PreRoutingTranslationColocatedTask_User for evidence_submission
+  <a class="anchor" href="#preroutingtranslationcolocatedtask_user-for-evidence_submission">#</a>
+</h1>
+<p>
+
+
+<a href="/caseflow/task_trees/trees/task_descr/PreRoutingTranslationColocatedTask_User.html">PreRoutingTranslationColocatedTask_User description</a>
+</p>
+<h2 id="parent-and-child-tasks">
+  Parent and Child Tasks
+  <a class="anchor" href="#parent-and-child-tasks">#</a>
+</h2>
+<p>
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+flowchart LR
+
+PreRoutingTranslationColocatedTask_User -- 3 --> TranslationTask_Organization
+PreRoutingTranslationColocatedTask_User -- 2 --> TimedHoldTask_User
+PreRoutingTranslationColocatedTask_Organization -- 5 --> PreRoutingTranslationColocatedTask_User
+</p>
+
+<strong>Parent Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_Organization.html">PreRoutingTranslationColocatedTask_Organization</a>
+: 5 times</li>
+</ul>
+<p><strong>Child Tasks:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_Organization.html">TranslationTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 2 times</li>
+</ul>
+<h2 id="tasks-created-before-and-after">
+  Tasks Created Before and After
+  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+</h2>
+<p>
+
+<p class="mermaid">
+flowchart LR
+
+PreRoutingTranslationColocatedTask_User -- 3 --> TranslationTask_Organization
+PreRoutingTranslationColocatedTask_User -- 1 --> TimedHoldTask_User
+PreRoutingTranslationColocatedTask_User -- 1 --> PreRoutingTranslationColocatedTask_Organization
+PreRoutingTranslationColocatedTask_Organization -- 5 --> PreRoutingTranslationColocatedTask_User
+</p>
+
+<strong>Before:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_Organization.html">PreRoutingTranslationColocatedTask_Organization</a>
+: 5 times</li>
+</ul>
+<p><strong>After:</strong></p>
+<ul>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_Organization.html">TranslationTask_Organization</a>
+: 3 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_Organization.html">PreRoutingTranslationColocatedTask_Organization</a>
+: 1 times</li>
+<li>
+
+
+<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>
+: 1 times</li>
+</ul>
+<h2 id="task-creation-sequences">
+  Task Creation Sequences
+  <a class="anchor" href="#task-creation-sequences">#</a>
+</h2>
+<p>There are 5 total occurrences of PreRoutingTranslationColocatedTask_User among appeals in the evidence_submission docket.  This count includes multiple occurrences in a single appeal.</p>
+<p>The following subsections provide TCSs up to PreRoutingTranslationColocatedTask_User, sorted by frequency.</p>
+<h3 id="rtoprtctoprtctu">
+  RTO.PRTCTO.PRTCTU
+  <a class="anchor" href="#rtoprtctoprtctu">#</a>
+</h3>
+<p>1 (20%) occurrences (example appeal IDs: [806])</p>
+<p>Task Tree for appeal with ID 806
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  3.PreRoutingTranslationColocatedTask["3.PreRoutingTranslationColocatedTask\n(organization)"]
+style 4.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  4.PreRoutingTranslationColocatedTask["4.PreRoutingTranslationColocatedTask\n(user)"]
+style 5.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  5.TranslationTask["5.TranslationTask\n(organization)"]
+style 6.TranslationTask fill:#bcbd22
+  6.TranslationTask["6.TranslationTask\n(user)"]
+style 7.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  7.EvidenceOrArgumentMailTask["7.EvidenceOrArgumentMailTask\n(organization)"]
+style 8.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  8.EvidenceOrArgumentMailTask["8.EvidenceOrArgumentMailTask\n(organization)"]
+style 9.EvidenceOrArgumentMailTask fill:#ff9f9b
+  9.EvidenceOrArgumentMailTask["9.EvidenceOrArgumentMailTask\n(user)"]
+style 10.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  10.EvidenceOrArgumentMailTask["10.EvidenceOrArgumentMailTask\n(organization)"]
+style 11.EvidenceOrArgumentMailTask fill:#ff9f9b
+  11.EvidenceOrArgumentMailTask["11.EvidenceOrArgumentMailTask\n(user)"]
+style 12.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  12.EvidenceOrArgumentMailTask["12.EvidenceOrArgumentMailTask\n(organization)"]
+style 13.EvidenceOrArgumentMailTask fill:#ff9f9b
+  13.EvidenceOrArgumentMailTask["13.EvidenceOrArgumentMailTask\n(user)"]
+style 14.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  14.PreRoutingTranslationColocatedTask["14.PreRoutingTranslationColocatedTask\n(organization)"]
+style 15.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  15.PreRoutingTranslationColocatedTask["15.PreRoutingTranslationColocatedTask\n(user)"]
+style 16.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  16.TranslationTask["16.TranslationTask\n(organization)"]
+style 17.TranslationTask fill:#bcbd22
+  17.TranslationTask["17.TranslationTask\n(user)"]
+style 18.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  18.PreRoutingTranslationColocatedTask["18.PreRoutingTranslationColocatedTask\n(organization)"]
+style 19.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  19.PreRoutingTranslationColocatedTask["19.PreRoutingTranslationColocatedTask\n(user)"]
+style 20.MissingRecordsColocatedTask fill:#ea8032,stroke-dasharray: 5 5
+  20.MissingRecordsColocatedTask["20.MissingRecordsColocatedTask\n(organization)"]
+style 21.MissingRecordsColocatedTask fill:#ea8032
+  21.MissingRecordsColocatedTask["21.MissingRecordsColocatedTask\n(user)"]
+style 22.TimedHoldTask fill:#fab0e4
+  22.TimedHoldTask["22.TimedHoldTask\n(user)"]
+style 23.TimedHoldTask fill:#fab0e4
+  23.TimedHoldTask["23.TimedHoldTask\n(user)"]
+style 24.TimedHoldTask fill:#fab0e4
+  24.TimedHoldTask["24.TimedHoldTask\n(user)"]
+style 25.TimedHoldTask fill:#fab0e4
+  25.TimedHoldTask["25.TimedHoldTask\n(user)"]
+style 26.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  26.PreRoutingTranslationColocatedTask["26.PreRoutingTranslationColocatedTask\n(organization)"]
+style 27.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  27.PreRoutingTranslationColocatedTask["27.PreRoutingTranslationColocatedTask\n(user)"]
+style 28.TimedHoldTask fill:#fab0e4
+  28.TimedHoldTask["28.TimedHoldTask\n(user)"]
+style 29.TimedHoldTask fill:#fab0e4
+  29.TimedHoldTask["29.TimedHoldTask\n(user)"]
+style 30.TimedHoldTask fill:#fab0e4
+  30.TimedHoldTask["30.TimedHoldTask\n(user)"]
+style 31.TimedHoldTask fill:#fab0e4
+  31.TimedHoldTask["31.TimedHoldTask\n(user)"]
+style 32.TimedHoldTask fill:#fab0e4
+  32.TimedHoldTask["32.TimedHoldTask\n(user)"]
+style 33.TranslationTask fill:#bcbd22
+  33.TranslationTask["33.TranslationTask\n(user)"]
+style 34.JudgeAssignTask fill:#b3b3b3
+  34.JudgeAssignTask[\"34.JudgeAssignTask\n(user)"/]
+style 35.JudgeDecisionReviewTask fill:#e5c494
+  35.JudgeDecisionReviewTask[["35.JudgeDecisionReviewTask\n(user)"]]
+style 36.AttorneyTask fill:#ffb482
+  36.AttorneyTask["36.AttorneyTask\n(user)"]
+style 37.AttorneyRewriteTask fill:#17becf
+  37.AttorneyRewriteTask["37.AttorneyRewriteTask\n(user)"]
+style 38.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  38.BvaDispatchTask{{"38.BvaDispatchTask\n(organization)"}}
+style 39.BvaDispatchTask fill:#e78ac3
+  39.BvaDispatchTask{{"39.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+2.AttorneyTask --> 3.PreRoutingTranslationColocatedTask
+3.PreRoutingTranslationColocatedTask --> 4.PreRoutingTranslationColocatedTask
+4.PreRoutingTranslationColocatedTask --> 5.TranslationTask
+5.TranslationTask --> 6.TranslationTask
+0.RootTask --> 7.EvidenceOrArgumentMailTask
+7.EvidenceOrArgumentMailTask --> 8.EvidenceOrArgumentMailTask
+8.EvidenceOrArgumentMailTask --> 9.EvidenceOrArgumentMailTask
+8.EvidenceOrArgumentMailTask --> 10.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 11.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 12.EvidenceOrArgumentMailTask
+12.EvidenceOrArgumentMailTask --> 13.EvidenceOrArgumentMailTask
+2.AttorneyTask --> 14.PreRoutingTranslationColocatedTask
+14.PreRoutingTranslationColocatedTask --> 15.PreRoutingTranslationColocatedTask
+15.PreRoutingTranslationColocatedTask --> 16.TranslationTask
+16.TranslationTask --> 17.TranslationTask
+2.AttorneyTask --> 18.PreRoutingTranslationColocatedTask
+18.PreRoutingTranslationColocatedTask --> 19.PreRoutingTranslationColocatedTask
+2.AttorneyTask --> 20.MissingRecordsColocatedTask
+20.MissingRecordsColocatedTask --> 21.MissingRecordsColocatedTask
+19.PreRoutingTranslationColocatedTask --> 22.TimedHoldTask
+17.TranslationTask --> 23.TimedHoldTask
+6.TranslationTask --> 24.TimedHoldTask
+6.TranslationTask --> 25.TimedHoldTask
+2.AttorneyTask --> 26.PreRoutingTranslationColocatedTask
+26.PreRoutingTranslationColocatedTask --> 27.PreRoutingTranslationColocatedTask
+27.PreRoutingTranslationColocatedTask --> 28.TimedHoldTask
+27.PreRoutingTranslationColocatedTask --> 29.TimedHoldTask
+21.MissingRecordsColocatedTask --> 30.TimedHoldTask
+6.TranslationTask --> 31.TimedHoldTask
+17.TranslationTask --> 32.TimedHoldTask
+16.TranslationTask --> 33.TranslationTask
+0.RootTask --> 34.JudgeAssignTask
+0.RootTask --> 35.JudgeDecisionReviewTask
+35.JudgeDecisionReviewTask --> 36.AttorneyTask
+35.JudgeDecisionReviewTask --> 37.AttorneyRewriteTask
+0.RootTask --> 38.BvaDispatchTask
+38.BvaDispatchTask --> 39.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtojdrtuatuprtctoprtctu">
+  RTO.JDRTU.ATU.PRTCTO.PRTCTU
+  <a class="anchor" href="#rtojdrtuatuprtctoprtctu">#</a>
+</h3>
+<p>1 (20%) occurrences (example appeal IDs: [1271])</p>
+<p>Task Tree for appeal with ID 1271
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  3.PreRoutingTranslationColocatedTask["3.PreRoutingTranslationColocatedTask\n(organization)"]
+style 4.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  4.PreRoutingTranslationColocatedTask["4.PreRoutingTranslationColocatedTask\n(user)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  6.TrackVeteranTask(["6.TrackVeteranTask\n(organization)"])
+style 7.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  7.TrackVeteranTask(["7.TrackVeteranTask\n(organization)"])
+style 8.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  8.TrackVeteranTask(["8.TrackVeteranTask\n(organization)"])
+style 9.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  9.TranslationTask["9.TranslationTask\n(organization)"]
+style 10.TranslationTask fill:#bcbd22
+  10.TranslationTask["10.TranslationTask\n(user)"]
+style 11.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  11.PreRoutingTranslationColocatedTask["11.PreRoutingTranslationColocatedTask\n(organization)"]
+style 12.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  12.PreRoutingTranslationColocatedTask["12.PreRoutingTranslationColocatedTask\n(user)"]
+style 13.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  13.PreRoutingTranslationColocatedTask["13.PreRoutingTranslationColocatedTask\n(organization)"]
+style 14.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  14.PreRoutingTranslationColocatedTask["14.PreRoutingTranslationColocatedTask\n(user)"]
+style 15.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  15.TranslationTask["15.TranslationTask\n(organization)"]
+style 16.TranslationTask fill:#bcbd22
+  16.TranslationTask["16.TranslationTask\n(user)"]
+style 17.TranslationTask fill:#bcbd22
+  17.TranslationTask["17.TranslationTask\n(user)"]
+style 18.TimedHoldTask fill:#fab0e4
+  18.TimedHoldTask["18.TimedHoldTask\n(user)"]
+style 19.TranslationTask fill:#bcbd22
+  19.TranslationTask["19.TranslationTask\n(user)"]
+style 20.TimedHoldTask fill:#fab0e4
+  20.TimedHoldTask["20.TimedHoldTask\n(user)"]
+style 21.TimedHoldTask fill:#fab0e4
+  21.TimedHoldTask["21.TimedHoldTask\n(user)"]
+style 22.TimedHoldTask fill:#fab0e4
+  22.TimedHoldTask["22.TimedHoldTask\n(user)"]
+style 23.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  23.OtherColocatedTask["23.OtherColocatedTask\n(organization)"]
+style 24.OtherColocatedTask fill:#f77189
+  24.OtherColocatedTask["24.OtherColocatedTask\n(user)"]
+style 25.OtherColocatedTask fill:#f77189
+  25.OtherColocatedTask["25.OtherColocatedTask\n(user)"]
+style 26.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  26.BvaDispatchTask{{"26.BvaDispatchTask\n(organization)"}}
+style 27.BvaDispatchTask fill:#e78ac3
+  27.BvaDispatchTask{{"27.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+2.AttorneyTask --> 3.PreRoutingTranslationColocatedTask
+3.PreRoutingTranslationColocatedTask --> 4.PreRoutingTranslationColocatedTask
+0.RootTask --> 5.TrackVeteranTask
+0.RootTask --> 6.TrackVeteranTask
+0.RootTask --> 7.TrackVeteranTask
+0.RootTask --> 8.TrackVeteranTask
+4.PreRoutingTranslationColocatedTask --> 9.TranslationTask
+9.TranslationTask --> 10.TranslationTask
+2.AttorneyTask --> 11.PreRoutingTranslationColocatedTask
+11.PreRoutingTranslationColocatedTask --> 12.PreRoutingTranslationColocatedTask
+2.AttorneyTask --> 13.PreRoutingTranslationColocatedTask
+13.PreRoutingTranslationColocatedTask --> 14.PreRoutingTranslationColocatedTask
+14.PreRoutingTranslationColocatedTask --> 15.TranslationTask
+15.TranslationTask --> 16.TranslationTask
+15.TranslationTask --> 17.TranslationTask
+10.TranslationTask --> 18.TimedHoldTask
+15.TranslationTask --> 19.TranslationTask
+19.TranslationTask --> 20.TimedHoldTask
+19.TranslationTask --> 21.TimedHoldTask
+10.TranslationTask --> 22.TimedHoldTask
+2.AttorneyTask --> 23.OtherColocatedTask
+23.OtherColocatedTask --> 24.OtherColocatedTask
+23.OtherColocatedTask --> 25.OtherColocatedTask
+0.RootTask --> 26.BvaDispatchTask
+26.BvaDispatchTask --> 27.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtojdrtuatuprtctoprtctuttottuprtctoprtctu">
+  RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU
+  <a class="anchor" href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctu">#</a>
+</h3>
+<p>1 (20%) occurrences (example appeal IDs: [1271])</p>
+<p>Task Tree for appeal with ID 1271
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  3.PreRoutingTranslationColocatedTask["3.PreRoutingTranslationColocatedTask\n(organization)"]
+style 4.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  4.PreRoutingTranslationColocatedTask["4.PreRoutingTranslationColocatedTask\n(user)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  6.TrackVeteranTask(["6.TrackVeteranTask\n(organization)"])
+style 7.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  7.TrackVeteranTask(["7.TrackVeteranTask\n(organization)"])
+style 8.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  8.TrackVeteranTask(["8.TrackVeteranTask\n(organization)"])
+style 9.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  9.TranslationTask["9.TranslationTask\n(organization)"]
+style 10.TranslationTask fill:#bcbd22
+  10.TranslationTask["10.TranslationTask\n(user)"]
+style 11.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  11.PreRoutingTranslationColocatedTask["11.PreRoutingTranslationColocatedTask\n(organization)"]
+style 12.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  12.PreRoutingTranslationColocatedTask["12.PreRoutingTranslationColocatedTask\n(user)"]
+style 13.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  13.PreRoutingTranslationColocatedTask["13.PreRoutingTranslationColocatedTask\n(organization)"]
+style 14.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  14.PreRoutingTranslationColocatedTask["14.PreRoutingTranslationColocatedTask\n(user)"]
+style 15.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  15.TranslationTask["15.TranslationTask\n(organization)"]
+style 16.TranslationTask fill:#bcbd22
+  16.TranslationTask["16.TranslationTask\n(user)"]
+style 17.TranslationTask fill:#bcbd22
+  17.TranslationTask["17.TranslationTask\n(user)"]
+style 18.TimedHoldTask fill:#fab0e4
+  18.TimedHoldTask["18.TimedHoldTask\n(user)"]
+style 19.TranslationTask fill:#bcbd22
+  19.TranslationTask["19.TranslationTask\n(user)"]
+style 20.TimedHoldTask fill:#fab0e4
+  20.TimedHoldTask["20.TimedHoldTask\n(user)"]
+style 21.TimedHoldTask fill:#fab0e4
+  21.TimedHoldTask["21.TimedHoldTask\n(user)"]
+style 22.TimedHoldTask fill:#fab0e4
+  22.TimedHoldTask["22.TimedHoldTask\n(user)"]
+style 23.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  23.OtherColocatedTask["23.OtherColocatedTask\n(organization)"]
+style 24.OtherColocatedTask fill:#f77189
+  24.OtherColocatedTask["24.OtherColocatedTask\n(user)"]
+style 25.OtherColocatedTask fill:#f77189
+  25.OtherColocatedTask["25.OtherColocatedTask\n(user)"]
+style 26.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  26.BvaDispatchTask{{"26.BvaDispatchTask\n(organization)"}}
+style 27.BvaDispatchTask fill:#e78ac3
+  27.BvaDispatchTask{{"27.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+2.AttorneyTask --> 3.PreRoutingTranslationColocatedTask
+3.PreRoutingTranslationColocatedTask --> 4.PreRoutingTranslationColocatedTask
+0.RootTask --> 5.TrackVeteranTask
+0.RootTask --> 6.TrackVeteranTask
+0.RootTask --> 7.TrackVeteranTask
+0.RootTask --> 8.TrackVeteranTask
+4.PreRoutingTranslationColocatedTask --> 9.TranslationTask
+9.TranslationTask --> 10.TranslationTask
+2.AttorneyTask --> 11.PreRoutingTranslationColocatedTask
+11.PreRoutingTranslationColocatedTask --> 12.PreRoutingTranslationColocatedTask
+2.AttorneyTask --> 13.PreRoutingTranslationColocatedTask
+13.PreRoutingTranslationColocatedTask --> 14.PreRoutingTranslationColocatedTask
+14.PreRoutingTranslationColocatedTask --> 15.TranslationTask
+15.TranslationTask --> 16.TranslationTask
+15.TranslationTask --> 17.TranslationTask
+10.TranslationTask --> 18.TimedHoldTask
+15.TranslationTask --> 19.TranslationTask
+19.TranslationTask --> 20.TimedHoldTask
+19.TranslationTask --> 21.TimedHoldTask
+10.TranslationTask --> 22.TimedHoldTask
+2.AttorneyTask --> 23.OtherColocatedTask
+23.OtherColocatedTask --> 24.OtherColocatedTask
+23.OtherColocatedTask --> 25.OtherColocatedTask
+0.RootTask --> 26.BvaDispatchTask
+26.BvaDispatchTask --> 27.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtojdrtuatuprtctoprtctuttottuprtctoprtctuprtctoprtctu">
+  RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU.PRTCTO.PRTCTU
+  <a class="anchor" href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctuprtctoprtctu">#</a>
+</h3>
+<p>1 (20%) occurrences (example appeal IDs: [1271])</p>
+<p>Task Tree for appeal with ID 1271
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  3.PreRoutingTranslationColocatedTask["3.PreRoutingTranslationColocatedTask\n(organization)"]
+style 4.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  4.PreRoutingTranslationColocatedTask["4.PreRoutingTranslationColocatedTask\n(user)"]
+style 5.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  5.TrackVeteranTask(["5.TrackVeteranTask\n(organization)"])
+style 6.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  6.TrackVeteranTask(["6.TrackVeteranTask\n(organization)"])
+style 7.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  7.TrackVeteranTask(["7.TrackVeteranTask\n(organization)"])
+style 8.TrackVeteranTask fill:#cccccc,stroke-dasharray: 5 5
+  8.TrackVeteranTask(["8.TrackVeteranTask\n(organization)"])
+style 9.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  9.TranslationTask["9.TranslationTask\n(organization)"]
+style 10.TranslationTask fill:#bcbd22
+  10.TranslationTask["10.TranslationTask\n(user)"]
+style 11.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  11.PreRoutingTranslationColocatedTask["11.PreRoutingTranslationColocatedTask\n(organization)"]
+style 12.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  12.PreRoutingTranslationColocatedTask["12.PreRoutingTranslationColocatedTask\n(user)"]
+style 13.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  13.PreRoutingTranslationColocatedTask["13.PreRoutingTranslationColocatedTask\n(organization)"]
+style 14.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  14.PreRoutingTranslationColocatedTask["14.PreRoutingTranslationColocatedTask\n(user)"]
+style 15.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  15.TranslationTask["15.TranslationTask\n(organization)"]
+style 16.TranslationTask fill:#bcbd22
+  16.TranslationTask["16.TranslationTask\n(user)"]
+style 17.TranslationTask fill:#bcbd22
+  17.TranslationTask["17.TranslationTask\n(user)"]
+style 18.TimedHoldTask fill:#fab0e4
+  18.TimedHoldTask["18.TimedHoldTask\n(user)"]
+style 19.TranslationTask fill:#bcbd22
+  19.TranslationTask["19.TranslationTask\n(user)"]
+style 20.TimedHoldTask fill:#fab0e4
+  20.TimedHoldTask["20.TimedHoldTask\n(user)"]
+style 21.TimedHoldTask fill:#fab0e4
+  21.TimedHoldTask["21.TimedHoldTask\n(user)"]
+style 22.TimedHoldTask fill:#fab0e4
+  22.TimedHoldTask["22.TimedHoldTask\n(user)"]
+style 23.OtherColocatedTask fill:#f77189,stroke-dasharray: 5 5
+  23.OtherColocatedTask["23.OtherColocatedTask\n(organization)"]
+style 24.OtherColocatedTask fill:#f77189
+  24.OtherColocatedTask["24.OtherColocatedTask\n(user)"]
+style 25.OtherColocatedTask fill:#f77189
+  25.OtherColocatedTask["25.OtherColocatedTask\n(user)"]
+style 26.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  26.BvaDispatchTask{{"26.BvaDispatchTask\n(organization)"}}
+style 27.BvaDispatchTask fill:#e78ac3
+  27.BvaDispatchTask{{"27.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+2.AttorneyTask --> 3.PreRoutingTranslationColocatedTask
+3.PreRoutingTranslationColocatedTask --> 4.PreRoutingTranslationColocatedTask
+0.RootTask --> 5.TrackVeteranTask
+0.RootTask --> 6.TrackVeteranTask
+0.RootTask --> 7.TrackVeteranTask
+0.RootTask --> 8.TrackVeteranTask
+4.PreRoutingTranslationColocatedTask --> 9.TranslationTask
+9.TranslationTask --> 10.TranslationTask
+2.AttorneyTask --> 11.PreRoutingTranslationColocatedTask
+11.PreRoutingTranslationColocatedTask --> 12.PreRoutingTranslationColocatedTask
+2.AttorneyTask --> 13.PreRoutingTranslationColocatedTask
+13.PreRoutingTranslationColocatedTask --> 14.PreRoutingTranslationColocatedTask
+14.PreRoutingTranslationColocatedTask --> 15.TranslationTask
+15.TranslationTask --> 16.TranslationTask
+15.TranslationTask --> 17.TranslationTask
+10.TranslationTask --> 18.TimedHoldTask
+15.TranslationTask --> 19.TranslationTask
+19.TranslationTask --> 20.TimedHoldTask
+19.TranslationTask --> 21.TimedHoldTask
+10.TranslationTask --> 22.TimedHoldTask
+2.AttorneyTask --> 23.OtherColocatedTask
+23.OtherColocatedTask --> 24.OtherColocatedTask
+23.OtherColocatedTask --> 25.OtherColocatedTask
+0.RootTask --> 26.BvaDispatchTask
+26.BvaDispatchTask --> 27.BvaDispatchTask
+</p>
+</p>
+<h3 id="rtoprtctoprtctuttottueoamtoeoamtoeoamtoeoamtoprtctomrctomrctuthtuthtuprtctoprtctu">
+  RTO.PRTCTO.PRTCTU.TTO.TTU.EOAMTO.EOAMTO.EOAMTO.EOAMTO.PRTCTO.MRCTO.MRCTU.THTU.THTU.PRTCTO.PRTCTU
+  <a class="anchor" href="#rtoprtctoprtctuttottueoamtoeoamtoeoamtoeoamtoprtctomrctomrctuthtuthtuprtctoprtctu">#</a>
+</h3>
+<p>1 (20%) occurrences (example appeal IDs: [806])</p>
+<p>Task Tree for appeal with ID 806
+
+
+<p class="mermaid">
+flowchart TD
+style 0.RootTask fill:#eeeeee,stroke-dasharray: 5 5
+  0.RootTask(["0.RootTask\n(organization)"])
+style 1.JudgeDecisionReviewTask fill:#e5c494
+  1.JudgeDecisionReviewTask[["1.JudgeDecisionReviewTask\n(user)"]]
+style 2.AttorneyTask fill:#ffb482
+  2.AttorneyTask["2.AttorneyTask\n(user)"]
+style 3.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  3.PreRoutingTranslationColocatedTask["3.PreRoutingTranslationColocatedTask\n(organization)"]
+style 4.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  4.PreRoutingTranslationColocatedTask["4.PreRoutingTranslationColocatedTask\n(user)"]
+style 5.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  5.TranslationTask["5.TranslationTask\n(organization)"]
+style 6.TranslationTask fill:#bcbd22
+  6.TranslationTask["6.TranslationTask\n(user)"]
+style 7.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  7.EvidenceOrArgumentMailTask["7.EvidenceOrArgumentMailTask\n(organization)"]
+style 8.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  8.EvidenceOrArgumentMailTask["8.EvidenceOrArgumentMailTask\n(organization)"]
+style 9.EvidenceOrArgumentMailTask fill:#ff9f9b
+  9.EvidenceOrArgumentMailTask["9.EvidenceOrArgumentMailTask\n(user)"]
+style 10.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  10.EvidenceOrArgumentMailTask["10.EvidenceOrArgumentMailTask\n(organization)"]
+style 11.EvidenceOrArgumentMailTask fill:#ff9f9b
+  11.EvidenceOrArgumentMailTask["11.EvidenceOrArgumentMailTask\n(user)"]
+style 12.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
+  12.EvidenceOrArgumentMailTask["12.EvidenceOrArgumentMailTask\n(organization)"]
+style 13.EvidenceOrArgumentMailTask fill:#ff9f9b
+  13.EvidenceOrArgumentMailTask["13.EvidenceOrArgumentMailTask\n(user)"]
+style 14.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  14.PreRoutingTranslationColocatedTask["14.PreRoutingTranslationColocatedTask\n(organization)"]
+style 15.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  15.PreRoutingTranslationColocatedTask["15.PreRoutingTranslationColocatedTask\n(user)"]
+style 16.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5
+  16.TranslationTask["16.TranslationTask\n(organization)"]
+style 17.TranslationTask fill:#bcbd22
+  17.TranslationTask["17.TranslationTask\n(user)"]
+style 18.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  18.PreRoutingTranslationColocatedTask["18.PreRoutingTranslationColocatedTask\n(organization)"]
+style 19.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  19.PreRoutingTranslationColocatedTask["19.PreRoutingTranslationColocatedTask\n(user)"]
+style 20.MissingRecordsColocatedTask fill:#ea8032,stroke-dasharray: 5 5
+  20.MissingRecordsColocatedTask["20.MissingRecordsColocatedTask\n(organization)"]
+style 21.MissingRecordsColocatedTask fill:#ea8032
+  21.MissingRecordsColocatedTask["21.MissingRecordsColocatedTask\n(user)"]
+style 22.TimedHoldTask fill:#fab0e4
+  22.TimedHoldTask["22.TimedHoldTask\n(user)"]
+style 23.TimedHoldTask fill:#fab0e4
+  23.TimedHoldTask["23.TimedHoldTask\n(user)"]
+style 24.TimedHoldTask fill:#fab0e4
+  24.TimedHoldTask["24.TimedHoldTask\n(user)"]
+style 25.TimedHoldTask fill:#fab0e4
+  25.TimedHoldTask["25.TimedHoldTask\n(user)"]
+style 26.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke-dasharray: 5 5
+  26.PreRoutingTranslationColocatedTask["26.PreRoutingTranslationColocatedTask\n(organization)"]
+style 27.PreRoutingTranslationColocatedTask fill:#bb82f4,stroke:#00f,stroke-width:4px
+  27.PreRoutingTranslationColocatedTask["27.PreRoutingTranslationColocatedTask\n(user)"]
+style 28.TimedHoldTask fill:#fab0e4
+  28.TimedHoldTask["28.TimedHoldTask\n(user)"]
+style 29.TimedHoldTask fill:#fab0e4
+  29.TimedHoldTask["29.TimedHoldTask\n(user)"]
+style 30.TimedHoldTask fill:#fab0e4
+  30.TimedHoldTask["30.TimedHoldTask\n(user)"]
+style 31.TimedHoldTask fill:#fab0e4
+  31.TimedHoldTask["31.TimedHoldTask\n(user)"]
+style 32.TimedHoldTask fill:#fab0e4
+  32.TimedHoldTask["32.TimedHoldTask\n(user)"]
+style 33.TranslationTask fill:#bcbd22
+  33.TranslationTask["33.TranslationTask\n(user)"]
+style 34.JudgeAssignTask fill:#b3b3b3
+  34.JudgeAssignTask[\"34.JudgeAssignTask\n(user)"/]
+style 35.JudgeDecisionReviewTask fill:#e5c494
+  35.JudgeDecisionReviewTask[["35.JudgeDecisionReviewTask\n(user)"]]
+style 36.AttorneyTask fill:#ffb482
+  36.AttorneyTask["36.AttorneyTask\n(user)"]
+style 37.AttorneyRewriteTask fill:#17becf
+  37.AttorneyRewriteTask["37.AttorneyRewriteTask\n(user)"]
+style 38.BvaDispatchTask fill:#e78ac3,stroke-dasharray: 5 5
+  38.BvaDispatchTask{{"38.BvaDispatchTask\n(organization)"}}
+style 39.BvaDispatchTask fill:#e78ac3
+  39.BvaDispatchTask{{"39.BvaDispatchTask\n(user)"}}
+
+0.RootTask --> 1.JudgeDecisionReviewTask
+1.JudgeDecisionReviewTask --> 2.AttorneyTask
+2.AttorneyTask --> 3.PreRoutingTranslationColocatedTask
+3.PreRoutingTranslationColocatedTask --> 4.PreRoutingTranslationColocatedTask
+4.PreRoutingTranslationColocatedTask --> 5.TranslationTask
+5.TranslationTask --> 6.TranslationTask
+0.RootTask --> 7.EvidenceOrArgumentMailTask
+7.EvidenceOrArgumentMailTask --> 8.EvidenceOrArgumentMailTask
+8.EvidenceOrArgumentMailTask --> 9.EvidenceOrArgumentMailTask
+8.EvidenceOrArgumentMailTask --> 10.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 11.EvidenceOrArgumentMailTask
+10.EvidenceOrArgumentMailTask --> 12.EvidenceOrArgumentMailTask
+12.EvidenceOrArgumentMailTask --> 13.EvidenceOrArgumentMailTask
+2.AttorneyTask --> 14.PreRoutingTranslationColocatedTask
+14.PreRoutingTranslationColocatedTask --> 15.PreRoutingTranslationColocatedTask
+15.PreRoutingTranslationColocatedTask --> 16.TranslationTask
+16.TranslationTask --> 17.TranslationTask
+2.AttorneyTask --> 18.PreRoutingTranslationColocatedTask
+18.PreRoutingTranslationColocatedTask --> 19.PreRoutingTranslationColocatedTask
+2.AttorneyTask --> 20.MissingRecordsColocatedTask
+20.MissingRecordsColocatedTask --> 21.MissingRecordsColocatedTask
+19.PreRoutingTranslationColocatedTask --> 22.TimedHoldTask
+17.TranslationTask --> 23.TimedHoldTask
+6.TranslationTask --> 24.TimedHoldTask
+6.TranslationTask --> 25.TimedHoldTask
+2.AttorneyTask --> 26.PreRoutingTranslationColocatedTask
+26.PreRoutingTranslationColocatedTask --> 27.PreRoutingTranslationColocatedTask
+27.PreRoutingTranslationColocatedTask --> 28.TimedHoldTask
+27.PreRoutingTranslationColocatedTask --> 29.TimedHoldTask
+21.MissingRecordsColocatedTask --> 30.TimedHoldTask
+6.TranslationTask --> 31.TimedHoldTask
+17.TranslationTask --> 32.TimedHoldTask
+16.TranslationTask --> 33.TranslationTask
+0.RootTask --> 34.JudgeAssignTask
+0.RootTask --> 35.JudgeDecisionReviewTask
+35.JudgeDecisionReviewTask --> 36.AttorneyTask
+35.JudgeDecisionReviewTask --> 37.AttorneyRewriteTask
+0.RootTask --> 38.BvaDispatchTask
+38.BvaDispatchTask --> 39.BvaDispatchTask
+</p>
+</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-ES/PreRoutingTranslationColocatedTask_User.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#parent-and-child-tasks">Parent and Child Tasks</a></li>
+    <li><a href="#tasks-created-before-and-after">Tasks Created Before and After</a></li>
+    <li><a href="#task-creation-sequences">Task Creation Sequences</a>
+      <ul>
+        <li><a href="#rtoprtctoprtctu">RTO.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtojdrtuatuprtctoprtctuttottuprtctoprtctuprtctoprtctu">RTO.JDRTU.ATU.PRTCTO.PRTCTU.TTO.TTU.PRTCTO.PRTCTU.PRTCTO.PRTCTU</a></li>
+        <li><a href="#rtoprtctoprtctuttottueoamtoeoamtoeoamtoeoamtoprtctomrctomrctuthtuthtuprtctoprtctu">RTO.PRTCTO.PRTCTU.TTO.TTU.EOAMTO.EOAMTO.EOAMTO.EOAMTO.PRTCTO.MRCTO.MRCTU.THTU.THTU.PRTCTO.PRTCTU</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
