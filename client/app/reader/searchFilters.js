@@ -1,4 +1,4 @@
-import { get, pickBy, sortBy, toPairs, map, forEach, some, find } from 'lodash';
+import { get, pickBy, sortBy, toPairs, map, forEach, some, find, filter } from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
@@ -9,36 +9,31 @@ export const getUpdatedFilteredResults = (state) => {
   const searchCategoryHighlights = update(state.documentList.searchCategoryHighlights, {});
 
   const { docFilterCriteria } = state.documentList;
-  const activeCategoryFilters = toPairs(docFilterCriteria.category).
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => categoryFieldNameOfCategoryName(key));
+  const activeCategoryFilters = map(
+    filter(toPairs(docFilterCriteria.category), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => categoryFieldNameOfCategoryName(key)
+  );
 
-  const activeTagFilters = toPairs(docFilterCriteria.tag).
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => key);
+  const activeTagFilters = map(
+    filter(toPairs(docFilterCriteria.tag), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => key
+  );
 
   const searchQuery = get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
-
   const filteredIds = map(
     sortBy(
-      updatedNextState.documents.
+      filter(
         filter(
-          (doc) =>
-            !activeCategoryFilters.length ||
-            activeCategoryFilters.some(
-              (categoryFieldName) => doc[categoryFieldName]
-            )
-        ).
-        filter(
-          (doc) =>
-            !activeTagFilters.length ||
-            some(activeTagFilters, (tagText) =>
-              find(doc.tags, { text: tagText })
-            )
-        ).
-        filter(searchString(searchQuery, updatedNextState)),
+          filter(
+            updatedNextState.documents,
+            (doc) => !activeCategoryFilters.length ||
+              some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+          ),
+          (doc) => !activeTagFilters.length || some(activeTagFilters, (tagText) => find(doc.tags, { text: tagText }))
+        ),
+        searchString(searchQuery, updatedNextState)),
       docFilterCriteria.sort.sortBy
     ),
     'id'

@@ -10,7 +10,7 @@ export const getFilteredDocuments = createSelector(
   (filteredDocIds, allDocs) =>
     filteredDocIds ?
       map(filteredDocIds, (docId) => allDocs[docId]) :
-      Object.values(allDocs)
+      values(allDocs)
 );
 
 const getEditingAnnotations = (state) => state.annotationLayer.editingAnnotations;
@@ -24,15 +24,15 @@ export const makeGetAnnotationsByDocumentId = createSelector(
     memoize((docId) =>
       reject(
         uniqBy(
-          Object.values(editingAnnotations).
+          values(editingAnnotations).
             map((annotation) => ({
               editing: true,
               ...annotation
             })).
             concat(
-              Object.values(pendingEditingAnnotations),
-              Object.values(annotations),
-              Object.values(pendingAnnotations)
+              values(pendingEditingAnnotations),
+              values(annotations),
+              values(pendingAnnotations)
             ),
           'id'
         ),
