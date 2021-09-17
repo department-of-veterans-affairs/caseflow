@@ -3,8 +3,13 @@ title: Tasks
 parent: Caseflow Queue
 nav_order: 3
 ---
+<details open markdown="block">
+  <summary>
+  Table of contents
+  </summary>
 1. TOC
 {:toc}
+</details>
 ## What are tasks?
 See all Caseflow tasks' source code [here](https://github.com/department-of-veterans-affairs/caseflow/tree/master/app/models/tasks).
 
