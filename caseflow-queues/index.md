@@ -9,9 +9,6 @@ Caseflow Queue is a workflow management tool that will allow BVA employees proce
 
 ## [Definitions and term-usage](https://github.com/department-of-veterans-affairs/caseflow/wiki/Queue-data-dictionary)
 
-## Features
-Please see the TOC below for a list of high lever features
-
 ## User groups
 All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings.
 
@@ -34,3 +31,6 @@ Private attorneys and claims agents |Caseflow Queue<br>Caseflow Reader<br>Casefl
 
 ### Other VA
 - VA call center
+
+## Features
+Please see the TOC below for a list of high level features
