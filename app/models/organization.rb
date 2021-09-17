@@ -35,6 +35,10 @@ class Organization < CaseflowRecord
       find_by(url: convert_url(url))
     end
 
+    def convert_url(url)
+      url&.parameterize&.dasherize
+    end
+
     def default_active_tab
       Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     end
@@ -160,9 +164,5 @@ class Organization < CaseflowRecord
 
   def clean_url
     self.url = self.class.convert_url(url)
-  end
-
-  def self.convert_url(url)
-    url&.parameterize&.dasherize
   end
 end
