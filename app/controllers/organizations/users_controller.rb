@@ -24,8 +24,6 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def update
-    no_cache
-
     if params.key?(:admin)
       adjust_admin_rights
     end

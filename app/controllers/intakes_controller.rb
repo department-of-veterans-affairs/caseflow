@@ -9,8 +9,6 @@ class IntakesController < ApplicationController
   attr_accessor :error_id
 
   def index
-    no_cache
-
     respond_to do |format|
       format.html { render(:index) }
     end
