@@ -30,6 +30,11 @@ class Organization < CaseflowRecord
       find_by(name: string) || find_by(url: string)
     end
 
+    # Needed to handle URLs like "loan_guaranty", which are in prod and were never converted/cleaned
+    def find_by_url(url)
+      find_by(url: convert_url(url))
+    end
+
     def default_active_tab
       Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     end
@@ -154,6 +159,10 @@ class Organization < CaseflowRecord
   private
 
   def clean_url
-    self.url = url&.parameterize&.dasherize
+    self.url = self.class.convert_url(url)
+  end
+
+  def self.convert_url(url)
+    url&.parameterize&.dasherize
   end
 end

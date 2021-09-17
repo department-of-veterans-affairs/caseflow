@@ -317,6 +317,9 @@ class SanitizedJsonConfiguration
     if klass == User
       # The index for css_id has an odd column name plus find_by_css_id is faster.
       User.find_by_css_id(obj_hash["css_id"])
+    elsif klass == Organization
+      # The url may need to be converted into a clean url
+      Organization.find_by_url(obj_hash["url"])
     elsif klass == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])
