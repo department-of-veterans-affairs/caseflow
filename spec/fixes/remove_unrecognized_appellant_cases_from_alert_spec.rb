@@ -6,7 +6,7 @@ require "helpers/sanitized_json_importer.rb"
 describe "Appeals with unrecognized appellants" do
   shared_examples "appeal has an engineering task added to it" do |path|
     it "no longer shows this appeal in the AppealsWithNoTasksOrAllTasksOnHoldQuery" do
-      sji = SanitizedJsonImporter.from_file(path, verbosity: 6)
+      sji = SanitizedJsonImporter.from_file(path)
       sji.import
       appeal = sji.imported_records[Appeal.table_name].first
       add_nonadmin_user_to_bva_organization
