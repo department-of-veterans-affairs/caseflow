@@ -37,7 +37,7 @@ Source: <a href={{ $url }}>{{ $url }}</a>
         </tbody>
       </table>
     {{ end }}
-    <h2 id="{{ $tableName }}">Table '{{ $tableName }}'</h2>
+    <h2 id="{{ $tableName }}">'{{ $tableName }}' table</h2>
     <div class="tableComment">{{ index $row (index $csvColDict "Description") }}</div>
     <table class="{{ $tableClass }} {{ $tableName }}">
     <thead>

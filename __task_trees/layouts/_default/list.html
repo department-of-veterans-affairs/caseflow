@@ -1,0 +1,14 @@
+{{ define "main" }}
+<main>
+  {{ .Content }}
+  <h2>Contents</h2>
+  <ul class="contents">
+  {{ with where .Pages ".Params.order" "!=" nil }}
+    {{ range sort . ".Params.order" }}
+        <li class="sectItem-{{ .Kind }}"><a href="{{ .Permalink }}">{{ .Title | default .Name | default .Path }}</a>
+        </li>
+    {{ end }}
+  {{ end }}
+  </ul>
+</main>
+{{ end }}

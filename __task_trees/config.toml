@@ -53,6 +53,25 @@ theme = "hugo-book"
     # Theme will print warning if page referenced in markdown does not exists.
     BookPortableLinks = true
 
+# Set default Params for pages
+[[cascade]]
+order = 1
+[cascade._target]
+  kind = "page"
+
+[[cascade]]
+bookHidden = true
+[cascade._target]
+  path = "/trees/docket-*/*"
+[[cascade]]
+bookHidden = true
+[cascade._target]
+  path = "/trees/task_descr/*"
+[[cascade]]
+bookCollapseSection = true
+[cascade._target]
+  path = "/model/_index.md"
+
 [[cascade]]
 BookToC = false
 [cascade._target]
