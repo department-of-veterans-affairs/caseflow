@@ -23,6 +23,12 @@ theme = "hugo-book"
 
 [params]
     BookMenuBundle = "/menu"
+    # BookSection = '*'
+
+    # (Optional, default true) Controls table of contents visibility on right side of pages.
+    # Start and end levels can be controlled with markup.tableOfContents setting.
+    # You can also specify this parameter per page in front matter.
+    BookToC = true
 
     # Overridden by BookMenuBundle
     # (Optional, default docs) Specify section of content to render as menu
@@ -40,6 +46,12 @@ theme = "hugo-book"
     # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
     # Path must point to the site directory.
     BookEditPath = 'tree/main-gh-pages/__task_trees'
+
+    # /!\ This is an experimental feature, might be removed or changed at any time
+    # (Optional, experimental, default false) Enables portable links and link checks in markdown pages.
+    # Portable links meant to work with text editors and let you write markdown without {{< relref >}} shortcode
+    # Theme will print warning if page referenced in markdown does not exists.
+    BookPortableLinks = true
 
 [[cascade]]
 BookToC = false

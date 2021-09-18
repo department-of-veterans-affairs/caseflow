@@ -7,6 +7,8 @@ headless = true
 - Schema CSVs
   + [Caseflow Schema CSV]({{< relref "/schema/caseflow_schema_csv" >}})
   + [ETL Schema CSV]({{< relref "/schema/etl_schema_csv" >}})
+- [Data Model]({{< relref "/model/" >}})
+  + [Data Dictionary]({{< relref "/model/data_dictionary" >}})
 - [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
 - [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
 - [All tasks]({{< relref "/trees/alltasks" >}})
@@ -19,3 +21,5 @@ headless = true
   + [H tasklist]({{< relref "/trees/docket-H/tasklist" >}})
     + [H:parent-child]({{< relref "/trees/docket-H/freq-parentchild" >}})
     + [H:task-creation]({{< relref "/trees/docket-H/freq-taskcreation" >}})
+- [Tags](/tags)
+- [Categories](/categories)

@@ -11,7 +11,7 @@ The main audience are Caseflow engineers, BVA's Reporting Team, those who know S
 This page consists of these major sections:
    * [By product](#by-product)
    * [By workflow](#by-workflow)
-   * [By page](by-page)
+   * [By page](#by-page)
    * (Feel free to add another section if desired)
 
 Also check out [[Caseflow Database Schema Documentation]].
@@ -20,9 +20,9 @@ Also check out [[Caseflow Database Schema Documentation]].
 * Document any non-obvious semantics or logic that would be useful when interpreting database tables and constituent data.
    * Reference other relevant wiki pages to provide context/background.
    * Link to relevant code (in case it changes in the future).
-* To create tables diagram, go to http://dbdiagram.io/, click "Import", and paste table definition excerpts from [`schema.rb`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/db/schema.rb); then add cross-table links using the mouse and move the boxes around to your liking. Click "Save" and copy the URL to this page. 
+* To create tables diagram, go to http://dbdiagram.io/, click "Import", and paste table definition excerpts from [`schema.rb`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/db/schema.rb); then add cross-table links using the mouse and move the boxes around to your liking. Click "Save" and copy the URL to this page.
    * Note: you can only import once; try it a couple of times to get a hang of it before spending too much time.
-   * Table columns with `***` in the name are used to designate categories of columns. In the Certifications diagram, you will see a column titled `_initial ***` in the Form8s table. The Form8s table has twelve columns beginning with "_initial": `_initial_appellant_name`, `_initial_appellant_relationship`, etc. To keep the diagram and tables more tidy we grouped these categories together.  
+   * Table columns with `***` in the name are used to designate categories of columns. In the Certifications diagram, you will see a column titled `_initial ***` in the Form8s table. The Form8s table has twelve columns beginning with "_initial": `_initial_appellant_name`, `_initial_appellant_relationship`, etc. To keep the diagram and tables more tidy we grouped these categories together.
    * Pro-tip: Open another browser tab, paste the new excerpt, then copy-and-paste the resulting Table definition into the original tab.
    * To insert a screenshot of the diagram, paste the image into a comment on [ticket #15510](https://github.com/department-of-veterans-affairs/caseflow/issues/15510), which will upload the image to GitHub and provide a URL for the image, which can then be linked from this page.
 
@@ -32,7 +32,7 @@ Also check out [[Caseflow Database Schema Documentation]].
 * [Certification tables diagram](https://dbdiagram.io/d/5fc6a0143a78976d7b7e2059)
 
 ### Certifications
-Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between [VBMS](https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why) and [VACOLS](https://github.com/department-of-veterans-affairs/caseflow/wiki/VACOLS-DB-Schema). Caseflow Certification is also responsible for verifying the veteran's representation and hearings request are accurate and ready to be sent to the Board. 
+Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between [VBMS](https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why) and [VACOLS](https://github.com/department-of-veterans-affairs/caseflow/wiki/VACOLS-DB-Schema). Caseflow Certification is also responsible for verifying the veteran's representation and hearings request are accurate and ready to be sent to the Board.
 * `poa_correct_in_bgs`
 * `poa_correct_in_vbms`
 * `nod_matching`
@@ -48,7 +48,7 @@ Once an Appeal has been certified, the information on a Form8 form will be sent 
 * `power_of_attorney` information pulled from [BGS](https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why)
 
 ### LegacyAppeals
-The [LegacyAppeals](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#legacyappeal) table stores records of non-AMA appeals, appeals which originated in VACOLS, that are worked by Caseflow. 
+The [LegacyAppeals](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#legacyappeal) table stores records of non-AMA appeals, appeals which originated in VACOLS, that are worked by Caseflow.
 * `changed_request_type` is either the value of `R` representing a virtual hearing or `V` representing a video hearing. Those are the only two options when updating a hearing request
 * `vbms_id` is either the Veteran's file number + "C" or the Veteran's SSN + "S"
 
@@ -61,9 +61,9 @@ The CertificationCancellations table stores instances of cancelled certification
    * `Other`
 
 ### Relationships
-In the diagram below you will see the `certifications` table's `id` is stored on the `certification_cancellations` table as well as the `form8s` table. 
+In the diagram below you will see the `certifications` table's `id` is stored on the `certification_cancellations` table as well as the `form8s` table.
 
-The `form8s` table connects with the `certifications` table through the `certification_date`, `representative_name`, `representative_type`, and `vacols_id`, which also connects it with the `legacy_appeals` table. It is connected with a Veteran by storing the `veteran_file_number`. 
+The `form8s` table connects with the `certifications` table through the `certification_date`, `representative_name`, `representative_type`, and `vacols_id`, which also connects it with the `legacy_appeals` table. It is connected with a Veteran by storing the `veteran_file_number`.
 
 <img src="https://user-images.githubusercontent.com/63597932/116123748-6468f180-a691-11eb-86bd-9dc6012f7be9.png">
 
@@ -71,17 +71,17 @@ The `form8s` table connects with the `certifications` table through the `certifi
 ## eFolder Express
 * [eFolder Express tables diagram](https://dbdiagram.io/d/5ed6741c39d18f555300202a)
 
-Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran's files at once. It is the only Caseflow product that has a separate [code repository](https://github.com/department-of-veterans-affairs/caseflow-efolder) and runs on separate servers. 
+Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran's files at once. It is the only Caseflow product that has a separate [code repository](https://github.com/department-of-veterans-affairs/caseflow-efolder) and runs on separate servers.
 
 ### Records
 When mentioning a Veteran's files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files
 
- 
+
 ### Manifests
-As mentioned above, the purpose of EE is to allow users to download all of a Veteran's files at once. The reasoning for this is to reduce the need for the user to select and download files individually. A `Manifest` represents the collection of all of a Veteran's files and consists of a `ManifestSource` for each file, pointing to its source. 
+As mentioned above, the purpose of EE is to allow users to download all of a Veteran's files at once. The reasoning for this is to reduce the need for the user to select and download files individually. A `Manifest` represents the collection of all of a Veteran's files and consists of a `ManifestSource` for each file, pointing to its source.
 
 ### ManifestSources
-The sources for files made available for download in EE are [VBMS](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vbms) and [Virtual VA (VVA)](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vva). A `ManifestSource` groups a set of `Records` to allow all of a Veteran's files to be downloaded at the same time. 
+The sources for files made available for download in EE are [VBMS](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vbms) and [Virtual VA (VVA)](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vva). A `ManifestSource` groups a set of `Records` to allow all of a Veteran's files to be downloaded at the same time.
 * `name`: Either "VBMS" or "VVA"
 * `status`: Stores whether a `Record` was successfully added to a `Manifest`
 
@@ -89,7 +89,7 @@ The sources for files made available for download in EE are [VBMS](https://githu
 When a user searches for the Veteran they are looking for in EE, they are presented with a view of all files available for download. The FileDownloads table stores each time a user downloads all of a Veteran's files.
 
 ### Relationships
-In the diagram below you can see that every `FileDownload` will store a `manifest_id`, as well as every `ManifestSource`. This makes sense given the fact that a `Manifest` is a collection of `ManifestSources`, with each `ManifestSource` containing a `Record`. The files indirectly referenced by a `Manifest` can be downloaded as many times as needed. 
+In the diagram below you can see that every `FileDownload` will store a `manifest_id`, as well as every `ManifestSource`. This makes sense given the fact that a `Manifest` is a collection of `ManifestSources`, with each `ManifestSource` containing a `Record`. The files indirectly referenced by a `Manifest` can be downloaded as many times as needed.
 
 <img src="https://user-images.githubusercontent.com/63597932/101203241-64137f80-3638-11eb-98b7-ebdc95a39533.png" width=800>
 
@@ -99,18 +99,18 @@ In the diagram below you can see that every `FileDownload` will store a `manifes
 * [BVA Dispatch](https://github.com/department-of-veterans-affairs/caseflow/wiki/BVA-Dispatch)
 * [Dispatch tables diagram](https://dbdiagram.io/d/5f790ba03a78976d7b763c6d)
 
-Caseflow Dispatch exists to create [EndProducts](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproduct) in VBMS from completed cases in VACOLS. Users of Dispatch, VBA Office of Administrative Review (OAR) employees, are presented with VACOLS cases that have received a decision and need to be routed to the correct VBA entity to update a Veteran's benefits. 
+Caseflow Dispatch exists to create [EndProducts](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproduct) in VBMS from completed cases in VACOLS. Users of Dispatch, VBA Office of Administrative Review (OAR) employees, are presented with VACOLS cases that have received a decision and need to be routed to the correct VBA entity to update a Veteran's benefits.
 
 ### LegacyAppeals
-The LegacyAppeals table is utilized by numerous Caseflow products. A [description](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary#legacyappeals) can be found above in the Certification section. 
+The LegacyAppeals table is utilized by numerous Caseflow products. A [description](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary#legacyappeals) can be found above in the Certification section.
 
 ### DispatchTasks
-Caseflow [tasks](https://github.com/department-of-veterans-affairs/caseflow/wiki/Tasks) designate what action needs to be taken on an appeal and who is responsible for taking said action. There are a wide variety of tasks across Caseflow products, but the Dispatch::Tasks table currently only stores EstablishClaim task records which are used to create the EndProduct in VBMS. You can read more about tasks [here](https://docs.google.com/presentation/d/1Cc84GH7giWHTNxUe3zixH7O-QT77STlptYfud9X8P1Y/edit#slide=id.g5ee8a20194_1_406). 
+Caseflow [tasks](https://github.com/department-of-veterans-affairs/caseflow/wiki/Tasks) designate what action needs to be taken on an appeal and who is responsible for taking said action. There are a wide variety of tasks across Caseflow products, but the Dispatch::Tasks table currently only stores EstablishClaim task records which are used to create the EndProduct in VBMS. You can read more about tasks [here](https://docs.google.com/presentation/d/1Cc84GH7giWHTNxUe3zixH7O-QT77STlptYfud9X8P1Y/edit#slide=id.g5ee8a20194_1_406).
 * `aasm_state`
 * `user_id` gets assigned upon clicking "Establish Next Claim" in Dispatch
 
 ### Users
-[Caseflow users](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Tasks/tasktrees/roles/role-overview.md) are distinguished by their role, with different roles having different permissions and thus different capabilities made available to them. 
+[Caseflow users](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Tasks/tasktrees/roles/role-overview.md) are distinguished by their role, with different roles having different permissions and thus different capabilities made available to them.
 * `roles`: All of the user's roles
 * `css_id`: A unique identifier for VA employees or contractors
 
@@ -127,35 +127,35 @@ In the diagram below, you will see that the `dispatch_tasks` tables stores the `
 * [Intake tables diagram](https://dbdiagram.io/d/5fc9027b3a78976d7b7e6700)
 
 ### Decision Reviews
-Intake is the source of all AMA decision review request submissions. There are three decision review lanes: Appeals, HigherLevelReviews, and SupplementalClaims. 
+Intake is the source of all AMA decision review request submissions. There are three decision review lanes: Appeals, HigherLevelReviews, and SupplementalClaims.
 
 Class diagram of relevant terminology:
 * [DecisionReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#decisionreview)
    - [Appeal](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#appeal)
-   - [ClaimReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#claimreview) 
+   - [ClaimReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#claimreview)
       - [SupplementalClaim](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#supplementalclaim)
       - [HigherLevelReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#higherlevelreview)
 
 #### Appeals
 [Appeals](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#appeal) represent an AMA review that gets filed with the Board of Veterans' Appeals (BVA). Refer to Intake tables diagram below.
 * `docket_type` can be one of the following:
-   * `direct_review` - No new evidence and not requesting a hearing 
+   * `direct_review` - No new evidence and not requesting a hearing
    * `evidence_submission` - New evidence but not requesting a hearing
    * `hearing` - Submit new evidence and want to testify before a VLJ
 * `poa_participant_id`: Power of Attorney (POA) is connected to legacy appeals in VACOLS and Veterans in BGS. Since this model represents AMA appeals, we are getting this data from [BGS](https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why)
 * `veteran_is_not_claimant`: A claimant on an appeal does not have to be the Veteran. It can be a spouse, child, or even an attorney.
 
 ### Claim Reviews (i.e., HigherLevelReviews and SupplementalClaims)
-A [HigherLevelReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#higher-level-review) and [SupplementalClaim](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#supplementalclaim) are a type of [ClaimReviews](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#claimreview). These ClaimReviews are sent to the Veterans Benefit Administration (VBA) and differentiate from Appeals in that they include a benefit type. Benefit types of `compensation` and `pension` are processed in VBMS, where as the rest are processed in Caseflow. 
+A [HigherLevelReview](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#higher-level-review) and [SupplementalClaim](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#supplementalclaim) are a type of [ClaimReviews](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#claimreview). These ClaimReviews are sent to the Veterans Benefit Administration (VBA) and differentiate from Appeals in that they include a benefit type. Benefit types of `compensation` and `pension` are processed in VBMS, where as the rest are processed in Caseflow.
 
 ### RequestIssues
-[RequestIssues](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#requestissue) are submitted as part of a DecisionReview and represent a specific issue a Veteran is facing, such as hearing loss or sleep apnea. There are three categories of RequestIssues: `rating`, `non-rating`, and `unidentified`. 
- 
+[RequestIssues](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#requestissue) are submitted as part of a DecisionReview and represent a specific issue a Veteran is facing, such as hearing loss or sleep apnea. There are three categories of RequestIssues: `rating`, `non-rating`, and `unidentified`.
+
 ### EndProductEstablishments
-The [EndProductEstablishment](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproductestablishment) model exists in Caseflow to represent [EndProducts](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproduct) created in VBMS. End Products are created for Higher Level Reviews and Supplemental Claims that are compensation or pensions and for Board Grant Effectuations that have granted compensation and pension issues on appeals. 
+The [EndProductEstablishment](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproductestablishment) model exists in Caseflow to represent [EndProducts](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#endproduct) created in VBMS. End Products are created for Higher Level Reviews and Supplemental Claims that are compensation or pensions and for Board Grant Effectuations that have granted compensation and pension issues on appeals.
 
 ### Relationships
-In the diagram below you can see that the `appeals`, `supplemental_claims`, and `higher_level_reviews` table's `id` will correspond with the `request_issues` table's `decision_review_id` as well as the `end_product_establishments` table's `source_id`. 
+In the diagram below you can see that the `appeals`, `supplemental_claims`, and `higher_level_reviews` table's `id` will correspond with the `request_issues` table's `decision_review_id` as well as the `end_product_establishments` table's `source_id`.
 
 Also note that the `request_issues` table's `id` is referenced by the `end_product_establishments` table. The `end_product_establishments` table's `source_type` is the same as the `request_issues` table's `decision_review_type`.
 
@@ -188,7 +188,7 @@ A `HearingDay` organizes `Hearings` and `LegacyHearings` by regional office and 
 * `scheduled_for`
 
 ### LegacyHearings
-Legacy Hearings are hearings for cases that originated inside of VACOLS.  On a judge's Hearing Worksheet, they can edit Legacy hearing issues directly on the workbook page (for AMA cases, they would need to go to the Case Details page). 
+Legacy Hearings are hearings for cases that originated inside of VACOLS.  On a judge's Hearing Worksheet, they can edit Legacy hearing issues directly on the workbook page (for AMA cases, they would need to go to the Case Details page).
 
 ### Task
 All appeals on the hearing docket have a series of tasks that can be divided into five groups.  Here is a brief summary of what those are, full description can be found [here](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#hearings-task-model).
@@ -200,7 +200,7 @@ All appeals on the hearing docket have a series of tasks that can be divided int
 
 ### VirtualHearings
 Once a virtual hearing is scheduled, the associated record in `hearing_days` is not changed because a record in the `hearing_days` table represents the whole day. In other words, many hearing types are associated with that `hearing_days` record, so `hearing_days.request_type` should not be changed. This is an artifact of how the virtual hearings feature was introduced into Caseflow, i.e., as a conversion of video hearings into virtual hearings.
- 
+
 [`virtual_hearings`, `virtual_hearing_establishments`, and `sent_hearing_email_events` table descriptions](https://github.com/department-of-veterans-affairs/caseflow/issues/14067#issuecomment-620792309)
 
 ### Relationships
@@ -230,10 +230,10 @@ User interaction with specific appeals is dependent on the type of task on the a
 A more thorough breakdown of Queue tasks can be found in the Decision phase portion of the task tree [documentation](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Tasks/tasktrees/descr/tasks-overview.md#decision-phase)
 
 ### Organizations
-Users can be added to organizations so that we can control the types of permissions and task action options alotted to them.  For instance, [`JudgeTeams`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/organizations/judge_team.rb) are comprised of a judge along with their team of attorneys.  This allows the judge to assign cases to these individuals in the same flow mentioned in the Task description.   
+Users can be added to organizations so that we can control the types of permissions and task action options alotted to them.  For instance, [`JudgeTeams`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/organizations/judge_team.rb) are comprised of a judge along with their team of attorneys.  This allows the judge to assign cases to these individuals in the same flow mentioned in the Task description.
 
 ### Relationships
-In the following diagram, you can see that an `id` on an AMA or Legacy appeal will correspond with the `appeal_id` on a task created on that appeal.  
+In the following diagram, you can see that an `id` on an AMA or Legacy appeal will correspond with the `appeal_id` on a task created on that appeal.
 
 An `assigned_by_id` or `assigned_to_id` will correspond with the `id` of the user who has either assigned or been assigned a task
 
@@ -244,10 +244,10 @@ Finally, `organization_users` is representative of a users relationship to a par
 
 ## Caseflow Reader
 * [Caseflow Reader](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Reader) and [Reader Backend](https://github.com/department-of-veterans-affairs/caseflow/wiki/Reader-Backend)
-* [Reader tables diagram](https://dbdiagram.io/d/5ed6793d39d18f5553002077) 
+* [Reader tables diagram](https://dbdiagram.io/d/5ed6793d39d18f5553002077)
 
 ### Documents
-[Caseflow Reader](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Reader) allows users to access all of the documents related to the Veteran for an appeal. Users first interact with a *document list* page which presents a list of the documents.  Upon selection of a particular document, they are redirected to the *document view* page where they can view and interact with the document. Documents are populated by [eFolder](https://github.com/department-of-veterans-affairs/caseflow-efolder#caseflow---efolder-express), which retrieves them from two upstream dependencies: VBMS & VVA -- see [Reader Backend](https://github.com/department-of-veterans-affairs/caseflow/wiki/Reader-Backend) for details.  
+[Caseflow Reader](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Reader) allows users to access all of the documents related to the Veteran for an appeal. Users first interact with a *document list* page which presents a list of the documents.  Upon selection of a particular document, they are redirected to the *document view* page where they can view and interact with the document. Documents are populated by [eFolder](https://github.com/department-of-veterans-affairs/caseflow-efolder#caseflow---efolder-express), which retrieves them from two upstream dependencies: VBMS & VVA -- see [Reader Backend](https://github.com/department-of-veterans-affairs/caseflow/wiki/Reader-Backend) for details.
 
 ### Annotations
 On the document view page, users have the ability to add comments to documents via the "Add a comment" button.  A comment is stored in the `annotations` table.  Once a comment is created, it can be edited, shared via a link or deleted. In addition, comments can be seen on the document list page under the "Comment" column for the related document and also by selecting the "Comments" button which shows all comments.
@@ -256,7 +256,7 @@ On the document view page, users have the ability to add comments to documents v
 Tags can be added by the user to further label and categorize documents based on issues that they identify.  On the document view page, users may create a tag within the sidebar under the "Issue tags" dropdown section. Once a tag is created, it is saved (in the `tags` table) so that it is available for use on other documents.  Tags can also be deleted by the user.
 
 ### DocumentViews
-Caseflow keeps track of when a user has viewed a document so the user is aware of which ones they have already opened.  To do this, documents in the document list are initially shown in bold text, however once a user has viewed a document, the text will no longer be bold. 
+Caseflow keeps track of when a user has viewed a document so the user is aware of which ones they have already opened.  To do this, documents in the document list are initially shown in bold text, however once a user has viewed a document, the text will no longer be bold.
 
 ### Relationships
 When a tag is created for a document, the user can apply it on other documents that may be relevant.  The `document_tags` table keeps track of which tags apply to which documents.  The `id` of the `tags` table corresponds to the `tag_id`, and the `id` of the documents table corresponds to the `documents_id`.

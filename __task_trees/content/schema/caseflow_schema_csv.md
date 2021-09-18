@@ -1,5 +1,6 @@
 ---
 BookToC: false
+tags: "csv"
 ---
 
 # Caseflow Schema CSV

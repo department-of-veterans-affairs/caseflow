@@ -17,4 +17,4 @@
     <figcaption>{{ with $.Title | safeHTML }}{{ . }}{{ end }}</figcaption>
 </figure>
 {{- else -}}
-<img src="{{ .Destination | safeURL }}" alt="{{ $.Text }}" />{{- end -}}
+<a href="{{ .Destination | safeURL }}"><img src="{{ .Destination | safeURL }}" alt="{{ $.Text }}" /></a>{{- end -}}

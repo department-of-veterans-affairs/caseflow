@@ -1,3 +1,8 @@
+---
+title: "Tasks Overview"
+categories: "overview"
+---
+
 | [README](../intro/README.md) | [All tasks](alltasks.md) | [DR tasks](docket-DR/tasklist.md) | [ES tasks](docket-ES/tasklist.md) | [H tasks](docket-H/tasklist.md) |
 
 See [How to use](../README.md#how-to-use-and-interpret-this-documentation) for a description of the docket types: Direct Review (DR), Evidence Submission (ES), and Hearing (H).
@@ -93,7 +98,7 @@ Associated tasks:
     * [HearingTask_Organization](task_descr/HearingTask_Organization.md) only in Hearing docket; almost always a child task of DistributionTask_Organization
       * [ScheduleHearingTask_Organization](task_descr/ScheduleHearingTask_Organization.md)
         * [**HearingAdminActionTask**](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/hearing_admin_action_task.rb) -
-          blocks scheduling a Veteran for a hearing. 
+          blocks scheduling a Veteran for a hearing.
           A few scenarios (e.g., missing data or Veteran situations) automatically create HearingAdminTasks.
           A hearing coordinator must resolve these before scheduling a Veteran.
           Subclasses of various hearing admin actions are listed below.

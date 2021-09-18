@@ -91,5 +91,5 @@ digraph G {
 
 ![RTO.DTO.ESWTO](RTO.DTO.ESWTO.dot.png)
 
-- Manually-added content is kept in the `task_descr` subdirectory. 
+- Manually-added content is kept in the `task_descr` subdirectory.
 - Generated files are placed in the `docs-*` subdirectories, which can be deleted and regenerated. To regenerate the files, use the `gen_ttdocs.py` and `createPngs.sh` scripts in the [trees directory](https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees).
