@@ -1,0 +1,4 @@
+<h{{ .Level }} id="{{ .Anchor | safeURL }}">
+  {{ .Text | safeHTML }}
+  <small><a class="anchor-heading" href="#{{ .Anchor | safeURL }}" aria-labelledby="{{ .Anchor | safeURL }}">#</a></small>
+</h{{ .Level }}>

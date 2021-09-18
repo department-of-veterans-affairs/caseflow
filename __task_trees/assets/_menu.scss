@@ -1,0 +1,13 @@
+
+.book-menu nav ul li {
+  margin: 5px 0px;
+}
+.book-menu a {
+  padding: 5px;
+}
+
+// highlight active item
+.book-menu a.active {
+  color: black;
+  background-color: #FAF884;
+}

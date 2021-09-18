@@ -1,0 +1,23 @@
+// used by docket-*/freq-parentchild
+
+table.parentChildTable {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+
+
+  th:first-of-type {
+    width: 40%;
+  }
+  th:nth-of-type(2) {
+    width: 40%;
+  }
+  td:first-of-type {
+    white-space:normal;
+    word-wrap:break-word;
+  }
+  td:nth-of-type(2) {
+    white-space:normal;
+    word-wrap:break-word;
+  }
+}

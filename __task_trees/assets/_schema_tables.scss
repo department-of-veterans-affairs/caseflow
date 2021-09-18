@@ -1,0 +1,60 @@
+// Used by caseflow_schema_csv
+
+.tableComment {
+  font-weight: bold;
+}
+
+table.caseflowCsv {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  font-size: small;
+  box-sizing: unset;
+
+  thead tr {
+    // adjust the height to fit the rotated column names
+    height: 70px;
+  }
+  thead tr th {
+    padding: 2px;
+    background-color: lightblue;
+  }
+
+  tr td {
+    padding: 0px 2px;
+  }
+
+  th.Required, th.Unique, th.Index {
+    width: 20px;
+  }
+  th.Required div.outer, th.Unique div.outer, th.Index div.outer{
+    position: relative;
+  }
+  th.Required div.inner, th.Unique div.inner, th.Index div.inner{
+    transform: translateX(-50%) translateY(-50%) rotate(-90deg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  td.Required, td.Unique, td.Index {
+    text-align: center;
+  }
+  td.Required.nonblank, td.Unique.nonblank, td.Index.nonblank {
+    background-color: pink;
+  }
+
+  th.Column {
+    width: 20%;
+  }
+  th.Type {
+    width: 12%;
+  }
+  th.Description {
+    width: 60%;
+  }
+
+  td.Table, td.Column, td.Description {
+    white-space:normal;
+    word-wrap:break-word;
+  }
+}
