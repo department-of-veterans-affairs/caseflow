@@ -1,6 +1,11 @@
 ---
+title: Caseflow Schema CSV
 BookToC: false
 tags: "csv"
+menu:
+  navmenu:
+    parent: schema
+weight: 1
 ---
 
 # Caseflow Schema CSV

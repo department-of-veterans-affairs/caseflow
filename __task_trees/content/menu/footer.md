@@ -2,15 +2,6 @@
 headless = true
 +++
 
-- <a href="/caseflow/">(Back to Caseflow)</a>
-- [README]({{< relref "/intro/README" >}})
-- [Schema CSVs](/schema)
-  + [Caseflow Schema CSV]({{< relref "/schema/caseflow_schema_csv" >}})
-  + [ETL Schema CSV]({{< relref "/schema/etl_schema_csv" >}})
-- [Data Model]({{< relref "/data-model/" >}})
-  + [Data Dictionary]({{< relref "/data-model/data_dictionary" >}})
-- [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
-- [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
 - [All tasks]({{< relref "/trees/alltasks" >}})
   + [DR tasklist]({{< relref "/trees/docket-DR/tasklist" >}})
     + [DR:freq-parentchild]({{< relref "/trees/docket-DR/freq-parentchild" >}})
@@ -21,5 +12,6 @@ headless = true
   + [H tasklist]({{< relref "/trees/docket-H/tasklist" >}})
     + [H:parent-child]({{< relref "/trees/docket-H/freq-parentchild" >}})
     + [H:task-creation]({{< relref "/trees/docket-H/freq-taskcreation" >}})
+----
 - [Tags](/tags)
 - [Categories](/categories)

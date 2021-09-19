@@ -1,0 +1,103 @@
+baseURL: 'https://department-of-veterans-affairs/caseflow/task_trees'
+languageCode: en-us
+title: Task Trees
+
+# Does not modify uppercase letters in URL,
+# allowing use of uppercase letters in folder and file names
+disablePathToLower: true
+
+# make all relative URLs relative to content root
+# relativeURLs: true
+enableGitInfo: true
+
+# creates URL of the form /filename.html instead of /filename/
+# https://www.ii.com/themeless-gitless-intro-hugo/#_source_files_destination_files_and_pretty_urls
+# uglyURLs: true
+
+ignoreFiles:
+  - appeals-tasks.json
+  - \.py$
+  - \.sh$
+
+# Ignore error-remote-getcsv in case Github Pages is not serving the CSV file yet
+ignoreErrors:
+  - error-remote-getcsv
+
+theme: hugo-book
+
+sectionPagesMenu: navmenu
+
+params:
+  # Overridden by BookMenuBundle
+  # (Optional, default docs) Specify section of content to render as menu
+  # You can also set value to "*" to render all sections to menu
+  # BookSection: '*'
+
+  # (Optional, default true) Controls table of contents visibility on right side of pages.
+  # Start and end levels can be controlled with markup.tableOfContents setting.
+  # You can also specify this parameter per page in front matter.
+  BookMenuBundle: /menu
+  BookToC: true
+
+  # Set source repository location.
+  # Used for 'Last Modified' and 'Edit this page' links.
+  BookRepo: 'https://github.com/department-of-veterans-affairs/caseflow'
+
+  # Github uses 'commit', Bitbucket uses 'commits'
+  BookCommitPath: commit
+  # Enable 'Edit this page' links for 'doc' page type.
+  # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
+  # Path must point to the site directory.
+  BookEditPath: tree/main-gh-pages/__task_trees
+
+  # /!\ This is an experimental feature, might be removed or changed at any time
+  # (Optional, experimental, default false) Enables portable links and link checks in markdown pages.
+  # Portable links meant to work with text editors and let you write markdown without {{< relref >}} shortcode
+  # Theme will print warning if page referenced in markdown does not exists.
+  BookPortableLinks: true
+
+cascade:
+  # Set default Params for pages
+  - order: 1
+    _target:
+      kind: page
+
+  - bookHidden: true
+    _target:
+      path: /trees/docket-*/*
+  - bookHidden: true
+    _target:
+      path: /trees/task_descr/*
+  - bookCollapseSection: true
+    _target:
+      path: /model/_index.md
+  - BookToC: false
+    _target:
+      path: /trees/docket-*/freq-*.md
+  - BookToC: false
+    _target:
+      path: /trees/alltasks.md
+
+  # Quick way to set parent in navmenu
+  - menu:
+      navmenu:
+        parent: data-model
+    _target:
+      path: /data-model/[!_]*
+  - menu:
+      navmenu:
+        parent: workflows
+    _target:
+      path: /workflows/[!_]*
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+    parser:
+      attribute:
+        block: true
+
+outputs:
+  home:
+    - HTML

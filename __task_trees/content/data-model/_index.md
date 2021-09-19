@@ -1,9 +1,19 @@
 ---
-title: Data Model
+title: Data Models
+bookToC: false
+menu:
+  navmenu:
+    identifier: data-model
+    collapsible: true
+weight: 3
 ---
+
+# Caseflow Data Models
 
 This section provides information about Caseflow's data model, data dictionary, and resources to help understand Caseflow's database contents ([terminology](https://dataedo.com/blog/data-model-data-dictionary-database-schema-erd) and [example data-dictionaries](https://www.usgs.gov/products/data-and-tools/data-management/data-dictionaries)).
 The main audience are Caseflow engineers, BVA's Reporting Team, and onboarders.
+
+Also check out [Caseflow Database Schema Documentation](schema_diagrams).
 
 ## Contents
 {{< pages_list >}}

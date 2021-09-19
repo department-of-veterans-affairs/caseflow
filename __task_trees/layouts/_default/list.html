@@ -1,14 +1,19 @@
 {{ define "main" }}
 <main>
   {{ .Content }}
-  <h2>Contents</h2>
-  <ul class="contents">
-  {{ with where .Pages ".Params.order" "!=" nil }}
-    {{ range sort . ".Params.order" }}
-        <li class="sectItem-{{ .Kind }}"><a href="{{ .Permalink }}">{{ .Title | default .Name | default .Path }}</a>
-        </li>
+
+  {{ if not (.HasShortcode "pages_list") }}
+    {{ with where .Pages "Weight" "ge" 0 }}
+      {{ if len . }}
+        <h2>Contents</h2>
+        <ul class="contents">
+          {{ range sort . "Weight" }}
+              <li class="sectItem-{{ .Kind }}"><a href="{{ .Permalink }}">{{ .Title | default .Name | default (path.Base .Path) }}</a>
+              </li>
+          {{ end }}
+        </ul>
+      {{ end }}
     {{ end }}
   {{ end }}
-  </ul>
 </main>
 {{ end }}

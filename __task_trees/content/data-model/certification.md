@@ -1,7 +1,9 @@
 ---
 title: Caseflow Certification
-order: 1
+weight: 1
 ---
+# Caseflow Certification
+
 * [Certification tables diagram](https://dbdiagram.io/d/5fc6a0143a78976d7b7e2059)
 
 ## Certifications

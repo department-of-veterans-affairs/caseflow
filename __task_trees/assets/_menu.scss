@@ -1,13 +1,44 @@
 
-.book-menu nav ul li {
-  margin: 5px 0px;
-}
-.book-menu a {
-  padding: 5px;
+aside nav ul a {
+  // don't put links on new line
+  display: unset;
 }
 
-// highlight active item
-.book-menu a.active {
-  color: black;
-  background-color: #FAF884;
+.book-menu {
+  nav ul li {
+    margin: 5px 0px;
+  }
+  a {
+    padding: 0px 5px; // pad sides for highlighting
+  }
+
+  // highlight active item
+  label.active,
+  a.active,
+  li.active {
+    color: black;
+    background-color: #FAF884;
+    font-weight: bold;
+  }
+
+  a.hasactive,
+  li.hasactive {
+    background-color: #FFFF84;
+  }
+
+  input.toggle + label + ul {
+    display: none;
+  }
+
+  input.toggle:checked + label + ul {
+    display: block;
+  }
+
+  input.toggle + label::after {
+    content: "+";
+  }
+
+  input.toggle:checked + label::after {
+    content: "-";
+  }
 }

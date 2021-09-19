@@ -1,7 +1,7 @@
 <main>
   <ul class="contents">
-  {{ with where $.Page.Pages ".Params.order" "!=" nil }}
-    {{ range sort . ".Params.order" }}
+  {{ with where $.Page.Pages "Weight" "ge" 0 }}
+    {{ range sort . "Weight" }}
         <li class="sectItem-{{ .Kind }}"><a href="{{ .Permalink }}">{{ .Title | default .Name | default .Path }}</a>
         </li>
     {{ end }}

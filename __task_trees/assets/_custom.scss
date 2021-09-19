@@ -5,6 +5,16 @@ main.container {
     margin: 0 auto;
 }
 
+html {
+  // font-size: 15px;
+  line-height: 1.4;
+}
+
+code {
+    background-color: #eeeeee;
+    font-size: smaller;
+}
+
 @import "heading_permalink";
 @import "menu";
 
