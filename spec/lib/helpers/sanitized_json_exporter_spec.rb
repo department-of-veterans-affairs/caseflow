@@ -195,7 +195,9 @@ describe "SanitizedJsonExporter/Importer" do
         HearingTaskAssociation => %w[hearing_id hearing_task_id],
         HearingDay => [],
         VirtualHearing => ["hearing_id"],
-        OrganizationsUser => []
+        OrganizationsUser => [],
+        UnrecognizedAppellant => ["claimant_id", "current_version_id", "unrecognized_party_detail_id", "unrecognized_power_of_attorney_id"],
+        UnrecognizedPartyDetail => []
       }
       # pp configuration.offset_id_fields.transform_keys(&:name)
       expect(configuration.offset_id_fields).to eq offset_id_fields
@@ -233,7 +235,8 @@ describe "SanitizedJsonExporter/Importer" do
         Hearing => %w[updated_by_id judge_id created_by_id],
         HearingDay => %w[updated_by_id judge_id created_by_id],
         VirtualHearing => %w[updated_by_id created_by_id],
-        OrganizationsUser => ["user_id"]
+        OrganizationsUser => ["user_id"],
+        UnrecognizedAppellant => ["created_by_id"]
       }
       expect(configuration.reassociate_fields["User"]).to eq reassociate_fields_for_user
     end
@@ -583,7 +586,9 @@ describe "SanitizedJsonExporter/Importer" do
                           "hearings" => 1,
                           "hearing_task_associations" => 1,
                           "hearing_days" => 1,
-                          "virtual_hearings" => 1 }
+                          "virtual_hearings" => 1,
+                          "unrecognized_appellants" => 0,
+                          "unrecognized_party_details" => 0 }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
         reused_record_counts = {
           "organizations" => 2,
@@ -704,7 +709,6 @@ describe "SanitizedJsonExporter/Importer" do
       it "imports unrecognized POA" do
         expect(real_appeal.claimant.unrecognized_appellant.unrecognized_party_detail).not_to eq nil
         expect(real_appeal.claimant.unrecognized_appellant.unrecognized_power_of_attorney).not_to eq nil
-        expect(real_appeal.claimant.person).not_to eq nil
       end
     end
   end
