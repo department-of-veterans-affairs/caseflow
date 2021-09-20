@@ -136,7 +136,15 @@ class SanitizedJsonConfiguration
       },
       Person => {
         track_imported_ids: true,
-        retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
+        # For unrecognized appellants, `claimant.person` always returns a non-nil object.
+        retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).reject{|p| p.id==nil}.uniq.compact }
+      },
+      # import UnrecognizedPartyDetail before UnrecognizedAppellant
+      UnrecognizedPartyDetail => {
+        retrieval: ->(records) { records[Claimant].map(&:unrecognized_appellant).map(&:unrecognized_party_detail).uniq.compact }
+      },
+      UnrecognizedAppellant => {
+        retrieval: ->(records) { records[Claimant].map(&:unrecognized_appellant).uniq.compact }
       }
     }.each do |clazz, class_configuration|
       class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|

@@ -685,4 +685,19 @@ describe "SanitizedJsonExporter/Importer" do
       expect(diffs.values.flatten).to be_empty
     end
   end
+
+  context "importing real appeals" do
+    let(:real_appeal) do
+      sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
+      sji.import
+      sji.imported_records[Appeal.table_name].first
+    end
+    context "when an appeal has an unrecognized appellant" do
+      let(:json_filename) { "appeal-113251.json" }
+      it "imports unrecognized appellant" do
+        expect(real_appeal.claimant.unrecognized_appellant.unrecognized_party_detail).not_to eq nil
+        expect(a.claimant.person.id).to eq nil
+      end
+    end
+  end
 end
