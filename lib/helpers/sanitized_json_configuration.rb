@@ -129,6 +129,8 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
       Organization => {
+        # track_imported_ids = true so that an existing Organization in our dev environment can be reused 
+        # instead of importing/creating a new equivalent Organization. See comments for the SanitizedJsonImporter.
         track_imported_ids: true,
         retrieval: lambda do |records|
           organizations_for(records[Task], records[User])
@@ -136,8 +138,8 @@ class SanitizedJsonConfiguration
       },
       Person => {
         track_imported_ids: true,
-        # For unrecognized appellants, `claimant.person` always returns a non-nil object.
         retrieval: lambda do |records|
+          # For unrecognized appellants, `claimant.person` returns a non-nil object with nil id
           (records[Veteran] + records[Claimant]).map(&:person)
             .reject { |person| person.id.nil? }.uniq.compact.sort_by(&:id)
         end

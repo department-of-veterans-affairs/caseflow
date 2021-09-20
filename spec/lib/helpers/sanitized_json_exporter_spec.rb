@@ -196,7 +196,10 @@ describe "SanitizedJsonExporter/Importer" do
         HearingDay => [],
         VirtualHearing => ["hearing_id"],
         OrganizationsUser => [],
-        UnrecognizedAppellant => ["claimant_id", "current_version_id", "unrecognized_party_detail_id", "unrecognized_power_of_attorney_id"],
+        UnrecognizedAppellant => %w[claimant_id
+                                    current_version_id
+                                    unrecognized_party_detail_id
+                                    unrecognized_power_of_attorney_id],
         UnrecognizedPartyDetail => []
       }
       # pp configuration.offset_id_fields.transform_keys(&:name)
