@@ -7,7 +7,7 @@ module Taskable
     tasks.not_cancelled
       .order(created_at: :desc)
       .includes(:assigned_to)
-      .detect { |t| t.is_a?(AttorneyTask) }
+      .detect { |t| t.is_a?(AttorneyTask) && !t.is_a?(DocketSwitchAbstractAttorneyTask) }
       .try(:assigned_to)
   end
 

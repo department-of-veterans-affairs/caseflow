@@ -30,7 +30,7 @@ module Seeds
 
       create(
         :appeal,
-        :dispatched, :with_decision_issue,
+        :with_decision_issue, :dispatched, # trait order matters to ensure correct `closed_status` on RI
         disposition: "dismissed_death",
         number_of_claimants: 1,
         veteran: veteran,
