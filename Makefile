@@ -42,3 +42,15 @@ install_jekyll_diagram_dependencies:
 
 run:
 	bundle exec jekyll serve --incremental
+
+move_make_docs_files:
+	@echo "::group::Moving files to task_trees subsite"
+	[ -d __task_trees/content/schema/make_docs ] || mkdir __task_trees/content/schema/make_docs
+	mv -vf schema/make_docs/caseflow-*{subclasses,erd}.{dot,png,svg} __task_trees/content/schema/make_docs
+	mv -vf schema/make_docs/etl-*{subclasses,erd}.{dot,png,svg} __task_trees/content/schema/make_docs
+	@echo "::endgroup::"
+
+github_action_pre_commit_hook: move_make_docs_files
+	@echo "::group::Remove files that change with every run"
+	rm -vf schema/make_docs/*-erd.pdf
+	@echo "::endgroup::"

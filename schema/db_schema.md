@@ -1,7 +1,6 @@
 ---
 title: DB Schema
 nav_order: 30
-has_children: true
 ---
 
 This page is a resource to understand Caseflow's database.
@@ -10,7 +9,7 @@ This page is a resource to understand Caseflow's database.
 
 These are the most up-to-date documentation.
 
-- [Schema Diagrams](schema_diagrams)
+- [Schema Diagrams](/caseflow/task_trees/schema/schema_diagrams)
 - Schema CSVs
   + [Caseflow Schema CSV](/caseflow/task_trees/schema/caseflow_schema_csv)
   + [ETL Schema CSV](/caseflow/task_trees/schema/etl_schema_csv)
@@ -18,7 +17,7 @@ These are the most up-to-date documentation.
 
 ## Manual documentation
 
-See [Caseflow Data Model &amp; Dictionary](/caseflow/task_trees/data-model/).
+See [Caseflow Data Model](/caseflow/task_trees/data-model).
 
 ### Participant IDs
 

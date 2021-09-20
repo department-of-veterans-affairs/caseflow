@@ -5,7 +5,7 @@ tags: "csv"
 menu:
   navmenu:
     parent: schema
-weight: 2
+weight: 6
 ---
 
 # ETL Schema CSV

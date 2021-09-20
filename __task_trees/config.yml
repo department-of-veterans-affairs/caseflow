@@ -12,7 +12,8 @@ enableGitInfo: true
 
 # creates URL of the form /filename.html instead of /filename/
 # https://www.ii.com/themeless-gitless-intro-hugo/#_source_files_destination_files_and_pretty_urls
-# uglyURLs: true
+# Also enables `[image](image.png)` instead of `[image](page-name/image.png)`
+uglyURLs: true
 
 ignoreFiles:
   - appeals-tasks.json

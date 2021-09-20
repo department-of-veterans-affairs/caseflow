@@ -5,7 +5,7 @@ tags: "csv"
 menu:
   navmenu:
     parent: schema
-weight: 1
+weight: 5
 ---
 
 # Caseflow Schema CSV
