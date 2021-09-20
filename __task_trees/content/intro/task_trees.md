@@ -1,5 +1,5 @@
 ---
-title: README
+title: Task Trees README
 ---
 
 ## Data-Driven Documentation of Task Trees
@@ -25,7 +25,7 @@ When new task types are added or task tree structures change, this documentation
 
 Actual task trees from AMA appeals were used to generate this documentation.
 
-- [Tasks Overview](/trees/task_descr/tasks-overview)
+- [Tasks Overview](/trees/tasks-overview)
 - [User Roles Overview](/trees/roles/role-overview)
 - [List of all task types](/trees/alltasks) use in actual appeals
 - To get an idea of typical task trees, check out the Frequent Parent-Child Relationships for each docket type: [DR:parent-child](/trees/docket-DR/freq-parentchild), [ES:parent-child](/trees/docket-ES/freq-parentchild), and [H:parent-child](/trees/docket-H/freq-parentchild).

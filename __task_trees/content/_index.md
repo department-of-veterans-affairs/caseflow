@@ -4,12 +4,12 @@ title: Welcome
 
 # Welcome
 
-- [README](intro/README)
 - Schema CSVs
   + [Caseflow Schema CSV]({{< relref "/schema/caseflow_schema_csv" >}})
   + [ETL Schema CSV]({{< relref "/schema/etl_schema_csv" >}})
 - [Roles Overview]({{< relref "/trees/roles/role-overview" >}})
 - [Tasks Overview]({{< relref "/trees/tasks-overview" >}})
+- [Task trees](intro/task_trees)
 - [All tasks]({{< relref "/trees/alltasks" >}})
   + [DR (Direct Review docket) tasklist]({{< relref "/trees/docket-DR/tasklist" >}})
     + [DR:freq-parentchild]({{< relref "/trees/docket-DR/freq-parentchild" >}})
