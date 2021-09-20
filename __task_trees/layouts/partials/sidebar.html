@@ -7,7 +7,7 @@
   <ul>
     {{ $currentPage := . }}
     {{ $visibleMenuItems := (where .Site.Menus.navmenu "Weight" "gt" 0 ) }}
-    {{ $sortedMenuItems := (sort (sort (sort $visibleMenuItems "Page.Weight") "Page.Params.order") "Weight") }}
+    {{ $sortedMenuItems := (sort (sort $visibleMenuItems "Page.Weight") "Weight") }}
     {{ range $sortedMenuItems }}
       {{ $sectionId := print "section-" .Identifier }}
       <li id="{{ $sectionId }}">
@@ -32,8 +32,7 @@
             </a>
           </label>
           <ul class="sub-menu">
-            <!-- sort by menu.Weight, then by Page.order, then by Page.weight -->
-            {{ range (sort (sort (sort .Children "Page.Weight") "Page.Params.order") "Weight") }}
+            {{ range (sort (sort .Children "Page.Weight") "Weight") }}
               {{with .Page}}{{ $scratch.Set "childpage" .Page }}{{end}}
               {{ $childpageViaMenu := $scratch.Get "childpage" }}
               {{ $childLinkLabel := (.Name | default .Title | default .Identifier | default .URL) }}

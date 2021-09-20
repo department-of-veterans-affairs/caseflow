@@ -8,8 +8,9 @@
         <h2>Contents</h2>
         <ul class="contents">
           {{ range sort . "Weight" }}
-              <li class="sectItem-{{ .Kind }}"><a href="{{ .Permalink }}">{{ .Title | default .Name | default (path.Base .Path) }}</a>
-              </li>
+            <li class="sectItem-{{ .Kind }}">
+              <a href="{{ .Permalink }}">{{ .Title | default .Name | default (path.Base .Path) }}</a>
+            </li>
           {{ end }}
         </ul>
       {{ end }}
