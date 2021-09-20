@@ -1,6 +1,6 @@
 ---
-parent: Workflows
-nav_order: 2
+title: Intake Workflow
+weight: 2
 tags: ["workflow", "intake"]
 ---
 # Intake Workflow
@@ -13,7 +13,7 @@ It helps present data to veterans in the same way they already view decision rev
 
 ## Mail Intake
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 
 claim --> claim_decision
@@ -47,39 +47,40 @@ EvidenceSubmissionWindowTask --> ACD
 BvaMail --> TrackVeteranTask
 VSO -.- TrackVeteranTask
 VSO --> |if IHP-writing VSO| IHPTask
-```
+{{< /mermaid >}}
 
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 validate[Validate form]
 validate --> add_issues[add issues from veteran's decision review]
 add_issues --> |match to| decision
 add_issues --> |same issue as| legacy
-```
+{{< /mermaid >}}
 
 ## Business Lines
 
 Once Intake is done, there are 3 major flows for AMA decision review:
 1. HLR & SC (Compensation and Pension) - in VBMS
-  * Request issues are represented as *contentions* on EPs in VBMS
-  * Request issues (in the same appeal) can map to contentions in different EPs.
-  * Once EP is cleared/completed, Caseflow loads the new rating issues (and dispositions) to create VA decision issues on AMA decision reviews.
-  * A decision issue maps to only one rating issue or nothing.
+   - Request issues are represented as *contentions* on EPs in VBMS
+   - Request issues (in the same appeal) can map to contentions in different EPs.
+   - Once EP is cleared/completed, Caseflow loads the new rating issues (and dispositions) to create VA decision issues on AMA decision reviews.
+   - A decision issue maps to only one rating issue or nothing.
 2. HLR & SC (other business lines) - in Caseflow
-  * One queue for each non-VBMS business line.
-  * No EPs or contentions. For each request issue, create a decision issue with the disposition.
+   - One queue for each non-VBMS business line.
+   - No EPs or contentions. For each request issue, create a decision issue with the disposition.
 3. Board Appeals - in Caseflow
-  * Attorneys create decision issues, not raters.
-  * Dispositions on decision issues get *outcoded* to contentions on a new(?) EP, and a new rating issue is created.
-  * The only purpose of the EP is to email the person of the decision.
+   - Attorneys create decision issues, not raters.
+   - Dispositions on decision issues get *outcoded* to contentions on a new(?) EP, and a new rating issue is created.
+   - The only purpose of the EP is to email the person of the decision.
 
+Note:
 * Only VBA Compensation and Pension business lines use ratings (and VBMS).
 * The 7 other business lines use nonrating request issues.
 * Unidentified issues should be resolved before making decisions on them.
   Otherwise, they will be considered ineligible.
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 bizlines{business lines}
 mailPortal[Mail Portal]
@@ -90,11 +91,11 @@ bizlines --> |small volume| manual[NCA, Fiduciary, VHA, Loan Guaranty, Eudcation
 
 bizlines --> |performs| record_request
 record_request --> |document| bizlines
-```
+{{< /mermaid >}}
 
 ## Decision Review Lanes
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 decision_review_lanes --> SC
 decision_review_lanes --> HLR
@@ -106,11 +107,11 @@ form --> |specifies| decision_review_lanes
 form --> Intake[Intake within 24 hrs]
 Intake --> intake_complete
 Intake --> intake_cancelled
-```
+{{< /mermaid >}}
 
 ## Caseflow and EPs
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 EP --> |has| request_issue
 request_issue --> |can result in many| decision_issue
@@ -134,20 +135,20 @@ Caseflow_sync_VBMS_decision_review --> |creates| decision_issue
 Caseflow_sync_VBMS_decision_review --> dtaError{DTA error?}
 dtaError --> |yes| auto_create_SC
 auto_create_SC --> SupplementalClaim
-```
+{{< /mermaid >}}
 
 ## After Dispatched
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 board_grants --> |notified during outcode| bizline
 bizline --> |confirms in Caseflow| grant_effectuation
 grant_effectuation --> bizlineUsesVBMS{bizline uses VBMS?}
 bizlineUsesVBMS --> |yes| Caseflow_creates_effectuation_EP
 bizlineUsesVBMS --> |no| Caseflow_uses_task
-```
+{{< /mermaid >}}
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 
 Dispatch --> |dispatched| outcode
@@ -167,7 +168,7 @@ bizline --> |Non-compensation| NonCompen_SupplementalClaim
 subgraph Other bizline worked in CaseflowIntake
     NonCompen_SupplementalClaim
 end
-```
+{{< /mermaid >}}
 
 ## Intake Models
 [Intake Data Model](https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model)
@@ -178,7 +179,7 @@ end
   * Veteran can choose to close the VACOLS legacy issue with a disposition designating
     that it's been opted into the AMA process.
 
-```mermaid!
+{{< mermaid >}}
 graph TD
 
 Veteran -.- Rating
@@ -198,4 +199,4 @@ Appeal --> |inherits| DecisionReview
 
 Appeal --> |has multiple| DecisionDocument
 DecisionDocument -.- BoardGrantEffectuation
-```
+{{< /mermaid >}}

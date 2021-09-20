@@ -1,6 +1,6 @@
 baseURL: 'https://department-of-veterans-affairs/caseflow/task_trees'
 languageCode: en-us
-title: Task Trees
+title: Task Trees & DB
 
 # Does not modify uppercase letters in URL,
 # allowing use of uppercase letters in folder and file names

@@ -1,6 +1,7 @@
 ---
 title: Appeal Workflow
 tags: ["workflow"]
+weight: 1
 ---
 
 # Appeal Workflow
