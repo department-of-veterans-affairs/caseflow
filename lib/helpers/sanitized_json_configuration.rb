@@ -11,7 +11,9 @@ class SanitizedJsonConfiguration
     clazz.columns.select { |column| column.comment&.starts_with?("PII") }.map(&:name)
   end
 
-  # For exporting, the :retrieval lambda is run according to the ordering in this hash.
+  # During exporting, the :retrieval lambda is run according to the ordering in the configuration hash.
+  # The exported JSON file will have the records in the exported order.
+  # The SanitizedJsonImporter will import in the order within the JSON file, except for `first_types_to_import`.
   # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def configuration
@@ -148,7 +150,7 @@ class SanitizedJsonConfiguration
             .reject { |person| person.id.nil? }.sort_by(&:id)
         end
       },
-      # import UnrecognizedPartyDetail before UnrecognizedAppellant
+      # Put UnrecognizedPartyDetail before UnrecognizedAppellant so that it is imported in that order
       UnrecognizedPartyDetail => {
         retrieval: lambda { |records|
           party_detail_ids = records[Claimant].map(&:unrecognized_appellant).compact
