@@ -145,8 +145,8 @@ class SanitizedJsonConfiguration
       # import UnrecognizedPartyDetail before UnrecognizedAppellant
       UnrecognizedPartyDetail => {
         retrieval: lambda { |records|
-          unrecog_appellants = records[Claimant].map(&:unrecognized_appellant)
-          party_detail_ids = unrecog_appellants.pluck(:unrecognized_party_detail_id, :unrecognized_power_of_attorney_id)
+          unrecog_appellants = records[Claimant].map(&:unrecognized_appellant).compact
+          party_detail_ids = unrecog_appellants&.pluck(:unrecognized_party_detail_id, :unrecognized_power_of_attorney_id)
             .flatten.uniq.compact
           UnrecognizedPartyDetail.where(id: party_detail_ids).order(:id)
         }
