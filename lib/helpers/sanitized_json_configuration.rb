@@ -28,6 +28,7 @@ class SanitizedJsonConfiguration
         end
       },
       Veteran => {
+        # track_imported_ids = true so that an existing (previously imported) Veteran can be reused
         track_imported_ids: true,
         retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
@@ -103,6 +104,7 @@ class SanitizedJsonConfiguration
       },
 
       User => {
+        # track_imported_ids = true so that an existing (previously imported) User can be reused
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
@@ -137,11 +139,12 @@ class SanitizedJsonConfiguration
         end
       },
       Person => {
+        # track_imported_ids = true so that an existing (previously imported) Person can be reused
         track_imported_ids: true,
         retrieval: lambda do |records|
           # For unrecognized appellants, `claimant.person` returns a non-nil object with nil id
-          (records[Veteran] + records[Claimant]).map(&:person)
-            .reject { |person| person.id.nil? }.uniq.compact.sort_by(&:id)
+          (records[Veteran] + records[Claimant]).map(&:person).uniq.compact
+            .reject { |person| person.id.nil? }.sort_by(&:id)
         end
       },
       # import UnrecognizedPartyDetail before UnrecognizedAppellant
