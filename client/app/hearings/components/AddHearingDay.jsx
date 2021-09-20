@@ -162,7 +162,8 @@ export const AddHearingDay = ({
         invalidDate: 'Video hearing days cannot be scheduled for prior than April 1st through Caseflow.'
       }),
       ...(requestType === '' && { requestType: 'Please make sure you have entered a Hearing Type' }),
-      ...(selectedVideoOrTravel && !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
+      ...(selectedVideoOrTravel &&
+        !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
     };
 
     if (!isEmpty(errorMsgs)) {
