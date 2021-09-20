@@ -2261,19 +2261,6 @@
       "name_suffix": null,
       "email_address": "ashli.predovic@heidenreich.org",
       "ssn": null
-    },
-    {
-      "id": 0,
-      "participant_id": "1",
-      "date_of_birth": null,
-      "created_at": null,
-      "updated_at": null,
-      "first_name": null,
-      "last_name": null,
-      "middle_name": null,
-      "name_suffix": null,
-      "email_address": null,
-      "ssn": null
     }
   ]
 }
