@@ -131,7 +131,7 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
       Organization => {
-        # track_imported_ids = true so that an existing Organization in our dev environment can be reused 
+        # track_imported_ids = true so that an existing Organization in our dev environment can be reused
         # instead of importing/creating a new equivalent Organization. See comments for the SanitizedJsonImporter.
         track_imported_ids: true,
         retrieval: lambda do |records|
