@@ -18,7 +18,7 @@ These are the most up-to-date documentation.
 
 ## Manual documentation
 
-See [Caseflow Data Model &amp; Dictionary](model_and_dict).
+See [Caseflow Data Model &amp; Dictionary](/caseflow/task_trees/data-model/).
 
 ### Participant IDs
 
