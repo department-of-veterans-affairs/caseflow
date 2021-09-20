@@ -60,7 +60,7 @@ class Hearing < CaseflowRecord
            :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :hearing_day_full?, :request_type, to: :hearing_day
+  delegate :hearing_day_full?, to: :hearing_day
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :timezone, :name, to: :regional_office, prefix: true
 
@@ -85,6 +85,16 @@ class Hearing < CaseflowRecord
     T: "Travel",
     C: "Central"
   }.freeze
+
+  # This is part of CASEFLOW-1820 and is a -very- temporary dodge
+  # It allows us to have a hearing_day with request_type == 'T', but
+  # the hearings on that hearing_day give request type == 'V'. This is part
+  # of the ACs. This code should NOT be here past October 2021.
+  def request_type
+    return "V" if hearing_day.request_type == "T"
+
+    hearing_day.request_type
+  end
 
   def check_available_slots
     fail HearingDayFull if hearing_day_full?
