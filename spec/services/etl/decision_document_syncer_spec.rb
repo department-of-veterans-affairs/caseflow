@@ -46,7 +46,7 @@ describe ETL::DecisionDocumentSyncer, :etl, :all_dbs do
       it "enables SQL joins" do
         subject
         expect(ETL::DecisionDocument.count).to eq(1)
-        expect(ETL::DecisionIssue.count).to eq(2)
+        expect(ETL::DecisionIssue.count).to eq(1)
 
         # Paul Saindon's DecisionDocument query
         query = <<~SQL
