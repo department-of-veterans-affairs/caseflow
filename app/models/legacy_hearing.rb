@@ -77,12 +77,10 @@ class LegacyHearing < CaseflowRecord
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents,
-           :number_of_documents_after_certification, :appellant_tz, :representative_tz,
-           :representative_type, :veteran, :veteran_file_number, :docket_name,
-           :closest_regional_office, :available_hearing_locations, :veteran_email_address,
-           :appellant_address, :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
-           :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
-           :appellant_relationship,
+           :number_of_documents_after_certification, :representative_type, :veteran, :veteran_file_number,
+           :docket_name, :closest_regional_office, :available_hearing_locations, :appellant_address,
+           :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
+           :appellant_country, :appellant_state, :appellant_zip, :appellant_relationship,
            to: :appeal,
            allow_nil: true
   delegate :external_id, to: :appeal, prefix: true
@@ -102,10 +100,6 @@ class LegacyHearing < CaseflowRecord
 
   def representative
     appeal&.representative_name
-  end
-
-  def representative_email_address
-    appeal&.representative_email_address
   end
 
   def assigned_to_vso?(user)

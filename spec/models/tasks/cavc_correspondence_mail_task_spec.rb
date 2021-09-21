@@ -10,9 +10,6 @@ describe CavcCorrespondenceMailTask do
     CavcLitigationSupport.singleton.add_user(cavc_lit_user)
   end
 
-  before { FeatureToggle.enable!(:cavc_remand) }
-  after { FeatureToggle.disable!(:cavc_remand) }
-
   describe ".available_actions" do
     let(:appeal) { create(:appeal, :type_cavc_remand) }
     let(:mail_task) do

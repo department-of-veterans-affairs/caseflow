@@ -191,7 +191,7 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              { dateOfBirthFieldToggle &&
+              { dateOfBirthFieldToggle && !props.POA &&
                 <DateSelector
                   optional
                   inputRef={register({

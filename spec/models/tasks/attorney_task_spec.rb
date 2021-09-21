@@ -51,6 +51,15 @@ describe AttorneyTask, :all_dbs do
         expect(subject.errors.messages[:assigned_to].first).to eq "has to be an attorney"
       end
     end
+
+    context "when an AttorneyTask is already open for the appeal" do
+      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: parent) }
+      it "throws an error when a second task is created" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+        end
+      end
+    end
   end
 
   context ".update" do

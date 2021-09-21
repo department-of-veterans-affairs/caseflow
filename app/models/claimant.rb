@@ -7,7 +7,9 @@
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
-  belongs_to :decision_review, polymorphic: true
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :decision_review
+
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)

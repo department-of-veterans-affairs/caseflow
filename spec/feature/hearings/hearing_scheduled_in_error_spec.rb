@@ -149,7 +149,7 @@ RSpec.feature "Remove hearing scheduled in error" do
       expect(page).to_not have_content("Finding hearing locations", wait: 30)
       click_dropdown(name: "appealHearingLocation", index: 0)
     end
-    click_dropdown(name: "hearingDate", index: 1)
+    click_dropdown(name: "hearingDate", index: 0)
     find(
       ".cf-form-radio-option",
       text: "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
@@ -220,16 +220,16 @@ RSpec.feature "Remove hearing scheduled in error" do
         expect(new_hearing.notes).to eq(fill_in_unscheduled_notes)
       end
 
-      scenario "Reschedule to a Virtual hearing with error" do
-        fill_schedule_veteran_form(true)
-
-        fill_in "Veteran Email", with: "invalid email"
-        click_button("Schedule")
-        expect(page).to have_content("Veteran email does not appear to be a valid e-mail address")
-        expect(hearing_class.where(hearing_day_id: video_hearing_day.id).reload.count).to eq 1
-        expect(hearing.reload.disposition).to eq nil
-        expect(hearing_class.count).to eq 1
-      end
+      # scenario "Reschedule to a Virtual hearing with error" do
+      #   fill_schedule_veteran_form(true)
+      #
+      #   fill_in "Veteran Email", with: "invalid email"
+      #   click_button("Schedule")
+      #   expect(page).to have_content("Veteran email does not appear to be a valid e-mail address")
+      #   expect(hearing_class.where(hearing_day_id: video_hearing_day.id).reload.count).to eq 1
+      #   expect(hearing.reload.disposition).to eq nil
+      #   expect(hearing_class.count).to eq 1
+      # end
     end
   end
 

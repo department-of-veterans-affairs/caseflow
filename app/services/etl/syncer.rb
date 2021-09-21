@@ -18,9 +18,28 @@ class ETL::Syncer
     end
   end
 
-  def initialize(since: nil, etl_build:)
+  def initialize(since: nil, etl_build:, id_offset: 0)
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
+    @id_offset = id_offset
+  end
+
+  # :reek:UtilityFunction
+  def slack_url
+    ENV["SLACK_DISPATCH_ALERT_URL"]
+  end
+
+  def slack_service
+    @slack_service ||= SlackService.new(url: slack_url)
+  end
+
+  # :reek:FeatureEnvy
+  def dump_messages_to_slack(target_class)
+    return unless target_class.messages
+
+    slack_msg = target_class.messages.join("\n")
+    slack_service.send_notification(slack_msg, target_class.name, "#appeals-data-workgroup")
+    target_class.clear_messages
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -57,13 +76,17 @@ class ETL::Syncer
         rejected += (possible - saved)
       end
       build_record.update!(
-        status: :complete,
-        finished_at: Time.zone.now,
+        status: :running,
         rows_inserted: inserted,
         rows_updated: updated,
         rows_rejected: rejected
       )
     end
+    build_record.update!(
+      status: :complete,
+      finished_at: Time.zone.now
+    )
+    dump_messages_to_slack(target_class)
   rescue StandardError => error
     build_record.update!(
       rows_inserted: inserted,
@@ -118,7 +141,7 @@ class ETL::Syncer
   end
 
   def calculate_since
-    last_build = ETL::BuildTable.complete.where(table_name: target_class.table_name).order(created_at: :desc).first
+    last_build = ETL::BuildTable.complete.where(table_name: target_class.table_name).order(:created_at).last
     last_build&.started_at
   end
 
@@ -129,8 +152,12 @@ class ETL::Syncer
   protected
 
   def instances_needing_update
-    return origin_class.where("updated_at >= ?", since) if incremental?
+    return instances_after_id_offset.where("updated_at >= ?", since) if incremental?
 
-    origin_class
+    instances_after_id_offset
+  end
+
+  def instances_after_id_offset
+    origin_class.where("id >= ?", @id_offset)
   end
 end

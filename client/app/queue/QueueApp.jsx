@@ -74,7 +74,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
-import TeamManagement from './TeamManagement';
+import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -176,6 +176,7 @@ class QueueApp extends React.PureComponent {
       userCanAccessReader={
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
+      hasVLJSupportRole={this.props.hasVLJSupportRole}
     />
   );
 
@@ -281,6 +282,14 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedAssignToVhaRegionalOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -349,6 +358,9 @@ class QueueApp extends React.PureComponent {
             appealId={props.match.params.appealId}
           >
             <ScheduleVeteran
+              userCanCollectVideoCentralEmails={
+                this.props.featureToggles.collect_video_and_central_emails
+              }
               userCanViewTimeSlots={
                 this.props.featureToggles.enable_hearing_time_slots
               }
@@ -359,6 +371,9 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran
+            userCanCollectVideoCentralEmails={
+              this.props.featureToggles.collect_video_and_central_emails
+            }
             userCanViewTimeSlots={
               this.props.featureToggles.enable_hearing_time_slots
             }
@@ -818,6 +833,18 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaRegionalOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CREATE_MAIL_TASK.value
                 }`}
               render={this.routedCreateMailTask}
@@ -1110,6 +1137,7 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
+  hasVLJSupportRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,

@@ -58,13 +58,23 @@ class Docket
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
-  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
-    Distribution.transaction do
-      appeals = appeals(priority: priority, ready: true).limit(limit)
-
-      tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-
-      tasks.map do |task|
+  # :reek:FeatureEnvy
+  def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
+    appeals = appeals(priority: priority, ready: true).limit(limit)
+    tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
+    tasks.map do |task|
+      # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
+      # This is modeled after the allow! method in the redistributed_case model
+      distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
+      if distributed_case && task.appeal.can_redistribute_appeal?
+        distributed_case.flag_redistribution(task)
+        distributed_case.rename_for_redistribution!
+        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+                                               docket: docket_type,
+                                               priority: priority,
+                                               ready_at: task.appeal.ready_for_distribution_at,
+                                               task: task)
+      elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
                                                priority: priority,
@@ -90,15 +100,19 @@ class Docket
 
   def assign_judge_tasks_for_appeals(appeals, judge)
     appeals.map do |appeal|
+      distribution_task = appeal.tasks.of_type(:DistributionTask).first
+      distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
       Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
-      task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge).call
-      Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
+      judge_task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge,
+                                              assigned_by_id: distribution_task_assignee_id).call
+      Rails.logger.info("Assigned judge task with task id #{judge_task.id} to #{judge_task.assigned_to.css_id}")
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
       appeal.tasks.of_type(:DistributionTask).update(status: :completed)
-      Rails.logger.info("Closing distribution task with task id #{task.id} to #{task.assigned_to.css_id}")
+      Rails.logger.info("Closing distribution task with task id #{distribution_task.id} "\
+        "that was assigned to id #{distribution_task_assignee_id}")
 
-      task
+      judge_task
     end
   end
 
@@ -112,15 +126,14 @@ class Docket
         .group("appeals.id")
     end
 
-    # rubocop:disable Metrics/LineLength
     def nonpriority
       include_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
-        .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+        .having("count(case when advance_on_docket_motions.granted "\
+          "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
-    # rubocop:enable Metrics/LineLength
 
     def include_aod_motions
       joins(claimants: :person)

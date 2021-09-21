@@ -21,7 +21,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
       hearing_days = ::HearingDay.where(id: spreadsheet_data.judge_assignments.pluck(:hearing_day_id))
 
-      hearing_days.map do |hearing_day|
+      hearing_days.sort_by(&:scheduled_for).map do |hearing_day|
         data = spreadsheet_data.judge_assignments.find { |day| day[:hearing_day_id] == hearing_day.id }
         result = hearing_day.to_hash
         result[:judge_css_id] = data[:judge_css_id]

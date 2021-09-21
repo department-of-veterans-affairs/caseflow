@@ -1219,7 +1219,6 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
       let!(:attorney_task) { create(:ama_attorney_task, parent: judge_task, assigned_to: user) }
-      let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
         FeatureToggle.enable!(:view_nod_date_updates)
@@ -1227,7 +1226,6 @@ RSpec.feature "Case details", :all_dbs do
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
         nod_date_update.update!(updated_at: "2019-01-05")
       end
@@ -1246,11 +1244,9 @@ RSpec.feature "Case details", :all_dbs do
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
-        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
-        expect(second_row_with_date).to have_content("03/01/2019")
-        expect(third_row_with_date).to have_content("02/01/2019")
-        expect(fourth_row_with_date).to have_content("01/05/2019")
+        expect(second_row_with_date).to have_content("02/01/2019")
+        expect(third_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
@@ -1896,9 +1892,6 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "substitute appellant" do
-      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
-      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
-
       describe "The 'Add Substitute' button" do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
@@ -1931,12 +1924,6 @@ RSpec.feature "Case details", :all_dbs do
             wait_for_page_render
             expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
-        end
-
-        context "when the feature flag is disabled" do
-          FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
-          it_behaves_like "the button is not shown"
-          FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
         end
 
         context "When the case type is not 'original'" do
@@ -2023,7 +2010,6 @@ RSpec.feature "Case details", :all_dbs do
       before do
         CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
-        FeatureToggle.enable!(:cavc_remand)
       end
 
       shared_examples "the button is not shown" do

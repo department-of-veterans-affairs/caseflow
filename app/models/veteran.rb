@@ -229,7 +229,7 @@ class Veteran < CaseflowRecord
   def validate_date_of_birth
     return if date_of_birth.blank?
 
-    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
+    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(18|19|20)\d\d/)
       errors.add(:date_of_birth, "invalid_date_of_birth")
     end
   end

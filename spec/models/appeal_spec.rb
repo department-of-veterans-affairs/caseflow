@@ -118,6 +118,51 @@ describe Appeal, :all_dbs do
         subject
       end
     end
+
+    context "when the appeal has only vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has vha and non-vha issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "education")
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:vha_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_predocket_appeals)
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
   end
 
   context "#create_issues!" do
@@ -250,10 +295,16 @@ describe Appeal, :all_dbs do
 
   context "#latest_attorney_case_review" do
     let(:appeal) { create(:appeal) }
-    let(:task1) { create(:ama_attorney_task, appeal: appeal) }
-    let(:task2) { create(:ama_attorney_task, appeal: appeal) }
+    let!(:task1) { create(:ama_attorney_task, appeal: appeal) }
     let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
-    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
+    let!(:attorney_case_review2) do
+      task1.update!(status: Constants.TASK_STATUSES.completed)
+      if appeal.tasks.open.of_type("JudgeDecisionReviewTask").any?
+        appeal.tasks.open.find_by(type: "JudgeDecisionReviewTask").completed!
+      end
+      task2 = create(:ama_attorney_task, appeal: appeal)
+      create(:attorney_case_review, task: task2, created_at: 1.day.ago)
+    end
 
     subject { appeal.latest_attorney_case_review }
 
@@ -909,8 +960,16 @@ describe Appeal, :all_dbs do
       let!(:attorney) { create(:user) }
       let!(:attorney2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_attorney_task, assigned_to: attorney2, appeal: appeal) }
+      let(:judge_decision_review_task) { create(:ama_judge_decision_review_task, appeal: appeal) }
+      let!(:task) do
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney,
+                                   appeal: appeal, created_at: 1.day.ago)
+      end
+      let!(:task2) do
+        task.completed!
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2,
+                                   appeal: appeal, created_at: 1.hour.ago)
+      end
 
       subject { appeal.assigned_attorney }
 
@@ -919,8 +978,21 @@ describe Appeal, :all_dbs do
       end
 
       it "should know the right assigned attorney with a cancelled task" do
-        task2.update(status: "cancelled")
+        task2.cancelled!
         expect(subject).to eq attorney
+      end
+
+      context "when there is a more recent DocketSwitch attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
+        let(:root_task) { create(:root_task, appeal: appeal) }
+        let!(:ds_task) do
+          create(:docket_switch_denied_task, parent: root_task, appeal: appeal, assigned_to: attorney,
+                                             assigned_by: judge, created_at: 1.minute.ago)
+        end
+
+        it "ignores the attorney assigned to the DocketSwitch attorney task" do
+          expect(subject).to eq attorney2
+        end
       end
     end
 
@@ -1277,6 +1349,50 @@ describe Appeal, :all_dbs do
         let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
 
         it { is_expected.to be nil }
+      end
+    end
+  end
+
+  describe "can_redistribute_appeal?" do
+    let!(:distributed_appeal_can_redistribute) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:distributed_appeal_cannot_redistribute) do
+      create(:appeal,
+             :with_schedule_hearing_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user,
+             associated_attorney: attorney_user)
+    end
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let(:attorney_user) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
+    let!(:attorney_on_judge_team) { judge_team.add_user(attorney_user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:docket) { DirectReviewDocket.new }
+    before do
+      distributed_appeal_can_redistribute.tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
+      past_distribution.completed!
+    end
+
+    context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
+      subject { distributed_appeal_can_redistribute.can_redistribute_appeal? }
+      it "returns true " do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has open tasks" do
+      subject { distributed_appeal_cannot_redistribute.can_redistribute_appeal? }
+      it "returns false" do
+        expect(subject).to be false
       end
     end
   end

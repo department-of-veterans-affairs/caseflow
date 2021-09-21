@@ -69,7 +69,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
       }
       featureToggles={
         Object {
-          "cavc_remand": true,
           "dismissal_cavc_remand": undefined,
           "mdr_cavc_remand": undefined,
           "reversal_cavc_remand": undefined,
@@ -210,14 +209,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             checkoutStagedAppeal={[Function]}
             continueBtnText="Submit"
             disableNext={false}
-            featureToggles={
-              Object {
-                "cavc_remand": true,
-                "dismissal_cavc_remand": undefined,
-                "mdr_cavc_remand": undefined,
-                "reversal_cavc_remand": undefined,
-              }
-            }
             getNextStepUrl={null}
             getPrevStepUrl={null}
             goToNextStep={[Function]}

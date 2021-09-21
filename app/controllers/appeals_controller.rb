@@ -88,7 +88,8 @@ class AppealsController < ApplicationController
 
     render json:
       if most_recently_held_hearing
-        AppealHearingSerializer.new(most_recently_held_hearing).serializable_hash[:data][:attributes]
+        AppealHearingSerializer.new(most_recently_held_hearing,
+                                    params: { user: current_user }).serializable_hash[:data][:attributes]
       else
         {}
       end

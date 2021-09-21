@@ -161,10 +161,10 @@ export const CaseDetailsView = (props) => {
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
   const editPOAInformation =
-    props.featureToggles.edit_unrecognized_appellant_poa;
+  !appeal.hasPOA && props.hasVLJSupportRole && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
+  currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
   const hasSubstitution = appeal.substitutions?.length;
   const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
@@ -323,6 +323,7 @@ CaseDetailsView.propTypes = {
   userCanAccessReader: PropTypes.bool,
   veteranCaseListIsVisible: PropTypes.bool,
   userCanScheduleVirtualHearings: PropTypes.bool,
+  hasVLJSupportRole: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,

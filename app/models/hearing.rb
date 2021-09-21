@@ -55,11 +55,9 @@ class Hearing < CaseflowRecord
 
   delegate :appellant_first_name, :appellant_last_name, :representative_address,
            :representative_type, :appellant_city, :appellant_state, :appellant_relationship,
-           :appellant_zip, :appellant_address_line_1, :appellant_email_address, :appellant_tz,
-           :representative_tz, :veteran_age, :veteran_gender, :veteran_first_name,
-           :veteran_last_name, :veteran_file_number, :veteran_email_address, :docket_number,
-           :docket_name, :request_issues, :decision_issues, :available_hearing_locations,
-           :closest_regional_office, :advanced_on_docket?,
+           :appellant_zip, :appellant_address_line_1, :veteran_age, :veteran_gender, :veteran_first_name,
+           :veteran_last_name, :veteran_file_number, :docket_number, :docket_name, :request_issues,
+           :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :hearing_day_full?, :request_type, to: :hearing_day
@@ -134,10 +132,6 @@ class Hearing < CaseflowRecord
 
   def representative
     appeal.representative_name
-  end
-
-  def representative_email_address
-    appeal&.representative_email_address
   end
 
   def claimant_id

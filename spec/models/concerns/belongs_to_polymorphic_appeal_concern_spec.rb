@@ -26,7 +26,7 @@ describe BelongsToPolymorphicAppealConcern do
     context "when `has_many ama_decision_issues through: :ama_appeal` is defined" do
       subject { decision_doc.ama_decision_issues }
       it "returns the correct decision_issues" do
-        expect(subject.count).to eq 2
+        expect(subject.count).to eq 1
         expect(subject).to eq decision_doc.appeal.decision_issues
       end
 
@@ -53,13 +53,13 @@ describe BelongsToPolymorphicAppealConcern do
 
             # 2. Querying using SQL produces incomprehensible numerical column names
             sql_result = ActiveRecord::Base.connection.exec_query(query.to_sql)
-            expect(sql_result.to_hash.size).to eq 10
+            expect(sql_result.to_hash.size).to eq 5
 
             # 3. Querying using pluck_to_hash works but must specify all columns
             fields = DecisionDocument.column_names.map { |n| DecisionDocument.table_name + "." + n } +
                      DecisionIssue.column_names.map { |n| DecisionIssue.table_name + "." + n }
             hash_result = query.pluck_to_hash(*fields.uniq) # sensible column names as long as they're unique
-            expect(hash_result.size).to eq 10
+            expect(hash_result.size).to eq 5
             expect(hash_result.sample.size).to eq fields.size # ensure result has all requested fields
           end
 

@@ -27,7 +27,7 @@ require "helpers/association_wrapper.rb"
 # When calling `belongs_to_polymorphic_appeal :decision_review`, it defines similar associations to HLR and SC.
 #
 # These associations enable, for example, `has_many ama_decision_issues through: :ama_appeal`, which provides
-# 1. easy access to decision_issues through a polymorphic association and
+# 1. easy access to associated records through a polymorphic association and
 # 2. efficient queries when joining with other tables
 # See RSpec for examples.
 

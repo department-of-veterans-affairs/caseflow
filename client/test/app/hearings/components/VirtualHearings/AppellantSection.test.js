@@ -112,7 +112,7 @@ describe('Appellant', () => {
   test('Displays appellant information when appellant is not veteran', () => {
     const appellantSection = mount(
       <AppellantSection
-        appellantTitle='Appellant'
+        appellantTitle="Appellant"
         virtualHearing={virtualHearing.virtualHearing}
         hearing={
           {
@@ -126,13 +126,31 @@ describe('Appellant', () => {
     );
 
     expect(appellantSection.find(ReadOnly)).toHaveLength(3);
-    expect(appellantSection.text()).toContain('Appellant Name')
+    expect(appellantSection.text()).toContain('Appellant Name');
     expect(appellantSection.text()).toContain(
       `${defaultHearing.appellantFirstName} ${defaultHearing.appellantLastName}`
-    )
-    expect(appellantSection.text()).toContain('Relation to Veteran')
-    expect(appellantSection.text()).toContain(defaultHearing.appellantRelationship)
-    expect(appellantSection.text()).toContain('Appellant Mailing Address')
+    );
+    expect(appellantSection.text()).toContain('Relation to Veteran');
+    expect(appellantSection.text()).toContain(defaultHearing.appellantRelationship);
+    expect(appellantSection.text()).toContain('Appellant Mailing Address');
+    expect(appellantSection).toMatchSnapshot();
+  });
+
+  test('Does not display address when formFieldsOnly = true', () => {
+    const appellantSection = mount(
+      <AppellantSection
+        formFieldsOnly
+        appellantTitle="Appellant"
+        virtualHearing={virtualHearing.virtualHearing}
+        hearing={defaultHearing}
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+      />
+    );
+
+    expect(appellantSection.find(ReadOnly)).toHaveLength(0);
+    expect(appellantSection.find(AddressLine)).toHaveLength(0);
+    expect(appellantSection.find(VirtualHearingEmail)).toHaveLength(1);
     expect(appellantSection).toMatchSnapshot();
   });
 });

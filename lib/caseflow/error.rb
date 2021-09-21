@@ -114,6 +114,15 @@ module Caseflow::Error
     end
   end
 
+  class ClosedTaskError < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 403
+      @title = "Task Error"
+      @message = args[:message] || "It looks like you can't take action on this task because it is closed. " \
+      "Please return to the case details page and hit refresh for updated task information."
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
@@ -193,6 +202,19 @@ module Caseflow::Error
       @code = args[:code] || 400
       @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
                                    " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class BgsFileNumberMismatch < SerializableError
+    # Add attr_accessors for testing
+    attr_accessor :user_id, :appeal_id
+
+    def initialize(args)
+      @user_id = args[:user_id]
+      @appeal_id = args[:appeal_id]
+      @code = args[:code] || 500
+      @title = args[:title] || "VBMS::FilenumberDoesNotExist"
+      @message = args[:message] || "The veteran file number does not match the file number in VBMS"
     end
   end
 
@@ -288,6 +310,7 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate DVC Team error"
       @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
     end
   end
@@ -296,7 +319,21 @@ module Caseflow::Error
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
+      @title = "Duplicate Judge Team error"
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
+    end
+  end
+
+  class DuplicateParticipantIdOrganization < SerializableError
+    # :reek:FeatureEnvy
+    def initialize(args)
+      participant_id = args[:participant_id]
+      organization = args[:organization]
+      @code = args[:code] || 400
+      @title = "Participant ID error"
+      @message = args[:message] ||
+                 "Participant ID #{participant_id} is already used for existing team '#{organization.name}'. " \
+                 "Cannot create another team with the same participant ID."
     end
   end
 
@@ -386,4 +423,22 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
+  class InvalidEmailError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @code = args[:code]
+      @message = args[:message]
+    end
+  end
+
+  # GovDelivery Errors
+  class GovDeliveryApiError < SerializableError; end
+  class GovDeliveryUnauthorizedError < GovDeliveryApiError; end
+  class GovDeliveryForbiddenError < GovDeliveryApiError; end
+  class GovDeliveryNotFoundError < GovDeliveryApiError; end
+  class GovDeliveryInternalServerError < GovDeliveryApiError; end
+  class GovDeliveryBadGatewayError < GovDeliveryApiError; end
+  class GovDeliveryServiceUnavailableError < GovDeliveryApiError; end
 end

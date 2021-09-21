@@ -41,3 +41,9 @@ jest.mock(
     v4: () => '00000000-0000-0000-0000-000000000000',
   })
 );
+
+// Ignore Performance Debugging during tests
+jest.mock('app/util/PerfDebug', () => ({
+  timeFunction: (fn) => (...args) => fn(...args),
+  timeFunctionPromise: (fn) => (...args) => fn(...args),
+}));

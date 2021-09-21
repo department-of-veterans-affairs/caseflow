@@ -27,13 +27,10 @@ rake local:vacols:wait_for_connection
 echo "Creating DB in PG"
 rake db:setup
 
-echo "Seeding Facols and Caseflow App"
+echo "Seeding Facols"
 rake local:vacols:seed
 
-echo "Migrating the database"
-rails db:migrate
-
-echo "Seeding local caseflow database"
+echo "Seeding DB in PG"
 rake db:seed
 
 echo "Enabling Feature Flags"

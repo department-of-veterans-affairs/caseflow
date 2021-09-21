@@ -2,6 +2,7 @@
 
 class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include HasAppealUpdatedSince
   include IssueUpdater
 
   belongs_to :judge, class_name: "User"
@@ -84,6 +85,7 @@ class JudgeCaseReview < CaseflowRecord
         record = create(params)
         if record.valid?
           record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          record.associate_with_appeal
         end
         record
       end
