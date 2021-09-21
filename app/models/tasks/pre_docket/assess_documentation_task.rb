@@ -10,20 +10,37 @@ class AssessDocumentationTask < Task
                      parentTask: { task_type: VhaDocumentSearchTask },
                      on: :create
 
-  # Actions that can be taken on both organization and user tasks
-  TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.COMPLETE_TASK.to_h
-  ].freeze
-
   def self.label
     COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
   end
 
+  # Actions that can be taken on both organization and user tasks
+  DEFAULT_ACTIONS = [
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+    Constants.TASK_ACTIONS.COMPLETE_TASK.to_h
+  ].freeze
+
+  PO_ACTIONS = [
+    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h
+  ].freeze
+
+  RO_ACTIONS = [].freeze
 
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
 
-    TASK_ACTIONS
+    task_actions = []
+
+    task_actions.concat(DEFAULT_ACTIONS)
+
+    if assigned_to.is_a?(VhaProgramOffice)
+      task_actions.concat(PO_ACTIONS)
+    end
+
+    if assigned_to.is_a?(VhaRegionalOffice)
+      task_actions.concat(RO_ACTIONS)
+    end
+
+    task_actions
   end
 end
