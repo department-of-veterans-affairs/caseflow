@@ -38,7 +38,7 @@ const OTHER = 'OTHER';
  * attorney in caseflow by selecting "Other". The full list of attorneys is preloaded into state for judges in
  * QueueLoadingScreen.
  */
-class AssignToAttorneyWidget extends React.PureComponent {
+export class AssignToAttorneyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -47,7 +47,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
     };
   }
 
-  componentDidMount = () => this.props.resetSuccessMessages();
+  componentDidMount = () => this.props.resetSuccessMessages?.();
 
   validAssignee = () => {
     const { selectedAssignee } = this.props;
@@ -92,14 +92,14 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   onCancel = () => {
     this.props.resetAssignees();
-    this.props.history.goBack();
+    this.props.history?.goBack();
   }
 
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages?.();
+    this.props.resetErrorMessages?.();
 
     if (this.props.isModal) {
       // QueueFlowModal will call validateForm
