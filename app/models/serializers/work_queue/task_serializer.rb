@@ -49,8 +49,11 @@ class WorkQueue::TaskSerializer
   end
 
   def self.unscoped_assignee(object)
+    @unscoped_assignee ||= {}
     # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-    @unscoped_assignee ||= Organization.unscoped do
+    puts "#{object.id} => #{@unscoped_assignee[object.id]&.id}"
+    @unscoped_assignee[object.id] ||= Organization.unscoped do
+      puts "reloading #{object.id}"
       object.reload.assigned_to
     end
   end
