@@ -637,7 +637,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_on "Bob"
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
         click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
-        click_dropdown(name: "hearingDate", index: 1)
+        click_dropdown(name: "hearingDate", index: 0)
 
         select_hearing_time("8:30")
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
@@ -807,7 +807,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
-        click_dropdown(name: "hearingDate", index: 1)
+        click_dropdown(name: "hearingDate", index: 0)
 
         # Ensure the new email notification label is visible
         expect(page).to have_content("Email Notifications")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_26_145249) do
+ActiveRecord::Schema.define(version: 2021_09_10_163649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -891,6 +891,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "updated_at"
     t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
     t.string "veteran_file_number", comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.bigint "veteran_id", comment: "The ID of the veteran record associated with this intake"
     t.index ["detail_type", "detail_id"], name: "index_intakes_on_detail_type_and_detail_id"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
@@ -898,6 +899,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.index ["user_id"], name: "index_intakes_on_user_id"
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
+    t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
   create_table "job_notes", force: :cascade do |t|
@@ -1083,6 +1085,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
     t.index ["accepts_priority_pushed_cases"], name: "index_organizations_on_accepts_priority_pushed_cases"
+    t.index ["participant_id"], name: "index_organizations_on_participant_id", unique: true
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
@@ -1217,6 +1220,8 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "deleted_at"
     t.integer "request_issue_id", comment: "The ID of the request issue."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
+    t.index ["decision_issue_id", "request_issue_id"], name: "index_on_decision_issue_id_and_request_issue_id", unique: true
+    t.index ["deleted_at"], name: "index_request_decision_issues_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
     t.index ["updated_at"], name: "index_request_decision_issues_on_updated_at"
   end
@@ -1534,6 +1539,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["css_id"], name: "index_users_on_css_id", unique: true
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
   end
@@ -1727,6 +1733,7 @@ ActiveRecord::Schema.define(version: 2021_08_26_145249) do
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
+  add_foreign_key "intakes", "veterans"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

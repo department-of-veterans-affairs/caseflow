@@ -24,7 +24,8 @@ export class DocumentSearch extends React.PureComponent {
 
   getText = () => {
     if (this.props.pdfDocument &&
-        !this.props.pdfDocument.transport.destroyed &&
+        // eslint-disable-next-line no-underscore-dangle
+        !this.props.pdfDocument._transport.destroyed &&
         !this.sentAction[this.props.file] &&
         !_.isEmpty(this.searchTerm) &&
         _.isEmpty(this.props.pdfText)) {
@@ -175,7 +176,28 @@ export class DocumentSearch extends React.PureComponent {
 }
 
 DocumentSearch.propTypes = {
-  file: PropTypes.string
+  currentMatchIndex: PropTypes.number,
+  file: PropTypes.string,
+  getDocumentText: PropTypes.func,
+  hidden: PropTypes.any,
+  hideSearchBar: PropTypes.func,
+  matchIndexToHighlight: PropTypes.any,
+  pdfDocument: PropTypes.shape({
+    _transport: PropTypes.shape({
+      destroyed: PropTypes.any
+    })
+  }),
+  pdfText: PropTypes.shape({
+    length: PropTypes.any
+  }),
+  searchIsLoading: PropTypes.any,
+  searchText: PropTypes.func,
+  setSearchIndex: PropTypes.func,
+  setSearchIndexToHighlight: PropTypes.func,
+  setSearchIsLoading: PropTypes.func,
+  showSearchBar: PropTypes.func,
+  totalMatchesInFile: PropTypes.number,
+  updateSearchIndex: PropTypes.func
 };
 
 const mapStateToProps = (state, props) => ({

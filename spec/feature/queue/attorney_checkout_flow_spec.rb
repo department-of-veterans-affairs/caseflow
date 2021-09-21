@@ -61,46 +61,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       )
     end
 
-    context "when special_issues_revamp feature is enabled" do
-      before { FeatureToggle.enable!(:special_issues_revamp, users: [attorney_user.css_id]) }
-      after { FeatureToggle.disable!(:special_issues_revamp) }
-      scenario "submits draft decision" do
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
-        # Ensure the issue is on the case details screen
-        expect(page).to have_content(issue_description)
-        expect(page).to have_content(issue_note)
-        expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
-        expect(page).to have_content "Correct issues"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
-
-        # Special Issues page
-        expect(page).to have_content("Select special issues")
-
-        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-
-        expect(page).to have_content("Blue Water")
-        expect(page).to have_content("Burn Pit")
-        expect(page).to have_content("Military Sexual Trauma (MST)")
-        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
-        find("label", text: "Blue Water").click
-        expect(page.find("#blue_water", visible: false).checked?).to eq true
-        find("label", text: "No Special Issues").click
-        expect(page.find("#blue_water", visible: false).checked?).to eq false
-        expect(page.find("#blue_water", visible: false).disabled?).to eq true
-        find("label", text: "No Special Issues").click
-        expect(page.find("#blue_water", visible: false).checked?).to eq false
-        find("label", text: "Blue Water").click
-        click_on "Continue"
-
-        click_on "Continue"
-        # Ensure the issue is on the select disposition screen
-        expect(page).to have_content(issue_description)
-      end
-    end
-
     scenario "submits draft decision" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
@@ -113,20 +73,15 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
 
-      # Remove the conditional once the feature is permanently enabled
-      if FeatureToggle.enabled?(:special_issues_revamp)
-        # Special Issues page
-        expect(page).to have_content("Select special issues")
+      expect(page).to have_content("Select special issues")
 
-        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-
-        expect(page).to have_content("Blue Water")
-        expect(page).to have_content("Burn Pit")
-        expect(page).to have_content("Military Sexual Trauma (MST)")
-        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
-        find("label", text: "Blue Water").click
-        click_on "Continue"
-      end
+      expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+      expect(page).to have_content("Blue Water")
+      expect(page).to have_content("Burn Pit")
+      expect(page).to have_content("Military Sexual Trauma (MST)")
+      expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+      find("label", text: "Blue Water").click
+      click_on "Continue"
 
       click_on "Continue"
 
@@ -309,20 +264,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
 
-      # Remove the conditional once the feature is permanently enabled
-      if FeatureToggle.enabled?(:special_issues_revamp)
-        # Special Issues page
-        expect(page).to have_content("Select special issues")
-
-        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-
-        expect(page).to have_content("Blue Water")
-        expect(page).to have_content("Burn Pit")
-        expect(page).to have_content("Military Sexual Trauma (MST)")
-        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
-        find("label", text: "Burn Pit").click
-        click_on "Continue"
-      end
+      expect(page).to have_content("Select special issues")
+      expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+      expect(page).to have_content("Blue Water")
+      expect(page).to have_content("Burn Pit")
+      expect(page).to have_content("Military Sexual Trauma (MST)")
+      expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+      find("label", text: "Burn Pit").click
+      click_on "Continue"
 
       expect(page).to have_content("Added to 2 issues", count: 2)
 
@@ -412,7 +361,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(appeal.special_issue_list.vamc).to eq(true)
         click_on "Continue"
 
-        expect(page).to have_content "Select disposition"
+        expect(page).to have_content "Select Dispositions"
 
         cancel_button = page.find "#button-cancel-button"
         expect(cancel_button.text).to eql "Cancel"
@@ -451,15 +400,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     context "with four issues" do
       let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
 
-      context "when :special_issues_revamp feature enabled" do
-        before { FeatureToggle.enable!(:special_issues_revamp, users: [attorney_user.css_id]) }
-        after { FeatureToggle.disable!(:special_issues_revamp) }
-
+      context "special issues functionality" do
         scenario "no special issue chosen" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
           click_dropdown(index: 0)
-
           click_on "Continue"
           expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         end
@@ -467,42 +412,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
           click_dropdown(index: 0)
-
           click_label "private_attorney_or_agent"
-
           click_on "Continue"
           expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         end
-      end
-
-      scenario "selects issue dispositions" do
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0)
-
-        click_on "Continue"
-
-        expect(page).to have_content("Select disposition")
-
-        table_rows = page.find_all("tr[id^='table-row-']")
-        expect(table_rows.length).to eq(appeal.issues.length)
-
-        # do not select all dispositions
-        table_rows[0..0].each { |row| click_dropdown({ index: 1 }, row) }
-
-        click_on "Continue"
-
-        table_rows[1..-1].each do |row|
-          dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
-          expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
-        end
-
-        # select all dispositions
-        table_rows.each { |row| click_dropdown({ index: 2 }, row) }
-
-        click_on "Continue"
-
-        expect(page).to have_content("Submit Draft Decision for Review")
       end
 
       scenario "submits draft decision" do
@@ -512,6 +425,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
+        click_on "Continue"
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
         issue_dispositions = page.find_all(
           ".cf-select__control",
           text: "Select disposition",
@@ -634,9 +550,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        find("label", text: "No Special Issues").click
         click_on "Continue"
 
-        expect(page).to have_content("Select disposition")
+        expect(page).to have_content("Select Dispositions")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
@@ -693,8 +610,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_dropdown(index: 0)
 
         click_on "Continue"
-
-        expect(page).to have_content("Select disposition")
+        find("label", text: "Blue Water").click
+        click_on "Continue"
+        expect(page).to have_content("Select Dispositions")
 
         first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
@@ -726,6 +644,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
+        if !find("#no_special_issues", visible: false).checked?
+          find("label", text: "No Special Issues").click
+        end
+        click_on "Continue"
         expect(page).to have_content "Select disposition"
 
         diag_code_no_l2 = %w[4 5 0 *]
@@ -748,9 +670,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        find("label", text: "No Special Issues").click
         click_on "Continue"
 
-        expect(page).to have_content "Select disposition"
+        expect(page).to have_content "Select Dispositions"
 
         click_on "Add Issue"
         expect(page).to have_content "Add Issue"

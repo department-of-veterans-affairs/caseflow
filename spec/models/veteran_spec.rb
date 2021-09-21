@@ -575,6 +575,14 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "given date of birth from before 1900" do
+    let(:date_of_birth) { "02/03/1856" }
+
+    it "date_of_birth is valid" do
+      expect(veteran.valid?(:bgs)).to be true
+    end
+  end
+
   context "#validate_name_suffix" do
     subject { veteran.validate_name_suffix }
     let(:name_suffix) { "JR." }
