@@ -35,7 +35,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
-    assignee = unscoped_assignee(object)
+    assignee = object.try(:unscoped_assigned_to) || object.assigned_to
 
     {
       css_id: assignee.try(:css_id),
@@ -46,16 +46,6 @@ class WorkQueue::TaskSerializer
       type: assignee.class.name,
       id: assignee.id
     }
-  end
-
-  def self.unscoped_assignee(object)
-    @unscoped_assignee ||= {}
-    # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-    puts "#{object.id} => #{@unscoped_assignee[object.id]&.id}"
-    @unscoped_assignee[object.id] ||= Organization.unscoped do
-      puts "reloading #{object.id}"
-      object.reload.assigned_to
-    end
   end
 
   attribute :cancelled_by do |object|
@@ -79,7 +69,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assignee_name do |object|
-    assignee = unscoped_assignee(object)
+    assignee = object.try(:unscoped_assigned_to) || object.assigned_to
     assignee.is_a?(Organization) ? assignee.name : assignee.css_id
   end
 

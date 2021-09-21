@@ -423,6 +423,13 @@ class Task < CaseflowRecord
     end
   end
 
+  def unscoped_assigned_to
+    # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
+    @unscoped_assigned_to ||= Organization.unscoped do
+      reload.assigned_to
+    end
+  end
+
   def assigned_to_same_org?(task_to_check)
     assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
   end
