@@ -25,7 +25,7 @@ class Person < CaseflowRecord
       return person if person
 
       person = new(participant_id: participant_id)
-      return nil unless person.found?
+      return unless person.found?
 
       person.update_cached_attributes!
       person
