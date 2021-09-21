@@ -27,6 +27,19 @@ describe WorkQueue::TaskSerializer, :postgres do
     end
   end
 
+  context "inactive organization assignee" do
+    subject { described_class.new(child).serializable_hash[:data][:attributes] }
+    let(:inactive_org) { create(:organization, status: :inactive) }
+    let!(:child) { create(:ama_task, parent: parent, assigned_to: inactive_org).reload }
+    it "serializes assignee information" do
+      expect(child.assigned_to).to eq nil
+      expect(subject[:assigned_to][:id]).to eq inactive_org.id
+      expect(subject[:assigned_to][:name]).to eq inactive_org.name
+      expect(subject[:assignee_name]).to eq inactive_org.name
+      expect(subject[:assigned_to][:status]).to eq "inactive"
+    end
+  end
+
   describe "the attribute timer_ends_at" do
     subject { described_class.new(task).serializable_hash[:data][:attributes] }
 
