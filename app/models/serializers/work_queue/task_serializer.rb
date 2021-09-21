@@ -34,7 +34,7 @@ class WorkQueue::TaskSerializer
     }
   end
 
-  def initialize(object)
+  def initialize(object, **_kw_args)
     Organization.unscoped do
       # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
       # Also need to call `assigned_to` so that the potentially inactive Organization is queried unscoped.
