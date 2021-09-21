@@ -1128,5 +1128,9 @@
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
-  "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center"
+  "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
+
+  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
+  "VHA_COMPLETE_TAKS_MODAL_TITLE": "Where were documents regarding this appeal stored?",
+  "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details, such as file structure or file path:"
 }
