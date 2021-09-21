@@ -35,19 +35,23 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
-    Organization.unscoped do
-      # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-      assignee = object.reload.assigned_to
+    assignee = unscoped_assignee(object)
 
-      {
-        css_id: assignee.try(:css_id),
-        full_name: assignee.try(:full_name),
-        is_organization: assignee.is_a?(Organization),
-        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-        status: assignee.try(:status),
-        type: assignee.class.name,
-        id: assignee.id
-      }
+    {
+      css_id: assignee.try(:css_id),
+      full_name: assignee.try(:full_name),
+      is_organization: assignee.is_a?(Organization),
+      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+      status: assignee.try(:status),
+      type: assignee.class.name,
+      id: assignee.id
+    }
+  end
+
+  def self.unscoped_assignee(object)
+    # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
+    @unscoped_assignee ||= Organization.unscoped do
+      object.reload.assigned_to
     end
   end
 
@@ -72,10 +76,8 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assignee_name do |object|
-    Organization.unscoped do
-      # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-      object.reload.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
-    end
+    assignee = unscoped_assignee(object)
+    assignee.is_a?(Organization) ? assignee.name : assignee.css_id
   end
 
   attribute :placed_on_hold_at, &:calculated_placed_on_hold_at
