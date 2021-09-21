@@ -424,10 +424,9 @@ class Task < CaseflowRecord
   end
 
   def unscoped_assigned_to
-    # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-    @unscoped_assigned_to ||= Organization.unscoped do
-      reload.assigned_to
-    end
+    return Organization.unscoped.find(assigned_to_id) if assigned_to_type == "Organization"
+
+    assigned_to
   end
 
   def assigned_to_same_org?(task_to_check)
