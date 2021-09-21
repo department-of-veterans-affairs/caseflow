@@ -271,7 +271,7 @@ class HearingRepository
     #   A hash of setter names on a `LegacyHearing` to values
     def regional_office_for_scheduled_timezone(hearing, vacols_record)
       ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
-                 vacols_record.bfregoff || vacols_record.hearing_venue
+                 vacols_record.hearing_venue || vacols_record.bfregoff
                else
                  hearing.hearing_day&.regional_office || "C"
                end
