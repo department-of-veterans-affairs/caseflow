@@ -32,7 +32,7 @@ describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
         expect(ETL::DecisionIssue.count).to eq(1)
 
         decision_issue.soft_delete
-        expect(decision_issue.deleted_at).not to eq nil
+        expect(decision_issue.deleted_at).not_to eq nil
         subject
 
         expect(ETL::DecisionIssue.count).to eq(1)
