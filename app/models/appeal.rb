@@ -160,6 +160,10 @@ class Appeal < DecisionReview
     post_decision_motion&.vacate_type
   end
 
+  def contested_claim?
+    binding.pry
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
