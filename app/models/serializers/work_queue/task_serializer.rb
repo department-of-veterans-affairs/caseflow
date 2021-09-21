@@ -34,10 +34,18 @@ class WorkQueue::TaskSerializer
     }
   end
 
-  attribute :assigned_to do |object|
+  def initialize(object)
     Organization.unscoped do
       # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-      assignee = object.reload.assigned_to
+      # Also need to call `assigned_to` so that the potentially inactive Organization is queried unscoped.
+      object.reload.assigned_to
+    end
+    super
+  end
+
+  attribute :assigned_to do |object|
+    Organization.unscoped do
+      assignee = object.assigned_to
 
       {
         css_id: assignee.try(:css_id),
@@ -73,8 +81,7 @@ class WorkQueue::TaskSerializer
 
   attribute :assignee_name do |object|
     Organization.unscoped do
-      # `reload` is needed to prevent use of a cached query on object that uses Organization.default_scope
-      object.reload.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
+      object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
     end
   end
 

@@ -29,7 +29,7 @@ describe WorkQueue::TaskSerializer, :postgres do
 
   context "inactive organization assignee" do
     subject { described_class.new(child).serializable_hash[:data][:attributes] }
-    let(:inactive_org) { create(:organization, status: :inactive) }
+    let(:inactive_org) { create(:private_bar, status: :inactive) }
     let!(:child) { create(:ama_task, parent: parent, assigned_to: inactive_org).reload }
     it "serializes assignee information" do
       expect(child.assigned_to).to eq nil
