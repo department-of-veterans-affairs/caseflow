@@ -11,11 +11,9 @@
     {{ range $sortedMenuItems }}
       {{ $sectionId := print "section-" .Identifier }}
       <li id="{{ $sectionId }}">
-        {{ $scratch := newScratch }}
         <!-- https://gohugo.io/templates/menu-templates/#using-page-in-menus -->
         <!-- `with` dereferences `.Page` so that an error doesn't occur if it is null -->
-        {{with .Page}}{{ $scratch.Set "page" .Page }}{{end}}
-        {{ $pageViaMenu := $scratch.Get "page" }}
+        {{ $pageViaMenu := .Page }} {{ with .Page }}{{ $pageViaMenu = .Page }}{{ end }}
         {{ $linkLabel := (.Name | default .Title | default .Identifier | default .URL) }}
         {{ if .HasChildren }}
           {{ $inputId := print "input-" $sectionId }}
@@ -33,8 +31,7 @@
           </label>
           <ul class="sub-menu">
             {{ range (sort (sort .Children "Page.Weight") "Weight") }}
-              {{with .Page}}{{ $scratch.Set "childpage" .Page }}{{end}}
-              {{ $childpageViaMenu := $scratch.Get "childpage" }}
+              {{ $childpageViaMenu := .Page }} {{ with .Page }}{{ $childpageViaMenu = .Page }}{{ end }}
               {{ $childLinkLabel := (.Name | default .Title | default .Identifier | default .URL) }}
               <li class="{{ if $currentPage.IsMenuCurrent "navmenu" . }}active{{ end }}">
                 <a href="{{ .URL }}">{{- $childLinkLabel -}}</a>
