@@ -34,9 +34,9 @@ const formStyling = css({
   marginBottom: 0,
 });
 
-const getTimeOptions = (regionalOffice, readOnly) =>
+const getTimeOptions = (regionalOffice, readOnly, requestType) =>
   _.map(
-    regionalOffice === 'C' ?
+    regionalOffice === 'C' || requestType === 'Travel' ?
       HEARING_TIME_RADIO_OPTIONS.central :
       HEARING_TIME_RADIO_OPTIONS.default,
     (obj) => _.extend(obj, { disabled: readOnly })
@@ -54,9 +54,10 @@ export const HearingTime = ({
   disableRadioOptions,
   label,
   vertical,
-  hideLabel
+  hideLabel,
+  requestType
 }) => {
-  const timeOptions = getTimeOptions(regionalOffice, readOnly);
+  const timeOptions = getTimeOptions(regionalOffice, readOnly, requestType);
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
@@ -125,5 +126,11 @@ HearingTime.propTypes = {
   value: PropTypes.string,
   label: PropTypes.string,
   localZone: PropTypes.string,
-  hideLabel: PropTypes.bool
+  hideLabel: PropTypes.bool,
+  requestType: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
 };
