@@ -5,7 +5,8 @@ module HasDecisionReviewUpdatedSince
 
   included do
     scope :updated_since_for_appeals, lambda { |since|
-      select(:decision_review_id)
+      # unscope this query so that soft-deleted records are considered when updated in ETL records
+      unscoped.select(:decision_review_id)
         .where("#{table_name}.updated_at >= ?", since)
         .where("#{table_name}.decision_review_type='Appeal'")
     }
