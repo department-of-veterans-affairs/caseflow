@@ -146,8 +146,7 @@ class SanitizedJsonConfiguration
         retrieval: lambda do |records|
           # For unrecognized appellants, `claimant.person` returns a non-nil object with nil id
           # If PR #16768 is merged, then the `reject` call can be remove.
-          (records[Veteran] + records[Claimant]).map(&:person).uniq.compact
-            .reject { |person| person.id.nil? }.sort_by(&:id)
+          (records[Veteran] + records[Claimant]).map(&:person).uniq.compact.sort_by(&:id)
         end
       },
       # Put UnrecognizedPartyDetail before UnrecognizedAppellant so that it is imported in that order
