@@ -19,7 +19,7 @@ describe VACOLS::CaseHearing, :all_dbs do
         create(
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:central],
-          folder_nr: legacy_appeal.vacols_id,
+          folder_nr: legacy_appeal.vacols_id
         )
       end
       it "sets hearing_venue to bfregoff value" do
@@ -32,7 +32,7 @@ describe VACOLS::CaseHearing, :all_dbs do
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:central],
           hearing_date: "2019-03-28",
-          folder_nr: legacy_appeal.vacols_id,
+          folder_nr: legacy_appeal.vacols_id
         )
       end
       it "sets hearing_venue to bfregoff value" do
@@ -45,7 +45,7 @@ describe VACOLS::CaseHearing, :all_dbs do
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:video],
           hearing_date: "2019-03-28",
-          folder_nr: legacy_appeal.vacols_id,
+          folder_nr: legacy_appeal.vacols_id
         )
       end
       it "sets hearing to the result of HEARING_VENUE function which is NOT bfregoff field" do
