@@ -151,7 +151,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
-      select("case when hearing_type='video' AND hearing_date < '#{VACOLS_VIDEO_HEARINGS_END_DATE}' " \
+      select("case when hearing_type='#{HEARING_TYPE_LOOKUP[:video]}' AND hearing_date < '#{VACOLS_VIDEO_HEARINGS_END_DATE}' " \
               "then #{Rails.application.config.vacols_db_name}.HEARING_VENUE(vdkey) " \
               "else bfregoff end as hearing_venue",
              :hearing_disp, :hearing_pkseq, :hearing_date, :hearing_type,

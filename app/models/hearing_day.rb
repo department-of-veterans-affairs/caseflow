@@ -150,7 +150,7 @@ class HearingDay < CaseflowRecord
     # Check if we have a stored value
     return number_of_slots unless number_of_slots.nil?
 
-    SLOTS_BY_REQUEST_TYPE[request_type][:default]
+    10
   end
 
   def slot_length_minutes
