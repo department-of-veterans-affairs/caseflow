@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import pluralize from 'pluralize';
+import { sprintf } from 'sprintf-js';
 
 import {
   setSavePending,
@@ -16,14 +17,11 @@ import {
   setSelectedAssigneeSecondary,
   resetAssignees
 } from '../uiReducer/uiActions';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextareaField from '../../components/TextareaField';
-import Button from '../../components/Button';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import TextareaField from 'app/components/TextareaField';
+import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import _ from 'lodash';
-import pluralize from 'pluralize';
-import COPY from '../../../COPY';
-import { sprintf } from 'sprintf-js';
+import COPY from 'app/../COPY';
 import { fullWidth } from '../constants';
 import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
@@ -89,11 +87,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
   }
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
-
-  onCancel = () => {
-    this.props.resetAssignees();
-    this.props.history?.goBack();
-  }
 
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
@@ -193,14 +186,15 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       selectedTasks,
       savePending,
       highlightFormItems,
-      isModal
+      isModal,
+      onCancel
     } = this.props;
     const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat([{ label: COPY.ASSIGN_WIDGET_OTHER,
       value: OTHER }]);
-    const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
+    const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
@@ -220,7 +214,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     if (optionsOther?.length) {
       placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
+      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
     }
 
     const Widget = <React.Fragment>
@@ -269,7 +263,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm} onCancel={this.onCancel}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
@@ -300,41 +294,55 @@ AssignToAttorneyWidget.propTypes = {
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
   resetAssignees: PropTypes.func,
-  saveFailure: PropTypes.func
+  saveFailure: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
-const mapStateToProps = (state) => {
-  const { attorneysOfJudge, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems } = state.ui;
-  const { savePending } = state.ui.saveState;
+const AssignToAttorneyWidgetContainer = (props) => {
+  const dispatch = useDispatch();
+  const { attorneysOfJudge, attorneys } = useSelector((state) => state.queue);
+  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems } = useSelector((state) => state.ui);
+  const { savePending } = useSelector((state) => state.ui.saveState);
 
-  return {
-    attorneysOfJudge,
-    selectedAssignee,
-    selectedAssigneeSecondary,
-    attorneys,
-    savePending,
-    highlightFormItems
+  return (
+    <AssignToAttorneyWidget
+      attorneys={attorneys}
+      attorneysOfJudge={attorneysOfJudge}
+      selectedAssignee={selectedAssignee}
+      selectedAssigneeSecondary={selectedAssigneeSecondary}
+      highlightFormItems={highlightFormItems}
+      savePending={savePending}
+      setSavePending={(val) => dispatch(setSavePending(val))}
+      resetSaveState={(val) => dispatch(resetSaveState(val))}
+      setSelectedAssignee={(val) => dispatch(setSelectedAssignee(val))}
+      setSelectedAssigneeSecondary={(val) => dispatch(setSelectedAssigneeSecondary(val))}
+      showErrorMessage={(val) => dispatch(showErrorMessage(val))}
+      resetErrorMessages={(val) => dispatch(resetErrorMessages(val))}
+      showSuccessMessage={(val) => dispatch(showSuccessMessage(val))}
+      resetSuccessMessages={(val) => dispatch(resetSuccessMessages(val))}
+      resetAssignees={() => dispatch(resetAssignees())}
+      saveFailure={() => dispatch({ type: ACTIONS.SAVE_FAILURE })}
+      {...props}
+    />
+  );
+};
+
+export default AssignToAttorneyWidgetContainer;
+
+export const AssignToAttorneyWidgetModal = (props) => {
+  const { goBack } = useHistory();
+  const dispatch = useDispatch();
+
+  const handleCancel = () => {
+    dispatch(resetAssignees());
+    goBack();
   };
+
+  return (
+    <AssignToAttorneyWidgetContainer
+      onCancel={handleCancel}
+      {...props}
+    />
+  );
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setSavePending,
-  resetSaveState,
-  setSelectedAssignee,
-  setSelectedAssigneeSecondary,
-  showErrorMessage,
-  resetErrorMessages,
-  showSuccessMessage,
-  resetSuccessMessages,
-  resetAssignees,
-  saveFailure: () => dispatch({ type: ACTIONS.SAVE_FAILURE })
-}, dispatch);
-
-export default (connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AssignToAttorneyWidget));
-
-export const AssignToAttorneyWidgetModal =
-  withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
