@@ -337,8 +337,7 @@ module Seeds
             :legacy_appeal,
             :with_veteran,
             vacols_case: vacols_case,
-            closest_regional_office: nil,
-            changed_hearing_request_type: "R"
+            closest_regional_office: nil
           )
         )
       end
