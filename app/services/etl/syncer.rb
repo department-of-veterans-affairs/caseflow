@@ -158,6 +158,6 @@ class ETL::Syncer
   end
 
   def instances_after_id_offset
-    origin_class.where("id >= ?", @id_offset)
+    origin_class.unscoped.where("id >= ?", @id_offset)
   end
 end
