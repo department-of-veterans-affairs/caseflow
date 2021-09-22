@@ -48,7 +48,7 @@ describe VACOLS::CaseHearing, :all_dbs do
           folder_nr: legacy_appeal.vacols_id,
         )
       end
-      it "sets hearing to the result of HEARING_VENUE function which is NOT bfregoff" do
+      it "sets hearing to the result of HEARING_VENUE function which is NOT bfregoff field" do
         expect(subject).to_not eq(ro_id)
       end
     end
