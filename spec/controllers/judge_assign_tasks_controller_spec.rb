@@ -133,15 +133,14 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
 
     before do
       User.authenticate!(user: judge)
-      judge_decision_review_task = double(JudgeDecisionReviewTask)
-      allow(judge_decision_review_task).to(
-        receive(:create!).and_raise(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+      allow_any_instance_of(AttorneyTaskCreator).to(
+        receive(:call).and_raise(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
       )
     end
 
     context "when an appeal has more than one open active task of the same type" do
       it "reports the error as non-actionable to Sentry" do
-        expect { subject }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError) do |_err|
+        expect { subject }.to raise_error do |_err|
           expect(Raven).to receive(:capture_exception).with(anything, extra: { error_uuid: anything, actionable: false })
         end
       end
