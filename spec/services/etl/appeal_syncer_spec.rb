@@ -94,7 +94,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
         etl_build_table = ETL::BuildTable.where(table_name: "appeals").last
         expect(etl_build_table.rows_inserted).to eq(14)
         expect(ETL::Appeal.count).to eq(Appeal.count)
-        expect(ETL::Appeal.find_by(appeal_id: appeal.id).updated_at).to be_within(1.minute).of(Time.now)
+        expect(ETL::Appeal.find_by(appeal_id: appeal.id).updated_at).to be_within(1.minute).of(Time.zone.now)
 
         Timecop.travel(5.days.from_now)
         decision_issue.soft_delete
