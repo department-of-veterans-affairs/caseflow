@@ -12,10 +12,13 @@ class ApplicationController < ApplicationBaseController
   before_action :deny_vso_access, except: [:unauthorized, :feedback]
   before_action :set_no_cache_headers
 
+  NONACTIONABLE_ERRORS = [Caseflow::Error::MultipleOpenTasksOfSameTypeError].freeze
+
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
 
-    Raven.capture_exception(e, extra: { error_uuid: error_uuid })
+    actionable = !NONACTIONABLE_ERRORS.include?(error.class)
+    Raven.capture_exception(e, extra: { error_uuid: error_uuid, actionable: actionable })
     render(e.serialize_response)
   end
 
