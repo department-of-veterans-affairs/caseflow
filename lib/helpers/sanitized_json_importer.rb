@@ -237,7 +237,6 @@ class SanitizedJsonImporter
     if @verbosity > 3
       puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
     end
-    [orig_record_id, obj_hash[id_field]]
   end
 
   # Try to find record using unique indices on the corresponding table
