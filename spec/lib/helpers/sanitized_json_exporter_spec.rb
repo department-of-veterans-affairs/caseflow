@@ -704,7 +704,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:json_filename) { "appeal-113251.json" }
       it "imports unrecognized appellant" do
         expect(real_appeal.claimant.unrecognized_appellant.unrecognized_party_detail).not_to eq nil
-        expect(real_appeal.claimant.person.id).to eq nil
+        expect(real_appeal.claimant.person).to eq nil
       end
     end
     context "when an appeal has an unrecognized POA" do
