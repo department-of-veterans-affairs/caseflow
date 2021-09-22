@@ -413,7 +413,6 @@ module Seeds
 
     def create_different_hearings_tasks
       (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-
         30.times do
           appeal = create(
             :appeal,
