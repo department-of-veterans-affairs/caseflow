@@ -99,8 +99,9 @@ describe ApplicationController, type: :controller do
 
     context "when an appeal has more than one open active task of the same type" do
       it "reports the error as non-actionable to Sentry" do
-        subject
-        expect(Raven).to receive(:capture_exception).with(anything, extra: { error_uuid: anything, actionable: false })
+        expect { subject }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError) do |_err|
+          expect(Raven).to receive(:capture_exception).with(anything, extra: { error_uuid: anything, actionable: false })
+        end
       end
     end
   end
