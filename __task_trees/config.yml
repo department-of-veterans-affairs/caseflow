@@ -8,7 +8,9 @@ disablePathToLower: true
 
 # make all relative URLs relative to content root
 # relativeURLs: true
-enableGitInfo: true
+
+# causes all files' timestamps to be updated and committed
+enableGitInfo: false
 
 # creates URL of the form /filename.html instead of /filename/
 # https://www.ii.com/themeless-gitless-intro-hugo/#_source_files_destination_files_and_pretty_urls

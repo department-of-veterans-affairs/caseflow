@@ -46,9 +46,9 @@ run:
 move_make_docs_files:
 	@echo "::group::Moving files to task_trees subsite"
 	[ -d __task_trees/content/schema/make_docs ] || mkdir __task_trees/content/schema/make_docs
-	ls -al schema/make_docs/
 	mv -vf schema/make_docs/*-subclasses.* __task_trees/content/schema/make_docs
 	mv -vf schema/make_docs/*-belongs_to_erd.* __task_trees/content/schema/make_docs
+	ls -al schema/make_docs/
 	@echo "::endgroup::"
 
 github_action_pre_commit_hook: move_make_docs_files
