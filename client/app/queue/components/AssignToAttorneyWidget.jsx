@@ -316,7 +316,12 @@ AssignToAttorneyWidget.propTypes = {
 const AssignToAttorneyWidgetContainer = (props) => {
   const dispatch = useDispatch();
   const { attorneysOfJudge, attorneys } = useSelector((state) => state.queue);
-  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems, loadedUserId: userId } = useSelector((state) => state.ui);
+  const {
+    selectedAssignee,
+    selectedAssigneeSecondary,
+    highlightFormItems,
+    loadedUserId: userId,
+  } = useSelector((state) => state.ui);
   const { savePending } = useSelector((state) => state.ui.saveState);
   const currentUser = useSelector((state) => state.ui.userInfo);
 

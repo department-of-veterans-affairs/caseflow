@@ -1133,6 +1133,7 @@ QueueApp.propTypes = {
   featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
+  setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
