@@ -368,5 +368,10 @@
     "label": "Assign to VISN",
     "value": "modal/assign_to_regional_office",
     "func": "vha_assign_to_regional_office_data"
+  },
+  "RETURN_TO_CAMO": {
+    "label": "Return to CAMO team",
+    "value": "modal/return_to_camo",
+    "func": "return_to_camo"
   }
 }

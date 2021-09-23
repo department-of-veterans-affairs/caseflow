@@ -470,6 +470,23 @@ class TaskActionRepository
       }
     end
 
+    def return_to_camo(task, _user)
+      org = VhaCamo.singleton
+      task.update!(status: Constants.TASK_STATUSES.completed)
+      task.parent.update!(status: Constants.TASK_STATUSES.in_progress)
+
+      queue_url = org.url
+      {
+        options: organizations_to_options(VhaRegionalOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)

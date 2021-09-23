@@ -50,6 +50,7 @@ import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispos
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
+import ReturnToCamo from './ReturnToCamo';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddDvcTeamModal from './AddDvcTeamModal';
@@ -288,6 +289,10 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToVhaRegionalOffice = (props) => (
     <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedReturnToCamo = (props) => (
+    <ReturnToCamo {...props.match.params} />
   );
 
   routedCreateMailTask = (props) => (
@@ -842,6 +847,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value
                 }`}
               render={this.routedAssignToVhaRegionalOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RETURN_TO_CAMO.value
+                }`}
+              render={this.routedReturnToCamo}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
