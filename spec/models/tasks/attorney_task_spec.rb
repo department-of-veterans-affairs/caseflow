@@ -154,13 +154,13 @@ describe AttorneyTask, :all_dbs do
 
       context "and the task is assigned to self" do
         let(:attorney) { assigning_judge }
-        
+
         it "includes most attorney and movement actions" do
           expected_actions = [
             Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
             Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
             Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h,
-            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
           ]
 
           expect(subject).to eq(expected_actions)
