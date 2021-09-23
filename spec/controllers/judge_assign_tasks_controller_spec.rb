@@ -140,7 +140,8 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
 
     context "when an appeal has more than one open active task of the same type" do
       it "reports the error as non-actionable to Sentry" do
-        expect(Raven).to receive(:capture_exception).with(anything, extra: { error_uuid: anything, actionable: false })
+        expect(Raven).to receive(:capture_exception).with(anything, extra: { application: "queue", error_uuid: anything,
+                                                                             actionable: false })
         subject
       end
     end
