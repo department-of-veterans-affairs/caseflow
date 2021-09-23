@@ -245,7 +245,7 @@ describe ColocatedTask, :all_dbs do
         let(:colocated_subclass) { TranslationColocatedTask }
         it "should update location to the assigner in vacols" do
           # Why is this returning nil?
-          #expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          # expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
@@ -255,7 +255,7 @@ describe ColocatedTask, :all_dbs do
         let(:colocated_subclass) { ScheduleHearingColocatedTask }
         it "should create a schedule hearing task" do
           # similarly, this is also nil:
-          #expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          # expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(appeal_1.root_task.children.empty?)
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
@@ -285,7 +285,6 @@ describe ColocatedTask, :all_dbs do
     end
 
     context "when status is updated after individual assignment" do
-
       before do
         org_colocated_task.update!(assigned_to: attorney_2)
       end
