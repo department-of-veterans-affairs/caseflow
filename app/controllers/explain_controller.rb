@@ -12,6 +12,8 @@ class ExplainController < ApplicationController
   def show
     return render_access_error unless access_allowed?
 
+    no_cache
+
     begin
       # https://chodounsky.com/2015/01/26/respond-to-different-formats-in-rails-controller/
       respond_to do |format|

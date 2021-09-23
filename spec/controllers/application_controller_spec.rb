@@ -36,12 +36,28 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    it "sets Cache-Control etc" do
-      get :index
+    context "when toggle not set" do
+      it "does not set Cache-Control" do
+        get :index
 
-      expect(response.headers["Cache-Control"]).to eq "no-cache, no-store"
-      expect(response.headers["Pragma"]).to eq "no-cache"
-      expect(response.headers["Expires"]).to eq "Fri, 01 Jan 1990 00:00:00 GMT"
+        expect(response.headers["Cache-Control"]).to be_nil
+      end
+    end
+
+    context "when toggle set" do
+      before do
+        FeatureToggle.enable!(:set_no_cache_headers)
+      end
+
+      after do
+        FeatureToggle.disable!(:set_no_cache_headers)
+      end
+
+      it "sets Cache-Control etc" do
+        get :index
+
+        expect(response.headers["Cache-Control"]).to eq "no-cache, no-store"
+      end
     end
   end
 end

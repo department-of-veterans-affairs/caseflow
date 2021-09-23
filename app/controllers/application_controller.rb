@@ -10,7 +10,7 @@ class ApplicationController < ApplicationBaseController
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized, :feedback]
-  before_action :no_cache
+  before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -177,6 +177,10 @@ class ApplicationController < ApplicationBaseController
     "&nbsp &gt &nbsp".html_safe + title
   end
   helper_method :certification_header
+
+  def set_no_cache_headers
+    no_cache if FeatureToggle.enabled?(:set_no_cache_headers, user: current_user)
+  end
 
   # https://stackoverflow.com/a/748646
   def no_cache

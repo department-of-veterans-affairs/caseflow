@@ -6,6 +6,8 @@ class TaskTreeController < ApplicationController
 
     return render_access_error unless BGSService.new.can_access?(appeal.veteran_file_number)
 
+    no_cache
+
     respond_to do |format|
       format.html { render layout: "plain_application" }
       format.text { render plain: appeal.structure_render(*Task.column_names) }
