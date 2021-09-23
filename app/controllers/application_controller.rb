@@ -14,6 +14,7 @@ class ApplicationController < ApplicationBaseController
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
+    # The `actionable` attribute will be shown as part of the Slack message from Sentry
     Raven.capture_exception(e, extra: { error_uuid: error_uuid, actionable: e.try(:actionable) })
     render(e.serialize_response)
   end
