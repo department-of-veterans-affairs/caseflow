@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { css } from 'glamor';
@@ -15,7 +15,8 @@ import {
   resetSuccessMessages,
   setSelectedAssignee,
   setSelectedAssigneeSecondary,
-  resetAssignees
+  resetAssignees,
+  fetchUserInfo
 } from '../uiReducer/uiActions';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TextareaField from 'app/components/TextareaField';
@@ -179,10 +180,11 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   render = () => {
     const {
+      attorneys,
       attorneysOfJudge,
+      currentUser,
       selectedAssignee,
       selectedAssigneeSecondary,
-      attorneys,
       selectedTasks,
       savePending,
       highlightFormItems,
@@ -192,8 +194,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
-    const options = attorneysOfJudge.map(optionFromAttorney).concat([{ label: COPY.ASSIGN_WIDGET_OTHER,
-      value: OTHER }]);
+    const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
+    const judgeOpt = currentUser ? { label: currentUser.fullName, value: currentUser.id } : null;
+    const options = [...attorneysOfJudge.map(optionFromAttorney), ...(judgeOpt ? [judgeOpt] : []), otherOpt];
     const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
@@ -272,6 +275,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 AssignToAttorneyWidget.propTypes = {
   previousAssigneeId: PropTypes.string,
   userId: PropTypes.number,
+  currentUser: PropTypes.shape({
+    id: PropTypes.number,
+    fullName: PropTypes.string,
+  }),
   setSavePending: PropTypes.func,
   onTaskAssignment: PropTypes.func,
   resetSaveState: PropTypes.func,
@@ -301,13 +308,19 @@ AssignToAttorneyWidget.propTypes = {
 const AssignToAttorneyWidgetContainer = (props) => {
   const dispatch = useDispatch();
   const { attorneysOfJudge, attorneys } = useSelector((state) => state.queue);
-  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems } = useSelector((state) => state.ui);
+  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems, loadedUserId: userId } = useSelector((state) => state.ui);
   const { savePending } = useSelector((state) => state.ui.saveState);
+  const currentUser = useSelector((state) => state.ui.userInfo);
+
+  useEffect(() => {
+    dispatch(fetchUserInfo(userId));
+  }, []);
 
   return (
     <AssignToAttorneyWidget
       attorneys={attorneys}
       attorneysOfJudge={attorneysOfJudge}
+      currentUser={currentUser}
       selectedAssignee={selectedAssignee}
       selectedAssigneeSecondary={selectedAssigneeSecondary}
       highlightFormItems={highlightFormItems}
