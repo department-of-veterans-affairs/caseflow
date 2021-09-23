@@ -108,14 +108,22 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     return this.assignTasks(selectedTasks, this.getAssignee(selectedAssignee));
   }
 
-  getAssignee = (id) => {
-    const { attorneysOfJudge, attorneys, selectedTasks } = this.props;
-    let assignee = (attorneysOfJudge.concat(attorneys.data)).find((attorney) => attorney?.id?.toString() === id);
+  getAssignee = (userId) => {
+    const { attorneysOfJudge, attorneys, currentUser, selectedTasks } = this.props;
+
+    // Assignee could be the current user
+    const judgeOpt = { id: currentUser.id, full_name: currentUser.fullName };
+    const assigneeOpts = [...attorneysOfJudge, judgeOpt, ...attorneys.data];
+
+    let assignee = assigneeOpts.find((user) => user?.id?.toString() === userId.toString());
 
     if (!assignee) {
       // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
       // the tasks.
-      const option = taskActionData({ ...this.props, task: selectedTasks[0] })?.options.find((opt) => opt.value === id);
+      const option = taskActionData({
+        ...this.props,
+        task: selectedTasks[0],
+      })?.options.find((opt) => opt.value === userId);
 
       assignee = { id: option.value, full_name: option.label };
     }
