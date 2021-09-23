@@ -17,11 +17,10 @@
         {{ $linkLabel := (.Name | default .Title | default .Identifier | default .URL) }}
         {{ if .HasChildren }}
           {{ $inputId := print "input-" $sectionId }}
-          {{ $collapsible := $pageViaMenu.Params.menu.navmenu.collapsible }}
           {{ $active := ($currentPage.IsMenuCurrent "navmenu" .) }}
           <!-- hasactive is false if it is active -->
           {{ $hasactive := cond $active false ($currentPage.HasMenuCurrent "navmenu" .) }}
-          {{ if $collapsible }}
+          {{ if $pageViaMenu.Params.menu.navmenu.collapsible }}
             <input type="checkbox" id="{{ $inputId }}" class="toggle" {{ if or $active $hasactive }} checked{{ end }} />
           {{ end }}
           <label for="{{ $inputId }}" class="flex justify-between {{ if $hasactive }}hasactive{{ end }} {{ if $active }}active{{ end }}">

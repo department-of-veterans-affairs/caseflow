@@ -46,6 +46,7 @@ run:
 move_make_docs_files:
 	@echo "::group::Moving files to task_trees subsite"
 	[ -d __task_trees/content/schema/make_docs ] || mkdir __task_trees/content/schema/make_docs
+	ls -al schema/make_docs/
 	mv -vf schema/make_docs/caseflow-*{subclasses,erd}.{dot,png,svg} __task_trees/content/schema/make_docs
 	mv -vf schema/make_docs/etl-*{subclasses,erd}.{dot,png,svg} __task_trees/content/schema/make_docs
 	@echo "::endgroup::"
