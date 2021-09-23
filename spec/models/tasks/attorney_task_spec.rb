@@ -141,13 +141,30 @@ describe AttorneyTask, :all_dbs do
     context "when the current user is the assigning judge" do
       let(:user) { assigning_judge }
 
-      it "includes actions to cancel the task and reassign to another attorney" do
-        expected_actions = [
-          Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-          Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-        ]
+      context "when assigned to attorney" do
+        it "includes actions to cancel the task and reassign to another attorney" do
+          expected_actions = [
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+            Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+          ]
+  
+          expect(subject).to eq(expected_actions)
+        end
+      end
 
-        expect(subject).to eq(expected_actions)
+      context "and the task is assigned to self" do
+        let(:attorney) { assigning_judge }
+        
+        it "includes most attorney and movement actions" do
+          expected_actions = [
+            Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
+            Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+            Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h,
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+          ]
+
+          expect(subject).to eq(expected_actions)
+        end
       end
     end
 

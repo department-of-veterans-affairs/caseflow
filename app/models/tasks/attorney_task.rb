@@ -19,21 +19,28 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
   def available_actions(user)
-    if can_be_moved_by_user?(user)
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-        Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-      ]
-    end
-
-    return [] if assigned_to != user
-
-    [
+    atty_actions = [
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
+
+    movement_actions = [
+      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+    ]
+
+    if self_assigned?(user)
+      # VLJ w/ self-assigned task can do most things (return to judge doesn't make sense)
+      (atty_actions + [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]).uniq
+    elsif can_be_moved_by_user?(user) && !self_assigned?(user)
+      movement_actions
+    else
+      return [] if assigned_to != user
+
+      atty_actions
+    end
   end
 
   def timeline_title
@@ -83,6 +90,13 @@ class AttorneyTask < Task
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
     parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
+  end
+
+  # VLJs can assign these to themselves
+  def self_assigned?(user)
+    return false unless parent.is_a?(JudgeTask)
+
+    assigned_to == user && assigned_by == user
   end
 
   def assigned_to_role_is_valid
