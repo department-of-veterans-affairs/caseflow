@@ -1150,7 +1150,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  fdescribe "#contested_claim?" do
+  describe "#contested_claim?" do
     subject { appeal.contested_claim? }
 
     let(:request_issues) do
@@ -1158,10 +1158,18 @@ describe Appeal, :all_dbs do
         create(:request_issue, benefit_type: "compensation", nonrating_issue_category: issue_category)
       ]
     end
-    let(:appeal) { create(:appeal), request_issues: request_issues }
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
 
-    context "when issue category falls under contested claim" do
-      let(:issue_category) { "Contested Claims - Apportionment" }
+    context "when issue category falls under contested claim and category contains string 'Contested Claim'" do
+      let(:issue_category) { "Contested Claims - Insurance" }
+
+      it "returns true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "when issue category falls under contested claim and category contains string 'Apportionment'" do
+      let(:issue_category) { "Apportionment" }
 
       it "returns true" do
         expect(subject).to be_truthy
