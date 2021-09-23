@@ -114,7 +114,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
         expect(new_docket_task).to be_active
         expect(persistent_task_copy).to be_active
         expect(new_docket_stream.tasks.find { |task| task.type == "FoiaTask" }).to be nil
-        expect(new_admin_action).to be_active
+        expect(new_admin_action).to be_nil
       end
     end
 
@@ -144,7 +144,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
         expect(persistent_task_copy).to be_active
         removed_task = old_docket_stream_tasks.find { |task| !selected_task_ids.include?(task.id.to_s) }
         expect(new_docket_stream.tasks.find { |task| task.type == removed_task.type }).to be nil
-        expect(new_admin_action).to be_active
+        expect(new_admin_action).to be_nil
       end
     end
 

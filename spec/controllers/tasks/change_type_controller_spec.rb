@@ -36,12 +36,23 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           )
         end
 
+        let!(:child_task) do
+          create(
+            :ama_colocated_task,
+            appeal: root_task.appeal,
+            parent_id: parent_task.id,
+            assigned_by: assigner,
+            assigned_to: user,
+            instructions: [old_instructions]
+          )
+        end
+
         it "should update successfully" do
           subject
 
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
-          expect(response_body.length).to eq 4
+          expect(response_body.length).to eq 2
           expect(response_body.first["id"]).not_to eq task.id.to_s
           expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
           expect(response_body.first["attributes"]["status"]).to eq task.status
@@ -51,19 +62,17 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
           expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
 
-          new_parent_id = Task.find(response_body.first["id"]).parent_id
-          new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
-          expect(new_parent["id"]).not_to eq parent_task.id.to_s
-          expect(new_parent["attributes"]["label"]).to eq new_task_type.label
-          expect(new_parent["attributes"]["status"]).to eq parent_task.status
-          expect(new_parent["attributes"]["instructions"]).to include old_instructions
-          expect(new_parent["attributes"]["instructions"]).to include new_instructions
-          expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
-          expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
-          expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
+          # The resultant task tree looks like
+          #                                          ┌──────────────────────────────────────────────────────────────────┐
+          # Appeal 1 (E 210922-1 Original) ───────── │ ID │ STATUS    │ ASGN_BY │ ASGN_TO   │ UPDATED_AT                │
+          # └── RootTask                             │ 1  │ on_hold   │         │ Bva       │ 2021-09-23 17:42:16 -0400 │
+          #     └── IhpColocatedTask                 │ 2  │ on_hold   │ CSS_ID2 │ Colocated │ 2021-09-23 17:42:16 -0400 │
+          #         ├── UnaccreditedRepColocatedTask │ 3  │ cancelled │ CSS_ID2 │ CSS_ID1   │ 2021-09-23 17:42:16 -0400 │
+          #         └── OtherColocatedTask           │ 4  │ assigned  │ CSS_ID2 │ Colocated │ 2021-09-23 17:42:16 -0400 │
+          #                                          └──────────────────────────────────────────────────────────────────┘
 
           expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-          expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
         end
 
         context "that needs reassigning" do
@@ -74,7 +83,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
-            expect(response_body.length).to eq 4
+            expect(response_body.length).to eq 3
             expect(response_body.first["id"]).not_to eq task.id.to_s
             expect(response_body.first["attributes"]["label"]).to eq FoiaTask.name.titlecase
             expect(response_body.first["attributes"]["status"]).to eq task.status

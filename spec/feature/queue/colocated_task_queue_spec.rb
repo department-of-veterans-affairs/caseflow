@@ -46,6 +46,8 @@ RSpec.feature "ColocatedTask", :all_dbs do
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Return case to attorney.
+      # maw: I think this whole test needs to be reworked.
+      # But, it should give greater confidence that this whole process works when done.
       find(".cf-select__control", text: "Select an action…").click
       find(
         "div",
