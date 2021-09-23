@@ -472,7 +472,7 @@ class TaskActionRepository
 
     def return_to_camo(task, _user)
       org = VhaCamo.singleton
-      task.update!(status: Constants.TASK_STATUSES.completed)
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
       task.parent.update!(status: Constants.TASK_STATUSES.in_progress)
 
       queue_url = org.url
