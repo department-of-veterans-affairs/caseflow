@@ -5,11 +5,6 @@ permalink: "index"
 
 # Contents
 
-## Workflow Diagrams
-- [Appeal workflow](workflows/appeal-workflow)
-- [Intake workflow](workflows/intake-workflow)
-- [Hearing workflow](workflows/hearing-workflow)
-
 ## Database
 * [Caseflow DB schema](schema/db_schema): with diagrams and relevant tables for each Caseflow product
 * [Table associations subsite](schema/html/) (created via [Jailer](https://github.com/Wisser/Jailer)): provides SQL joins clauses for basic and polymorphic associations
