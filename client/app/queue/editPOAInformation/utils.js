@@ -7,11 +7,16 @@ export const mapPOADataToApi = (_poa) => {
         address_line_2: _poa.addressLine2,
         address_line_3: _poa.addressLine3,
         party_type: _poa.partyType,
-        name: _poa.firstName,
+        name: _poa.partyType == 'organization' ? _poa.name : _poa.firstName,
+        middle_name: _poa.middleName,
+        last_name: _poa.lastName,
+        suffix: _poa.suffix,
         city: _poa.city,
         country: _poa.country,
         state: _poa.state,
-        zip: _poa.zip
+        zip: _poa.zip,
+        phone_number: _poa.phoneNumber,
+        email: _poa.email
       }
     }
   };
