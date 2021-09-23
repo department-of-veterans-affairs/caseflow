@@ -2,11 +2,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/workflows/appeal-workflow.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/certification.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/schema/schema_diagrams.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/intake.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/schema.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/workflows/intake-workflow.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/hearings.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/reader.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/workflows.html</loc>
+  </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/schema/caseflow_schema_csv.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/efolder_express.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/queue.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/schema/etl_schema_csv.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/alltasks.html</loc>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/data-model/dispatch.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/menu/footer.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/menu/header.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-DR/AbstractMotionToVacateTask_User.html</loc>
   </url><url>
@@ -864,8 +894,6 @@
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/roles/Regional_Office_User.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/roles/role-overview.html</loc>
-  </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/task_descr/AbstractMotionToVacateTask_User.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/task_descr/AddressChangeMailTask_Organization.html</loc>
@@ -1194,20 +1222,36 @@
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/task_descr/VeteranRecordRequest_Organization.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/tasks-overview.html</loc>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/alltasks.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/categories.html</loc>
   </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags/csv.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags/diagrams.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags/hearings.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags/intake.html</loc>
+  </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/intro.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs/caseflow/task_trees/intro/README.html</loc>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/menu.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs/caseflow/task_trees/schema.html</loc>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/categories/overview.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/roles/role-overview.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/intro/task_trees.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees/tasks-overview.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/trees.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs/caseflow/task_trees/</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs/caseflow/task_trees/tags/workflow.html</loc>
   </url>
 </urlset>

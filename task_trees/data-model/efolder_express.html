@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="eFolder Express #    eFolder Express tables diagram  Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran&rsquo;s files at once. It is the only Caseflow product that has a separate code repository and runs on separate servers.
+Records #  When mentioning a Veteran&rsquo;s files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="eFolder Express" />
+<meta property="og:description" content="eFolder Express #    eFolder Express tables diagram  Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran&rsquo;s files at once. It is the only Caseflow product that has a separate code repository and runs on separate servers.
+Records #  When mentioning a Veteran&rsquo;s files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/data-model/efolder_express.html" /><meta property="article:section" content="data-model" />
+
+
+
+<title>eFolder Express | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  checked />
+          
+          <label for="input-section-data-model" class="flex justify-between hasactive ">
+            <a href="/caseflow/task_trees/data-model.html" class="hasactive ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="active">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>eFolder Express</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#records">Records</a></li>
+    <li><a href="#manifests">Manifests</a></li>
+    <li><a href="#manifestsources">ManifestSources</a></li>
+    <li><a href="#filedownloads">FileDownloads</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="efolder-express">
+  eFolder Express
+  <small><a class="anchor-heading" href="#efolder-express" aria-labelledby="efolder-express">#</a></small>
+</h1>
+<ul>
+<li>
+
+<a href="https://dbdiagram.io/d/5ed6741c39d18f555300202a" target="_blank">eFolder Express tables diagram</a></li>
+</ul>
+<p>Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran&rsquo;s files at once. It is the only Caseflow product that has a separate 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow-efolder" target="_blank">code repository</a> and runs on separate servers.</p>
+<h2 id="records">
+  Records
+  <small><a class="anchor-heading" href="#records" aria-labelledby="records">#</a></small>
+</h2>
+<p>When mentioning a Veteran&rsquo;s files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files</p>
+<h2 id="manifests">
+  Manifests
+  <small><a class="anchor-heading" href="#manifests" aria-labelledby="manifests">#</a></small>
+</h2>
+<p>As mentioned above, the purpose of EE is to allow users to download all of a Veteran&rsquo;s files at once. The reasoning for this is to reduce the need for the user to select and download files individually. A <code>Manifest</code> represents the collection of all of a Veteran&rsquo;s files and consists of a <code>ManifestSource</code> for each file, pointing to its source.</p>
+<h2 id="manifestsources">
+  ManifestSources
+  <small><a class="anchor-heading" href="#manifestsources" aria-labelledby="manifestsources">#</a></small>
+</h2>
+<p>The sources for files made available for download in EE are 
+
+<a href="https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vbms" target="_blank">VBMS</a> and 
+
+<a href="https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/VA-API-services#vva" target="_blank">Virtual VA (VVA)</a>. A <code>ManifestSource</code> groups a set of <code>Records</code> to allow all of a Veteran&rsquo;s files to be downloaded at the same time.</p>
+<ul>
+<li><code>name</code>: Either &ldquo;VBMS&rdquo; or &ldquo;VVA&rdquo;</li>
+<li><code>status</code>: Stores whether a <code>Record</code> was successfully added to a <code>Manifest</code></li>
+</ul>
+<h2 id="filedownloads">
+  FileDownloads
+  <small><a class="anchor-heading" href="#filedownloads" aria-labelledby="filedownloads">#</a></small>
+</h2>
+<p>When a user searches for the Veteran they are looking for in EE, they are presented with a view of all files available for download. The FileDownloads table stores each time a user downloads all of a Veteran&rsquo;s files.</p>
+<h2 id="relationships">
+  Relationships
+  <small><a class="anchor-heading" href="#relationships" aria-labelledby="relationships">#</a></small>
+</h2>
+<p>In the diagram below you can see that every <code>FileDownload</code> will store a <code>manifest_id</code>, as well as every <code>ManifestSource</code>. This makes sense given the fact that a <code>Manifest</code> is a collection of <code>ManifestSources</code>, with each <code>ManifestSource</code> containing a <code>Record</code>. The files indirectly referenced by a <code>Manifest</code> can be downloaded as many times as needed.</p>
+<img src="https://user-images.githubusercontent.com/63597932/101203241-64137f80-3638-11eb-98b7-ebdc95a39533.png" width=800>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/data-model/efolder_express.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#records">Records</a></li>
+    <li><a href="#manifests">Manifests</a></li>
+    <li><a href="#manifestsources">ManifestSources</a></li>
+    <li><a href="#filedownloads">FileDownloads</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

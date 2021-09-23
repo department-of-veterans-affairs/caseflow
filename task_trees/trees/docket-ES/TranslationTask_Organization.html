@@ -4,23 +4,25 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="| All Tasks | evidence_submission Tasks |
-TranslationTask_Organization for evidence_submission #   TranslationTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR TranslationTask_Organization -- 298 -- TranslationTask_User DistributionTask_Organization -- 316 -- TranslationTask_Organization TranslationColocatedTask_Organization -- 21 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization RootTask_Organization -- 1 -- TranslationTask_Organization Parent Tasks:
-  DistributionTask_Organization : 316 times  TranslationColocatedTask_Organization : 21 times  PreRoutingTranslationColocatedTask_User : 3 times  RootTask_Organization : 1 times  Child Tasks:">
+TranslationTask_Organization for evidence_submission #   TranslationTask_Organization description
+Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR TranslationTask_Organization -- 298 -- TranslationTask_User DistributionTask_Organization -- 316 -- TranslationTask_Organization TranslationColocatedTask_Organization -- 21 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization RootTask_Organization -- 1 -- TranslationTask_Organization Parent Tasks:
+  DistributionTask_Organization: 316 times  TranslationColocatedTask_Organization: 21 times  PreRoutingTranslationColocatedTask_User: 3 times  RootTask_Organization: 1 times  Child Tasks:">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
 <meta property="og:description" content="| All Tasks | evidence_submission Tasks |
-TranslationTask_Organization for evidence_submission #   TranslationTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR TranslationTask_Organization -- 298 -- TranslationTask_User DistributionTask_Organization -- 316 -- TranslationTask_Organization TranslationColocatedTask_Organization -- 21 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization RootTask_Organization -- 1 -- TranslationTask_Organization Parent Tasks:
-  DistributionTask_Organization : 316 times  TranslationColocatedTask_Organization : 21 times  PreRoutingTranslationColocatedTask_User : 3 times  RootTask_Organization : 1 times  Child Tasks:" />
+TranslationTask_Organization for evidence_submission #   TranslationTask_Organization description
+Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR TranslationTask_Organization -- 298 -- TranslationTask_User DistributionTask_Organization -- 316 -- TranslationTask_Organization TranslationColocatedTask_Organization -- 21 -- TranslationTask_Organization PreRoutingTranslationColocatedTask_User -- 3 -- TranslationTask_Organization RootTask_Organization -- 1 -- TranslationTask_Organization Parent Tasks:
+  DistributionTask_Organization: 316 times  TranslationColocatedTask_Organization: 21 times  PreRoutingTranslationColocatedTask_User: 3 times  RootTask_Organization: 1 times  Child Tasks:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-ES/TranslationTask_Organization.html" /><meta property="article:section" content="trees" />
 
 
 
-<title>Translation Task Organization | Task Trees</title>
+<title>Translation Task Organization | Task Trees &amp; DB</title>
 <link rel="manifest" href="/caseflow/task_trees/manifest.json">
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.5424006a0504241dbd5466df21fd4e957842915c78f6f56e71ad6eabd33816ef.js" integrity="sha256-VCQAagUEJB29VGbfIf1OlXhCkVx49vVuca1uq9M4Fu8=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -36,7 +38,7 @@ https://github.com/alex-shpak/hugo-book
         
   <nav>
 <h2 class="book-brand">
-  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
   </a>
 </h2>
 
@@ -58,102 +60,232 @@ https://github.com/alex-shpak/hugo-book
 
 
 
+  
+<aside>
   <ul>
 <li><a href="/caseflow/">(Back to Caseflow)</a></li>
-<li>
-
-
-<a href="/caseflow/task_trees/intro/README.html">README</a>
-</li>
-<li>Schema CSVs
+</ul>
+<hr>
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
-</li>
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
-</li>
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
 </ul>
-</li>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  />
+          
+          <label for="input-section-data-model" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/data-model.html" class=" ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
-</li>
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
 <li>
-
-
-<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
-</li>
-<li>
-
 
 <a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
-
 <ul>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
 </ul>
 </li>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
 </ul>
 </li>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+<hr>
+<ul>
+<li>
 
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
 
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
 
 
 
@@ -229,25 +361,19 @@ https://github.com/alex-shpak/hugo-book
   <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
 <p>| 
 
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a> | 
 
-<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
- | 
-
-
-<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a>
- |</p>
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a> |</p>
 <h1 id="translationtask_organization-for-evidence_submission">
   TranslationTask_Organization for evidence_submission
-  <a class="anchor" href="#translationtask_organization-for-evidence_submission">#</a>
+  <small><a class="anchor-heading" href="#translationtask_organization-for-evidence_submission" aria-labelledby="translationtask_organization-for-evidence_submission">#</a></small>
 </h1>
 <p>
 
-
-<a href="/caseflow/task_trees/trees/task_descr/TranslationTask_Organization.html">TranslationTask_Organization description</a>
-</p>
+<a href="/caseflow/task_trees/trees/task_descr/TranslationTask_Organization.html">TranslationTask_Organization description</a></p>
 <h2 id="parent-and-child-tasks">
   Parent and Child Tasks
-  <a class="anchor" href="#parent-and-child-tasks">#</a>
+  <small><a class="anchor-heading" href="#parent-and-child-tasks" aria-labelledby="parent-and-child-tasks">#</a></small>
 </h2>
 <p>
 
@@ -278,36 +404,26 @@ RootTask_Organization -- 1 --> TranslationTask_Organization
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>
-: 316 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>: 316 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>
-: 21 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>: 21 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_User.html">PreRoutingTranslationColocatedTask_User</a>
-: 3 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_User.html">PreRoutingTranslationColocatedTask_User</a>: 3 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/RootTask_Organization.html">RootTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/RootTask_Organization.html">RootTask_Organization</a>: 1 times</li>
 </ul>
 <p><strong>Child Tasks:</strong></p>
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_User.html">TranslationTask_User</a>
-: 298 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_User.html">TranslationTask_User</a>: 298 times</li>
 </ul>
 <h2 id="tasks-created-before-and-after">
   Tasks Created Before and After
-  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+  <small><a class="anchor-heading" href="#tasks-created-before-and-after" aria-labelledby="tasks-created-before-and-after">#</a></small>
 </h2>
 <p>
 
@@ -339,112 +455,74 @@ DistributionTask_Organization -- 1 --> TranslationTask_Organization
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>
-: 315 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>: 315 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>
-: 21 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>: 21 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_User.html">PreRoutingTranslationColocatedTask_User</a>
-: 3 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/PreRoutingTranslationColocatedTask_User.html">PreRoutingTranslationColocatedTask_User</a>: 3 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>: 1 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>: 1 times</li>
 </ul>
 <p><strong>After:</strong></p>
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_User.html">TranslationTask_User</a>
-: 199 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationTask_User.html">TranslationTask_User</a>: 199 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>
-: 42 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a>: 42 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/InformalHearingPresentationTask_Organization.html">InformalHearingPresentationTask_Organization</a>
-: 31 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/InformalHearingPresentationTask_Organization.html">InformalHearingPresentationTask_Organization</a>: 31 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>
-: 8 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TimedHoldTask_User.html">TimedHoldTask_User</a>: 8 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a>
-: 7 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a>: 7 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_User.html">EvidenceSubmissionWindowTask_User</a>
-: 6 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_User.html">EvidenceSubmissionWindowTask_User</a>: 6 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a>
-: 3 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a>: 3 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
-: 3 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>: 3 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/SpecialCaseMovementTask_User.html">SpecialCaseMovementTask_User</a>
-: 2 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/SpecialCaseMovementTask_User.html">SpecialCaseMovementTask_User</a>: 2 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a>: 1 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TranslationColocatedTask_Organization.html">TranslationColocatedTask_Organization</a>: 1 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a>: 1 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a>: 1 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/DeathCertificateMailTask_Organization.html">DeathCertificateMailTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/DeathCertificateMailTask_Organization.html">DeathCertificateMailTask_Organization</a>: 1 times</li>
 </ul>
 <h2 id="task-creation-sequences">
   Task Creation Sequences
-  <a class="anchor" href="#task-creation-sequences">#</a>
+  <small><a class="anchor-heading" href="#task-creation-sequences" aria-labelledby="task-creation-sequences">#</a></small>
 </h2>
 <p>There are 342 total occurrences of TranslationTask_Organization among appeals in the evidence_submission docket.  This count includes multiple occurrences in a single appeal.</p>
 <p>The following subsections provide TCSs up to TranslationTask_Organization, sorted by frequency.</p>
 <h3 id="rtodtoeswtotto">
   RTO.DTO.ESWTO.TTO
-  <a class="anchor" href="#rtodtoeswtotto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtotto" aria-labelledby="rtodtoeswtotto">#</a></small>
 </h3>
 <p>250 (73%) occurrences (example appeal IDs: [59523, 144975, 153241, 56597, 154794])</p>
 <p>Task Tree for appeal with ID 59523
@@ -492,7 +570,7 @@ style 11.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtotvtodtoeswtotto">
   RTO.TVTO.DTO.ESWTO.TTO
-  <a class="anchor" href="#rtotvtodtoeswtotto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtotto" aria-labelledby="rtotvtodtoeswtotto">#</a></small>
 </h3>
 <p>52 (15%) occurrences (example appeal IDs: [57597, 69118, 3076, 157821, 11981])</p>
 <p>Task Tree for appeal with ID 57597
@@ -525,7 +603,7 @@ style 6.TranslationTask fill:#bcbd22
 </p>
 <h3 id="dtoeswtotto">
   DTO.ESWTO.TTO
-  <a class="anchor" href="#dtoeswtotto">#</a>
+  <small><a class="anchor-heading" href="#dtoeswtotto" aria-labelledby="dtoeswtotto">#</a></small>
 </h3>
 <p>11 (3%) occurrences (example appeal IDs: [19131, 14297, 29596, 132253, 159283])</p>
 <p>Task Tree for appeal with ID 19131
@@ -576,7 +654,7 @@ style 12.AttorneyTask fill:#ffb482
 </p>
 <h3 id="rtodtoeswtojatujdrtuatutctotto">
   RTO.DTO.ESWTO.JATU.JDRTU.ATU.TCTO.TTO
-  <a class="anchor" href="#rtodtoeswtojatujdrtuatutctotto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtojatujdrtuatutctotto" aria-labelledby="rtodtoeswtojatujdrtuatutctotto">#</a></small>
 </h3>
 <p>3 (1%) occurrences (example appeal IDs: [15211, 24883, 100914])</p>
 <p>Task Tree for appeal with ID 15211
@@ -624,7 +702,7 @@ style 11.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtotvtodtoeswtojatujdrtuatutctotto">
   RTO.TVTO.DTO.ESWTO.JATU.JDRTU.ATU.TCTO.TTO
-  <a class="anchor" href="#rtotvtodtoeswtojatujdrtuatutctotto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtojatujdrtuatutctotto" aria-labelledby="rtotvtodtoeswtojatujdrtuatutctotto">#</a></small>
 </h3>
 <p>3 (1%) occurrences (example appeal IDs: [13291, 36157, 17215])</p>
 <p>Task Tree for appeal with ID 13291
@@ -678,7 +756,7 @@ style 13.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtotvtotvtodtoeswtotto">
   RTO.TVTO.TVTO.DTO.ESWTO.TTO
-  <a class="anchor" href="#rtotvtotvtodtoeswtotto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtotvtodtoeswtotto" aria-labelledby="rtotvtotvtodtoeswtotto">#</a></small>
 </h3>
 <p>2 (1%) occurrences (example appeal IDs: [178422, 176362])</p>
 <p>Task Tree for appeal with ID 178422
@@ -708,7 +786,7 @@ style 5.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5,stroke:#00f,stroke-wi
 </p>
 <h3 id="rtotvtodtoeswtoihptoihptujatujdrtuatutctotto">
   RTO.TVTO.DTO.ESWTO.IHPTO.IHPTU.JATU.JDRTU.ATU.TCTO.TTO
-  <a class="anchor" href="#rtotvtodtoeswtoihptoihptujatujdrtuatutctotto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtoihptoihptujatujdrtuatutctotto" aria-labelledby="rtotvtodtoeswtoihptoihptujatujdrtuatutctotto">#</a></small>
 </h3>
 <p>2 (1%) occurrences (example appeal IDs: [167735, 15554])</p>
 <p>Task Tree for appeal with ID 167735
@@ -753,7 +831,7 @@ style 10.TranslationTask fill:#bcbd22,stroke-dasharray: 5 5,stroke:#00f,stroke-w
 </p>
 <h3 id="tto">
   TTO
-  <a class="anchor" href="#tto">#</a>
+  <small><a class="anchor-heading" href="#tto" aria-labelledby="tto">#</a></small>
 </h3>
 <p>1 (0%) occurrences (example appeal IDs: [155177])</p>
 <p>Task Tree for appeal with ID 155177
@@ -783,7 +861,7 @@ style 5.EvidenceOrArgumentMailTask fill:#ff9f9b,stroke-dasharray: 5 5
 </p>
 <h3 id="rtoprtctoprtctutto">
   RTO.PRTCTO.PRTCTU.TTO
-  <a class="anchor" href="#rtoprtctoprtctutto">#</a>
+  <small><a class="anchor-heading" href="#rtoprtctoprtctutto" aria-labelledby="rtoprtctoprtctutto">#</a></small>
 </h3>
 <p>1 (0%) occurrences (example appeal IDs: [806])</p>
 <p>Task Tree for appeal with ID 806
@@ -915,7 +993,7 @@ style 39.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtotvtotvtodtotto">
   RTO.TVTO.TVTO.DTO.TTO
-  <a class="anchor" href="#rtotvtotvtodtotto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtotvtodtotto" aria-labelledby="rtotvtotvtodtotto">#</a></small>
 </h3>
 <p>1 (0%) occurrences (example appeal IDs: [162908])</p>
 <p>Task Tree for appeal with ID 162908

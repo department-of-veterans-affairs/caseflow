@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Caseflow Hearings #    Caseflow Hearings  Hearing Request Type  Hearings tables diagram  Hearings #  Veterans have the option to have a hearing with a Veterans Law Judge (VLJ) as part of the appeals process. At these hearings, a VLJ meets with a veteran or representative to go over the case. It is not a defense but a chance for a Veteran to provide additional details.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Caseflow Hearings" />
+<meta property="og:description" content="Caseflow Hearings #    Caseflow Hearings  Hearing Request Type  Hearings tables diagram  Hearings #  Veterans have the option to have a hearing with a Veterans Law Judge (VLJ) as part of the appeals process. At these hearings, a VLJ meets with a veteran or representative to go over the case. It is not a defense but a chance for a Veteran to provide additional details." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/data-model/hearings.html" /><meta property="article:section" content="data-model" />
+
+
+
+<title>Caseflow Hearings | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  checked />
+          
+          <label for="input-section-data-model" class="flex justify-between hasactive ">
+            <a href="/caseflow/task_trees/data-model.html" class="hasactive ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="active">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Caseflow Hearings</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#hearings">Hearings</a></li>
+    <li><a href="#hearingdays">HearingDays</a></li>
+    <li><a href="#legacyhearings">LegacyHearings</a></li>
+    <li><a href="#task">Task</a></li>
+    <li><a href="#virtualhearings">VirtualHearings</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="caseflow-hearings">
+  Caseflow Hearings
+  <small><a class="anchor-heading" href="#caseflow-hearings" aria-labelledby="caseflow-hearings">#</a></small>
+</h1>
+<ul>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings" target="_blank">Caseflow Hearings</a></li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#hearing-request-type" target="_blank">Hearing Request Type</a></li>
+<li>
+
+<a href="https://dbdiagram.io/d/5f98b2073a78976d7b796fa2" target="_blank">Hearings tables diagram</a></li>
+</ul>
+<h2 id="hearings">
+  Hearings
+  <small><a class="anchor-heading" href="#hearings" aria-labelledby="hearings">#</a></small>
+</h2>
+<p>Veterans have the option to have a hearing with a Veterans Law Judge (VLJ) as part of the appeals process. At these hearings, a VLJ meets with a veteran or representative to go over the case. It is not a defense but a chance for a Veteran to provide additional details. After a hearing is conducted, the recordings are sent to the transcription office, and then entered into VBMS.</p>
+<p>There are four types of hearings:</p>
+<ul>
+<li>Central Hearing: An in-person hearing at BVA&rsquo;s central office (425 I st.)</li>
+<li>Video Hearing: A hearing over video conference conducted between a regional office or alternate hearing location and central office</li>
+<li>Virtual Hearing: a hearing over video conference conducted between any location (sometimes the representative&rsquo;s office) and central office</li>
+<li>Travel Board: An in person hearing where the VLJ travels to the regional office. These are not currently supported by Caseflow and are handled in VACOLS. If Caseflow serves Travel Board hearings it will be only through converting them to video or virtual hearings.</li>
+</ul>
+<h2 id="hearingdays">
+  HearingDays
+  <small><a class="anchor-heading" href="#hearingdays" aria-labelledby="hearingdays">#</a></small>
+</h2>
+<p>A <code>HearingDay</code> organizes <code>Hearings</code> and <code>LegacyHearings</code> by regional office and hearing room.</p>
+<ul>
+<li>A hearing day is assigned to one judge, although hearing coordinators have the ability to override the hearing day&rsquo;s judge on the 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/622210e52cff4b468385b2396bf4ca105546a04b/db/schema.rb#L628" target="_blank">Hearings table</a> or in 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/hearing_repository.rb#L177" target="_blank">VACOLS</a> by editing the 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#for-hearing-coordinators" target="_blank">hearing details</a>.</li>
+<li>Each room / HearingDay has a maximum number of hearings that can be held (slots) that are determined by the regional office&rsquo;s 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/622210e52cff4b468385b2396bf4ca105546a04b/app/models/hearing_day.rb#L27-L39" target="_blank">timezone</a>. If a hearing day&rsquo;s slots are filled, the coordinator will receive a warning when scheduling a Veteran (&ldquo;You are about to schedule this Veteran on a full docket. Please verify before scheduling&rdquo;) but will still be able to schedule if they so choose.</li>
+<li><code>request_type</code> : <code>R</code> for virtual, <code>V</code> for video, <code>C</code> for central</li>
+<li><code>regional_office</code>: If the <code>request_type</code> is <code>V</code>, then the <code>HearingDay</code> will be associated to a regional office</li>
+<li><code>judge_id</code></li>
+<li><code>scheduled_for</code></li>
+</ul>
+<h2 id="legacyhearings">
+  LegacyHearings
+  <small><a class="anchor-heading" href="#legacyhearings" aria-labelledby="legacyhearings">#</a></small>
+</h2>
+<p>Legacy Hearings are hearings for cases that originated inside of VACOLS.  On a judge&rsquo;s Hearing Worksheet, they can edit Legacy hearing issues directly on the workbook page (for AMA cases, they would need to go to the Case Details page).</p>
+<h2 id="task">
+  Task
+  <small><a class="anchor-heading" href="#task" aria-labelledby="task">#</a></small>
+</h2>
+<p>All appeals on the hearing docket have a series of tasks that can be divided into five groups.  Here is a brief summary of what those are, full description can be found 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#hearings-task-model" target="_blank">here</a>.</p>
+<ul>
+<li>Initial tasks - these include creating a <code>HearingTask</code> with a child <code>ScheduleHearingTask</code>. For AMA cases, the initial hearing tasks are created as a children of the <code>DistributionTask</code> after intake. For Legacy cases, a geomatching job finds all appeals in VACOLS that are ready to be scheduled and creates a hearing task tree as a child of the <code>RootTask</code>.</li>
+<li>Schedule Veteran tasks - schedule hearing tasks are shown on the assign hearings page (see this 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#hearings-pages-overview" target="_blank">page</a>. A coordinator can block scheduling by adding a <code>HearingAdminActionTask</code> and can also withdraw the hearing.  After scheduling, a <code>AssignHearingDispositionTask</code> and a new hearing is created and that hearing is associated to the <code>HearingTask</code> with an <code>HearingTaskAssociation</code>.</li>
+<li>Assign a Disposition - Postponing cancels the current hearing task and recreates the initial hearing task tree. If a coordinator or judge changes the hearing&rsquo;s disposition on the daily docket, the <code>HearingDispositionChangeJob</code> finds all appeals with hearings in the last 24 hours and creates a <code>AssignHearingDispositionTask</code> and completes the task based on the disposition.  No-show hearings are given a <code>NoShowHearingTask</code>.</li>
+<li>Transcription/Evidence submission - After a disposition is assigned, AMA appeals must complete a <code>TranscriptionTask</code> and an <code>EvidenceSubmissionWindowTask</code>. The evidence task gives the Veteran an additional 90 days to submit evidence before the case is distributed.</li>
+<li>Case Distribution - When all other hearing tasks are completed, a case is ready for distribution to judge because its <code>DistributionTask</code> is moved from on_hold to assigned (AMA cases) or the case is in case storage location 81 (legacy cases). See also 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Automatic-Case-Distribution" target="_blank">automatic case distribution</a>.</li>
+</ul>
+<h2 id="virtualhearings">
+  VirtualHearings
+  <small><a class="anchor-heading" href="#virtualhearings" aria-labelledby="virtualhearings">#</a></small>
+</h2>
+<p>Once a virtual hearing is scheduled, the associated record in <code>hearing_days</code> is not changed because a record in the <code>hearing_days</code> table represents the whole day. In other words, many hearing types are associated with that <code>hearing_days</code> record, so <code>hearing_days.request_type</code> should not be changed. This is an artifact of how the virtual hearings feature was introduced into Caseflow, i.e., as a conversion of video hearings into virtual hearings.</p>
+<p>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/issues/14067#issuecomment-620792309" target="_blank"><code>virtual_hearings</code>, <code>virtual_hearing_establishments</code>, and <code>sent_hearing_email_events</code> table descriptions</a></p>
+<h2 id="relationships">
+  Relationships
+  <small><a class="anchor-heading" href="#relationships" aria-labelledby="relationships">#</a></small>
+</h2>
+<p>In the diagram below you can see the following relationships between various hearing-related tables:</p>
+<ul>
+<li>The <code>hearings</code> and <code>legacy_hearings</code> table&rsquo;s <code>id</code> corresponds with the <code>hearings_tasks_assocations</code> and <code>virtual_hearings</code> table&rsquo;s <code>hearing_id</code>.</li>
+<li>The <code>hearings</code> and <code>legacy_hearings</code> table&rsquo;s <code>hearing_day_id</code> corresponds with the <code>hearing_days</code> table&rsquo;s <code>id</code>.</li>
+<li>The <code>hearings_tasks_assocations</code> table&rsquo;s hearing_task_id corresponds with the <code>tasks</code> table&rsquo;s <code>id</code>.</li>
+</ul>
+<img src="https://user-images.githubusercontent.com/63597932/105734269-760af380-5f00-11eb-8766-cc8fea5ba437.png">
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/data-model/hearings.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#hearings">Hearings</a></li>
+    <li><a href="#hearingdays">HearingDays</a></li>
+    <li><a href="#legacyhearings">LegacyHearings</a></li>
+    <li><a href="#task">Task</a></li>
+    <li><a href="#virtualhearings">VirtualHearings</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

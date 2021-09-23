@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Caseflow Certification #    Certification tables diagram  Certifications #  Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between VBMS and VACOLS. Caseflow Certification is also responsible for verifying the veteran&rsquo;s representation and hearings request are accurate and ready to be sent to the Board.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Caseflow Certification" />
+<meta property="og:description" content="Caseflow Certification #    Certification tables diagram  Certifications #  Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between VBMS and VACOLS. Caseflow Certification is also responsible for verifying the veteran&rsquo;s representation and hearings request are accurate and ready to be sent to the Board." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/data-model/certification.html" /><meta property="article:section" content="data-model" />
+
+
+
+<title>Caseflow Certification | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  checked />
+          
+          <label for="input-section-data-model" class="flex justify-between hasactive ">
+            <a href="/caseflow/task_trees/data-model.html" class="hasactive ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="active">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Caseflow Certification</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#form8s">Form8s</a></li>
+    <li><a href="#legacyappeals">LegacyAppeals</a></li>
+    <li><a href="#certificationcancellations">CertificationCancellations</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="caseflow-certification">
+  Caseflow Certification
+  <small><a class="anchor-heading" href="#caseflow-certification" aria-labelledby="caseflow-certification">#</a></small>
+</h1>
+<ul>
+<li>
+
+<a href="https://dbdiagram.io/d/5fc6a0143a78976d7b7e2059" target="_blank">Certification tables diagram</a></li>
+</ul>
+<h2 id="certifications">
+  Certifications
+  <small><a class="anchor-heading" href="#certifications" aria-labelledby="certifications">#</a></small>
+</h2>
+<p>Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why" target="_blank">VBMS</a> and 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/VACOLS-DB-Schema" target="_blank">VACOLS</a>. Caseflow Certification is also responsible for verifying the veteran&rsquo;s representation and hearings request are accurate and ready to be sent to the Board.</p>
+<ul>
+<li><code>poa_correct_in_bgs</code></li>
+<li><code>poa_correct_in_vbms</code></li>
+<li><code>nod_matching</code></li>
+<li><code>soc_matching</code></li>
+<li><code>already_certified</code></li>
+</ul>
+<h2 id="form8s">
+  Form8s
+  <small><a class="anchor-heading" href="#form8s" aria-labelledby="form8s">#</a></small>
+</h2>
+<p>Once an Appeal has been certified, the information on a Form8 form will be sent to the Board and the representation and hearing information will be updated in VACOLS accordingly.</p>
+<ul>
+<li><code>hearing_requested</code></li>
+<li><code>hearing_held</code>: <code>nil</code> if <code>hearing_requested</code> set to <code>No</code></li>
+<li><code>certification_date</code></li>
+<li><code>soc_date</code></li>
+<li><code>power_of_attorney</code> information pulled from 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Data%3A-where-and-why" target="_blank">BGS</a></li>
+</ul>
+<h2 id="legacyappeals">
+  LegacyAppeals
+  <small><a class="anchor-heading" href="#legacyappeals" aria-labelledby="legacyappeals">#</a></small>
+</h2>
+<p>The 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model#legacyappeal" target="_blank">LegacyAppeals</a> table stores records of non-AMA appeals, appeals which originated in VACOLS, that are worked by Caseflow.</p>
+<ul>
+<li><code>changed_request_type</code> is either the value of <code>R</code> representing a virtual hearing or <code>V</code> representing a video hearing. Those are the only two options when updating a hearing request</li>
+<li><code>vbms_id</code> is either the Veteran&rsquo;s file number + &ldquo;C&rdquo; or the Veteran&rsquo;s SSN + &ldquo;S&rdquo;</li>
+</ul>
+<h2 id="certificationcancellations">
+  CertificationCancellations
+  <small><a class="anchor-heading" href="#certificationcancellations" aria-labelledby="certificationcancellations">#</a></small>
+</h2>
+<p>The CertificationCancellations table stores instances of cancelled certifications.</p>
+<ul>
+<li><code>cancellation_reason</code> can be one of the following:
+<ul>
+<li><code>VBMS and VACOLS dates didn't match and couldn't be changed</code></li>
+<li><code>Missing document could not be found</code></li>
+<li><code>Pending FOIA request</code></li>
+<li><code>Other</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="relationships">
+  Relationships
+  <small><a class="anchor-heading" href="#relationships" aria-labelledby="relationships">#</a></small>
+</h2>
+<p>In the diagram below you will see the <code>certifications</code> table&rsquo;s <code>id</code> is stored on the <code>certification_cancellations</code> table as well as the <code>form8s</code> table.</p>
+<p>The <code>form8s</code> table connects with the <code>certifications</code> table through the <code>certification_date</code>, <code>representative_name</code>, <code>representative_type</code>, and <code>vacols_id</code>, which also connects it with the <code>legacy_appeals</code> table. It is connected with a Veteran by storing the <code>veteran_file_number</code>.</p>
+<img src="https://user-images.githubusercontent.com/63597932/116123748-6468f180-a691-11eb-86bd-9dc6012f7be9.png">
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/data-model/certification.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#form8s">Form8s</a></li>
+    <li><a href="#legacyappeals">LegacyAppeals</a></li>
+    <li><a href="#certificationcancellations">CertificationCancellations</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

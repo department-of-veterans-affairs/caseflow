@@ -4,25 +4,27 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="| All Tasks | evidence_submission Tasks |
-ScheduleHearingTask_Organization for evidence_submission #   ScheduleHearingTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization Parent Tasks:
-  HearingTask_Organization : 10 times  Child Tasks:
+ScheduleHearingTask_Organization for evidence_submission #   ScheduleHearingTask_Organization description
+Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization Parent Tasks:
+  HearingTask_Organization: 10 times  Child Tasks:
  (No child tasks)  Tasks Created Before and After #   flowchart LR ScheduleHearingTask_Organization -- 2 -- TrackVeteranTask_Organization ScheduleHearingTask_Organization -- 2 -- DistributionTask_Organization ScheduleHearingTask_Organization -- 2 -- AssignHearingDispositionTask_Organization ScheduleHearingTask_Organization -- 1 -- ScheduleHearingColocatedTask_Organization HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization ScheduleHearingColocatedTask_Organization -- 3 -- ScheduleHearingTask_Organization DistributionTask_Organization -- 1 -- ScheduleHearingTask_Organization Before:">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
 <meta property="og:description" content="| All Tasks | evidence_submission Tasks |
-ScheduleHearingTask_Organization for evidence_submission #   ScheduleHearingTask_Organization description Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization Parent Tasks:
-  HearingTask_Organization : 10 times  Child Tasks:
+ScheduleHearingTask_Organization for evidence_submission #   ScheduleHearingTask_Organization description
+Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) flowchart LR HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization Parent Tasks:
+  HearingTask_Organization: 10 times  Child Tasks:
  (No child tasks)  Tasks Created Before and After #   flowchart LR ScheduleHearingTask_Organization -- 2 -- TrackVeteranTask_Organization ScheduleHearingTask_Organization -- 2 -- DistributionTask_Organization ScheduleHearingTask_Organization -- 2 -- AssignHearingDispositionTask_Organization ScheduleHearingTask_Organization -- 1 -- ScheduleHearingColocatedTask_Organization HearingTask_Organization -- 10 -- ScheduleHearingTask_Organization ScheduleHearingColocatedTask_Organization -- 3 -- ScheduleHearingTask_Organization DistributionTask_Organization -- 1 -- ScheduleHearingTask_Organization Before:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/trees/docket-ES/ScheduleHearingTask_Organization.html" /><meta property="article:section" content="trees" />
 
 
 
-<title>Schedule Hearing Task Organization | Task Trees</title>
+<title>Schedule Hearing Task Organization | Task Trees &amp; DB</title>
 <link rel="manifest" href="/caseflow/task_trees/manifest.json">
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/caseflow/task_trees/book.min.bcb29a9107d217630a9cfdf51cb4df842df0bdfbf0c373231194c22d648e6ef7.css" integrity="sha256-vLKakQfSF2MKnP31HLTfhC3wvfvww3MjEZTCLWSObvc=" crossorigin="anonymous">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.5424006a0504241dbd5466df21fd4e957842915c78f6f56e71ad6eabd33816ef.js" integrity="sha256-VCQAagUEJB29VGbfIf1OlXhCkVx49vVuca1uq9M4Fu8=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -38,7 +40,7 @@ https://github.com/alex-shpak/hugo-book
         
   <nav>
 <h2 class="book-brand">
-  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees</span>
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
   </a>
 </h2>
 
@@ -60,102 +62,232 @@ https://github.com/alex-shpak/hugo-book
 
 
 
+  
+<aside>
   <ul>
 <li><a href="/caseflow/">(Back to Caseflow)</a></li>
-<li>
-
-
-<a href="/caseflow/task_trees/intro/README.html">README</a>
-</li>
-<li>Schema CSVs
+</ul>
+<hr>
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
-</li>
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
-</li>
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
 </ul>
-</li>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  />
+          
+          <label for="input-section-data-model" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/data-model.html" class=" ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a>
-</li>
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
 <li>
-
-
-<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a>
-</li>
-<li>
-
 
 <a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
-
 <ul>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
 </ul>
 </li>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
 </ul>
 </li>
 <li>
-
 
 <a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
-
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>
-</li>
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+<hr>
+<ul>
+<li>
 
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
 
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
 
 
 
@@ -231,25 +363,19 @@ https://github.com/alex-shpak/hugo-book
   <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
 <p>| 
 
+<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a> | 
 
-<a href="/caseflow/task_trees/trees/alltasks.html">All Tasks</a>
- | 
-
-
-<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a>
- |</p>
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">evidence_submission Tasks</a> |</p>
 <h1 id="schedulehearingtask_organization-for-evidence_submission">
   ScheduleHearingTask_Organization for evidence_submission
-  <a class="anchor" href="#schedulehearingtask_organization-for-evidence_submission">#</a>
+  <small><a class="anchor-heading" href="#schedulehearingtask_organization-for-evidence_submission" aria-labelledby="schedulehearingtask_organization-for-evidence_submission">#</a></small>
 </h1>
 <p>
 
-
-<a href="/caseflow/task_trees/trees/task_descr/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization description</a>
-</p>
+<a href="/caseflow/task_trees/trees/task_descr/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization description</a></p>
 <h2 id="parent-and-child-tasks">
   Parent and Child Tasks
-  <a class="anchor" href="#parent-and-child-tasks">#</a>
+  <small><a class="anchor-heading" href="#parent-and-child-tasks" aria-labelledby="parent-and-child-tasks">#</a></small>
 </h2>
 <p>
 
@@ -276,9 +402,7 @@ HearingTask_Organization -- 10 --> ScheduleHearingTask_Organization
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/HearingTask_Organization.html">HearingTask_Organization</a>
-: 10 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/HearingTask_Organization.html">HearingTask_Organization</a>: 10 times</li>
 </ul>
 <p><strong>Child Tasks:</strong></p>
 <ul>
@@ -286,7 +410,7 @@ HearingTask_Organization -- 10 --> ScheduleHearingTask_Organization
 </ul>
 <h2 id="tasks-created-before-and-after">
   Tasks Created Before and After
-  <a class="anchor" href="#tasks-created-before-and-after">#</a>
+  <small><a class="anchor-heading" href="#tasks-created-before-and-after" aria-labelledby="tasks-created-before-and-after">#</a></small>
 </h2>
 <p>
 
@@ -306,52 +430,38 @@ DistributionTask_Organization -- 1 --> ScheduleHearingTask_Organization
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/HearingTask_Organization.html">HearingTask_Organization</a>
-: 10 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/HearingTask_Organization.html">HearingTask_Organization</a>: 10 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>
-: 3 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>: 3 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>: 1 times</li>
 </ul>
 <p><strong>After:</strong></p>
 <ul>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>
-: 2 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a>: 2 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a>
-: 2 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a>: 2 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>
-: 2 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/DistributionTask_Organization.html">DistributionTask_Organization</a>: 2 times</li>
 <li>
 
-
-<a href="/caseflow/task_trees/trees/docket-ES/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>
-: 1 times</li>
+<a href="/caseflow/task_trees/trees/docket-ES/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a>: 1 times</li>
 </ul>
 <h2 id="task-creation-sequences">
   Task Creation Sequences
-  <a class="anchor" href="#task-creation-sequences">#</a>
+  <small><a class="anchor-heading" href="#task-creation-sequences" aria-labelledby="task-creation-sequences">#</a></small>
 </h2>
 <p>There are 14 total occurrences of ScheduleHearingTask_Organization among appeals in the evidence_submission docket.  This count includes multiple occurrences in a single appeal.</p>
 <p>The following subsections provide TCSs up to ScheduleHearingTask_Organization, sorted by frequency.</p>
 <h3 id="rtotvtodtoeswtoihptoihptujatushctodtohtoshto">
   RTO.TVTO.DTO.ESWTO.IHPTO.IHPTU.JATU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtotvtodtoeswtoihptoihptujatushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtoihptoihptujatushctodtohtoshto" aria-labelledby="rtotvtodtoeswtoihptoihptujatushctodtohtoshto">#</a></small>
 </h3>
 <p>3 (21%) occurrences (example appeal IDs: [11206, 17161, 56786])</p>
 <p>Task Tree for appeal with ID 11206
@@ -435,7 +545,7 @@ style 23.FoiaTask fill:#f7727c
 </p>
 <h3 id="rtodtoshto">
   RTO.DTO.SHTO
-  <a class="anchor" href="#rtodtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoshto" aria-labelledby="rtodtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [213])</p>
 <p>Task Tree for appeal with ID 213
@@ -483,7 +593,7 @@ style 11.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtodtoeswtojatushctodtohtoshto">
   RTO.DTO.ESWTO.JATU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtodtoeswtojatushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtojatushctodtohtoshto" aria-labelledby="rtodtoeswtojatushctodtohtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [138745])</p>
 <p>Task Tree for appeal with ID 138745
@@ -531,7 +641,7 @@ style 11.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5,stroke:#00f,stro
 </p>
 <h3 id="rtotvtodtoeswtojatushctodtohtoshto">
   RTO.TVTO.DTO.ESWTO.JATU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtotvtodtoeswtojatushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtojatushctodtohtoshto" aria-labelledby="rtotvtodtoeswtojatushctodtohtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [124456])</p>
 <p>Task Tree for appeal with ID 124456
@@ -594,7 +704,7 @@ style 16.HearingRelatedMailTask fill:#ff7f0e,stroke-dasharray: 5 5
 </p>
 <h3 id="rtodtoeswtotvtojatushctodtohtoshto">
   RTO.DTO.ESWTO.TVTO.JATU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtodtoeswtotvtojatushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtotvtojatushctodtohtoshto" aria-labelledby="rtodtoeswtotvtojatushctodtohtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [39278])</p>
 <p>Task Tree for appeal with ID 39278
@@ -639,7 +749,7 @@ style 10.ScheduleHearingTask fill:#ffd92f,stroke-dasharray: 5 5,stroke:#00f,stro
 </p>
 <h3 id="dtoeswtojatueoamtoeoamtoeoamtushctoshto">
   DTO.ESWTO.JATU.EOAMTO.EOAMTO.EOAMTU.SHCTO.SHTO
-  <a class="anchor" href="#dtoeswtojatueoamtoeoamtoeoamtushctoshto">#</a>
+  <small><a class="anchor-heading" href="#dtoeswtojatueoamtoeoamtoeoamtushctoshto" aria-labelledby="dtoeswtojatueoamtoeoamtoeoamtushctoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [55182])</p>
 <p>Task Tree for appeal with ID 55182
@@ -705,7 +815,7 @@ style 17.JudgeAssignTask fill:#b3b3b3
 </p>
 <h3 id="rtodtoeswtojatuhcctohcctuthtushctoshto">
   RTO.DTO.ESWTO.JATU.HCCTO.HCCTU.THTU.SHCTO.SHTO
-  <a class="anchor" href="#rtodtoeswtojatuhcctohcctuthtushctoshto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtojatuhcctohcctuthtushctoshto" aria-labelledby="rtodtoeswtojatuhcctohcctuthtushctoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [38176])</p>
 <p>Task Tree for appeal with ID 38176
@@ -804,7 +914,7 @@ style 28.TranscriptionTask fill:#cfcfcf,stroke-dasharray: 5 5
 </p>
 <h3 id="rtotvtodtoeswtoihptoihptujatushctoshto">
   RTO.TVTO.DTO.ESWTO.IHPTO.IHPTU.JATU.SHCTO.SHTO
-  <a class="anchor" href="#rtotvtodtoeswtoihptoihptujatushctoshto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtoihptoihptujatushctoshto" aria-labelledby="rtotvtodtoeswtoihptoihptujatushctoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [15081])</p>
 <p>Task Tree for appeal with ID 15081
@@ -912,7 +1022,7 @@ style 31.BvaDispatchTask fill:#e78ac3
 </p>
 <h3 id="rtodtoeswtoammtoammtoammtuammtoammtujatushctodtohtoshto">
   RTO.DTO.ESWTO.AMMTO.AMMTO.AMMTU.AMMTO.AMMTU.JATU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtodtoeswtoammtoammtoammtuammtoammtujatushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtodtoeswtoammtoammtoammtuammtoammtujatushctodtohtoshto" aria-labelledby="rtodtoeswtoammtoammtoammtuammtoammtujatushctodtohtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [97596])</p>
 <p>Task Tree for appeal with ID 97596
@@ -978,7 +1088,7 @@ style 17.AssignHearingDispositionTask fill:#debb9b,stroke-dasharray: 5 5
 </p>
 <h3 id="rtotvtodtoeswtojatuhcctohcctuthtuoctooctushctodtohtoshto">
   RTO.TVTO.DTO.ESWTO.JATU.HCCTO.HCCTU.THTU.OCTO.OCTU.SHCTO.DTO.HTO.SHTO
-  <a class="anchor" href="#rtotvtodtoeswtojatuhcctohcctuthtuoctooctushctodtohtoshto">#</a>
+  <small><a class="anchor-heading" href="#rtotvtodtoeswtojatuhcctohcctuthtuoctooctushctodtohtoshto" aria-labelledby="rtotvtodtoeswtojatuhcctohcctuthtuoctooctushctodtohtoshto">#</a></small>
 </h3>
 <p>1 (7%) occurrences (example appeal IDs: [111561])</p>
 <p>Task Tree for appeal with ID 111561

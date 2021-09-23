@@ -1,6 +1,6 @@
 {
-  "name": "Task Trees",
-  "short_name": "Task Trees",
+  "name": "Task Trees & DB",
+  "short_name": "Task Trees & DB",
   "start_url": "/caseflow/task_trees/",
   "scope": "/caseflow/task_trees/",
   "display": "standalone",

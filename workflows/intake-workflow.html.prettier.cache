@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Intake Workflow - Caseflow Docs</title>
+    <link
+      rel="shortcut icon"
+      href="/caseflow/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="/caseflow/assets/css/just-the-docs-default.css"
+    />
+    <script
+      type="text/javascript"
+      src="/caseflow/assets/js/vendor/lunr.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/caseflow/assets/js/just-the-docs.js"
+    ></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+    <title>Intake Workflow | Caseflow Docs</title>
+    <meta name="generator" content="Jekyll v3.9.0" />
+    <meta property="og:title" content="Intake Workflow" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Documentation for Caseflow" />
+    <meta property="og:description" content="Documentation for Caseflow" />
+    <link rel="canonical" href="/caseflow/workflows/intake-workflow.html" />
+    <meta
+      property="og:url"
+      content="/caseflow/workflows/intake-workflow.html"
+    />
+    <meta property="og:site_name" content="Caseflow Docs" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="Intake Workflow" />
+    <script type="application/ld+json">
+      {
+        "description": "Documentation for Caseflow",
+        "headline": "Intake Workflow",
+        "url": "/caseflow/workflows/intake-workflow.html",
+        "@type": "WebPage",
+        "@context": "https://schema.org"
+      }
+    </script>
+    <!-- End Jekyll SEO tag -->
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+      <symbol id="svg-link" viewbox="0 0 24 24">
+        <title>Link</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-link"
+        >
+          <path
+            d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+          ></path>
+          <path
+            d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+          ></path>
+        </svg>
+      </symbol>
+      <symbol id="svg-search" viewbox="0 0 24 24">
+        <title>Search</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-search"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </symbol>
+      <symbol id="svg-menu" viewbox="0 0 24 24">
+        <title>Menu</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </symbol>
+      <symbol id="svg-arrow-right" viewbox="0 0 24 24">
+        <title>Expand</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-chevron-right"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </symbol>
+      <symbol id="svg-doc" viewbox="0 0 24 24">
+        <title>Document</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-file"
+        >
+          <path
+            d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
+          ></path>
+          <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+      </symbol>
+    </svg>
+    <div class="side-bar">
+      <div class="site-header">
+        <a href="/caseflow/" class="site-title lh-tight"> Caseflow Docs </a>
+        <a href="#" id="menu-button" class="site-button">
+          <svg viewbox="0 0 24 24" class="icon">
+            <use xlink:href="#svg-menu"></use>
+          </svg>
+        </a>
+      </div>
+      <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
+        <ul class="nav-list">
+          <li class="nav-list-item">
+            <a href="/caseflow/index" class="nav-list-link">Contents</a>
+          </li>
+          <li class="nav-list-item">
+            <a href="/caseflow/README.html" class="nav-list-link">README</a>
+          </li>
+          <li class="nav-list-item active">
+            <a href="#" class="nav-list-expander"
+              ><svg viewbox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use></svg></a
+            ><a href="/caseflow/workflows/" class="nav-list-link">Workflows</a>
+            <ul class="nav-list">
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/workflows/appeal-workflow.html"
+                  class="nav-list-link"
+                  >Appeal Workflow</a
+                >
+              </li>
+              <li class="nav-list-item active">
+                <a
+                  href="/caseflow/workflows/intake-workflow.html"
+                  class="nav-list-link active"
+                  >Intake Workflow</a
+                >
+              </li>
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/workflows/hearing-workflow.html"
+                  class="nav-list-link"
+                  >Hearing Workflow</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="nav-list-item">
+            <a href="/caseflow/schema/db_schema.html" class="nav-list-link"
+              >DB Schema</a
+            >
+          </li>
+          <li class="nav-list-item">
+            <a href="#" class="nav-list-expander"
+              ><svg viewbox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use></svg></a
+            ><a href="/caseflow/caseflow-queues/" class="nav-list-link"
+              >Caseflow Queue</a
+            >
+            <ul class="nav-list">
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/caseflow-queues/automatic_case_distribution.html"
+                  class="nav-list-link"
+                  >Automatic Case Distribution</a
+                >
+              </li>
+              <li class="nav-list-item">
+                <a
+                  href="/caseflow/caseflow-queues/tasks.html"
+                  class="nav-list-link"
+                  >Tasks</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="nav-list-item">
+            <a href="#" class="nav-list-expander"
+              ><svg viewbox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use></svg></a
+            ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
+            <ul class="nav-list">
+              <li class="nav-list-item">
+                <a href="#" class="nav-list-expander"
+                  ><svg viewbox="0 0 24 24">
+                    <use xlink:href="#svg-arrow-right"></use></svg></a
+                ><a href="/caseflow/batteam/dispatch/" class="nav-list-link"
+                  >Caseflow Dispatch</a
+                >
+                <ul class="nav-list">
+                  <li class="nav-list-item">
+                    <a
+                      href="/caseflow/batteam/dispatch/dispatch_stuck.html"
+                      class="nav-list-link"
+                      >Dispatch claim being “stuck”</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <footer class="site-footer">
+        This site uses
+        <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>,
+        a documentation theme for Jekyll.
+      </footer>
+    </div>
+    <div class="main" id="top">
+      <div id="main-header" class="main-header">
+        <div class="search">
+          <div class="search-input-wrap">
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              tabindex="0"
+              placeholder="Search Caseflow Docs"
+              aria-label="Search Caseflow Docs"
+              autocomplete="off"
+            />
+            <label for="search-input" class="search-label"
+              ><svg viewbox="0 0 24 24" class="search-icon">
+                <use xlink:href="#svg-search"></use></svg
+            ></label>
+          </div>
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <nav aria-label="Auxiliary" class="aux-nav">
+          <ul class="aux-nav-list">
+            <li class="aux-nav-list-item">
+              <a
+                href="//github.com/department-of-veterans-affairs/caseflow"
+                class="site-button"
+              >
+                Caseflow on GitHub
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div id="main-content-wrap" class="main-content-wrap">
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+          <ol class="breadcrumb-nav-list">
+            <li class="breadcrumb-nav-list-item">
+              <a href="/caseflow/workflows/">Workflows</a>
+            </li>
+            <li class="breadcrumb-nav-list-item">
+              <span>Intake Workflow</span>
+            </li>
+          </ol>
+        </nav>
+        <div id="main-content" class="main-content" role="main">
+          <h1 id="intake-workflow">
+            <a
+              href="#intake-workflow"
+              class="anchor-heading"
+              aria-labelledby="intake-workflow"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Intake Workflow
+          </h1>
+          <p>
+            Intake creates data that can trace a claim through its initial
+            decision, through any requests to contest that decision or
+            subsequent decisions, all the way to the final decision(s).
+          </p>
+          <p>
+            It helps present data to veterans in the same way they already view
+            decision reviews, as an extension to their original claim.
+          </p>
+          <p>
+            <a
+              href="https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Intake/AMA%20ISSUES.pdf"
+              >Issues presentation</a
+            >
+          </p>
+          <h2 id="mail-intake">
+            <a
+              href="#mail-intake"
+              class="anchor-heading"
+              aria-labelledby="mail-intake"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Mail Intake
+          </h2>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbiUlLVxuY2xhaW0gLS0-IGNsYWltX2RlY2lzaW9uXG5jbGFpbV9kZWNpc2lvbiAtLT4gVltWZXRlcmFuXVxuJSUtXG5WIC0tPiB8Zm9ybXwgQnZhTWFpbFtCVkEgbWFpbCBpbnRha2VdXG5CdmFNYWlsIC0uLSBOT0RcbkJ2YU1haWwgLS4tIG1haWxQb3J0YWxbTWFpbCBQb3J0YWxdXG5tYWlsUG9ydGFsIC0tPiB8ZG9jdW1lbnRzfCB2Ym1zRUZvbGRlcltWQk1TIGVGb2xkZXJdXG4lJS1cbkJ2YU1haWwgLS0-IGRvY2tldHtkb2NrZXQ_fVxuQnZhTWFpbCAtLT4gVHJhbnNsYXRpb25UYXNrXG4lJS1cbkJ2YU1haWwgLS0-IHxjaGFuZ2UgUE9BfCBQb2FNYWlsVGFza1xuUG9hTWFpbFRhc2sgLS0-IG5ld1RyYWNrVmV0W25ldyBUcmFja1ZldGVyYW5UYXNrXVxuUG9hTWFpbFRhc2sgLS0-IHxpZiBuZWNlc3Nhcnl8IG5ld0lIUFtuZXcgSUhQVGFza11cbiUlLVxuQnZhTWFpbCAtLT4gQW9kTWFpbFRhc2tcbkFvZE1haWxUYXNrIC0uLSB8ZGVjaWRlZCBieXwgVkxKXG4lJS1cbmRvY2tldCAtLT4gfGlmIEh8IEhlYXJpbmdcbkhlYXJpbmcgLS4tIHxwcmVzaWRlZCBieXwgVkxKXG5IZWFyaW5nIC0tPiBBQ0RcbkFDRCAtLT4gRGVjaXNpb25cbiUlIERlY2lzaW9uIC0uLSBWTEpcbkRlY2lzaW9uIC0tPiBEaXNwYXRjaFxuJSUtXG5kb2NrZXQgLS0-IHxpZiBFU3wgRXZpZGVuY2VTdWJtaXNzaW9uV2luZG93VGFza1xuRXZpZGVuY2VTdWJtaXNzaW9uV2luZG93VGFzayAtLT4gQUNEXG4lJS1cbkJ2YU1haWwgLS0-IFRyYWNrVmV0ZXJhblRhc2tcblZTTyAtLi0gVHJhY2tWZXRlcmFuVGFza1xuVlNPIC0tPiB8aWYgSUhQLXdyaXRpbmcgVlNPfCBJSFBUYXNrIiwibWVybWFpZCI6bnVsbH0"
+            />
+          </p>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbnZhbGlkYXRlW1ZhbGlkYXRlIGZvcm1dXG52YWxpZGF0ZSAtLT4gYWRkX2lzc3Vlc1thZGQgaXNzdWVzIGZyb20gdmV0ZXJhbidzIGRlY2lzaW9uIHJldmlld11cbmFkZF9pc3N1ZXMgLS0-IHxtYXRjaCB0b3wgZGVjaXNpb25cbmFkZF9pc3N1ZXMgLS0-IHxzYW1lIGlzc3VlIGFzfCBsZWdhY3kiLCJtZXJtYWlkIjpudWxsfQ"
+            />
+          </p>
+          <h2 id="business-lines">
+            <a
+              href="#business-lines"
+              class="anchor-heading"
+              aria-labelledby="business-lines"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Business Lines
+          </h2>
+          <p>
+            Once Intake is done, there are 3 major flows for AMA decision
+            review:
+          </p>
+          <ol>
+            <li>
+              HLR &amp; SC (Compensation and Pension) - in VBMS
+              <ul>
+                <li>
+                  Request issues are represented as <em>contentions</em> on EPs
+                  in VBMS
+                </li>
+                <li>
+                  Request issues (in the same appeal) can map to contentions in
+                  different EPs.
+                </li>
+                <li>
+                  Once EP is cleared/completed, Caseflow loads the new rating
+                  issues (and dispositions) to create VA decision issues on AMA
+                  decision reviews.
+                </li>
+                <li>
+                  A decision issue maps to only one rating issue or nothing.
+                </li>
+              </ul>
+            </li>
+            <li>
+              HLR &amp; SC (other business lines) - in Caseflow
+              <ul>
+                <li>One queue for each non-VBMS business line.</li>
+                <li>
+                  No EPs or contentions. For each request issue, create a
+                  decision issue with the disposition.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Board Appeals - in Caseflow
+              <ul>
+                <li>Attorneys create decision issues, not raters.</li>
+                <li>
+                  Dispositions on decision issues get <em>outcoded</em> to
+                  contentions on a new(?) EP, and a new rating issue is created.
+                </li>
+                <li>
+                  The only purpose of the EP is to email the person of the
+                  decision.
+                </li>
+              </ul>
+            </li>
+          </ol>
+          <ul>
+            <li>
+              Only VBA Compensation and Pension business lines use ratings (and
+              VBMS).
+            </li>
+            <li>The 7 other business lines use nonrating request issues.</li>
+            <li>
+              Unidentified issues should be resolved before making decisions on
+              them. Otherwise, they will be considered ineligible.
+            </li>
+          </ul>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbmJpemxpbmVze2J1c2luZXNzIGxpbmVzfVxubWFpbFBvcnRhbFtNYWlsIFBvcnRhbF1cbm1haWxQb3J0YWwgLS0-IHxkb2N1bWVudHN8IHZibXNFRm9sZGVyW1ZCTVMgZUZvbGRlcl1cbmJpemxpbmVzIC0tPiB8Q29tcGVuc2F0aW9ufCBtYWlsUG9ydGFsXG5iaXpsaW5lcyAtLT4gfFBlbnNpb258IG1haWxQb3J0YWxcbmJpemxpbmVzIC0tPiB8c21hbGwgdm9sdW1lfCBtYW51YWxbTkNBLCBGaWR1Y2lhcnksIFZIQSwgTG9hbiBHdWFyYW50eSwgRXVkY2F0aW9uLCBJbnN1cmFuY2VdXG4lJS1cbmJpemxpbmVzIC0tPiB8cGVyZm9ybXN8IHJlY29yZF9yZXF1ZXN0XG5yZWNvcmRfcmVxdWVzdCAtLT4gfGRvY3VtZW50fCBiaXpsaW5lcyIsIm1lcm1haWQiOm51bGx9"
+            />
+          </p>
+          <h2 id="decision-review-lanes">
+            <a
+              href="#decision-review-lanes"
+              class="anchor-heading"
+              aria-labelledby="decision-review-lanes"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Decision Review Lanes
+          </h2>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbmRlY2lzaW9uX3Jldmlld19sYW5lcyAtLT4gU0NcbmRlY2lzaW9uX3Jldmlld19sYW5lcyAtLT4gSExSXG5kZWNpc2lvbl9yZXZpZXdfbGFuZXMgLS0-IEJvYXJkX0FwcGVhbFxuU0MgLS0-IHxkZWNpc2lvbiBzYXZlZHwgaXNzdWVfY29tcGxldGVcbkhMUiAtLT4gfGRlY2lzaW9uIHNhdmVkfCBpc3N1ZV9jb21wbGV0ZVxuJSUtXG5mb3JtIC0tPiB8c3BlY2lmaWVzfCBkZWNpc2lvbl9yZXZpZXdfbGFuZXNcbmZvcm0gLS0-IEludGFrZVtJbnRha2Ugd2l0aGluIDI0IGhyc11cbkludGFrZSAtLT4gaW50YWtlX2NvbXBsZXRlXG5JbnRha2UgLS0-IGludGFrZV9jYW5jZWxsZWQiLCJtZXJtYWlkIjpudWxsfQ"
+            />
+          </p>
+          <h2 id="caseflow-and-eps">
+            <a
+              href="#caseflow-and-eps"
+              class="anchor-heading"
+              aria-labelledby="caseflow-and-eps"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Caseflow and EPs
+          </h2>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbkVQIC0tPiB8aGFzfCByZXF1ZXN0X2lzc3VlXG5yZXF1ZXN0X2lzc3VlIC0tPiB8Y2FuIHJlc3VsdCBpbiBtYW55fCBkZWNpc2lvbl9pc3N1ZVxuZGVjaXNpb25faXNzdWUgLS0-IHxjYW4gc2F0aXNmeSBtYW55fCByZXF1ZXN0X2lzc3VlXG4lJS1cbkNhc2VmbG93IC0tPiB8Y3JlYXRlcyBpbiBWQk1TfCBFUFxuRVAgLS0-IHxoYXMgb25lIG9yIG1vcmV8IGNvbnRlbnRpb25cbmNvbnRlbnRpb24gLS0-IHxjb25uZWN0cyB0b3wgcmF0aW5nX2lzc3VlXG5DYXNlZmxvdyAtLT4gY2xvc2VfbGVnYWN5W2Nsb3NlIGxlZ2FjeSBhcHBlYWwgaXNzdWVzIG9yIGxlZ2FjeSBhcHBlYWxzXVxuJSUtXG5DYXNlZmxvdyAtLT4gfHBvbGxzIEVQcyBpbnwgVkJNU1xuVkJNUyAtLT4gRVBfc3RhdGV7RVAgc3RhdGU_fVxuRVBfc3RhdGUgLS0-IHxjYW5jZWxsZWR8IENhc2VmbG93X2Nsb3Nlc19pc3N1ZXNcbkVQX3N0YXRlIC0tPiB8Y2xlYXJlZCwgdGFrZXMgMjRocnMgZnJvbSBCR1N8IENhc2VmbG93X3N5bmNzXG5DYXNlZmxvd19zeW5jcyAtLT4gfHN5bmNzfCBjb250ZW50aW9uX2Rpc3Bvc2l0aW9uXG4lJS1cbnJhdGluZ19pc3N1ZSAtLT4gQ2FzZWZsb3dfc3luY19WQk1TX2RlY2lzaW9uX3Jldmlld1xuY29udGVudGlvbl9kaXNwb3NpdGlvbiAtLT4gQ2FzZWZsb3dfc3luY19WQk1TX2RlY2lzaW9uX3Jldmlld1xuQ2FzZWZsb3dfc3luY19WQk1TX2RlY2lzaW9uX3JldmlldyAtLT4gfGNyZWF0ZXN8IGRlY2lzaW9uX2lzc3VlXG4lJS1cbkNhc2VmbG93X3N5bmNfVkJNU19kZWNpc2lvbl9yZXZpZXcgLS0-IGR0YUVycm9ye0RUQSBlcnJvcj99XG5kdGFFcnJvciAtLT4gfHllc3wgYXV0b19jcmVhdGVfU0NcbmF1dG9fY3JlYXRlX1NDIC0tPiBTdXBwbGVtZW50YWxDbGFpbSIsIm1lcm1haWQiOm51bGx9"
+            />
+          </p>
+          <h2 id="after-dispatched">
+            <a
+              href="#after-dispatched"
+              class="anchor-heading"
+              aria-labelledby="after-dispatched"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            After Dispatched
+          </h2>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbmJvYXJkX2dyYW50cyAtLT4gfG5vdGlmaWVkIGR1cmluZyBvdXRjb2RlfCBiaXpsaW5lXG5iaXpsaW5lIC0tPiB8Y29uZmlybXMgaW4gQ2FzZWZsb3d8IGdyYW50X2VmZmVjdHVhdGlvblxuZ3JhbnRfZWZmZWN0dWF0aW9uIC0tPiBiaXpsaW5lVXNlc1ZCTVN7Yml6bGluZSB1c2VzIFZCTVM_fVxuYml6bGluZVVzZXNWQk1TIC0tPiB8eWVzfCBDYXNlZmxvd19jcmVhdGVzX2VmZmVjdHVhdGlvbl9FUFxuYml6bGluZVVzZXNWQk1TIC0tPiB8bm98IENhc2VmbG93X3VzZXNfdGFzayIsIm1lcm1haWQiOm51bGx9"
+            />
+          </p>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbiUlLVxuRGlzcGF0Y2ggLS0-IHxkaXNwYXRjaGVkfCBvdXRjb2RlXG5vdXRjb2RlIC0tPiBiaXpsaW5le2JpemxpbmU_fVxuJSUtXG5iaXpsaW5lIC0tPiB8VkJNU3wgRVBcbmJpemxpbmUgLS0-IHxWQk1TfCBTdXBwbGVtZW50YWxDbGFpbVxuYml6bGluZSAtLT4gfFZCTVN8IERlY2lzaW9uSXNzdWVcbiUlLVxuc3ViZ3JhcGggQ29tcGVuc2F0aW9uIGFuZCBQZW5zaW9uIGJpemxpbmUgd29ya2VkIGluIFZCTVNcbkVQXG5TdXBwbGVtZW50YWxDbGFpbVxuRGVjaXNpb25Jc3N1ZVxuZW5kXG4lJS1cbmJpemxpbmUgLS0-IHxOb24tY29tcGVuc2F0aW9ufCBOb25Db21wZW5fU3VwcGxlbWVudGFsQ2xhaW1cbnN1YmdyYXBoIE90aGVyIGJpemxpbmUgd29ya2VkIGluIENhc2VmbG93SW50YWtlXG5Ob25Db21wZW5fU3VwcGxlbWVudGFsQ2xhaW1cbmVuZCIsIm1lcm1haWQiOm51bGx9"
+            />
+          </p>
+          <h2 id="intake-models">
+            <a
+              href="#intake-models"
+              class="anchor-heading"
+              aria-labelledby="intake-models"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Intake Models
+          </h2>
+          <p>
+            <a
+              href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model"
+              >Intake Data Model</a
+            >
+          </p>
+          <ul>
+            <li>
+              Ratings and rating issues are stored in the VBA Corp DB.
+              <ul>
+                <li>Caseflow and VBMS both use BGS, which queries Corp DB.</li>
+              </ul>
+            </li>
+            <li>
+              Request issues can also match legacy issues in VACOLS.
+              <ul>
+                <li>
+                  Veteran can choose to close the VACOLS legacy issue with a
+                  disposition designating that it’s been opted into the AMA
+                  process.
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            <img
+              class="mermaid"
+              src="https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggVERcbiUlLVxuVmV0ZXJhbiAtLi0gUmF0aW5nXG5SYXRpbmcgLS4tIFJhdGluZ0lzc3VlXG5SZXF1ZXN0SXNzdWUgLS4tIENvbnRlbnRpb25cblJlcXVlc3RJc3N1ZSAtLi0gUmF0aW5nSXNzdWVcblJlcXVlc3RJc3N1ZSAtLi0gRW5kUHJvZHVjdEVzdGFibGlzaG1lbnRcblJlcXVlc3RJc3N1ZSAtLi0gRGVjaXNpb25Jc3N1ZVxuRGVjaXNpb25Jc3N1ZSAtLi0gRGVjaXNpb25SZXZpZXdcblZldGVyYW4gLS4tIEVuZFByb2R1Y3RcbkVuZFByb2R1Y3QgLS4tIEVuZFByb2R1Y3RFc3RhYmxpc2htZW50XG4lJS1cbkNsYWltUmV2aWV3IC0tPiB8aW5oZXJpdHN8IERlY2lzaW9uUmV2aWV3XG5TdXBwbGVtZW50YWxDbGFpbSAtLT4gfGluaGVyaXRzfCBDbGFpbVJldmlld1xuSGlnaGVyTGV2ZWxSZXZpZXcgLS0-IHxpbmhlcml0c3wgQ2xhaW1SZXZpZXdcbkFwcGVhbCAtLT4gfGluaGVyaXRzfCBEZWNpc2lvblJldmlld1xuJSUtXG5BcHBlYWwgLS0-IHxoYXMgbXVsdGlwbGV8IERlY2lzaW9uRG9jdW1lbnRcbkRlY2lzaW9uRG9jdW1lbnQgLS4tIEJvYXJkR3JhbnRFZmZlY3R1YXRpb24iLCJtZXJtYWlkIjpudWxsfQ"
+            />
+          </p>
+          <hr />
+          <footer>
+            <a href="#top" id="back-to-top">Back to top</a>
+            <div class="d-flex mt-2">
+              <p class="text-small text-grey-dk-000 mb-0">
+                <a
+                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/workflows/intake-workflow.md"
+                  id="edit-this-page"
+                  >Edit this page</a
+                >
+              </p>
+            </div>
+          </footer>
+        </div>
+      </div>
+      <div class="search-overlay"></div>
+    </div>
+  </body>
+</html>

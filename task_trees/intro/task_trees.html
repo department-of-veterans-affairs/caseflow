@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Data-Driven Documentation of Task Trees #  Purpose and uses #  The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
+This documentation is useful for the following:
+ General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Task Trees README" />
+<meta property="og:description" content="Data-Driven Documentation of Task Trees #  Purpose and uses #  The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
+This documentation is useful for the following:
+ General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/intro/task_trees.html" /><meta property="article:section" content="intro" />
+
+
+
+<title>Task Trees README | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  />
+          
+          <label for="input-section-data-model" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/data-model.html" class=" ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html"class=active>Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Task Trees README</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#data-driven-documentation-of-task-trees">Data-Driven Documentation of Task Trees</a>
+      <ul>
+        <li><a href="#purpose-and-uses">Purpose and uses</a></li>
+        <li><a href="#contents">Contents</a></li>
+        <li><a href="#task-page">Task Page</a></li>
+        <li><a href="#notes">Notes</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h2 id="data-driven-documentation-of-task-trees">
+  Data-Driven Documentation of Task Trees
+  <small><a class="anchor-heading" href="#data-driven-documentation-of-task-trees" aria-labelledby="data-driven-documentation-of-task-trees">#</a></small>
+</h2>
+<h3 id="purpose-and-uses">
+  Purpose and uses
+  <small><a class="anchor-heading" href="#purpose-and-uses" aria-labelledby="purpose-and-uses">#</a></small>
+</h3>
+<p>The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail.
+This documentation expands on the 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Tasks" target="_blank">Tasks wiki documentation</a> and validates the 
+
+<a href="https://docs.google.com/presentation/d/1Cc84GH7giWHTNxUe3zixH7O-QT77STlptYfud9X8P1Y" target="_blank">Explaining Caseflow Tasks slide deck</a> with up-to-date concrete examples.</p>
+<p>This documentation is useful for the following:</p>
+<ul>
+<li>General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy.</li>
+<li>Targeted training: Specific subsets of tasks or task trees can be copied to training material or referenced in GitHub issues to enhance understanding and/or provide further evidence.</li>
+<li>Data integrity: This documentation offers basic statistics to help identify common and unusual task trees, which can prompt proactive automated integrity checks or rules to prevent undesirable task trees (and hence future bugs).</li>
+<li>Bat Team problem diagnosis: A common step to diagnosing a problem is to inspect the subject task tree. This documentation offers existing task trees for comparison to assess if a similar task tree exists and with what frequency. With manually added descriptions of how specific task trees came to be and the reason for the presence of each task, this documentation can help identify the problem and a potential remedy (e.g., the subject task tree should be changed to look like existing task trees).</li>
+<li>Knowledge sharing: This documentation provides a comprehensive, updated view into the task tree structures of <em>all</em> existing appeals. The information is presented in an accessible manner with visualizations to be used by both technical and non-technical team members.</li>
+</ul>
+<p>It is expected that other uses of this documentation will arise as more domain information is manually added.</p>
+<p>When new task types are added or task tree structures change, this documentation can be readily regenerated to maintain up-to-date documentation.</p>
+<h3 id="contents">
+  Contents
+  <small><a class="anchor-heading" href="#contents" aria-labelledby="contents">#</a></small>
+</h3>
+<p>Actual task trees from AMA appeals were used to generate this documentation.</p>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">User Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">List of all task types</a> use in actual appeals</li>
+<li>To get an idea of typical task trees, check out the Frequent Parent-Child Relationships for each docket type: 
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:parent-child</a>, 
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a>, and 
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a>.</li>
+<li>To get an idea of when tasks are created, check out the Frequent Task Creation Sequences for each docket type: 
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a>, 
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a>, and 
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a>.</li>
+</ul>
+<p>AMA appeals are handled by BVA according to their assigned docket. Since there are different procedures associated with a particular docket, the resulting task tree structures are different. This documentation presents task trees according to the three docket types for the 
+
+<a href="https://www.bva.va.gov/docs/Decision_Review_Process_Slides.pdf" target="_blank">AMA Decision Review Process</a>:</p>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">Direct Review docket task listing</a>: The Direct Review docket contains appeals where the Veteran has decided they <em>do not</em> want to add new evidence and <em>do not</em> want a hearing.</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">Evidence Submission docket task listing</a>: On the Evidence Submission docket, a Veteran can add evidence during the 90 days after they begin their appeal.</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">Hearing docket task listing</a>: On the Hearing Request docket, the Veteran has requested a scheduled hearing with a judge, where the Veteran can present new evidence and testifies their benefit claim. They can submit evidence at their hearing or within 90 days after the hearing.</li>
+</ul>
+<p>You can start using the documentation by clicking on one of the above task listing links (no one should need to directly view the files in any of the <code>docs-*</code> subdirectories).
+Each task listing page linked above presents a list of tasks relevant to the particular docket.
+Each task has its own page (i.e., an <code>md</code> file).</p>
+<h3 id="task-page">
+  Task Page
+  <small><a class="anchor-heading" href="#task-page" aria-labelledby="task-page">#</a></small>
+</h3>
+<p>Each task page has the following sections:</p>
+<ul>
+<li>A link to a description page, which should be manually filled with relevant information such as description of the task, scenarios where it is created, and other information to help understand the context and motivation for the task. See 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Types" target="_blank">task descriptions</a> for source material.</li>
+<li>&ldquo;Parent and Child Tasks&rdquo; section
+<ul>
+<li><strong>Parent Tasks</strong>: links to tasks that are <em>parents</em> of the page&rsquo;s task</li>
+<li><strong>Child Tasks</strong>: links to tasks that are <em>children</em> of the page&rsquo;s task</li>
+</ul>
+</li>
+<li>&ldquo;Tasks Created Before and After&rdquo; section
+<ul>
+<li>A diagram of inlinks and outlinks to the task page. The number labeled on the link represents the number of occurrences where the creation of source task was followed by the creation of the destination task.</li>
+<li><strong>Before</strong>: links to tasks that were created <em>before</em> the page&rsquo;s task</li>
+<li><strong>After</strong>: links to tasks that were created <em>after</em> the page&rsquo;s task</li>
+</ul>
+</li>
+<li>&ldquo;Task Creation Sequences&rdquo; section: Examples grouped according to the sequence of tasks created up to the page&rsquo;s task.
+<ul>
+<li>Section names are formed using acronyms for each task. For example, <code>RootTask_Organization</code> is <code>RTO</code>. So a section named <code>RTO.TVTO.DTO.SHTO</code> means <code>RootTask_Organization</code> was created and followed by <code>TrackVeteranTask_Organization</code> followed by <code>DistributionTask_Organization</code> followed by <code>ScheduleHearingTask_Organization</code>. The naming represents the <strong>task creation sequence</strong> (TCS). The last task in the sequence will always refer to the page&rsquo;s task.</li>
+<li>Each section has a link to a description page, which should be manually filled with relevant information such as how and why the task sequence is created. Only some of these description pages were automatically created. As needed, add <code>md</code> files for pages that do not yet exist.</li>
+<li>Each section presents the number of occurrences of that TCS (along with a few appeal IDs that have that TCS) and a task tree diagram of that appeal. The diagram annotates each task with a number representing the task creation order.</li>
+<li>Note that some tasks (e.g., 
+
+<a href="/caseflow/task_trees/trees/task_descr/InformalHearingPresentationTask_Organization.html">InformalHearingPresentationTask_Organization</a>) can be created before its parent task. This can happen when an existing task is moved to a newly-created parent task.</li>
+</ul>
+</li>
+</ul>
+<p>On the task listing pages and all the task pages, the content is presented by order of occurrence counts so that the most common tasks or TCSs (Task Creation Sequences) are presented first. Task trees with few occurrences may indicate unusual or undesirable appeal states, which is relevant to the Data Integrity and Bat Team.</p>
+<h3 id="notes">
+  Notes
+  <small><a class="anchor-heading" href="#notes" aria-labelledby="notes">#</a></small>
+</h3>
+<ul>
+<li>The Graphviz code used to generate the graph on each task page can be combined to show multi-hop/indirect relationships. For example, the following graph shows the task creation order pulled from the <code>RootTask_Organization</code>, <code>DistributionTask_Organization</code>, <code>EvidenceSubmissionWindowTask_Organization</code> task pages. From this, we can surmise that <code>JudgeAssignTask_User</code> is always created after <code>DistributionTask_Organization</code>.</li>
+</ul>
+<details><summary>Task creation order combined from 3 task pages</summary>
+<pre tabindex="0"><code>digraph G {
+  rankdir=&quot;LR&quot;;
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=1]
+  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=2]
+  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;SpecialCaseMovementTask_User&quot; [label=1]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;JudgeAssignTask_User&quot; [label=16]
+  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;JudgeAssignTask_User&quot; [label=2]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;ScheduleHearingTask_Organization&quot; [label=128]
+  &quot;RootTask_Organization&quot; -&gt; &quot;DistributionTask_Organization&quot; [label=102]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;EvidenceOrArgumentMailTask_Organization&quot; [label=1]
+  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;InformalHearingPresentationTask_Organization&quot; [label=9]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;SpecialCaseMovementTask_User&quot; [label=1]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;EvidenceSubmissionWindowTask_Organization&quot; [label=103]
+  &quot;RootTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=301]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;InformalHearingPresentationTask_Organization&quot; [label=75]
+  &quot;TrackVeteranTask_Organization&quot; -&gt; &quot;DistributionTask_Organization&quot; [label=301]
+  &quot;DistributionTask_Organization&quot; -&gt; &quot;TranslationTask_Organization&quot; [label=1]
+}
+</code></pre></details>
+<p><a href="RTO.DTO.ESWTO.dot.png"><img src="RTO.DTO.ESWTO.dot.png" alt="RTO.DTO.ESWTO" /></a></p>
+<ul>
+<li>Manually-added content is kept in the <code>task_descr</code> subdirectory.</li>
+<li>Generated files are placed in the <code>docs-*</code> subdirectories, which can be deleted and regenerated. To regenerate the files, use the <code>gen_ttdocs.py</code> and <code>createPngs.sh</code> scripts in the 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees" target="_blank">trees directory</a>.</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/intro/task_trees.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#data-driven-documentation-of-task-trees">Data-Driven Documentation of Task Trees</a>
+      <ul>
+        <li><a href="#purpose-and-uses">Purpose and uses</a></li>
+        <li><a href="#contents">Contents</a></li>
+        <li><a href="#task-page">Task Page</a></li>
+        <li><a href="#notes">Notes</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

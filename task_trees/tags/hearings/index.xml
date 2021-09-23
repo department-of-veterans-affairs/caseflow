@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hearings on Task Trees &amp; DB</title>
+    <link>https://department-of-veterans-affairs/caseflow/task_trees/tags/hearings.html</link>
+    <description>Recent content in hearings on Task Trees &amp; DB</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://department-of-veterans-affairs/caseflow/task_trees/tags/hearings/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hearing Workflow</title>
+      <link>https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html</guid>
+      <description>Hearing Workflow #    Caseflow Hearings  HearingTask   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD docket -- |if H| admin_actions{need hearing admin actions?} admin_actions -- |yes| HearingAdminActionTask HearingAdminActionTask -- ScheduleHearingTask admin_actions -- |no| ScheduleHearingTask ScheduleHearingTask -- AssignHearingDispositionTask AssignHearingDispositionTask -- disposition{hearing disposition?} disposition -- |postponed| ScheduleHearingTask disposition -- |held| waiveES{waive Evidence Submission?} waiveES -- |yes| TranscriptionTask waiveES -- |no| EvidenceSubmissionWindowTask EvidenceSubmissionWindowTask -- TranscriptionTask TranscriptionTask -- ACD[DistributionTask] ACD -- Decision disposition -- |cancelled| ihpVSO{IHP-writing VSO?</description>
+    </item>
+    
+  </channel>
+</rss>

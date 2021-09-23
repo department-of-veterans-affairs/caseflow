@@ -1,0 +1,1157 @@
+digraph subclasses {
+	graph [bb="0,0,1778.1,6215",
+		rankdir=LR,
+		splines=line
+	];
+	node [label="\N"];
+	NonAvailability	[color="#000099",
+		fillcolor="#00aaff",
+		fontcolor="#000099",
+		label=NonAvailability,
+		shape=record,
+		style=filled,
+		];
+	CoNonAvailability	[fillcolor="#00aaff",
+		label=CoNonAvailability,
+		style=filled,
+		];
+	NonAvailability -> CoNonAvailability	[color="#000099",
+		style=dotted];
+	RoNonAvailability	[fillcolor="#00aaff",
+		label=RoNonAvailability,
+		style=filled,
+		];
+	NonAvailability -> RoNonAvailability	[color="#000099",
+		style=dotted];
+	JudgeNonAvailability	[fillcolor="#00aaff",
+		label=JudgeNonAvailability,
+		style=filled,
+		];
+	NonAvailability -> JudgeNonAvailability	[color="#000099",
+		style=dotted];
+	Organization	[color="#000099",
+		fillcolor="#d9d9ff",
+		fontcolor="#000099",
+		label=Organization,
+		shape=record,
+		style=filled,
+		];
+	DvcTeam	[fillcolor="#d9d9ff",
+		label=DvcTeam,
+		style=filled,
+		];
+	Organization -> DvcTeam	[color="#000099",
+		style=dotted];
+	Representative	[color="#000099",
+		fillcolor="#d9d9ff",
+		fontcolor="#000099",
+		label=Representative,
+		shape=record,
+		style=filled,
+		];
+	Organization -> Representative	[color="#000099",
+		style=dotted];
+	JudgeTeam	[fillcolor="#d9d9ff",
+		label=JudgeTeam,
+		style=filled,
+		];
+	Organization -> JudgeTeam	[color="#000099",
+		style=dotted];
+	BusinessLine	[fillcolor="#d9d9ff",
+		label=BusinessLine,
+		style=filled,
+		];
+	Organization -> BusinessLine	[color="#000099",
+		style=dotted];
+	AodTeam	[fillcolor="#d9d9ff",
+		label=AodTeam,
+		style=filled,
+		];
+	Organization -> AodTeam	[color="#000099",
+		style=dotted];
+	BoardProductOwners	[fillcolor="#d9d9ff",
+		label=BoardProductOwners,
+		style=filled,
+		];
+	Organization -> BoardProductOwners	[color="#000099",
+		style=dotted];
+	Bva	[fillcolor="#d9d9ff",
+		label=Bva,
+		style=filled,
+		];
+	Organization -> Bva	[color="#000099",
+		style=dotted];
+	BvaDispatch	[fillcolor="#d9d9ff",
+		label=BvaDispatch,
+		style=filled,
+		];
+	Organization -> BvaDispatch	[color="#000099",
+		style=dotted];
+	BvaIntake	[fillcolor="#d9d9ff",
+		label=BvaIntake,
+		style=filled,
+		];
+	Organization -> BvaIntake	[color="#000099",
+		style=dotted];
+	CaseReview	[fillcolor="#d9d9ff",
+		label=CaseReview,
+		style=filled,
+		];
+	Organization -> CaseReview	[color="#000099",
+		style=dotted];
+	CaseflowSupport	[fillcolor="#d9d9ff",
+		label=CaseflowSupport,
+		style=filled,
+		];
+	Organization -> CaseflowSupport	[color="#000099",
+		style=dotted];
+	CavcLitigationSupport	[fillcolor="#d9d9ff",
+		label=CavcLitigationSupport,
+		style=filled,
+		];
+	Organization -> CavcLitigationSupport	[color="#000099",
+		style=dotted];
+	ClerkOfTheBoard	[fillcolor="#d9d9ff",
+		label=ClerkOfTheBoard,
+		style=filled,
+		];
+	Organization -> ClerkOfTheBoard	[color="#000099",
+		style=dotted];
+	Colocated	[fillcolor="#d9d9ff",
+		label=Colocated,
+		style=filled,
+		];
+	Organization -> Colocated	[color="#000099",
+		style=dotted];
+	HearingAdmin	[fillcolor="#d9d9ff",
+		label=HearingAdmin,
+		style=filled,
+		];
+	Organization -> HearingAdmin	[color="#000099",
+		style=dotted];
+	HearingsManagement	[fillcolor="#d9d9ff",
+		label=HearingsManagement,
+		style=filled,
+		];
+	Organization -> HearingsManagement	[color="#000099",
+		style=dotted];
+	LitigationSupport	[fillcolor="#d9d9ff",
+		label=LitigationSupport,
+		style=filled,
+		];
+	Organization -> LitigationSupport	[color="#000099",
+		style=dotted];
+	MailTeam	[fillcolor="#d9d9ff",
+		label=MailTeam,
+		style=filled,
+		];
+	Organization -> MailTeam	[color="#000099",
+		style=dotted];
+	PrivacyTeam	[fillcolor="#d9d9ff",
+		label=PrivacyTeam,
+		style=filled,
+		];
+	Organization -> PrivacyTeam	[color="#000099",
+		style=dotted];
+	PulacCerullo	[fillcolor="#d9d9ff",
+		label=PulacCerullo,
+		style=filled,
+		];
+	Organization -> PulacCerullo	[color="#000099",
+		style=dotted];
+	QualityReview	[fillcolor="#d9d9ff",
+		label=QualityReview,
+		style=filled,
+		];
+	Organization -> QualityReview	[color="#000099",
+		style=dotted];
+	SpecialCaseMovementTeam	[fillcolor="#d9d9ff",
+		label=SpecialCaseMovementTeam,
+		style=filled,
+		];
+	Organization -> SpecialCaseMovementTeam	[color="#000099",
+		style=dotted];
+	TranscriptionTeam	[fillcolor="#d9d9ff",
+		label=TranscriptionTeam,
+		style=filled,
+		];
+	Organization -> TranscriptionTeam	[color="#000099",
+		style=dotted];
+	Translation	[fillcolor="#d9d9ff",
+		label=Translation,
+		style=filled,
+		];
+	Organization -> Translation	[color="#000099",
+		style=dotted];
+	VhaCamo	[fillcolor="#d9d9ff",
+		label=VhaCamo,
+		style=filled,
+		];
+	Organization -> VhaCamo	[color="#000099",
+		style=dotted];
+	VhaProgramOffice	[fillcolor="#d9d9ff",
+		label=VhaProgramOffice,
+		style=filled,
+		];
+	Organization -> VhaProgramOffice	[color="#000099",
+		style=dotted];
+	VhaRegionalOffice	[fillcolor="#d9d9ff",
+		label=VhaRegionalOffice,
+		style=filled,
+		];
+	Organization -> VhaRegionalOffice	[color="#000099",
+		style=dotted];
+	Vso	[color="#000099",
+		fillcolor="#d9d9ff",
+		fontcolor="#000099",
+		label=Vso,
+		shape=record,
+		style=filled,
+		];
+	Representative -> Vso	[color="#000099",
+		style=dotted];
+	PrivateBar	[fillcolor="#d9d9ff",
+		label=PrivateBar,
+		style=filled,
+		];
+	Representative -> PrivateBar	[color="#000099",
+		style=dotted];
+	Task	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=Task,
+		shape=record,
+		style=filled,
+		];
+	ColocatedTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=ColocatedTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> ColocatedTask	[color="#000099",
+		style=dotted];
+	SendCavcRemandProcessedLetterTask	[fillcolor="#00ff00",
+		label=SendCavcRemandProcessedLetterTask,
+		style=filled,
+		];
+	Task -> SendCavcRemandProcessedLetterTask	[color="#000099",
+		style=dotted];
+	CavcTask	[fillcolor="#00ff00",
+		label=CavcTask,
+		style=filled,
+		];
+	Task -> CavcTask	[color="#000099",
+		style=dotted];
+	DistributionTask	[fillcolor="#00ff00",
+		label=DistributionTask,
+		style=filled,
+		];
+	Task -> DistributionTask	[color="#000099",
+		style=dotted];
+	CavcRemandProcessedLetterResponseWindowTask	[fillcolor="#00ff00",
+		label=CavcRemandProcessedLetterResponseWindowTask,
+		style=filled,
+		];
+	Task -> CavcRemandProcessedLetterResponseWindowTask	[color="#000099",
+		style=dotted];
+	RootTask	[fillcolor="#00ff00",
+		label=RootTask,
+		style=filled,
+		];
+	Task -> RootTask	[color="#000099",
+		style=dotted];
+	TrackVeteranTask	[fillcolor="#00ff00",
+		label=TrackVeteranTask,
+		style=filled,
+		];
+	Task -> TrackVeteranTask	[color="#000099",
+		style=dotted];
+	DecisionReviewTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=DecisionReviewTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> DecisionReviewTask	[color="#000099",
+		style=dotted];
+	PulacCerulloTask	[fillcolor="#00ff00",
+		label=PulacCerulloTask,
+		style=filled,
+		];
+	Task -> PulacCerulloTask	[color="#000099",
+		style=dotted];
+	PrivacyActTask	[fillcolor="#00ff00",
+		label=PrivacyActTask,
+		style=filled,
+		];
+	Task -> PrivacyActTask	[color="#000099",
+		style=dotted];
+	FoiaTask	[fillcolor="#00ff00",
+		label=FoiaTask,
+		style=filled,
+		];
+	Task -> FoiaTask	[color="#000099",
+		style=dotted];
+	TimedHoldTask	[fillcolor="#00ff00",
+		label=TimedHoldTask,
+		style=filled,
+		];
+	Task -> TimedHoldTask	[color="#000099",
+		style=dotted];
+	JudgeTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=JudgeTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> JudgeTask	[color="#000099",
+		style=dotted];
+	AssignHearingDispositionTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=AssignHearingDispositionTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> AssignHearingDispositionTask	[color="#000099",
+		style=dotted];
+	HearingTask	[fillcolor="#00ff00",
+		label=HearingTask,
+		style=filled,
+		];
+	Task -> HearingTask	[color="#000099",
+		style=dotted];
+	ChangeHearingRequestTypeTask	[fillcolor="#00ff00",
+		label=ChangeHearingRequestTypeTask,
+		style=filled,
+		];
+	Task -> ChangeHearingRequestTypeTask	[color="#000099",
+		style=dotted];
+	TranslationTask	[fillcolor="#00ff00",
+		label=TranslationTask,
+		style=filled,
+		];
+	Task -> TranslationTask	[color="#000099",
+		style=dotted];
+	CavcPoaClarificationTask	[fillcolor="#00ff00",
+		label=CavcPoaClarificationTask,
+		style=filled,
+		];
+	Task -> CavcPoaClarificationTask	[color="#000099",
+		style=dotted];
+	ScheduleHearingTask	[fillcolor="#00ff00",
+		label=ScheduleHearingTask,
+		style=filled,
+		];
+	Task -> ScheduleHearingTask	[color="#000099",
+		style=dotted];
+	MailTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=MailTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> MailTask	[color="#000099",
+		style=dotted];
+	NoShowHearingTask	[fillcolor="#00ff00",
+		label=NoShowHearingTask,
+		style=filled,
+		];
+	Task -> NoShowHearingTask	[color="#000099",
+		style=dotted];
+	EvidenceSubmissionWindowTask	[fillcolor="#00ff00",
+		label=EvidenceSubmissionWindowTask,
+		style=filled,
+		];
+	Task -> EvidenceSubmissionWindowTask	[color="#000099",
+		style=dotted];
+	AttorneyTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=AttorneyTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> AttorneyTask	[color="#000099",
+		style=dotted];
+	TranscriptionTask	[fillcolor="#00ff00",
+		label=TranscriptionTask,
+		style=filled,
+		];
+	Task -> TranscriptionTask	[color="#000099",
+		style=dotted];
+	QualityReviewTask	[fillcolor="#00ff00",
+		label=QualityReviewTask,
+		style=filled,
+		];
+	Task -> QualityReviewTask	[color="#000099",
+		style=dotted];
+	BvaDispatchTask	[fillcolor="#00ff00",
+		label=BvaDispatchTask,
+		style=filled,
+		];
+	Task -> BvaDispatchTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=HearingAdminActionTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> HearingAdminActionTask	[color="#000099",
+		style=dotted];
+	InformalHearingPresentationTask	[fillcolor="#00ff00",
+		label=InformalHearingPresentationTask,
+		style=filled,
+		];
+	Task -> InformalHearingPresentationTask	[color="#000099",
+		style=dotted];
+	PreDocketTask	[fillcolor="#00ff00",
+		label=PreDocketTask,
+		style=filled,
+		];
+	Task -> PreDocketTask	[color="#000099",
+		style=dotted];
+	AssessDocumentationTask	[fillcolor="#00ff00",
+		label=AssessDocumentationTask,
+		style=filled,
+		];
+	Task -> AssessDocumentationTask	[color="#000099",
+		style=dotted];
+	VhaDocumentSearchTask	[fillcolor="#00ff00",
+		label=VhaDocumentSearchTask,
+		style=filled,
+		];
+	Task -> VhaDocumentSearchTask	[color="#000099",
+		style=dotted];
+	AbstractMotionToVacateTask	[fillcolor="#00ff00",
+		label=AbstractMotionToVacateTask,
+		style=filled,
+		];
+	Task -> AbstractMotionToVacateTask	[color="#000099",
+		style=dotted];
+	DecidedMotionToVacateTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=DecidedMotionToVacateTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> DecidedMotionToVacateTask	[color="#000099",
+		style=dotted];
+	SpecialCaseMovementTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=SpecialCaseMovementTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> SpecialCaseMovementTask	[color="#000099",
+		style=dotted];
+	CavcExtensionRequestTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=CavcExtensionRequestTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> CavcExtensionRequestTask	[color="#000099",
+		style=dotted];
+	EngineeringTask	[fillcolor="#00ff00",
+		label=EngineeringTask,
+		style=filled,
+		];
+	Task -> EngineeringTask	[color="#000099",
+		style=dotted];
+	InsufficientInformationTask	[fillcolor="#00ff00",
+		label=InsufficientInformationTask,
+		style=filled,
+		];
+	Task -> InsufficientInformationTask	[color="#000099",
+		style=dotted];
+	MandateHoldTask	[fillcolor="#00ff00",
+		label=MandateHoldTask,
+		style=filled,
+		];
+	Task -> MandateHoldTask	[color="#000099",
+		style=dotted];
+	MdrTask	[fillcolor="#00ff00",
+		label=MdrTask,
+		style=filled,
+		];
+	Task -> MdrTask	[color="#000099",
+		style=dotted];
+	PoaClarificationColocatedTask	[fillcolor="#00ff00",
+		label=PoaClarificationColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> PoaClarificationColocatedTask	[color="#000099",
+		style=dotted];
+	IhpColocatedTask	[fillcolor="#00ff00",
+		label=IhpColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> IhpColocatedTask	[color="#000099",
+		style=dotted];
+	HearingClarificationColocatedTask	[fillcolor="#00ff00",
+		label=HearingClarificationColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> HearingClarificationColocatedTask	[color="#000099",
+		style=dotted];
+	AojColocatedTask	[fillcolor="#00ff00",
+		label=AojColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> AojColocatedTask	[color="#000099",
+		style=dotted];
+	ExtensionColocatedTask	[fillcolor="#00ff00",
+		label=ExtensionColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> ExtensionColocatedTask	[color="#000099",
+		style=dotted];
+	MissingHearingTranscriptsColocatedTask	[fillcolor="#00ff00",
+		label=MissingHearingTranscriptsColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> MissingHearingTranscriptsColocatedTask	[color="#000099",
+		style=dotted];
+	UnaccreditedRepColocatedTask	[fillcolor="#00ff00",
+		label=UnaccreditedRepColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> UnaccreditedRepColocatedTask	[color="#000099",
+		style=dotted];
+	FoiaColocatedTask	[fillcolor="#00ff00",
+		label=FoiaColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> FoiaColocatedTask	[color="#000099",
+		style=dotted];
+	RetiredVljColocatedTask	[fillcolor="#00ff00",
+		label=RetiredVljColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> RetiredVljColocatedTask	[color="#000099",
+		style=dotted];
+	ArnesonColocatedTask	[fillcolor="#00ff00",
+		label=ArnesonColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> ArnesonColocatedTask	[color="#000099",
+		style=dotted];
+	NewRepArgumentsColocatedTask	[fillcolor="#00ff00",
+		label=NewRepArgumentsColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> NewRepArgumentsColocatedTask	[color="#000099",
+		style=dotted];
+	PendingScanningVbmsColocatedTask	[fillcolor="#00ff00",
+		label=PendingScanningVbmsColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> PendingScanningVbmsColocatedTask	[color="#000099",
+		style=dotted];
+	AddressVerificationColocatedTask	[fillcolor="#00ff00",
+		label=AddressVerificationColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> AddressVerificationColocatedTask	[color="#000099",
+		style=dotted];
+	ScheduleHearingColocatedTask	[fillcolor="#00ff00",
+		label=ScheduleHearingColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> ScheduleHearingColocatedTask	[color="#000099",
+		style=dotted];
+	StayedAppealColocatedTask	[fillcolor="#00ff00",
+		label=StayedAppealColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> StayedAppealColocatedTask	[color="#000099",
+		style=dotted];
+	MissingRecordsColocatedTask	[fillcolor="#00ff00",
+		label=MissingRecordsColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> MissingRecordsColocatedTask	[color="#000099",
+		style=dotted];
+	TranslationColocatedTask	[fillcolor="#00ff00",
+		label=TranslationColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> TranslationColocatedTask	[color="#000099",
+		style=dotted];
+	OtherColocatedTask	[fillcolor="#00ff00",
+		label=OtherColocatedTask,
+		style=filled,
+		];
+	ColocatedTask -> OtherColocatedTask	[color="#000099",
+		style=dotted];
+	PreRoutingColocatedTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=PreRoutingColocatedTask,
+		shape=record,
+		style=filled,
+		];
+	ColocatedTask -> PreRoutingColocatedTask	[color="#000099",
+		style=dotted];
+	BoardGrantEffectuationTask	[fillcolor="#00ff00",
+		label=BoardGrantEffectuationTask,
+		style=filled,
+		];
+	DecisionReviewTask -> BoardGrantEffectuationTask	[color="#000099",
+		style=dotted];
+	VeteranRecordRequest	[fillcolor="#00ff00",
+		label=VeteranRecordRequest,
+		style=filled,
+		];
+	DecisionReviewTask -> VeteranRecordRequest	[color="#000099",
+		style=dotted];
+	JudgeAssignTask	[fillcolor="#00ff00",
+		label=JudgeAssignTask,
+		style=filled,
+		];
+	JudgeTask -> JudgeAssignTask	[color="#000099",
+		style=dotted];
+	JudgeDecisionReviewTask	[fillcolor="#00ff00",
+		label=JudgeDecisionReviewTask,
+		style=filled,
+		];
+	JudgeTask -> JudgeDecisionReviewTask	[color="#000099",
+		style=dotted];
+	JudgeQualityReviewTask	[fillcolor="#00ff00",
+		label=JudgeQualityReviewTask,
+		style=filled,
+		];
+	JudgeTask -> JudgeQualityReviewTask	[color="#000099",
+		style=dotted];
+	JudgeDispatchReturnTask	[fillcolor="#00ff00",
+		label=JudgeDispatchReturnTask,
+		style=filled,
+		];
+	JudgeTask -> JudgeDispatchReturnTask	[color="#000099",
+		style=dotted];
+	DocketSwitchRulingTask	[fillcolor="#00ff00",
+		label=DocketSwitchRulingTask,
+		style=filled,
+		];
+	JudgeTask -> DocketSwitchRulingTask	[color="#000099",
+		style=dotted];
+	JudgeAddressMotionToVacateTask	[fillcolor="#00ff00",
+		label=JudgeAddressMotionToVacateTask,
+		style=filled,
+		];
+	JudgeTask -> JudgeAddressMotionToVacateTask	[color="#000099",
+		style=dotted];
+	ChangeHearingDispositionTask	[fillcolor="#00ff00",
+		label=ChangeHearingDispositionTask,
+		style=filled,
+		];
+	AssignHearingDispositionTask -> ChangeHearingDispositionTask	[color="#000099",
+		style=dotted];
+	AddressChangeMailTask	[fillcolor="#00ff00",
+		label=AddressChangeMailTask,
+		style=filled,
+		];
+	MailTask -> AddressChangeMailTask	[color="#000099",
+		style=dotted];
+	AodMotionMailTask	[fillcolor="#00ff00",
+		label=AodMotionMailTask,
+		style=filled,
+		];
+	MailTask -> AodMotionMailTask	[color="#000099",
+		style=dotted];
+	CavcCorrespondenceMailTask	[fillcolor="#00ff00",
+		label=CavcCorrespondenceMailTask,
+		style=filled,
+		];
+	MailTask -> CavcCorrespondenceMailTask	[color="#000099",
+		style=dotted];
+	ClearAndUnmistakeableErrorMailTask	[fillcolor="#00ff00",
+		label=ClearAndUnmistakeableErrorMailTask,
+		style=filled,
+		];
+	MailTask -> ClearAndUnmistakeableErrorMailTask	[color="#000099",
+		style=dotted];
+	CongressionalInterestMailTask	[fillcolor="#00ff00",
+		label=CongressionalInterestMailTask,
+		style=filled,
+		];
+	MailTask -> CongressionalInterestMailTask	[color="#000099",
+		style=dotted];
+	ControlledCorrespondenceMailTask	[fillcolor="#00ff00",
+		label=ControlledCorrespondenceMailTask,
+		style=filled,
+		];
+	MailTask -> ControlledCorrespondenceMailTask	[color="#000099",
+		style=dotted];
+	DeathCertificateMailTask	[fillcolor="#00ff00",
+		label=DeathCertificateMailTask,
+		style=filled,
+		];
+	MailTask -> DeathCertificateMailTask	[color="#000099",
+		style=dotted];
+	DocketSwitchMailTask	[fillcolor="#00ff00",
+		label=DocketSwitchMailTask,
+		style=filled,
+		];
+	MailTask -> DocketSwitchMailTask	[color="#000099",
+		style=dotted];
+	EvidenceOrArgumentMailTask	[fillcolor="#00ff00",
+		label=EvidenceOrArgumentMailTask,
+		style=filled,
+		];
+	MailTask -> EvidenceOrArgumentMailTask	[color="#000099",
+		style=dotted];
+	ExtensionRequestMailTask	[fillcolor="#00ff00",
+		label=ExtensionRequestMailTask,
+		style=filled,
+		];
+	MailTask -> ExtensionRequestMailTask	[color="#000099",
+		style=dotted];
+	FoiaRequestMailTask	[fillcolor="#00ff00",
+		label=FoiaRequestMailTask,
+		style=filled,
+		];
+	MailTask -> FoiaRequestMailTask	[color="#000099",
+		style=dotted];
+	HearingRelatedMailTask	[fillcolor="#00ff00",
+		label=HearingRelatedMailTask,
+		style=filled,
+		];
+	MailTask -> HearingRelatedMailTask	[color="#000099",
+		style=dotted];
+	OtherMotionMailTask	[fillcolor="#00ff00",
+		label=OtherMotionMailTask,
+		style=filled,
+		];
+	MailTask -> OtherMotionMailTask	[color="#000099",
+		style=dotted];
+	PowerOfAttorneyRelatedMailTask	[fillcolor="#00ff00",
+		label=PowerOfAttorneyRelatedMailTask,
+		style=filled,
+		];
+	MailTask -> PowerOfAttorneyRelatedMailTask	[color="#000099",
+		style=dotted];
+	PrivacyActRequestMailTask	[fillcolor="#00ff00",
+		label=PrivacyActRequestMailTask,
+		style=filled,
+		];
+	MailTask -> PrivacyActRequestMailTask	[color="#000099",
+		style=dotted];
+	PrivacyComplaintMailTask	[fillcolor="#00ff00",
+		label=PrivacyComplaintMailTask,
+		style=filled,
+		];
+	MailTask -> PrivacyComplaintMailTask	[color="#000099",
+		style=dotted];
+	ReconsiderationMotionMailTask	[fillcolor="#00ff00",
+		label=ReconsiderationMotionMailTask,
+		style=filled,
+		];
+	MailTask -> ReconsiderationMotionMailTask	[color="#000099",
+		style=dotted];
+	ReturnedUndeliverableCorrespondenceMailTask	[fillcolor="#00ff00",
+		label=ReturnedUndeliverableCorrespondenceMailTask,
+		style=filled,
+		];
+	MailTask -> ReturnedUndeliverableCorrespondenceMailTask	[color="#000099",
+		style=dotted];
+	StatusInquiryMailTask	[fillcolor="#00ff00",
+		label=StatusInquiryMailTask,
+		style=filled,
+		];
+	MailTask -> StatusInquiryMailTask	[color="#000099",
+		style=dotted];
+	VacateMotionMailTask	[fillcolor="#00ff00",
+		label=VacateMotionMailTask,
+		style=filled,
+		];
+	MailTask -> VacateMotionMailTask	[color="#000099",
+		style=dotted];
+	AppealWithdrawalMailTask	[fillcolor="#00ff00",
+		label=AppealWithdrawalMailTask,
+		style=filled,
+		];
+	MailTask -> AppealWithdrawalMailTask	[color="#000099",
+		style=dotted];
+	AttorneyRewriteTask	[fillcolor="#00ff00",
+		label=AttorneyRewriteTask,
+		style=filled,
+		];
+	AttorneyTask -> AttorneyRewriteTask	[color="#000099",
+		style=dotted];
+	AttorneyDispatchReturnTask	[fillcolor="#00ff00",
+		label=AttorneyDispatchReturnTask,
+		style=filled,
+		];
+	AttorneyTask -> AttorneyDispatchReturnTask	[color="#000099",
+		style=dotted];
+	DocketSwitchAbstractAttorneyTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=DocketSwitchAbstractAttorneyTask,
+		shape=record,
+		style=filled,
+		];
+	AttorneyTask -> DocketSwitchAbstractAttorneyTask	[color="#000099",
+		style=dotted];
+	AttorneyQualityReviewTask	[fillcolor="#00ff00",
+		label=AttorneyQualityReviewTask,
+		style=filled,
+		];
+	AttorneyTask -> AttorneyQualityReviewTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionContestedClaimantTask	[fillcolor="#00ff00",
+		label=HearingAdminActionContestedClaimantTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionContestedClaimantTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionFoiaPrivacyRequestTask	[fillcolor="#00ff00",
+		label=HearingAdminActionFoiaPrivacyRequestTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionFoiaPrivacyRequestTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionForeignVeteranCaseTask	[fillcolor="#00ff00",
+		label=HearingAdminActionForeignVeteranCaseTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionForeignVeteranCaseTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionIncarceratedVeteranTask	[fillcolor="#00ff00",
+		label=HearingAdminActionIncarceratedVeteranTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionIncarceratedVeteranTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionMissingFormsTask	[fillcolor="#00ff00",
+		label=HearingAdminActionMissingFormsTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionMissingFormsTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionOtherTask	[fillcolor="#00ff00",
+		label=HearingAdminActionOtherTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionOtherTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionVerifyAddressTask	[fillcolor="#00ff00",
+		label=HearingAdminActionVerifyAddressTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionVerifyAddressTask	[color="#000099",
+		style=dotted];
+	HearingAdminActionVerifyPoaTask	[fillcolor="#00ff00",
+		label=HearingAdminActionVerifyPoaTask,
+		style=filled,
+		];
+	HearingAdminActionTask -> HearingAdminActionVerifyPoaTask	[color="#000099",
+		style=dotted];
+	DeniedMotionToVacateTask	[fillcolor="#00ff00",
+		label=DeniedMotionToVacateTask,
+		style=filled,
+		];
+	DecidedMotionToVacateTask -> DeniedMotionToVacateTask	[color="#000099",
+		style=dotted];
+	DismissedMotionToVacateTask	[fillcolor="#00ff00",
+		label=DismissedMotionToVacateTask,
+		style=filled,
+		];
+	DecidedMotionToVacateTask -> DismissedMotionToVacateTask	[color="#000099",
+		style=dotted];
+	BlockedSpecialCaseMovementTask	[fillcolor="#00ff00",
+		label=BlockedSpecialCaseMovementTask,
+		style=filled,
+		];
+	SpecialCaseMovementTask -> BlockedSpecialCaseMovementTask	[color="#000099",
+		style=dotted];
+	CavcDeniedExtensionRequestTask	[fillcolor="#00ff00",
+		label=CavcDeniedExtensionRequestTask,
+		style=filled,
+		];
+	CavcExtensionRequestTask -> CavcDeniedExtensionRequestTask	[color="#000099",
+		style=dotted];
+	CavcGrantedExtensionRequestTask	[fillcolor="#00ff00",
+		label=CavcGrantedExtensionRequestTask,
+		style=filled,
+		];
+	CavcExtensionRequestTask -> CavcGrantedExtensionRequestTask	[color="#000099",
+		style=dotted];
+	DecisionReview	[color="#000099",
+		fillcolor="#ffff00",
+		fontcolor="#000099",
+		label=DecisionReview,
+		shape=record,
+		style=filled,
+		];
+	Appeal	[fillcolor="#ffff00",
+		label=Appeal,
+		style=filled,
+		];
+	DecisionReview -> Appeal	[color="#000099",
+		style=dotted];
+	ClaimReview	[color="#000099",
+		fillcolor="#ffff00",
+		fontcolor="#000099",
+		label=ClaimReview,
+		shape=record,
+		style=filled,
+		];
+	DecisionReview -> ClaimReview	[color="#000099",
+		style=dotted];
+	SupplementalClaim	[fillcolor="#ffff00",
+		label=SupplementalClaim,
+		style=filled,
+		];
+	ClaimReview -> SupplementalClaim	[color="#000099",
+		style=dotted];
+	HigherLevelReview	[fillcolor="#ffff00",
+		label=HigherLevelReview,
+		style=filled,
+		];
+	ClaimReview -> HigherLevelReview	[color="#000099",
+		style=dotted];
+	Claimant	[color="#000099",
+		fillcolor="#a9a9a9",
+		fontcolor="#000099",
+		label=Claimant,
+		shape=record,
+		style=filled,
+		];
+	AttorneyClaimant	[fillcolor="#a9a9a9",
+		label=AttorneyClaimant,
+		style=filled,
+		];
+	Claimant -> AttorneyClaimant	[color="#000099",
+		style=dotted];
+	BgsRelatedClaimant	[color="#000099",
+		fillcolor="#a9a9a9",
+		fontcolor="#000099",
+		label=BgsRelatedClaimant,
+		shape=record,
+		style=filled,
+		];
+	Claimant -> BgsRelatedClaimant	[color="#000099",
+		style=dotted];
+	OtherClaimant	[fillcolor="#a9a9a9",
+		label=OtherClaimant,
+		style=filled,
+		];
+	Claimant -> OtherClaimant	[color="#000099",
+		style=dotted];
+	DependentClaimant	[fillcolor="#a9a9a9",
+		label=DependentClaimant,
+		style=filled,
+		];
+	BgsRelatedClaimant -> DependentClaimant	[color="#000099",
+		style=dotted];
+	VeteranClaimant	[fillcolor="#a9a9a9",
+		label=VeteranClaimant,
+		style=filled,
+		];
+	BgsRelatedClaimant -> VeteranClaimant	[color="#000099",
+		style=dotted];
+	HearingEmailRecipient	[color="#000099",
+		fillcolor="#66ccff",
+		fontcolor="#000099",
+		label=HearingEmailRecipient,
+		shape=record,
+		style=dashed,
+		];
+	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
+		label=AppellantHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=JudgeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=RepresentativeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	Intake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=Intake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=DecisionReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> DecisionReviewIntake	[color="#000099",
+		style=dotted];
+	RampElectionIntake	[fillcolor="#ffffcc",
+		label=RampElectionIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> RampElectionIntake	[color="#000099",
+		style=dotted];
+	RampRefilingIntake	[fillcolor="#ffffcc",
+		label=RampRefilingIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> RampRefilingIntake	[color="#000099",
+		style=dotted];
+	AppealIntake	[fillcolor="#ffffcc",
+		label=AppealIntake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake -> AppealIntake	[color="#000099",
+		style=dotted];
+	ClaimReviewIntake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=ClaimReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake -> ClaimReviewIntake	[color="#000099",
+		style=dotted];
+	RequestIssue	[color="#000099",
+		fillcolor="#ffa500",
+		fontcolor="#000099",
+		label=RequestIssue,
+		shape=record,
+		style=filled,
+		];
+	NonratingRequestIssue	[fillcolor="#ffa500",
+		label=NonratingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> NonratingRequestIssue	[color="#000099",
+		style=dotted];
+	RatingRequestIssue	[fillcolor="#ffa500",
+		label=RatingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> RatingRequestIssue	[color="#000099",
+		style=dotted];
+	"Dispatch::Task"	[color="#000099",
+		fillcolor="#adff2f",
+		fontcolor="#000099",
+		label="Dispatch::Task",
+		shape=record,
+		style=filled,
+		];
+	EstablishClaim	[fillcolor="#adff2f",
+		label=EstablishClaim,
+		style=filled,
+		];
+	"Dispatch::Task" -> EstablishClaim	[color="#000099",
+		style=dotted];
+	SchedulePeriod	[color="#000099",
+		fillcolor="#00ffff",
+		fontcolor="#000099",
+		label=SchedulePeriod,
+		shape=record,
+		style=filled,
+		];
+	JudgeSchedulePeriod	[fillcolor="#00ffff",
+		label=JudgeSchedulePeriod,
+		style=filled,
+		];
+	SchedulePeriod -> JudgeSchedulePeriod	[color="#000099",
+		style=dotted];
+	RoSchedulePeriod	[fillcolor="#00ffff",
+		label=RoSchedulePeriod,
+		style=filled,
+		];
+	SchedulePeriod -> RoSchedulePeriod	[color="#000099",
+		style=dotted];
+	RampReview	[color="#000099",
+		fillcolor="#cc99ff",
+		fontcolor="#000099",
+		label=RampReview,
+		shape=record,
+		style=filled,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label=RampElection,
+		style=filled,
+		];
+	RampReview -> RampElection	[color="#000099",
+		style=dotted];
+	RampRefiling	[fillcolor="#cc99ff",
+		label=RampRefiling,
+		style=filled,
+		];
+	RampReview -> RampRefiling	[color="#000099",
+		style=dotted];
+	FieldVso	[fillcolor="#d9d9ff",
+		label=FieldVso,
+		style=filled,
+		];
+	Vso -> FieldVso	[color="#000099",
+		style=dotted];
+	PreRoutingFoiaColocatedTask	[fillcolor="#00ff00",
+		label=PreRoutingFoiaColocatedTask,
+		style=filled,
+		];
+	PreRoutingColocatedTask -> PreRoutingFoiaColocatedTask	[color="#000099",
+		style=dotted];
+	PreRoutingMissingHearingTranscriptsColocatedTask	[fillcolor="#00ff00",
+		label=PreRoutingMissingHearingTranscriptsColocatedTask,
+		style=filled,
+		];
+	PreRoutingColocatedTask -> PreRoutingMissingHearingTranscriptsColocatedTask	[color="#000099",
+		style=dotted];
+	PreRoutingTranslationColocatedTask	[fillcolor="#00ff00",
+		label=PreRoutingTranslationColocatedTask,
+		style=filled,
+		];
+	PreRoutingColocatedTask -> PreRoutingTranslationColocatedTask	[color="#000099",
+		style=dotted];
+	DocketSwitchDeniedTask	[fillcolor="#00ff00",
+		label=DocketSwitchDeniedTask,
+		style=filled,
+		];
+	DocketSwitchAbstractAttorneyTask -> DocketSwitchDeniedTask	[color="#000099",
+		style=dotted];
+	DocketSwitchGrantedTask	[fillcolor="#00ff00",
+		label=DocketSwitchGrantedTask,
+		style=filled,
+		];
+	DocketSwitchAbstractAttorneyTask -> DocketSwitchGrantedTask	[color="#000099",
+		style=dotted];
+	HigherLevelReviewIntake	[fillcolor="#ffffcc",
+		label=HigherLevelReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	ClaimReviewIntake -> HigherLevelReviewIntake	[color="#000099",
+		style=dotted];
+	SupplementalClaimIntake	[fillcolor="#ffffcc",
+		label=SupplementalClaimIntake,
+		shape=cds,
+		style=filled,
+		];
+	ClaimReviewIntake -> SupplementalClaimIntake	[color="#000099",
+		style=dotted];
+}

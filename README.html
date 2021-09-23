@@ -165,57 +165,12 @@
             >
           </li>
           <li class="nav-list-item">
-            <a href="#" class="nav-list-expander"
-              ><svg viewbox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use></svg></a
-            ><a href="/caseflow/workflows/" class="nav-list-link">Workflows</a>
-            <ul class="nav-list">
-              <li class="nav-list-item">
-                <a
-                  href="/caseflow/workflows/appeal-workflow.html"
-                  class="nav-list-link"
-                  >Appeal Workflow</a
-                >
-              </li>
-              <li class="nav-list-item">
-                <a
-                  href="/caseflow/workflows/intake-workflow.html"
-                  class="nav-list-link"
-                  >Intake Workflow</a
-                >
-              </li>
-              <li class="nav-list-item">
-                <a
-                  href="/caseflow/workflows/hearing-workflow.html"
-                  class="nav-list-link"
-                  >Hearing Workflow</a
-                >
-              </li>
-            </ul>
+            <a href="/caseflow/workflows/" class="nav-list-link">Workflows</a>
           </li>
           <li class="nav-list-item">
-            <a href="#" class="nav-list-expander"
-              ><svg viewbox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use></svg></a
-            ><a href="/caseflow/schema/db_schema.html" class="nav-list-link"
+            <a href="/caseflow/schema/db_schema.html" class="nav-list-link"
               >DB Schema</a
             >
-            <ul class="nav-list">
-              <li class="nav-list-item">
-                <a
-                  href="/caseflow/schema/schema_diagrams.html"
-                  class="nav-list-link"
-                  >Schema Diagrams</a
-                >
-              </li>
-              <li class="nav-list-item">
-                <a
-                  href="/caseflow/schema/model_and_dict.html"
-                  class="nav-list-link"
-                  >Data Model &amp; Dictionary</a
-                >
-              </li>
-            </ul>
           </li>
           <li class="nav-list-item">
             <a href="#" class="nav-list-expander"
@@ -390,6 +345,15 @@
                   <a href="#hugo-subsite" id="markdown-toc-hugo-subsite"
                     >Hugo subsite</a
                   >
+                  <ol>
+                    <li>
+                      <a
+                        href="#task-tree-hugo-subsite"
+                        id="markdown-toc-task-tree-hugo-subsite"
+                        >Task tree Hugo subsite</a
+                      >
+                    </li>
+                  </ol>
                 </li>
                 <li>
                   <a href="#html-subsite" id="markdown-toc-html-subsite"
@@ -845,6 +809,143 @@ make install_jekyll_diagram_dependencies # only needed to view diagrams locally
             folder and follows
             <a href="https://gohugo.io/getting-started/directory-structure/"
               >Hugo’s folder structure</a
+            >.
+          </p>
+          <p>
+            Spending time to read
+            <a href="https://cloudcannon.com/community/learn/hugo-tutorial/"
+              >this tutorial</a
+            >
+            is highly recommended before digging into Hugo’s documentation,
+            which is less amenable to learning.
+          </p>
+          <h4 id="task-tree-hugo-subsite">
+            <a
+              href="#task-tree-hugo-subsite"
+              class="anchor-heading"
+              aria-labelledby="task-tree-hugo-subsite"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Task tree Hugo subsite
+          </h4>
+          <p>
+            Some Hugo customizations have been applied to the
+            <a href="task_trees/">Task trees subsite</a> to make it easier to
+            update. These customizations are under the
+            <code class="language-plaintext highlighter-rouge"
+              >__task_trees</code
+            >
+            folder.
+          </p>
+          <p>
+            To add a new section, create a subfolder under the
+            <code class="language-plaintext highlighter-rouge">content</code>
+            folder. To add the section to the navigation menu, add this front
+            matter to the top of a new
+            <code class="language-plaintext highlighter-rouge"
+              >my-subfolder-name/_index.md</code
+            >
+            file:
+          </p>
+          <div class="language-yaml highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code><span class="nn">---</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">My New Section</span>
+<span class="na">menu</span><span class="pi">:</span>
+  <span class="na">navmenu</span><span class="pi">:</span>
+    <span class="na">identifier</span><span class="pi">:</span> <span class="s">my-subfolder-name</span>
+    <span class="c1"># whether the child pages in this section will be collapsed when not selected</span>
+    <span class="na">collapsible</span><span class="pi">:</span> <span class="no">true</span>
+<span class="c1"># affects ordering in the navigation menu</span>
+<span class="na">weight</span><span class="pi">:</span> <span class="m">3</span>
+<span class="nn">---</span>
+
+<span class="c1"># My New Section</span>
+<span class="s">Check out these new pages.</span>
+</code></pre>
+            </div>
+          </div>
+          <p>
+            Clicking on the section link in the navigation menu will render
+            <code class="language-plaintext highlighter-rouge">_index.md</code>
+            followed by a listing of the constituent pages. To display the list
+            of pages elsewhere, insert `` at the desired location in the
+            <code class="language-plaintext highlighter-rouge">_index.md</code>
+            file. (This feature is provided by
+            <code class="language-plaintext highlighter-rouge"
+              >layouts/_default/list.html</code
+            >
+            and
+            <code class="language-plaintext highlighter-rouge"
+              >layout/shortcodes/pages_list.html</code
+            >.)
+          </p>
+          <p>
+            For each page in the new subfolder, add this front matter to the
+            page’s
+            <code class="language-plaintext highlighter-rouge">md</code> file in
+            order to display it in the navigation menu:
+          </p>
+          <div class="language-yaml highlighter-rouge">
+            <div class="highlight">
+              <pre class="highlight"><code><span class="nn">---</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">Page 1 within Section</span>
+<span class="na">menu</span><span class="pi">:</span>
+  <span class="na">navmenu</span><span class="pi">:</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="s">my-subfolder-name</span>
+<span class="na">weight</span><span class="pi">:</span> <span class="m">1</span>
+<span class="nn">---</span>
+</code></pre>
+            </div>
+          </div>
+          <p>
+            Note that pages and sections with a negative
+            <code class="language-plaintext highlighter-rouge">weight</code>
+            will not be shown in the navigation menu.
+          </p>
+          <p>
+            To avoid having to set the 3-line
+            <code class="language-plaintext highlighter-rouge">parent</code>
+            property for every page, add a
+            <a
+              href="https://gohugo.io/content-management/front-matter#front-matter-cascade"
+              ><code class="language-plaintext highlighter-rouge"
+                >front matter cascade</code
+              >
+              configuration</a
+            >
+            under the
+            <code class="language-plaintext highlighter-rouge">cascade</code>
+            section of
+            <code class="language-plaintext highlighter-rouge">config.yml</code>
+            instead, which will set the front matter for all files in
+            <code class="language-plaintext highlighter-rouge"
+              >my-subfolder-name</code
+            >
+            except those beginning with
+            <code class="language-plaintext highlighter-rouge">_</code>:
+          </p>
+          <div class="language-yaml highlighter-rouge">
+            <div class="highlight">
+              <pre
+                class="highlight"
+              ><code>  <span class="pi">-</span> <span class="na">menu</span><span class="pi">:</span>
+      <span class="na">navmenu</span><span class="pi">:</span>
+        <span class="na">parent</span><span class="pi">:</span> <span class="s">my-subfolder-name</span>
+    <span class="na">_target</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s">/my-subfolder-name/[!_]*</span>
+</code></pre>
+            </div>
+          </div>
+          <p>
+            To further customize the menu, modify
+            <code class="language-plaintext highlighter-rouge"
+              >menu/header.md</code
+            >
+            and
+            <code class="language-plaintext highlighter-rouge"
+              >menu/footer.md</code
             >.
           </p>
           <h3 id="html-subsite">

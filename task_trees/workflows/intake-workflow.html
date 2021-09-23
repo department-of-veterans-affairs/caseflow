@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Intake Workflow #  Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
+It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.
+ Issues presentation
+Mail Intake #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD claim -- claim_decision claim_decision -- V[Veteran] V -- |form| BvaMail[BVA mail intake] BvaMail -.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Intake Workflow" />
+<meta property="og:description" content="Intake Workflow #  Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
+It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.
+ Issues presentation
+Mail Intake #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD claim -- claim_decision claim_decision -- V[Veteran] V -- |form| BvaMail[BVA mail intake] BvaMail -." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/workflows/intake-workflow.html" /><meta property="article:section" content="workflows" />
+
+
+
+<title>Intake Workflow | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  />
+          
+          <label for="input-section-data-model" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/data-model.html" class=" ">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  checked />
+          
+          <label for="input-section-workflows" class="flex justify-between hasactive ">
+            <a href="/caseflow/task_trees/workflows.html" class="hasactive ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="active">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Intake Workflow</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#mail-intake">Mail Intake</a></li>
+    <li><a href="#business-lines">Business Lines</a></li>
+    <li><a href="#decision-review-lanes">Decision Review Lanes</a></li>
+    <li><a href="#caseflow-and-eps">Caseflow and EPs</a></li>
+    <li><a href="#after-dispatched">After Dispatched</a></li>
+    <li><a href="#intake-models">Intake Models</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="intake-workflow">
+  Intake Workflow
+  <small><a class="anchor-heading" href="#intake-workflow" aria-labelledby="intake-workflow">#</a></small>
+</h1>
+<p>Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).</p>
+<p>It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.</p>
+<p>
+
+<a href="https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Intake/AMA%20ISSUES.pdf" target="_blank">Issues presentation</a></p>
+<h2 id="mail-intake">
+  Mail Intake
+  <small><a class="anchor-heading" href="#mail-intake" aria-labelledby="mail-intake">#</a></small>
+</h2>
+
+
+<script src="/caseflow/task_trees/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
+graph TD
+
+claim --> claim_decision
+claim_decision --> V[Veteran]
+
+V --> |form| BvaMail[BVA mail intake]
+BvaMail -.- NOD
+BvaMail -.- mailPortal[Mail Portal]
+mailPortal --> |documents| vbmsEFolder[VBMS eFolder]
+
+BvaMail --> docket{docket?}
+BvaMail --> TranslationTask
+
+BvaMail --> |change POA| PoaMailTask
+PoaMailTask --> newTrackVet[new TrackVeteranTask]
+PoaMailTask --> |if necessary| newIHP[new IHPTask]
+
+BvaMail --> AodMailTask
+AodMailTask -.- |decided by| VLJ
+
+docket --> |if H| Hearing
+Hearing -.- |presided by| VLJ
+Hearing --> ACD
+ACD --> Decision
+%% Decision -.- VLJ
+Decision --> Dispatch
+
+docket --> |if ES| EvidenceSubmissionWindowTask
+EvidenceSubmissionWindowTask --> ACD
+
+BvaMail --> TrackVeteranTask
+VSO -.- TrackVeteranTask
+VSO --> |if IHP-writing VSO| IHPTask
+</p>
+
+
+
+<p class="mermaid">
+graph TD
+validate[Validate form]
+validate --> add_issues[add issues from veteran's decision review]
+add_issues --> |match to| decision
+add_issues --> |same issue as| legacy
+</p>
+
+<h2 id="business-lines">
+  Business Lines
+  <small><a class="anchor-heading" href="#business-lines" aria-labelledby="business-lines">#</a></small>
+</h2>
+<p>Once Intake is done, there are 3 major flows for AMA decision review:</p>
+<ol>
+<li>HLR &amp; SC (Compensation and Pension) - in VBMS
+<ul>
+<li>Request issues are represented as <em>contentions</em> on EPs in VBMS</li>
+<li>Request issues (in the same appeal) can map to contentions in different EPs.</li>
+<li>Once EP is cleared/completed, Caseflow loads the new rating issues (and dispositions) to create VA decision issues on AMA decision reviews.</li>
+<li>A decision issue maps to only one rating issue or nothing.</li>
+</ul>
+</li>
+<li>HLR &amp; SC (other business lines) - in Caseflow
+<ul>
+<li>One queue for each non-VBMS business line.</li>
+<li>No EPs or contentions. For each request issue, create a decision issue with the disposition.</li>
+</ul>
+</li>
+<li>Board Appeals - in Caseflow
+<ul>
+<li>Attorneys create decision issues, not raters.</li>
+<li>Dispositions on decision issues get <em>outcoded</em> to contentions on a new(?) EP, and a new rating issue is created.</li>
+<li>The only purpose of the EP is to email the person of the decision.</li>
+</ul>
+</li>
+</ol>
+<p>Note:</p>
+<ul>
+<li>Only VBA Compensation and Pension business lines use ratings (and VBMS).</li>
+<li>The 7 other business lines use nonrating request issues.</li>
+<li>Unidentified issues should be resolved before making decisions on them.
+Otherwise, they will be considered ineligible.</li>
+</ul>
+
+
+<p class="mermaid">
+graph TD
+bizlines{business lines}
+mailPortal[Mail Portal]
+mailPortal --> |documents| vbmsEFolder[VBMS eFolder]
+bizlines --> |Compensation| mailPortal
+bizlines --> |Pension| mailPortal
+bizlines --> |small volume| manual[NCA, Fiduciary, VHA, Loan Guaranty, Eudcation, Insurance]
+
+bizlines --> |performs| record_request
+record_request --> |document| bizlines
+</p>
+
+<h2 id="decision-review-lanes">
+  Decision Review Lanes
+  <small><a class="anchor-heading" href="#decision-review-lanes" aria-labelledby="decision-review-lanes">#</a></small>
+</h2>
+
+
+<p class="mermaid">
+graph TD
+decision_review_lanes --> SC
+decision_review_lanes --> HLR
+decision_review_lanes --> Board_Appeal
+SC --> |decision saved| issue_complete
+HLR --> |decision saved| issue_complete
+
+form --> |specifies| decision_review_lanes
+form --> Intake[Intake within 24 hrs]
+Intake --> intake_complete
+Intake --> intake_cancelled
+</p>
+
+<h2 id="caseflow-and-eps">
+  Caseflow and EPs
+  <small><a class="anchor-heading" href="#caseflow-and-eps" aria-labelledby="caseflow-and-eps">#</a></small>
+</h2>
+
+
+<p class="mermaid">
+graph TD
+EP --> |has| request_issue
+request_issue --> |can result in many| decision_issue
+decision_issue --> |can satisfy many| request_issue
+
+Caseflow --> |creates in VBMS| EP
+EP --> |has one or more| contention
+contention --> |connects to| rating_issue
+Caseflow --> close_legacy[close legacy appeal issues or legacy appeals]
+
+Caseflow --> |polls EPs in| VBMS
+VBMS --> EP_state{EP state?}
+EP_state --> |cancelled| Caseflow_closes_issues
+EP_state --> |cleared, takes 24hrs from BGS| Caseflow_syncs
+Caseflow_syncs --> |syncs| contention_disposition
+
+rating_issue --> Caseflow_sync_VBMS_decision_review
+contention_disposition --> Caseflow_sync_VBMS_decision_review
+Caseflow_sync_VBMS_decision_review --> |creates| decision_issue
+
+Caseflow_sync_VBMS_decision_review --> dtaError{DTA error?}
+dtaError --> |yes| auto_create_SC
+auto_create_SC --> SupplementalClaim
+</p>
+
+<h2 id="after-dispatched">
+  After Dispatched
+  <small><a class="anchor-heading" href="#after-dispatched" aria-labelledby="after-dispatched">#</a></small>
+</h2>
+
+
+<p class="mermaid">
+graph TD
+board_grants --> |notified during outcode| bizline
+bizline --> |confirms in Caseflow| grant_effectuation
+grant_effectuation --> bizlineUsesVBMS{bizline uses VBMS?}
+bizlineUsesVBMS --> |yes| Caseflow_creates_effectuation_EP
+bizlineUsesVBMS --> |no| Caseflow_uses_task
+</p>
+
+
+
+<p class="mermaid">
+graph TD
+
+Dispatch --> |dispatched| outcode
+outcode --> bizline{bizline?}
+
+bizline --> |VBMS| EP
+bizline --> |VBMS| SupplementalClaim
+bizline --> |VBMS| DecisionIssue
+
+subgraph Compensation and Pension bizline worked in VBMS
+    EP
+    SupplementalClaim
+    DecisionIssue
+end
+
+bizline --> |Non-compensation| NonCompen_SupplementalClaim
+subgraph Other bizline worked in CaseflowIntake
+    NonCompen_SupplementalClaim
+end
+</p>
+
+<h2 id="intake-models">
+  Intake Models
+  <small><a class="anchor-heading" href="#intake-models" aria-labelledby="intake-models">#</a></small>
+</h2>
+<p>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Intake-Data-Model" target="_blank">Intake Data Model</a></p>
+<ul>
+<li>Ratings and rating issues are stored in the VBA Corp DB.
+<ul>
+<li>Caseflow and VBMS both use BGS, which queries Corp DB.</li>
+</ul>
+</li>
+<li>Request issues can also match legacy issues in VACOLS.
+<ul>
+<li>Veteran can choose to close the VACOLS legacy issue with a disposition designating
+that it&rsquo;s been opted into the AMA process.</li>
+</ul>
+</li>
+</ul>
+
+
+<p class="mermaid">
+graph TD
+
+Veteran -.- Rating
+Rating -.- RatingIssue
+RequestIssue -.- Contention
+RequestIssue -.- RatingIssue
+RequestIssue -.- EndProductEstablishment
+RequestIssue -.- DecisionIssue
+DecisionIssue -.- DecisionReview
+Veteran -.- EndProduct
+EndProduct -.- EndProductEstablishment
+
+ClaimReview --> |inherits| DecisionReview
+SupplementalClaim --> |inherits| ClaimReview
+HigherLevelReview --> |inherits| ClaimReview
+Appeal --> |inherits| DecisionReview
+
+Appeal --> |has multiple| DecisionDocument
+DecisionDocument -.- BoardGrantEffectuation
+</p>
+
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/workflows/intake-workflow.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#mail-intake">Mail Intake</a></li>
+    <li><a href="#business-lines">Business Lines</a></li>
+    <li><a href="#decision-review-lanes">Decision Review Lanes</a></li>
+    <li><a href="#caseflow-and-eps">Caseflow and EPs</a></li>
+    <li><a href="#after-dispatched">After Dispatched</a></li>
+    <li><a href="#intake-models">Intake Models</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Caseflow Data Models #  This section provides information about Caseflow&rsquo;s data model, data dictionary, and resources to help understand Caseflow&rsquo;s database contents ( terminology and example data-dictionaries). The main audience are Caseflow engineers, BVA&rsquo;s Reporting Team, and onboarders.
+Also check out Caseflow Database Schema Documentation.
+Contents #  Caseflow Certification  Caseflow Intake  Caseflow Hearings  Caseflow Reader  eFolder Express  Caseflow Queue  Caseflow Dispatch   Instructions for adding documentation #   Document any non-obvious semantics or logic that would be useful when interpreting database tables and constituent data.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Data Models" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/data-model.html" />
+
+<title>Data Models | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.e7edcf008d8bc42049bdf6b76a9eebf2e2c0076a9bbb3bbd679549a04b9308fb.css" integrity="sha256-5&#43;3PAI2LxCBJvfa3ap7r8uLAB2qbuzu9Z5VJoEuTCPs=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a4cd025b7614a896305dc2f1191ebb5f89d7df28366cd7827684e2492047c0f4.js" integrity="sha256-pM0CW3YUqJYwXcLxGR67X4nX3yg2bNeCdoTiSSBHwPQ=" crossorigin="anonymous"></script>
+<link rel="alternate" type="application/rss+xml" href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/index.xml" title="Task Trees & DB" />
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+  <ul>
+    
+    
+    
+    
+      
+      <li id="section-schema">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-schema" class="toggle"  />
+          
+          <label for="input-section-schema" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/schema.html" class=" ">DB Schemas</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/schema_diagrams.html">Schema Diagrams</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html">Caseflow Schema CSV</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/schema/etl_schema_csv.html">ETL Schema CSV</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-data-model">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-data-model" class="toggle"  checked />
+          
+          <label for="input-section-data-model" class="flex justify-between  active">
+            <a href="/caseflow/task_trees/data-model.html" class=" active">Data Models</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      
+      <li id="section-workflows">
+        
+        
+         
+        
+        
+          
+          
+          
+          
+          
+            <input type="checkbox" id="input-section-workflows" class="toggle"  />
+          
+          <label for="input-section-workflows" class="flex justify-between  ">
+            <a href="/caseflow/task_trees/workflows.html" class=" ">Workflows</a>
+          </label>
+          <ul class="sub-menu">
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/appeal-workflow.html">Appeal Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/intake-workflow.html">Intake Workflow</a>
+              </li>
+            
+               
+              
+              <li class="">
+                <a href="/caseflow/task_trees/workflows/hearing-workflow.html">Hearing Workflow</a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Data Models</strong>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+<main>
+  <h1 id="caseflow-data-models">
+  Caseflow Data Models
+  <small><a class="anchor-heading" href="#caseflow-data-models" aria-labelledby="caseflow-data-models">#</a></small>
+</h1>
+<p>This section provides information about Caseflow&rsquo;s data model, data dictionary, and resources to help understand Caseflow&rsquo;s database contents (
+
+<a href="https://dataedo.com/blog/data-model-data-dictionary-database-schema-erd" target="_blank">terminology</a> and 
+
+<a href="https://www.usgs.gov/products/data-and-tools/data-management/data-dictionaries" target="_blank">example data-dictionaries</a>).
+The main audience are Caseflow engineers, BVA&rsquo;s Reporting Team, and onboarders.</p>
+<p>Also check out 
+
+<a href="schema_diagrams">Caseflow Database Schema Documentation</a>.</p>
+<h2 id="contents">
+  Contents
+  <small><a class="anchor-heading" href="#contents" aria-labelledby="contents">#</a></small>
+</h2>
+<ul class="contents">
+
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/certification.html">Caseflow Certification</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/intake.html">Caseflow Intake</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/hearings.html">Caseflow Hearings</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/reader.html">Caseflow Reader</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/efolder_express.html">eFolder Express</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/queue.html">Caseflow Queue</a>
+    </li>
+  
+    <li class="sectItem-page">
+      <a href="https://department-of-veterans-affairs/caseflow/task_trees/data-model/dispatch.html">Caseflow Dispatch</a>
+    </li>
+  
+
+</ul>
+
+<h3 id="instructions-for-adding-documentation">
+  Instructions for adding documentation
+  <small><a class="anchor-heading" href="#instructions-for-adding-documentation" aria-labelledby="instructions-for-adding-documentation">#</a></small>
+</h3>
+<ul>
+<li>Document any non-obvious semantics or logic that would be useful when interpreting database tables and constituent data.
+<ul>
+<li>Reference other relevant wiki pages to provide context/background.</li>
+<li>Link to relevant code (in case it changes in the future).</li>
+</ul>
+</li>
+<li>To create tables diagram, go to 
+
+<a href="http://dbdiagram.io/," target="_blank">http://dbdiagram.io/,</a> click &ldquo;Import&rdquo;, and paste table definition excerpts from 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/db/schema.rb" target="_blank"><code>schema.rb</code></a>; then add cross-table links using the mouse and move the boxes around to your liking. Click &ldquo;Save&rdquo; and copy the URL to this page.
+<ul>
+<li>Note: you can only import once; try it a couple of times to get a hang of it before spending too much time.</li>
+<li>Table columns with <code>***</code> in the name are used to designate categories of columns. In the Certifications diagram, you will see a column titled <code>_initial ***</code> in the Form8s table. The Form8s table has twelve columns beginning with &ldquo;_initial&rdquo;: <code>_initial_appellant_name</code>, <code>_initial_appellant_relationship</code>, etc. To keep the diagram and tables more tidy we grouped these categories together.</li>
+<li>Pro-tip: Open another browser tab, paste the new excerpt, then copy-and-paste the resulting Table definition into the original tab.</li>
+<li>To insert a screenshot of the diagram, paste the image into a comment on 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/issues/15510" target="_blank">ticket #15510</a>, which will upload the image to GitHub and provide a URL for the image, which can then be linked from this page.</li>
+</ul>
+</li>
+</ul>
+
+
+  
+</main>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/data-model/_index.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
