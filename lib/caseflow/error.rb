@@ -17,7 +17,7 @@ module Caseflow::Error
 
   class SerializableError < StandardError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message, :title
+    attr_accessor :code, :message, :title, :actionable
   end
 
   class TransientError < SerializableError
@@ -106,6 +106,7 @@ module Caseflow::Error
 
   class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)
+      @actionable = false
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @title = "Error assigning tasks"
