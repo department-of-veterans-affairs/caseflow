@@ -52,6 +52,14 @@ describe AttorneyTask, :all_dbs do
       end
     end
 
+    context "when the assignee is the assigning VLJ" do
+      let(:assigning_judge) { create(:user, :judge) }
+      let(:attorney) { assigning_judge }
+      it "succeeds" do
+        expect(subject).to be_valid
+      end
+    end
+
     context "when an AttorneyTask is already open for the appeal" do
       let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: parent) }
       it "throws an error when a second task is created" do
