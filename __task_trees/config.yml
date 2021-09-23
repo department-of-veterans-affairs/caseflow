@@ -1,4 +1,4 @@
-baseURL: 'https://department-of-veterans-affairs/caseflow/task_trees'
+baseURL: 'https://department-of-veterans-affairs.github.io/caseflow/task_trees'
 languageCode: en-us
 title: Task Trees & DB
 
