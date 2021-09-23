@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Workflows on Task Trees &amp; DB</title>
-    <link>https://department-of-veterans-affairs/caseflow/task_trees/workflows.html</link>
+    <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows.html</link>
     <description>Recent content in Workflows on Task Trees &amp; DB</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://department-of-veterans-affairs/caseflow/task_trees/workflows/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Appeal Workflow</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/workflows/appeal-workflow.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/appeal-workflow.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/workflows/appeal-workflow.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/appeal-workflow.html</guid>
       <description>Appeal Workflow #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD V[Veteran] --|claim| firstRO[DRO] firstRO --|claim decision| V %% start(start appeal) -.- V V --|appeal forms| R(Regional Office) subgraph -VBA- firstRO R -- choice{choice?} choice -- |Supp Claim| DRO[DRO] choice -- |HLR| DRO end DRO -- |decision| V choice -- |Board appeal, NOD| docket{docket?} choice -- |Legacy appeal, before AMA| Certification Certification -- InActiv[Activation] InActiv -- H[Hearing] subgraph -Hearing- H[Hearing] end docket -- |Hearing| InH docket -- |Evid Subm| In docket -- |Direct Review| In subgraph -Intake- InH(Intake for Hearing) In(Intake) end InH -- H[Hearing] H -- Transcription In -- VSO In -- ACD[ACD] VSO -- ACD[ACD] Transcription -- ACD[ACD] ACD -- JAT[Judge assigns] InActiv -- JAT subgraph -Decision- JAT -- AT[Attorney task] VLJSupport[VLJ support] -.</description>
     </item>
     
     <item>
       <title>Intake Workflow</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/workflows/intake-workflow.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/workflows/intake-workflow.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</guid>
       <description>Intake Workflow #  Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
 It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.
  Issues presentation
@@ -29,10 +29,10 @@ Mail Intake #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34
     
     <item>
       <title>Hearing Workflow</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/hearing-workflow.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/hearing-workflow.html</guid>
       <description>Hearing Workflow #    Caseflow Hearings  HearingTask   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD docket -- |if H| admin_actions{need hearing admin actions?} admin_actions -- |yes| HearingAdminActionTask HearingAdminActionTask -- ScheduleHearingTask admin_actions -- |no| ScheduleHearingTask ScheduleHearingTask -- AssignHearingDispositionTask AssignHearingDispositionTask -- disposition{hearing disposition?} disposition -- |postponed| ScheduleHearingTask disposition -- |held| waiveES{waive Evidence Submission?} waiveES -- |yes| TranscriptionTask waiveES -- |no| EvidenceSubmissionWindowTask EvidenceSubmissionWindowTask -- TranscriptionTask TranscriptionTask -- ACD[DistributionTask] ACD -- Decision disposition -- |cancelled| ihpVSO{IHP-writing VSO?</description>
     </item>
     

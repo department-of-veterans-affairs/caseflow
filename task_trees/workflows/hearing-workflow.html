@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Hearing Workflow" />
 <meta property="og:description" content="Hearing Workflow #    Caseflow Hearings  HearingTask   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD docket -- |if H| admin_actions{need hearing admin actions?} admin_actions -- |yes| HearingAdminActionTask HearingAdminActionTask -- ScheduleHearingTask admin_actions -- |no| ScheduleHearingTask ScheduleHearingTask -- AssignHearingDispositionTask AssignHearingDispositionTask -- disposition{hearing disposition?} disposition -- |postponed| ScheduleHearingTask disposition -- |held| waiveES{waive Evidence Submission?} waiveES -- |yes| TranscriptionTask waiveES -- |no| EvidenceSubmissionWindowTask EvidenceSubmissionWindowTask -- TranscriptionTask TranscriptionTask -- ACD[DistributionTask] ACD -- Decision disposition -- |cancelled| ihpVSO{IHP-writing VSO?" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://department-of-veterans-affairs/caseflow/task_trees/workflows/hearing-workflow.html" /><meta property="article:section" content="workflows" />
+<meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/hearing-workflow.html" /><meta property="article:section" content="workflows" />
 
 
 

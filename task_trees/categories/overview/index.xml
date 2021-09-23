@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>overview on Task Trees &amp; DB</title>
-    <link>https://department-of-veterans-affairs/caseflow/task_trees/categories/overview.html</link>
+    <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/categories/overview.html</link>
     <description>Recent content in overview on Task Trees &amp; DB</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://department-of-veterans-affairs/caseflow/task_trees/categories/overview/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/categories/overview/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>All Tasks</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/trees/alltasks.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/alltasks.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/trees/alltasks.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/alltasks.html</guid>
       <description>Task Listing for All Dockets #  See Tasks Overview for context.
 Table columns:
  sum = total occurrences across all docket types DR = occurrences in direct_review docket; DR tasks ES = occurrences in evidence_submission docket; ES tasks H = occurrences in hearing docket; H tasks  These counts include multiple occurrences in a single appeal.
@@ -20,10 +20,10 @@ Table columns:
     
     <item>
       <title>Roles Overview</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/trees/roles/role-overview.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/roles/role-overview.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/trees/roles/role-overview.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/roles/role-overview.html</guid>
       <description>| All Roles | Attorney | Judge | Colocated | Acting Judge | Dispatch User | Regional Office User | Intake User | Hearings User |
 Roles Overview #  There are a number of different roles available within Caseflow defined primarily by which functions they are allowed to perform.
   Attorney  Judge  Colocated  Acting Judge  Dispatch User  Regional Office User  Intake User  Hearings User  Users with a particular role will have access to perform different actions on tasks that have been assigned to them in their queue.</description>
@@ -31,10 +31,10 @@ Roles Overview #  There are a number of different roles available within Caseflo
     
     <item>
       <title>Tasks Overview</title>
-      <link>https://department-of-veterans-affairs/caseflow/task_trees/trees/tasks-overview.html</link>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://department-of-veterans-affairs/caseflow/task_trees/trees/tasks-overview.html</guid>
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html</guid>
       <description>| README | All tasks | DR tasks | ES tasks | H tasks |
 See How to use for a description of the docket types: Direct Review (DR), Evidence Submission (ES), and Hearing (H).
 Appeals Process: mural
