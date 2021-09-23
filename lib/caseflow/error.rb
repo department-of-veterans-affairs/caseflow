@@ -104,6 +104,7 @@ module Caseflow::Error
     end
   end
 
+  # :reek:TooManyInstanceVariables
   class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)
       @actionable = false
