@@ -296,6 +296,8 @@ class Fakes::BGSService
         ssn_nbr: veteran.ssn,
         email_address: veteran.email_address
       }
+    elsif participant_id == ""
+      {} # simulates returned value for unrecognized appellant
     else
       {
         birth_date: DateTime.new(1998, 9, 5),
