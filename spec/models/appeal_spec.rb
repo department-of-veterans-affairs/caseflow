@@ -1160,23 +1160,25 @@ describe Appeal, :all_dbs do
     end
     let(:appeal) { create(:appeal, request_issues: request_issues) }
 
-    context "when issue category falls under contested claim and category contains string 'Contested Claim'" do
-      let(:issue_category) { "Contested Claims - Insurance" }
+    context "when issue category falls under contested claims" do
+      context "contains string 'Contested Claim'" do
+        let(:issue_category) { "Contested Claims - Insurance" }
 
-      it "returns true" do
-        expect(subject).to be_truthy
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "contains string 'Apportionment'" do
+        let(:issue_category) { "Apportionment" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
       end
     end
 
-    context "when issue category falls under contested claim and category contains string 'Apportionment'" do
-      let(:issue_category) { "Apportionment" }
-
-      it "returns true" do
-        expect(subject).to be_truthy
-      end
-    end
-
-    context "when issue category doesn't fall under contested claim" do
+    context "when issue category doesn't fall under contested claims" do
       let(:issue_category) { "Military Retired Pay" }
 
       it "returns false" do
