@@ -113,7 +113,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     // Assignee could be the current user
     const judgeOpt = { id: currentUser.id, full_name: currentUser.fullName };
-    const assigneeOpts = [...attorneysOfJudge, judgeOpt, ...attorneys.data];
+    const assigneeOpts = [...attorneysOfJudge, judgeOpt, ...(attorneys?.data || [])];
 
     let assignee = assigneeOpts.find((user) => user?.id?.toString() === userId.toString());
 
