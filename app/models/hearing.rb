@@ -60,8 +60,6 @@ class Hearing < CaseflowRecord
            :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :hearing_day_full?, :request_type, to: :hearing_day
-  delegate :regional_office, to: :hearing_day, prefix: true
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
@@ -85,6 +83,23 @@ class Hearing < CaseflowRecord
     T: "Travel",
     C: "Central"
   }.freeze
+
+  # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
+  # allows us to soft-delete hearing_days by setting the deleted_at value.
+  # As a result, instead of delegating these functions to hearing_day we redefine them using\
+  # the safe navigator operator.
+
+  def request_type
+    hearing_day&.request_type
+  end
+
+  def hearing_day_full?
+    hearing_day&.hearing_day_full?
+  end
+
+  def hearing_day_regional_office
+    hearing_day&.regional_office
+  end
 
   def check_available_slots
     fail HearingDayFull if hearing_day_full?
