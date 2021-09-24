@@ -111,10 +111,13 @@ class VaDotGovAddressValidator
   # Gets a list of RO facility ids to geomatch with.
   #
   # @return            [Array<String>]
-  #   An array of RO facility ids that are in the same state as the veteran/appellant.
+  #   Array of all RO facility ids for Travel board appeals or RO facility IDs by state for all other appeal types
   def ro_facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
+
+    # Return the list of RO facility IDs
+    return RegionalOffice.facility_ids if appeal.current_hearing_request_type == :travel_board
 
     facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
 

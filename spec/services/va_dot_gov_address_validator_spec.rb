@@ -248,6 +248,14 @@ describe VaDotGovAddressValidator do
         expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
       end
     end
+
+    context "when veteran with legacy appeal requests travel board" do
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "2")) }
+
+      it "returns all facilities" do
+        expect(subject).to match_array RegionalOffice.facility_ids
+      end
+    end
   end
 
   describe "#valid_address when there is an address validation error" do
