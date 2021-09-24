@@ -147,7 +147,7 @@ describe AttorneyTask, :all_dbs do
             Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
             Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
           ]
-  
+
           expect(subject).to eq(expected_actions)
         end
       end

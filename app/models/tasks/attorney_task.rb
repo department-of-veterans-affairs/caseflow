@@ -101,7 +101,7 @@ class AttorneyTask < Task
 
   def assigned_to_role_is_valid
     is_self = assigned_to == assigned_by
-      
+
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols? && !is_self
   end
 
