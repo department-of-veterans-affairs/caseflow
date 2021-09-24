@@ -19,36 +19,32 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
   def available_actions(user)
-    if self_assigned?(user)
-      # VLJ w/ self-assigned task can do most things (return to judge doesn't make sense)
-      (attorney_actions + [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]).uniq
-    elsif can_be_moved_by_user?(user) && !self_assigned?(user)
-      movement_actions
-    else
-      return [] if assigned_to != user
-
-      attorney_actions
-    end
-  end
-
-  def timeline_title
-    COPY::CASE_TIMELINE_ATTORNEY_TASK
-  end
-
-  def attorney_actions
-    [
+    atty_actions = [
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
-  end
 
-  def movement_actions
-    [
+    movement_actions = [
       Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ]
+
+    if self_assigned?(user)
+      # VLJ w/ self-assigned task can do most things (return to judge doesn't make sense)
+      (atty_actions + [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]).uniq
+    elsif can_be_moved_by_user?(user) && !self_assigned?(user)
+      movement_actions
+    else
+      return [] if assigned_to != user
+
+      atty_actions
+    end
+  end
+
+  def timeline_title
+    COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
   def update_parent_status
@@ -105,7 +101,7 @@ class AttorneyTask < Task
 
   def assigned_to_role_is_valid
     is_self = assigned_to == assigned_by
-
+      
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols? && !is_self
   end
 
