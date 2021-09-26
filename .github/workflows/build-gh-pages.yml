@@ -13,12 +13,15 @@ jobs:
     steps:
       - name: "📂 Checkout branch"
         uses: actions/checkout@v2
+        with:
+          # Needed for Hugo themes (e.g., __task_trees/themes)
+          submodules: true
 
-        # include the lines below if you are using jekyll-last-modified-at
-        # or if you would otherwise need to fetch the full commit history
-        # however this may be very slow for large repositories!
-        # with:
-        #   fetch-depth: '0'
+          # include the lines below if you are using jekyll-last-modified-at
+          # or if you would otherwise need to fetch the full commit history
+          # however this may be very slow for large repositories!
+          # with:
+          #   fetch-depth: '0'
 
       - name: "Install Graphviz (for jekyll-graphviz)"
         uses: ts-graphviz/setup-graphviz@v1
