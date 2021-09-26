@@ -54,7 +54,7 @@ To checkout to a `main-gh-pages` directory as a sibling of your `caseflow` direc
 ```
 cd $YOUR_PATH_TO/caseflow
 cd ..
-git clone -b main-gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git main-gh-pages
+git clone --recurse-submodules -b main-gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git main-gh-pages
 ```
 
 ## Committing big changes

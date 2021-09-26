@@ -55,3 +55,6 @@ github_action_pre_commit_hook: move_make_docs_files
 	@echo "::group::Remove files that change with every run"
 	rm -vf schema/make_docs/*-erd.pdf
 	@echo "::endgroup::"
+
+update_theme:
+	git submodule update --init --recursive --remote

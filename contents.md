@@ -10,6 +10,8 @@ permalink: "index"
 * [Table associations subsite](schema/html/) (created via [Jailer](https://github.com/Wisser/Jailer)): provides SQL joins clauses for basic and polymorphic associations
 * [Task trees subsite](task_trees/index.html): roles, tasks, and statistics from real task trees
 
+## Other sites
+- [Appeals Deployment](https://verbose-broccoli-9868be41.pages.github.io/)
 
 ## Help and examples
 * [README](README.html)
