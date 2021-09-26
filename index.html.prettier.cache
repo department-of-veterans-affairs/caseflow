@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>Caseflow Dispatch - Caseflow Docs</title>
+    <title>Contents - Caseflow Docs</title>
     <link
       rel="shortcut icon"
       href="/caseflow/favicon.ico"
@@ -24,22 +24,22 @@
     ></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Begin Jekyll SEO tag v2.7.1 -->
-    <title>Caseflow Dispatch | Caseflow Docs</title>
+    <title>Contents | Caseflow Docs</title>
     <meta name="generator" content="Jekyll v3.9.0" />
-    <meta property="og:title" content="Caseflow Dispatch" />
+    <meta property="og:title" content="Contents" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="Documentation for Caseflow" />
     <meta property="og:description" content="Documentation for Caseflow" />
-    <link rel="canonical" href="/caseflow/batteam/dispatch/" />
-    <meta property="og:url" content="/caseflow/batteam/dispatch/" />
+    <link rel="canonical" href="/caseflow/index" />
+    <meta property="og:url" content="/caseflow/index" />
     <meta property="og:site_name" content="Caseflow Docs" />
     <meta name="twitter:card" content="summary" />
-    <meta property="twitter:title" content="Caseflow Dispatch" />
+    <meta property="twitter:title" content="Contents" />
     <script type="application/ld+json">
       {
         "description": "Documentation for Caseflow",
-        "headline": "Caseflow Dispatch",
-        "url": "/caseflow/batteam/dispatch/",
+        "headline": "Contents",
+        "url": "/caseflow/index",
         "@type": "WebPage",
         "@context": "https://schema.org"
       }
@@ -156,8 +156,8 @@
       </div>
       <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
         <ul class="nav-list">
-          <li class="nav-list-item">
-            <a href="/caseflow/index" class="nav-list-link">Contents</a>
+          <li class="nav-list-item active">
+            <a href="/caseflow/index" class="nav-list-link active">Contents</a>
           </li>
           <li class="nav-list-item">
             <a href="/caseflow/README.html" class="nav-list-link">README</a>
@@ -194,19 +194,17 @@
               </li>
             </ul>
           </li>
-          <li class="nav-list-item active">
+          <li class="nav-list-item">
             <a href="#" class="nav-list-expander"
               ><svg viewbox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
             ><a href="/caseflow/batteam/" class="nav-list-link">Bat Team</a>
             <ul class="nav-list">
-              <li class="nav-list-item active">
+              <li class="nav-list-item">
                 <a href="#" class="nav-list-expander"
                   ><svg viewbox="0 0 24 24">
                     <use xlink:href="#svg-arrow-right"></use></svg></a
-                ><a
-                  href="/caseflow/batteam/dispatch/"
-                  class="nav-list-link active"
+                ><a href="/caseflow/batteam/dispatch/" class="nav-list-link"
                   >Caseflow Dispatch</a
                 >
                 <ul class="nav-list">
@@ -263,28 +261,135 @@
         </nav>
       </div>
       <div id="main-content-wrap" class="main-content-wrap">
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-          <ol class="breadcrumb-nav-list">
-            <li class="breadcrumb-nav-list-item">
-              <a href="/caseflow/batteam/">Bat Team</a>
-            </li>
-            <li class="breadcrumb-nav-list-item">
-              <a href="/caseflow/batteam/dispatch/">Bat Team</a>
-            </li>
-            <li class="breadcrumb-nav-list-item">
-              <span>Caseflow Dispatch</span>
-            </li>
-          </ol>
-        </nav>
         <div id="main-content" class="main-content" role="main">
-          <p>Caseflow Dispatch</p>
-          <hr />
-          <h2 class="text-delta">Table of contents</h2>
+          <h1 id="contents">
+            <a
+              href="#contents"
+              class="anchor-heading"
+              aria-labelledby="contents"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Contents
+          </h1>
+          <h2 id="database">
+            <a
+              href="#database"
+              class="anchor-heading"
+              aria-labelledby="database"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Database
+          </h2>
           <ul>
             <li>
-              <a href="/caseflow/batteam/dispatch/dispatch_stuck.html"
-                >Dispatch claim being “stuck”</a
+              <a href="schema/db_schema">Caseflow DB schema</a>: with diagrams
+              and relevant tables for each Caseflow product
+            </li>
+            <li>
+              <a href="schema/html/">Table associations subsite</a> (created via
+              <a href="https://github.com/Wisser/Jailer">Jailer</a>): provides
+              SQL joins clauses for basic and polymorphic associations
+            </li>
+            <li>
+              <a href="task_trees/index.html">Task trees subsite</a>: roles,
+              tasks, and statistics from real task trees
+            </li>
+          </ul>
+          <h2 id="help-and-examples">
+            <a
+              href="#help-and-examples"
+              class="anchor-heading"
+              aria-labelledby="help-and-examples"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Help and examples
+          </h2>
+          <ul>
+            <li><a href="README.html">README</a></li>
+            <li>
+              <a href="help/index.html">Help subsite</a>
+              <ul>
+                <li><a href="help/diagrams">Diagram examples</a></li>
+                <li><a href="help/jekyll">Jekyll</a></li>
+              </ul>
+            </li>
+          </ul>
+          <h2 id="list-of-pages">
+            <a
+              href="#list-of-pages"
+              class="anchor-heading"
+              aria-labelledby="list-of-pages"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            List of pages
+          </h2>
+          <ol>
+            <li><a href="/caseflow/index">Contents</a></li>
+            <li>
+              <a
+                href="/caseflow/caseflow-queues/automatic_case_distribution.html"
+                >Automatic Case Distribution</a
               >
+            </li>
+            <li><a href="/caseflow/caseflow-queues/tasks.html">Tasks</a></li>
+            <li><a href="/caseflow/README.html">README</a></li>
+            <li><a href="/caseflow/workflows/">Workflows</a></li>
+            <li><a href="/caseflow/schema/db_schema.html">DB Schema</a></li>
+            <li><a href="/caseflow/caseflow-queues/">Caseflow Queue</a></li>
+            <li><a href="/caseflow/batteam/">Bat Team</a></li>
+          </ol>
+          <h2 id="testing">
+            <a href="#testing" class="anchor-heading" aria-labelledby="testing"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Testing
+          </h2>
+          <p>
+            <button class="btn js-toggle-dark-mode">Preview dark theme</button>
+            <script>
+              const toggleDarkMode = document.querySelector(
+                ".js-toggle-dark-mode"
+              );
+              jtd.addEvent(toggleDarkMode, "click", function () {
+                if (jtd.getTheme() === "dark") {
+                  jtd.setTheme("light");
+                  toggleDarkMode.textContent = "Preview dark theme";
+                } else {
+                  jtd.setTheme("dark");
+                  toggleDarkMode.textContent = "Return to the light side";
+                }
+              });
+            </script>
+          </p>
+          <h3 id="bat-team-items-jekyll-collection-test">
+            <a
+              href="#bat-team-items-jekyll-collection-test"
+              class="anchor-heading"
+              aria-labelledby="bat-team-items-jekyll-collection-test"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Bat Team Items (Jekyll collection test)
+          </h3>
+          <ul>
+            <li>
+              <p>
+                <a href="/caseflow/batteam_items/dispatch_stuck/"
+                  >Dispatch_stuck, , ok
+                </a>
+                <br />tags: batteam, dispatch”, and stuck
+              </p>
+            </li>
+            <li>
+              <p>
+                <a href="/caseflow/batteam_items/index/">Bat Team, , </a>
+                <br />tags:
+              </p>
             </li>
           </ul>
           <hr />
@@ -293,7 +398,7 @@
             <div class="d-flex mt-2">
               <p class="text-small text-grey-dk-000 mb-0">
                 <a
-                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/batteam/dispatch/index.md"
+                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/contents.md"
                   id="edit-this-page"
                   >Edit this page</a
                 >
