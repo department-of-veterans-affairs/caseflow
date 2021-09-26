@@ -2,6 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu.html</loc>
+  </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/appeal-workflow.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/certification.html</loc>
@@ -1235,8 +1237,6 @@
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/intake.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/intro.html</loc>
-  </url><url>
-    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/categories/overview.html</loc>
   </url><url>
