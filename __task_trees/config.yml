@@ -26,7 +26,7 @@ ignoreFiles:
 ignoreErrors:
   - error-remote-getcsv
 
-theme: hugo-book
+theme: hugo-book-caseflow
 
 sectionPagesMenu: navmenu
 

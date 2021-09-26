@@ -1,0 +1,188 @@
+<!-- sidebar start -->
+<aside>
+  {{ with .Site.GetPage "/menu/header" }}
+    {{- $href := printf "href=\"%s\"" $.RelPermalink -}}
+    {{- replace .Content $href (print $href "class=active") | safeHTML -}}
+  {{ end }}
+    <ul>
+        {{ $currentPage := . }}
+        {{ $visibleMenuItems := (where .Site.Menus.navmenu "Weight" "gt" 0 ) }}
+        {{ $sortedMenuItems := sort $visibleMenuItems "Weight" }}
+        {{ $sortedMenuItems := (sort (sort (sort $visibleMenuItems "Page.Weight") "Page.Params.order") "Weight") }}
+        {{ range $sortedMenuItems }}
+
+          {{ $scratch := newScratch }}
+          {{with .Page}}{{ $scratch.Set "page" .Page }}{{end}}
+          {{ $pageViaMenu := $scratch.Get "page" }}
+          {{ $sectionId := print "section-" .Identifier }}
+
+          <li id="{{ $sectionId }}">
+            {{ $linkLabel := (.Name | default .Title | default .Identifier | default .URL) }}
+{{/*
+    w={{with .Page}}{{ eq $currentPage .Page }}{{ end }}
+    eq={{ eq $currentPage $pageViaMenu }}
+    {{ $currentPage.IsMenuCurrent "navmenu" . }}
+    {{ $currentPage.HasMenuCurrent "navmenu" . }}
+  */}}
+            {{ if .HasChildren }}
+{{/*
+    {{ block "navmenu-link" (dict "MenuItem" . "CurrentPage" $currentPage) }}{{ end }}
+    {{ block "navmenu-children" (dict "MenuItem" . "CurrentPage" $currentPage) }}{{ end }}
+  */}}
+
+                  {{ if true }}
+                    {{ $inputId := print "input-" $sectionId }}
+                    {{ $collapsible := $pageViaMenu.Params.menu.navmenu.collapsible }}
+                    {{ $active := ($currentPage.IsMenuCurrent "navmenu" .) }}
+                    <!-- hasactive is false if it is active -->
+                    {{ $hasactive := cond $active false ($currentPage.HasMenuCurrent "navmenu" .) }}
+                    {{ if $collapsible }}
+                      <input type="checkbox" id="{{ $inputId }}" class="toggle" {{ if or $active $hasactive }}checked{{ end }} />
+                    {{ end }}
+                    <label for="{{ $inputId }}" class="flex justify-between {{ if $hasactive }}hasactive{{ end }} {{ if $active }}active{{ end }}">
+                      <a href="{{ .URL }}" class="{{ if $hasactive }}hasactive{{ end }} {{ if $active }}active{{ end }}">
+                        {{- $linkLabel -}}
+                      </a>
+                    </label>
+                  {{ else }}
+                    {{ block "navmenu-link" (dict "MenuItem" . "CurrentPage" $currentPage) }}{{ end }}
+                  {{ end }}
+                  <ul class="sub-menu">
+                      <!-- sort by menu.Weight, then by Page.order, then by Page.weight -->
+                      {{ range (sort (sort (sort .Children "Page.Weight") "Page.Params.order") "Weight") }}
+                        {{with .Page}}{{ $scratch.Set "childpage" .Page }}{{end}}
+                        {{ $childpageViaMenu := $scratch.Get "childpage" }}
+                        {{ $childLinkLabel := (.Name | default .Title | default .Identifier | default .URL) }}
+                        <li class="{{ if $currentPage.IsMenuCurrent "navmenu" . }}active{{ end }}">
+                            <a href="{{ .URL }}">{{- $childLinkLabel -}}</a>
+                        </li>
+                      {{ end }}
+                  </ul>
+            {{ else }}
+                  <a href="{{ .URL }}" class="{{ if $currentPage.IsMenuCurrent "navmenu" . }}active{{ end }}">
+                      {{ .Pre }}
+                      <span>{{- $linkLabel -}}</span>
+                  </a>
+            {{ end }}
+<!--     <a class="{{if or ($currentPage.IsMenuCurrent "navmenu" .) ($currentPage.HasMenuCurrent "navmenu" .) }}active{{end}}" href="{{ .URL }}" title="{{ .Title }}">={{ .Name }}</a> -->
+            <!-- https://gohugo.io/templates/menu-templates/#using-page-in-menus -->
+            <!-- `with` dereferences `.Page` so that an error doesn't occur if it is null -->
+            {{/* id={{ .Identifier }}, w={{.Weight}}; {{with .Page}}or={{ .Params.order }}, {{ .Params }}{{end}} */}}
+          </li>
+        {{ end }}
+    </ul>
+  {{ with .Site.GetPage "/menu/footer" }}
+    {{- $href := printf "href=\"%s\"" $.RelPermalink -}}
+    {{- replace .Content $href (print $href "class=active") | safeHTML -}}
+  {{ end }}
+</aside>
+
+{{ define "navmenu-children" }}
+  <ul>
+  {{ $relUrl := replace (.MenuItem.URL | absURL) site.BaseURL "" }}
+  {{ $page := site.GetPage $relUrl }}
+  childs={{ $page }}
+    {{ $currPage := .CurrentPage }}
+    {{ range .MenuItem.Children }} <!-- (where .MenuItem.Children "Page.Params.bookhidden" "ne" true) -->
+      {{ if $page.IsSection }}
+        <li {{- if $page.Params.BookFlatSection }} class="book-section-flat" {{ end -}}>
+            s:
+          {{ block "navmenu-link" (dict "MenuItem" . "CurrentPage" $currPage) }}{{ end }}
+          {{ block "navmenu-children" (dict "MenuItem" . "CurrentPage" $currPage) }}{{ end }}
+        </li>
+      {{ else if and $page.IsPage $page.Content }}
+        <li>p:
+          {{ block "navmenu-link" (dict "MenuItem" . "CurrentPage" $currPage) }}{{ end }}
+        </li>
+      {{ end }}
+    {{ end }}
+  </ul>
+{{ end }}
+
+{{ define "navmenu-link" }}
+  {{ if true }}
+  {{ site.GetPage (.MenuItem.URL) }}
+    {{ .MenuItem.URL }}
+    {{ $mp := .MenuItem.Page }}
+    ref={{ .MenuItem.PageRef }};
+    {{ $p1 := site.GetPage "/data-model" }}
+    p1={{ eq $p1 $mp }}
+    {{ $p1.Kind }};
+    {{ .MenuItem.Params }};
+    {{ $relUrl := replace (.MenuItem.URL | absURL) site.BaseURL "" }}
+    {{ $relUrl }}
+    {{ $p2 := site.GetPage $relUrl }}
+    {{ $p2.Params }}
+  {{ end }}
+{{ end }}
+
+{{ define "navmenu-linkBAK" }}
+  {{ $relUrl1 := replace (.MenuItem.URL | absURL) site.BaseURL "/" }}
+  {{ $page1 := site.GetPage (replaceRE "/$" "/index.html" $relUrl1 ) }}
+  {{ $relUrl := relref .CurrentPage $relUrl1 }}
+  {{ $page := site.GetPage (print $relUrl) }}
+  {{ $relUrl }}
+  AAAA={{ site.GetPage "/data-model/certification/index.html" }}
+  {{ if $page.Params.bookCollapseSection }}
+    <input type="checkbox" id="section-{{ md5 $page }}" class="toggle" {{ if .CurrentPage.HasMenuCurrent "navmenu" .MenuItem }}checked{{ end }} />
+    <label for="section-{{ md5 $page }}" class="flex justify-between">
+      <a {{ if $page.Content }}href="{{ $page.RelPermalink }}"{{ else }}role="button"{{ end }} class="{{ if .CurrentPage.IsMenuCurrent "navmenu" .MenuItem }}active{{ end }}">
+        {{- partial "docs/title" $page -}}
+      </a>
+    </label>
+  {{ else if $page.Content }}
+    <a href="{{ $page.RelPermalink }}" class="{{ if .CurrentPage.IsMenuCurrent "navmenu" .MenuItem }} active{{ end }}">
+      {{- partial "docs/title" $page -}}
+    </a>
+  {{ else }}
+    <span>{{ $page }}<br>{{$relUrl}} {- partial "docs/title" $page -}</span>
+  {{ end }}
+{{ end }}
+
+{{/*
+<hr/>
+{{ $bookSection := "data-model" }}
+{{ $currPage := . }}
+{{ with .Site.GetPage $bookSection }}
+  {{ block "sidebar-link" (dict "Page" . "CurrentPage" $currPage) }}{{ end }}
+  {{ block "sidebar-children" (dict "Section" . "CurrentPage" $currPage) }}{{ end }}
+{{ end }}
+*/}}
+
+{{ define "sidebar-children" }}
+  <ul>
+    {{ range (where .Section.Pages "Params.bookhidden" "ne" true) }}
+      {{ if .IsSection }}
+        <li {{- if .Params.BookFlatSection }} class="book-section-flat" {{ end -}}>
+            s:
+          {{ block "sidebar-link" (dict "Page" . "CurrentPage" $.CurrentPage) }}{{ end }}
+          {{ block "sidebar-children" (dict "Section" . "CurrentPage" $.CurrentPage) }}{{ end }}
+        </li>
+      {{ else if and .IsPage .Content }}
+        <li>p:
+          {{ block "sidebar-link" (dict "Page" . "CurrentPage" $.CurrentPage) }}{{ end }}
+        </li>
+      {{ end }}
+    {{ end }}
+  </ul>
+{{ end }}
+
+{{ define "sidebar-link" }}
+  {{ $current := eq .CurrentPage .Page }}
+  {{ $ancestor := .Page.IsAncestor .CurrentPage }}
+
+  {{ if .Page.Params.bookCollapseSection }}
+    <input type="checkbox" id="section-{{ md5 .Page }}" class="toggle" {{ if or $current $ancestor }}checked{{ end }} />
+    <label for="section-{{ md5 .Page }}" class="flex justify-between">
+      <a {{ if .Page.Content }}href="{{ .Page.RelPermalink }}"{{ else }}role="button"{{ end }} class="{{ if $current }}active{{ end }}">
+        {{- partial "docs/title" .Page -}}
+      </a>
+    </label>
+  {{ else if .Page.Content }}
+    <a href="{{ .Page.RelPermalink }}" class="{{ if $current }} active{{ end }}">
+      {{- partial "docs/title" .Page -}}
+    </a>
+  {{ else }}
+    <span>{{- partial "docs/title" .Page -}}</span>
+  {{ end }}
+{{ end }}

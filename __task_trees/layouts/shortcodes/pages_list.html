@@ -1,9 +1,0 @@
-<ul class="contents">
-{{ with where $.Page.Pages "Weight" "ge" 0 }}
-  {{ range sort . "Weight" }}
-    <li class="sectItem-{{ .Kind }}">
-      <a href="{{ .Permalink }}">{{ .Title | default .Name | default (path.Base .Path) }}</a>
-    </li>
-  {{ end }}
-{{ end }}
-</ul>

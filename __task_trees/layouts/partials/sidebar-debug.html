@@ -1,0 +1,35 @@
+<!-- sidebar start -->
+<aside>
+  {{ with .Site.GetPage "/menu/header" }}
+    {{- $href := printf "href=\"%s\"" $.RelPermalink -}}
+    {{- replace .Content $href (print $href "class=active") | safeHTML -}}
+  {{ end }}
+    <ul>
+        {{ $currentPage := . }}
+        {{ $visibleMenuItems := (where .Site.Menus.navmenu "Weight" "ge" -1000 ) }}
+        {{ $sortedMenuItems := sort $visibleMenuItems "Weight" }}
+        {{/* $sortedMenuItems2 := (sort (sort (sort $visibleMenuItems "Page.Params.weight") "Page.Params.order") "Weight") */}}
+        {{ range $sortedMenuItems }}
+
+          {{ $scratch := newScratch }}
+          {{with .Page}}{{ $scratch.Set "page" .Page }}{{end}}
+          {{ $pageViaMenu := $scratch.Get "page" }}
+          {{ $sectionId := print "section-" .Identifier }}
+          <li>id={{ .Identifier }}, w={{.Weight}}; c={{len $pageViaMenu.Content}}, wc={{$pageViaMenu.WordCount}}; {{ . }}
+
+
+<!--     <a class="{{if or ($currentPage.IsMenuCurrent "navmenu" .) ($currentPage.HasMenuCurrent "navmenu" .) }}active{{end}}" href="{{ .URL }}" title="{{ .Title }}">={{ .Name }}</a> -->
+            <!-- https://gohugo.io/templates/menu-templates/#using-page-in-menus -->
+            <!-- `with` dereferences `.Page` so that an error doesn't occur if it is null -->
+            {{/* id={{ .Identifier }}, w={{.Weight}}; {{with .Page}}or={{ .Params.order }}, {{ .Params }}{{end}} */}}
+
+                <a class="sidebar-nav-item{{if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }} active{{end}}" href="{{ .URL }}" title="{{ .Title }}">{{ .Name }}</a>
+
+          </li>
+        {{ end }}
+    </ul>
+  {{ with .Site.GetPage "/menu/footer" }}
+    {{- $href := printf "href=\"%s\"" $.RelPermalink -}}
+    {{- replace .Content $href (print $href "class=active") | safeHTML -}}
+  {{ end }}
+</aside>
