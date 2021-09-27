@@ -16,7 +16,7 @@ export const mapPOADataToApi = (_poa) => {
         state: _poa.state,
         zip: _poa.zip,
         phone_number: _poa.phoneNumber,
-        email: _poa.email
+        email_address: _poa.emailAddress
       }
     }
   };
