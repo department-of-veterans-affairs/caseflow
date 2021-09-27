@@ -130,7 +130,6 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   const renderPoaLogic = () => {
     const unrecognizedAppellant = 'OtherClaimant';
     const unrecognizedPoa = 'Unrecognized representative';
-    const recognizedAppellant = appellantType !== unrecognizedAppellant;
     const recognizedPoa = poa.representative_type !== unrecognizedPoa;
 
     if (recognizedPoa) {
