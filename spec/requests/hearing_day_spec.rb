@@ -31,15 +31,15 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
           scheduled_for: Date.new(2019, 4, 14),
           room: n.to_s
         )
-        (1..3).each do |n|
-          create(
-            :hearing_day,
-            regional_office: "RO10",
-            request_type: HearingDay::REQUEST_TYPES[:travel],
-            scheduled_for: Date.new(2019, 4, 14),
-            room: (n + 3).to_s
-          )
-        end
+      end
+      (1..3).each do |n|
+        create(
+          :hearing_day,
+          regional_office: "RO10",
+          request_type: HearingDay::REQUEST_TYPES[:travel],
+          scheduled_for: Date.new(2019, 4, 14),
+          room: (n + 3).to_s
+        )
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     it "Create new adhoc Travel hearing day and do not assign a room" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:travel],
-                                              scheduled_for: "17-Jan-2019", assign_room: false}
+                                              scheduled_for: "17-Jan-2019", assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))

@@ -75,7 +75,7 @@ describe HearingDay, :all_dbs do
           :hearing_day,
           request_type: HearingDay::REQUEST_TYPES[:travel],
           scheduled_for: test_hearing_date_caseflow,
-          regional_office: "RO43",
+          regional_office: "RO43"
         )
       end
 

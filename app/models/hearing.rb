@@ -96,7 +96,7 @@ class Hearing < CaseflowRecord
   # the hearings on that hearing_day give request type == 'V'. This is part
   # of the ACs. This code should NOT be here past October 2021.
   def request_type
-    return nil if !hearing_day 
+    return nil if !hearing_day
     return "V" if hearing_day.request_type == "T"
 
     hearing_day.request_type
