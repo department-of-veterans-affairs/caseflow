@@ -15,12 +15,11 @@ describe('DocketStartTimes', () => {
   };
 
   const renderComponent = (props = {}) => render(
-    <DocketStartTimes {...defaultProps} {...props}>
-    </DocketStartTimes>
+    <DocketStartTimes {...defaultProps} {...props} />
   );
 
   test('Matches snapshot with default props', () => {
-    const { container } = renderComponent()
+    const { container } = renderComponent();
 
     expect(container).toMatchSnapshot();
 
@@ -29,7 +28,7 @@ describe('DocketStartTimes', () => {
   });
 
   test('Passes a11y testing', async () => {
-    const { container } = renderComponent()
+    const { container } = renderComponent();
 
     const results = await axe(container);
 
@@ -59,7 +58,7 @@ describe('DocketStartTimes', () => {
 
           expect(screen.getByText(fullDayLabel)).toBeInTheDocument();
           expect(screen.getByText(halfDayAmLabel)).toBeInTheDocument();
-          expect(screen.getByText(halfDayPmLabel)).toBeInTheDocument()
+          expect(screen.getByText(halfDayPmLabel)).toBeInTheDocument();
         } else {
           const amTimeInEastern =
             moment(moment.tz('08:30', 'h:mm A', timezone)).tz('America/New_York').
@@ -75,7 +74,7 @@ describe('DocketStartTimes', () => {
           expect(screen.getByText(halfDayAmLabel)).toBeInTheDocument();
           expect(screen.getByText(halfDayPmLabel)).toBeInTheDocument();
         }
-      })
-    })
+      });
+    });
   });
 });

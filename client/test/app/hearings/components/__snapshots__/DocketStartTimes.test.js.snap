@@ -48,7 +48,7 @@ exports[`DocketStartTimes Matches snapshot with default props 1`] = `
           class=""
           for="docketStartTimes_04:30"
         >
-          Half-Day AM (5 slots at 4:30 AM Eastern)
+          Half-Day AM (5 slots at 8:30 AM Eastern)
         </label>
       </div>
       <div
@@ -64,7 +64,7 @@ exports[`DocketStartTimes Matches snapshot with default props 1`] = `
           class=""
           for="docketStartTimes_08:30"
         >
-          Half-Day PM (5 slots at 8:30 AM Eastern)
+          Half-Day PM (5 slots at 12:30 PM Eastern)
         </label>
       </div>
     </div>
@@ -120,7 +120,7 @@ exports[`DocketStartTimes Matches snapshot with default props 2`] = `
           class=""
           for="docketStartTimes_04:30"
         >
-          Half-Day AM (5 slots at 4:30 AM Eastern)
+          Half-Day AM (5 slots at 8:30 AM Eastern)
         </label>
       </div>
       <div
@@ -136,7 +136,7 @@ exports[`DocketStartTimes Matches snapshot with default props 2`] = `
           class=""
           for="docketStartTimes_08:30"
         >
-          Half-Day PM (5 slots at 8:30 AM Eastern)
+          Half-Day PM (5 slots at 12:30 PM Eastern)
         </label>
       </div>
     </div>
