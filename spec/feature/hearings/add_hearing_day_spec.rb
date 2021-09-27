@@ -289,9 +289,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
           # Confirm presence of available times
           expect(page).to have_content("Available Times")
           radio_choices = page.all(".cf-form-radio-option")
-          expect(radio_choices[0]).to have_content("Full-Day AM & PM (10 slots at 8:30 AM & 12:30 PM Eastern)")
-          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 8:30 AM Eastern")
-          expect(radio_choices[2]).to have_content("Half-Day PM (5 slots at 12:30 PM Eastern")
+          expect(radio_choices[0]).to have_content("Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Eastern)")
+          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 9:00 AM Eastern")
+          expect(radio_choices[2]).to have_content("Half-Day PM (5 slots at 1:00 PM Eastern")
 
           expect(page).to have_content("Regional Office (RO)", wait: 30)
           dropdowns = page.all(".cf-select__control")
@@ -300,7 +300,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
 
           radio_choices = page.all(".cf-form-radio-option > label")
           expect(radio_choices[0]).to have_content("Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Pacific)")
-          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 9:00 AM Pacific / 12:00 AM Eastern)")
+          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 9:00 AM Pacific / 12:00 PM Eastern)")
           expect(radio_choices[2]).to have_content("Half-Day PM (5 slots at 1:00 PM Pacific / 4:00 PM Eastern)")
 
           radio_choices[choice].click
@@ -325,16 +325,16 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       context "Half day AM" do
         let(:choice) { 1 }
         let(:total_slots) { 5 }
-        let(:first_slot_time) { "11:30" } # 12
-        let(:begins_at) { "2019-04-15T11:30:00-04:00" }
+        let(:first_slot_time) { "12:00" }
+        let(:begins_at) { "2019-04-15T12:00:00-04:00" }
         include_examples "adding full or half day dockets"
       end
 
       context "Half day PM" do
         let(:choice) { 2 }
         let(:total_slots) { 5 }
-        let(:first_slot_time) { "15:30" } # 4
-        let(:begins_at) { "2019-04-15T15:30:00-04:00" }
+        let(:first_slot_time) { "16:00" }
+        let(:begins_at) { "2019-04-15T16:00:00-04:00" }
         include_examples "adding full or half day dockets"
       end
     end
