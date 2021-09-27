@@ -65,9 +65,9 @@ export const AddHearingDay = ({
   const [loading, setLoading] = useState(false);
 
   const selectedVirtual = selectedRequestType === HEARING_REQUEST_TYPES.virtual;
-  const selectedVideoOrTravel =
-    selectedRequestType === HEARING_REQUEST_TYPES.video ||
-    selectedRequestType === HEARING_REQUEST_TYPES.travel;
+  const selectedVideo = selectedRequestType === HEARING_REQUEST_TYPES.video;
+  const selectedTravel = selectedRequestType === HEARING_REQUEST_TYPES.travel;
+  const selectedVideoOrTravel = selectedVideo || selectedTravel;
 
   const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
 
@@ -284,6 +284,8 @@ export const AddHearingDay = ({
               setSlotCount={setSlotCount}
               setHearingStartTime={setHearingStartTime}
               hearingStartTime={hearingStartTime}
+              amStartTime={selectedTravel ? '9:00' : '8:30'}
+              pmStartTime={selectedTravel ? '13:00' : '12:30'}
               roTimezone={selectedRegionalOffice?.timezone}
             />
           }
