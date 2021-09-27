@@ -59,4 +59,4 @@ TBA
 
 
 
-* I want to acknowledge that other tests on the draft PR failed.  I didn't fix all of the breaking tests because I thought that would venture into actual implementation of the proposed change, which is not in scope for working on a tech spec.
+`*` I want to acknowledge that other tests on the draft PR failed.  I didn't fix all of the breaking tests because I thought that would venture into actual implementation of the proposed change, which is not in scope for working on a tech spec.
