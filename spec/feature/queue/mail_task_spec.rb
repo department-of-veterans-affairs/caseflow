@@ -34,6 +34,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       it "successfully assigns the task to team member" do
+        visit("/queue")
         visit("queue/appeals/#{aod_team_task.appeal.external_id}")
 
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
@@ -77,14 +78,29 @@ RSpec.feature "MailTasks", :postgres do
       )
     end
 
-    let(:task) { parent_task.children.first }
+    let(:vlj_support_user) do
+      team = Colocated.first || Colocated.create(name: "VLJ Support Staff", url: "vlj-support")
+      user = create(:user)
+      team.add_user(user)
+      user
+    end
+
+    let(:task) do
+      old_task_type.create!(
+        appeal: parent_task.appeal,
+        parent_id: parent_task.id,
+        assigned_to: vlj_support_user,
+        status: Constants.TASK_STATUSES.assigned,
+        instructions: [old_instructions]
+      )
+    end
 
     before do
       Colocated.singleton.add_user(user)
     end
 
     it "should update the task type" do
-      # Visit case details page
+      visit "/queue/" # avoids a weird race condition
       visit "/queue/appeals/#{task.appeal.uuid}"
 
       # Make sure mail team tasks do not show in task snapshot
@@ -127,7 +143,7 @@ RSpec.feature "MailTasks", :postgres do
 
       # Ensure the task has been updated and the assignee is unchanged
       expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
-      expect(page).to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
+      expect(page).to have_content(format("ASSIGNED TO\nVLJ Support Staff"))
       page.find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(old_instructions)
       expect(page).to have_content(new_instructions)
