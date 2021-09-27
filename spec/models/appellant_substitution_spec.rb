@@ -359,4 +359,50 @@ describe AppellantSubstitution do
       end
     end
   end
+
+  describe "create a same appeal substitution" do
+    subject { described_class.create!(params) }
+
+    let(:created_by) { create(:user) }
+    let(:deceased_veteran) { create(:veteran, date_of_death: "12/31/2019") }
+    let(:source_appeal) do
+      create(:appeal, :with_decision_issue, :dispatched,
+             disposition: "dismissed_death", veteran: deceased_veteran)
+    end
+    let(:substitution_date) { 1.day.ago.to_date }
+    let(:substitute) { create(:claimant) }
+
+    let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
+    let(:poa_participant_id) { substitutes_poa.poa_participant_id }
+
+    let(:selected_task_types) { [] }
+    let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
+    let(:task_params) { {} }
+
+    let(:params) do
+      {
+        created_by: created_by,
+        source_appeal: source_appeal,
+        substitution_date: substitution_date,
+        claimant_type: substitute&.type,
+        substitute_participant_id: substitute&.participant_id,
+        poa_participant_id: poa_participant_id,
+        selected_task_ids: selected_task_ids,
+        task_params: task_params
+      }
+    end
+
+    it "updates the existing appeal" do
+      expect { subject }.not_to raise_error
+      params.each_key { |key| expect(subject.send(key)).to eq params[key] }
+
+      expect(subject.target_appeal.appellant_substitution).to eq subject
+      expect(subject.target_appeal.appellant_substitution?).to eq true
+      expect(subject.target_appeal).to eq(subject.source_appeal)
+      expect(subject.target_appeal.veteran_is_not_claimant).to eq true
+      expect(subject.substitute_claimant.participant_id).to eq subject.substitute_participant_id
+      expect(subject.target_appeal.claimant.participant_id).to eq subject.substitute_participant_id
+      expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
+    end
+  end
 end
