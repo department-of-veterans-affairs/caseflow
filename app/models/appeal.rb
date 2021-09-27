@@ -160,6 +160,18 @@ class Appeal < DecisionReview
     post_decision_motion&.vacate_type
   end
 
+  def contested_claim?
+    category_substrings = ["Contested Claims", "Apportionment"]
+
+    matching_issue_categories = Constants::ISSUE_CATEGORIES.values.flatten.select do |category|
+      category.match? Regexp.union(category_substrings)
+    end
+
+    active_request_issues.any? do |request_issue|
+      matching_issue_categories.include?(request_issue.nonrating_issue_category)
+    end
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
