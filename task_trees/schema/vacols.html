@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VACOLS #  This page documents the VACOLS DB and its schema.
+ VACOLS is the source of truth for Legacy Appeals.  VACOLS GitHub repo  VACOLS Data Dictionary spreadsheet copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.  Docs in the VACOLS repo   VACOLS Reference docs - VACOLS_Table_Joins.xls  Feb 2017 VACOLS doc in appeals-data repo - explanations of example queries    Caseflow&rsquo;s Rails Source Code for VACOLS DB #   Caseflow&rsquo;s VACOLS Rails models">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="VACOLS" />
+<meta property="og:description" content="VACOLS #  This page documents the VACOLS DB and its schema.
+ VACOLS is the source of truth for Legacy Appeals.  VACOLS GitHub repo  VACOLS Data Dictionary spreadsheet copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.  Docs in the VACOLS repo   VACOLS Reference docs - VACOLS_Table_Joins.xls  Feb 2017 VACOLS doc in appeals-data repo - explanations of example queries    Caseflow&rsquo;s Rails Source Code for VACOLS DB #   Caseflow&rsquo;s VACOLS Rails models" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols.html" /><meta property="article:section" content="schema" />
+
+
+
+<title>VACOLS | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.5d6733259aecd3beb663d26685a6ae0b0c0ab7b51a6a10dd3b01ab5c153852c0.css" integrity="sha256-XWczJZrs0762Y9JmhaauCwwKt7UaahDdOwGrXBU4UsA=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.3c32362d2a87def2c873f6cc3d329d151d823e998f04ce470671b7b5cba849d0.js" integrity="sha256-PDI2LSqH3vLIc/bMPTKdFR2CPpmPBM5HBnG3tcuoSdA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+
+  <ul>
+    
+    
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-schema'>
+      
+     
+    
+      <input type="checkbox" id="input-schema" class="toggle"  checked />
+    
+    <label for="input-schema" class="flex justify-between hasactive ">
+      <a href="/caseflow/task_trees/schema.html" class="hasactive ">
+        DB Schemas
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-a32031daf6826a3a658364c8ef641ca2'>
+      
+     
+    
+    <label for="input-a32031daf6826a3a658364c8ef641ca2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/schema_diagrams.html" class=" ">
+        Schema Diagrams
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-4e3261ee60f20cb3c2f4ef840300d7ee'>
+      
+     
+    
+    <label for="input-4e3261ee60f20cb3c2f4ef840300d7ee" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html" class=" ">
+        Caseflow Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-etl'>
+      
+     
+    
+    <label for="input-etl" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl.html" class=" ">
+        ETL/ODS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-80b3a20f34bcfa1497e53f6df98f9a1a'>
+      
+     
+    
+    <label for="input-80b3a20f34bcfa1497e53f6df98f9a1a" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl_schema_csv.html" class=" ">
+        ETL Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-510fcecf0cba28b1d0c46768d27ecd96'>
+      
+     
+    
+    <label for="input-510fcecf0cba28b1d0c46768d27ecd96" class="flex justify-between  active">
+      <a href="/caseflow/task_trees/schema/vacols.html" class=" active">
+        VACOLS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-86d4ee7ca78396e350fefbdb82eae3d4'>
+      
+     
+    
+    <label for="input-86d4ee7ca78396e350fefbdb82eae3d4" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/vacols_schema.html" class=" ">
+        VACOLS Schema
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-data-model'>
+      
+     
+    
+      <input type="checkbox" id="input-data-model" class="toggle"  />
+    
+    <label for="input-data-model" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model.html" class=" ">
+        Data Models
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-d9a62a0a0731eac713a305003af79490'>
+      
+     
+    
+    <label for="input-d9a62a0a0731eac713a305003af79490" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/certification.html" class=" ">
+        Caseflow Certification
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-b7f27412867a0a8e1e4953a63bf95106'>
+      
+     
+    
+    <label for="input-b7f27412867a0a8e1e4953a63bf95106" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/intake.html" class=" ">
+        Caseflow Intake
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-fa3d69149400827fe11bd6ce3d9aa84b'>
+      
+     
+    
+    <label for="input-fa3d69149400827fe11bd6ce3d9aa84b" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/hearings.html" class=" ">
+        Caseflow Hearings
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-527774a69e219f3c432838b1f74869ac'>
+      
+     
+    
+    <label for="input-527774a69e219f3c432838b1f74869ac" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/reader.html" class=" ">
+        Caseflow Reader
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-eca58f638455b63e62ef87da8262aaea'>
+      
+     
+    
+    <label for="input-eca58f638455b63e62ef87da8262aaea" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/efolder_express.html" class=" ">
+        eFolder Express
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-04e9d47bd2d7efdf6336448f0af7e675'>
+      
+     
+    
+    <label for="input-04e9d47bd2d7efdf6336448f0af7e675" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/queue.html" class=" ">
+        Caseflow Queue
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-595643a3078a34fba5f27a8dbcfce9f2'>
+      
+     
+    
+    <label for="input-595643a3078a34fba5f27a8dbcfce9f2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/dispatch.html" class=" ">
+        Caseflow Dispatch
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-workflows'>
+      
+     
+    
+      <input type="checkbox" id="input-workflows" class="toggle"  />
+    
+    <label for="input-workflows" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows.html" class=" ">
+        Workflows
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-edf4bada38d8b7d9cb267d0fad6cb482'>
+      
+     
+    
+    <label for="input-edf4bada38d8b7d9cb267d0fad6cb482" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/appeal-workflow.html" class=" ">
+        Appeal Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-634712e82d20fc609167455d5ba6a3b0'>
+      
+     
+    
+    <label for="input-634712e82d20fc609167455d5ba6a3b0" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/intake-workflow.html" class=" ">
+        Intake Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-71a11ce05606820e012aa432ca8c93db'>
+      
+     
+    
+    <label for="input-71a11ce05606820e012aa432ca8c93db" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/hearing-workflow.html" class=" ">
+        Hearing Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+  </ul>
+
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>VACOLS</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#caseflows-rails-source-code-for-vacols-db">Caseflow&rsquo;s Rails Source Code for VACOLS DB</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="vacols">
+  VACOLS
+  <small><a class="anchor-heading" href="#vacols" aria-labelledby="vacols">#</a></small>
+</h1>
+<p>This page documents the VACOLS DB and its schema.</p>
+<ul>
+<li>VACOLS is the source of truth for Legacy Appeals.</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs" target="_blank">VACOLS GitHub repo</a></li>
+<li>
+
+<a href="https://docs.google.com/spreadsheets/d/1I8vb7PWeDSJBQhwUFAkvywlwNXJW0KnzQQtb_rxz7j4/edit?usp=sharing" target="_blank">VACOLS Data Dictionary spreadsheet</a> copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs" target="_blank">Docs in the VACOLS repo</a>
+<ul>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs/VACOLS%20Reference%20Docs" target="_blank">VACOLS Reference docs</a> - VACOLS_Table_Joins.xls</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/appeals-data/blob/master/vacols.pdf" target="_blank">Feb 2017 VACOLS doc in appeals-data repo</a> - explanations of example queries</li>
+</ul>
+</li>
+</ul>
+<h2 id="caseflows-rails-source-code-for-vacols-db">
+  Caseflow&rsquo;s Rails Source Code for VACOLS DB
+  <small><a class="anchor-heading" href="#caseflows-rails-source-code-for-vacols-db" aria-labelledby="caseflows-rails-source-code-for-vacols-db">#</a></small>
+</h2>
+<p>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/tree/master/app/models/vacols" target="_blank">Caseflow&rsquo;s VACOLS Rails models</a></p>
+<ul>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/appeal_repository.rb" target="_blank">appeal_repository.rb</a> to query and update VACOLS</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/case.rb" target="_blank">case.rb</a> has mappings of VACOLS values to more intuitive values</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_appeal.rb" target="_blank">legacy_appeal.rb</a> - model that queries VACOLS for Legacy appeal info</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/helpers/vacols_helper.rb" target="_blank">vacols_helper.rb</a> - utility methods to handle VACOLS quirks</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/concerns/associated_vacols_model.rb" target="_blank">associated_vacols_model.rb</a>
+<ul>
+<li><code>vacols_attr_accessors</code> will lazy load the underlying data from the VACOLS DB upon first call.
+For example, <code>appeal = LegacyAppeal.find(id)</code> will <em>not</em> make any calls to load the data from VACOLS,
+but soon as we call <code>appeal.veteran_first_name</code>, it will trigger the VACOLS DB lookup and fill in
+all instance variables for the appeal. Further requests will pull the values from memory and not
+do subsequent VACOLS DB lookups</li>
+<li><code>AppealRepository.load_vacols_data</code> calls 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/appeal_repository.rb#L177" target="_blank"><code>set_vacols_values</code></a> to load appeal (aka &ldquo;case&rdquo;) information from VACOLS.</li>
+</ul>
+</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/appeals-support/wiki/VACOLS-Location-Codes" target="_blank">Location codes</a> - in the 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_appeal.rb#L149" target="_blank">code</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/schema/vacols.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#caseflows-rails-source-code-for-vacols-db">Caseflow&rsquo;s Rails Source Code for VACOLS DB</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

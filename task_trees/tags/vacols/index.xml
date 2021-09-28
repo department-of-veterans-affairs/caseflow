@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vacols on Task Trees &amp; DB</title>
+    <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/vacols.html</link>
+    <description>Recent content in vacols on Task Trees &amp; DB</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/vacols/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VACOLS</title>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols.html</guid>
+      <description>VACOLS #  This page documents the VACOLS DB and its schema.
+ VACOLS is the source of truth for Legacy Appeals.  VACOLS GitHub repo  VACOLS Data Dictionary spreadsheet copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.  Docs in the VACOLS repo   VACOLS Reference docs - VACOLS_Table_Joins.xls  Feb 2017 VACOLS doc in appeals-data repo - explanations of example queries    Caseflow&amp;rsquo;s Rails Source Code for VACOLS DB #   Caseflow&amp;rsquo;s VACOLS Rails models</description>
+    </item>
+    
+    <item>
+      <title>VACOLS Schema</title>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html</guid>
+      <description>VACOLS Schema #  VACOLS - VBMS Mapping #  CORRES table contains most of Veteran&amp;rsquo;s info (should match VBMS)
+TIVBMS field allows us to determine if the claim is ready for VBMS
+TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
+BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
+Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq    Also check out visualization of table relationships.</description>
+    </item>
+    
+  </channel>
+</rss>

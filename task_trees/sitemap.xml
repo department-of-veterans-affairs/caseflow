@@ -14,8 +14,6 @@
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/etl.html</loc>
-  </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/hearings.html</loc>
@@ -34,9 +32,15 @@
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/queue.html</loc>
   </url><url>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/dispatch.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/etl.html</loc>
+  </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/etl_schema_csv.html</loc>
   </url><url>
-    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/dispatch.html</loc>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/footer.html</loc>
   </url><url>
@@ -1251,6 +1255,8 @@
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees.html</loc>
+  </url><url>
+    <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/vacols.html</loc>
   </url><url>
     <loc>https://department-of-veterans-affairs.github.io/caseflow/task_trees/</loc>
   </url><url>

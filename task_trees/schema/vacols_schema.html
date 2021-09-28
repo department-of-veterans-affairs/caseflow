@@ -1,0 +1,6531 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VACOLS Schema #  VACOLS - VBMS Mapping #  CORRES table contains most of Veteran&rsquo;s info (should match VBMS)
+TIVBMS field allows us to determine if the claim is ready for VBMS
+TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
+BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
+Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq    Also check out visualization of table relationships.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="VACOLS Schema" />
+<meta property="og:description" content="VACOLS Schema #  VACOLS - VBMS Mapping #  CORRES table contains most of Veteran&rsquo;s info (should match VBMS)
+TIVBMS field allows us to determine if the claim is ready for VBMS
+TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
+BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
+Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq    Also check out visualization of table relationships." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html" /><meta property="article:section" content="schema" />
+
+
+
+<title>VACOLS Schema | Task Trees &amp; DB</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.5d6733259aecd3beb663d26685a6ae0b0c0ab7b51a6a10dd3b01ab5c153852c0.css" integrity="sha256-XWczJZrs0762Y9JmhaauCwwKt7UaahDdOwGrXBU4UsA=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.3c32362d2a87def2c873f6cc3d329d151d823e998f04ce470671b7b5cba849d0.js" integrity="sha256-PDI2LSqH3vLIc/bMPTKdFR2CPpmPBM5HBnG3tcuoSdA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DB</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+
+  <ul>
+    
+    
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-schema'>
+      
+     
+    
+      <input type="checkbox" id="input-schema" class="toggle"  checked />
+    
+    <label for="input-schema" class="flex justify-between hasactive ">
+      <a href="/caseflow/task_trees/schema.html" class="hasactive ">
+        DB Schemas
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-a32031daf6826a3a658364c8ef641ca2'>
+      
+     
+    
+    <label for="input-a32031daf6826a3a658364c8ef641ca2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/schema_diagrams.html" class=" ">
+        Schema Diagrams
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-4e3261ee60f20cb3c2f4ef840300d7ee'>
+      
+     
+    
+    <label for="input-4e3261ee60f20cb3c2f4ef840300d7ee" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html" class=" ">
+        Caseflow Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-etl'>
+      
+     
+    
+    <label for="input-etl" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl.html" class=" ">
+        ETL/ODS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-80b3a20f34bcfa1497e53f6df98f9a1a'>
+      
+     
+    
+    <label for="input-80b3a20f34bcfa1497e53f6df98f9a1a" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl_schema_csv.html" class=" ">
+        ETL Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-510fcecf0cba28b1d0c46768d27ecd96'>
+      
+     
+    
+    <label for="input-510fcecf0cba28b1d0c46768d27ecd96" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/vacols.html" class=" ">
+        VACOLS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-86d4ee7ca78396e350fefbdb82eae3d4'>
+      
+     
+    
+    <label for="input-86d4ee7ca78396e350fefbdb82eae3d4" class="flex justify-between  active">
+      <a href="/caseflow/task_trees/schema/vacols_schema.html" class=" active">
+        VACOLS Schema
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-data-model'>
+      
+     
+    
+      <input type="checkbox" id="input-data-model" class="toggle"  />
+    
+    <label for="input-data-model" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model.html" class=" ">
+        Data Models
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-d9a62a0a0731eac713a305003af79490'>
+      
+     
+    
+    <label for="input-d9a62a0a0731eac713a305003af79490" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/certification.html" class=" ">
+        Caseflow Certification
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-b7f27412867a0a8e1e4953a63bf95106'>
+      
+     
+    
+    <label for="input-b7f27412867a0a8e1e4953a63bf95106" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/intake.html" class=" ">
+        Caseflow Intake
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-fa3d69149400827fe11bd6ce3d9aa84b'>
+      
+     
+    
+    <label for="input-fa3d69149400827fe11bd6ce3d9aa84b" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/hearings.html" class=" ">
+        Caseflow Hearings
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-527774a69e219f3c432838b1f74869ac'>
+      
+     
+    
+    <label for="input-527774a69e219f3c432838b1f74869ac" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/reader.html" class=" ">
+        Caseflow Reader
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-eca58f638455b63e62ef87da8262aaea'>
+      
+     
+    
+    <label for="input-eca58f638455b63e62ef87da8262aaea" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/efolder_express.html" class=" ">
+        eFolder Express
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-04e9d47bd2d7efdf6336448f0af7e675'>
+      
+     
+    
+    <label for="input-04e9d47bd2d7efdf6336448f0af7e675" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/queue.html" class=" ">
+        Caseflow Queue
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-595643a3078a34fba5f27a8dbcfce9f2'>
+      
+     
+    
+    <label for="input-595643a3078a34fba5f27a8dbcfce9f2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/dispatch.html" class=" ">
+        Caseflow Dispatch
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-workflows'>
+      
+     
+    
+      <input type="checkbox" id="input-workflows" class="toggle"  />
+    
+    <label for="input-workflows" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows.html" class=" ">
+        Workflows
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-edf4bada38d8b7d9cb267d0fad6cb482'>
+      
+     
+    
+    <label for="input-edf4bada38d8b7d9cb267d0fad6cb482" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/appeal-workflow.html" class=" ">
+        Appeal Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-634712e82d20fc609167455d5ba6a3b0'>
+      
+     
+    
+    <label for="input-634712e82d20fc609167455d5ba6a3b0" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/intake-workflow.html" class=" ">
+        Intake Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-71a11ce05606820e012aa432ca8c93db'>
+      
+     
+    
+    <label for="input-71a11ce05606820e012aa432ca8c93db" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/hearing-workflow.html" class=" ">
+        Hearing Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+  </ul>
+
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:freq-parentchild</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>VACOLS Schema</strong>
+
+  <label for="toc-control">
+    
+    <img src="/caseflow/task_trees/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
+    <li><a href="#table-joins">Table Joins</a></li>
+    <li><a href="#tables">Tables</a>
+      <ul>
+        <li><a href="#assign-diary-table-notes-about-the-claim">ASSIGN (Diary Table; Notes about the claim)</a></li>
+        <li><a href="#attach-attachments-table">ATTACH (Attachments table)</a></li>
+        <li><a href="#brieff-briefface-table">BRIEFF (Briefface table)</a></li>
+        <li><a href="#corres-veteranappellant-table">CORRES (Veteran/Appellant) table</a></li>
+        <li><a href="#corrtyps">CORRTYPS</a></li>
+        <li><a href="#cova">COVA</a></li>
+        <li><a href="#folder-more-claim-info">FOLDER (More claim info)</a></li>
+        <li><a href="#hearsched">HEARSCHED</a></li>
+        <li><a href="#issref-issue-reference">ISSREF (issue reference)</a></li>
+        <li><a href="#issues">ISSUES</a></li>
+        <li><a href="#mail">MAIL</a></li>
+        <li><a href="#priorloc">PRIORLOC</a></li>
+        <li><a href="#othdocs">OTHDOCS</a></li>
+        <li><a href="#rmdrea">RMDREA</a></li>
+        <li><a href="#rep-representatives">REP (representatives)</a></li>
+        <li><a href="#staff">STAFF</a></li>
+        <li><a href="#vftypes">VFTYPES</a></li>
+        <li><a href="#coin">COIN</a></li>
+        <li><a href="#decreview">DECREVIEW</a></li>
+        <li><a href="#actcode">ACTCODE</a></li>
+        <li><a href="#decass">DECASS</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="vacols-schema">
+  VACOLS Schema
+  <small><a class="anchor-heading" href="#vacols-schema" aria-labelledby="vacols-schema">#</a></small>
+</h1>
+<h2 id="vacols---vbms-mapping">
+  VACOLS - VBMS Mapping
+  <small><a class="anchor-heading" href="#vacols---vbms-mapping" aria-labelledby="vacols---vbms-mapping">#</a></small>
+</h2>
+<p>CORRES table contains most of Veteran&rsquo;s info (should match VBMS)</p>
+<p>TIVBMS field allows us to determine if the claim is ready for VBMS</p>
+<p>TIOCTIME of no greater than 3 days ago will let us pull that
+specific Full Grant (no time limit on Partial/Remands)</p>
+<p>BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be
+updated by Dispatch must be validated</p>
+<h2 id="table-joins">
+  Table Joins
+  <small><a class="anchor-heading" href="#table-joins" aria-labelledby="table-joins">#</a></small>
+</h2>
+<table>
+<thead>
+<tr>
+<th>TABLE</th>
+<th>TABLE</th>
+<th>Join</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Brieff</td>
+<td>Corres</td>
+<td>bfcorkey to stafkey</td>
+</tr>
+<tr>
+<td>Folder</td>
+<td>Corres</td>
+<td>ticorkey to stafkey</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Folder</td>
+<td>bfkey to ticknum</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Attach</td>
+<td>bfkey to imgtkky</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Assign</td>
+<td>bfkey to tsktknum</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Mail</td>
+<td>bfkey to mlfolder</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Cova</td>
+<td>bfkey to cvfolder</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>PriorLoc</td>
+<td>bfkey to lockey</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Issues</td>
+<td>bfkey to isskey</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Hearsched</td>
+<td>bfkey to folder_nr</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Decass</td>
+<td>bfkey to defolder</td>
+</tr>
+<tr>
+<td>Brieff</td>
+<td>Othdocs</td>
+<td>bfkey to ticknum</td>
+</tr>
+<tr>
+<td>Issues</td>
+<td>Rmdrea</td>
+<td>isskey to rmdkey</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>issseq to rmdissseq</td>
+</tr>
+</tbody>
+</table>
+<p>Also check out 
+
+<a href="https://dbdiagram.io/d/5f8225973a78976d7b77234f" target="_blank">visualization of table relationships</a>.</p>
+<h2 id="tables">
+  Tables
+  <small><a class="anchor-heading" href="#tables" aria-labelledby="tables">#</a></small>
+</h2>
+<h3 id="assign-diary-table-notes-about-the-claim">
+  ASSIGN (Diary Table; Notes about the claim)
+  <small><a class="anchor-heading" href="#assign-diary-table-notes-about-the-claim" aria-labelledby="assign-diary-table-notes-about-the-claim">#</a></small>
+</h3>
+<details ><summary>ASSIGN table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unique Primary Key Field</td>
+<td>TASKNUM</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Folder Related To</td>
+<td>TSKTKNM</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Attach(imgtkky), Brieff(bfkey), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Assigned to Perform Work</td>
+<td>TSKSTFAS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Diary Indicator</td>
+<td>TSKACTCD</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Classification of Assignment</td>
+<td>TSKCLASS</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Requested Activity</td>
+<td>TSKRQACT</td>
+<td>VARCHAR2</td>
+<td>280</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Response Notes</td>
+<td>TSKRSPN</td>
+<td>VARCHAR2</td>
+<td>200</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date Assigned</td>
+<td>TSKDASSN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Days to Complete</td>
+<td>TSKDTC</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Diary Due Date</td>
+<td>TSKDDUE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date Closed</td>
+<td>TSKDCLS</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Owner of Assignment - Usually Creator</td>
+<td>TSKSTOWN</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Diary Status (Pending, Closed)</td>
+<td>TSKSTAT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSKOWNTS</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSKCLSTM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Added by</td>
+<td>TSKADUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Record was Added</td>
+<td>TSKADTM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last Modified By</td>
+<td>TSKMDUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Record was Last Modified</td>
+<td>TSKMDTM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Specialty (for IME, VHA, or AFIP)</td>
+<td>TSSPARE1</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSSPARE2</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSSPARE3</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSREAD1</td>
+<td>VARCHAR2</td>
+<td>28</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VISN</td>
+<td>TSREAD</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSKORDER</td>
+<td>VARCHAR2</td>
+<td>15</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TSSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="attach-attachments-table">
+  ATTACH (Attachments table)
+  <small><a class="anchor-heading" href="#attach-attachments-table" aria-labelledby="attach-attachments-table">#</a></small>
+</h3>
+<details ><summary>ATTACH table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unique Primary Key Field</td>
+<td>IMGKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>Folder Related To</td>
+<td>IMGTKKY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Brieff(bfkey),Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>IMGTSKKY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Full Path to Attached File</td>
+<td>IMGDOC</td>
+<td>VARCHAR2</td>
+<td>96</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Attachment Type</td>
+<td>IMGDOCTP</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Description/Comments</td>
+<td>IMGDESC</td>
+<td>VARCHAR2</td>
+<td>70</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Original Location of File or Application Element</td>
+<td>IMGLOC</td>
+<td>VARCHAR2</td>
+<td>150</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Classification of The Attachment</td>
+<td>IMGCLASS</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Designated Responsible for This Item</td>
+<td>IMGOWNER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>User Who Added Attachment</td>
+<td>IMGADUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date The Attachment was Added</td>
+<td>IMGADTM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User Who Last Modified Attachment</td>
+<td>IMGMDUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Staff(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date The Attachment was Last Modified</td>
+<td>IMGMDTM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Active/Inactive Flag</td>
+<td>IMACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mailed to Address line 1</td>
+<td>IMSPARE1</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mailed to Address line 2</td>
+<td>IMSPARE2</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mailed to City, State and Zip</td>
+<td>IMREAD1</td>
+<td>VARCHAR2</td>
+<td>28</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>IMREAD2</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>IMGSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="brieff-briefface-table">
+  BRIEFF (Briefface table)
+  <small><a class="anchor-heading" href="#brieff-briefface-table" aria-labelledby="brieff-briefface-table">#</a></small>
+</h3>
+<p>Appeal Info, multiple per Vet): 3.5+ million legacy appeals</p>
+<ul>
+<li>BFKEY - Appeal ID (connects to FOLDER)</li>
+<li>BFCORLID - Veteran ID, SSN (VBMS ID)</li>
+<li>BFCORKEY - connects to CORRES</li>
+<li>BFREGOFF - Regional Office</li>
+<li>BFSO - Service organization (exclude &lsquo;T&rsquo;)</li>
+<li>BFCURLOC - Location Code (99 - Full Grant, 97 - Partial/Remand)</li>
+<li>BFDEC - Decision date (just visual, but make it equals TIOCTIME)
+<ul>
+<li>Appeal Status:  BFMPRO, 3 chars
+<ul>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/issues/13254#issuecomment-581648391" target="_blank">Stats for Legacy Appeal status</a></li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/VACOLS/blob/master/docs/VACOLS%20Reference%20Docs/VACOLS.System.Codes.doc" target="_blank">Status code definitions</a></li>
+<li>ACT: ACTIVE (Case currently at BVA)</li>
+<li>ADV: ADVANCE (NOD Filed. Case currently at RO)</li>
+<li>REM: REMAND (Case has been Remanded to RO or AMC)</li>
+<li>HIS: HISTORY (BVA action is complete)</li>
+<li>MOT: MOTION (appellant has filed a motion for reconsideration)</li>
+</ul>
+</li>
+<li>From Caseflow: 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/case.rb" target="_blank">case.rb</a></li>
+</ul>
+</li>
+<li>BFDC - Disposition of Appeal; see <code>VACOLS.System.Codes.doc</code> at 
+
+<a href="https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs/VACOLS%20Reference%20Docs" target="_blank">VACOLS Reference Docs</a> for Disposition Codes
+<ul>
+<li>1: Allowed</li>
+<li>3: Remanded</li>
+<li>4: Denied</li>
+<li>5: Vacated</li>
+<li>6: Dismissed, Other</li>
+<li>8: Dismissed, Death</li>
+<li>9: Withdrawn</li>
+<li>D: Designation of Record</li>
+<li>M: Merged Appeal</li>
+<li>R: Reconsideration by Letter</li>
+<li>Above are codes for &ldquo;BVA Disposition&rdquo;. There are other disposition codes that refer to &ldquo;Field Disposition&rdquo;</li>
+</ul>
+</li>
+<li>BFDLOOUT - represents how long the case has been ready to distribute</li>
+</ul>
+<details ><summary>BRIEFF table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Folder Number (Unique Primary Key)</td>
+<td>BFKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Attach(imgtkky), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey), Issue(Isskey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of Decision</td>
+<td>BFDDEC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Corres Table Key</td>
+<td>BFCORKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Corres (stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant ID (SSN or Claim Number)</td>
+<td>BFCORLID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Stays Indicator (CUE, Tobacco, IVM)</td>
+<td>BFDCN</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Video Hearing Requested Indicator</td>
+<td>BFDOCIND</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Insurance/Loan Number</td>
+<td>BFPDNUM</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of Prior Decision</td>
+<td>BFDPDCN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Sub-location - Home , Shelf loc, VSO employee</td>
+<td>BFORGTIC</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time to Service Organization</td>
+<td>BFDORG</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Thurber Date (obsolete)</td>
+<td>BFDTHURB</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Notice of Disagreement Received</td>
+<td>BFDNOD</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Statement of the Case Issued</td>
+<td>BFDSOC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Form 9 Received</td>
+<td>BFD19</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Certified to BVA</td>
+<td>BF41STAT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Status</td>
+<td>BFMSTAT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appeal Status</td>
+<td>BFMPRO</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Control Date/Time</td>
+<td>BFDMCON</td>
+<td>DATE</td>
+<td></td>
+<td>Remand returned date/Advance sent to BVA date</td>
+<td></td>
+</tr>
+<tr>
+<td>Regional Office</td>
+<td>BFREGOFF</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Number of Issues (computed via batch update)</td>
+<td>BFISSNR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Destination (RO, AMC, VHA, NCA, GC)</td>
+<td>BFRDMREF</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>D=AMC R=RO V=VHA G=GC N=NCA</td>
+<td></td>
+</tr>
+<tr>
+<td>Appeal Program Area</td>
+<td>BFCASEV</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>BFCASEVA</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>BFCASEVB</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>BFCASEVC</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Decision Team</td>
+<td>BFBOARD</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Assigned to Decision Team</td>
+<td>BFBSASGN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Attorney ID</td>
+<td>BFATTID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time assigned to Attorney</td>
+<td>BFDASGN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CAVC folder number</td>
+<td>BFCCLKID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time sent to Quality Review</td>
+<td>BFDQRSNT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Location In</td>
+<td>BFDLOCIN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Location Out</td>
+<td>BFDLOOUT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Medical Facility</td>
+<td>BFSTASGN</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Current Location of Case File</td>
+<td>BFCURLOC</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Number of Copies for Duplication</td>
+<td>BFNRCOPY</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Member Id</td>
+<td>BFMEMID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time assigned Board Member</td>
+<td>BFDMEM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Number of Copies for Congressional Interest</td>
+<td>BFNRCI</td>
+<td>VARCHAR2</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Outbased Travel Board Ind</td>
+<td>BFCALLUP</td>
+<td>CHAR</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CAPRI Patient List Add/Del Indicator</td>
+<td>BFCALLYYMM</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GenPop ind for Ret VLJ Hearing cases</td>
+<td>BFHINES</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td>GP or null</td>
+<td></td>
+</tr>
+<tr>
+<td>DRO Informal Hearing</td>
+<td>BFDCFLD1</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td>Y or Null</td>
+<td></td>
+</tr>
+<tr>
+<td>DRO Formal Hearing</td>
+<td>BFDCFLD2</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td>Y or Null</td>
+<td></td>
+</tr>
+<tr>
+<td>DRO</td>
+<td>BFDCFLD3</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td>Y or Null</td>
+<td></td>
+</tr>
+<tr>
+<td>Type Action</td>
+<td>BFAC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Disposition of Appeal</td>
+<td>BFDC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Action</td>
+<td>BFHA</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>BFIC</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used (old Primary Issue Code used prior to 6/99)</td>
+<td>BFIO</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mailing Status</td>
+<td>BFMS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>R - Remand returned A - Adv Sent</td>
+<td></td>
+</tr>
+<tr>
+<td>Opinion Code</td>
+<td>BFOC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Special Handling</td>
+<td>BFSH</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Service Organization</td>
+<td>BFSO</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Travel Board Hearing Requested</td>
+<td>BFHR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DRO Partial Grant/Denial (P or D)</td>
+<td>BFST</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO Notification Date</td>
+<td>BFDRODEC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Supplement Statement of Case Issued</td>
+<td>BFSSOC1</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Supplement Statement of Case Issued</td>
+<td>BFSSOC2</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Supplement Statement of Case Issued</td>
+<td>BFSSOC3</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Supplement Statement of Case Issued</td>
+<td>BFSSOC4</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Supplement Statement of Case Issued</td>
+<td>BFSSOC5</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of Travel Board Request</td>
+<td>BFDTB</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Travel Board Ready</td>
+<td>BFTBIND</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of CUE</td>
+<td>BFDCUE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date in Development</td>
+<td>BFDVIN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date out of Development</td>
+<td>BFDVOUT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date DRO requested</td>
+<td>BFDDRO</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DRO Id</td>
+<td>BFDROID</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date development work began</td>
+<td>BFDDVWRK</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date developent dispatched</td>
+<td>BFDDVDSP</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date development returned</td>
+<td>BFDDVRET</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ready to Rate by DRO</td>
+<td>BFDRORTR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource Center (Remands)</td>
+<td>BFRO1</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td>RO15, RO25, RO17, RO46, RO97</td>
+<td></td>
+</tr>
+<tr>
+<td>OVLJ Admin Action</td>
+<td>BFLOT</td>
+<td>VARCHAR3</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Specialty Case Tracking (SCT) group</td>
+<td>BFBOX</td>
+<td>VARCHAR4</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date Ready for Travel Board</td>
+<td>BFDTBREADY</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appeals Recource Center (for brokered appeals)</td>
+<td>BFARC</td>
+<td>VARCHAR4</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date to ARC</td>
+<td>BFDARCIN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date from ARC</td>
+<td>BFDARCOUT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ARC (Broker) disposition</td>
+<td>BFARCDISP</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Substitution appeal indicator</td>
+<td>BFSUB</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>&ldquo;S&rdquo; or null</td>
+<td></td>
+</tr>
+<tr>
+<td>Rocket Docket indicator</td>
+<td>BFROCDOC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>S = Selected or R = Reviewed not selected H=Hearing select</td>
+<td></td>
+</tr>
+<tr>
+<td>Rocket Docket date</td>
+<td>BFDROCKET</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="corres-veteranappellant-table">
+  CORRES (Veteran/Appellant) table
+  <small><a class="anchor-heading" href="#corres-veteranappellant-table" aria-labelledby="corres-veteranappellant-table">#</a></small>
+</h3>
+<ul>
+<li>SNAMEF, SNAMEL, SSN - basic Info</li>
+<li>STAFKEY - connects to BRIEFF</li>
+</ul>
+<details ><summary>CORRES (Veteran/Appellant) table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unique Primary Key</td>
+<td>STAFKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Brieff(bfcorkey), Folder(ticorkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SUSRPW</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SUSRSEC</td>
+<td>VARCHAR2</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Relationship to Veteran</td>
+<td>SUSRTYP</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td>Values = Veteran, Widow, Child, Parent, Other</td>
+<td></td>
+</tr>
+<tr>
+<td>Salutation</td>
+<td>SSALUT</td>
+<td>VARCHAR2</td>
+<td>15</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>First Name of Veteran</td>
+<td>SNAMEF</td>
+<td>VARCHAR2</td>
+<td>24</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Middle Initial of Veteran</td>
+<td>SNAMEMI</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last Name of Veteran</td>
+<td>SNAMEL</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant ID/Claim Number</td>
+<td>SLOGID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Title</td>
+<td>STITLE</td>
+<td>VARCHAR2</td>
+<td>40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Organization</td>
+<td>SORG</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Department</td>
+<td>SDEPT</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SADDRNUM</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>First Line of Appellant Residence Address</td>
+<td>SADDRST1</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Second Line of Appellant Residence Address</td>
+<td>SADDRST2</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Residence City</td>
+<td>SADDRCTY</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Residence State</td>
+<td>SADDRSTT</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Residence Country</td>
+<td>SADDRCNTY</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Residence Zip Code</td>
+<td>SADDRZIP</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Work Phone Number</td>
+<td>STELW</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Extra Phone Number</td>
+<td>STELWEX</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Residence Fax Number</td>
+<td>STELFAX</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Home Phone Number</td>
+<td>STELH</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Who Added Correspondence</td>
+<td>STADUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Correspondence Added</td>
+<td>STADTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Who Modified Correspondence</td>
+<td>STMDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Correspondence Modified</td>
+<td>STMDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>STC1</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>STC2</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>STC3</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>STC4</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>SNOTES</td>
+<td>VARCHAR2</td>
+<td>80</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SORC1</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SORC2</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SORC3</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SORC4</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Active/Inactive Flag</td>
+<td>SACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Last Name (if different from Veteran)</td>
+<td>SSPARE1</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant First Name</td>
+<td>SSPARE2</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant MI</td>
+<td>SSPARE3</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appellant Suffix</td>
+<td>SSPARE4</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Social Security Number</td>
+<td>SSN</td>
+<td>VARCHAR2</td>
+<td>9</td>
+<td></td>
+<td>Jed: According to Ivy they enter the SSN of the Veteran.</td>
+</tr>
+<tr>
+<td>Date/Time Final Notice of Death</td>
+<td>SFNOD</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date of Birth of Appellant</td>
+<td>SDOB</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td>
+
+<a href="https://github.com/department-of-veterans-affairs/dsva-vacols/issues/207" target="_blank">#207</a></td>
+</tr>
+<tr>
+<td>Gender of Appellant</td>
+<td>SGENDER</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td>
+
+<a href="https://github.com/department-of-veterans-affairs/dsva-vacols/issues/207" target="_blank">#207</a></td>
+</tr>
+<tr>
+<td>Homeless Vet</td>
+<td>SHOMELESS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Terminally Ill</td>
+<td>STERMILL</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Financial Hardship</td>
+<td>SFINHARD</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Advanced Age</td>
+<td>SADVAGE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Medal of Honor</td>
+<td>SMOH</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Very Serious Ilnnes</td>
+<td>SVSI</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POW</td>
+<td>SPOW</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ALS</td>
+<td>SALS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Persian Gulf War Veteran</td>
+<td>SPGWV</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="corrtyps">
+  CORRTYPS
+  <small><a class="anchor-heading" href="#corrtyps" aria-labelledby="corrtyps">#</a></small>
+</h3>
+<details ><summary>CORRTYPS table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary key</td>
+<td>CTYPKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Corres(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Type value (PS0-9, POW, PWGV)</td>
+<td>CTYPVAL</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User adding record</td>
+<td>CTYADUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Record add date</td>
+<td>CTYADTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User last modifying record</td>
+<td>CTYMDUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date last modified</td>
+<td>CTYMDTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>CTYACTVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>CTYSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="cova">
+  COVA
+  <small><a class="anchor-heading" href="#cova" aria-labelledby="cova">#</a></small>
+</h3>
+<details ><summary>COVA table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Folder Number</td>
+<td>CVFOLDER</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Brieff(bfkey),Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey)</td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Docket Number</td>
+<td>CVDOCKET</td>
+<td>VARCHAR2</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Decision Date</td>
+<td>CVDDEC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Joint Decision Indicator</td>
+<td>CVJOINT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Disposition Code</td>
+<td>CVDISP</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Member 1</td>
+<td>CVBM1</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Member 2</td>
+<td>CVBM2</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Member 3</td>
+<td>CVBM3</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>More than 3 Board Members Indicator</td>
+<td>CVBM3PLUS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Reasons</td>
+<td>CVRR</td>
+<td>VARCHAR2</td>
+<td>26</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Federal Circuit Indicator</td>
+<td>CVFEDCIR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>30 Day Letter sent Indicator</td>
+<td>CV30DIND</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date 30 day letter sent</td>
+<td>CV30DATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Location Code</td>
+<td>CVLOC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Issue Sequence Number</td>
+<td>CVISSSEQ</td>
+<td>NUMBER</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Judgement</td>
+<td>CVJUDGEMENT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Mandate</td>
+<td>CVMANDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Comments</td>
+<td>CVCOMMENTS</td>
+<td>VARCHAR2</td>
+<td>2000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Litigation Material indicator</td>
+<td>CVLITMAT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Appeal Status</td>
+<td>CVSTATUS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Joint Motion Remand indicator</td>
+<td>CVJMR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date of Joint Motion Remand</td>
+<td>CVJMRDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Representative</td>
+<td>CVREP</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COVA Remand Reasons free text</td>
+<td>CVRRTEXT</td>
+<td>VARCHAR3</td>
+<td>160</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="folder-more-claim-info">
+  FOLDER (More claim info)
+  <small><a class="anchor-heading" href="#folder-more-claim-info" aria-labelledby="folder-more-claim-info">#</a></small>
+</h3>
+<ul>
+<li>TICKNUM - connects to BRIEFF</li>
+<li>TIOCTIME - Outcoding date (make sure BFDEC is the same)</li>
+<li>TIVBMS - Appeal in VBMS?
+<ul>
+<li>From Caseflow: 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/folder.rb" target="_blank">folder.rb</a></li>
+</ul>
+</li>
+</ul>
+<details ><summary>FOLDER table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Folder Number</td>
+<td>TICKNUM</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Attach(imgtkky) Brieff(bfkey), Hearsched(folder_nr), Priorloc(lockey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Corres table key</td>
+<td>TICORKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Corres(stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Owner</td>
+<td>TISTKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Docket Number</td>
+<td>TINUM</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Reason for Advancing on Docket</td>
+<td>TIFILOC</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CAVC Docket Nr (for Motions)</td>
+<td>TIADDRTO</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appeal Id</td>
+<td>TITRNUM</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td>Vet&rsquo;s file number</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TICUKEY</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TIDSNT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Folder Received at BVA</td>
+<td>TIDRECV</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ECA Revoked (db trigger)</td>
+<td>TIDDUE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of Decision</td>
+<td>TIDCLS</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Motion Notes (for Motions)</td>
+<td>TIWPPTR</td>
+<td>VARCHAR2</td>
+<td>250</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TIWPPTRT</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Who Added to Docket</td>
+<td>TIADUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Added to Docket</td>
+<td>TIADTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff that Last Modified</td>
+<td>TIMDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Last Modified</td>
+<td>TIMDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Transfer Date (AMO batch broker)</td>
+<td>TICLSTME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Transferring Regional Office</td>
+<td>TIRESP1</td>
+<td>VARCHAR2</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Key Word</td>
+<td>TIKEYWRD</td>
+<td>VARCHAR2</td>
+<td>250</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TIACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GC Attorney Last (for Motions)</td>
+<td>TISPARE1</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GC Attorney First (for Motions)</td>
+<td>TISPARE2</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Character Count for Decision (Archive Process)</td>
+<td>TISPARE3</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TIREAD1</td>
+<td>VARCHAR2</td>
+<td>28</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Citation Number</td>
+<td>TIREAD2</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TIMT</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ECA Appeal ind.</td>
+<td>TISUBJ1</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NOA filed (for Motions)</td>
+<td>TISUBJ</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Paperless Appeal (Virtual VA)</td>
+<td>TISUBJ2</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>TISYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Special Interests Agent Orange</td>
+<td>TIAGOR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Asbestos</td>
+<td>TIASBT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gulf War Undiagnosed Illness</td>
+<td>TIGWUI</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hepatitis C</td>
+<td>TIHEPC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>AIDS/HIV</td>
+<td>TIAIDS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mustard Gas</td>
+<td>TIMGAS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PTSD</td>
+<td>TIPTSD</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Radiation Bomb</td>
+<td>TIRADB</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Radiation Non-bomb</td>
+<td>TIRADN</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Sarcoidosis</td>
+<td>TISARC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Sexual Harrasement</td>
+<td>TISEXH</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Tobacco</td>
+<td>TITOBA</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>No Special Contentions</td>
+<td>TINOSC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>38 U.S.C. 1151</td>
+<td>TI38US</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>No New and Material</td>
+<td>TINNME</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not well grounded</td>
+<td>TINWGR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pre-discharge VA Exam</td>
+<td>TIPRES</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total rating termination</td>
+<td>TITRTM</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>No Other contentions</td>
+<td>TINOOT</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Outcode Date</td>
+<td>TIOCTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Outcoder</td>
+<td>TIOCUSER</td>
+<td>VARCH(A1R6)2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Case Review date</td>
+<td>TIDKTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Case Review processor</td>
+<td>TIDKUSER</td>
+<td>VARCH(A16R)2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pulac Order Date (for Motions)</td>
+<td>TIPULAC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Cerullo Order Date (for Motions)</td>
+<td>TICERULLO</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pilot Standardized NOD</td>
+<td>TIPLNOD</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pilot Waiver Form</td>
+<td>TIPLWAIVER</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pilot Express Lane</td>
+<td>TIPLEXPRESS</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SNL indicator</td>
+<td>TISNL</td>
+<td>VARCHAR3</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VBMS appeal indicator</td>
+<td>TIVBMS</td>
+<td>VARCHAR4</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="hearsched">
+  HEARSCHED
+  <small><a class="anchor-heading" href="#hearsched" aria-labelledby="hearsched">#</a></small>
+</h3>
+<ul>
+<li>From Caseflow: 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/case_hearing.rb" target="_blank">case_hearing.rb</a></li>
+<li>Caseflow’s <code>legacy_hearings.vacols_id</code> corresponds to VACOLS’ <code>hearsched.hearing_pkseq</code>
+<ul>
+<li>mentioned in 
+
+<a href="https://github.com/department-of-veterans-affairs/dsva-vacols/issues/124" target="_blank">dsva-vacols#124</a></li>
+</ul>
+</li>
+</ul>
+<details ><summary>HEARSCHED table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hearing Sequence Number</td>
+<td>HEARING_PKSEQ</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td>&mdash;&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Type</td>
+<td>HEARING_TYPE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>See Appendix 1</td>
+<td></td>
+</tr>
+<tr>
+<td>Folder Number</td>
+<td>FOLDER_NR</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Attach(imgtkky) Brieff(bfkey), Folder(ticknum), Priorloc(lockey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time of Hearing</td>
+<td>HEARING_DATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Disposition</td>
+<td>HEARING_DISP</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Member</td>
+<td>BOARD_MEMBER</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>NOTES1</td>
+<td>VARCHAR2</td>
+<td>100</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>BVA Decision Team</td>
+<td>TEAM</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Room Number</td>
+<td>ROOM</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>State for Service Organization</td>
+<td>REP_STATE</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last Modified by</td>
+<td>MDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time last modified</td>
+<td>MDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Request date</td>
+<td>REQDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Close date</td>
+<td>CLSDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Recording media type</td>
+<td>RECMED</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date sent to Contactor</td>
+<td>CONSENT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date returned from Contractor</td>
+<td>CONRET</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Tapes sent to Contractor</td>
+<td>CONTAPES</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Transcript request from Vet</td>
+<td>TRANREQ</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Transcript sent to Vet</td>
+<td>TRANSENT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Takes sent to Wilkes-Barre</td>
+<td>WBTAPES</td>
+<td>NUMBER</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wilkes-Barre backup indicator</td>
+<td>WBBACKUP</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date tapes sent to Wilkes-Barre</td>
+<td>WBSENT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Digital recording problem</td>
+<td>RECPROB</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Contractor task Number</td>
+<td>TASKNO</td>
+<td>VARCHAR2</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User adding record</td>
+<td>ADDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date record added</td>
+<td>ADDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Advance on Docket indicator</td>
+<td>AOD</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hold Days for VLJ</td>
+<td>HOLDAYS</td>
+<td>NUMBER</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Virtual Docket key</td>
+<td>VDKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Represenative&rsquo;s name</td>
+<td>REPNAME</td>
+<td>VARCHAR2</td>
+<td>25</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Virtual Docket BVA POC</td>
+<td>VDBVAPOC</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Virtual Docket RO POC</td>
+<td>VDROPOC</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Cancellation notification date</td>
+<td>CANCELDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="issref-issue-reference">
+  ISSREF (issue reference)
+  <small><a class="anchor-heading" href="#issref-issue-reference" aria-labelledby="issref-issue-reference">#</a></small>
+</h3>
+<details ><summary>ISSREF table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Program Code</td>
+<td>PROG_CODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Program Description</td>
+<td>PROG_DESC</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Code</td>
+<td>ISS_CODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Description</td>
+<td>ISS_DESC</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 1 Code</td>
+<td>LEV1_CODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 1 Description</td>
+<td>LEV1_DESC</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 2 Code</td>
+<td>LEV2_CODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 2 Description</td>
+<td>LEV2_DESC</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 3 Code</td>
+<td>LEV3_CODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 3 Description</td>
+<td>LEV3_DESC</td>
+<td>VARCHAR2</td>
+<td>50</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="issues">
+  ISSUES
+  <small><a class="anchor-heading" href="#issues" aria-labelledby="issues">#</a></small>
+</h3>
+<p>(case issues; regarding claim (medical,etc), also connects to appeal type)</p>
+<ul>
+<li>From Caseflow: 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/issue.rb" target="_blank">issue.rb</a></li>
+</ul>
+<details ><summary>ISSUES table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key to Table</td>
+<td>ISSKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Brieff(bfkey), Rmdrea(rmdkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Sequence</td>
+<td>ISSSEQ</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Program</td>
+<td>ISSPROG</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Code</td>
+<td>ISSCODE</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 1 Code</td>
+<td>ISSLEV1</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 2 Code</td>
+<td>ISSLEV2</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Level 3 Code</td>
+<td>ISSLEV3</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Disposition Code</td>
+<td>ISSDC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Disposition Date</td>
+<td>ISSDCLS</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Issue was Added</td>
+<td>ISSADTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Added by</td>
+<td>ISSADUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Issue was Modified</td>
+<td>ISSMDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Modified By</td>
+<td>ISSMDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Description</td>
+<td>ISSDESC</td>
+<td>VARCHAR2</td>
+<td>100</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue selected</td>
+<td>ISSSEL</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Reason for Grant</td>
+<td>ISSGR</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>(RO = CUE, De Novo, New Evidence)<br/>(BVA = AOJ Error, New Evidence, Change in Law)</td>
+<td></td>
+</tr>
+<tr>
+<td>Issue Development Flag</td>
+<td>ISSDEV</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>Y'</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="mail">
+  MAIL
+  <small><a class="anchor-heading" href="#mail" aria-labelledby="mail">#</a></small>
+</h3>
+<details ><summary>MAIL table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Folder Number</td>
+<td>MLFOLDER</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Brieff (bfkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Sequence Nr</td>
+<td>MLSEQ</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Corres key (for Congressional Interests)</td>
+<td>MLCORKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Corres (stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Source (Mail, Fax, Phone, RO)</td>
+<td>MLSOURCE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Type (Congressional, POA, Hearing, etc.)</td>
+<td>MLTYPE</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date of Correspondence</td>
+<td>MLCORRDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date Correspondence Received</td>
+<td>MLRECVDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Action Due Date</td>
+<td>MLDUEDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Action Completion Date</td>
+<td>MLCOMPDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Final Action</td>
+<td>MLACTION</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Assigned to</td>
+<td>MLASSIGNEE</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>MLNOTES</td>
+<td>VARCHAR2</td>
+<td>80</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Added by</td>
+<td>MLADDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Added</td>
+<td>MLADDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail last modified</td>
+<td>MLMODUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time last modified</td>
+<td>MLMODTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Controlled Correspondence (Y/N)</td>
+<td>MLCONTROL</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>EDMS number</td>
+<td>MLEDMS</td>
+<td>VARCHAR2(10)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail action date</td>
+<td>MLACTDATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor last</td>
+<td>MLREQLAST</td>
+<td>VARCHAR2(25)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor first</td>
+<td>MLREQFIRST</td>
+<td>VARCHAR2(15)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor mi</td>
+<td>MLREQMI</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor relationship</td>
+<td>MLREQREL</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor access</td>
+<td>MLACCESS</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor amendment</td>
+<td>MLAMEND</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor litigation</td>
+<td>MLLIT</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor fee</td>
+<td>MLFEE</td>
+<td>NUMBER(8,2)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor pages</td>
+<td>MLPAGES</td>
+<td>NUMBER(5)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor addresss line1</td>
+<td>MLADDR1</td>
+<td>VARCHAR2(40)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor address line2</td>
+<td>MLADDR2</td>
+<td>VARCHAR2(40)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor city</td>
+<td>MLCITY</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor state</td>
+<td>MLST</td>
+<td>VARCHAR2(4)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA requestor zip</td>
+<td>MLZIP</td>
+<td>VARCHAR2(10)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date received FOIA/PA Office</td>
+<td>MLFOIADATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA Requesting Facility</td>
+<td>MLREQFAC</td>
+<td>VARCHAR2(25)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA Tracking Status</td>
+<td>MLTRACK</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA Tracking due date2</td>
+<td>MLDUE2ND</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA/PA Tracking check authorization ind.</td>
+<td>MLAUTH</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="priorloc">
+  PRIORLOC
+  <small><a class="anchor-heading" href="#priorloc" aria-labelledby="priorloc">#</a></small>
+</h3>
+<p>(prior locations; claim location history)</p>
+<details ><summary>PRIORLOC table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sub-Location</td>
+<td>LOCLCODE</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td>Shelf loc, VSO emp, Home charge (bforgtic)</td>
+<td></td>
+</tr>
+<tr>
+<td>Folder Related To</td>
+<td>LOCKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Assign(tsktknm), Attach(imgtkky) Brieff(bfkey), Folder(ticknum), Hearsched(folder_nr)</td>
+<td></td>
+</tr>
+<tr>
+<td>Location Check-In Date</td>
+<td>LOCDIN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Location Check-Out Date</td>
+<td>LOCDOUT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff to Whom Case File was sent</td>
+<td>LOCSTTO</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Brieff(bfcurloc)</td>
+<td>an org or person</td>
+</tr>
+<tr>
+<td>Staff who received Case file</td>
+<td>LOCSTRCV</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td>a person (in the org)</td>
+</tr>
+<tr>
+<td>Staff Who Checked Out Case File</td>
+<td>LOCSTOUT</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td>equal to LOCSTRCV in previous location</td>
+</tr>
+<tr>
+<td>Exception Flag</td>
+<td>LOCEXCEP</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>LOCDTO</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="othdocs">
+  OTHDOCS
+  <small><a class="anchor-heading" href="#othdocs" aria-labelledby="othdocs">#</a></small>
+</h3>
+<ul>
+<li>CLMFLD - 3 characters; Claims folder volumes; &ldquo;for virtual appeals the value should be left null &hellip; should only be entered for paper cases and is normally 1 or 2 volumes&rdquo; 
+
+<a href="https://github.com/department-of-veterans-affairs/dsva-vacols/issues/97" target="_blank">ref</a></li>
+</ul>
+<details ><summary>OTHDOCS table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary key</td>
+<td>TICKNUM</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Brieff(bfkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Claims folder volumes</td>
+<td>CLMFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inactive claims folders</td>
+<td>INCLMFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>X-rays</td>
+<td>XRAY</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Slides</td>
+<td>SLIDES</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Tissue Blocks</td>
+<td>TISBLK</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Education folders</td>
+<td>VREFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>WOE folders</td>
+<td>WOEFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>OE folders</td>
+<td>OEFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Counseling / Traning folder</td>
+<td>CNSLTRN</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Loan Guaranty folder</td>
+<td>LNGRN</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Insuracne folders</td>
+<td>INSFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Dental exam folders</td>
+<td>DNLFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Outpatient treatment folder</td>
+<td>OUTTRT</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Clinical exams</td>
+<td>CLINICAL</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hospital correspondence folder</td>
+<td>HSPCOR</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Guardianship documents</td>
+<td>GRDSHP</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Investigation folder</td>
+<td>INVFLD</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Other Medical folders</td>
+<td>OTHMED</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Income Verification Match (IVM) folder</td>
+<td>OTHLEG</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Other folders</td>
+<td>OTHER</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Service Department Envelope</td>
+<td>SDRENV</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Other folder description</td>
+<td>OTHDESC</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Co-pay folders</td>
+<td>COPAY</td>
+<td>VARCHAR2</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="rmdrea">
+  RMDREA
+  <small><a class="anchor-heading" href="#rmdrea" aria-labelledby="rmdrea">#</a></small>
+</h3>
+<details ><summary>RMDREA table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key to Table</td>
+<td>RMDKEY</td>
+<td>VARCHAR2</td>
+<td>12</td>
+<td>Issues(isskey), Brieff(bfkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Value</td>
+<td>RMDVAL</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Who Modified Remand Reason</td>
+<td>RMDMDUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Remand Reason Modified</td>
+<td>RMDMDTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Priority</td>
+<td>RMDPRIORITY</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Issue Sequence</td>
+<td>RMDISSSEQ</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Remand Development Reason</td>
+<td>RMDDEV</td>
+<td>VARCHAR2</td>
+<td>2</td>
+<td>R1' = RO Error; &lsquo;R2&rsquo; = Post RO Event</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="rep-representatives">
+  REP (representatives)
+  <small><a class="anchor-heading" href="#rep-representatives" aria-labelledby="rep-representatives">#</a></small>
+</h3>
+<p>(representatives of veterans/claimants)</p>
+<ul>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/representative.rb" target="_blank">representative.rb</a></li>
+</ul>
+<details ><summary>REP table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key to Table (Folder Nr.)</td>
+<td>REPKEY</td>
+<td>VARCHAR2(12)</td>
+<td></td>
+<td>Brieff (bfkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date added</td>
+<td>REPADDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Rep Type (Attorney/Agent/Contesting Appellant)</td>
+<td>REPTYPE</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Service Organization</td>
+<td>REPSO</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>REPLAST</td>
+<td>VARCHAR2(40)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>REPFIRST</td>
+<td>VARCHAR2(24)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Middle Initial</td>
+<td>REPMI</td>
+<td>VARCHAR2(4)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suffix</td>
+<td>REPSUF</td>
+<td>VARCHAR2(4)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Address line 1</td>
+<td>REPADDR1</td>
+<td>VARCHAR2(50)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Address line 2</td>
+<td>REPADDR2</td>
+<td>VARCHAR2(50)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>City</td>
+<td>REPCITY</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>State</td>
+<td>REPST</td>
+<td>VARCHAR2(4)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Zip</td>
+<td>REPZIP</td>
+<td>VARCHAR2(10)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Phone number</td>
+<td>REPPHONE</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>REPNOTES</td>
+<td>VARCHAR2(50)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last modified by</td>
+<td>REPMODUSER</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date last modified</td>
+<td>REPMODTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Direct Pay indicator</td>
+<td>REPDIRPAY</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date of Attorney fee agreement</td>
+<td>REPDFEE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date fee agreement received BVA</td>
+<td>REPFEERECV</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date last document sent</td>
+<td>REPLASTDOC</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date attorney fee dispatched</td>
+<td>REPFEEDISP</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Corres table key</td>
+<td>REPCORKEY</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td>Corres (stafkey)</td>
+<td></td>
+</tr>
+<tr>
+<td>Date acknowledgement letter sent</td>
+<td>REPACKNW</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="staff">
+  STAFF
+  <small><a class="anchor-heading" href="#staff" aria-labelledby="staff">#</a></small>
+</h3>
+<ul>
+<li><code>VACOLS::Staff.count =&gt; 4072</code></li>
+<li>Active/Inactive Flag: SACTIVE,  1 char, A= Active; I= Inactive
+<ul>
+<li><code>VACOLS::Staff.select(:sactive).distinct.pluck(:sactive) =&gt; [&quot;A&quot;, &quot;I&quot;, nil, &quot;V&quot;]</code></li>
+</ul>
+</li>
+<li>Attorney Number:  SATTYID,  4 chars
+<ul>
+<li><code>VACOLS::Staff.select(:sattyid).distinct.size =&gt; 2047</code></li>
+</ul>
+</li>
+<li>VLJ (A or J): SVLJ, 1 char
+<ul>
+<li><code>VACOLS::Staff.select(:svlj).distinct.pluck(:svlj) =&gt; [nil, &quot;I&quot;, &quot;A&quot;, &quot;J&quot;]</code>
+<ul>
+<li><code>svlj = &quot;J&quot;</code> : Judge</li>
+<li><code>svlj = &quot;A&quot;</code> : Acting Judge</li>
+<li><code>svlj = nil</code> : Attorney</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/pull/13366#issuecomment-583189359" target="_blank">Stats for Attorneys, Judges, Acting Judges</a></li>
+<li>Uses from Caseflow: 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/attorney_repository.rb" target="_blank">attorney_repository.rb</a>, 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/judge_repository.rb" target="_blank">judge_repository.rb</a>, 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/repositories/user_repository.rb" target="_blank">user_repository.rb</a></li>
+</ul>
+<details ><summary>STAFF table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key to Table</td>
+<td>STAFKEY</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Assign(tskstfas, tskadusr, tskmdusr), Attach(imgowner,imgadusr,imgmdusr, imread2), Brieff(bfattid, bfcclkid, bfstasgn), Folder(tiaduser, timduser), Corres(staduser, stmduser), Priorloc(locstrv, locstout, locstto)</td>
+<td></td>
+</tr>
+<tr>
+<td>Password</td>
+<td>SUSRPW</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User Security Level</td>
+<td>SUSRSEC</td>
+<td>VARCHAR2</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff User Type - ARC indicator</td>
+<td>SUSRTYP</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td>Also used for ROADMIN = RO VACOLS Administrator</td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Salutation</td>
+<td>SSALUT</td>
+<td>VARCHAR2</td>
+<td>15</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member First Name</td>
+<td>SNAMEF</td>
+<td>VARCHAR2</td>
+<td>24</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Middle Initial</td>
+<td>SNAMEMI</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Last Name</td>
+<td>SNAMEL</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Unique ID</td>
+<td>SLOGID</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Title</td>
+<td>STITLE</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Organization</td>
+<td>SORG</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Department</td>
+<td>SDEPT</td>
+<td>VARCHAR2</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DAS Security</td>
+<td>SADDRNUM</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td>3=Admin 2=Delete</td>
+<td></td>
+</tr>
+<tr>
+<td>First Line of Staff Member Street Address</td>
+<td>SADDRST1</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Second Line of Staff Member Street Address</td>
+<td>SADDRST2</td>
+<td>VARCHAR2</td>
+<td>30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member City</td>
+<td>SADDRCTY</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member State</td>
+<td>SADDRSTT</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Country</td>
+<td>SADDRCNTY</td>
+<td>VARCHAR2</td>
+<td>6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Zip Code</td>
+<td>SADDRZIP</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Work Phone Number</td>
+<td>STELW</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Work Phone Extension</td>
+<td>STELWEX</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Fax Number</td>
+<td>STELFAX</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Member Home Phone Number</td>
+<td>STELH</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Record Added By</td>
+<td>STADUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Staff Record Added</td>
+<td>STADTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Staff Record Modified By</td>
+<td>STMDUSER</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Staff Record Modified</td>
+<td>STMDTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Open Folders</td>
+<td>STC1</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO TB Hearing Limit Mon/Fri</td>
+<td>STC2</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO TB Hearing Limit Tue/Wed/Thu</td>
+<td>STC3</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO Video Hearing Limit</td>
+<td>STC4</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>SNOTES</td>
+<td>VARCHAR2</td>
+<td>80</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mail Security</td>
+<td>SORC1</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hearing Security</td>
+<td>SORC2</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Atty Fee Security</td>
+<td>SORC3</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>QR Security</td>
+<td>SORC4</td>
+<td>NUMBER</td>
+<td>22</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Active/Inactive Flag</td>
+<td>SACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td>A= Active; I= Inactive</td>
+<td></td>
+</tr>
+<tr>
+<td>Flexiplace Ind</td>
+<td>SSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO Pilot program indicator</td>
+<td>SSPARE1</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td>Y' or &lsquo;N&rsquo;</td>
+<td></td>
+</tr>
+<tr>
+<td>RO Case Flow indicatior</td>
+<td>SSPARE2</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td>Y' or &lsquo;N&rsquo;</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>SSPARE3</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Writes for VLJ</td>
+<td>SMEMGRP</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FOIA Security access</td>
+<td>SFOIASEC</td>
+<td>NUMBER</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VACOLS Reports access</td>
+<td>SRPTSEC</td>
+<td>NUMBER</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Attorney Number</td>
+<td>SATTYID</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VLJ (A or J)</td>
+<td>SVLJ</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inventory Security</td>
+<td>SINVSEC</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="vftypes">
+  VFTYPES
+  <small><a class="anchor-heading" href="#vftypes" aria-labelledby="vftypes">#</a></small>
+</h3>
+<details ><summary>VFTYPES table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key to Table</td>
+<td>FTKEY</td>
+<td>VARCHAR2</td>
+<td>10</td>
+<td>RRAA - RREK for new FY05 Remand Reasons</td>
+<td></td>
+</tr>
+<tr>
+<td>Lookup Description</td>
+<td>FTDESC</td>
+<td>VARCHAR2</td>
+<td>100</td>
+<td>Remand Reason Description</td>
+<td></td>
+</tr>
+<tr>
+<td>Lookup Description Added by</td>
+<td>FTADUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date/Time Lookup Description Added</td>
+<td>FTADTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Lookup Description Modified By</td>
+<td>FTMDUSR</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date lookup Description Modified</td>
+<td>FTMDTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Active/Inactive Flag</td>
+<td>FTACTIVE</td>
+<td>VARCHAR2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Lookup Code Type</td>
+<td>FTTYPE</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>R5 = New Remand Reasons for FY05</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>FTSYS</td>
+<td>VARCHAR2</td>
+<td>16</td>
+<td>Remand Reason Category</td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>FTSPARE1</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>FTSPARE2</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not Used</td>
+<td>FTSPARE3</td>
+<td>VARCHAR2</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="coin">
+  COIN
+  <small><a class="anchor-heading" href="#coin" aria-labelledby="coin">#</a></small>
+</h3>
+<details ><summary>COIN table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Regional Office</td>
+<td>COINRO</td>
+<td>VARCHAR2</td>
+<td>4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Report Date</td>
+<td>RPTDT</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of NODs Current Month</td>
+<td>NODCM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of NODs Fiscal Year-To-Date</td>
+<td>NODFY</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of NODs Pending Current Month</td>
+<td>NODPNCM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total days for NODs Pending Current Month</td>
+<td>DNODPNCM</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of SOCs Current Month</td>
+<td>SOCCM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of SOCs Fiscal Year-To-Date</td>
+<td>SOCFY</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for SOCs Current Month</td>
+<td>DSOCCM</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for SOCc Fiscal Year-To-Date</td>
+<td>DSOCFY</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Form 9s Current Month</td>
+<td>F9CM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Form 9s Fiscal Year-To-Date</td>
+<td>F9FY</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for Form 9s Current Month</td>
+<td>DF9CM</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for Form 9s Fiscal Year-To-Date</td>
+<td>DF9FY</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Form 9s Without SSOCs</td>
+<td>F9WOSSOC</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Form 9s With SSOC</td>
+<td>F9WSSOC</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for Form 9s Without SSOC</td>
+<td>DF9WOSSOC</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for Form 9s With SSOC</td>
+<td>DF9WSSOC</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of SSOCs Current Month</td>
+<td>SSOCCM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of SSOCs Fiscal Year-To-Date</td>
+<td>SSOCFY</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for SSOCs Current Month</td>
+<td>DSSOCCM</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for SSOCs Fiscal Year-To-Date</td>
+<td>DSSOCFY</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Appeals Certified Current Month</td>
+<td>CERTCM</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Num of Appeals Certified Fiscal Year-To-Date</td>
+<td>CERTFY</td>
+<td>NUMBER</td>
+<td>7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total Days for Appeals Certified Current Month</td>
+<td>DCERTCM</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Total days for Appeals Certified Fiscal Year-To-date</td>
+<td>DCERTFY</td>
+<td>NUMBER</td>
+<td>9</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="decreview">
+  DECREVIEW
+  <small><a class="anchor-heading" href="#decreview" aria-labelledby="decreview">#</a></small>
+</h3>
+<details ><summary>DECREVIEW table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Appellant id</td>
+<td>APPEAL_ID</td>
+<td>VARCHAR2(10)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Folder (primary key)</td>
+<td>FOLDER</td>
+<td>VARCHAR2(12)</td>
+<td>12</td>
+<td>Breiff(bfkey), Folder(ticknum)</td>
+<td></td>
+</tr>
+<tr>
+<td>QR Review date</td>
+<td>REVIEW_DATE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Issue</td>
+<td>ISSUE</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Difficulty</td>
+<td>DIFFICULTY</td>
+<td>VARCHAR2(1)</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>QR Reviewer</td>
+<td>USER_ID</td>
+<td>VARCHAR2(11)</td>
+<td>11</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>(<strong>Exceptions:</strong>)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Raised but undeveloped issue(s) omitted</td>
+<td>EX1</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Developed issue(s) omitted</td>
+<td>EX2</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inaccurate issues(s) set forth on title page</td>
+<td>EX3</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inaccurate finding</td>
+<td>EX4</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Necessary elements of claim not addressed</td>
+<td>EX5</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Erroneous conclusion</td>
+<td>EX6</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Failure to address every relevant theory of entitlement</td>
+<td>EX7</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority misapplied: Case Law</td>
+<td>EX8</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority misapplied: Law or Regulation</td>
+<td>EX9</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority misapplied: Precedent opinion</td>
+<td>EX10</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority not applied: Case Law</td>
+<td>EX11</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority not applied: Law or Regulation</td>
+<td>EX12</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Legal authority not applied: Precedent opinion</td>
+<td>EX13</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Incorrect standard of proof</td>
+<td>EX14</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inadequate explanation: Material evidence omitted</td>
+<td>EX15</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inadequate explanation: Deficient credibility determ</td>
+<td>EX16</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inadequate explanation: Conclusionary discussion</td>
+<td>EX17</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inadequate explanation: Relevant theory not addressed</td>
+<td>EX18</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Fair process violation(Bernard,Colvin,Thurber)</td>
+<td>EX19</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Board Jurisdictional error(e.g., Marsh, Barnett)</td>
+<td>EX20</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inadequate development</td>
+<td>EX21</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Failure of duty to notify</td>
+<td>EX22</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Procedural deficiency: Hearing</td>
+<td>EX23</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Procedural deficiency: Representation</td>
+<td>EX24</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Procedural deficiency: 38 C.F.R 20.1304</td>
+<td>EX25</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Procedural deficiency: Other</td>
+<td>EX26</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Typographical/grammatical errors</td>
+<td>EX27</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>BVA Handbook 8430.2 not applied</td>
+<td>EX28</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Appeal misidentification</td>
+<td>EX29</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Internal inconsistency (Issue:FOF:COL:ORDER)</td>
+<td>EX30</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Essential decisional elements not present</td>
+<td>EX31</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX32</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX33</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX34</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX35</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Inaccurate Remand reasons</td>
+<td>EX36</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX37</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used in NEW format</td>
+<td>EX38</td>
+<td>VARCHAR2(5)</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Decision or Motion</td>
+<td>DECTYPE</td>
+<td>VARCHAR2(1)</td>
+<td>1</td>
+<td>(D or M)</td>
+<td></td>
+</tr>
+<tr>
+<td>Record format</td>
+<td>RECFORMAT</td>
+<td>VARCHAR2(3)</td>
+<td>3</td>
+<td>(NEW = after 06/01/1999)</td>
+<td></td>
+</tr>
+<tr>
+<td>Last modified by</td>
+<td>MODUSER</td>
+<td>VARCHAR2(16)</td>
+<td>16</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last modified on</td>
+<td>MODTIME</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="actcode">
+  ACTCODE
+  <small><a class="anchor-heading" href="#actcode" aria-labelledby="actcode">#</a></small>
+</h3>
+<details ><summary>ACTCODE table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diary code</td>
+<td>ACTCKEY</td>
+<td>VARCHAR2(10)</td>
+<td></td>
+<td>Primary key join to ASSIGN.TSKACTCD</td>
+<td></td>
+</tr>
+<tr>
+<td>Diary description</td>
+<td>ACTCDESC</td>
+<td>VARCHAR2(50)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>ACTCSEC</td>
+<td>VARCHAR2(5)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>ACTCUKEY</td>
+<td>VARCHAR2(10)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Default numbr of days for Diary</td>
+<td>ACTCDTC</td>
+<td>VARCHAR2(3)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User Adding</td>
+<td>ACTADUSR</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date added</td>
+<td>ACTADTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>User last modifying</td>
+<td>ACTMDUSR</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date last modified</td>
+<td>ACTMDTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Diary Active (A) or Inactive (I)</td>
+<td>ACACTIVE</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>RO or BVA diary</td>
+<td>ACTSYS</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Additional diary description</td>
+<td>ACTCDESC2</td>
+<td>VARCHAR2(280)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>ACSPARE1</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>ACSPARE2</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Not used</td>
+<td>ACSPARE3</td>
+<td>VARCHAR2(20)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+<h3 id="decass">
+  DECASS
+  <small><a class="anchor-heading" href="#decass" aria-labelledby="decass">#</a></small>
+</h3>
+<details ><summary>DECASS table</summary>
+  <div class="markdown-inner">
+    <table>
+<thead>
+<tr>
+<th>FIELD DESCRIPTION</th>
+<th>FIELD NAME</th>
+<th>TYPE</th>
+<th>SIZE</th>
+<th>RELATED TABLES/REMARKS</th>
+<th>Our Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Folder number (Primary key)</td>
+<td>DEFOLDER</td>
+<td>VARCHAR2(12)</td>
+<td></td>
+<td>Breiff(bfkey), Folder(ticknum)</td>
+<td></td>
+</tr>
+<tr>
+<td>Attorney number</td>
+<td>DEATTY</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Decision Team</td>
+<td>DETEAM</td>
+<td>VARCHAR2(3)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Peliminary difficulty</td>
+<td>DEPDIFF</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Final Difficulty</td>
+<td>DEFDIFF</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date Assigned</td>
+<td>DEASSIGN</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Date received by VLJ</td>
+<td>DERECEIVE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Hours spent on case</td>
+<td>DEHOURS</td>
+<td>NUMBER(5,2)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Work Product</td>
+<td>DEPROD</td>
+<td>VARCHAR2(3)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Timeliness indicator</td>
+<td>DETREM</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td>Y or N</td>
+<td></td>
+</tr>
+<tr>
+<td>Additional Remarks (obsolete)</td>
+<td>DEAREM</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td>Y or N</td>
+<td></td>
+</tr>
+<tr>
+<td>Overall Quality</td>
+<td>DEOQ</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Added by</td>
+<td>DEADUSR</td>
+<td>VARCHAR2(12)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Added on date/time</td>
+<td>DEADTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Progress review date</td>
+<td>DEPROGREV</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Attorney comments</td>
+<td>DEATCOM</td>
+<td>VARCHAR2(350)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VLJ comments</td>
+<td>DEBMCOM</td>
+<td>VARCHAR2(600)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last modified by</td>
+<td>DEMDUSR</td>
+<td>VARCHAR2(12)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Last modified on</td>
+<td>DEMDTIM</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DAS locked</td>
+<td>DELOCK</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VLJ number</td>
+<td>DEMEMID</td>
+<td>VARCHAR2(16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DAS completion date</td>
+<td>DECOMP</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Deadline date</td>
+<td>DEDEADLINE</td>
+<td>DATE</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Intial Complexity rating</td>
+<td>DEICR</td>
+<td>NUMBER(5,2)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Final Complexity rating</td>
+<td>DEFCR</td>
+<td>NUMBER(5,2)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 1</td>
+<td>DEQR1</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 2</td>
+<td>DEQR2</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 3</td>
+<td>DEQR3</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 4</td>
+<td>DEQR4</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 5</td>
+<td>DEQR5</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 6</td>
+<td>DEQR6</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 7</td>
+<td>DEQR7</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 8</td>
+<td>DEQR8</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 9</td>
+<td>DEQR9</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 10</td>
+<td>DEQR10</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Quality Review item 11</td>
+<td>DEQR11</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Decision document id</td>
+<td>DEDOCID</td>
+<td>VARCHAR2(30)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Recommened decision</td>
+<td>DERECOMMEND</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>One touch initiative</td>
+<td>DE1TOUCH</td>
+<td>VARCHAR2(1)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+</details>
+
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/schema/vacols_schema.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
+    <li><a href="#table-joins">Table Joins</a></li>
+    <li><a href="#tables">Tables</a>
+      <ul>
+        <li><a href="#assign-diary-table-notes-about-the-claim">ASSIGN (Diary Table; Notes about the claim)</a></li>
+        <li><a href="#attach-attachments-table">ATTACH (Attachments table)</a></li>
+        <li><a href="#brieff-briefface-table">BRIEFF (Briefface table)</a></li>
+        <li><a href="#corres-veteranappellant-table">CORRES (Veteran/Appellant) table</a></li>
+        <li><a href="#corrtyps">CORRTYPS</a></li>
+        <li><a href="#cova">COVA</a></li>
+        <li><a href="#folder-more-claim-info">FOLDER (More claim info)</a></li>
+        <li><a href="#hearsched">HEARSCHED</a></li>
+        <li><a href="#issref-issue-reference">ISSREF (issue reference)</a></li>
+        <li><a href="#issues">ISSUES</a></li>
+        <li><a href="#mail">MAIL</a></li>
+        <li><a href="#priorloc">PRIORLOC</a></li>
+        <li><a href="#othdocs">OTHDOCS</a></li>
+        <li><a href="#rmdrea">RMDREA</a></li>
+        <li><a href="#rep-representatives">REP (representatives)</a></li>
+        <li><a href="#staff">STAFF</a></li>
+        <li><a href="#vftypes">VFTYPES</a></li>
+        <li><a href="#coin">COIN</a></li>
+        <li><a href="#decreview">DECREVIEW</a></li>
+        <li><a href="#actcode">ACTCODE</a></li>
+        <li><a href="#decass">DECASS</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
