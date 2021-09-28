@@ -3,8 +3,9 @@ title: ETL/ODS
 menu:
   navmenu:
     identifier: etl
+    parent: schema
     collapsible: true
-weight: 2
+weight: 21
 ---
 
 # ETL / ODS Database

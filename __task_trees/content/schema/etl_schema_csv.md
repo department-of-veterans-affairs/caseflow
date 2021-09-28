@@ -2,10 +2,7 @@
 title: ETL Schema CSV
 BookToC: false
 tags: "csv"
-menu:
-  navmenu:
-    parent: schema
-weight: 6
+weight: 22
 ---
 
 # ETL Schema CSV

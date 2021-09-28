@@ -92,6 +92,11 @@ cascade:
         parent: workflows
     _target:
       path: /workflows/[!_]*
+  - menu:
+      navmenu:
+        parent: schema
+    _target:
+      path: /schema/[!_]*
 
 markup:
   goldmark:
