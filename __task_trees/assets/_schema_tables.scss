@@ -58,3 +58,16 @@ table.caseflowCsv {
     word-wrap:break-word;
   }
 }
+
+.vacolsTables table {
+  font-size: small;
+
+  thead tr th {
+    padding: 2px;
+    background-color: lightblue;
+  }
+
+  tr td {
+    padding: 0px 2px;
+  }
+}

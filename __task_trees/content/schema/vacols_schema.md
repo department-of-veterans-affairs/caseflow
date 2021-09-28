@@ -7,18 +7,14 @@ weight: 31
 
 ## VACOLS - VBMS Mapping
 
-CORRES table contains most of Veteran's info (should match VBMS)
-
-TIVBMS field allows us to determine if the claim is ready for VBMS
-
-TIOCTIME of no greater than 3 days ago will let us pull that
-specific Full Grant (no time limit on Partial/Remands)
-
-BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be
-updated by Dispatch must be validated
+- CORRES table contains most of Veteran's info (should match VBMS)
+- TIVBMS field allows us to determine if the claim is ready for VBMS
+- TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
+- BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
 
 ## Table Joins
 
+{{< details "Table joins" >}}
 | TABLE  | TABLE | Join |
 | -------- | -------- | -------- |
 | Brieff | Corres | bfcorkey to stafkey |
@@ -35,12 +31,16 @@ updated by Dispatch must be validated
 | Brieff | Othdocs | bfkey to ticknum |
 | Issues | Rmdrea | isskey to rmdkey |
 |  |  | issseq to rmdissseq |
+{{< /details >}}
 
 Also check out [visualization of table relationships](https://dbdiagram.io/d/5f8225973a78976d7b77234f).
 
-## Tables
+<div class="vacolsTables">
 
-### ASSIGN (Diary Table; Notes about the claim)
+## Main Tables
+
+### ASSIGN (Diary)
+Notes about the claim
 
 {{< details "ASSIGN table" >}}
 FIELD DESCRIPTION | FIELD NAME | TYPE | SIZE | RELATED TABLES/REMARKS | Our Notes
@@ -74,14 +74,13 @@ Not Used|TSKORDER|VARCHAR2|15|
 Not Used|TSSYS|VARCHAR2|16|
 {{< /details >}}
 
-### ATTACH (Attachments table)
+### ATTACH (Attachments)
 
 {{< details "ATTACH table" >}}
 FIELD DESCRIPTION | FIELD NAME | TYPE | SIZE | RELATED TABLES/REMARKS | Our Notes
 -----|-----|-----|-----|-----|-----
 Unique Primary Key Field|IMGKEY|VARCHAR2|12|
------|-----|-----|-----|-----
-Folder Related To|IMGTKKY|VARCHAR2|12|Assign(tsktknm), Brieff(bfkey),Folder(ticknum), Hearsched(folder\_nr), Priorloc(lockey)
+Folder Related To|IMGTKKY|VARCHAR2|12|Assign(tsktknm), Brieff(bfkey), Folder(ticknum), Hearsched(folder\_nr), Priorloc(lockey)
 Not Used|IMGTSKKY|VARCHAR2|12|
 Full Path to Attached File|IMGDOC|VARCHAR2|96|
 Attachment Type|IMGDOCTP|VARCHAR2|4|
@@ -101,14 +100,8 @@ Not Used|IMREAD2|VARCHAR2|16|
 Not Used|IMGSYS|VARCHAR2|16|
 {{< /details >}}
 
-### BRIEFF (Briefface table)
+### BRIEFF (Briefface)
 Appeal Info, multiple per Vet): 3.5+ million legacy appeals
-- BFKEY - Appeal ID (connects to FOLDER)
-- BFCORLID - Veteran ID, SSN (VBMS ID)
-- BFCORKEY - connects to CORRES
-- BFREGOFF - Regional Office
-- BFSO - Service organization (exclude 'T')
-- BFCURLOC - Location Code (99 - Full Grant, 97 - Partial/Remand)
 - BFDEC - Decision date (just visual, but make it equals TIOCTIME)
   * Appeal Status:  BFMPRO, 3 chars
     * [Stats for Legacy Appeal status](https://github.com/department-of-veterans-affairs/caseflow/issues/13254#issuecomment-581648391)
@@ -131,15 +124,14 @@ Appeal Info, multiple per Vet): 3.5+ million legacy appeals
   * M: Merged Appeal
   * R: Reconsideration by Letter
   * Above are codes for "BVA Disposition". There are other disposition codes that refer to "Field Disposition"
-- BFDLOOUT - represents how long the case has been ready to distribute
 
 {{< details "BRIEFF table" >}}
 FIELD DESCRIPTION | FIELD NAME | TYPE | SIZE | RELATED TABLES/REMARKS | Our Notes
 -----|-----|-----|-----|-----|-----
-Folder Number (Unique Primary Key)|BFKEY|VARCHAR2|12|Assign(tsktknm), Attach(imgtkky), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey), Issue(Isskey)
+Folder Number (Unique Primary Key)|BFKEY|VARCHAR2|12|Assign(tsktknm), Attach(imgtkky), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey), Issue(Isskey)|Appeal ID
 Date/Time of Decision|BFDDEC|DATE| |
 Corres Table Key|BFCORKEY|VARCHAR2|16|Corres (stafkey)
-Appellant ID (SSN or Claim Number)|BFCORLID|VARCHAR2|16|
+Appellant ID (SSN or Claim Number)|BFCORLID|VARCHAR2|16||Veteran ID, SSN (VBMS ID)
 Stays Indicator (CUE, Tobacco, IVM)|BFDCN|VARCHAR2|6|
 Video Hearing Requested Indicator|BFDOCIND|VARCHAR2|1|
 Insurance/Loan Number|BFPDNUM|VARCHAR2|12|
@@ -154,7 +146,7 @@ Date/Time Certified to BVA|BF41STAT|DATE| |
 Mail Status|BFMSTAT|VARCHAR2|1|
 Appeal Status|BFMPRO|VARCHAR2|3|
 Mail Control Date/Time|BFDMCON|DATE| |Remand returned date/Advance sent to BVA date
-Regional Office|BFREGOFF|VARCHAR2|16|
+Regional Office|BFREGOFF|VARCHAR2|16| |Regional Office
 Number of Issues (computed via batch update)|BFISSNR|VARCHAR2|1|
 Remand Destination (RO, AMC, VHA, NCA, GC)|BFRDMREF|VARCHAR2|1|D=AMC R=RO V=VHA G=GC N=NCA
 Appeal Program Area|BFCASEV|VARCHAR2|4|
@@ -168,9 +160,9 @@ Date/Time assigned to Attorney|BFDASGN|DATE| |
 CAVC folder number|BFCCLKID|VARCHAR2|16|
 Date/Time sent to Quality Review|BFDQRSNT|DATE| |
 Date/Time Location In|BFDLOCIN|DATE| |
-Date/Time Location Out|BFDLOOUT|DATE| |
+Date/Time Location Out|BFDLOOUT|DATE| | | how long the case has been ready to distribute
 Medical Facility|BFSTASGN|VARCHAR2|16|
-Current Location of Case File|BFCURLOC|VARCHAR2|10|
+Current Location of Case File|BFCURLOC|VARCHAR2|10| |Location Code (99 - Full Grant, 97 - Partial/Remand)
 Total Number of Copies for Duplication|BFNRCOPY|VARCHAR2|4|
 Board Member Id|BFMEMID|VARCHAR2|16|
 Date/Time assigned Board Member|BFDMEM|DATE| |
@@ -182,14 +174,14 @@ DRO Informal Hearing|BFDCFLD1|VARCHAR2|2|Y or Null
 DRO Formal Hearing|BFDCFLD2|VARCHAR2|2|Y or Null
 DRO|BFDCFLD3|VARCHAR2|2|Y or Null
 Type Action|BFAC|VARCHAR2|1|
-Disposition of Appeal|BFDC|VARCHAR2|1|
+Disposition of Appeal|BFDC|VARCHAR2|1| |Disposition of Appeal -- see notes above table
 Hearing Action|BFHA|VARCHAR2|1|
 Not Used|BFIC|VARCHAR2|2|
 Not Used (old Primary Issue Code used prior to 6/99)|BFIO|VARCHAR2|2|
 Mailing Status|BFMS|VARCHAR2|1|R - Remand returned A - Adv Sent
 Opinion Code|BFOC|VARCHAR2|1|
 Special Handling|BFSH|VARCHAR2|1|
-Service Organization|BFSO|VARCHAR2|1|
+Service Organization|BFSO|VARCHAR2|1| |Service organization (exclude 'T')
 Travel Board Hearing Requested|BFHR|VARCHAR2|1|
 DRO Partial Grant/Denial (P or D)|BFST|VARCHAR2|1|
 RO Notification Date|BFDRODEC|DATE| |
@@ -222,7 +214,7 @@ Rocket Docket indicator|BFROCDOC|VARCHAR2|1|S = Selected or R = Reviewed not sel
 Rocket Docket date|BFDROCKET|DATE| |
 {{< /details >}}
 
-### CORRES (Veteran/Appellant) table
+### CORRES (Veteran/Appellant)
   * SNAMEF, SNAMEL, SSN - basic Info
   * STAFKEY - connects to BRIEFF
 
@@ -333,8 +325,6 @@ COVA Remand Reasons free text|CVRRTEXT|VARCHAR3|160|
 {{< /details >}}
 
 ### FOLDER (More claim info)
-- TICKNUM - connects to BRIEFF
-- TIOCTIME - Outcoding date (make sure BFDEC is the same)
 - TIVBMS - Appeal in VBMS?
   * From Caseflow: [folder.rb](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/vacols/folder.rb)
 
@@ -392,7 +382,7 @@ Not well grounded|TINWGR|VARCHAR2|1|
 Pre-discharge VA Exam|TIPRES|VARCHAR2|1|
 Total rating termination|TITRTM|VARCHAR2|1|
 No Other contentions|TINOOT|VARCHAR2|1|
-Outcode Date|TIOCTIME|DATE| |
+Outcode Date|TIOCTIME|DATE| | |Outcoding date (make sure BFDEC is the same)
 Outcoder|TIOCUSER|VARCH(A1R6)2|16|
 Case Review date|TIDKTIME|DATE| |
 Case Review processor|TIDKUSER|VARCH(A16R)2|16|
@@ -414,7 +404,6 @@ VBMS appeal indicator|TIVBMS|VARCHAR4|1|
 FIELD DESCRIPTION | FIELD NAME | TYPE | SIZE | RELATED TABLES/REMARKS | Our Notes
 -----|-----|-----|-----|-----|-----
 Hearing Sequence Number|HEARING\_PKSEQ|NUMBER|22|
------|-----|-----|-----|-----
 Hearing Type|HEARING\_TYPE|VARCHAR2|1|See Appendix 1
 Folder Number|FOLDER\_NR|VARCHAR2|12|Assign(tsktknm), Attach(imgtkky) Brieff(bfkey), Folder(ticknum), Priorloc(lockey)
 Date/Time of Hearing|HEARING\_DATE|DATE| |
@@ -538,8 +527,8 @@ FOIA/PA Tracking due date2|MLDUE2ND|DATE| |
 FOIA/PA Tracking check authorization ind.|MLAUTH|VARCHAR2(1)| |
 {{< /details >}}
 
-### PRIORLOC
-(prior locations; claim location history)
+### PRIORLOC (prior locations)
+(claim location history)
 
 {{< details "PRIORLOC table" >}}
 FIELD DESCRIPTION | FIELD NAME | TYPE | SIZE | RELATED TABLES/REMARKS | Our Notes
@@ -720,6 +709,8 @@ Not Used|FTSPARE2|VARCHAR2|20|
 Not Used|FTSPARE3|VARCHAR2|20|
 {{< /details >}}
 
+## Other Tables
+
 ### COIN
 
 {{< details "COIN table" >}}
@@ -877,3 +868,4 @@ Recommened decision|DERECOMMEND|VARCHAR2(1)| |
 One touch initiative|DE1TOUCH|VARCHAR2(1)| |
 {{< /details >}}
 
+</div>
