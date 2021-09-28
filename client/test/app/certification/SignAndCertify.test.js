@@ -1,7 +1,5 @@
-import { expect } from 'chai';
-
-import * as Actions from '../../../../app/certification/actions/SignAndCertify';
-import * as Constants from '../../../../app/certification/constants/constants';
+import * as Actions from '../../../app/certification/actions/SignAndCertify';
+import * as Constants from '../../../app/certification/constants/constants';
 
 describe('.updateProgressBar', () => {
   it('should create an action to update the progress bar', () => {
@@ -12,7 +10,7 @@ describe('.updateProgressBar', () => {
       }
     };
 
-    expect(Actions.updateProgressBar()).to.eql(expectedAction);
+    expect(Actions.updateProgressBar()).toEqual(expectedAction);
   });
 });
 
@@ -26,7 +24,7 @@ describe('.onSignAndCertifyFormChange', () => {
       }
     };
 
-    expect(Actions.onSignAndCertifyFormChange('certifyingUsername', certifyingUsername)).to.eql(expectedAction);
+    expect(Actions.onSignAndCertifyFormChange('certifyingUsername', certifyingUsername)).toEqual(expectedAction);
   });
 });
 
@@ -36,7 +34,7 @@ describe('.handleServerError', () => {
       type: Constants.HANDLE_SERVER_ERROR
     };
 
-    expect(Actions.handleServerError()).to.eql(expectedAction);
+    expect(Actions.handleServerError()).toEqual(expectedAction);
   });
 });
 
@@ -46,7 +44,7 @@ describe('.certificationUpdateSuccess', () => {
       type: Constants.CERTIFICATION_UPDATE_SUCCESS
     };
 
-    expect(Actions.certificationUpdateSuccess()).to.eql(expectedAction);
+    expect(Actions.certificationUpdateSuccess()).toEqual(expectedAction);
   });
 });
 
@@ -62,7 +60,7 @@ describe('.certificationUpdateStart', () => {
       payload: {}
     };
 
-    expect(Actions.certificationUpdateStart(params)).to.eql(expectedAction);
+    expect(Actions.certificationUpdateStart(params)).toEqual(expectedAction);
 
   });
 });
