@@ -1,7 +1,5 @@
-import { expect } from 'chai';
-
-import * as Actions from '../../../../app/certification/actions/ConfirmCaseDetails';
-import * as Constants from '../../../../app/certification/constants/constants';
+import * as Actions from '../../../app/certification/actions/ConfirmCaseDetails';
+import * as Constants from '../../../app/certification/constants/constants';
 
 describe('.updateProgressBar', () => {
   it('should create an action to update the progress bar', () => {
@@ -12,7 +10,7 @@ describe('.updateProgressBar', () => {
       }
     };
 
-    expect(Actions.updateProgressBar()).to.eql(expectedAction);
+    expect(Actions.updateProgressBar()).toEqual(expectedAction);
   });
 });
 
@@ -26,7 +24,7 @@ describe('.changeRepresentativeName', () => {
       }
     };
 
-    expect(Actions.changeRepresentativeName(representativeName)).to.eql(expectedAction);
+    expect(Actions.changeRepresentativeName(representativeName)).toEqual(expectedAction);
   });
 });
 
@@ -41,7 +39,7 @@ describe('.changeRepresentativeType', () => {
     };
 
     expect(Actions.changeRepresentativeType(representativeType)).
-      to.eql(expectedAction);
+      toEqual(expectedAction);
   });
 });
 
@@ -56,7 +54,7 @@ describe('.changeOtherRepresentativeType', () => {
     };
 
     expect(Actions.changeOtherRepresentativeType(otherRepresentativeType)).
-      to.eql(expectedAction);
+      toEqual(expectedAction);
   });
 });
 
@@ -71,7 +69,7 @@ describe('.changePoaMatches', () => {
     };
 
     expect(Actions.changePoaMatches(poaMatches)).
-      to.eql(expectedAction);
+      toEqual(expectedAction);
   });
 });
 
@@ -86,7 +84,7 @@ describe('.changePoaCorrectLocation', () => {
     };
 
     expect(Actions.changePoaCorrectLocation(poaCorrectLocation)).
-      to.eql(expectedAction);
+      toEqual(expectedAction);
   });
 });
 
@@ -96,7 +94,7 @@ describe('.handleServerError', () => {
       type: Constants.HANDLE_SERVER_ERROR
     };
 
-    expect(Actions.handleServerError()).to.eql(expectedAction);
+    expect(Actions.handleServerError()).toEqual(expectedAction);
   });
 });
 
@@ -106,7 +104,7 @@ describe('.certificationUpdateSuccess', () => {
       type: Constants.CERTIFICATION_UPDATE_SUCCESS
     };
 
-    expect(Actions.certificationUpdateSuccess()).to.eql(expectedAction);
+    expect(Actions.certificationUpdateSuccess()).toEqual(expectedAction);
   });
 });
 
@@ -129,6 +127,6 @@ describe('.certificationUpdateStart', () => {
       }
     };
 
-    expect(Actions.certificationUpdateStart(params)).to.eql(expectedAction);
+    expect(Actions.certificationUpdateStart(params)).toEqual(expectedAction);
   });
 });
