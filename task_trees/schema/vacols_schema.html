@@ -3,17 +3,9 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="VACOLS Schema #  VACOLS - VBMS Mapping #  CORRES table contains most of Veteran&rsquo;s info (should match VBMS)
-TIVBMS field allows us to determine if the claim is ready for VBMS
-TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
-BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
-Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq    Also check out visualization of table relationships.">
+<meta name="description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq      Also check out visualization of table relationships.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="VACOLS Schema" />
-<meta property="og:description" content="VACOLS Schema #  VACOLS - VBMS Mapping #  CORRES table contains most of Veteran&rsquo;s info (should match VBMS)
-TIVBMS field allows us to determine if the claim is ready for VBMS
-TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)
-BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated
-Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq    Also check out visualization of table relationships." />
+<meta property="og:description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq      Also check out visualization of table relationships." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html" /><meta property="article:section" content="schema" />
 
@@ -22,9 +14,9 @@ Table Joins #     TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folde
 <title>VACOLS Schema | Task Trees &amp; DB</title>
 <link rel="manifest" href="/caseflow/task_trees/manifest.json">
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/caseflow/task_trees/book.min.5d6733259aecd3beb663d26685a6ae0b0c0ab7b51a6a10dd3b01ab5c153852c0.css" integrity="sha256-XWczJZrs0762Y9JmhaauCwwKt7UaahDdOwGrXBU4UsA=" crossorigin="anonymous">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.3c32362d2a87def2c873f6cc3d329d151d823e998f04ce470671b7b5cba849d0.js" integrity="sha256-PDI2LSqH3vLIc/bMPTKdFR2CPpmPBM5HBnG3tcuoSdA=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.3a718349dbf39b56bd2f67eedf01b4045a60cdce1013d2277751327fb9ef099d.js" integrity="sha256-OnGDSdvzm1a9L2fu3wG0BFpgzc4QE9Ind1Eyf7nvCZ0=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -594,12 +586,12 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
     <li><a href="#table-joins">Table Joins</a></li>
-    <li><a href="#tables">Tables</a>
+    <li><a href="#main-tables">Main Tables</a>
       <ul>
-        <li><a href="#assign-diary-table-notes-about-the-claim">ASSIGN (Diary Table; Notes about the claim)</a></li>
-        <li><a href="#attach-attachments-table">ATTACH (Attachments table)</a></li>
-        <li><a href="#brieff-briefface-table">BRIEFF (Briefface table)</a></li>
-        <li><a href="#corres-veteranappellant-table">CORRES (Veteran/Appellant) table</a></li>
+        <li><a href="#assign-diary">ASSIGN (Diary)</a></li>
+        <li><a href="#attach-attachments">ATTACH (Attachments)</a></li>
+        <li><a href="#brieff-briefface">BRIEFF (Briefface)</a></li>
+        <li><a href="#corres-veteranappellant">CORRES (Veteran/Appellant)</a></li>
         <li><a href="#corrtyps">CORRTYPS</a></li>
         <li><a href="#cova">COVA</a></li>
         <li><a href="#folder-more-claim-info">FOLDER (More claim info)</a></li>
@@ -607,12 +599,16 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#issref-issue-reference">ISSREF (issue reference)</a></li>
         <li><a href="#issues">ISSUES</a></li>
         <li><a href="#mail">MAIL</a></li>
-        <li><a href="#priorloc">PRIORLOC</a></li>
+        <li><a href="#priorloc-prior-locations">PRIORLOC (prior locations)</a></li>
         <li><a href="#othdocs">OTHDOCS</a></li>
         <li><a href="#rmdrea">RMDREA</a></li>
         <li><a href="#rep-representatives">REP (representatives)</a></li>
         <li><a href="#staff">STAFF</a></li>
         <li><a href="#vftypes">VFTYPES</a></li>
+      </ul>
+    </li>
+    <li><a href="#other-tables">Other Tables</a>
+      <ul>
         <li><a href="#coin">COIN</a></li>
         <li><a href="#decreview">DECREVIEW</a></li>
         <li><a href="#actcode">ACTCODE</a></li>
@@ -639,17 +635,19 @@ https://github.com/alex-shpak/hugo-book
   VACOLS - VBMS Mapping
   <small><a class="anchor-heading" href="#vacols---vbms-mapping" aria-labelledby="vacols---vbms-mapping">#</a></small>
 </h2>
-<p>CORRES table contains most of Veteran&rsquo;s info (should match VBMS)</p>
-<p>TIVBMS field allows us to determine if the claim is ready for VBMS</p>
-<p>TIOCTIME of no greater than 3 days ago will let us pull that
-specific Full Grant (no time limit on Partial/Remands)</p>
-<p>BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be
-updated by Dispatch must be validated</p>
+<ul>
+<li>CORRES table contains most of Veteran&rsquo;s info (should match VBMS)</li>
+<li>TIVBMS field allows us to determine if the claim is ready for VBMS</li>
+<li>TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands)</li>
+<li>BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated</li>
+</ul>
 <h2 id="table-joins">
   Table Joins
   <small><a class="anchor-heading" href="#table-joins" aria-labelledby="table-joins">#</a></small>
 </h2>
-<table>
+<details ><summary>Table joins</summary>
+  <div class="markdown-inner">
+    <table>
 <thead>
 <tr>
 <th>TABLE</th>
@@ -730,17 +728,23 @@ updated by Dispatch must be validated</p>
 </tr>
 </tbody>
 </table>
+
+  </div>
+</details>
+
 <p>Also check out 
 
 <a href="https://dbdiagram.io/d/5f8225973a78976d7b77234f" target="_blank">visualization of table relationships</a>.</p>
-<h2 id="tables">
-  Tables
-  <small><a class="anchor-heading" href="#tables" aria-labelledby="tables">#</a></small>
+<div class="vacolsTables">
+<h2 id="main-tables">
+  Main Tables
+  <small><a class="anchor-heading" href="#main-tables" aria-labelledby="main-tables">#</a></small>
 </h2>
-<h3 id="assign-diary-table-notes-about-the-claim">
-  ASSIGN (Diary Table; Notes about the claim)
-  <small><a class="anchor-heading" href="#assign-diary-table-notes-about-the-claim" aria-labelledby="assign-diary-table-notes-about-the-claim">#</a></small>
+<h3 id="assign-diary">
+  ASSIGN (Diary)
+  <small><a class="anchor-heading" href="#assign-diary" aria-labelledby="assign-diary">#</a></small>
 </h3>
+<p>Notes about the claim</p>
 <details ><summary>ASSIGN table</summary>
   <div class="markdown-inner">
     <table>
@@ -977,9 +981,9 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
-<h3 id="attach-attachments-table">
-  ATTACH (Attachments table)
-  <small><a class="anchor-heading" href="#attach-attachments-table" aria-labelledby="attach-attachments-table">#</a></small>
+<h3 id="attach-attachments">
+  ATTACH (Attachments)
+  <small><a class="anchor-heading" href="#attach-attachments" aria-labelledby="attach-attachments">#</a></small>
 </h3>
 <details ><summary>ATTACH table</summary>
   <div class="markdown-inner">
@@ -1004,19 +1008,11 @@ updated by Dispatch must be validated</p>
 <td></td>
 </tr>
 <tr>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td></td>
-</tr>
-<tr>
 <td>Folder Related To</td>
 <td>IMGTKKY</td>
 <td>VARCHAR2</td>
 <td>12</td>
-<td>Assign(tsktknm), Brieff(bfkey),Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey)</td>
+<td>Assign(tsktknm), Brieff(bfkey), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey)</td>
 <td></td>
 </tr>
 <tr>
@@ -1161,18 +1157,12 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
-<h3 id="brieff-briefface-table">
-  BRIEFF (Briefface table)
-  <small><a class="anchor-heading" href="#brieff-briefface-table" aria-labelledby="brieff-briefface-table">#</a></small>
+<h3 id="brieff-briefface">
+  BRIEFF (Briefface)
+  <small><a class="anchor-heading" href="#brieff-briefface" aria-labelledby="brieff-briefface">#</a></small>
 </h3>
 <p>Appeal Info, multiple per Vet): 3.5+ million legacy appeals</p>
 <ul>
-<li>BFKEY - Appeal ID (connects to FOLDER)</li>
-<li>BFCORLID - Veteran ID, SSN (VBMS ID)</li>
-<li>BFCORKEY - connects to CORRES</li>
-<li>BFREGOFF - Regional Office</li>
-<li>BFSO - Service organization (exclude &lsquo;T&rsquo;)</li>
-<li>BFCURLOC - Location Code (99 - Full Grant, 97 - Partial/Remand)</li>
 <li>BFDEC - Decision date (just visual, but make it equals TIOCTIME)
 <ul>
 <li>Appeal Status:  BFMPRO, 3 chars
@@ -1212,7 +1202,6 @@ updated by Dispatch must be validated</p>
 <li>Above are codes for &ldquo;BVA Disposition&rdquo;. There are other disposition codes that refer to &ldquo;Field Disposition&rdquo;</li>
 </ul>
 </li>
-<li>BFDLOOUT - represents how long the case has been ready to distribute</li>
 </ul>
 <details ><summary>BRIEFF table</summary>
   <div class="markdown-inner">
@@ -1234,7 +1223,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>12</td>
 <td>Assign(tsktknm), Attach(imgtkky), Folder(ticknum), Hearsched(folder_nr), Priorloc(lockey), Issue(Isskey)</td>
-<td></td>
+<td>Appeal ID</td>
 </tr>
 <tr>
 <td>Date/Time of Decision</td>
@@ -1258,7 +1247,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>16</td>
 <td></td>
-<td></td>
+<td>Veteran ID, SSN (VBMS ID)</td>
 </tr>
 <tr>
 <td>Stays Indicator (CUE, Tobacco, IVM)</td>
@@ -1378,7 +1367,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>16</td>
 <td></td>
-<td></td>
+<td>Regional Office</td>
 </tr>
 <tr>
 <td>Number of Issues (computed via batch update)</td>
@@ -1490,7 +1479,7 @@ updated by Dispatch must be validated</p>
 <td>DATE</td>
 <td></td>
 <td></td>
-<td></td>
+<td>how long the case has been ready to distribute</td>
 </tr>
 <tr>
 <td>Medical Facility</td>
@@ -1506,7 +1495,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>10</td>
 <td></td>
-<td></td>
+<td>Location Code (99 - Full Grant, 97 - Partial/Remand)</td>
 </tr>
 <tr>
 <td>Total Number of Copies for Duplication</td>
@@ -1602,7 +1591,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>1</td>
 <td></td>
-<td></td>
+<td>Disposition of Appeal &ndash; see notes above table</td>
 </tr>
 <tr>
 <td>Hearing Action</td>
@@ -1658,7 +1647,7 @@ updated by Dispatch must be validated</p>
 <td>VARCHAR2</td>
 <td>1</td>
 <td></td>
-<td></td>
+<td>Service organization (exclude &lsquo;T&rsquo;)</td>
 </tr>
 <tr>
 <td>Travel Board Hearing Requested</td>
@@ -1906,9 +1895,9 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
-<h3 id="corres-veteranappellant-table">
-  CORRES (Veteran/Appellant) table
-  <small><a class="anchor-heading" href="#corres-veteranappellant-table" aria-labelledby="corres-veteranappellant-table">#</a></small>
+<h3 id="corres-veteranappellant">
+  CORRES (Veteran/Appellant)
+  <small><a class="anchor-heading" href="#corres-veteranappellant" aria-labelledby="corres-veteranappellant">#</a></small>
 </h3>
 <ul>
 <li>SNAMEF, SNAMEL, SSN - basic Info</li>
@@ -2687,8 +2676,6 @@ updated by Dispatch must be validated</p>
   <small><a class="anchor-heading" href="#folder-more-claim-info" aria-labelledby="folder-more-claim-info">#</a></small>
 </h3>
 <ul>
-<li>TICKNUM - connects to BRIEFF</li>
-<li>TIOCTIME - Outcoding date (make sure BFDEC is the same)</li>
 <li>TIVBMS - Appeal in VBMS?
 <ul>
 <li>From Caseflow: 
@@ -3125,7 +3112,7 @@ updated by Dispatch must be validated</p>
 <td>DATE</td>
 <td></td>
 <td></td>
-<td></td>
+<td>Outcoding date (make sure BFDEC is the same)</td>
 </tr>
 <tr>
 <td>Outcoder</td>
@@ -3249,14 +3236,6 @@ updated by Dispatch must be validated</p>
 <td>NUMBER</td>
 <td>22</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
-<td>&mdash;&ndash;</td>
 <td></td>
 </tr>
 <tr>
@@ -4127,11 +4106,11 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
-<h3 id="priorloc">
-  PRIORLOC
-  <small><a class="anchor-heading" href="#priorloc" aria-labelledby="priorloc">#</a></small>
+<h3 id="priorloc-prior-locations">
+  PRIORLOC (prior locations)
+  <small><a class="anchor-heading" href="#priorloc-prior-locations" aria-labelledby="priorloc-prior-locations">#</a></small>
 </h3>
-<p>(prior locations; claim location history)</p>
+<p>(claim location history)</p>
 <details ><summary>PRIORLOC table</summary>
   <div class="markdown-inner">
     <table>
@@ -5301,6 +5280,10 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
+<h2 id="other-tables">
+  Other Tables
+  <small><a class="anchor-heading" href="#other-tables" aria-labelledby="other-tables">#</a></small>
+</h2>
 <h3 id="coin">
   COIN
   <small><a class="anchor-heading" href="#coin" aria-labelledby="coin">#</a></small>
@@ -6429,7 +6412,7 @@ updated by Dispatch must be validated</p>
   </div>
 </details>
 
-</article>
+</div></article>
  
       
 
@@ -6479,12 +6462,12 @@ updated by Dispatch must be validated</p>
   <ul>
     <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
     <li><a href="#table-joins">Table Joins</a></li>
-    <li><a href="#tables">Tables</a>
+    <li><a href="#main-tables">Main Tables</a>
       <ul>
-        <li><a href="#assign-diary-table-notes-about-the-claim">ASSIGN (Diary Table; Notes about the claim)</a></li>
-        <li><a href="#attach-attachments-table">ATTACH (Attachments table)</a></li>
-        <li><a href="#brieff-briefface-table">BRIEFF (Briefface table)</a></li>
-        <li><a href="#corres-veteranappellant-table">CORRES (Veteran/Appellant) table</a></li>
+        <li><a href="#assign-diary">ASSIGN (Diary)</a></li>
+        <li><a href="#attach-attachments">ATTACH (Attachments)</a></li>
+        <li><a href="#brieff-briefface">BRIEFF (Briefface)</a></li>
+        <li><a href="#corres-veteranappellant">CORRES (Veteran/Appellant)</a></li>
         <li><a href="#corrtyps">CORRTYPS</a></li>
         <li><a href="#cova">COVA</a></li>
         <li><a href="#folder-more-claim-info">FOLDER (More claim info)</a></li>
@@ -6492,12 +6475,16 @@ updated by Dispatch must be validated</p>
         <li><a href="#issref-issue-reference">ISSREF (issue reference)</a></li>
         <li><a href="#issues">ISSUES</a></li>
         <li><a href="#mail">MAIL</a></li>
-        <li><a href="#priorloc">PRIORLOC</a></li>
+        <li><a href="#priorloc-prior-locations">PRIORLOC (prior locations)</a></li>
         <li><a href="#othdocs">OTHDOCS</a></li>
         <li><a href="#rmdrea">RMDREA</a></li>
         <li><a href="#rep-representatives">REP (representatives)</a></li>
         <li><a href="#staff">STAFF</a></li>
         <li><a href="#vftypes">VFTYPES</a></li>
+      </ul>
+    </li>
+    <li><a href="#other-tables">Other Tables</a>
+      <ul>
         <li><a href="#coin">COIN</a></li>
         <li><a href="#decreview">DECREVIEW</a></li>
         <li><a href="#actcode">ACTCODE</a></li>
