@@ -277,22 +277,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
     end
 
-    let!(:judge_assign_task) do
-      create(
-        :ama_judge_assign_task,
-        appeal: appeal,
-        parent: root_task
-      )
-    end
-
-    let!(:attorney_task) do
-      create(
-        :ama_attorney_task,
-        appeal: appeal,
-        parent: root_task
-      )
-    end
-
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
