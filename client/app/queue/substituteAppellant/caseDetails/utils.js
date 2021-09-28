@@ -14,7 +14,6 @@ export const shouldSupportSubstituteAppellant = ({
     !appeal.isLegacyAppeal &&
       currentUserOnClerkOfTheBoard &&
       !appeal.appellantIsNotVeteran &&
-      featureToggles.recognized_granted_substitution_after_dd &&
       appeal.caseType === 'Original' &&
       // Substitute appellants for hearings require separate feature toggle
       (appeal.docketName !== 'hearing' ||

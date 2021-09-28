@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import _ from 'lodash';
+import { keyBy, memoize, reject, sum, uniqBy, map, mapValues, filter, size, values, some } from 'lodash';
 
 const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -7,9 +7,10 @@ const getAllDocs = (state) => state.documents;
 export const getFilteredDocuments = createSelector(
   [getFilteredDocIds, getAllDocs],
   // eslint-disable-next-line no-confusing-arrow
-  (filteredDocIds, allDocs) => filteredDocIds ?
-    _.map(filteredDocIds, (docId) => allDocs[docId]) :
-    _.values(allDocs)
+  (filteredDocIds, allDocs) =>
+    filteredDocIds ?
+      map(filteredDocIds, (docId) => allDocs[docId]) :
+      values(allDocs)
 );
 
 const getEditingAnnotations = (state) => state.annotationLayer.editingAnnotations;
@@ -20,33 +21,30 @@ const getPendingAnnotations = (state) => state.annotationLayer.pendingAnnotation
 export const makeGetAnnotationsByDocumentId = createSelector(
   [getEditingAnnotations, getPendingEditingAnnotations, getAnnotations, getPendingAnnotations],
   (editingAnnotations, pendingEditingAnnotations, annotations, pendingAnnotations) =>
-    _.memoize(
-      (docId) =>
-        _(editingAnnotations).
-          values().
-          map((annotation) => ({
-            editing: true,
-            ...annotation
-          })).
-          concat(
-            _.values(pendingEditingAnnotations),
-            _.values(annotations),
-            _.values(pendingAnnotations),
-          ).
-          uniqBy('id').
-          reject('pendingDeletion').
-          filter({ documentId: docId }).
-          value()
+    memoize((docId) =>
+      reject(
+        uniqBy(
+          values(editingAnnotations).
+            map((annotation) => ({
+              editing: true,
+              ...annotation
+            })).
+            concat(
+              values(pendingEditingAnnotations),
+              values(annotations),
+              values(pendingAnnotations)
+            ),
+          'id'
+        ),
+        'pendingDeletion'
+      ).filter((doc) => doc.documentId === docId)
     )
 );
 
 export const getAnnotationsPerDocument = createSelector(
   [getFilteredDocuments, makeGetAnnotationsByDocumentId],
   (documents, getAnnotationsByDocumentId) =>
-    _(documents).
-      keyBy('id').
-      mapValues((doc) => getAnnotationsByDocumentId(doc.id)).
-      value()
+    mapValues(keyBy(documents, 'id'), (doc) => getAnnotationsByDocumentId(doc.id))
 );
 
 const getDocFilterCriteria = (state) => state.documentList.docFilterCriteria;
@@ -57,10 +55,10 @@ export const docListIsFiltered = createSelector(
   [getAllDocs, getFilteredDocIds, getDocFilterCriteria],
   (documents, filteredDocIds, docFilterCriteria) =>
     Boolean(
-      _.size(documents) !== filteredDocIds.length ||
+      size(documents) !== filteredDocIds.length ||
         docFilterCriteria.searchQuery ||
-        _(docFilterCriteria.category).values().some() ||
-        _(docFilterCriteria.tag).values().some()
+        some(values(docFilterCriteria.category)) ||
+        some(values(docFilterCriteria.tag))
     )
 );
 
@@ -74,7 +72,7 @@ const getFile = (state, props) => props.file;
 
 export const getTextForFile = createSelector(
   [getExtractedText, getFile],
-  (extractedText, file) => _.filter(extractedText, (pageText) => pageText.file === file)
+  (extractedText, file) => filter(extractedText, (pageText) => pageText.file === file)
 );
 
 export const getMatchesPerPageInFile = createSelector(
@@ -88,21 +86,21 @@ export const getMatchesPerPageInFile = createSelector(
 
     const regex = new RegExp(escapeRegExp(searchTerm), 'gi');
 
-    return textForFile.map((page) => ({
-      id: page.id,
-      pageIndex: page.pageIndex,
-      matches: (page.text.match(regex) || []).length
-    })).filter((page) => {
-      return page.matches > 0;
-    });
+    return textForFile.
+      map((page) => ({
+        id: page.id,
+        pageIndex: page.pageIndex,
+        matches: (page.text.match(regex) || []).length
+      })).
+      filter((page) => {
+        return page.matches > 0;
+      });
   }
 );
 
 export const getTotalMatchesInFile = createSelector(
   [getMatchesPerPageInFile],
-  (matches) => _(matches).
-    map((match) => match.matches).
-    sum()
+  (matches) => sum(map(matches, (match) => match.matches))
 );
 
 const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;

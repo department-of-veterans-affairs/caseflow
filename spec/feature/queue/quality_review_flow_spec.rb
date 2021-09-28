@@ -141,7 +141,8 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         find(".cf-select__control", text: "Select an action").click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
-        expect(page.has_no_content?("Select special issues")).to eq(true)
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         all("button", text: "+ Add decision", count: 1)[0].click

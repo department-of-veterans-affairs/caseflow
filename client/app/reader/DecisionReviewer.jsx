@@ -112,7 +112,6 @@ export class DecisionReviewer extends React.PureComponent {
       vacolsId={vacolsId}>
       <PdfViewer
         allDocuments={_.values(this.props.storeDocuments)}
-        pdfWorker={this.props.pdfWorker}
         showPdf={this.showPdf(props.history, vacolsId)}
         history={props.history}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
@@ -166,15 +165,21 @@ export class DecisionReviewer extends React.PureComponent {
 }
 
 DecisionReviewer.propTypes = {
-  pdfWorker: PropTypes.string,
-  userDisplayName: PropTypes.string,
+  annotations: PropTypes.any,
+  appeal: PropTypes.any,
+  appealDocuments: PropTypes.any,
+  applicationUrls: PropTypes.any,
+  buildDate: PropTypes.any,
   dropdownUrls: PropTypes.array,
-  singleDocumentMode: PropTypes.bool,
-
-  // Required actions
+  featureToggles: PropTypes.any,
+  feedbackUrl: PropTypes.any,
+  isPlacingAnnotation: PropTypes.any,
   onScrollToComment: PropTypes.func,
+  setCategoryFilter: PropTypes.func,
+  singleDocumentMode: PropTypes.bool,
   stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func
+  storeDocuments: PropTypes.any,
+  userDisplayName: PropTypes.string
 };
 
 const mapStateToProps = (state, props) => {

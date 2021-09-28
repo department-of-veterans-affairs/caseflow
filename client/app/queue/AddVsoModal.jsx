@@ -1,12 +1,14 @@
 import * as React from 'react';
-import COPY from '../../COPY.json';
+import PropTypes from 'prop-types';
+import COPY from 'app/../COPY';
 import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { onReceiveNewVso } from './teamManagement/actions';
+import { vsoAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
@@ -36,6 +38,14 @@ class AddVsoModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
+  componentWillUnmount() {
+    this.props.resetErrorMessages();
+  }
+
   submit = () => {
     const options = {
       data: {
@@ -50,9 +60,8 @@ class AddVsoModal extends React.Component {
     const endpoint = `/team_management/${configForVsoClasses[this.state.classification].endpoint}`;
 
     return this.props.requestSave(endpoint, options).
-      then((resp) => this.props.onReceiveNewVso(resp.body)).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err }));
+      then((resp) => this.props.vsoAdded(resp.body?.org)).
+      catch();
   }
 
   changeName = (value) => this.setState({ name: value });
@@ -94,12 +103,26 @@ class AddVsoModal extends React.Component {
   };
 }
 
+AddVsoModal.propTypes = {
+  requestSave: PropTypes.func,
+  vsoAdded: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+};
+
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewVso,
+  vsoAdded,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 }, dispatch);
+
+AddVsoModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewVso: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddVsoModal));

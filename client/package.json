@@ -5,6 +5,9 @@
   "license": "none",
   "version": "0.0.1",
   "scripts": {
+    "analyze": "yarn run analyze:build && yarn run analyze:view",
+    "analyze:build": "webpack -p --mode=production --config webpack.config.js --profile --json > ../tmp/bundle-stats.json",
+    "analyze:view": "webpack-bundle-analyzer ../tmp/bundle-stats.json build",
     "test": "yarn run test:karma && yarn run test:jest",
     "test:jest": "NODE_ENV=test jest",
     "test:jest:watch": "NODE_ENV=test jest --watch",
@@ -94,7 +97,7 @@
     "moment-timezone": "^0.5.27",
     "node-sass": "^4.13.1",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.10.97",
+    "pdfjs-dist": "2.5.207",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.11.8",
@@ -150,6 +153,7 @@
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^26.0.10",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-lodash": "^3.3.4",
     "chai": "^3.5.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
@@ -184,6 +188,7 @@
     "react-select-event": "^4.1.4",
     "sinon": "^2.1.0",
     "weak-napi": "^2.0.2",
+    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-dev-server": "^3.9.0"
   },
   "resolutions": {

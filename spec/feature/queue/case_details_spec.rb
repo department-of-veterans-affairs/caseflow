@@ -1892,9 +1892,6 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "substitute appellant" do
-      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
-      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
-
       describe "The 'Add Substitute' button" do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
@@ -1927,12 +1924,6 @@ RSpec.feature "Case details", :all_dbs do
             wait_for_page_render
             expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
-        end
-
-        context "when the feature flag is disabled" do
-          FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
-          it_behaves_like "the button is not shown"
-          FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
         end
 
         context "When the case type is not 'original'" do
@@ -2019,7 +2010,6 @@ RSpec.feature "Case details", :all_dbs do
       before do
         CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
-        FeatureToggle.enable!(:cavc_remand)
       end
 
       shared_examples "the button is not shown" do

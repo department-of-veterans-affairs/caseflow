@@ -1,16 +1,17 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY.json';
+import COPY from 'app/../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { onReceiveNewJudgeTeam } from './teamManagement/actions';
+import { judgeTeamAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
-  showErrorMessage
-} from './uiReducer/uiActions';
+  resetErrorMessages,
+  resetSuccessMessages } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
 
@@ -24,6 +25,14 @@ class AddJudgeTeamModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.resetErrorMessages();
+    this.props.resetSuccessMessages();
+  }
+  componentWillUnmount() {
+    this.props.resetErrorMessages();
+  }
+
   loadingPromise = () => {
     return ApiUtil.get('/users?role=non_judges').then((resp) => {
       return this.setState({ nonJudges: resp.body.non_judges.data });
@@ -35,13 +44,12 @@ class AddJudgeTeamModal extends React.Component {
   formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
 
   dropdownOptions = () =>
-    this.state.nonJudges.map((user) => ({ label: this.formatName(user),
+    this.state.nonJudges?.map((user) => ({ label: this.formatName(user),
       value: user }));
 
   submit = () => this.props.requestSave(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).
-    then((resp) => this.props.onReceiveNewJudgeTeam(resp.body)).
-    catch((err) => this.props.showErrorMessage({ title: 'Error',
-      detail: err }));
+    then((resp) => this.props.judgeTeamAdded(resp.body?.org)).
+    catch();
 
   render = () => {
     return <QueueFlowModal
@@ -68,14 +76,27 @@ class AddJudgeTeamModal extends React.Component {
     </QueueFlowModal>;
   };
 }
+AddJudgeTeamModal.propTypes = {
+  requestSave: PropTypes.func,
+  judgeTeamAdded: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+};
 
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewJudgeTeam,
+  judgeTeamAdded,
   requestSave,
-  showErrorMessage
+  resetErrorMessages,
+  resetSuccessMessages
 }, dispatch);
+
+AddJudgeTeamModal.propTypes = {
+  requestSave: PropTypes.func,
+  onReceiveNewJudgeTeam: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTeamModal));
 
