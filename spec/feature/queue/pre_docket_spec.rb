@@ -27,6 +27,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:ro_instructions) { "No docs here. Please look for this veteran's documents." }
 
   context "when a VHA case goes through intake" do
+    before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
     it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
       step "BVA Intake user intakes a VHA case" do
         User.authenticate!(user: bva_intake_user)
