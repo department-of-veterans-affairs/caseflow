@@ -159,6 +159,7 @@ class Hearing < CaseflowRecord
 
   def scheduled_for
     return nil unless hearing_day
+
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
     #
