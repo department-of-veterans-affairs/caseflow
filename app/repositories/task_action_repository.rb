@@ -445,7 +445,7 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
-    def docket_appeal_data(task, _user = nil)
+    def docket_appeal_data(*)
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,

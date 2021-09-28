@@ -20,7 +20,7 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
-      {taskConfiguration?.modal_body}
+      {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
           label="Instructions:"
