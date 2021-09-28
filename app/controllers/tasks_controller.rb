@@ -104,13 +104,14 @@ class TasksController < ApplicationController
   # }
   def update
     tasks = task.update_from_params(update_params, current_user)
-    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
+    tasks.each{ |t| return invalid_record_error(t) unless t.valid? }
 
     tasks_hash = json_tasks(tasks.uniq)
 
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
-    alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
+    alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+
     tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
     render json: { tasks: tasks_hash }

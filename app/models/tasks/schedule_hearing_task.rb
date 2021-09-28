@@ -51,8 +51,12 @@ class ScheduleHearingTask < Task
     multi_transaction do
       verify_user_can_update!(current_user)
 
+      # If the change_hearing_request_type is the same in the DB and the params
+      # stop, don't update anything and return an empty array
+      return [] unless change_hearing_request_type_valid?(params)
+
       # Either change the hearing request type or schedule/cancel the hearing
-      if params.dig(:business_payloads, :values, :changed_hearing_request_type).present?
+      if changed_hearing_request_type_present?(params)
         change_hearing_request_type(params, current_user)
       else
         created_tasks = create_schedule_hearing_tasks(params)
@@ -195,6 +199,27 @@ class ScheduleHearingTask < Task
 
     # Call the child method so that we follow that workflow when changing the hearing request type
     change_hearing_request_type_task.update_from_params(params, current_user)
+  end
+
+  # Method to check for presence of the param :changed_hearing_request_type
+  def changed_hearing_request_type_present?(params)
+    params.dig(
+      :business_payloads,
+      :values,
+      :changed_hearing_request_type
+    ).present?
+  end
+
+  # Method to make sure that we do not create a ChangeHearingRequestTypeTask if
+  # the value of changed_hearing_request_type is the same in DB and params
+  def change_hearing_request_type_valid?(params)
+    changed_hearing_request_type = params.dig(
+      :business_payloads,
+      :values,
+      :changed_hearing_request_type
+    )
+
+    changed_hearing_request_type != appeal.changed_hearing_request_type
   end
 
   def cancel_parent_task(parent)
