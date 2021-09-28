@@ -31,6 +31,10 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ]
 
+    actions_based_on_assignment(user, atty_actions, movement_actions)
+  end
+
+  def actions_based_on_assignment(user, atty_actions, movement_actions)
     if self_assigned?(user)
       # VLJ w/ self-assigned task can do most things (return to judge doesn't make sense)
       (atty_actions + [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]).uniq
