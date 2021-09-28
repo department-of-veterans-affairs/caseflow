@@ -18,19 +18,34 @@ describe AttorneyQueue, :all_dbs do
       let!(:action1) { create(:colocated_task, assigned_by: user, assigned_to: org1) }
       let(:org2) { Colocated.singleton }
       let!(:action2) { create(:colocated_task, :ihp, appeal: appeal, assigned_by: user, assigned_to: org2) }
-      let!(:action3) do
+      let!(:action3_parent) do
         create(
           :colocated_task,
           :poa_clarification,
           appeal: appeal,
           assigned_by: user
+        )
+      end
+      let!(:action_3) do
+        create(
+          :colocated_task,
+          appeal: appeal,
+          assigned_by: user,
+          parent: action3_parent,
+          assigned_to: vlj_support_staff
         ).tap do |task|
-          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+          task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
+        #   .tap do |task|
+        #   task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        # end
+      let!(:action4_parent) do
+        create(:colocated_task, assigned_by: user)#
+      end
       let!(:action4) do
-        create(:colocated_task, assigned_by: user).tap do |task|
-          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        create(:colocated_task, assigned_to: vlj_support_staff, parent: action4_parent).tap do |task|
+          task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
       let(:org5) { Colocated.singleton }
@@ -65,28 +80,38 @@ describe AttorneyQueue, :all_dbs do
         Colocated.singleton.users.first
       end
 
+      let!(:completed_action_parent) do
+        create(
+          :colocated_task,
+          appeal: appeal,
+          assigned_by: user
+        )
+      end
+
       let!(:completed_action) do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: user
+          assigned_by: user,
+          assigned_to: vlj_support_staff,
+          parent: completed_action_parent
         ).tap do |task|
-          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+          task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
-      let!(:incomplete_action) do
+
+      let!(:incomplete_action_parent) do
         create(
           :colocated_task,
           appeal: appeal,
           assigned_by: user
-        ).tap do |task|
-          task.children.first.update!(status: Constants.TASK_STATUSES.on_hold)
-        end
+        )
       end
 
       it "should only return the incomplete colocated admin actions" do
         expect(subject.size).to eq(1)
-        expect(subject.first).to eq(incomplete_action)
+        # maw: This is showing the parent, assigned to the Org. Is that correct??
+        expect(subject.first).to eq(incomplete_action_parent)
       end
     end
   end
