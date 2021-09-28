@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as ConfirmCaseDetails from
   '../../../../app/certification/reducers/ConfirmCaseDetails';
 import { getBlankInitialState } from './util';
@@ -16,7 +15,7 @@ describe('.changeRepresentativeType', () => {
     };
 
     expect(ConfirmCaseDetails.changeRepresentativeType(initialState, action).
-      representativeType).to.eq('new rep type');
+      representativeType).toEqual('new rep type');
   });
 });
 
@@ -31,7 +30,7 @@ describe('.changeRepresentativeName', () => {
     };
 
     expect(ConfirmCaseDetails.changeRepresentativeName(initialState, action).
-      representativeName).to.eq('new rep name');
+      representativeName).toEqual('new rep name');
   });
 });
 
@@ -46,7 +45,7 @@ describe('.changeOtherRepresentativeType', () => {
     };
 
     expect(ConfirmCaseDetails.changeOtherRepresentativeType(initialState, action).
-      otherRepresentativeType).to.eq('new other rep type');
+      otherRepresentativeType).toEqual('new other rep type');
   });
 });
 
@@ -61,7 +60,7 @@ describe('.changePoaMatches', () => {
     };
 
     expect(ConfirmCaseDetails.changePoaMatches(initialState, action).
-      poaMatches).to.eq('MATCH');
+      poaMatches).toEqual('MATCH');
   });
 });
 
@@ -76,6 +75,6 @@ describe('.changePoaCorrectLocation', () => {
     };
 
     expect(ConfirmCaseDetails.changePoaCorrectLocation(initialState, action).
-      poaCorrectLocation).to.eq(Constants.poaCorrectLocation.VACOLS);
+      poaCorrectLocation).toEqual(Constants.poaCorrectLocation.VACOLS);
   });
 });
