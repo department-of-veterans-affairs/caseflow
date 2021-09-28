@@ -7,7 +7,11 @@ menu:
 weight: 4
 ---
 
-## Misc Workflows
+# Workflows
+
+{{< pages_list >}}
+
+## Workflows with respect to Data Model
 
 ### Case Distribution workflow
 * Distribution, CaseDistribution, Task
@@ -19,7 +23,7 @@ weight: 4
 * JudgeCaseReview, AttorneyCaseReview
 * [JudgeTeam Checkout tables diagram](https://dbdiagram.io/d/5f790c8f3a78976d7b763c75)
 
-## New Appeal Workflows
+## Workflows that Create New Appeals
 
 ### Motion-To-Vacate workflow
 * A PostDecisionMotion record is created with these possible [`dispositions`](https://github.com/department-of-veterans-affairs/caseflow/blob/a7af6b0742413eaa137e6e04e592e960ce136e6d/app/models/post_decision_motion.rb#L15-L21), the `vacated_decision_issue_ids` (which reference DecisionIssue records), and a `task_id` (which references a Task record, which is associated to an appeal).
@@ -45,12 +49,3 @@ weight: 4
   * Both appeals have the same docket type, docket number, and request issues, but different appellant.
   * The request issues on the source appeal has associated decision issues with `death_dismissal` dispositions.
   * The two appeals can have different tasks, etc.
-
-
-## Caching
-
-### Appeals caching
-(TBD)
-
-### BGS caching
-(TBD)
