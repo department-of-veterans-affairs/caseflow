@@ -15,6 +15,7 @@ import {
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
   setFeatureToggles,
+  setUserId,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -107,6 +108,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserId(this.props.userId);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -1131,6 +1133,7 @@ QueueApp.propTypes = {
   featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
+  setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
@@ -1163,6 +1166,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
+      setUserId,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,
