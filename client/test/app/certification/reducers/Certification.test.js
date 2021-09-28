@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as Certification from
   '../../../../app/certification/reducers/Certification';
 import { getBlankInitialState } from './util';
@@ -16,7 +15,7 @@ describe('.updateProgressBar', () => {
     };
 
     expect(Certification.updateProgressBar(initialState, action).
-      currentSection).to.eq('current section');
+      currentSection).toEqual('current section');
   });
 });
 
@@ -25,7 +24,7 @@ describe('.startUpdateCertification', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.startUpdateCertification(initialState).
-      loading).to.eq(true);
+      loading).toEqual(true);
   });
 });
 
@@ -40,7 +39,7 @@ describe('.showValidationErrors', () => {
     };
 
     expect(Certification.showValidationErrors(initialState, action).
-      erroredFields).to.eql(['otherRepresentativeType']);
+      erroredFields).toEqual(['otherRepresentativeType']);
   });
   it('should update the scroll to error', () => {
     let initialState = getBlankInitialState();
@@ -52,7 +51,7 @@ describe('.showValidationErrors', () => {
     };
 
     expect(Certification.showValidationErrors(initialState, action).
-      scrollToError).to.eql(true);
+      scrollToError).toEqual(true);
   });
 });
 
@@ -61,13 +60,13 @@ describe('.handleServerError', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.handleServerError(initialState).
-      loading).to.eq(false);
+      loading).toEqual(false);
   });
   it('should set updateFailed to true', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.handleServerError(initialState).
-      serverError).to.eq(true);
+      serverError).toEqual(true);
   });
 });
 
@@ -76,12 +75,12 @@ describe('.certificationUpdateSuccess', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.certificationUpdateSuccess(initialState).
-      loading).to.eq(false);
+      loading).toEqual(false);
   });
   it('should set updateSucceeded to true', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.certificationUpdateSuccess(initialState).
-      updateSucceeded).to.eq(true);
+      updateSucceeded).toEqual(true);
   });
 });
