@@ -460,23 +460,15 @@ FactoryBot.define do
     end
 
     trait :with_decision_issue do
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
-      notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|
-        request_issue = create(:request_issue,
-                               :rating,
-                               :with_rating_decision_issue,
-                               decision_review: appeal,
-                               veteran_participant_id: appeal.veteran.participant_id,
-                               contested_issue_description: description,
-                               notes: notes)
-        decision_issue = create(:decision_issue,
-                                :rating,
-                                decision_review: appeal,
-                                disposition: evaluator.disposition,
-                                description: "Issue description",
-                                decision_text: "Decision text")
-        request_issue.decision_issues << decision_issue
+        create(
+          :decision_issue,
+          :rating,
+          decision_review: appeal,
+          disposition: evaluator.disposition,
+          description: "Issue description",
+          decision_text: "Decision text"
+        )
       end
     end
 

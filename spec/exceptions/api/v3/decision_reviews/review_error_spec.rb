@@ -4,7 +4,7 @@ context Api::V3::DecisionReviews::ReviewError do
   let(:intake) do
     intake = Intake.build(
       user: build_stubbed(:user),
-      veteran_file_number: "64205050",
+      search_term: "64205050",
       form_type: "higher_level_review"
     )
     intake.detail = HigherLevelReview.new
