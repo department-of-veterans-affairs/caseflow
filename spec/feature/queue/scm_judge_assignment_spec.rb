@@ -139,7 +139,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_on(appeal.veteran_file_number)
 
           expect(page).to have_content("ASSIGNED TO\n#{judge_one.css_id}")
-          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please take over this case"
           fill_in("taskInstructions", with: instructions)
@@ -156,7 +156,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         end
 
         step "assign an AttorneyTask" do
-          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
@@ -176,7 +176,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         end
 
         step "reassign an AttorneyTask" do
-          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
           click_on("Submit")
@@ -191,7 +191,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         end
 
         step "cancel an AttorneyTask" do
-          click_dropdown(propmt: "Select an action...", text: "Cancel task")
+          click_dropdown(prompt: "Select an action...", text: "Cancel task")
           expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.full_name))
           fill_in "taskInstructions", with: "Sending back to judge to be reassigned"
           click_on("Submit")
@@ -211,7 +211,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
 
           expect(page).to have_content("ASSIGNED TO\n#{judge_one.css_id}")
           expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
-          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
           click_on("Submit")
@@ -231,7 +231,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_on(legacy_appeal.veteran_file_number)
 
           expect(page).to have_content("ASSIGNED TO\n#{judge_one.vacols_uniq_id}")
-          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
           click_on("Submit")
@@ -246,7 +246,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         end
 
         step "assign an AttorneyTask" do
-          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
