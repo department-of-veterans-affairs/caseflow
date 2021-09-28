@@ -149,7 +149,7 @@ weight: 3
 Check out these new pages.
 ```
 
-Clicking on the section link in the navigation menu will render `_index.md` followed by a listing of the constituent pages. To display the list of pages elsewhere, insert `{{< pages_list >}}` at the desired location in the `_index.md` file. (This feature is provided by `layouts/_default/list.html` and `layout/shortcodes/pages_list.html`.)
+Clicking on the section link in the navigation menu will render `_index.md` followed by a listing of the constituent pages. To display the list of pages elsewhere, insert `{{ "{{< pages_list >" }}}}` at the desired location in the `_index.md` file. (This feature is provided by `layouts/_default/list.html` and `layout/shortcodes/pages_list.html`.)
 
 For each page in the new subfolder, add this front matter to the page's `md` file in order to display it in the navigation menu:
 ```yaml
