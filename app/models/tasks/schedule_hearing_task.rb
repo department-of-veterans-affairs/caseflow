@@ -51,8 +51,8 @@ class ScheduleHearingTask < Task
     multi_transaction do
       verify_user_can_update!(current_user)
 
-      # If the change_hearing_request_type is the same in the DB and the params
-      # stop, don't update anything and return an empty array
+      # If the change_hearing_request_type is the same in the DB and the params,
+      # don't update anything and return an empty array
       return [] unless change_hearing_request_type_valid?(params)
 
       # Either change the hearing request type or schedule/cancel the hearing
