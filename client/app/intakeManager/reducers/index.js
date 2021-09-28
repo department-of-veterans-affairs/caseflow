@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import * as Constants from '../constants';
-import _ from 'lodash';
+import { orderBy } from 'lodash';
 
 export const mapDataToInitialState = function() {
   return {
@@ -15,9 +15,7 @@ export const intakeManagerReducers = (state = mapDataToInitialState(), action = 
     return update(state, {
       loading: { $set: false },
       flaggedForReview: {
-        $set: _(action.payload.intakes).
-          orderBy('completed_at').
-          value()
+        $set: orderBy(action.payload.intakes, ['completed_at'])
       }
     });
   default: return state;
