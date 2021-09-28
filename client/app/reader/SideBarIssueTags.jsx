@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { reject, first, pick, size, map, find } from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -10,24 +10,19 @@ import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
 class SideBarIssueTags extends PureComponent {
   render() {
-    const {
-      doc
-    } = this.props;
+    const { doc } = this.props;
 
     let generateOptionsFromTags = (tags) =>
-      _(tags).
-        reject('pendingRemoval').
-        map((tag) => ({
-          value: tag.text,
-          label: tag.text,
-          tagId: tag.id })
-        ).
-        value();
+      map(reject(tags, 'pendingRemoval'), (tag) => ({
+        value: tag.text,
+        label: tag.text,
+        tagId: tag.id
+      }));
 
     let onChange = (values, deletedValue) => {
-      if (_.size(deletedValue)) {
-        const tagValue = _.first(deletedValue).label;
-        const result = _.find(doc.tags, { text: tagValue });
+      if (size(deletedValue)) {
+        const tagValue = first(deletedValue).label;
+        const result = find(doc.tags, { text: tagValue });
 
         this.props.removeTag(doc, result);
       } else if (values && values.length) {
@@ -35,21 +30,23 @@ class SideBarIssueTags extends PureComponent {
       }
     };
 
-    return <div className="cf-issue-tag-sidebar">
-      {this.props.error.tag.visible && <CannotSaveAlert />}
-      <SearchableDropdown
-        key={doc.id}
-        name="tags"
-        label="Select or tag issues"
-        multi
-        dropdownStyling={{ position: 'relative' }}
-        creatable
-        options={generateOptionsFromTags(this.props.tagOptions)}
-        placeholder=""
-        value={generateOptionsFromTags(doc.tags)}
-        onChange={onChange}
-      />
-    </div>;
+    return (
+      <div className="cf-issue-tag-sidebar">
+        {this.props.error.tag.visible && <CannotSaveAlert />}
+        <SearchableDropdown
+          key={doc.id}
+          name="tags"
+          label="Select or tag issues"
+          multi
+          dropdownStyling={{ position: 'relative' }}
+          creatable
+          options={generateOptionsFromTags(this.props.tagOptions)}
+          placeholder=""
+          value={generateOptionsFromTags(doc.tags)}
+          onChange={onChange}
+        />
+      </div>
+    );
   }
 }
 
@@ -64,17 +61,21 @@ SideBarIssueTags.propTypes = {
 const mapStateToProps = (state) => {
   return {
     error: state.pdfViewer.pdfSideBarError,
-    ..._.pick(state.pdfViewer, 'tagOptions')
+    ...pick(state.pdfViewer, 'tagOptions')
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    addNewTag,
-    removeTag
-  }, dispatch)
+  ...bindActionCreators(
+    {
+      addNewTag,
+      removeTag
+    },
+    dispatch
+  )
 });
 
 export default connect(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(SideBarIssueTags);
