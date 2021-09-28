@@ -115,7 +115,7 @@ class Hearing < CaseflowRecord
   end
 
   def readable_request_type
-    HEARING_TYPES[request_type.to_sym]
+    HEARING_TYPES[request_type&.to_sym]
   end
 
   alias original_request_type request_type
@@ -158,6 +158,7 @@ class Hearing < CaseflowRecord
   end
 
   def scheduled_for
+    return nil unless hearing_day
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
     #
