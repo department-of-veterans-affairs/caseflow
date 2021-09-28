@@ -104,7 +104,7 @@ class TasksController < ApplicationController
   # }
   def update
     tasks = task.update_from_params(update_params, current_user)
-    tasks.each{ |t| return invalid_record_error(t) unless t.valid? }
+    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
     tasks_hash = json_tasks(tasks.uniq)
 
