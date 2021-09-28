@@ -1,5 +1,5 @@
-import * as Actions from '../../../app/certification/actions/SignAndCertify';
-import * as Constants from '../../../app/certification/constants/constants';
+import * as Actions from '../../../../app/certification/actions/SignAndCertify';
+import * as Constants from '../../../../app/certification/constants/constants';
 
 describe('.updateProgressBar', () => {
   it('should create an action to update the progress bar', () => {

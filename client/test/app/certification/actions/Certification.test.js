@@ -1,5 +1,5 @@
-import { showValidationErrors } from '../../../app/certification/actions/Certification';
-import { SHOW_VALIDATION_ERRORS } from '../../../app/certification/constants/constants';
+import { showValidationErrors } from '../../../../app/certification/actions/Certification';
+import { SHOW_VALIDATION_ERRORS } from '../../../../app/certification/constants/constants';
 
 describe('Certification', () => {
   it('should create an action to set the errors', () => {
