@@ -66,6 +66,13 @@ describe ChangeHearingRequestTypeTask do
               expect(vacols_case.reload.bfhr).to eq "2"
               expect(vacols_case.reload.bfdocind).to eq "V"
             end
+
+            it "updates changed hearing request type field" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "V"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+            end
           end
 
           context "to central from video" do
@@ -91,6 +98,13 @@ describe ChangeHearingRequestTypeTask do
               expect(vacols_case.reload.bfhr).to eq "1"
               expect(vacols_case.reload.bfdocind).to eq nil
             end
+
+            it "updates changed hearing request type field" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "C"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+            end
           end
 
           context "to virtual from video" do
@@ -115,6 +129,91 @@ describe ChangeHearingRequestTypeTask do
 
               expect(vacols_case.reload.bfhr).to eq "2"
               expect(vacols_case.reload.bfdocind).to eq "V"
+            end
+
+            it "updates changed hearing request type field" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "R"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+            end
+          end
+
+          context "to video from video" do
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "V",
+                    "closest_regional_office": nil
+                  }
+                }
+              }
+            end
+
+            it "does not do anything if changed_hearing_request_type is not changing" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "V"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "V"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+            end
+          end
+
+          context "to central from central" do
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "C",
+                    "closest_regional_office": "C"
+                  }
+                }
+              }
+            end
+
+            it "does not do anything if changed_hearing_request_type is not changing" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "C"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "C"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+            end
+          end
+
+          context "to virtual from virtual" do
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "R",
+                    "closest_regional_office": "RO17"
+                  }
+                }
+              }
+            end
+
+            it "does not do anything if changed_hearing_request_type is not changing" do
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "R"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+
+              subject
+
+              expect(appeal.changed_hearing_request_type).to eq "R"
+              expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
             end
           end
         end
