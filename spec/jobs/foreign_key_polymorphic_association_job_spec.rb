@@ -164,6 +164,19 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         message = /#{heading}:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
         expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
+
+      context "Claimant.type is not \"VeteranClaimant\"" do
+        before do
+          claimant.person.destroy!
+          claimant.update(type: "OtherClaimant")
+        end
+        it "does not send alert" do
+          expect(claimant.reload_person).to eq nil
+          expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
+          subject
+          expect(slack_service).not_to have_received(:send_notification)
+        end
+      end
     end
   end
 end
