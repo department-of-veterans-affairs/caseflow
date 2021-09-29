@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _, { escapeRegExp } from 'lodash';
+import { escapeRegExp, constant, flatten, groupBy, pick, sortBy, map, filter } from 'lodash';
 import { connect } from 'react-redux';
 
 import { getAnnotationsPerDocument } from './selectors';
@@ -8,19 +8,18 @@ import Comment from './Comment';
 import Table from '../components/Table';
 
 export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '') => {
-  const groupedAnnotations = _(annotationsPerDocument).
-    map((notes) =>
-      notes.map((note) => {
-        // eslint-disable-next-line camelcase
-        const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
+  const groupedAnnotations = groupBy(flatten(map(annotationsPerDocument, (notes) =>
+    notes.map((note) => {
+      // eslint-disable-next-line camelcase
+      const { type, serialized_receipt_date } = filter(documents, (doc) => doc.id === note.documentId)[0];
 
-        return _.extend({}, note, {
-          docType: type,
-          serialized_receipt_date
-        });
-      })
-    ).
-    flatten().
+      return {
+        ...note,
+        docType: type,
+        serialized_receipt_date
+      };
+    })
+  )).
     filter((note) => {
       if (!searchQuery) {
         return true;
@@ -29,13 +28,12 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
       const query = new RegExp(escapeRegExp(searchQuery), 'i');
 
       return note.comment.match(query) || note.docType.match(query);
-    }).
-    groupBy((note) => (note.relevant_date ? 'relevant_date' : 'serialized_receipt_date')).
-    value();
+    }),
+  (note) => (note.relevant_date ? 'relevant_date' : 'serialized_receipt_date'));
 
   // groupBy returns { relevant_date: [notes w/relevant_date], serialized_receipt_date: [notes w/out] }
-  return _.sortBy(groupedAnnotations.relevant_date, 'relevant_date').concat(
-    _.sortBy(groupedAnnotations.serialized_receipt_date, 'serialized_receipt_date')
+  return sortBy(groupedAnnotations.relevant_date, 'relevant_date').concat(
+    sortBy(groupedAnnotations.serialized_receipt_date, 'serialized_receipt_date')
   );
 };
 
@@ -74,7 +72,7 @@ class CommentsTable extends React.PureComponent {
           bodyClassName="cf-document-list-body"
           getKeyForRow={this.getKeyForRow}
           headerClassName="comments-table-header"
-          rowClassNames={_.constant('borderless')}
+          rowClassNames={constant('borderless')}
         />
       </div>
     );
@@ -90,7 +88,7 @@ CommentsTable.propTypes = {
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state.documentList.docFilterCriteria, 'searchQuery')
+  ...pick(state.documentList.docFilterCriteria, 'searchQuery')
 });
 
 export default connect(mapStateToProps)(CommentsTable);

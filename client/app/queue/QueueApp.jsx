@@ -15,6 +15,7 @@ import {
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
   setFeatureToggles,
+  setUserId,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -107,6 +108,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserId(this.props.userId);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -526,6 +528,14 @@ class QueueApp extends React.PureComponent {
     />
   )
 
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedCamoSendToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -943,6 +953,18 @@ class QueueApp extends React.PureComponent {
                 }`}
               render={this.routedCavcRemandReceived}
             />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoSendToBoardIntake}
+            />
 
             <PageRoute
               exact
@@ -1141,6 +1163,7 @@ QueueApp.propTypes = {
   featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
+  setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
@@ -1173,6 +1196,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
+      setUserId,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

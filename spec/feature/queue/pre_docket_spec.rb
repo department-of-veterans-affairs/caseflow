@@ -14,7 +14,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   after { FeatureToggle.disable!(:vha_predocket_appeals) }
 
   let(:bva_intake) { BvaIntake.singleton }
-  let(:bva_intake_user) { create(:intake_user) }
+  let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
   let(:program_office) { create(:vha_program_office) }
@@ -149,6 +149,30 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(ro_instructions)
+      end
+
+      step "CAMO can return the appeal to BVA Intake" do
+        appeal = Appeal.last
+        camo_task = VhaDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        # Remove this section once the steps completing these tasks is available
+        camo_task.children.each { |task| task.update!(status: "completed") }
+
+        User.authenticate!(user: camo_user)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
+
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
+
+        fill_in("Instructions:", with: "This appeal is ready to be docketed.")
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
+        expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
       end
     end
   end

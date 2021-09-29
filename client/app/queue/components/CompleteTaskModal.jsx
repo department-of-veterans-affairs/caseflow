@@ -82,6 +82,14 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  vha_send_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
 
@@ -149,6 +157,7 @@ class CompleteTaskModal extends React.Component {
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
         submit={this.submit}
+        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
           modalAttributes.getContent(this.getContentArgs()) :
