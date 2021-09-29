@@ -10,13 +10,11 @@ export default {
   component: AddCavcRemandView,
   parameters: { controls: { expanded: true } },
   args: {
-    cavcRemandFeature: true,
     mdrFeature: true,
     reversalFeature: false,
     dismissalFeature: false,
   },
   argTypes: {
-    cavcRemandFeature: { control: { type: 'boolean' } },
     mdrFeature: { control: { type: 'boolean' } },
     reversalFeature: { control: { type: 'boolean' } },
     dismissalFeature: { control: { type: 'boolean' } },
@@ -25,11 +23,10 @@ export default {
 
 const appealId = amaAppeal.externalId;
 
-const Template = ({ cavcRemandFeature, mdrFeature, reversalFeature, dismissalFeature, ...componentArgs }) => {
+const Template = ({ mdrFeature, reversalFeature, dismissalFeature, ...componentArgs }) => {
   const storeArgs = {
     ui: {
       featureToggles: {
-        cavc_remand: cavcRemandFeature,
         mdr_cavc_remand: mdrFeature,
         reversal_cavc_remand: reversalFeature,
         dismissal_cavc_remand: dismissalFeature

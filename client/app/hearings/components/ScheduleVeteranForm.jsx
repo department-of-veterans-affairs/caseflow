@@ -11,7 +11,6 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown,
 } from '../../components/DataDropdowns';
-import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
@@ -34,7 +33,7 @@ export const ScheduleVeteranForm = ({
   hearing,
   errors,
   initialRegionalOffice,
-  initialHearingDate,
+  initialHearingDay,
   convertToVirtual,
   userCanViewTimeSlots,
   hearingTask,
@@ -77,6 +76,7 @@ export const ScheduleVeteranForm = ({
     hearing,
     appellantTitle,
     userCanCollectVideoCentralEmails,
+    formFieldsOnly: true,
     showDivider: false,
     schedulingToVirtual: virtual,
     virtualHearing: hearing?.virtualHearing,
@@ -105,6 +105,7 @@ export const ScheduleVeteranForm = ({
 
     return <HearingTime
       regionalOffice={ro}
+      requestType={hearing?.hearingDay?.readableRequestType}
       errorMessage={errors?.scheduledTimeString}
       vertical
       label="Hearing Time"
@@ -119,7 +120,7 @@ export const ScheduleVeteranForm = ({
   return (
     <div className="usa-width-one-whole schedule-veteran-details">
       <div className="usa-width-one-fourth schedule-veteran-appeal-info-container">
-        <AppealInformation appeal={appeal} />
+        <AppealInformation appeal={appeal} appellantTitle={appellantTitle} hearing={hearing} />
       </div>
       <div className="usa-width-one-half">
         <UnscheduledNotes
@@ -138,25 +139,9 @@ export const ScheduleVeteranForm = ({
             virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>
-        <div className="cf-help-divider usa-width-one-whole" />
-        <div className="usa-width-one-whole">
-          {virtual ? (
+        <div className="usa-width-one-whole" {...marginTop(30)}>
+          {virtual && (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
-          ) : (
-            <ReadOnly
-              spacing={0}
-              label={`${appellantTitle} Address`}
-              text={
-                <AddressLine
-                  spacing={5}
-                  name={appeal?.appellantFullName}
-                  addressLine1={appeal?.appellantAddress?.address_line_1}
-                  addressState={appeal?.appellantAddress?.state}
-                  addressCity={appeal?.appellantAddress?.city}
-                  addressZip={appeal?.appellantAddress?.zip}
-                />
-              }
-            />
           )}
           <div {...marginTop(30)}>
             <RegionalOfficeDropdown
@@ -192,7 +177,7 @@ export const ScheduleVeteranForm = ({
                   errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
                   regionalOffice={ro}
-                  value={hearing.hearingDay || initialHearingDate}
+                  value={hearing.hearingDay || initialHearingDay}
                   onChange={(hearingDay) => {
                     // Call fetch scheduled hearings only if passed
                     fetchScheduledHearings(hearingDay)(dispatch);
@@ -243,7 +228,7 @@ ScheduleVeteranForm.propTypes = {
   errors: PropTypes.object,
   hearing: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  initialHearingDate: PropTypes.string,
+  initialHearingDay: PropTypes.object,
   appellantTitle: PropTypes.string,
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,

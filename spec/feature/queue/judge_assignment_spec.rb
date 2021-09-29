@@ -341,6 +341,23 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  describe "Assigning an AttorneyTask to self (VLJ)from the case details page" do
+    before do
+      create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one, appeal: appeal_one)
+    end
+
+    it "should allow us to assign an ama appeal to an acting judge from the 'Assign to attorney' action'" do
+      visit("/queue/appeals/#{appeal_one.external_id}")
+
+      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
+      click_dropdown(prompt: "Select a user", text: judge_one.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+
+      click_on("Submit")
+      expect(page).to have_content("Assigned 1 task to #{judge_one.full_name}")
+    end
+  end
+
   describe "requesting cases (automatic case distribution)" do
     before do
       allow_any_instance_of(DirectReviewDocket)

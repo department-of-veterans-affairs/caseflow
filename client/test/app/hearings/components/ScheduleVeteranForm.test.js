@@ -45,17 +45,6 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Assertions
-    expect(
-      scheduleVeteran.find(`[label="${amaAppeal?.appellantTitle} Address"]`).
-        prop('text').props
-    ).toMatchObject(
-      {
-        addressLine1: amaAppeal.appellantAddress.address_line_1,
-        addressCity: amaAppeal.appellantAddress.city,
-        addressZip: amaAppeal.appellantAddress.zip,
-        addressState: amaAppeal.appellantAddress.state
-      }
-    );
     expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
@@ -87,7 +76,6 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(AddressLine)).toHaveLength(1);
 
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(0);
     expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(0);

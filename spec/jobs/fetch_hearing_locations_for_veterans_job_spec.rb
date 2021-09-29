@@ -79,6 +79,10 @@ describe FetchHearingLocationsForVeteransJob do
         let!(:veteran_3) { create(:veteran, file_number: "000000000") }
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
         let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
+        # Travel board case without an appeal:
+        let!(:travel_board_case) do
+          create(:case, :travel_board_hearing, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+        end
 
         # should not be returned
         before do
@@ -91,7 +95,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "returns only appeals with scheduled hearings tasks without an admin action or who are in location 57" do
           job.create_schedule_hearing_tasks
           expect(job.appeals.pluck(:id)).to contain_exactly(
-            legacy_appeal.id, legacy_appeal_2.id, appeal.id
+            legacy_appeal.id, legacy_appeal_2.id, appeal.id, LegacyAppeal.last.id
           )
         end
       end
@@ -254,7 +258,22 @@ describe FetchHearingLocationsForVeteransJob do
               receive(:record_geomatched_appeal).with("error")
             )
           end
-          expect(Raven).to receive(:capture_exception)
+          expect(Raven).to receive(:capture_exception).with(anything,
+                                                            hash_including(extra: { actionable: true,
+                                                                                    appeal_external_id: anything }))
+
+          subject.perform
+        end
+      end
+
+      context "when non-actionable error is thrown" do
+        let(:nonactionable_error) { Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500) }
+        before { allow_any_instance_of(GeomatchService).to receive(:geomatch).and_raise(nonactionable_error) }
+
+        it "records a geomatch error with actionable attribute = false" do
+          expect(Raven).to receive(:capture_exception).with(nonactionable_error,
+                                                            hash_including(extra: { actionable: false,
+                                                                                    appeal_external_id: anything }))
 
           subject.perform
         end

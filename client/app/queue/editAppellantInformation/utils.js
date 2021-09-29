@@ -29,25 +29,25 @@ export const mapAppellantDataToApi = (appellant) => {
 
 export const mapAppellantDataFromApi = (appeal) => {
   return {
-    relationship: lowerCase(appeal.appellantRelationship),
-    partyType: appeal.appellantPartyType,
-    name: appeal.appellantFullName,
-    firstName: appeal.appellantFirstName,
-    middleName: appeal.appellantMiddleName,
-    lastName: appeal.appellantLastName,
-    suffix: appeal.appellantSuffix,
-    dateOfBirth: appeal.appellantDateOfBirth,
     addressLine1: appeal.appellantAddress.address_line_1,
     addressLine2: appeal.appellantAddress.address_line_2,
     addressLine3: appeal.appellantAddress.address_line_3,
     city: appeal.appellantAddress.city,
-    state: appeal.appellantAddress.state,
-    zip: appeal.appellantAddress.zip,
     country: appeal.appellantAddress.country,
-    phoneNumber: appeal.appellantPhoneNumber,
+    dateOfBirth: appeal.appellantDateOfBirth,
     emailAddress: appeal.appellantEmailAddress,
+    firstName: appeal.appellantFirstName,
+    lastName: appeal.appellantLastName,
     listedAttorney: {
       value: 'not_listed'
-    }
+    },
+    middleName: appeal.appellantMiddleName,
+    name: appeal.appellantFullName,
+    partyType: appeal.appellantPartyType,
+    phoneNumber: appeal.appellantPhoneNumber,
+    relationship: lowerCase(appeal.appellantRelationship),
+    suffix: appeal.appellantSuffix,
+    state: appeal.appellantAddress.state,
+    zip: appeal.appellantAddress.zip,
   };
 };
