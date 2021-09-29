@@ -42,7 +42,7 @@ describe ChangeHearingRequestTypeTask do
           expect(vacols_case.reload.bfcurloc).to eq(loc_schedule_hearing)
         end
 
-        context "the request type is being changed" do
+        context "the request type is being changed for legacy appeals" do
           context "to video from central" do
             let(:vacols_case) { create(:case, :central_office_hearing) }
             let(:payload) do

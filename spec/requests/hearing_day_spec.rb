@@ -23,13 +23,22 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
   describe "Create a new hearing day (Add Hearing)" do
     let(:jan_hearing_days) do
-      (1..6).each do |n|
+      (1..3).each do |n|
         create(
           :hearing_day,
           regional_office: "RO10",
           request_type: HearingDay::REQUEST_TYPES[:video],
           scheduled_for: Date.new(2019, 4, 14),
           room: n.to_s
+        )
+      end
+      (1..3).each do |n|
+        create(
+          :hearing_day,
+          regional_office: "RO10",
+          request_type: HearingDay::REQUEST_TYPES[:travel],
+          scheduled_for: Date.new(2019, 4, 14),
+          room: (n + 3).to_s
         )
       end
     end
@@ -65,6 +74,16 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       expect(actual_date).to eq(Date.new(2019, 1, 17))
       expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq("2 (1W200B)")
+    end
+
+    it "Create new adhoc Travel hearing day and do not assign a room" do
+      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:travel],
+                                              scheduled_for: "17-Jan-2019", assign_room: false }
+      expect(response).to be_successful
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
+      expect(actual_date).to eq(Date.new(2019, 1, 17))
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Travel")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
     end
 
     let(:may_hearing_days) do
@@ -150,6 +169,8 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
          { request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "9-Jun-2019 13:00:00.000-4:00",
            room: "3", judge_id: create(:user, css_id: "BVARTONY") },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "15-Jun-2019 08:30:00.000-4:00",
+           regional_office: "RO27", room: "4" },
+         { request_type: HearingDay::REQUEST_TYPES[:travel], scheduled_for: "13-Jun-2019 08:30:00.000-4:00",
            regional_office: "RO27", room: "4" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
@@ -165,7 +186,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       }
       get "/hearings/hearing_day", params: { start_date: "2019-01-01", end_date: "2019-06-15" }, headers: headers
       expect(response).to be_successful
-      expect(JSON.parse(response.body)["hearings"].size).to eq(3)
+      expect(JSON.parse(response.body)["hearings"].size).to eq(4)
       # Passing locally, failing on Jenkins
       # expect(JSON.parse(response.body)["hearings"][1]["judge_last_name"]).to eq("Randall")
       # expect(JSON.parse(response.body)["hearings"][1]["judge_first_name"]).to eq("Tony")
@@ -180,6 +201,8 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Jun-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO17" },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Jun-2019 09:00:00.000-4:00",
+           room: "3", regional_office: "RO27" },
+         { request_type: HearingDay::REQUEST_TYPES[:travel], scheduled_for: "8-Jun-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO27" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
@@ -208,6 +231,8 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Mar-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO04" },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Mar-2019 09:00:00.000-4:00",
+           room: "3", regional_office: "RO04" },
+         { request_type: HearingDay::REQUEST_TYPES[:travel], scheduled_for: "8-Mar-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO04" }]
       )
     end
@@ -219,7 +244,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       }
       get "/hearings/schedule/assign/hearing_days", params: { regional_office: "RO04" }, headers: headers
       expect(response).to be_successful
-      expect(JSON.parse(response.body)["hearing_days"].size).to be(2)
+      expect(JSON.parse(response.body)["hearing_days"].size).to be(3)
     end
   end
 
