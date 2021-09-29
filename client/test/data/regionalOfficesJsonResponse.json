@@ -552,7 +552,7 @@
       "timezone": "America/Los_Angeles",
       "state": "NV",
       "alternate_locations": [
-        "vc_0505V"
+        "vha_593", "vc_0505V"
       ],
       "facility_locator_id": "vba_354",
       "city": "Reno"
