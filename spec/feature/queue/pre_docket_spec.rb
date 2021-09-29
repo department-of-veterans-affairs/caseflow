@@ -156,7 +156,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         bva_intake_task = PreDocketTask.last
 
         # Remove this section once the steps completing these tasks is available
-        camo_task.children.each{ |task| task.update!(status: "completed") }
+        camo_task.children.each { |task| task.update!(status: "completed") }
 
         User.authenticate!(user: camo_user)
         visit "/queue/appeals/#{appeal.uuid}"
