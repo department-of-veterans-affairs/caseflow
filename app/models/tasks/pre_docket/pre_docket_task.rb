@@ -20,8 +20,8 @@ class PreDocketTask < Task
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
+      update_with_instructions(params)
       docket_appeal if params[:status] == Constants.TASK_STATUSES.completed
-      super(params, current_user)
     end
 
     [self]
@@ -32,7 +32,12 @@ class PreDocketTask < Task
 
     # Cancel any VHA tasks that remain open, which is overridden when BVA Intake dockets an appeal.
     # This can be due to business processes happening outside of Caseflow.
-    cancel_descendants(instructions: ["This appeal has been docketed by BVA Intake."])
+    children.each do |task|
+      task.update_with_instructions(
+        status: Constants.TASK_STATUSES.cancelled,
+        instructions: [Copy::DOCKET_APPEAL_INSTRUCTIONS_NOTE]
+      )
+    end
   end
 
   # overriding to allow action on an on_hold task
