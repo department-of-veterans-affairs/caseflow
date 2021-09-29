@@ -201,25 +201,23 @@ class ScheduleHearingTask < Task
     change_hearing_request_type_task.update_from_params(params, current_user)
   end
 
-  # Method to check for presence of the param :changed_hearing_request_type
-  def changed_hearing_request_type_present?(params)
+  def changed_request_type_from_params(params)
     params.dig(
       :business_payloads,
       :values,
       :changed_hearing_request_type
-    ).present?
+    )
+  end
+
+  # Method to check for presence of the param :changed_hearing_request_type
+  def changed_hearing_request_type_present?(params)
+    changed_request_type_from_params(params).present?
   end
 
   # Method to make sure that we do not create a ChangeHearingRequestTypeTask if
   # the value of changed_hearing_request_type is the same in DB and params
   def change_hearing_request_type_valid?(params)
-    changed_hearing_request_type = params.dig(
-      :business_payloads,
-      :values,
-      :changed_hearing_request_type
-    )
-
-    changed_hearing_request_type != appeal.changed_hearing_request_type
+    changed_request_type_from_params(params).to_s != appeal.changed_hearing_request_type
   end
 
   def cancel_parent_task(parent)
