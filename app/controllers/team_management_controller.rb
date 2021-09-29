@@ -2,6 +2,7 @@
 
 class TeamManagementController < ApplicationController
   before_action :verify_access
+  before_action :fail_on_duplicate_participant_id, only: :create
 
   def index
     respond_to do |format|
@@ -47,6 +48,8 @@ class TeamManagementController < ApplicationController
   end
 
   def create_private_bar
+    fail_on_duplicate_participant_id
+
     org = PrivateBar.create!(update_params)
 
     Rails.logger.info("Creating PrivateBar with parameters: #{update_params.inspect}")
@@ -55,6 +58,8 @@ class TeamManagementController < ApplicationController
   end
 
   def create_national_vso
+    fail_on_duplicate_participant_id
+
     org = Vso.create!(update_params)
 
     Rails.logger.info("Creating Vso with parameters: #{update_params.inspect}")
@@ -63,6 +68,8 @@ class TeamManagementController < ApplicationController
   end
 
   def create_field_vso
+    fail_on_duplicate_participant_id
+
     org = FieldVso.create!(update_params)
 
     Rails.logger.info("Creating FieldVso with parameters: #{update_params.inspect}")
@@ -72,8 +79,19 @@ class TeamManagementController < ApplicationController
 
   private
 
+  def fail_on_duplicate_participant_id
+    existing_org = Organization.find_by_participant_id(update_params[:participant_id])
+    if existing_org
+      fail(Caseflow::Error::DuplicateParticipantIdOrganization,
+           participant_id: update_params[:participant_id],
+           organization: existing_org)
+    end
+  end
+
   def update_params
-    params.require(:organization).permit(:name, :participant_id, :url, :accepts_priority_pushed_cases)
+    params.require(:organization).permit(
+      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request
+    )
   end
 
   def judge_teams

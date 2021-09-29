@@ -53,7 +53,17 @@ class WorkQueue::AppealSerializer
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
-  attribute(:hearings) { |object, params| hearings(object, params) }
+  attribute(:hearings) do |object, params|
+    # For substitution appeals after death dismissal, we need to show hearings from the source appeal
+    # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
+    associated_hearings = []
+
+    if object.substitution_appeal?
+      associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
+    end
+
+    associated_hearings + hearings(object, params)
+  end
 
   attribute :withdrawn, &:withdrawn?
 

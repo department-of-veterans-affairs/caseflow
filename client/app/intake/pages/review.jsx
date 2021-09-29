@@ -13,7 +13,9 @@ import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../co
 import { rampElectionFormHeader, reviewRampElectionSchema } from './rampElection/review';
 import { rampRefilingHeader, reviewRampRefilingSchema } from './rampRefiling/review';
 import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
-import { higherLevelReviewFormHeader, reviewHigherLevelReviewSchema } from './higherLevelReview/review';
+import { higherLevelReviewFormHeader,
+  reviewHigherLevelReviewSchema,
+  reviewHigherLevelReviewSchemaWithFiledByVaGov } from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
 import Button from '../../components/Button';
@@ -31,13 +33,14 @@ const textAlignRightStyling = css({
   textAlign: 'right',
 });
 
-const schemaMappings = {
+const schemaMappings = (featureToggles) => ({
   appeal: reviewAppealSchema,
-  higher_level_review: reviewHigherLevelReviewSchema,
+  higher_level_review: featureToggles.filedByVaGovHlr ?
+    reviewHigherLevelReviewSchemaWithFiledByVaGov : reviewHigherLevelReviewSchema,
   supplemental_claim: reviewSupplementalClaimSchema,
   ramp_election: reviewRampElectionSchema,
   ramp_refiling: reviewRampRefilingSchema
-};
+});
 
 const headerMappings = {
   appeal: appealFormHeader,
@@ -58,7 +61,7 @@ const reviewForms = [
 const Review = (props) => {
   const formProps = useForm(
     {
-      resolver: yupResolver(schemaMappings[props.formType]),
+      resolver: yupResolver(schemaMappings(props.featureToggles)[props.formType]),
       context: { selectedForm: props.formType, useAmaActivationDate: props.featureToggles.useAmaActivationDate },
       mode: 'onSubmit',
       reValidateMode: 'onSubmit'
@@ -102,7 +105,7 @@ const Review = (props) => {
     formAccumulator[formKey] = <FormGenerator
       formName={selectedForm?.formName}
       formHeader={headerMappings[formKey]}
-      schema={schemaMappings[formKey]}
+      schema={schemaMappings(props.featureToggles)[formKey]}
       featureToggles={props.featureToggles}
       {...formProps}
     />;

@@ -83,5 +83,31 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
         expect(ETL::Appeal.count).to eq(15)
       end
     end
+
+    context "decision issue is deleted" do
+      let(:appeal) { Appeal.last }
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
+      subject { described_class.new(since: 2.days.ago, etl_build: etl_build).call }
+
+      it "updates attributes" do
+        described_class.new(etl_build: etl_build).call
+        etl_build_table = ETL::BuildTable.where(table_name: "appeals").last
+        expect(etl_build_table.rows_inserted).to eq(14)
+        expect(ETL::Appeal.count).to eq(Appeal.count)
+        expect(ETL::Appeal.find_by(appeal_id: appeal.id).updated_at).to be_within(1.minute).of(Time.zone.now)
+
+        Timecop.travel(5.days.from_now)
+        decision_issue.soft_delete
+        expect(decision_issue.deleted_at).not_to eq nil
+
+        subject
+        etl_build_table = ETL::BuildTable.where(table_name: "appeals").last
+        expect(etl_build_table.rows_inserted).to eq(0)
+        # The data in appeal record didn't change but it was considered for update
+        # because an associated record (i.e., decision_issue) was updated (i.e., soft-deleted).
+        expect(etl_build_table.rows_updated).to eq(1)
+        expect(ETL::Appeal.count).to eq(Appeal.count)
+      end
+    end
   end
 end

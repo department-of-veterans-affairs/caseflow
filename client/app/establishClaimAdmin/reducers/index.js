@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import * as Constants from '../constants';
-import _ from 'lodash';
+import { sortBy } from 'lodash';
 
 export const mapDataToInitialState = function() {
   return {
@@ -15,9 +15,7 @@ export const establishClaimAdminReducers = (state = mapDataToInitialState(), act
     return update(state, {
       loading: { $set: false },
       stuckTasks: {
-        $set: _(action.payload.tasks).
-          sortBy('prepared_at').
-          value()
+        $set: sortBy(action.payload.tasks, 'prepared_at')
       }
     });
   default: return state;

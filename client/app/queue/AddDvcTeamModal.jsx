@@ -7,9 +7,10 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { onReceiveNewDvcTeam } from './teamManagement/actions';
+import { dvcTeamAdded } from './teamManagement/teamManagement.slice';
 import {
   requestSave,
+  resetErrorMessages,
   resetSuccessMessages,
   showErrorMessage
 } from './uiReducer/uiActions';
@@ -21,9 +22,14 @@ export const AddDvcTeamModal = (props) => {
   const [usersWithoutDvcTeam, setUsersWithoutDvcTeam] = useState([]);
   const [selectedDvc, setSelectedDvc] = useState(null);
 
+  // mount effect
   useEffect(() => {
     props.resetSuccessMessages();
+    props.resetErrorMessages();
   }, []);
+
+  // unmount effect
+  useEffect(() => () => props.resetErrorMessages(), []);
 
   const loadingPromise = async () => {
     const resp = await ApiUtil.get('/users?role=non_dvcs');
@@ -40,9 +46,8 @@ export const AddDvcTeamModal = (props) => {
       value: user }));
 
   const submit = () => props.requestSave(`/team_management/dvc_team/${selectedDvc.value.id}`).
-    then((resp) => props.onReceiveNewDvcTeam(resp.body)).
-    catch((err) => props.showErrorMessage({ title: 'Error',
-      detail: err }));
+    then((resp) => props.dvcTeamAdded(resp.body?.org)).
+    catch();
 
   return (
     <QueueFlowModal
@@ -71,8 +76,9 @@ export const AddDvcTeamModal = (props) => {
 };
 
 AddDvcTeamModal.propTypes = {
-  onReceiveNewDvcTeam: PropTypes.func,
+  dvcTeamAdded: PropTypes.func,
   requestSave: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   showErrorMessage: PropTypes.func
 };
@@ -80,8 +86,9 @@ AddDvcTeamModal.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveNewDvcTeam,
+  dvcTeamAdded,
   requestSave,
+  resetErrorMessages,
   resetSuccessMessages,
   showErrorMessage
 }, dispatch);

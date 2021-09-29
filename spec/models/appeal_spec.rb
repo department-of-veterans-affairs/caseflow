@@ -967,7 +967,8 @@ describe Appeal, :all_dbs do
       end
       let!(:task2) do
         task.completed!
-        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2, appeal: appeal)
+        create(:ama_attorney_task, parent: judge_decision_review_task, assigned_to: attorney2,
+                                   appeal: appeal, created_at: 1.hour.ago)
       end
 
       subject { appeal.assigned_attorney }
@@ -979,6 +980,19 @@ describe Appeal, :all_dbs do
       it "should know the right assigned attorney with a cancelled task" do
         task2.cancelled!
         expect(subject).to eq attorney
+      end
+
+      context "when there is a more recent DocketSwitch attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
+        let(:root_task) { create(:root_task, appeal: appeal) }
+        let!(:ds_task) do
+          create(:docket_switch_denied_task, parent: root_task, appeal: appeal, assigned_to: attorney,
+                                             assigned_by: judge, created_at: 1.minute.ago)
+        end
+
+        it "ignores the attorney assigned to the DocketSwitch attorney task" do
+          expect(subject).to eq attorney2
+        end
       end
     end
 
@@ -1132,6 +1146,43 @@ describe Appeal, :all_dbs do
 
       it "returns true" do
         expect(appeal.stuck?).to eq(true)
+      end
+    end
+  end
+
+  describe "#contested_claim?" do
+    subject { appeal.contested_claim? }
+
+    let(:request_issues) do
+      [
+        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: issue_category)
+      ]
+    end
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+    context "when issue category falls under contested claims" do
+      context "contains string 'Contested Claim'" do
+        let(:issue_category) { "Contested Claims - Insurance" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "contains string 'Apportionment'" do
+        let(:issue_category) { "Apportionment" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+    end
+
+    context "when issue category doesn't fall under contested claims" do
+      let(:issue_category) { "Military Retired Pay" }
+
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
   end
@@ -1335,6 +1386,50 @@ describe Appeal, :all_dbs do
         let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
 
         it { is_expected.to be nil }
+      end
+    end
+  end
+
+  describe "can_redistribute_appeal?" do
+    let!(:distributed_appeal_can_redistribute) do
+      create(:appeal,
+             :assigned_to_judge,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user)
+    end
+    let!(:distributed_appeal_cannot_redistribute) do
+      create(:appeal,
+             :with_schedule_hearing_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             associated_judge: judge_user,
+             associated_attorney: attorney_user)
+    end
+    let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_2") }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let(:attorney_user) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
+    let!(:attorney_on_judge_team) { judge_team.add_user(attorney_user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+    let!(:past_distribution) { Distribution.create!(judge: judge_user) }
+    let(:docket) { DirectReviewDocket.new }
+    before do
+      distributed_appeal_can_redistribute.tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
+      past_distribution.completed!
+    end
+
+    context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
+      subject { distributed_appeal_can_redistribute.can_redistribute_appeal? }
+      it "returns true " do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has open tasks" do
+      subject { distributed_appeal_cannot_redistribute.can_redistribute_appeal? }
+      it "returns false" do
+        expect(subject).to be false
       end
     end
   end

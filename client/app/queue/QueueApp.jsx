@@ -15,6 +15,7 @@ import {
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
   setFeatureToggles,
+  setUserId,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -74,7 +75,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
-import TeamManagement from './TeamManagement';
+import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -107,6 +108,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserId(this.props.userId);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -279,6 +281,14 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAssignToTeam = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedAssignToVhaRegionalOffice = (props) => (
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
@@ -833,6 +843,18 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaRegionalOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CREATE_MAIL_TASK.value
                 }`}
               render={this.routedCreateMailTask}
@@ -1131,6 +1153,7 @@ QueueApp.propTypes = {
   featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
+  setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
@@ -1163,6 +1186,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
+      setUserId,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

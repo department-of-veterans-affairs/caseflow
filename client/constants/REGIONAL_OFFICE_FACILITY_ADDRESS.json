@@ -431,13 +431,22 @@
       "zip" : "89511",
       "timezone" : "America/Los_Angeles"
    },
-   "vba_354a" : {
+   "vha_593" : {
       "address_1" : "6900 North Pecos Rd",
       "address_2" : "Room 1C301",
       "address_3" : null,
       "city" : "North Las Vegas",
       "state" : "NV",
       "zip" : "89086",
+      "timezone" : "America/Los_Angeles"
+   },
+   "vc_0505V" : {
+      "address_1" : "7455 W. Washington Ave.",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Las Vegas",
+      "state" : "NV",
+      "zip" : "89128",
       "timezone" : "America/Los_Angeles"
    },
    "vba_355" : {
