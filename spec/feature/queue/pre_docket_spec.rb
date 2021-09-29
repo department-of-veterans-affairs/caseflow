@@ -51,7 +51,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
         appeal = Appeal.last
         visit "/queue/appeals/#{appeal.external_id}"
-        expect(page).to have_content("Pre Docket Task")
+        expect(page).to have_content("Pre-Docket Task")
       end
 
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
