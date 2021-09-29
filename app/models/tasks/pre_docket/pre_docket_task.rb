@@ -32,10 +32,10 @@ class PreDocketTask < Task
 
     # Cancel any VHA tasks that remain open, which is overridden when BVA Intake dockets an appeal.
     # This can be due to business processes happening outside of Caseflow.
-    children.each do |task|
+    children.open.each do |task|
       task.update_with_instructions(
         status: Constants.TASK_STATUSES.cancelled,
-        instructions: [Copy::DOCKET_APPEAL_INSTRUCTIONS_NOTE]
+        instructions: [COPY::DOCKET_APPEAL_INSTRUCTIONS_NOTE]
       )
     end
   end
