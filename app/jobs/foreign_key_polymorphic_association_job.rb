@@ -13,10 +13,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
-      { # To-do: Add a foreign-key to `people` table and remove this
+      { # participant_id could refer to the `people` or `bgs_attorneys` tables
         id_column: :participant_id,
         type_column: nil,
-        includes_method: :person
+        includes_method: :person,
+        # Exclude OtherClaimant (unrecognized appellants) and AttorneyClaimant
+        scope: -> { Claimant.where(type: "VeteranClaimant") }
       },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
@@ -98,6 +100,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
         .where(includes_method.to_s.classify.constantize.table_name => { id: nil })
         .where.not(config[:id_column] => nil)
     end
+  end
+
+  def scoped_orphan_records(klass, config)
+    return orphan_records(klass, config).merge(config[:scope]) if config[:scope]
+
+    orphan_records(klass, config)
   end
 
   def unusual_records(klass, config)
