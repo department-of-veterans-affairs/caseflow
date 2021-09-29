@@ -14,9 +14,10 @@ import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueAc
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
+import { requestGet, requestSave, showSuccessMessage, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
+import ApiUtil from '../util/ApiUtil';
 
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
@@ -38,7 +39,7 @@ class ReturnToCamo extends React.Component {
     const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions && instructionLength > 0 && !this.props.isReassignAction) {
+    if (instructions && instructionLength > 0) {
       existingInstructions = instructions[instructionLength - 1];
     }
 
@@ -53,14 +54,13 @@ class ReturnToCamo extends React.Component {
   componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.instructions !== '';
   };
 
   submit = () => {
-    const { appeal, task, isReassignAction } = this.props;
+    const { appeal, task } = this.props;
 
     const action = getAction(this.props);
-    const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
@@ -80,26 +80,7 @@ class ReturnToCamo extends React.Component {
       }
     };
 
-    const assignTaskSuccessMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
-      detail: taskActionData(this.props).message_detail
-    };
-
-    const pulacCerulloSuccessMessage = {
-      title: COPY.PULAC_CERULLO_SUCCESS_TITLE,
-      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
-    };
-
-    if (isReassignAction) {
-      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
-    }
-
-    return this.props.
-      requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
-      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
-      catch(() => {
-        // handle the error from the frontend
-      });
+    return this.reassignTask();
   };
 
   getAssignee = () => {
@@ -114,42 +95,30 @@ class ReturnToCamo extends React.Component {
     return assignee;
   };
 
-  reassignTask = (isLegacyReassignToJudge = false) => {
+  reassignTask = () => {
     const task = this.props.task;
     const payload = {
       data: {
         task: {
           reassign: {
             assigned_to_id: this.state.selectedValue,
-            assigned_to_type: 'User',
+            assigned_to_type: 'Organization',
             instructions: this.state.instructions
           }
         }
       }
     };
 
-    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+    const successMsg = { title: sprintf(COPY.RETURN_TASK_SUCCESS_MESSAGE) };
 
-    if (isLegacyReassignToJudge) {
-      return this.props.legacyReassignToJudge({
-        tasks: [task],
-        assigneeId: this.state.selectedValue
-      }, successMsg);
-    }
-
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
-      this.props.onReceiveAmaTasks(resp.body.tasks.data);
-      if (task.type === 'JudgeAssignTask') {
-        this.props.setOvertime(task.externalAppealId, false);
-      }
-    });
+    this.props.showSuccessMessage(successMsg);
+    this.props.history.goBack();
   };
 
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
     const actionData = taskActionData(this.props);
-    const isPulacCerullo = false
 
     if (!task || task.availableActions.length === 0) {
       return null;
@@ -164,7 +133,6 @@ class ReturnToCamo extends React.Component {
     };
 
 
-    console.log('modelprops', modalProps);
     return (
       <QueueFlowModal {...modalProps}>
         <TextareaField
@@ -187,10 +155,9 @@ ReturnToCamo.propTypes = {
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
-  isReassignAction: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
-  requestPatch: PropTypes.func,
+  requestGet: PropTypes.func,
   requestSave: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
@@ -200,7 +167,8 @@ ReturnToCamo.propTypes = {
     type: PropTypes.string
   }),
   setOvertime: PropTypes.func,
-  resetSuccessMessages: PropTypes.func
+  resetSuccessMessages: PropTypes.func,
+  showSuccessMessage: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -216,12 +184,13 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      requestPatch,
+      requestGet,
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
       setOvertime,
-      resetSuccessMessages
+      resetSuccessMessages,
+      showSuccessMessage
     },
     dispatch
   );
