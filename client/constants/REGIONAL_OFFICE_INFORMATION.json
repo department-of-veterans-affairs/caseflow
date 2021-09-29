@@ -528,7 +528,7 @@
     "timezone": "America/Los_Angeles",
     "hold_hearings": true,
     "facility_locator_id": "vba_354",
-    "alternate_locations": ["vba_354a"]
+    "alternate_locations": ["vc_0505V"]
   },
   "RO55": {
     "label": "San Juan regional office",
