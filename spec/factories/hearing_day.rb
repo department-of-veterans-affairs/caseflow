@@ -14,6 +14,12 @@ FactoryBot.define do
       room { "1" }
     end
 
+    trait :travel do
+      request_type { HearingDay::REQUEST_TYPES[:travel] }
+      regional_office { "RO01" }
+      room { "1" }
+    end
+
     trait :virtual do
       request_type { HearingDay::REQUEST_TYPES[:virtual] }
       room { nil }
