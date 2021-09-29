@@ -45,7 +45,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
 
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
-    orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
+    orphaned_ids = scoped_orphan_records(klass, config).pluck(*select_fields)
     send_alert("Found #{orphaned_ids.size} orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
     if config[:type_column]
