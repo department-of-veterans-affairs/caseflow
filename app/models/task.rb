@@ -423,6 +423,12 @@ class Task < CaseflowRecord
     end
   end
 
+  def unscoped_assigned_to
+    return Organization.unscoped.find(assigned_to_id) if assigned_to_type == "Organization"
+
+    assigned_to
+  end
+
   def assigned_to_same_org?(task_to_check)
     assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
   end
