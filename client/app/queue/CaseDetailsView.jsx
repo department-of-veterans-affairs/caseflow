@@ -161,7 +161,8 @@ export const CaseDetailsView = (props) => {
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
   const editPOAInformation =
-  !appeal.hasPOA && props.hasVLJSupportRole && props.featureToggles.edit_unrecognized_appellant_poa && appeal.appellantType === 'OtherClaimant';
+    props.hasVLJSupportRole && appeal.appellantType === 'OtherClaimant' &&
+    !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
   currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
