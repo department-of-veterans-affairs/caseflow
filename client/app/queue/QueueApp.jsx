@@ -178,7 +178,7 @@ class QueueApp extends React.PureComponent {
       userCanAccessReader={
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
-      hasVLJSupportRole={this.props.hasVLJSupportRole}
+      userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
     />
   );
 
@@ -1160,11 +1160,11 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
-  hasVLJSupportRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
+  userCanEditUnrecognizedPOA: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
