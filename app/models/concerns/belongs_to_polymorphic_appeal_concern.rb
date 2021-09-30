@@ -78,8 +78,9 @@ module BelongsToPolymorphicAppealConcern
       # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different
       self_table_name = table_name
 
-      # The use of `includes(self_table_name)` relies on an association being defined in the other class (e.g., Appeal).
-      # This association may be singular (`has_one`) or plural (`has_many`), which is reflected in `inverse_association_name`
+      # The use of `includes(self_table_name)` relies on an association being defined in the other class (eg, Appeal).
+      # The association may be singular (`has_one`) or plural (`has_many`),
+      # which is reflected in `inverse_association_name`.
       inverse_association_name = inverse_association_name(type_name)
       # DecisionIssue does not have an inverse association with LegacyAppeal
       return unless inverse_association_name
@@ -96,8 +97,8 @@ module BelongsToPolymorphicAppealConcern
 
     def inverse_association_name(type_name)
       klass = type_name.constantize
-      # `rescue false` is needed to ignore polymorphic associations
-      klass.reflections.values.select{|assoc| assoc.klass == self rescue false }.first&.name
+      # Ignore polymorphic associations, which don't have a `klass` and will raise and error
+      klass.reflections.values.reject(&:polymorphic?).detect { |assoc| assoc.klass == self }&.name
     end
   end
 end
