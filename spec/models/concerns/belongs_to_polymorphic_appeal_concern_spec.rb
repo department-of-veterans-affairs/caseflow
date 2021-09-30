@@ -77,6 +77,13 @@ describe BelongsToPolymorphicAppealConcern do
     before { Colocated.singleton.add_user(create(:user)) }
     let!(:legacy_task) { create(:colocated_task, appeal: legacy_decision_doc.appeal) }
 
+    let(:sc) { create(:supplemental_claim, benefit_type: "vha") }
+    let(:sc_task) do
+      create(:request_issue, decision_review: sc)
+      sc.create_business_line_tasks!
+      sc.reload.tasks.first
+    end
+
     it "`ama_appeal` returns the AMA appeal" do
       expect(task.ama_appeal).to eq decision_doc.appeal
     end
@@ -85,12 +92,24 @@ describe BelongsToPolymorphicAppealConcern do
       expect(legacy_task.legacy_appeal).to eq legacy_decision_doc.appeal
     end
 
+    it "`supplemental_claim` returns the supplemental claim" do
+      expect(sc_task.supplemental_claim).to eq sc
+    end
+
     it "scope `ama` returns AMA-associated Tasks" do
       expect(Task.ama).to match_array Task.where(appeal_type: "Appeal")
     end
 
     it "scope `legacy` returns legacy-associated Tasks" do
       expect(Task.legacy).to match_array Task.where(appeal_type: "LegacyAppeal")
+    end
+
+    it "scope `supplemental_claim` returns SupplementalClaimassociated Tasks" do
+      expect(Task.supplemental_claim).to match_array Task.where(appeal_type: "SupplementalClaim")
+    end
+
+    it "scope `higher_level_review` returns HigherLevelReview-associated Tasks" do
+      expect(Task.higher_level_review).to match_array Task.where(appeal_type: "HigherLevelReview")
     end
 
     context "when querying for appeal data for all Tasks" do

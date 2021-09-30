@@ -52,6 +52,9 @@ module BelongsToPolymorphicAppealConcern
       add_method_for_polymorphic_association("LegacyAppeal", association)
 
       if include_decision_review_classes || associated_class_symbol == :decision_review
+        scope :supplemental_claim, -> { where(type_column => "SupplementalClaim") }
+        scope :higher_level_review, -> { where(type_column => "HigherLevelReview") }
+
         add_method_for_polymorphic_association("SupplementalClaim", association)
         add_method_for_polymorphic_association("HigherLevelReview", association)
       end
