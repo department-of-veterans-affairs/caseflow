@@ -389,6 +389,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
+  def can_edit_unrecognized_poa?
+    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners].map(&:singleton)
+    colocated_in_vacols? || allowed_orgs.any? { |org| org.user_has_access?(self) }
+  end
+
   def can_act_on_behalf_of_judges?
     member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
