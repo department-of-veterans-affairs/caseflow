@@ -16,10 +16,6 @@ describe VhaDocumentSearchTask, :postgres do
   describe "#available_actions" do
     subject { task.available_actions(user) }
 
-    available_actions = [
-      Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h
-    ]
-
-    it { is_expected.to eq available_actions }
+    it { is_expected.to eq VhaDocumentSearchTask::TASK_ACTIONS }
   end
 end
