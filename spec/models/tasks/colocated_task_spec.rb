@@ -450,7 +450,6 @@ describe ColocatedTask, :all_dbs do
     end
   end
 
-  # FIXME: Needs work in AM
   describe "Reassigned ColocatedTask for LegacyAppeal" do
     let(:initial_assigner) { create(:user) }
     let!(:initial_assigner_staff) { create(:staff, :attorney_role, sdomainid: initial_assigner.css_id) }
@@ -474,7 +473,9 @@ describe ColocatedTask, :all_dbs do
         assigned_by: initial_assigner
       )
     end
-    let!(:colocated_task) { create(:colocated_task, :retired_vlj, appeal: appeal, parent: org_task, assigned_to: vlj_support_user) }
+    let!(:colocated_task) do
+      create(:colocated_task, :retired_vlj, appeal: appeal, parent: org_task, assigned_to: create(:user))
+    end
 
     before do
       puts appeal.treee
@@ -499,7 +500,6 @@ describe ColocatedTask, :all_dbs do
     end
   end
 
-  # FIXME: Needs work in AM
   describe "Reassign PreRoutingColocatedTask" do
     let(:task_class) { PreRoutingFoiaColocatedTask }
     let!(:parent_task) do
@@ -511,30 +511,16 @@ describe ColocatedTask, :all_dbs do
       )
     end
     let(:vlj_support_user) { create(:user, :vlj_support_user) }
-    # FIXME: parent_task.children.first is a good thing ot search for here, I think.
-    let(:child_task) { parent_task.reload.children.first }
-    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: vlj_support_user.id } }
-
-    before do
-      parent_task.update!(status: "on_hold")
+    let(:child_task) do
       task_class.create!(
-        parent: parent_task, appeal: appeal_1, assigned_to: vlj_support_user, status: "assigned", assigned_by: attorney
+        parent: parent_task, appeal: appeal_1, assigned_to: create(:user), status: "assigned", assigned_by: attorney
       )
     end
+    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: vlj_support_user.id } }
 
     subject { child_task.reassign(reassign_params, attorney) }
 
     it "allows the reassign" do
-      puts appeal_1.treee
-      # FIXME: OK, same issue as above.
-      # Validation failed: There is already an open FOIA action on this case with the instructions ""
-      #
-      # These are subclasses of ColocatedTask.
-      # I wonder:
-      #  1.) Does the board expect this change to apply to these subclasses? :-[
-      #  2.) Do these tasks not get a subtask of the same type and they're just reassigned from org to user?
-      #  3.) If that's the case, have I screwed up tons of examples of this in the code?
-      #  4.) If that's NOT the case... what then?
       tasks = subject
 
       expect(tasks.count).to eq 2

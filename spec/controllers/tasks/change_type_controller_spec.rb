@@ -36,9 +36,11 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           )
         end
 
+        # FIXME: If we don't do this, the test will work and we sidestep the issue of what SHOULD happen
         let!(:child_task) do
           create(
             :ama_colocated_task,
+            old_task_type_trait,
             appeal: root_task.appeal,
             parent_id: parent_task.id,
             assigned_by: assigner,
@@ -48,6 +50,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
         end
 
         it "should update successfully" do
+          puts root_task.appeal.treee
           subject
 
           expect(response.status).to eq 200
@@ -61,6 +64,18 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
           expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
           expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
+
+          new_parent_id = Task.find(response_body.first["id"]).parent_id # returns 2; child is 4
+
+          new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
+          expect(new_parent["id"]).not_to eq parent_task.id.to_s
+          expect(new_parent["attributes"]["label"]).to eq new_task_type.label
+          expect(new_parent["attributes"]["status"]).to eq parent_task.status
+          expect(new_parent["attributes"]["instructions"]).to include old_instructions
+          expect(new_parent["attributes"]["instructions"]).to include new_instructions
+          expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
+          expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
+          expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
 
           # The resultant task tree looks like
           #                                          ┌──────────────────────────────────────────────────────────────────┐
@@ -98,6 +113,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
             new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
             expect(new_parent["id"]).not_to eq parent_task.id.to_s
             expect(new_parent["attributes"]["label"]).to eq new_task_type.label
+            puts task.appeal.treee
             expect(new_parent["attributes"]["status"]).to eq parent_task.status
             expect(new_parent["attributes"]["instructions"]).to include old_instructions
             expect(new_parent["attributes"]["instructions"]).to include new_instructions
