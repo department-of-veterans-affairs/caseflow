@@ -28,6 +28,8 @@ describe PreDocketTask, :postgres do
     it { is_expected.to eq [] }
 
     context "When the user is a BVA Intake admin" do
+      let(:user) { bva_intake_admin_user }
+
       it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
     end
   end
