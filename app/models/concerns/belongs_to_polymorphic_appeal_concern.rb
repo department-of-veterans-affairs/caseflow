@@ -79,9 +79,13 @@ module BelongsToPolymorphicAppealConcern
       self_table_name = table_name
 
       # The use of `includes(self_table_name)` relies on an association being defined in the other class (e.g., Appeal).
-      # This association may be singular (`has_one`) or plural (`has_many`), which is reflected in `association.name`
+      # This association may be singular (`has_one`) or plural (`has_many`), which is reflected in `inverse_association_name`
+      inverse_association_name = inverse_association_name(type_name)
+      # DecisionIssue does not have an inverse association with LegacyAppeal
+      return unless inverse_association_name
+
       belongs_to method_name,
-                 -> { includes(association.name).where(self_table_name => { type_column => type_name }) },
+                 -> { includes(inverse_association_name).where(self_table_name => { type_column => type_name }) },
                  class_name: type_name, foreign_key: id_column.to_s, optional: true
 
       define_method method_name do
@@ -90,5 +94,10 @@ module BelongsToPolymorphicAppealConcern
       end
     end
 
+    def inverse_association_name(type_name)
+      klass = type_name.constantize
+      # `rescue false` is needed to ignore polymorphic associations
+      klass.reflections.values.select{|assoc| assoc.klass == self rescue false }.first&.name
+    end
   end
 end
