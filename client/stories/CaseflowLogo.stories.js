@@ -8,8 +8,8 @@ export default {
   component: CaseflowLogo,
   decorators: [],
   args: {
-    accentColor: '#5c626b',
-    overlapColor: '#4d535b',
+    accentColor: LOGO_COLORS.DEFAULT.ACCENT,
+    overlapColor: LOGO_COLORS.DEFAULT.OVERLAP,
   },
   argTypes: {
     accentColor: {
@@ -27,7 +27,7 @@ const Template = (args) => <CaseflowLogo {...args} />;
 
 export const All = () => (
   <React.Fragment>
-    <CaseflowLogo accentColor="#5c626b" overlapColor="#4d535b" />
+    <CaseflowLogo accentColor={LOGO_COLORS.DEFAULT.ACCENT} overlapColor={LOGO_COLORS.DEFAULT.OVERLAP} />
     <CaseflowLogo accentColor={LOGO_COLORS.CERTIFICATION.ACCENT} overlapColor={LOGO_COLORS.CERTIFICATION.OVERLAP} />
     <CaseflowLogo accentColor={LOGO_COLORS.DISPATCH.ACCENT} overlapColor={LOGO_COLORS.DISPATCH.OVERLAP} />
     <CaseflowLogo accentColor={LOGO_COLORS.EFOLDER.ACCENT} overlapColor={LOGO_COLORS.EFOLDER.OVERLAP} />
