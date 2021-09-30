@@ -2,7 +2,7 @@ import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 
-import { size } from 'lodash';
+import { get, size } from 'lodash';
 import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
 import { prepareAppealForStore, prepareClaimReviewForStore } from '../utils';
 import ValidatorsUtil from '../../util/ValidatorsUtil';
@@ -120,7 +120,7 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
       return uniqueVetIdsFromCases(returnedObject);
     }).
     catch((error) => {
-      const backendError = _.get(error.response, 'body');
+      const backendError = get(error.response, 'body');
 
       if (backendError) {
         const errorMessage = backendError.errors[0].detail;
