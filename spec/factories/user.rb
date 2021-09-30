@@ -78,6 +78,12 @@ FactoryBot.define do
       end
     end
 
+    trait :vlj_support_user do
+      after(:create) do |user|
+        Colocated.singleton.add_user(user)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)

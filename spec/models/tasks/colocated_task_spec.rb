@@ -207,12 +207,10 @@ describe ColocatedTask, :all_dbs do
     let!(:attorney_2) { create(:user) }
     let!(:staff_2) { create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
     let(:org_colocated_task) { create(:colocated_task, assigned_by: attorney_2) }
-    # So, this is nil, because there are no children.
-    # I think I need to write a simpler test here, that just shows normal task assignment happening.
-    let(:colocated_admin_action) { org_colocated_task.children.first }
+    let(:colocated_admin_action) { create(:colocated_task, parent: org_colocated_task, assigned_to: create(:user)) }
 
     context "when status is updated to completed" do
-      let(:colocated_admin_action) do
+      let!(:colocated_admin_action) do
         ColocatedTask.create_many_from_params([{
                                                 appeal: appeal_1,
                                                 appeal_type: "LegacyAppeal",
@@ -244,8 +242,7 @@ describe ColocatedTask, :all_dbs do
       context "when completing a translation task" do
         let(:colocated_subclass) { TranslationColocatedTask }
         it "should update location to the assigner in vacols" do
-          # Why is this returning nil?
-          # expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
@@ -254,8 +251,7 @@ describe ColocatedTask, :all_dbs do
       context "when completing a schedule hearing task" do
         let(:colocated_subclass) { ScheduleHearingColocatedTask }
         it "should create a schedule hearing task" do
-          # similarly, this is also nil:
-          # expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(appeal_1.root_task.children.empty?)
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
@@ -289,12 +285,9 @@ describe ColocatedTask, :all_dbs do
         org_colocated_task.update!(assigned_to: attorney_2)
       end
 
-      it "should reset timestamps only if status has changed", :skip do
+      it "should reset timestamps only if status has changed" do
         time1 = Time.utc(2015, 1, 1, 12, 0, 0)
         Timecop.freeze(time1)
-        puts org_colocated_task.inspect
-        puts org_colocated_task.children.inspect
-        # FIXME: This is nil
         colocated_admin_action.update(status: "in_progress")
         expect(colocated_admin_action.reload.started_at).to eq time1
 
@@ -376,7 +369,6 @@ describe ColocatedTask, :all_dbs do
     end
   end
 
-  # This test fails as wll
   describe "colocated task is cancelled" do
     let(:org) { Colocated.singleton }
     let(:colocated_user) { create(:user) }
@@ -386,7 +378,7 @@ describe ColocatedTask, :all_dbs do
     end
 
     let(:org_task) { create(:colocated_task, assigned_by: attorney, assigned_to: org) }
-    let(:colocated_task) { org_task.children.first }
+    let(:colocated_task) { create(:colocated_task, parent: org_task, assigned_to: colocated_user) }
 
     it "assigns the parent task back to the organization" do
       expect(org_task.status).to eq Constants.TASK_STATUSES.assigned
@@ -404,7 +396,7 @@ describe ColocatedTask, :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:legacy_colocated_task) { org_colocated_task.children.first }
+      let(:legacy_colocated_task) { create(:colocated_task, task_type_trait, parent: org_colocated_task, assigned_to: colocated_user) }
 
       before do
         org_colocated_task.appeal.case_record&.update!(bfcurloc: location_code)
@@ -458,11 +450,14 @@ describe ColocatedTask, :all_dbs do
     end
   end
 
+  # FIXME: Needs work in AM
   describe "Reassigned ColocatedTask for LegacyAppeal" do
     let(:initial_assigner) { create(:user) }
     let!(:initial_assigner_staff) { create(:staff, :attorney_role, sdomainid: initial_assigner.css_id) }
     let(:reassigner) { create(:user) }
     let!(:reassigner_staff) { create(:staff, sdomainid: reassigner.css_id) }
+
+    let(:vlj_support_user) { create(:user, :vlj_support_user) }
 
     let(:appeal) do
       create(
@@ -471,7 +466,7 @@ describe ColocatedTask, :all_dbs do
       )
     end
 
-    let(:org_task) do
+    let!(:org_task) do
       create(
         :colocated_task,
         :retired_vlj,
@@ -479,13 +474,19 @@ describe ColocatedTask, :all_dbs do
         assigned_by: initial_assigner
       )
     end
-    let!(:colocated_task) { org_task.children.first }
+    let!(:colocated_task) { create(:colocated_task, :retired_vlj, appeal: appeal, parent: org_task, assigned_to: vlj_support_user) }
 
     before do
+      puts appeal.treee
+
       reassign_params = {
         assigned_to_type: User.name,
-        assigned_to_id: Colocated.singleton.next_assignee.id
+        assigned_to_id: vlj_support_user.id
       }
+      # This now triggers an exception:
+      # ActiveRecord::RecordInvalid: Validation failed: There is already an open RETIRED VLJ action on this case with the instructions "VLJ Snuffy conducted the hearing in June. Since they are now retired, the Veteran needs to be provided notice of this and an opportunity to request hearing before another VLJ."
+      # FIXME: What is the right thing in this case? Is it counting the on_hold parent and the assigned child as two tasks?
+      # But wasn't that the old behavior anyway?
       colocated_task.reassign(reassign_params, reassigner)
     end
 
@@ -498,9 +499,10 @@ describe ColocatedTask, :all_dbs do
     end
   end
 
+  # FIXME: Needs work in AM
   describe "Reassign PreRoutingColocatedTask" do
     let(:task_class) { PreRoutingFoiaColocatedTask }
-    let(:parent_task) do
+    let!(:parent_task) do
       PreRoutingFoiaColocatedTask.create(
         assigned_by: attorney,
         assigned_to: colocated_org,
@@ -508,12 +510,31 @@ describe ColocatedTask, :all_dbs do
         appeal: appeal_1
       )
     end
-    let!(:child_task) { parent_task.children.first }
-    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: Colocated.singleton.next_assignee.id } }
+    let(:vlj_support_user) { create(:user, :vlj_support_user) }
+    # FIXME: parent_task.children.first is a good thing ot search for here, I think.
+    let(:child_task) { parent_task.reload.children.first }
+    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: vlj_support_user.id } }
+
+    before do
+      parent_task.update!(status: "on_hold")
+      task_class.create!(
+        parent: parent_task, appeal: appeal_1, assigned_to: vlj_support_user, status: "assigned", assigned_by: attorney
+      )
+    end
 
     subject { child_task.reassign(reassign_params, attorney) }
 
     it "allows the reassign" do
+      puts appeal_1.treee
+      # FIXME: OK, same issue as above.
+      # Validation failed: There is already an open FOIA action on this case with the instructions ""
+      #
+      # These are subclasses of ColocatedTask.
+      # I wonder:
+      #  1.) Does the board expect this change to apply to these subclasses? :-[
+      #  2.) Do these tasks not get a subtask of the same type and they're just reassigned from org to user?
+      #  3.) If that's the case, have I screwed up tons of examples of this in the code?
+      #  4.) If that's NOT the case... what then?
       tasks = subject
 
       expect(tasks.count).to eq 2
@@ -603,7 +624,7 @@ describe ColocatedTask, :all_dbs do
     context "vacate & de novo" do
       it "passes validation and creates child tasks" do
         expect { subject }.not_to raise_error
-        expect(ColocatedTask.all.count).to eq 2
+        expect(ColocatedTask.all.count).to eq 1
       end
     end
 

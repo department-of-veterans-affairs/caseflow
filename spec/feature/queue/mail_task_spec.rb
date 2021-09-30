@@ -78,12 +78,7 @@ RSpec.feature "MailTasks", :postgres do
       )
     end
 
-    let(:vlj_support_user) do
-      team = Colocated.first || Colocated.create(name: "VLJ Support Staff", url: "vlj-support")
-      user = create(:user)
-      team.add_user(user)
-      user
-    end
+    let(:vlj_support_user) { create(:user, :vlj_support_user) }
 
     let(:task) do
       old_task_type.create!(
