@@ -18,7 +18,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
         type_column: nil,
         includes_method: :person,
         # Exclude OtherClaimant (unrecognized appellants) and AttorneyClaimant
-        scope: -> { Claimant.where(type: "VeteranClaimant") }
+        scope: -> { where(type: "VeteranClaimant") }
       },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
