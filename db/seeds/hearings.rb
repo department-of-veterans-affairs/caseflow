@@ -128,12 +128,18 @@ module Seeds
       )
     end
 
+    def ten_percent_of_the_time
+      rand(100) < 10
+    end
+
     def request_type_by_ro_key(ro_key)
       if ro_key == "C"
         HearingDay::REQUEST_TYPES[:central]
       elsif ro_key == "R"
         HearingDay::REQUEST_TYPES[:virtual]
       elsif ro_key.starts_with?("RO")
+        return HearingDay::REQUEST_TYPES[:travel] if ten_percent_of_the_time
+
         HearingDay::REQUEST_TYPES[:video]
       end
     end

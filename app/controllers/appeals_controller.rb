@@ -70,11 +70,11 @@ class AppealsController < ApplicationController
         power_of_attorney: power_of_attorney_data
       }
     else
-      message, result = update_or_delete_power_of_attorney!
+      message, result, status = update_or_delete_power_of_attorney!
       render json: {
         alert_type: result,
         message: message,
-        power_of_attorney: power_of_attorney_data
+        power_of_attorney: (status == "updated") ? power_of_attorney_data : {}
       }
     end
   rescue StandardError => error
@@ -260,13 +260,13 @@ class AppealsController < ApplicationController
     poa = appeal.bgs_power_of_attorney
 
     if poa.blank?
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "blank"]
     elsif poa.bgs_record == :not_found
       poa.destroy!
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "deleted"]
     else
       poa.save_with_updated_bgs_record!
-      ["POA Updated Successfully", "success"]
+      ["POA Updated Successfully", "success", "updated"]
     end
   end
 
