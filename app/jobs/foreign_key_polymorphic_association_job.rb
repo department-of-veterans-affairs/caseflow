@@ -31,8 +31,13 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
-    Task => [APPEAL_ASSOCIATION_DETAILS],
-    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS]
+    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS],
+
+    Task => [
+      { id_column: :appeal_id,
+        type_column: :appeal_type,
+        includes_method: :task_appeal }
+    ]
   }.freeze
 
   def perform
@@ -70,7 +75,17 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:
   #   name used for `includes` => the associated ActiveRecord class
   POLYMORPHIC_TYPES = {
-    appeal: { ama_appeal: Appeal, legacy_appeal: LegacyAppeal },
+    appeal: {
+      ama_appeal: Appeal,
+      legacy_appeal: LegacyAppeal
+    },
+    task_appeal: {
+      ama_appeal: Appeal,
+      legacy_appeal: LegacyAppeal,
+      # SC and HLR records can have Tasks
+      supplemental_claim: SupplementalClaim,
+      higher_level_review: HigherLevelReview
+    },
     hearing: { ama_hearing: Hearing, legacy_hearing: LegacyHearing },
     decision_review: {
       ama_appeal: Appeal,
