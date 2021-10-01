@@ -119,7 +119,9 @@ class VaDotGovAddressValidator
     # Return the list of RO facility IDs
     if appeal.current_hearing_request_type == :travel_board
       Rails.logger.info("Travel Board Appeal Geomatching | Appeal ID: #{appeal.class.name}#{appeal.id}")
-      return RegionalOffice.facility_ids
+      # Exclude the DC regional office, unlikely that would be a "Travel" hearing
+      # and the facility_id is invalid according to the VA.gov API
+      return RegionalOffice.ro_facility_ids - ["vba_372"]
     end
 
     facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
