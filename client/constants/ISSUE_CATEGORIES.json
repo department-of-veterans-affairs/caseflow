@@ -157,7 +157,7 @@
     "Basic Eligibility - Certificate of Eligibility (COE) was denied for use of benefit",
     "Other",
     "Restoration of Entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE",
-    "Validity of Debt - Existing debt indicated from loan termination is incorrect as stated",
+    "Existence and amount - Existing debt indicated from loan termination is incorrect as stated",
     "Waiver of Indebtedness - Existing debt should be waived to allow issuance of COE" 
   ],
   "nca": [
@@ -197,8 +197,8 @@
     "Beneficiary Travel | Special Mode",
     "Caregiver",
     "Clothing Allowance § 3.810(b) Certification",
-    "Debt - Existence and amount",
-    "Debt - Waiver",
+    "Debt | Existence and amount",
+    "Debt | Waiver",
     "Eligibility for Fee Basis Care",
     "Eligibility for Treatment | Dental",
     "Eligibility for Treatment | Other",
@@ -207,8 +207,6 @@
     "Family Member Services | Camp Lejeune Family Member Eligibility",
     "Family Member Services | Foreign Medical Program Medical Charges",
     "Family Member Services | Spina Bifida Medical Charges",
-    "Indebtedness | Validity of Debt",
-    "Indebtedness | Waiver",
     "Level of Priority for Treatment",
     "Other",
     "Prosthetics Services"
