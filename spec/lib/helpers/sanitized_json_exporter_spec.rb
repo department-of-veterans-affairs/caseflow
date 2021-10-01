@@ -182,7 +182,7 @@ describe "SanitizedJsonExporter/Importer" do
         AttorneyCaseReview => ["task_id"],
         DecisionDocument => [],
         Claimant => ["decision_review_id"],
-        Task => %w[parent_id],
+        Task => %w[appeal_id parent_id],
         TaskTimer => ["task_id"],
         CavcRemand => %w[decision_issue_ids],
         DecisionIssue => ["decision_review_id"],
@@ -213,7 +213,7 @@ describe "SanitizedJsonExporter/Importer" do
         AttorneyCaseReview => ["appeal_id"],
         DecisionDocument => ["appeal_id"],
         JudgeCaseReview => ["appeal_id"],
-        Task => %w[assigned_to_id appeal_id]
+        Task => %w[assigned_to_id]
       }
       expect(configuration.reassociate_fields[:type]).to match_array reassociate_fields_for_polymorphics
 
