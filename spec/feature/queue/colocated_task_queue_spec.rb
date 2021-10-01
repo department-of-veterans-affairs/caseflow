@@ -29,6 +29,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
     it "should return attorney task to active state" do
       # Attorney assigns task to VLJ support staff.
       User.authenticate!(user: attorney_user)
+      visit("/queue") # this otherwise flakes
       visit("/queue/appeals/#{appeal.uuid}")
 
       find(".cf-select__control", text: "Select an action…").click
