@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "ColocatedTask", :all_dbs do
-  let(:vlj_support_staff) { create(:user, :vlj_support_user) }
+  let!(:vlj_support_staff) { create(:user, :vlj_support_user) }
   let(:vlj_admin) do
     user = create(:user)
     Colocated.singleton.add_admin(user)
@@ -44,19 +44,21 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # Redirected to personal queue page. Assignment succeeds.
       expect(page).to have_content("You have assigned an administrative action (#{action})")
 
-      # Oh! So we assign it to the _team_, now we need to sub it to the VLJ user
-      puts appeal.treee
       # Log in as a VLJ admin user and assign it to vlj_support_staff user
-      User.authenticate!(user: vlj_admin) # ???
-      expect(Colocated.singleton.admins).to include(vlj_admin)
-      # Visit the org page and make the assignment
-      # make sure vlj_support_staff is a team member
-      #binding.pry
+      User.authenticate!(user: vlj_admin)
+      visit("/organizations/vlj-support")
+      find("button", text: "Assign Tasks").click
+      find(".cf-form-dropdown", text: "Assign to").click
+      find("option", text: "#{vlj_support_staff.css_id} #{vlj_support_staff.full_name}").click
+      find(".cf-form-dropdown", text: "Select task type").click
+      find("option", text: "Poa Clarification Colocated Task").click
+      find(".cf-form-dropdown", text: "Select number of tasks to assign").click
+      find("option", text: "1 (all available tasks)").click
+      find("button", id: "Bulk-Assign-Tasks-button-id-1").click # going by text is an ambiguous match
 
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)
       visit("/queue/appeals/#{appeal.uuid}")
-
       # Return case to attorney.
       find(".cf-select__control", text: "Select an action…").click
       find(
@@ -107,7 +109,9 @@ RSpec.feature "ColocatedTask", :all_dbs do
           parent: root_task
         )
       end
-      let(:individual_task) { colocated_task.children.first }
+      let!(:individual_task) do
+        create(:ama_colocated_task, appeal: appeal, parent: colocated_task, assigned_to: vlj_support_staff)
+      end
 
       it "is successfully placed on hold" do
         # Visit case details page for VLJ support staff.
