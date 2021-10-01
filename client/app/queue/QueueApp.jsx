@@ -178,7 +178,7 @@ class QueueApp extends React.PureComponent {
       userCanAccessReader={
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
-      hasVLJSupportRole={this.props.hasVLJSupportRole}
+      userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
     />
   );
 
@@ -330,6 +330,10 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteTaskModal = (props) => (
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
+  );
+
+  routedDocketAppeal = (props) => (
+    <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
 
   routedCancelTaskModal = (props) => (
@@ -523,6 +527,14 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   )
+
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedCamoSendToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -835,6 +847,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.DOCKET_APPEAL.value
+                }`}
+              render={this.routedDocketAppeal}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
@@ -934,6 +952,18 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoSendToBoardIntake}
             />
 
             <PageRoute
@@ -1140,11 +1170,11 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
-  hasVLJSupportRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
+  userCanEditUnrecognizedPOA: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
