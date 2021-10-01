@@ -546,7 +546,7 @@ Object {
                       id="aria-context"
                     >
                        
-                       option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                       option Video focused, 1 of 3. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
                     </span>
                   </span>
                   <div
@@ -1154,7 +1154,7 @@ Object {
                     id="aria-context"
                   >
                      
-                     option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                     option Video focused, 1 of 3. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
                   </span>
                 </span>
                 <div
@@ -1819,7 +1819,7 @@ Object {
                       id="aria-context"
                     >
                        
-                        0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                       option Travel focused, 3 of 3. 1 result available for search term Travel. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
                     </span>
                   </span>
                   <div
@@ -1850,12 +1850,12 @@ Object {
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
                             type="text"
-                            value="Virtual"
+                            value="Travel"
                           />
                           <div
                             style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
                           >
-                            Virtual
+                            Travel
                           </div>
                         </div>
                       </div>
@@ -1895,16 +1895,20 @@ Object {
                       role="listbox"
                     >
                       <div
-                        class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"
+                        aria-disabled="false"
+                        class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
+                        id="react-select-8-option-2"
+                        role="option"
+                        tabindex="-1"
                       >
-                        Not an option
+                        Travel
                       </div>
                     </div>
                   </div>
                   <input
                     name="requestType"
                     type="hidden"
-                    value="R"
+                    value="T"
                   />
                 </div>
               </div>
@@ -1918,7 +1922,6 @@ Object {
             >
               <input
                 aria-label="roomRequired"
-                disabled=""
                 id="roomRequired"
                 name="roomRequired"
                 type="checkbox"
@@ -2033,6 +2036,73 @@ Object {
               </div>
             </div>
           </div>
+          <fieldset
+            class="usa-fieldset-inputs cf-form-radio "
+          >
+            <legend
+              class=""
+            >
+              <strong>
+                <span>
+                  Available Times
+                   
+                </span>
+              </strong>
+            </legend>
+            <div
+              class="cf-form-radio-options"
+            >
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  checked=""
+                  id="docketStartTimes_default"
+                  name="docketStartTimes"
+                  type="radio"
+                  value="default"
+                />
+                <label
+                  class=""
+                  for="docketStartTimes_default"
+                >
+                  Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Eastern)
+                </label>
+              </div>
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  id="docketStartTimes_09:00"
+                  name="docketStartTimes"
+                  type="radio"
+                  value="09:00"
+                />
+                <label
+                  class=""
+                  for="docketStartTimes_09:00"
+                >
+                  Half-Day AM (5 slots at 9:00 AM Eastern)
+                </label>
+              </div>
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  id="docketStartTimes_13:00"
+                  name="docketStartTimes"
+                  type="radio"
+                  value="13:00"
+                />
+                <label
+                  class=""
+                  for="docketStartTimes_13:00"
+                >
+                  Half-Day PM (5 slots at 1:00 PM Eastern)
+                </label>
+              </div>
+            </div>
+          </fieldset>
           <div
             class=""
           >
@@ -2357,7 +2427,7 @@ Object {
                     id="aria-context"
                   >
                      
-                      0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                     option Travel focused, 3 of 3. 1 result available for search term Travel. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
                   </span>
                 </span>
                 <div
@@ -2388,12 +2458,12 @@ Object {
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
                           type="text"
-                          value="Virtual"
+                          value="Travel"
                         />
                         <div
                           style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
                         >
-                          Virtual
+                          Travel
                         </div>
                       </div>
                     </div>
@@ -2433,16 +2503,20 @@ Object {
                     role="listbox"
                   >
                     <div
-                      class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"
+                      aria-disabled="false"
+                      class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
+                      id="react-select-8-option-2"
+                      role="option"
+                      tabindex="-1"
                     >
-                      Not an option
+                      Travel
                     </div>
                   </div>
                 </div>
                 <input
                   name="requestType"
                   type="hidden"
-                  value="R"
+                  value="T"
                 />
               </div>
             </div>
@@ -2456,7 +2530,6 @@ Object {
           >
             <input
               aria-label="roomRequired"
-              disabled=""
               id="roomRequired"
               name="roomRequired"
               type="checkbox"
@@ -2571,6 +2644,73 @@ Object {
             </div>
           </div>
         </div>
+        <fieldset
+          class="usa-fieldset-inputs cf-form-radio "
+        >
+          <legend
+            class=""
+          >
+            <strong>
+              <span>
+                Available Times
+                 
+              </span>
+            </strong>
+          </legend>
+          <div
+            class="cf-form-radio-options"
+          >
+            <div
+              class="cf-form-radio-option"
+            >
+              <input
+                checked=""
+                id="docketStartTimes_default"
+                name="docketStartTimes"
+                type="radio"
+                value="default"
+              />
+              <label
+                class=""
+                for="docketStartTimes_default"
+              >
+                Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Eastern)
+              </label>
+            </div>
+            <div
+              class="cf-form-radio-option"
+            >
+              <input
+                id="docketStartTimes_09:00"
+                name="docketStartTimes"
+                type="radio"
+                value="09:00"
+              />
+              <label
+                class=""
+                for="docketStartTimes_09:00"
+              >
+                Half-Day AM (5 slots at 9:00 AM Eastern)
+              </label>
+            </div>
+            <div
+              class="cf-form-radio-option"
+            >
+              <input
+                id="docketStartTimes_13:00"
+                name="docketStartTimes"
+                type="radio"
+                value="13:00"
+              />
+              <label
+                class=""
+                for="docketStartTimes_13:00"
+              >
+                Half-Day PM (5 slots at 1:00 PM Eastern)
+              </label>
+            </div>
+          </div>
+        </fieldset>
         <div
           class=""
         >
