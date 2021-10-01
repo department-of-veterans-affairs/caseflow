@@ -390,7 +390,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_edit_unrecognized_poa?
-    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners].map(&:singleton)
+    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners, BvaIntake].map(&:singleton)
     colocated_in_vacols? || allowed_orgs.any? { |org| org.user_has_access?(self) }
   end
 
