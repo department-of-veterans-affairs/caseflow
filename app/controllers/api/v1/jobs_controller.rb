@@ -35,8 +35,8 @@ class Api::V1::JobsController < Api::ApplicationController
     "take_docket_snapshot" => TakeDocketSnapshotJob,
     "task_timer_job" => TaskTimerJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
-    "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob
-    "warm_bgs_caches_job" => WarmBgsCachesJob,
+    "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
+    "warm_bgs_caches_job" => WarmBgsCachesJob
   }.freeze
 
   def create
