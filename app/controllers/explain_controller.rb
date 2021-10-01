@@ -135,8 +135,14 @@ class ExplainController < ApplicationController
   end
 
   def fetch_appeal
-    if Appeal::UUID_REGEX.match?(appeal_id)
-      Appeal.find_by(uuid: appeal_id)
+    if appeal_id.start_with?("ama-")
+      record_id = appeal_id.delete_prefix("ama-")
+      Appeal.find_by_id(record_id)
+    elsif appeal_id.start_with?("legacy-")
+      record_id = appeal_id.delete_prefix("legacy-")
+      LegacyAppeal.find_by_id(record_id)
+    elsif Appeal::UUID_REGEX.match?(appeal_id)
+      Appeal.find_by_uuid(appeal_id)
     else
       LegacyAppeal.find_by_vacols_id(appeal_id)
     end
