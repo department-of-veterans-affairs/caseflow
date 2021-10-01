@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,6215",
+	graph [bb="0,0,1778.1,6203",
 		rankdir=LR,
 		splines=line
 	];
@@ -923,6 +923,25 @@ digraph subclasses {
 		];
 	ClaimReview -> HigherLevelReview	[color="#000099",
 		style=dotted];
+	RequestIssue	[color="#000099",
+		fillcolor="#ffa500",
+		fontcolor="#000099",
+		label=RequestIssue,
+		shape=record,
+		style=filled,
+		];
+	NonratingRequestIssue	[fillcolor="#ffa500",
+		label=NonratingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> NonratingRequestIssue	[color="#000099",
+		style=dotted];
+	RatingRequestIssue	[fillcolor="#ffa500",
+		label=RatingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> RatingRequestIssue	[color="#000099",
+		style=dotted];
 	Claimant	[color="#000099",
 		fillcolor="#a9a9a9",
 		fontcolor="#000099",
@@ -962,31 +981,6 @@ digraph subclasses {
 		style=filled,
 		];
 	BgsRelatedClaimant -> VeteranClaimant	[color="#000099",
-		style=dotted];
-	HearingEmailRecipient	[color="#000099",
-		fillcolor="#66ccff",
-		fontcolor="#000099",
-		label=HearingEmailRecipient,
-		shape=record,
-		style=dashed,
-		];
-	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
-		label=AppellantHearingEmailRecipient,
-		style=filled,
-		];
-	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
-		style=dotted];
-	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=JudgeHearingEmailRecipient,
-		style=filled,
-		];
-	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
-		style=dotted];
-	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=RepresentativeHearingEmailRecipient,
-		style=filled,
-		];
-	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
 		style=dotted];
 	Intake	[color="#000099",
 		fillcolor="#ffffcc",
@@ -1034,25 +1028,6 @@ digraph subclasses {
 		];
 	DecisionReviewIntake -> ClaimReviewIntake	[color="#000099",
 		style=dotted];
-	RequestIssue	[color="#000099",
-		fillcolor="#ffa500",
-		fontcolor="#000099",
-		label=RequestIssue,
-		shape=record,
-		style=filled,
-		];
-	NonratingRequestIssue	[fillcolor="#ffa500",
-		label=NonratingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> NonratingRequestIssue	[color="#000099",
-		style=dotted];
-	RatingRequestIssue	[fillcolor="#ffa500",
-		label=RatingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> RatingRequestIssue	[color="#000099",
-		style=dotted];
 	"Dispatch::Task"	[color="#000099",
 		fillcolor="#adff2f",
 		fontcolor="#000099",
@@ -1065,6 +1040,31 @@ digraph subclasses {
 		style=filled,
 		];
 	"Dispatch::Task" -> EstablishClaim	[color="#000099",
+		style=dotted];
+	HearingEmailRecipient	[color="#000099",
+		fillcolor="#66ccff",
+		fontcolor="#000099",
+		label=HearingEmailRecipient,
+		shape=record,
+		style=dashed,
+		];
+	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
+		label=AppellantHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=JudgeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=RepresentativeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
 		style=dotted];
 	SchedulePeriod	[color="#000099",
 		fillcolor="#00ffff",
