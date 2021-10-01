@@ -109,11 +109,11 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
         klass.unscoped.includes(includes_name).where(poly_class.arel_table[:id].eq(nil))
       end.reduce(:merge)
       # only check for records where the _id column is not nil
-      merged_query.where.not(config[:id_column] => nil).order(config[:id_column])
+      merged_query.where.not(config[:id_column] => nil).order(config[:id_column], :id)
     else
       klass.unscoped.includes(includes_method)
         .where(includes_method.to_s.classify.constantize.table_name => { id: nil })
-        .where.not(config[:id_column] => nil).order(config[:id_column])
+        .where.not(config[:id_column] => nil).order(config[:id_column], :id)
     end
   end
 
