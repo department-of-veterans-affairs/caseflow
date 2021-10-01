@@ -123,7 +123,7 @@ class ColocatedTask < Task
   end
 
   def return_to_assigner_action
-    # Use assigner so that we handle creation of the ColcoatedTask from LegacyTasks gracefully.
+    # Use assigner so that we handle creation of the ColocatedTask from LegacyTasks gracefully.
     if JudgeTeam.for_judge(assigned_by)
       Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.to_h
     else
@@ -144,6 +144,14 @@ class ColocatedTask < Task
       instructions: params[:instructions],
       assigned_to: task_type&.default_assignee
     )
+  end
+
+  # In CASEFLOW-1125, we ceased creating a user task automatically for ColocatedTasks (per the Board's request).
+  # This change means that update_task_type no longer creates a user task for ColocatedTasks, even if one existed
+  # on the original task whose type is being changed. This appears to be consistent with what the Board wants, but
+  # is worth calling out in case it leads to potential unexpected side-effects.
+  def update_task_type(params)
+    super(params)
   end
 
   private

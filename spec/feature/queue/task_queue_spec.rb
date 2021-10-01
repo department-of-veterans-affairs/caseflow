@@ -675,16 +675,16 @@ feature "Task queue", :all_dbs do
 
     context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
       before do
-        ColocatedTask.create_many_from_params([{
+        _parent = ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
                                                 type: AojColocatedTask.name,
                                                 appeal: appeal
-                                              }], attorney)
+                                              }], attorney).first
+        AojColocatedTask.create!(assigned_by: attorney, appeal: appeal, parent: _parent, assigned_to: vlj_support_staffer)
       end
 
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
-
         find(".cf-select__control", text: "Select an action…").click
         find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
