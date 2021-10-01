@@ -164,6 +164,52 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         message = /#{heading}:.*\[#{claimant.id}, nil, "#{claimant.participant_id}"\]/m
         expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
+
+      context "Claimant.type is not \"VeteranClaimant\"" do
+        before do
+          claimant.person.destroy!
+          claimant.update(type: "OtherClaimant")
+        end
+        it "does not send alert" do
+          expect(claimant.reload_person).to eq nil
+          expect(Person.find_by_participant_id(claimant.participant_id)).to eq nil
+          subject
+          expect(slack_service).not_to have_received(:send_notification)
+        end
+      end
+    end
+  end
+
+  context "when checking Tasks associated with ClaimReview (HLR or SC)" do
+    let(:sc) { create(:supplemental_claim, benefit_type: "vha") }
+    let!(:task) do
+      create(:request_issue, decision_review: sc)
+      sc.create_business_line_tasks!
+      sc.reload.tasks.first
+    end
+
+    context "associated ClaimReview exists" do
+      it "does not send alert" do
+        expect(task.reload_appeal).not_to eq nil
+        expect(SupplementalClaim.find_by_id(task.appeal_id)).not_to eq nil
+        subject
+        expect(slack_service).not_to have_received(:send_notification)
+      end
+    end
+    context "associated ClaimReview does not exist" do
+      before do
+        # Don't use `destroy` because that will also delete the task
+        sc.delete
+      end
+      it "sends alert" do
+        expect(task.reload_appeal).to eq nil
+        expect(SupplementalClaim.find_by_id(task.appeal_id)).to eq nil
+        subject
+
+        heading = "Found [[:digit:]]+ orphaned records for Task"
+        message = /#{heading}:.*\[#{task.id}, "SupplementalClaim", #{task.appeal_id}\]/m
+        expect(slack_service).to have_received(:send_notification).with(message, any_args).once
+      end
     end
   end
 end

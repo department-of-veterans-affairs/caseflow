@@ -124,19 +124,24 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   }
 
   const showPoaDetails = poa.representative_type && poa.representative_name;
-  const bottomMessage = (showPoaDetails || poaAlert.powerOfAttorney) ? COPY.CASE_DETAILS_POA_EXPLAINER :
-    COPY.CASE_DETAILS_NO_POA;
+  const isRecognizedPoa = poa.representative_type !== 'Unrecognized representative';
 
   const renderPoaLogic = () => {
-    const unrecognizedPoa = 'Unrecognized representative';
     const isRecognizedAppellant = !['OtherClaimant', 'AttorneyClaimant'].includes(appellantType);
-    const recognizedPoa = poa.representative_type !== unrecognizedPoa;
 
-    if (isRecognizedAppellant && recognizedPoa) {
+    if (isRecognizedAppellant && isRecognizedPoa) {
       return <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />;
-    } else if (poa.representative_type === unrecognizedPoa) {
-      return <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em>;
     }
+  };
+  const renderBottomMessage = () => {
+    if (!showPoaDetails && !poaAlert.powerOfAttorney) {
+      return COPY.CASE_DETAILS_NO_POA;
+    }
+    if (isRecognizedPoa) {
+      return COPY.CASE_DETAILS_POA_EXPLAINER;
+    }
+
+    return COPY.CASE_DETAILS_UNRECOGNIZED_POA;
   };
 
   return (
@@ -148,7 +153,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
             <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
           </ul>
         )}
-        <p><em>{ bottomMessage }</em></p>
+        <p><em>{ renderBottomMessage() }</em></p>
         { poaAlert.message && poaAlert.alertType && (
           <div>
             <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
