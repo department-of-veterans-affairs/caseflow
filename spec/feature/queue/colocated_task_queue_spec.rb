@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.feature "ColocatedTask", :all_dbs do
-  let(:vlj_support_staff) { create(:user) }
-
-  before { Colocated.singleton.add_user(vlj_support_staff) }
+  let(:vlj_support_staff) { create(:user, :vlj_support_user) }
+  let(:vlj_admin) do
+    user = create(:user)
+    Colocated.singleton.add_admin(user)
+    user
+  end
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
     let(:judge_user) { create(:user) }
@@ -41,13 +44,20 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # Redirected to personal queue page. Assignment succeeds.
       expect(page).to have_content("You have assigned an administrative action (#{action})")
 
+      # Oh! So we assign it to the _team_, now we need to sub it to the VLJ user
+      puts appeal.treee
+      # Log in as a VLJ admin user and assign it to vlj_support_staff user
+      User.authenticate!(user: vlj_admin) # ???
+      expect(Colocated.singleton.admins).to include(vlj_admin)
+      # Visit the org page and make the assignment
+      # make sure vlj_support_staff is a team member
+      #binding.pry
+
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Return case to attorney.
-      # maw: I think this whole test needs to be reworked.
-      # But, it should give greater confidence that this whole process works when done.
       find(".cf-select__control", text: "Select an action…").click
       find(
         "div",
