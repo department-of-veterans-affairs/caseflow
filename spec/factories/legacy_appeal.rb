@@ -28,10 +28,6 @@ FactoryBot.define do
       end
     end
 
-    trait :in_vacols do
-      vacols_case { create(:case) }
-    end
-
     trait :with_schedule_hearing_tasks do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)

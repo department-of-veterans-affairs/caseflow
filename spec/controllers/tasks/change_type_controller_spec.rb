@@ -78,7 +78,6 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
-            parent_task.appeal.treee
             expect(response_body.length).to eq 4
             expect(response_body.first["id"]).not_to eq task.id.to_s
             expect(response_body.first["attributes"]["label"]).to eq FoiaTask.name.titlecase

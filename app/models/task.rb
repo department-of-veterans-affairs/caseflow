@@ -581,6 +581,7 @@ class Task < CaseflowRecord
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
           task.instructions = flattened_instructions(reassign_params)
           task.status = Constants.TASK_STATUSES.assigned
+
           task.save!
         end
       ensure

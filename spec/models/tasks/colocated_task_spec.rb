@@ -83,8 +83,6 @@ describe ColocatedTask, :all_dbs do
         expect(colocated_tasks.first).to be_a(AojColocatedTask)
         expect(colocated_tasks.first.assigned_to).to eq(Colocated.singleton)
 
-        # We never create a second task, which would be the user task
-
         expect(AppealRepository).to_not receive(:update_location!)
       end
     end
