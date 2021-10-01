@@ -31,19 +31,19 @@ class RecurringMetricsReportJob < CaseflowJob
   end
 
   # rubocop:disable Metrics/LineLength
-def build_report(appeals, async_stats, certification_metric)
-  certification_paperless_metric = certification_metric.call[:paperless_metric]
-  sc_stats = async_stats.stats[:supplemental_claims]
-  hlr_stats = async_stats.stats[:higher_level_reviews]
+  def build_report(appeals, async_stats, certification_metric)
+    certification_paperless_metric = certification_metric.call[:paperless_metric]
+    sc_stats = async_stats.stats[:supplemental_claims]
+    hlr_stats = async_stats.stats[:higher_level_reviews]
 
-  report = []
-  report << "#{period} report #{start_date} to #{end_date.to_date}"
-  report << "Percentage of all cases certified with Caseflow: #{certification_paperless_metric}%"
-  report << "Appeals established within 7 days: #{appeals} (100%)"
-  report << "Supplemental Claims within 7 days: #{sc_stats[:established_within_seven_days]} (#{sc_stats[:established_within_seven_days_percent]}%)"
-  report << "Higher Level Reviews within 7 days: #{hlr_stats[:established_within_seven_days]} (#{hlr_stats[:established_within_seven_days_percent]}%)"
-  report << async_stats.as_csv
-  report.join("\n")
-end
+    report = []
+    report << "#{period} report #{start_date} to #{end_date.to_date}"
+    report << "Percentage of all cases certified with Caseflow: #{certification_paperless_metric}%"
+    report << "Appeals established within 7 days: #{appeals} (100%)"
+    report << "Supplemental Claims within 7 days: #{sc_stats[:established_within_seven_days]} (#{sc_stats[:established_within_seven_days_percent]}%)"
+    report << "Higher Level Reviews within 7 days: #{hlr_stats[:established_within_seven_days]} (#{hlr_stats[:established_within_seven_days_percent]}%)"
+    report << async_stats.as_csv
+    report.join("\n")
+  end
   # rubocop:enable Metrics/LineLength
 end
