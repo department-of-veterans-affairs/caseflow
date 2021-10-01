@@ -40,6 +40,7 @@
       edit_unrecognized_appellant_poa: FeatureToggle.enabled?(:edit_unrecognized_appellant_poa, user: current_user),
       hearings_substitution_death_dismissal: FeatureToggle.enabled?(:hearings_substitution_death_dismissal, user: current_user),
       restrict_poa_visibility: FeatureToggle.enabled?(:restrict_poa_visibility, user: current_user),
+      vha_predocket_workflow: FeatureToggle.enabled?(:vha_predocket_workflow, user: current_user)
     }
   }) %>
 <% end %>
