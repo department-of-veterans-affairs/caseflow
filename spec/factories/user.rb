@@ -32,6 +32,13 @@ FactoryBot.define do
       roles { ["Mail Intake"] }
     end
 
+    factory :intake_admin_user do
+      css_id { "INTAKEADMINUSER" }
+      full_name { "Shirley Warner" }
+      email { "shirley.warner@example.com" }
+      roles { ["Admin Intake"] }
+    end
+
     trait :inactive do
       status { "inactive" }
     end
