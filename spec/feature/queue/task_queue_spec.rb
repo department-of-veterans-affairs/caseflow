@@ -675,12 +675,14 @@ feature "Task queue", :all_dbs do
 
     context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
       before do
-        _parent = ColocatedTask.create_many_from_params([{
-                                                assigned_by: attorney,
-                                                type: AojColocatedTask.name,
-                                                appeal: appeal
-                                              }], attorney).first
-        AojColocatedTask.create!(assigned_by: attorney, appeal: appeal, parent: _parent, assigned_to: vlj_support_staffer)
+        parent = ColocatedTask.create_many_from_params([{
+                                                          assigned_by: attorney,
+                                                          type: AojColocatedTask.name,
+                                                          appeal: appeal
+                                                        }], attorney).first
+        AojColocatedTask.create!(
+          assigned_by: attorney, appeal: appeal, parent: parent, assigned_to: vlj_support_staffer
+        )
       end
 
       it "should be actionable" do

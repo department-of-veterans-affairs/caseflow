@@ -37,11 +37,8 @@ describe AttorneyQueue, :all_dbs do
           task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
-        #   .tap do |task|
-        #   task.children.first.update!(status: Constants.TASK_STATUSES.completed)
-        # end
       let!(:action4_parent) do
-        create(:colocated_task, assigned_by: user)#
+        create(:colocated_task, assigned_by: user)
       end
       let!(:action4) do
         create(:colocated_task, assigned_to: vlj_support_staff, parent: action4_parent).tap do |task|

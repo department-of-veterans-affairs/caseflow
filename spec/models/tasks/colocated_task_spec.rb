@@ -386,7 +386,6 @@ describe ColocatedTask, :all_dbs do
       expect(org_task.status).to eq Constants.TASK_STATUSES.cancelled
     end
 
-    # FIXME: This is largely nonsensical now
     context "for legacy appeals, the new assigned to location is set correctly" do
       let(:org_colocated_task) do
         create(
@@ -396,7 +395,9 @@ describe ColocatedTask, :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:legacy_colocated_task) { create(:colocated_task, task_type_trait, parent: org_colocated_task, assigned_to: colocated_user) }
+      let(:legacy_colocated_task) do
+        create(:colocated_task, task_type_trait, parent: org_colocated_task, assigned_to: colocated_user)
+      end
 
       before do
         org_colocated_task.appeal.case_record&.update!(bfcurloc: location_code)
@@ -484,10 +485,6 @@ describe ColocatedTask, :all_dbs do
         assigned_to_type: User.name,
         assigned_to_id: vlj_support_user.id
       }
-      # This now triggers an exception:
-      # ActiveRecord::RecordInvalid: Validation failed: There is already an open RETIRED VLJ action on this case with the instructions "VLJ Snuffy conducted the hearing in June. Since they are now retired, the Veteran needs to be provided notice of this and an opportunity to request hearing before another VLJ."
-      # FIXME: What is the right thing in this case? Is it counting the on_hold parent and the assigned child as two tasks?
-      # But wasn't that the old behavior anyway?
       colocated_task.reassign(reassign_params, reassigner)
     end
 
