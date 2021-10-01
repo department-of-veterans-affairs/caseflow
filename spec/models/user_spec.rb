@@ -769,6 +769,13 @@ describe User, :all_dbs do
       end
     end
 
+    context "when current user is a member of BvaIntake org" do
+      it "returns true" do
+        BvaIntake.singleton.add_user(user)
+        expect(subject).to eq(true)
+      end
+    end
+
     context "when current user is colocated in VACOLS" do
       it "returns true" do
         allow(user).to receive(:vacols_roles).and_return(["colocated"])
