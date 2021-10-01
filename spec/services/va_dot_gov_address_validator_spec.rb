@@ -253,7 +253,7 @@ describe VaDotGovAddressValidator do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "2")) }
 
       it "returns all facilities" do
-        expect(subject).to match_array RegionalOffice.facility_ids
+        expect(subject).to match_array RegionalOffice.ro_facility_ids - ["vba_372"]
       end
     end
   end
