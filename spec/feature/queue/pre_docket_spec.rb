@@ -27,30 +27,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:ro_instructions) { "No docs here. Please look for this veteran's documents." }
 
   context "when a VHA case goes through intake" do
+    before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
+
     it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
       step "BVA Intake user intakes a VHA case" do
         User.authenticate!(user: bva_intake_user)
         start_appeal(veteran, intake_user: bva_intake_user)
-        visit "/intake"
-
-        expect(page).to have_current_path("/intake/review_request")
-
-        click_intake_continue
-
-        expect(page).to have_content("Add / Remove Issues")
-
-        click_intake_add_issue
-        add_intake_nonrating_issue(
-          benefit_type: "Veterans Health Administration",
-          category: "Caregiver",
-          description: "I am a VHA issue",
-          date: 1.month.ago.mdY
-        )
-        click_intake_finish
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+        complete_vha_intake
         appeal = Appeal.last
         visit "/queue/appeals/#{appeal.external_id}"
-        expect(page).to have_content("Pre Docket Task")
+        expect(page).to have_content("Pre-Docket")
       end
 
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
@@ -173,6 +159,82 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
       end
+
+      step "BVA Intake can docket an appeal" do
+        appeal = Appeal.last
+        camo_task = VhaDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        User.authenticate!(user: bva_intake_user)
+        visit "/queue/appeals/#{appeal.external_id}"
+        bva_intake_dockets_appeal
+
+        expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
+        expect(page).to have_content("Docket number: #{appeal.docket_number}")
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+        distribution_task = appeal.tasks.of_type(:DistributionTask).first
+        docket_related_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+
+        expect(distribution_task.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(docket_related_task.status).to eq Constants.TASK_STATUSES.assigned
+      end
     end
+
+    # This test confirms that BVA Intake can still perform this action while the Assess Documentation task is
+    # in progress and the Pre-Docket task is on hold.
+    it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
+      User.authenticate!(user: bva_intake_user)
+      start_appeal(veteran, intake_user: bva_intake_user)
+      complete_vha_intake
+      appeal = Appeal.last
+      camo_task = VhaDocumentSearchTask.last
+      bva_intake_task = PreDocketTask.last
+
+      visit "/queue/appeals/#{appeal.external_id}"
+      bva_intake_dockets_appeal
+
+      expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
+      expect(page).to have_content("Docket number: #{appeal.docket_number}")
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+      distribution_task = appeal.tasks.of_type(:DistributionTask).first
+      docket_related_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+
+      expect(distribution_task.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(docket_related_task.status).to eq Constants.TASK_STATUSES.assigned
+    end
+  end
+
+  def complete_vha_intake
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+    click_intake_continue
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    add_intake_nonrating_issue(
+      benefit_type: "Veterans Health Administration",
+      category: "Caregiver",
+      description: "I am a VHA issue",
+      date: 1.month.ago.mdY
+    )
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+  end
+
+  def bva_intake_dockets_appeal
+    expect(page).to have_content("Pre-Docket")
+
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
+
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+
+    fill_in("Instructions:", with: "I confirmed the documents are in VBMS.")
+    find("button", class: "usa-button", text: "Submit").click
   end
 end
