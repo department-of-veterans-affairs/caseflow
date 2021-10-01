@@ -332,6 +332,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
   );
 
+  routedDocketAppeal = (props) => (
+    <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
+  );
+
   routedCancelTaskModal = (props) => (
     <CancelTaskModal {...props.match.params} />
   );
@@ -840,6 +844,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.ASSIGN_TO_TEAM.value
                 }`}
               render={this.routedAssignToTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.DOCKET_APPEAL.value
+                }`}
+              render={this.routedDocketAppeal}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
