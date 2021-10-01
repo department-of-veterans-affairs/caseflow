@@ -144,12 +144,11 @@ RSpec.feature "Attorney queue", :all_dbs do
       end
 
       before do
-        user = Colocated.singleton.add_user(create(:user))
+        new_user = create(:user, :vlj_support_user)
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: user.id
+          assigned_to_id: new_user.id
         }
-        puts appeal.treee
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end
 
