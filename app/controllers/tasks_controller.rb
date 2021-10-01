@@ -111,7 +111,10 @@ class TasksController < ApplicationController
 
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
-    alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
+    # Start with any alerts on the current task, then find alerts on the tasks
+    # that resulted from the update
+    alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+
     tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
     render json: { tasks: tasks_hash }

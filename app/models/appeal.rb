@@ -25,7 +25,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
   has_many :nod_date_updates
-  has_one :special_issue_list
+  has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
