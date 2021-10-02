@@ -1137,8 +1137,6 @@ components:
         - Drill Pay Adjustments
         - Character of Discharge Determinations
         - Income/Net Worth (Pension)
-        - "Debt - Existence and amount"
-        - "Debt - Waiver"
         - Dependent Child - Adopted
         - Dependent Child - Stepchild
         - Dependent Child - Biological
@@ -1254,8 +1252,8 @@ components:
         - Other
         # for benefit type:  loan_guaranty
         - Basic Eligibility - Certificate of Eligibility (COE) was denied for use of benefit
-        - Validity of Debt - Existing debt indicated from loan termination is incorrect as stated
-        - Existance and amount - Existing debt should be waived to allow issuance of COE
+        - Existence and amount - Existing debt indicated from loan termination is incorrect as stated
+        - Waiver of Indebtedness - Existing debt should be waived to allow issuance of COE
         - Restoration of Entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE
         - Other
         # for benefit type:  nca
