@@ -138,7 +138,6 @@ export default class AssignHearingsTable extends React.PureComponent {
         valueFunction: (row) => (
           <HearingRequestType
             hearingRequestType={row.hearingRequestType}
-            isFormerTravel={row.isFormerTravel}
           />
         ),
         label: 'Filter by hearing request type',

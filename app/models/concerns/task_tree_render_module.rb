@@ -16,9 +16,9 @@ module TaskTreeRenderModule
         ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
     },
     ASGN_TO: lambda { |task|
-      ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+      ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :css_id])&.to_s
     }
   }.freeze
 
