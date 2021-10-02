@@ -8,12 +8,9 @@ class VhaDocumentSearchTask < Task
   validates :parent, presence: true
 
   def available_actions(user)
-    if assigned_to.user_has_access?(user) &&
-       FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
-      TASK_ACTIONS
-    else
-      []
-    end
+    return [] unless assigned_to.user_has_access?(user)
+
+    TASK_ACTIONS
   end
 
   TASK_ACTIONS = [

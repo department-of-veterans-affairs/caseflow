@@ -8,16 +8,12 @@ describe VhaDocumentSearchTask, :postgres do
   before { camo.add_user(user) }
 
   describe ".label" do
-    before { FeatureToggle.enable!(:vha_predocket_workflow) }
-    after { FeatureToggle.disable!(:vha_predocket_workflow) }
     it "uses a friendly label" do
       expect(task.class.label).to eq COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
     end
   end
 
   describe "#available_actions" do
-    before { FeatureToggle.enable!(:vha_predocket_workflow) }
-    after { FeatureToggle.disable!(:vha_predocket_workflow) }
     subject { task.available_actions(user) }
 
     it { is_expected.to eq VhaDocumentSearchTask::TASK_ACTIONS }
