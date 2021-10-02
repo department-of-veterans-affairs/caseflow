@@ -237,4 +237,34 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     fill_in("Instructions:", with: "I confirmed the documents are in VBMS.")
     find("button", class: "usa-button", text: "Submit").click
   end
+
+  def complete_vha_intake
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+    click_intake_continue
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    add_intake_nonrating_issue(
+      benefit_type: "Veterans Health Administration",
+      category: "Caregiver",
+      description: "I am a VHA issue",
+      date: 1.month.ago.mdY
+    )
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+  end
+
+  def bva_intake_dockets_appeal
+    expect(page).to have_content("Pre-Docket")
+
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
+
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+
+    fill_in("Instructions:", with: "I confirmed the documents are in VBMS.")
+    find("button", class: "usa-button", text: "Submit").click
+  end
 end
