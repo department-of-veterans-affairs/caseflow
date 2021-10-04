@@ -74,10 +74,6 @@ class Organization < CaseflowRecord
     OrganizationsUser.find_or_create_by!(organization: self, user: user)
   end
 
-  def add_admin(user)
-    OrganizationsUser.make_user_admin(user, self)
-  end
-
   def admins
     organizations_users.includes(:user).admin.map(&:user)
   end

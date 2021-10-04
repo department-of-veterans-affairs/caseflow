@@ -477,8 +477,6 @@ describe ColocatedTask, :all_dbs do
     end
 
     before do
-      puts appeal.treee
-
       reassign_params = {
         assigned_to_type: User.name,
         assigned_to_id: vlj_support_user.id

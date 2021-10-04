@@ -479,15 +479,15 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
             expect(response_body.second["attributes"]["label"]).to eq "Missing records"
-            #
-            # # assignee should be the same person
-            # id = response_body.second["attributes"]["assigned_to"]["id"]
-            # expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
-            #
-            # expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            # expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
-            # expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            # expect(response_body.last["attributes"]["label"]).to eq "Missing records"
+
+            # assignee should be the same person
+            id = response_body.second["attributes"]["assigned_to"]["id"]
+            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
+
+            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
           end
         end
 

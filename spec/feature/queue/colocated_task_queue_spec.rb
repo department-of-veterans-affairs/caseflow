@@ -4,7 +4,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
   let!(:vlj_support_staff) { create(:user, :vlj_support_user) }
   let(:vlj_admin) do
     user = create(:user)
-    Colocated.singleton.add_admin(user)
+    OrganizationsUser.make_user_admin(user, Colocated.singleton)
     user
   end
 

@@ -107,7 +107,6 @@ describe AttorneyQueue, :all_dbs do
 
       it "should only return the incomplete colocated admin actions" do
         expect(subject.size).to eq(1)
-        # maw: This is showing the parent, assigned to the Org. Is that correct??
         expect(subject.first).to eq(incomplete_action_parent)
       end
     end
