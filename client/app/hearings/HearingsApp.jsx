@@ -28,7 +28,6 @@ export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
       userCanConvertCentralHearings,
-      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -44,7 +43,6 @@ export default class HearingsApp extends React.PureComponent {
 
     return Object.freeze({
       userCanConvertCentralHearings,
-      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -203,7 +201,6 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  userCanScheduleVirtualHearings: PropTypes.bool,
   userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,

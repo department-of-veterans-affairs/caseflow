@@ -31,7 +31,6 @@ const DetailsForm = (props) => {
 
   // Get the user permissions
   const {
-    userCanScheduleVirtualHearings,
     userCanConvertCentralHearings
   } = useContext(HearingsUserContext);
 
@@ -39,7 +38,6 @@ const DetailsForm = (props) => {
   const enableVirtualHearings =
     requestType === 'Central' ?
       userCanConvertCentralHearings :
-      userCanScheduleVirtualHearings;
 
   return (
     <React.Fragment>
