@@ -48,9 +48,6 @@ const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
 
-  // Pull out feature flag
-  const { userUseFullPageVideoToVirtual } = useContext(HearingsUserContext);
-
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
@@ -190,9 +187,7 @@ const HearingDetails = (props) => {
         // API errors from the server need to be bubbled up to the VirtualHearingModal so it can
         // update the email components with the validation error messages.
         const changingFromVideoToVirtualWithModalFlow = (
-          hearing?.readableRequestType === 'Video' &&
-          !hearing.isVirtual &&
-          !userUseFullPageVideoToVirtual
+          hearing?.readableRequestType === 'Video' && !hearing.isVirtual
         );
 
         if (changingFromVideoToVirtualWithModalFlow) {

@@ -32,8 +32,7 @@ const DetailsForm = (props) => {
   // Get the user permissions
   const {
     userCanScheduleVirtualHearings,
-    userCanConvertCentralHearings,
-    userUseFullPageVideoToVirtual
+    userCanConvertCentralHearings
   } = useContext(HearingsUserContext);
 
   // Set whether to enable virtual hearings
@@ -68,7 +67,6 @@ const DetailsForm = (props) => {
         <div {...rowThirds}>
           {enableVirtualHearings && (
             <HearingTypeDropdown
-              enableFullPageConversion={userUseFullPageVideoToVirtual}
               convertHearing={convertHearing}
               virtualHearing={hearing?.virtualHearing}
               originalRequestType={requestType}

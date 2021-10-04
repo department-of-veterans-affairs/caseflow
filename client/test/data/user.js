@@ -29,11 +29,6 @@ export const vsoUser = {
   userCanAssignHearingSchedule: false
 }
 
-export const userUseFullPageVideoToVirtual = {
-  ...userWithVirtualHearingsFeatureEnabled,
-  userUseFullPageVideoToVirtual: true,
-};
-
 const attyTemplate = ({ id }) => {
   const name = faker.name.findName();
 

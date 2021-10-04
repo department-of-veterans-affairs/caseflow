@@ -11,8 +11,7 @@ import {
   userWithConvertCentralHearingsEnabled,
   legacyHearing,
   amaHearing,
-  defaultHearing,
-  userUseFullPageVideoToVirtual,
+  defaultHearing
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -130,7 +129,6 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userUseFullPageVideoToVirtual,
           defaultHearing
         ),
         wrappingComponentProps: { store: detailsStore },
