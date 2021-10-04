@@ -29,16 +29,9 @@ const DetailsForm = (props) => {
     convertHearing,
   } = props;
 
-  // Get the user permissions
-  const {
-    userCanConvertCentralHearings
-  } = useContext(HearingsUserContext);
-
   // Set whether to enable virtual hearings
-  const enableVirtualHearings =
-    requestType === 'Central' ?
-      userCanConvertCentralHearings :
-
+  const enableVirtualHearings = requestType === 'Central'
+  
   return (
     <React.Fragment>
       <ContentSection header="Hearing Details">
