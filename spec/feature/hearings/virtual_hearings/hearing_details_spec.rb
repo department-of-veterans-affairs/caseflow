@@ -61,7 +61,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
     HearingsManagement.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
-    FeatureToggle.enable!(:schedule_virtual_hearings)
     FeatureToggle.enable!(:schedule_virtual_hearings_for_central)
     stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end

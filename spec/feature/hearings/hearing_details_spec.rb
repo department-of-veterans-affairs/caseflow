@@ -131,7 +131,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:current_user) do
       HearingsManagement.singleton.add_user(user)
       User.authenticate!(user: user)
-      FeatureToggle.enable!(:schedule_virtual_hearings)
     end
 
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
