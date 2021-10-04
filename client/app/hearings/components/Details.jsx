@@ -14,7 +14,6 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
-import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,

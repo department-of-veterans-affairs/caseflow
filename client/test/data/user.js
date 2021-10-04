@@ -13,11 +13,6 @@ export const userWithVirtualHearingsFeatureEnabled = {
   userCanScheduleVirtualHearings: true,
 };
 
-export const userWithConvertCentralHearingsEnabled = {
-  ...anyUser,
-  userCanConvertCentralHearings: true,
-};
-
 export const userWithJudgeRole = {
   ...anyUser,
   userHasHearingPrepRole: true,
