@@ -4,7 +4,7 @@
 
 Our existing logic for appellant substitutions creates a new appeal stream, the target appeal, which is separate from the original appeal stream, the source appeal.  We need to implement a new structure where the appeal remains the same when a substitution occurs, however, the appellant information changes from veteran to substitute.
 
-Due to logistical reasons and metrics requirements, we need to maintain the existing functionality for death dismissal substitutions.
+Due to logistical reasons and metrics requirements, we need to maintain the existing functionality for death dismissal substitutions. Since the death dismissal completes the source appeal, it's logical to create a second appeal stream for the target appeal.
 
 #### Services involved
 - BGS: Where Caseflow retrieves POA information for all appellants, including substitute appellants
@@ -52,11 +52,13 @@ I don't recommend this approach.  It would require us to change the logic for fr
 
 
 ### Recommendation
-I recommend Option 1, using the existin appellant substitution code and having the appeal and source appeal be the same appeal.  I've already written a test to prove that this approach is sustainable.  Also, it doesn't require any changes to the database, and it would require minimal, if any, changes to the front-end logic around conditional rendering of alerts.
+I recommend Option 1, using the existing appellant substitution code and having the appeal and source appeal be the same appeal.  I've already written a test to prove that this approach is sustainable.  Also, it doesn't require any changes to the database, and it would require minimal, if any, changes to the front-end logic around conditional rendering of alerts.
 
 ### Additional Options From Team Discussion of Tech Spec
 TBA
 
 
 
-`*` I want to acknowledge that other tests on the draft PR failed.  I didn't fix all of the breaking tests because I thought that would venture into actual implementation of the proposed change, which is not in scope for working on a tech spec.
+`*` I want to acknowledge that other tests on the draft PR failed.  I didn't fix all of the breaking tests because I thought that would venture into actual implementation of the proposed change, which is not in scope for working on a tech spec.  A note on the failing tests: 24 tests failed, 1 of which was a bva dispatch return flow feature test that had already been marked as flaky.  The remaining 23 failing tests were appellant substitution model tests, which I expected to fail due to the change in model validations. I (Eileen) personally think the tests about task creation will be trickier to fix than the tests about AOD/CAVC status and copying issues to the target appeal, however, that may be a reflection of which area of the codebase I personally know better.
+
+23 appellant substitution model tests
