@@ -18,6 +18,7 @@ export const initialState = {
   featureToggles: {},
   userRole: '',
   userCssId: '',
+  userInfo: null,
   organizations: [],
   activeOrganization: {
     id: null,
@@ -38,7 +39,7 @@ export const initialState = {
     hearingDate: null,
     regionalOffice: null
   },
-  targetUser : {},
+  targetUser: {},
   poaAlert: {}
 };
 
@@ -188,6 +189,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userCssId: { $set: action.payload.cssId }
     });
+  case ACTIONS.SET_USER_INFO:
+    return update(state, {
+      userInfo: { $set: action.payload.userInfo }
+    });
   case ACTIONS.SET_TARGET_USER:
     return update(state, {
       targetUser: {
@@ -224,7 +229,8 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       selectedAssigneeSecondary: {
         $set: null
-      }, selectedAssignee: {
+      },
+      selectedAssignee: {
         $set: null
       }
     });
