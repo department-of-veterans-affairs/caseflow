@@ -4,6 +4,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   include IntakeHelpers
 
   before do
+    FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_predocket_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
@@ -11,7 +12,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     regional_office.add_user(regional_office_user)
   end
 
-  after { FeatureToggle.disable!(:vha_predocket_appeals) }
+  after do
+    FeatureToggle.disable!(:vha_predocket_workflow)
+    FeatureToggle.disable!(:vha_predocket_appeals)
+  end
 
   let(:bva_intake) { BvaIntake.singleton }
   let!(:bva_intake_user) { create(:intake_user) }
