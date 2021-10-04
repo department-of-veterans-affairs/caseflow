@@ -9,7 +9,7 @@ task :js_tests do
   if js_test_results
     puts Rainbow("Passed. All frontend react tests look good").green
   else
-    puts Rainbow("Failed. Please check jest and karma tests in client/test").red
+    puts Rainbow("Failed. Please check tests in client/test").red
     exit(1)
   end
 end
