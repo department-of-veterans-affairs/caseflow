@@ -257,8 +257,8 @@
         "description": "Overpayment",
         "levels": {
           "01": {
-            "description": "Validity of debt",
-            "plain_description": "Validity of debt owed"
+            "description": "Existence and amount",
+            "plain_description": "Existence and amount of debt owed"
           },
           "02": {
             "description": "Waiver",
@@ -526,8 +526,8 @@
         "description": "Overpayment",
         "levels": {
           "01": {
-            "description": "Validity of debt",
-            "plain_description": "Validity of debt owed"
+            "description": "Existence and amount",
+            "plain_description": "Existence and amount of debt owed"
           },
           "02": {
             "description": "Waiver",
@@ -637,8 +637,8 @@
         "plain_description": "Eligibility for loan guaranty benefits"
       },
       "02": {
-        "description": "Validity of debt",
-        "plain_description": "Validity of debt owed"
+        "description": "Existence and amount",
+        "plain_description": "Existence and amount of debt owed"
       },
       "03": {
         "description": "Waiver of indebtedness",
@@ -782,8 +782,8 @@
         "description": "Overpayment",
         "levels": {
           "01": {
-            "description": "Validity of debt",
-            "plain_description": "Validity of debt owed"
+            "description": "Existence and amount",
+            "plain_description": "Existence and amount of debt owed"
           },
           "02": {
             "description": "Waiver",
