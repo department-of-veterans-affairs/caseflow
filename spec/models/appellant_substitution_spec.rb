@@ -4,8 +4,47 @@ require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_importer.rb"
 
 describe AppellantSubstitution do
+  describe ".same_appeal_substitution_allowed?" do
+    subject do
+      AppellantSubstitution.new(is_cob_admin: is_cob_admin,
+                                date_of_death_present: date_of_death_present).same_appeal_substitution_allowed?
+    end
+
+    context "when is_cob_admin is true" do
+      let(:is_cob_admin) { true }
+      context "when date_of_death_present is false" do
+        let(:date_of_death_present) { false }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+      context "when date_of_death_present is true" do
+        let(:date_of_death_present) { true }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when is_cob_admin is false" do
+      let(:is_cob_admin) { false }
+      context "when date_of_death_present is false" do
+        let(:date_of_death_present) { false }
+        it "returns false" do
+          expect(subject).to eq(false)
+        end
+      end
+      context "when date_of_death_present is true" do
+        let(:date_of_death_present) { true }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+  end
+
   describe ".create!" do
-    context "when source appeal received a death dismissal" do
+    context "when same appeal substitution is not allowed" do
       subject { described_class.create!(params) }
 
       let(:created_by) { create(:user) }
@@ -16,8 +55,6 @@ describe AppellantSubstitution do
       let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
       let(:poa_participant_id) { substitutes_poa.poa_participant_id }
       before do
-        allow_any_instance_of(described_class).to receive(:death_dismissal_substitution?).and_return(true)
-
         # Needed to enable InformalHearingPresentationTask to be created for target_appeal.representatives
         allow_any_instance_of(Representative).to receive(:should_write_ihp?) { true }
       end
@@ -35,7 +72,9 @@ describe AppellantSubstitution do
           substitute_participant_id: substitute&.participant_id,
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
-          task_params: task_params
+          task_params: task_params,
+          is_cob_admin: false,
+          date_of_death_present: false
         }
       end
 
@@ -362,51 +401,53 @@ describe AppellantSubstitution do
         end
       end
     end
-  end
 
-  describe "create a same appeal substitution" do
-    subject { described_class.create!(params) }
+    context "when same appeal substitution is allowed" do
+      subject { described_class.create!(params) }
 
-    let(:created_by) { create(:user) }
-    let(:deceased_veteran) { create(:veteran, date_of_death: "12/31/2019") }
-    let(:source_appeal) do
-      create(:appeal, :with_decision_issue, :dispatched,
-             disposition: "dismissed_death", veteran: deceased_veteran)
-    end
-    let(:substitution_date) { 1.day.ago.to_date }
-    let(:substitute) { create(:claimant) }
+      let(:created_by) { create(:user) }
+      let(:deceased_veteran) { create(:veteran, date_of_death: "12/31/2019") }
+      let(:source_appeal) do
+        create(:appeal, :with_decision_issue, :dispatched,
+               disposition: "dismissed_death", veteran: deceased_veteran)
+      end
+      let(:substitution_date) { 1.day.ago.to_date }
+      let(:substitute) { create(:claimant) }
 
-    let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
-    let(:poa_participant_id) { substitutes_poa.poa_participant_id }
+      let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
+      let(:poa_participant_id) { substitutes_poa.poa_participant_id }
 
-    let(:selected_task_types) { [] }
-    let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
-    let(:task_params) { {} }
+      let(:selected_task_types) { [] }
+      let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
+      let(:task_params) { {} }
 
-    let(:params) do
-      {
-        created_by: created_by,
-        source_appeal: source_appeal,
-        substitution_date: substitution_date,
-        claimant_type: substitute&.type,
-        substitute_participant_id: substitute&.participant_id,
-        poa_participant_id: poa_participant_id,
-        selected_task_ids: selected_task_ids,
-        task_params: task_params
-      }
-    end
+      let(:params) do
+        {
+          created_by: created_by,
+          source_appeal: source_appeal,
+          substitution_date: substitution_date,
+          claimant_type: substitute&.type,
+          substitute_participant_id: substitute&.participant_id,
+          poa_participant_id: poa_participant_id,
+          selected_task_ids: selected_task_ids,
+          task_params: task_params,
+          is_cob_admin: true,
+          date_of_death_present: false
+        }
+      end
 
-    it "updates the existing appeal" do
-      expect { subject }.not_to raise_error
-      params.each_key { |key| expect(subject.send(key)).to eq params[key] }
+      it "updates the existing appeal" do
+        expect { subject }.not_to raise_error
+        params.each_key { |key| expect(subject.send(key)).to eq params[key] }
 
-      expect(subject.target_appeal.appellant_substitution).to eq subject
-      expect(subject.target_appeal.appellant_substitution?).to eq true
-      expect(subject.target_appeal).to eq(subject.source_appeal)
-      expect(subject.target_appeal.veteran_is_not_claimant).to eq true
-      expect(subject.substitute_claimant.participant_id).to eq subject.substitute_participant_id
-      expect(subject.target_appeal.claimant.participant_id).to eq subject.substitute_participant_id
-      expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
+        expect(subject.target_appeal.appellant_substitution).to eq subject
+        expect(subject.target_appeal.appellant_substitution?).to eq true
+        expect(subject.target_appeal).to eq(subject.source_appeal)
+        expect(subject.target_appeal.veteran_is_not_claimant).to eq true
+        expect(subject.substitute_claimant.participant_id).to eq subject.substitute_participant_id
+        expect(subject.target_appeal.claimant.participant_id).to eq subject.substitute_participant_id
+        expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
+      end
     end
   end
 end

@@ -22,6 +22,7 @@ class AppellantSubstitutionsController < ApplicationController
   }.freeze
 
   def create
+    # TODO: revisit here and add "is_cob_admin (bool)" and (is_veteran_date_of_death_present (bool)) to create_params
     new_substitution = AppellantSubstitution.create!(create_params)
     target_appeal = new_substitution.target_appeal.reload
     render json: { substitution: new_substitution, targetAppeal: target_appeal }, status: :created

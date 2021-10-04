@@ -7,6 +7,9 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
+  # TODO: figure out a way to implement same_appeal_substitution_allowed? without storing these traits on AppellantSubstitution
+  attr_accessor :is_cob_admin, :date_of_death_present
+
   scope :updated_since_for_appeals, lambda { |since|
     select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
   }
@@ -19,9 +22,9 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  before_create :establish_separate_appeal_stream, if: :death_dismissal_substitution?
-  before_create :establish_substitution_on_same_appeal, unless: :death_dismissal_substitution?
-  after_create :initialize_tasks, if: :death_dismissal_substitution?
+  before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
+  before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
+  after_create :initialize_tasks, unless: :same_appeal_substitution_allowed?
 
   def substitute_claimant
     target_appeal.claimant
@@ -35,9 +38,8 @@ class AppellantSubstitution < CaseflowRecord
     poa_participant_id ? BgsPowerOfAttorney.find_by(poa_participant_id: poa_participant_id) : nil
   end
 
-  def death_dismissal_substitution?
-    source_appeal.veteran.date_of_death &&
-      source_appeal.decision_issues.any? { |decision_issue| decision_issue.disposition == "dismissed_death" }
+  def same_appeal_substitution_allowed?
+    is_cob_admin || date_of_death_present
   end
 
   private
