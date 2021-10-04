@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>- Caseflow Docs</title>
+    <title>Caseflow Queue - Caseflow Docs</title>
     <link
       rel="shortcut icon"
       href="/caseflow/favicon.ico"
@@ -24,22 +24,22 @@
     ></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Begin Jekyll SEO tag v2.7.1 -->
-    <title>Caseflow Docs | Documentation for Caseflow</title>
+    <title>Caseflow Queue | Caseflow Docs</title>
     <meta name="generator" content="Jekyll v3.9.0" />
-    <meta property="og:title" content="Caseflow Docs" />
+    <meta property="og:title" content="Caseflow Queue" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="Documentation for Caseflow" />
     <meta property="og:description" content="Documentation for Caseflow" />
-    <link rel="canonical" href="/caseflow/404.html" />
-    <meta property="og:url" content="/caseflow/404.html" />
+    <link rel="canonical" href="/caseflow/caseflow-queues/" />
+    <meta property="og:url" content="/caseflow/caseflow-queues/" />
     <meta property="og:site_name" content="Caseflow Docs" />
     <meta name="twitter:card" content="summary" />
-    <meta property="twitter:title" content="Caseflow Docs" />
+    <meta property="twitter:title" content="Caseflow Queue" />
     <script type="application/ld+json">
       {
         "description": "Documentation for Caseflow",
-        "headline": "Caseflow Docs",
-        "url": "/caseflow/404.html",
+        "headline": "Caseflow Queue",
+        "url": "/caseflow/caseflow-queues/",
         "@type": "WebPage",
         "@context": "https://schema.org"
       }
@@ -157,6 +157,9 @@
       <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
         <ul class="nav-list">
           <li class="nav-list-item">
+            <a href="/caseflow/index" class="nav-list-link">Contents</a>
+          </li>
+          <li class="nav-list-item">
             <a href="/caseflow/README.html" class="nav-list-link">README</a>
           </li>
           <li class="nav-list-item">
@@ -167,11 +170,11 @@
               >DB Schema</a
             >
           </li>
-          <li class="nav-list-item">
+          <li class="nav-list-item active">
             <a href="#" class="nav-list-expander"
               ><svg viewbox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use></svg></a
-            ><a href="/caseflow/caseflow-queues/" class="nav-list-link"
+            ><a href="/caseflow/caseflow-queues/" class="nav-list-link active"
               >Caseflow Queue</a
             >
             <ul class="nav-list">
@@ -234,31 +237,192 @@
       </div>
       <div id="main-content-wrap" class="main-content-wrap">
         <div id="main-content" class="main-content" role="main">
-          <style type="text/css" media="screen">
-            .container {
-              margin: 10px auto;
-              max-width: 600px;
-              text-align: center;
-            }
-            h1 {
-              margin: 30px 0;
-              font-size: 4em;
-              line-height: 1;
-              letter-spacing: -1px;
-            }
-          </style>
-          <div class="container">
-            <h1>404</h1>
-            <p><strong>Page not found :(</strong></p>
-            <p>The requested page could not be found.</p>
+          <h1 id="about-queue">
+            <a
+              href="#about-queue"
+              class="anchor-heading"
+              aria-labelledby="about-queue"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            About Queue
+          </h1>
+          <p>
+            Caseflow Queue is a workflow management tool that will allow BVA
+            employees process legacy and AMA appeals at the Board. It’s also the
+            entry point for Caseflow Reader; users navigate to Reader from
+            Queue.
+          </p>
+          <h2 id="definitions-and-term-usage">
+            <a
+              href="#definitions-and-term-usage"
+              class="anchor-heading"
+              aria-labelledby="definitions-and-term-usage"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            <a
+              href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Queue-data-dictionary"
+              >Definitions and term-usage</a
+            >
+          </h2>
+          <h2 id="user-groups">
+            <a
+              href="#user-groups"
+              class="anchor-heading"
+              aria-labelledby="user-groups"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            User groups
+          </h2>
+          <p>
+            All Board teams use Caseflow Queue to view and complete their tasks.
+            Some branches also use other Caseflow products and features, like
+            the Hearing Branch uses Caseflow Hearings to schedule hearings.
+          </p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Primary Caseflow functionality</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Case Review</td>
+                  <td>
+                    Caseflow Intake<br />Caseflow Queue<br />Caseflow Reader<br />Issues
+                  </td>
+                </tr>
+                <tr>
+                  <td>Mail</td>
+                  <td>Caseflow Queue</td>
+                </tr>
+                <tr>
+                  <td>Translation</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Hearing Branch</td>
+                  <td>Caseflow Queue<br />Caseflow Hearings</td>
+                </tr>
+                <tr>
+                  <td>Privacy Team</td>
+                  <td>Caseflow Queue<br />eFolder Express</td>
+                </tr>
+                <tr>
+                  <td>Decision-drafting attorneys</td>
+                  <td>Caseflow Queue<br />Caseflow Reader<br />Issues</td>
+                </tr>
+                <tr>
+                  <td>Judges &amp; acting judges</td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow
+                    Hearings<br />Issues<br />Automatic Case Distribution
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/VLJ-Support"
+                      >VLJ Support Staff</a
+                    >
+                  </td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/BVA-Dispatch"
+                      >BVA Dispatch</a
+                    >
+                  </td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Interactive
+                    Decision Template
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Quality-Review"
+                      >Quality Review</a
+                    >
+                  </td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Litigation Support</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>Advanced on the Docket (AOD)</td>
+                  <td>Caseflow Queue<br />Caseflow Reader</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://github.com/department-of-veterans-affairs/caseflow/wiki/VSOs"
+                      >VSOs</a
+                    >
+                  </td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow Hearings
+                  </td>
+                </tr>
+                <tr>
+                  <td>Private attorneys and claims agents</td>
+                  <td>
+                    Caseflow Queue<br />Caseflow Reader<br />Caseflow Hearings
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <h3 id="other-va">
+            <a
+              href="#other-va"
+              class="anchor-heading"
+              aria-labelledby="other-va"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Other VA
+          </h3>
+          <ul>
+            <li>VA call center</li>
+          </ul>
+          <h2 id="features">
+            <a
+              href="#features"
+              class="anchor-heading"
+              aria-labelledby="features"
+              ><svg viewbox="0 0 16 16" aria-hidden="true">
+                <use xlink:href="#svg-link"></use></svg
+            ></a>
+            Features
+          </h2>
+          <p>Please see the TOC below for a list of high level features</p>
+          <hr />
+          <h2 class="text-delta">Table of contents</h2>
+          <ul>
+            <li>
+              <a
+                href="/caseflow/caseflow-queues/automatic_case_distribution.html"
+                >Automatic Case Distribution</a
+              >
+            </li>
+            <li><a href="/caseflow/caseflow-queues/tasks.html">Tasks</a></li>
+          </ul>
           <hr />
           <footer>
             <a href="#top" id="back-to-top">Back to top</a>
             <div class="d-flex mt-2">
               <p class="text-small text-grey-dk-000 mb-0">
                 <a
-                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/404.html"
+                  href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/caseflow-queues/index.md"
                   id="edit-this-page"
                   >Edit this page</a
                 >
