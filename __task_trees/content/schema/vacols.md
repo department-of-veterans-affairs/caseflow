@@ -13,6 +13,7 @@ This page documents the VACOLS DB and its schema.
 * [Docs in the VACOLS repo](https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs)
   - [VACOLS Reference docs](https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs/VACOLS%20Reference%20Docs) - VACOLS_Table_Joins.xls
   - [Feb 2017 VACOLS doc in appeals-data repo](https://github.com/department-of-veterans-affairs/appeals-data/blob/master/vacols.pdf) - explanations of example queries
+* [FACOLS - "Fake VACOLS" used for local testing](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS)
 
 ## Caseflow's Rails Source Code for VACOLS DB
 [Caseflow's VACOLS Rails models](https://github.com/department-of-veterans-affairs/caseflow/tree/master/app/models/vacols)
