@@ -11,5 +11,7 @@ Code comments extracted from Ruby file:
 * Attorney tasks include:
     - writing draft decisions for judges
     - adding admin actions (like translating documents)
+* While these are normally assigned to an attorney of the judge, it is possible for
+  them to be assigned to an attorney from another team or even the assigning VLJ themselves
 <!-- class_comments:end -->
 
