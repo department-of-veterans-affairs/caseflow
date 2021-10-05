@@ -14,7 +14,7 @@ require "digest"
 #
 class ExternalApi::VADotGovService
   BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
-  FACILITIES_IDS_ENDPOINT = "va_facilities/v0/ids"
+  FACILITY_IDS_ENDPOINT = "va_facilities/v0/ids"
   FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
 
@@ -322,7 +322,7 @@ class ExternalApi::VADotGovService
       cache_key = "send_facilities_ids_request"
       response = Rails.cache.fetch(cache_key, expires_in: 2.hours) do
         send_va_dot_gov_request(
-          endpoint: FACILITIES_IDS_ENDPOINT
+          endpoint: FACILITY_IDS_ENDPOINT
         )
       end
     end
