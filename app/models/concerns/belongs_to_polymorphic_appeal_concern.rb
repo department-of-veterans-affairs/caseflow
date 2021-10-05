@@ -11,10 +11,10 @@ require "helpers/association_wrapper.rb"
 #   scope :ama, -> { where(type_column => "Appeal") }
 #   scope :legacy, -> { where(type_column => "LegacyAppeal") }
 #   belongs_to :ama_appeal,
-#      -> { includes(base_table_name).where(base_table_name => {'appeal_type' => "Appeal"}) },
+#      -> { includes(association_name).where(base_table_name => {'appeal_type' => "Appeal"}) },
 #      class_name: "Appeal", foreign_key: 'appeal_id', optional: true
 #   belongs_to :legacy_appeal,
-#      -> { includes(base_table_name).where(base_table_name => {'appeal_type' => "LegacyAppeal"}) },
+#      -> { includes(association_name).where(base_table_name => {'appeal_type' => "LegacyAppeal"}) },
 #      class_name: "LegacyAppeal", foreign_key: 'appeal_id', optional: true
 #
 #   def ama_appeal
@@ -36,7 +36,7 @@ module BelongsToPolymorphicAppealConcern
 
   class_methods do
     # Since we can't pass an argument to a concern, call this method instead
-    def belongs_to_polymorphic_appeal(associated_class_symbol)
+    def belongs_to_polymorphic_appeal(associated_class_symbol, include_decision_review_classes: false)
       # Define polymorphic association before calling AssocationWrapper
       belongs_to associated_class_symbol, polymorphic: true
 
@@ -51,7 +51,10 @@ module BelongsToPolymorphicAppealConcern
       add_method_for_polymorphic_association("Appeal", association)
       add_method_for_polymorphic_association("LegacyAppeal", association)
 
-      if associated_class_symbol == :decision_review
+      if include_decision_review_classes || associated_class_symbol == :decision_review
+        scope :supplemental_claim, -> { where(type_column => "SupplementalClaim") }
+        scope :higher_level_review, -> { where(type_column => "HigherLevelReview") }
+
         add_method_for_polymorphic_association("SupplementalClaim", association)
         add_method_for_polymorphic_association("HigherLevelReview", association)
       end
@@ -60,7 +63,7 @@ module BelongsToPolymorphicAppealConcern
     private
 
     # This method creates a belongs_to association and method. For example, for type_name = "Appeal":
-    # belongs_to :ama_appeal, -> { includes(base_table_name).where(base_table_name => {type_column => "Appeal"}) },
+    # belongs_to :ama_appeal, -> { includes(association_name).where(base_table_name => {type_column => "Appeal"}) },
     #    class_name: "Appeal", foreign_key: id_column.to_s, optional: true
     #
     # def ama_appeal
@@ -78,14 +81,27 @@ module BelongsToPolymorphicAppealConcern
       # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different
       self_table_name = table_name
 
+      # The use of `includes(self_table_name)` relies on an association being defined in the other class (eg, Appeal).
+      # The association may be singular (`has_one`) or plural (`has_many`),
+      # which is reflected in `inverse_association_name`.
+      inverse_association_name = inverse_association_name(type_name)
+      # DecisionIssue does not have an inverse association with LegacyAppeal
+      return unless inverse_association_name
+
       belongs_to method_name,
-                 -> { includes(self_table_name).where(self_table_name => { type_column => type_name }) },
+                 -> { includes(inverse_association_name).where(self_table_name => { type_column => type_name }) },
                  class_name: type_name, foreign_key: id_column.to_s, optional: true
 
       define_method method_name do
         # `super()` will call the method created by the `belongs_to` above
         super() if send(type_column) == type_name
       end
+    end
+
+    def inverse_association_name(type_name)
+      klass = type_name.constantize
+      # Ignore polymorphic associations, which don't have a `klass` and will raise and error
+      klass.reflections.values.reject(&:polymorphic?).detect { |assoc| assoc.klass == self }&.name
     end
   end
 end

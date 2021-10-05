@@ -381,12 +381,14 @@ workflows:
               ignore:
                 - gh-pages
                 - main-gh-pages
+                - gh-actions/make_docs-update_docs
       - demo:
           filters:
             branches:
               ignore:
                 - gh-pages
                 - main-gh-pages
+                - gh-actions/make_docs-update_docs
       - rspec:
           requires:
             - build_workspace
@@ -395,15 +397,18 @@ workflows:
               ignore:
                 - gh-pages
                 - main-gh-pages
+                - gh-actions/make_docs-update_docs
       - js_tests:
           filters:
             branches:
               ignore:
                 - gh-pages
                 - main-gh-pages
+                - gh-actions/make_docs-update_docs
       - lint:
           filters:
             branches:
               ignore:
                 - gh-pages
                 - main-gh-pages
+                - gh-actions/make_docs-update_docs

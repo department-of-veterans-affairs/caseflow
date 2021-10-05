@@ -25,7 +25,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
   has_many :nod_date_updates
-  has_one :special_issue_list
+  has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
@@ -158,6 +158,18 @@ class Appeal < DecisionReview
     return nil unless vacate?
 
     post_decision_motion&.vacate_type
+  end
+
+  def contested_claim?
+    category_substrings = ["Contested Claims", "Apportionment"]
+
+    matching_issue_categories = Constants::ISSUE_CATEGORIES.values.flatten.select do |category|
+      category.match? Regexp.union(category_substrings)
+    end
+
+    active_request_issues.any? do |request_issue|
+      matching_issue_categories.include?(request_issue.nonrating_issue_category)
+    end
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,

@@ -22,6 +22,14 @@ jobs:
         ports: ["5432:5432"]
 
     steps:
+      - name: Debugging info
+        # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#pull_request
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          # prints GITHUB_CONTEXT env variable
+          env
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -128,9 +136,7 @@ jobs:
         run: |
           cd main-gh-pages_checkout
 
-          echo "::group::Remove files that change with every run"
-          rm -vf schema/make_docs/*-erd.pdf
-          echo "::endgroup::"
+          make github_action_pre_commit_hook
 
           git add .
           if git diff-index --quiet HEAD; then
@@ -158,12 +164,12 @@ jobs:
           base: "main-gh-pages"
           branch: "gh-actions/make_docs-update_docs"
           delete-branch: true # when closing PR
-          commit-message: '${{ github.actor }} - `make docs` GH Action: automatically update DB schema documentation files'
+          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
-          assignees: yoomlam
-          reviewers: ${{ github.actor }}
+          reviewers: yoomlam
+          assignees: ${{ github.event.commits[0].committer.username }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
         run: |
