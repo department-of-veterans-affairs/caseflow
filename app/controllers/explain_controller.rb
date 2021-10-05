@@ -64,6 +64,7 @@ class ExplainController < ApplicationController
     (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
   end
 
+  # :reek:FeatureEnvy
   def tasks_versions
     appeal.tasks.order(:id).select { |task| task.versions.any? }.map do |task|
       {

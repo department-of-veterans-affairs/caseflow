@@ -683,12 +683,14 @@ class Task < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
   def version_summary
-    versions.map do |v|
+    versions.map do |version|
       {
-        who: [User.find_by_id(v.whodunnit)].compact.map { |u| "#{u.css_id} (#{u.id}, #{u.full_name})" }.first,
-        when: v.created_at,
-        changeset: v.changeset
+        who: [User.find_by_id(version.whodunnit)].compact
+          .map { |user| "#{user.css_id} (#{user.id}, #{user.full_name})" }.first,
+        when: version.created_at,
+        changeset: version.changeset
       }
     end
   end
