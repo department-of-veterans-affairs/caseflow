@@ -21,7 +21,7 @@ const Tooltip = (props) => {
       backgroundColor: COLORS.GREY_DARK,
       fontWeight: 'normal',
       padding: '0.5rem 1rem',
-      textAlign: 'left'
+      textAlign: 'center'
     },
     [`& #${id}:after`]: { [`border${borderToColor}Color`]: COLORS.GREY_DARK }
   });
