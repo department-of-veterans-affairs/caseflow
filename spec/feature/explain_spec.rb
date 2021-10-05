@@ -131,17 +131,17 @@ RSpec.feature "Explain JSON" do
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
-    before do
-      real_appeal.root_task.tap do |task|
-        task.append_instruction "Adding instruction on RootTask"
-        task.append_instruction "Adding instruction to show task versions"
-      end
-      real_appeal.tasks.sample.tap do |task|
-        task.append_instruction "Adding instruction"
-        task.append_instruction "Adding instruction to show task versions"
-      end
-    end
     context "given a dispatched appeal" do
+      before do
+        real_appeal.root_task.tap do |task|
+          task.append_instruction "Adding instruction on RootTask"
+          task.append_instruction "Adding instruction to show task versions"
+        end
+        real_appeal.tasks.sample.tap do |task|
+          task.append_instruction "Adding instruction"
+          task.append_instruction "Adding instruction to show task versions"
+        end
+      end
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}?sections=all"
