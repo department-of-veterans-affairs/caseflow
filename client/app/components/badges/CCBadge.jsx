@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import Badge from './Badge';
-import { CC_BADGE_TOOLTIP, CC_BADGE_TOOLTIP_LONG } from '../../../COPY.json';
+import { CC_BADGE_TOOLTIP, CC_BADGE_TOOLTIP_LONG } from '../../../COPY';
 import { COLORS } from 'app/constants/AppConstants';
 
 /**
