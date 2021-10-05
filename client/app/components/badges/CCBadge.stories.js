@@ -15,7 +15,6 @@ export default {
   }
 };
 
-
 const Template = (args) => <CCBadge {...args} />;
 
-export const OTBadge = Template.bind({});
+export const ContestedBadge = Template.bind({});

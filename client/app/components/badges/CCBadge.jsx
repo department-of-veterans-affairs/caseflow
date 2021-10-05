@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import Badge from './Badge';
+import { CC_TOOLTIP_HEADER } from '../../../COPY.json';
 import { COLORS } from 'app/constants/AppConstants';
 
 /**
@@ -11,13 +12,12 @@ import { COLORS } from 'app/constants/AppConstants';
 const CCBadge = (props) => {
   const { appeal } = props;
 
-  if (appeal.contested_claim) {
+  if (!appeal.contested_claim) {
     return null;
   }
 
   const tooltipText = <div>
-    This is a Contested Claim and needs to be processed by the Specialty Case team.
-    Please include all parties and POA in correspondence.
+    { CC_TOOLTIP_HEADER }
   </div>;
 
   return <Badge name="contested" displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
