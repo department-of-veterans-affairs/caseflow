@@ -7,9 +7,6 @@ describe AppellantSubstitution do
   describe ".same_appeal_substitution_allowed?" do
     let(:created_by) { create(:user) }
     let(:created_by_id) { created_by.id }
-    before do
-      ClerkOfTheBoard.singleton.add_user(created_by)
-    end
     subject do
       AppellantSubstitution.new(created_by_id: created_by_id,
                                 date_of_death_present: date_of_death_present).same_appeal_substitution_allowed?
@@ -34,6 +31,9 @@ describe AppellantSubstitution do
     end
 
     context "when created_by is a nonadmin" do
+      before do
+        ClerkOfTheBoard.singleton.add_user(created_by)
+      end
       context "when date_of_death_present is false" do
         let(:date_of_death_present) { false }
         it "returns false" do
@@ -414,7 +414,7 @@ describe AppellantSubstitution do
       let(:deceased_veteran) { create(:veteran, date_of_death: "12/31/2019") }
       let(:source_appeal) do
         create(:appeal, :with_decision_issue, :dispatched,
-               disposition: "dismissed_death", veteran: deceased_veteran)
+               veteran: deceased_veteran)
       end
       let(:substitution_date) { 1.day.ago.to_date }
       let(:substitute) { create(:claimant) }
@@ -438,6 +438,10 @@ describe AppellantSubstitution do
           task_params: task_params,
           date_of_death_present: false
         }
+      end
+
+      before do
+        OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
       end
 
       it "updates the existing appeal" do
