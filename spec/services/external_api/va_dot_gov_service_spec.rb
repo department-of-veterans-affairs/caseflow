@@ -55,8 +55,16 @@ describe ExternalApi::VADotGovService do
       expect(result.missing_facility_ids).to eq(%w[vba_99999])
     end
 
-    it "returns empty string when no missing facility ids" do
+    it "returns empty array when no missing facility ids" do
       result = VADotGovService.check_facility_ids(ids: %w[vba_317 vba_318 vba_319])
+
+      expect(result.error).to be_nil
+      expect(result.all_ids_present?).to be_truthy
+      expect(result.missing_facility_ids).to eq(%w[])
+    end
+
+    it "returns empty array when no ids passed" do
+      result = VADotGovService.check_facility_ids
 
       expect(result.error).to be_nil
       expect(result.all_ids_present?).to be_truthy
