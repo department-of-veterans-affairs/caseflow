@@ -5,7 +5,7 @@ import Badge from './Badge';
 import { COLORS } from 'app/constants/AppConstants';
 
 /**
- * Component to display if the provided appeal has been approved for overtime work.
+ * Component to display if the appeal is a contested claim.
  */
 
 const CCBadge = (props) => {
