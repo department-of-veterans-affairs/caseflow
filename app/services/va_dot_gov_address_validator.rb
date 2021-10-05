@@ -134,15 +134,6 @@ class VaDotGovAddressValidator
     # facility ID to the Houston RO.
     facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
 
-    missing_facilities_response = VADotGovService.check_facility_ids(ids: facility_ids)
-    unless missing_facilities_response.all_ids_present?
-      Raven.capture_exception(
-        Caseflow::Error::VaDotGovMissingFacilityError, 
-        extra: missing_facilities_response.missing_facility_ids
-      )
-      facility_ids -= missing_facilities_response.missing_facility_ids
-    end
-
     facility_ids
   end
 
