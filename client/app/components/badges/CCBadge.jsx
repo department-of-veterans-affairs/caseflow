@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import Badge from './Badge';
-import { CC_TOOLTIP_HEADER } from '../../../COPY.json';
+import { CC_BADGE_TOOLTIP, CC_BADGE_TOOLTIP_LONG } from '../../../COPY.json';
 import { COLORS } from 'app/constants/AppConstants';
 
 /**
@@ -10,21 +10,22 @@ import { COLORS } from 'app/constants/AppConstants';
  */
 
 const CCBadge = (props) => {
-  const { appeal } = props;
+  const { appeal, longTooltip } = props;
 
   if (!appeal.contested_claim) {
     return null;
   }
 
-  const tooltipText = <div>
-    { CC_TOOLTIP_HEADER }
+  const tooltipText = <div style={{ whiteSpace: 'pre-line' }}>
+    { longTooltip ? CC_BADGE_TOOLTIP_LONG : CC_BADGE_TOOLTIP }
   </div>;
 
   return <Badge name="contested" displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
 };
 
 CCBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  longTooltip: PropTypes.bool
 };
 
 export default CCBadge;

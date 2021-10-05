@@ -10,8 +10,9 @@ export default {
   },
   args: {
     appeal: {
-      contested_claim: true
+      contested_claim: true,
     },
+    longTooltip: false
   }
 };
 
