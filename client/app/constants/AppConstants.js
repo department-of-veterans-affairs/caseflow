@@ -26,6 +26,10 @@ export const COLORS = {
 };
 
 export const LOGO_COLORS = {
+  DEFAULT: {
+    ACCENT: '#5c626b',
+    OVERLAP: '#4d535b'
+  },
   READER: {
     ACCENT: '#417505',
     OVERLAP: '#2D5104'
