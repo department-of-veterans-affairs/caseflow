@@ -1,6 +1,6 @@
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
+import { keyBy, map } from 'lodash';
 import { moveModel } from '../utils';
 
 const toggleAnnotationDeleteModalFor = (state, annotationId) =>
@@ -69,14 +69,11 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
       state,
       {
         annotations: {
-          $set: _(action.payload.annotations).
-            map((annotation) => ({
-              documentId: annotation.document_id,
-              uuid: annotation.id,
-              ...annotation
-            })).
-            keyBy('id').
-            value()
+          $set: keyBy(map(action.payload.annotations, (annotation) => ({
+            documentId: annotation.document_id,
+            uuid: annotation.id,
+            ...annotation
+          })), 'id')
         }
       }
     );

@@ -1,5 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
+import { forEach } from 'lodash';
 
 const analytics = true;
 
@@ -198,7 +199,7 @@ export const submitIntakeReviewRequest = (intakeId, data) => (dispatch) => {
 export const analyticsCallback = (triggerEvent, category, actionName) => {
   triggerEvent(category, actionName, 'any-error');
 
-  _.forEach(
+  forEach(
     responseErrorCodes,
     (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
   );
