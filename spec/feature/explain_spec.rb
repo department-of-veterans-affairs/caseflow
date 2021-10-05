@@ -25,6 +25,10 @@ RSpec.feature "Explain JSON" do
       expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
 
       expect(page).to have_content("NOD received")
+
+      # Access page using record id
+      visit "explain/appeals/legacy-#{legacy_appeal.id}?sections=all"
+      expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
     end
   end
 
@@ -63,6 +67,10 @@ RSpec.feature "Explain JSON" do
       # intake.complete!(params)
 
       visit "explain/appeals/#{appeal.uuid}?sections=all"
+      expect(page).to have_content("Appeal.find(#{appeal.id})")
+
+      # Access page using record id
+      visit "explain/appeals/ama-#{appeal.id}?sections=all"
       expect(page).to have_content("Appeal.find(#{appeal.id})")
     end
 
