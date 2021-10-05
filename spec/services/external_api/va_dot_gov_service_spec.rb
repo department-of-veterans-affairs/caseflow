@@ -46,7 +46,7 @@ describe ExternalApi::VADotGovService do
     end
   end
 
-  fdescribe "#check_facility_ids" do
+  describe "#check_facility_ids" do
     it "returns missing facility ids" do
       result = VADotGovService.check_facility_ids(ids: %w[vba_317 vba_318 vba_319 vba_99999])
 
