@@ -13,12 +13,12 @@ class ExternalApi::VADotGovService::FacilitiesIdsResponse < ExternalApi::VADotGo
   end
 
   def all_ids_present?
-    @ids.all?{ |id| data.include?(id) }
+    @ids.all? { |id| data.include?(id) }
   end
 
   def missing_facility_ids
     return [] if all_ids_present?
 
-    @ids.select{ |id| !data.include?(id) }
+    @ids.select { |id| !data.include?(id) }
   end
 end
