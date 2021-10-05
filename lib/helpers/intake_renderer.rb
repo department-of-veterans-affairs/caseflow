@@ -220,7 +220,7 @@ class IntakeRenderer
       if request_issue.contention_disposition
         contention += " (disp: #{request_issue.contention_disposition.disposition})"
       end
-      children << contention
+      result << contention
     end
 
     result

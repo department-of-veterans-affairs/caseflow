@@ -32,6 +32,18 @@ describe TaskTreeRenderModule do
       end
     end
 
+    context "inactive organization assignee" do
+      let(:inactive_org) { create(:private_bar, status: :inactive) }
+      let!(:ama_task) { create(:ama_task, parent: root_task, assigned_to: inactive_org).reload }
+      it "shows inactive assignee information" do
+        expect(ama_task.assigned_to).to eq nil
+        expect(ama_task.unscoped_assigned_to).to eq inactive_org
+
+        _rows_hash, metadata = appeal.tree_hash(:id, :ASGN_TO)
+        expect(metadata.rows[ama_task]["ASGN_TO"]).to eq "PrivateBar"
+      end
+    end
+
     it "uses specified column labels" do
       atts = [:id, :status, :assigned_to_type, :parent_id, [:assigned_to, :type], :created_at]
       col_labels = ["\#", "Status", "AssignToType", "P_ID", "ASGN_TO", "Created"]

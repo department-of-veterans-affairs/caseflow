@@ -1137,8 +1137,6 @@ components:
         - Drill Pay Adjustments
         - Character of Discharge Determinations
         - Income/Net Worth (Pension)
-        - "Debt - Existence and amount"
-        - "Debt - Waiver"
         - Dependent Child - Adopted
         - Dependent Child - Stepchild
         - Dependent Child - Biological
@@ -1167,7 +1165,7 @@ components:
         - Dependent Eligibility | Other
         - Penalty Period
         - Post Award Audit
-        - Overpayment | Validity of Debt
+        - Overpayment | Existence and amount
         - Overpayment | Waiver
         - Apportionment
         - Survivor's Pension Eligibility
@@ -1220,7 +1218,7 @@ components:
         - Payment | 38 U.S.C. ch. 32
         - Payment | 38 U.S.C. ch. 33
         - Payment | 38 U.S.C. ch. 1606
-        - Overpayment | Validity of Debt
+        - Overpayment | Existence and amount
         - Vet Tec
         - Delimiting Date Issues | 38 U.S.C. ch. 30
         - Delimiting Date Issues | 38 U.S.C. ch. 35
@@ -1254,7 +1252,7 @@ components:
         - Other
         # for benefit type:  loan_guaranty
         - Basic Eligibility - Certificate of Eligibility (COE) was denied for use of benefit
-        - Validity of Debt - Existing debt indicated from loan termination is incorrect as stated
+        - Existence and amount - Existing debt indicated from loan termination is incorrect as stated
         - Waiver of Indebtedness - Existing debt should be waived to allow issuance of COE
         - Restoration of Entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE
         - Other
@@ -1296,8 +1294,8 @@ components:
         - Beneficiary Travel | Special Mode
         - Caregiver
         - Eligibility for Fee Basis Care
-        - Indebtedness | Validity of Debt
-        - Indebtedness | Waiver
+        - Debt | Existence and amount
+        - Debt | Waiver
         - Level of Priority for Treatment
         - Clothing Allowance § 3.810(b) Certification
         - Prosthetics Services
