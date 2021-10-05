@@ -8,7 +8,7 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :target_appeal, class_name: "Appeal"
 
   # TODO: figure out a way to implement same_appeal_substitution_allowed? without storing these traits on AppellantSubstitution
-  attr_accessor :is_cob_admin, :date_of_death_present
+  attr_accessor :date_of_death_present
 
   scope :updated_since_for_appeals, lambda { |since|
     select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
@@ -39,7 +39,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def same_appeal_substitution_allowed?
-    is_cob_admin || date_of_death_present
+    ClerkOfTheBoard.singleton.user_is_admin?(created_by) || date_of_death_present
   end
 
   private

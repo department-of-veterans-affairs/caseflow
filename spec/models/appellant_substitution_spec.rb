@@ -5,13 +5,20 @@ require "helpers/sanitized_json_importer.rb"
 
 describe AppellantSubstitution do
   describe ".same_appeal_substitution_allowed?" do
+    let(:created_by) { create(:user) }
+    let(:created_by_id) { created_by.id }
+    before do
+      ClerkOfTheBoard.singleton.add_user(created_by)
+    end
     subject do
-      AppellantSubstitution.new(is_cob_admin: is_cob_admin,
+      AppellantSubstitution.new(created_by_id: created_by_id,
                                 date_of_death_present: date_of_death_present).same_appeal_substitution_allowed?
     end
 
-    context "when is_cob_admin is true" do
-      let(:is_cob_admin) { true }
+    context "when created_by is an admin cob user" do
+      before do
+        OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
+      end
       context "when date_of_death_present is false" do
         let(:date_of_death_present) { false }
         it "returns true" do
@@ -26,8 +33,7 @@ describe AppellantSubstitution do
       end
     end
 
-    context "when is_cob_admin is false" do
-      let(:is_cob_admin) { false }
+    context "when created_by is a nonadmin" do
       context "when date_of_death_present is false" do
         let(:date_of_death_present) { false }
         it "returns false" do
@@ -73,7 +79,6 @@ describe AppellantSubstitution do
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
           task_params: task_params,
-          is_cob_admin: false,
           date_of_death_present: false
         }
       end
@@ -431,7 +436,6 @@ describe AppellantSubstitution do
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
           task_params: task_params,
-          is_cob_admin: true,
           date_of_death_present: false
         }
       end
