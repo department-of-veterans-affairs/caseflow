@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Fakes::VADotGovService < ExternalApi::VADotGovService
+  # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **_args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
       facilities = query[:ids].split(",").map do |id|
@@ -27,7 +28,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.fake_address_data
     {
       "address": {
@@ -165,30 +165,30 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
 
   def self.fake_facilities_ids_data
     {
-      "data": [
-        "vba_301", "vba_304", "vba_304a", "vba_304h", "vba_304j",
-        "vba_304k", "vba_306", "vba_306a", "vba_306b", "vba_306d",
-        "vba_306f", "vba_306g", "vba_306h", "vba_306i", "vba_306j",
-        "vba_307", "vba_307a", "vba_307b", "vba_307c", "vba_307d",
-        "vba_307e", "vba_307f", "vba_308", "vba_308b", "vba_308d",
-        "vba_309", "vba_310", "vba_310a", "vba_310c", "vba_310d",
-        "vba_310e", "vba_310g", "vba_311", "vc_3121OS", "vc_3122OS",
-        "vba_313", "vba_313a", "vba_313b", "vba_313c", "vba_313d",
-        "vba_313e", "vba_313f", "vba_314", "vba_314aa", "vba_314ab",
-        "vba_314b", "vba_314c", "vba_314e", "vba_314g", "vba_314h",
-        "vba_314i", "vba_314j", "vba_314k", "vba_314l", "vba_314m",
-        "vba_314n", "vba_314o", "vba_314q", "vba_314v", "vba_315",
-        "vba_315d", "vba_315e", "vba_315f", "vba_316", "vba_316a",
-        "vba_316b", "vba_316c", "vba_316d", "vba_316e", "vba_316f",
-        "vba_316g", "vba_316h", "vba_316i", "vba_316j", "vba_316k",
-        "vba_316n", "vba_317", "vba_317a", "vba_317b", "vba_317c",
-        "vba_317d", "vba_317e", "vba_317f", "vba_317g", "vba_317h",
-        "vba_317i", "vba_317j", "vba_317k", "vba_317m", "vba_317o",
-        "vba_317p", "vba_317q", "vba_317r", "vba_317s", "vba_317t",
-        "vba_317u", "vba_318", "vba_318a", "vba_318c", "vba_318d",
-        "vba_318e", "vba_318f", "vba_318h", "vba_318l", "vba_318m",
-        "vba_319", "vba_319a", "vba_319b", "vba_319c", "vba_319d",
-        "vba_319e", "vba_319f", "vba_319g", "vba_319h", "vba_320",
+      "data": %w[
+        vba_301 vba_304 vba_304a vba_304h vba_304j
+        vba_304k vba_306 vba_306a vba_306b vba_306d
+        vba_306f vba_306g vba_306h vba_306i vba_306j
+        vba_307 vba_307a vba_307b vba_307c vba_307d
+        vba_307e vba_307f vba_308 vba_308b vba_308d
+        vba_309 vba_310 vba_310a vba_310c vba_310d
+        vba_310e vba_310g vba_311 vc_3121OS vc_3122OS
+        vba_313 vba_313a vba_313b vba_313c vba_313d
+        vba_313e vba_313f vba_314 vba_314aa vba_314ab
+        vba_314b vba_314c vba_314e vba_314g vba_314h
+        vba_314i vba_314j vba_314k vba_314l vba_314m
+        vba_314n vba_314o vba_314q vba_314v vba_315
+        vba_315d vba_315e vba_315f vba_316 vba_316a
+        vba_316b vba_316c vba_316d vba_316e vba_316f
+        vba_316g vba_316h vba_316i vba_316j vba_316k
+        vba_316n vba_317 vba_317a vba_317b vba_317c
+        vba_317d vba_317e vba_317f vba_317g vba_317h
+        vba_317i vba_317j vba_317k vba_317m vba_317o
+        vba_317p vba_317q vba_317r vba_317s vba_317t
+        vba_317u vba_318 vba_318a vba_318c vba_318d
+        vba_318e vba_318f vba_318h vba_318l vba_318m
+        vba_319 vba_319a vba_319b vba_319c vba_319d
+        vba_319e vba_319f vba_319g vba_319h vba_320
       ]
     }
   end
