@@ -74,4 +74,58 @@ describe Distribution, :all_dbs do
       end
     end
   end
+
+  context "priority push distributions" do
+    # This seems like the simpler case
+    # We can start modeling this off of what's in ACD#priority_push_distribution
+    # We do need to handle limits, though.
+
+    let(:priority_push) { true }
+
+    context "when there is no limit" do
+      it "distributed priority appeals on the legacy and hearing dockets" do
+        #
+      end
+    end
+
+    context "when there is a limit set" do
+      let(:limit) { 10 }
+
+      let(:stubbed_appeals) do
+        {
+          legacy: 5,
+          direct_review: 4,
+          evidence_submission: 3,
+          hearing: 2
+        }
+      end
+
+      it "distributes only up to the limit" do
+        expect(new_distribution).to receive(:num_oldest_priority_appeals_by_docket)
+                                      .with(limit)
+                                      .and_return stubbed_appeals
+
+        # Wait, where _is_ this limit enforced?
+
+        expect(new_distribution).to receive(:distribute_appeals).with(:legacy, 5, priority: true, style: "push")
+        expect(new_distribution).to receive(:distribute_appeals).with(:direct_review, 4, priority: true, style: "push")
+        expect(new_distribution).to receive(:distribute_appeals).with(:evidence_submission, 3, priority: true, style: "push")
+        expect(new_distribution).to receive(:distribute_appeals).with(:hearing, 2, priority: true, style: "push")
+
+        new_distribution.distribute!(limit)
+
+        # What have I done? This doesn't test what it says it tests.
+      end
+
+      it "distributes priority cases from all dockets" do
+        #
+      end
+    end
+  end
+
+  context "requested distributions" do
+    # This looks more involved
+    # See ACD#requested_distribution
+    # PLus there's the priority_acd feature flag
+  end
 end
