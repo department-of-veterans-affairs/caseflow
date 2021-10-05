@@ -1,10 +1,6 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../../../app/queue/reducers';
-import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
+
 import CCBadge from './CCBadge';
-import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
 export default {
   title: 'Commons/Components/Badges/CC Badge',
@@ -14,23 +10,12 @@ export default {
   },
   args: {
     appeal: {
-      overtime: true
-    },
-    canViewOvertimeStatus: true,
-    featureToggles: {
-      overtime_revamp: true
+      contested_claim: true
     },
   }
 };
 
-const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
-const store = getStore();
-store.dispatch(setCanViewOvertimeStatus(true));
 
-const Template = (args) => (
-  <Provider store={store}>
-    <CCBadge {...args} />
-  </Provider>
-);
+const Template = (args) => <CCBadge {...args} />;
 
 export const OTBadge = Template.bind({});
