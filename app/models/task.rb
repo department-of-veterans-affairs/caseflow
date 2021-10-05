@@ -683,6 +683,16 @@ class Task < CaseflowRecord
     end
   end
 
+  def version_summary
+    versions.map do |v|
+      {
+        who: [User.find_by_id(v.whodunnit)].compact.map { |u| "#{u.css_id} (#{u.id}, #{u.full_name})" }.first,
+        when: v.created_at,
+        changeset: v.changeset
+      }
+    end
+  end
+
   def timeline_title
     "#{type} completed"
   end

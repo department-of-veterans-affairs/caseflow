@@ -131,6 +131,16 @@ RSpec.feature "Explain JSON" do
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
+    before do
+      real_appeal.root_task.tap do |task|
+        task.append_instruction "Adding instruction on RootTask"
+        task.append_instruction "Adding instruction to show task versions"
+      end
+      real_appeal.tasks.sample.tap do |task|
+        task.append_instruction "Adding instruction"
+        task.append_instruction "Adding instruction to show task versions"
+      end
+    end
     context "given a dispatched appeal" do
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
@@ -143,6 +153,10 @@ RSpec.feature "Explain JSON" do
         expect(page).to have_content("Hearing (no PII)")
         expect(page).to have_content("Appeal Narrative (showing PII)")
         expect(page).to have_content("Timeline visualization")
+
+        expect(page).to have_content("task.version_summary")
+        find(id: "#{real_appeal.root_task.id}_versions").click
+        expect(page).to have_content("Adding instruction to show task versions")
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")

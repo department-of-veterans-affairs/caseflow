@@ -38,7 +38,7 @@ class ExplainController < ApplicationController
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
-                :task_tree_as_text, :intake_as_text, :hearing_as_text,
+                :tasks_versions, :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
                 :timeline_data,
                 :network_graph_data,
@@ -62,6 +62,16 @@ class ExplainController < ApplicationController
 
   def available_fields
     (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
+  end
+
+  def tasks_versions
+    appeal.tasks.order(:id).select { |task| task.versions.any? }.map do |task|
+      {
+        task_id: task.id,
+        task_type: task.type,
+        summary: JSON.pretty_generate(task.version_summary)
+      }
+    end
   end
 
   def task_tree_as_text
