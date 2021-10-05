@@ -163,7 +163,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
     }
   end
 
-
   def self.fake_facilities_ids_data
     {
       "data": [
