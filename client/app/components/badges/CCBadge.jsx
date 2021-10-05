@@ -11,9 +11,9 @@ import { COLORS } from 'app/constants/AppConstants';
 const CCBadge = (props) => {
   const { appeal } = props;
 
-  // if () {
-  //   return null;
-  // }
+  if (appeal.contested_claim) {
+    return null;
+  }
 
   const tooltipText = <div>
     This is a Contested Claim and needs to be processed by the Specialty Case team.
@@ -24,7 +24,7 @@ const CCBadge = (props) => {
 };
 
 CCBadge.propTypes = {
-
+  appeal: PropTypes.object
 };
 
 export default CCBadge;
