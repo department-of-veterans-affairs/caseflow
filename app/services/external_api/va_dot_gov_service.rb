@@ -134,7 +134,7 @@ class ExternalApi::VADotGovService
     #     helper methods to check for missing IDs
     def check_facility_ids(ids: [])
       response = send_facilities_ids_request
-      
+
       ExternalApi::VADotGovService::FacilitiesIdsResponse.new(response, ids)
     end
 
@@ -320,7 +320,7 @@ class ExternalApi::VADotGovService
     #   An aggregated API response that contains all the queried facilities (see #send_facilities_request)
     def send_facilities_ids_request
       cache_key = "send_facilities_ids_request"
-      response = Rails.cache.fetch(cache_key, expires_in: 2.hours) do
+      Rails.cache.fetch(cache_key, expires_in: 2.hours) do
         send_va_dot_gov_request(
           endpoint: FACILITY_IDS_ENDPOINT
         )

@@ -162,7 +162,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       }
     }
   end
-  # rubocop:enable Metrics/MethodLength
+
 
   def self.fake_facilities_ids_data
     {
@@ -193,4 +193,5 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       ]
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end
