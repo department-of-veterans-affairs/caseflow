@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../../constants';
+import { VIRTUAL_HEARING_LABEL } from '../../constants';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
 /**
@@ -9,38 +9,20 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
  */
 const HearingTypeDropdown = ({
   convertHearing,
-  enableFullPageConversion,
-  openModal,
   readOnly,
-  originalRequestType,
+  hearingTypeOptions,
   styling,
   update,
-  virtualHearing,
+  currentOption
 }) => {
-  const hearingTypeOptions = [
-    {
-      value: false,
-      label: originalRequestType
-    },
-    {
-      value: true,
-      label: VIRTUAL_HEARING_LABEL
-    }
-  ];
 
-  const currentOption = (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') ?
-    hearingTypeOptions[0] :
-    hearingTypeOptions[1];
   const { label: currentLabel } = currentOption;
 
-  const onChange = ({ label }) => {
+  const onChange = () => {
     // Change from virtual if the current label is virtual
     const type = currentLabel === VIRTUAL_HEARING_LABEL ? 'change_from_virtual' : 'change_to_virtual';
 
-    // Use the modal if the label is video
-    if ((label === VIDEO_HEARING_LABEL || currentLabel === VIDEO_HEARING_LABEL) && !enableFullPageConversion) {
-      openModal({ type });
-    } else if (convertHearing) {
+    if (convertHearing) {
       convertHearing(type);
     }
 
@@ -66,17 +48,12 @@ HearingTypeDropdown.propTypes = {
   convertHearing: PropTypes.func,
   enableFullPageConversion: PropTypes.bool,
   openModal: PropTypes.func,
-
-  // The original hearing request type.
-  //
-  // This component is used to convert a hearing to virtual from the hearing's
-  // original request type (or vice versa).
-  originalRequestType: PropTypes.string,
-
+  hearingTypeOptions: PropTypes.string,
   readOnly: PropTypes.bool,
   styling: PropTypes.object,
   update: PropTypes.func,
   virtualHearing: PropTypes.object,
+  currentOption: PropTypes.object
 };
 
 export default HearingTypeDropdown;

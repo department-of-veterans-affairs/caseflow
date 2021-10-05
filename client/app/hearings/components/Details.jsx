@@ -20,7 +20,8 @@ import {
   getAppellantTitle,
   processAlerts,
   startPolling,
-  parseVirtualHearingErrors
+  parseVirtualHearingErrors,
+  getCurrenHearingtOption
 } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -35,7 +36,7 @@ import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-
+import { VIRTUAL_HEARING_LABEL } from '../constants';
 import COPY from '../../../COPY';
 
 /**
@@ -46,6 +47,18 @@ import COPY from '../../../COPY';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+
+  const hearingTypeOptions = [
+    {
+      value: false,
+      label: hearing?.readableRequestType
+    },
+    {
+      value: true,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+  const currentOption = getCurrenHearingtOption(hearing, hearingTypeOptions);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -263,7 +276,9 @@ const HearingDetails = (props) => {
               isLegacy={isLegacy}
               openVirtualHearingModal={openVirtualHearingModal}
               readOnly={disabled}
-              requestType={hearing?.readableRequestType}
+              hearingTypeOptions={hearingTypeOptions}
+              virtualHearing={hearing?.virtualHearing}
+              currentOption={currentOption}
             />
             {shouldStartPolling && poll()}
           </div>

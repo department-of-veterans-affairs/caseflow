@@ -945,4 +945,14 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
     'Caseflow won’t send notifications immediately after scheduling.';
 };
 
+export const getCurrenHearingtOption = (hearing, options) => {
+  let virtualHearing = hearing?.virtualHearing;
+
+  if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
+    return options[0];
+  }
+
+  return options[1];
+};
+
 /* eslint-enable camelcase */

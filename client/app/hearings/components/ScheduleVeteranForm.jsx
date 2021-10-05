@@ -5,6 +5,7 @@ import {
   TRAVEL_BOARD_HEARING_LABEL,
   VIDEO_HEARING_LABEL,
   HEARING_CONVERSION_TYPES,
+  VIRTUAL_HEARING_LABEL
 } from '../constants';
 import {
   RegionalOfficeDropdown,
@@ -24,7 +25,7 @@ import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
 import { UnscheduledNotes } from './UnscheduledNotes';
-import { formatNotificationLabel } from '../utils';
+import { formatNotificationLabel, getCurrenHearingtOption } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -69,7 +70,17 @@ export const ScheduleVeteranForm = ({
     // The default is video hearing if the appeal isn't associated with an RO.
     return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
-
+  const hearingTypeOptions = [
+    {
+      value: false,
+      label: getHearingRequestType()
+    },
+    {
+      value: true,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+  const currentOption = getCurrenHearingtOption(hearing, hearingTypeOptions);
   // Set the section props
   const sectionProps = {
     errors,
@@ -133,9 +144,9 @@ export const ScheduleVeteranForm = ({
         <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
-            enableFullPageConversion
+            hearingTypeOptions={hearingTypeOptions}
+            currentOption={currentOption}
             update={convertToVirtual}
-            originalRequestType={getHearingRequestType()}
             virtualHearing={virtual ? { status: 'pending' } : null}
           />
         </div>

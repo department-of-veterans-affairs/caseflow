@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { EmailNotificationHistory } from './EmailNotificationHistory';
-import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
@@ -27,11 +26,10 @@ const DetailsForm = (props) => {
     requestType,
     errors,
     convertHearing,
+    hearingTypeOptions,
+    currentOption
   } = props;
 
-  // Set whether to enable virtual hearings
-  const enableVirtualHearings = requestType === 'Central'
-  
   return (
     <React.Fragment>
       <ContentSection header="Hearing Details">
@@ -56,21 +54,20 @@ const DetailsForm = (props) => {
           />
         </div>
         <div {...rowThirds}>
-          {enableVirtualHearings && (
-            <HearingTypeDropdown
-              convertHearing={convertHearing}
-              virtualHearing={hearing?.virtualHearing}
-              originalRequestType={requestType}
-              update={update}
-              openModal={openVirtualHearingModal}
-              readOnly={
+          <HearingTypeDropdown
+            hearingTypeOptions={hearingTypeOptions}
+            currentOption={currentOption}
+            convertHearing={convertHearing}
+            originalRequestType={requestType}
+            update={update}
+            openModal={openVirtualHearingModal}
+            readOnly={
                 hearing?.scheduledForIsPast ||
                 ((hearing?.isVirtual || hearing?.wasVirtual) &&
                   !hearing?.virtualHearing?.jobCompleted)
-              }
-              styling={columnThird}
-            />
-          )}
+            }
+            styling={columnThird}
+          />
           <div>
             {!isLegacy && (
               <React.Fragment>
@@ -147,6 +144,8 @@ DetailsForm.propTypes = {
   requestType: PropTypes.string,
   update: PropTypes.func,
   convertHearing: PropTypes.func,
+  hearingTypeOptions: PropTypes.string,
+  currentOption: PropTypes.string
 };
 
 export default DetailsForm;
