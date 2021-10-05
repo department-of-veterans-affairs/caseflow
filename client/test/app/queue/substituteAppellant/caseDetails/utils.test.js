@@ -9,7 +9,6 @@ describe('shouldSupportSubstituteAppellant', () => {
     isLegacyAppeal: false,
   };
   const featureToggles = {
-    recognized_granted_substitution_after_dd: true,
     hearings_substitution_death_dismissal: true,
   };
   const defaults = {
@@ -52,20 +51,6 @@ describe('shouldSupportSubstituteAppellant', () => {
   describe('when not AMA appeal', () => {
     it('returns false', () => {
       const args = { ...defaults, appeal: { ...appeal, isLegacyAppeal: true } };
-
-      expect(shouldSupportSubstituteAppellant(args)).toBe(false);
-    });
-  });
-
-  describe('without recognized_granted_substitution_after_dd feature toggle', () => {
-    it('returns false', () => {
-      const args = {
-        ...defaults,
-        featureToggles: {
-          ...featureToggles,
-          recognized_granted_substitution_after_dd: false,
-        },
-      };
 
       expect(shouldSupportSubstituteAppellant(args)).toBe(false);
     });

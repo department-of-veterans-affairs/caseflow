@@ -16,6 +16,9 @@ describe JudgeTask, :all_dbs do
     let!(:first_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
+    let!(:first_review_task) do
+      create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal)
+    end
 
     context "when one judge assign task is open for an appeal" do
       it "throws an error when a second task is created" do
@@ -24,11 +27,18 @@ describe JudgeTask, :all_dbs do
         end
       end
     end
+
+    context "when one judge decision review task is open for an appeal" do
+      it "throws an error when a second task is created" do
+        expect { create(:ama_judge_decision_review_task, assigned_to: judge2, appeal: appeal) }.to raise_error do |err|
+          expect(err).to be_a(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+        end
+      end
+    end
   end
 
   describe "reassign" do
     let(:root_task) { create(:root_task) }
-    let(:task) { create(:ama_judge_assign_task, parent: root_task) }
     let(:old_assignee) { task.assigned_to }
     let(:new_assignee) { create(:user) }
     let(:params) do
@@ -40,25 +50,21 @@ describe JudgeTask, :all_dbs do
     end
     subject { task.reassign(params, old_assignee) }
 
-    context "when a judge task is reassigned successfully" do
-      it "should not violate the only_open_task_of_type validation" do
-        expect { subject }.to_not raise_error
-        expect(Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)).to be_nil
+    context "when the task is a judge decision review task" do
+      let(:task) { create(:ama_judge_decision_review_task, parent: root_task) }
+      context "when the judge decision review task is reassigned successfully" do
+        it "does not violate the only_open_task_of_type validation" do
+          expect { subject }.to_not raise_error
+        end
       end
     end
 
-    context "when a judge task throws an error during attempted reassignment" do
-      let(:params) do
-        {
-          assigned_to_id: nil,
-          assigned_to_type: new_assignee.class.name,
-          instructions: "instructions"
-        }
-      end
-
-      it "sets the thread local variable of skip_only_open_task_of_type to nil" do
-        expect { subject }.to raise_error ActiveRecord::RecordNotFound
-        expect(Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)).to be_nil
+    context "when the task is a judge assign task" do
+      let(:task) { create(:ama_judge_assign_task, parent: root_task) }
+      context "when the judge assign task is reassigned successfully" do
+        it "should not violate the only_open_task_of_type validation" do
+          expect { subject }.to_not raise_error
+        end
       end
     end
   end
@@ -151,13 +157,13 @@ describe JudgeTask, :all_dbs do
           create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
         end
 
-        it "returns the dispatch action" do
+        it "returns the dispatch action along with special issues" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
               Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
@@ -197,10 +203,10 @@ describe JudgeTask, :all_dbs do
                assigned_to: judge3)
       end
 
-      it "should show pulac cerullo task action" do
+      it "should show pulac cerullo task action along with special actions" do
         expect(task.additional_available_actions(user)).to eq(
           [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
-           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
            Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
         )
       end
@@ -246,7 +252,7 @@ describe JudgeTask, :all_dbs do
           it "should fail creation of second JudgeDecisionReviewTask" do
             expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
             jdrt.update(status: o_status)
-            expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
+            expect { subject }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
             expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
           end
         end

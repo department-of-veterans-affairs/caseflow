@@ -9,6 +9,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:oakland_ro_pacific) { "RO43" }
   let(:baltimore_ro_eastern) { "RO13" }
   let(:timezone) { "America/New_York" }
+  let(:disposition) { nil }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -58,6 +59,45 @@ RSpec.describe HearingsController, type: :controller do
         expect(response_body["prepped"]).to eq true
         expect(response_body["location"]["facility_id"]).to eq "vba_301"
         expect(response_body["evidence_window_waived"]).to eq true
+      end
+    end
+
+    shared_context "based on hearing disposition" do
+      before do
+        # Stub out the job starting, so we can check to make sure the email
+        # sent flags are set properly.
+        allow(VirtualHearings::CreateConferenceJob).to receive(:perform_now)
+        allow(VirtualHearings::DeleteConferencesJob).to receive(:perform_now)
+        hearing.update!(disposition: disposition)
+      end
+
+      shared_examples "does not set email flags" do
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+
+          virtual_hearing.reload
+          expect(virtual_hearing.appellant_email_sent).to eq(true)
+          expect(virtual_hearing.representative_email_sent).to eq(true)
+          expect(virtual_hearing.judge_email_sent).to eq(true)
+        end
+      end
+
+      context "when hearing disposition is postponed" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.to_h[:postponed] }
+
+        include_examples "does not set email flags"
+      end
+
+      context "when hearing disposition is cancelled" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.to_h[:cancelled] }
+
+        include_examples "does not set email flags"
+      end
+
+      context "when hearing disposition is scheduled_in_error" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.to_h[:scheduled_in_error] }
+
+        include_examples "does not set email flags"
       end
     end
 
@@ -125,6 +165,8 @@ RSpec.describe HearingsController, type: :controller do
             expect(virtual_hearing.judge_email_sent).to eq(true)
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
           end
+
+          include_context "based on hearing disposition"
         end
       end
 
@@ -196,7 +238,8 @@ RSpec.describe HearingsController, type: :controller do
               hearing: hearing,
               appellant_email: "existing_veteran_email@caseflow.gov",
               appellant_email_sent: true,
-              judge_email: nil,
+              judge_email: "judge@email.com",
+              judge_email_sent: true,
               representative_email: "existing_rep_email@casfelow.gov",
               representative_email_sent: true
             )
@@ -208,6 +251,8 @@ RSpec.describe HearingsController, type: :controller do
             expect(virtual_hearing.appellant_email).to eq("new_veteran_email@caseflow.gov")
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
           end
+
+          include_context "based on hearing disposition"
         end
       end
 
@@ -229,11 +274,23 @@ RSpec.describe HearingsController, type: :controller do
           }
         end
 
+        before do
+          # Stub out the job starting, so we can check to make sure the email
+          # sent flags are set properly.
+          allow(VirtualHearings::DeleteConferencesJob).to receive(:perform_now)
+        end
+
         it "returns the expected status and updates the virtual hearing", :aggregate_failures do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
+          # Ensure email_sent flags are not set for judge recipient
+          expect(virtual_hearing.appellant_email_sent).to eq(false)
+          expect(virtual_hearing.representative_email_sent).to eq(false)
+          expect(virtual_hearing.judge_email_sent).to eq(true)
         end
+
+        include_context "based on hearing disposition"
       end
 
       context "with valid appellant_tz" do
@@ -314,6 +371,8 @@ RSpec.describe HearingsController, type: :controller do
         expect(virtual_hearing.appellant_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
       end
+
+      include_context "based on hearing disposition"
     end
 
     context "when updating the AOD" do

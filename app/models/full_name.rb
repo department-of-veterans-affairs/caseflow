@@ -25,6 +25,8 @@ class FullName
     case format
     when :readable_full
       [first_name, middle_initial, last_name].select(&:present?).join(" ").titleize
+    when :readable_full_nonformatted
+      [first_name, middle_initial, last_name].select(&:present?).join(" ")
     when :readable_mi_formatted
       [first_name, middle_initial + ".", last_name].select(&:present?).join(" ").titleize
     when :readable_fi_last_formatted

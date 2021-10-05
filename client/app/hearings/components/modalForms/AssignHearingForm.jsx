@@ -79,7 +79,7 @@ class AssignHearingForm extends React.Component {
   }
 
   render() {
-    const { appeal, values, initialRegionalOffice, initialHearingDate } = this.props;
+    const { appeal, values, initialRegionalOffice, initialHearingDay } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = values;
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
     const dynamic = regionalOffice !== appeal.closestRegionalOffice || _.isEmpty(appeal.availableHearingLocations);
@@ -106,7 +106,7 @@ class AssignHearingForm extends React.Component {
             errorMessage={this.getErrorMessage('hearingDay')}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
-            value={hearingDay || initialHearingDate}
+            value={hearingDay || initialHearingDay}
             onChange={(value) => this.onChange({ hearingDay: value })}
           />
           <HearingTime
@@ -128,7 +128,7 @@ AssignHearingForm.propTypes = {
     closestRegionalOffice: PropTypes.string,
     externalId: PropTypes.string
   }),
-  initialHearingDate: PropTypes.string,
+  initialHearingDay: PropTypes.object,
 
   // Initial Regional Office Key
   initialRegionalOffice: PropTypes.string,

@@ -5,6 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 import { sprintf } from 'sprintf-js';
+import { isEmpty } from 'lodash';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
@@ -35,7 +36,7 @@ const EditAppellantInformation = ({ appealId }) => {
   const [editFailure, setEditFailure] = useState(false);
 
   const {
-    formState: { isValid },
+    formState: { isValid, errors },
     handleSubmit,
   } = methods;
 
@@ -96,7 +97,7 @@ const EditAppellantInformation = ({ appealId }) => {
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
-        disabled={!isValid}
+        disabled={!isValid && !isEmpty(errors)}
         name="Save"
       >
         Save

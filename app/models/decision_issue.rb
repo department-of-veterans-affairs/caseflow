@@ -17,7 +17,13 @@ class DecisionIssue < CaseflowRecord
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
-  belongs_to :decision_review, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  # Sets up belongs_to association with :decision_review and provides `ama_appeal` used by `has_many` call
+  belongs_to_polymorphic_appeal :decision_review
+  has_many :ama_decision_documents, -> { includes(:ama_decision_issues).references(:decision_issues) },
+           through: :ama_appeal, source: :decision_documents
+
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 

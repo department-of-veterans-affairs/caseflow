@@ -11,7 +11,9 @@ class SanitizedJsonConfiguration
     clazz.columns.select { |column| column.comment&.starts_with?("PII") }.map(&:name)
   end
 
-  # For exporting, the :retrieval lambda is run according to the ordering in this hash.
+  # During exporting, the :retrieval lambda is run according to the ordering in the configuration hash.
+  # The exported JSON file will have the records in the exported order.
+  # The SanitizedJsonImporter will import in the order within the JSON file, except for `first_types_to_import`.
   # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def configuration
@@ -28,6 +30,7 @@ class SanitizedJsonConfiguration
         end
       },
       Veteran => {
+        # track_imported_ids = true so that an existing (previously imported) Veteran can be reused
         track_imported_ids: true,
         retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
@@ -103,6 +106,7 @@ class SanitizedJsonConfiguration
       },
 
       User => {
+        # track_imported_ids = true so that an existing (previously imported) User can be reused
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
@@ -129,14 +133,33 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
       Organization => {
+        # track_imported_ids = true so that an existing Organization in our dev environment can be reused
+        # instead of importing/creating a new equivalent Organization. See comments for the SanitizedJsonImporter.
         track_imported_ids: true,
         retrieval: lambda do |records|
           organizations_for(records[Task], records[User])
         end
       },
       Person => {
+        # track_imported_ids = true so that an existing (previously imported) Person can be reused
         track_imported_ids: true,
-        retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
+        retrieval: lambda do |records|
+          # For unrecognized appellants, `claimant.person` returns a non-nil object with nil id
+          # If PR #16768 is merged, then the `reject` call can be remove.
+          (records[Veteran] + records[Claimant]).map(&:person).uniq.compact.sort_by(&:id)
+        end
+      },
+      # Put UnrecognizedPartyDetail before UnrecognizedAppellant so that it is imported in that order
+      UnrecognizedPartyDetail => {
+        retrieval: lambda { |records|
+          party_detail_ids = records[Claimant].map(&:unrecognized_appellant).compact
+            .pluck(:unrecognized_party_detail_id, :unrecognized_power_of_attorney_id)
+            .flatten.uniq.compact
+          UnrecognizedPartyDetail.where(id: party_detail_ids).order(:id)
+        }
+      },
+      UnrecognizedAppellant => {
+        retrieval: ->(records) { records[Claimant].map(&:unrecognized_appellant).uniq.compact }
       }
     }.each do |clazz, class_configuration|
       class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
@@ -215,6 +238,8 @@ class SanitizedJsonConfiguration
 
         # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
+
+        class_to_fieldnames_hash.transform_values!(&:uniq)
       end.compact
     end
   end
@@ -315,6 +340,9 @@ class SanitizedJsonConfiguration
     if klass == User
       # The index for css_id has an odd column name plus find_by_css_id is faster.
       User.find_by_css_id(obj_hash["css_id"])
+    elsif klass == Organization
+      # The url may need to be converted into a clean url
+      Organization.find_by_url(obj_hash["url"])
     elsif klass == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])

@@ -140,7 +140,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isRating: !issue.category,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
-      ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
+      ratingIssueProfileDate: issue.rating_issue_profile_date && new Date(issue.rating_issue_profile_date).toISOString(),
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,

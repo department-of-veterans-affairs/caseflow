@@ -59,6 +59,22 @@ describe Hearings::SendEmail do
       allow(send_email_job).to receive(:representative_recipient_info).and_return(representative_recipient_info)
     end
 
+    context "there is no representative recipient" do
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          hearing: hearing,
+          representative_email: nil,
+          judge_email_sent: judge_email_sent,
+          appellant_email_sent: appellant_email_sent
+        )
+      end
+
+      it "does not error" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
     context "appellant_recipient name is populated correctly" do
       context "veteran is appellant" do
         it "uses the full name of the veteran" do
@@ -99,17 +115,17 @@ describe Hearings::SendEmail do
           expect(HearingMailer)
             .to receive(:cancellation)
             .once
-            .with(email_recipient: appellant_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: appellant_recipient_info, virtual_hearing: virtual_hearing)
 
           expect(HearingMailer)
             .to receive(:cancellation)
             .once
-            .with(email_recipient: representative_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: representative_recipient_info, virtual_hearing: virtual_hearing)
 
           # NO for judge
           expect(HearingMailer)
             .to_not receive(:cancellation)
-            .with(email_recipient: judge_recipient_info, virtual_hearing: virtual_hearing)
+            .with(email_recipient_info: judge_recipient_info, virtual_hearing: virtual_hearing)
 
           subject
         end

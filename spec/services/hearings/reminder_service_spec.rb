@@ -1,27 +1,26 @@
 # frozen_string_literal: true
 
 describe Hearings::ReminderService do
-  let(:hearing_day) { build(:hearing_day, scheduled_for: hearing_date) }
-  let(:hearing) { build(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
-  let(:virtual_hearing) do
-    build(
-      :virtual_hearing,
-      :initialized,
-      status: :active,
-      hearing: hearing,
-      created_at: created_at
-    )
-  end
+  shared_examples "determines which reminders should send" do
+    context "hearing is 60 days out" do
+      let(:hearing_date) { Time.zone.now + 59.days } # Nov 5, 2020 12:00 UTC + 59.days => 60 days or less
+      let(:created_at) { hearing_date - 61.days }
 
-  before do
-    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
-  end
+      context "last_sent_reminder is nil" do
+        let(:last_sent_reminder) { nil }
 
-  after { Timecop.return }
+        it "returns #{Hearings::ReminderService::SIXTY_DAY_REMINDER}" do
+          expect(subject).to eq(Hearings::ReminderService::SIXTY_DAY_REMINDER)
+        end
+      end
 
-  context ".should_send_reminder_email?" do
-    subject do
-      described_class.new(virtual_hearing, last_sent_reminder).should_send_reminder_email?
+      context "last_sent_reminder is 40 days out" do
+        let(:last_sent_reminder) { hearing_date - 40.days }
+
+        it "returns nil" do
+          expect(subject).to eq(nil)
+        end
+      end
     end
 
     context "hearing date is 7 days out" do
@@ -31,16 +30,16 @@ describe Hearings::ReminderService do
       context "last_sent_reminder is nil" do
         let(:last_sent_reminder) { nil }
 
-        it "returns true" do
-          expect(subject).to eq(true)
+        it "returns #{Hearings::ReminderService::SEVEN_DAY_REMINDER}" do
+          expect(subject).to eq(Hearings::ReminderService::SEVEN_DAY_REMINDER)
         end
       end
 
       context "last_sent_reminder is 5 days out" do
         let(:last_sent_reminder) { hearing_date - 5.days }
 
-        it "returns false" do
-          expect(subject).to eq(false)
+        it "returns nil" do
+          expect(subject).to eq(nil)
         end
       end
     end
@@ -54,8 +53,8 @@ describe Hearings::ReminderService do
         context "last_sent_reminder is nil" do
           let(:last_sent_reminder) { nil }
 
-          it "returns false" do
-            expect(subject).to eq(false)
+          it "returns nil" do
+            expect(subject).to eq(nil)
           end
         end
       end
@@ -68,8 +67,8 @@ describe Hearings::ReminderService do
       context "last_sent_reminder is nil" do
         let(:last_sent_reminder) { nil }
 
-        it "returns true" do
-          expect(subject).to eq(true)
+        it "returns #{Hearings::ReminderService::TWO_DAY_REMINDER}" do
+          expect(subject).to eq(Hearings::ReminderService::TWO_DAY_REMINDER)
         end
       end
 
@@ -77,8 +76,8 @@ describe Hearings::ReminderService do
         let(:last_sent_reminder) { hearing_date - 4.days }
         let(:created_at) { hearing_date - 5.days }
 
-        it "returns true" do
-          expect(subject).to eq(true)
+        it "returns #{Hearings::ReminderService::TWO_DAY_REMINDER}" do
+          expect(subject).to eq(Hearings::ReminderService::TWO_DAY_REMINDER)
         end
       end
 
@@ -86,8 +85,8 @@ describe Hearings::ReminderService do
         let(:last_sent_reminder) { hearing_date - 1.day }
         let(:created_at) { hearing_date - 2.days }
 
-        it "returns false" do
-          expect(subject).to eq(false)
+        it "returns nil" do
+          expect(subject).to eq(nil)
         end
       end
     end
@@ -101,8 +100,8 @@ describe Hearings::ReminderService do
         context "last_sent_reminder is nil" do
           let(:last_sent_reminder) { nil }
 
-          it "returns false" do
-            expect(subject).to eq(false)
+          it "returns nil" do
+            expect(subject).to eq(nil)
           end
         end
       end
@@ -122,14 +121,14 @@ describe Hearings::ReminderService do
               Timecop.freeze(Time.utc(2020, 11, 6, 13, 30, 0)) # Nov 6, 2020 13:30:00 UTC(Friday)
             end
 
-            it "returns true" do
-              expect(subject).to eq(true)
+            it "returns #{Hearings::ReminderService::THREE_DAY_REMINDER}" do
+              expect(subject).to eq(Hearings::ReminderService::THREE_DAY_REMINDER)
             end
           end
 
           context "today is thursday" do
-            it "returns false" do
-              expect(subject).to eq(false)
+            it "returns nil" do
+              expect(subject).to eq(nil)
             end
           end
         end
@@ -146,12 +145,73 @@ describe Hearings::ReminderService do
               Timecop.freeze(Time.utc(2020, 11, 7, 12, 0, 0)) # Nov 7, 2020 (Saturday)
             end
 
-            it "returns false" do
-              expect(subject).to eq(false)
+            it "returns nil" do
+              expect(subject).to eq(nil)
             end
           end
         end
       end
+    end
+  end
+
+  context "with a virtual hearing" do
+    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
+    let(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        status: :active,
+        hearing: hearing,
+        created_at: created_at
+      )
+    end
+
+    before do
+      Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+      hearing
+      virtual_hearing
+      hearing.reload
+    end
+
+    after { Timecop.return }
+
+    context ".reminder_type" do
+      subject do
+        described_class.new(
+          hearing: hearing,
+          last_sent_reminder: last_sent_reminder,
+          hearing_created_at: created_at
+        ).reminder_type
+      end
+      include_examples "determines which reminders should send"
+    end
+  end
+
+  context "with a central hearing" do
+    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+    let(:hearing) do
+      create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
+    end
+
+    before do
+      Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+      hearing
+      hearing.reload
+    end
+
+    after { Timecop.return }
+
+    context ".reminder_type" do
+      subject do
+        described_class.new(
+          hearing: hearing,
+          last_sent_reminder: last_sent_reminder,
+          hearing_created_at: created_at
+        ).reminder_type
+      end
+
+      include_examples "determines which reminders should send"
     end
   end
 end

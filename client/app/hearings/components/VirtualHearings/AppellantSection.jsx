@@ -26,7 +26,9 @@ export const AppellantSection = ({
   showOnlyAppellantName,
   showMissingEmailAlert,
   showTimezoneField,
-  schedulingToVirtual
+  schedulingToVirtual,
+  userCanCollectVideoCentralEmails,
+  formFieldsOnly
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -41,46 +43,51 @@ export const AppellantSection = ({
   const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
 
   return (
-    <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
-      {/*
+    <VirtualHearingSection formFieldsOnly={formFieldsOnly} label={appellantTitle} showDivider={showDivider}>
+      {!formFieldsOnly && (
+        <React.Fragment>
+          {/*
         * Appellant Name and Address
         */}
-      {showOnlyAppellantName ? (
-        <ReadOnly
-          label={`${appellantTitle} Name`}
-          text={appellantName}
-        />
-      ) :
-        (
-          <React.Fragment>
+          {showOnlyAppellantName ? (
             <ReadOnly
               label={`${appellantTitle} Name`}
               text={appellantName}
             />
-            {hearing?.appellantIsNotVeteran && hearing?.appellantRelationship && (
-              <ReadOnly
-                label="Relation to Veteran"
-                text={hearing?.appellantRelationship}
-              />
+          ) :
+            (
+              <React.Fragment>
+                <ReadOnly
+                  label={`${appellantTitle} Name`}
+                  text={appellantName}
+                />
+                {hearing?.appellantIsNotVeteran && hearing?.appellantRelationship && (
+                  <ReadOnly
+                    label="Relation to Veteran"
+                    text={hearing?.appellantRelationship}
+                  />
+                )}
+                <AddressLine
+                  label={`${appellantTitle} Mailing Address`}
+                  name={appellantName}
+                  addressLine1={hearing?.appellantAddressLine1}
+                  addressState={hearing?.appellantState}
+                  addressCity={hearing?.appellantCity}
+                  addressZip={hearing?.appellantZip}
+                />
+              </React.Fragment>
             )}
-            <AddressLine
-              label={`${appellantTitle} Mailing Address`}
-              name={appellantName}
-              addressLine1={hearing?.appellantAddressLine1}
-              addressState={hearing?.appellantState}
-              addressCity={hearing?.appellantCity}
-              addressZip={hearing?.appellantZip}
-            />
-          </React.Fragment>
-        )}
+        </React.Fragment>
+      )}
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && schedulingToVirtual && (
+      {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames(columnWidthClass)} >
             <Timezone
-              required
+              required={schedulingToVirtual}
+              optional={!schedulingToVirtual}
               value={virtualHearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
@@ -99,9 +106,10 @@ export const AppellantSection = ({
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(columnWidthClass)} >
           <VirtualHearingEmail
-            required
+            required={schedulingToVirtual}
+            optional={!schedulingToVirtual}
             readOnly={readOnly}
-            label={`${appellantTitle} Email`}
+            label={`${appellantTitle} Email (for these notifications only)`}
             emailType="appellantEmail"
             email={virtualHearing?.appellantEmail}
             error={errors?.appellantEmail}
@@ -140,5 +148,8 @@ AppellantSection.propTypes = {
   showDivider: PropTypes.bool,
   showMissingEmailAlert: PropTypes.bool,
   showTimezoneField: PropTypes.bool,
-  schedulingToVirtual: PropTypes.bool
+  virtual: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool,
+  formFieldsOnly: PropTypes.bool
 };

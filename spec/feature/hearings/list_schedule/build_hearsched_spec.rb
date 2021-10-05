@@ -54,9 +54,9 @@ RSpec.feature "List Schedule for Build HearSched", :all_dbs do
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       expect(page).to have_content("Hearings Scheduled")
       table_row = page.find("tr", id: "table-row-0")
-      expect(table_row).to have_content("2 of #{hearing_day_one.total_slots}")
+      expect(table_row).to have_content("2")
       table_row = page.find("tr", id: "table-row-1")
-      expect(table_row).to have_content("2 of #{hearing_day_two.total_slots}")
+      expect(table_row).to have_content("2")
     end
   end
 end

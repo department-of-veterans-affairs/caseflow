@@ -21,6 +21,7 @@ import Hearings from './hearings/index';
 import Help from './help/index';
 import Error500 from './errors/Error500';
 import Error404 from './errors/Error404';
+import { Error403 } from './errors/Error403';
 import Unauthorized from './containers/Unauthorized';
 import OutOfService from './containers/OutOfService';
 import Feedback from './containers/Feedback';
@@ -51,6 +52,7 @@ const COMPONENTS = {
   Login,
   TestUsers,
   TestData,
+  Error403,
   Error404,
   Error500,
   OutOfService,

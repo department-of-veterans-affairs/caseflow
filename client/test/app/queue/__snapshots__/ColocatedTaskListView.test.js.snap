@@ -85,7 +85,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-0"
           role="tabpanel"
-          tabindex="0"
         >
           <p
             class="cf-margin-top-0"
@@ -1129,14 +1128,12 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-1"
           role="tabpanel"
-          tabindex="-1"
         />
         <div
           aria-hidden="true"
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-2"
           role="tabpanel"
-          tabindex="-1"
         />
       </div>
     </div>
@@ -1229,14 +1226,12 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-0"
           role="tabpanel"
-          tabindex="-1"
         />
         <div
           aria-hidden="false"
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-1"
           role="tabpanel"
-          tabindex="0"
         >
           <p
             class="cf-margin-top-0"
@@ -2039,11 +2034,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>
@@ -2238,11 +2229,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <div
                       data-css-11y190r=""
                     >
-                      <span
-                        data-css-1umacli=""
-                      >
-                        Loading number of docs...
-                      </span>
+                      1
                     </div>
                   </td>
                 </tr>
@@ -2268,7 +2255,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           class="tabPanel"
           id="tasks-tabwindow-tabpanel-2"
           role="tabpanel"
-          tabindex="-1"
         />
       </div>
     </div>

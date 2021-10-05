@@ -100,6 +100,7 @@ function groupEventItems(items){
     content: 'cancelled<br/> tasks',
     className: 'group_cancelled_tasks',
     order: 3,
+    visible: false
   });
   groups.add({
     id: 'others',

@@ -73,7 +73,7 @@ describe AppellantSubstitution do
       let(:evidence_submission_hold_end_date) { Time.zone.today + rand(1..200).days }
 
       shared_examples "new appeal has user-selected ScheduleHearingTask task" do
-        it "copies ScheduleHearingTask to nw appeal" do
+        it "copies ScheduleHearingTask to new appeal" do
           expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to be > 0
 
           target_appeal = subject.target_appeal
@@ -127,7 +127,7 @@ describe AppellantSubstitution do
       shared_examples "new appeal does not have post-distribution tasks" do
         let(:expected_task_types) do
           %w[RootTask DistributionTask TrackVeteranTask InformalHearingPresentationTask
-             EvidenceSubmissionWindowTask ScheduleHearingTask]
+             EvidenceSubmissionWindowTask HearingTask ScheduleHearingTask]
         end
         it "doesn't create tasks typically created after DistributionTask is completed" do
           target_appeal = subject.target_appeal
@@ -219,6 +219,7 @@ describe AppellantSubstitution do
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
+          expect(target_appeal.aod_based_on_age).to be true
         end
       end
 
@@ -288,22 +289,31 @@ describe AppellantSubstitution do
       end
 
       context "source appeal has request issues" do
-        let(:source_appeal) { create(:appeal, :active, :with_request_issues).reload }
-        it "copies request issues but not decision issues to new appeal" do
-          expect(source_appeal.request_issues.count).to be > 0
+        context "on death-dismissed appeal" do
+          let(:source_appeal) do
+            create(:appeal, :with_decision_issue, :dispatched, disposition: "dismissed_death").reload
+          end
 
-          appellant_substitution = subject
-          target_appeal = appellant_substitution.target_appeal
-          expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
-          expect(target_appeal.request_issues.pluck(:benefit_type))
-            .to eq source_appeal.request_issues.pluck(:benefit_type)
-          expect(target_appeal.request_issues.pluck(:contested_issue_description))
-            .to eq source_appeal.request_issues.pluck(:contested_issue_description)
-          expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
-          expect(target_appeal.request_issues.pluck(:decision_date))
-            .to eq source_appeal.request_issues.pluck(:decision_date)
+          it "copies request issues but not decision issues to new appeal" do
+            expect(source_appeal.request_issues.count).to be > 0
 
-          expect(target_appeal.decision_issues.count).to eq 0
+            appellant_substitution = subject
+            target_appeal = appellant_substitution.target_appeal
+            expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
+            expect(target_appeal.request_issues.pluck(:benefit_type))
+              .to eq source_appeal.request_issues.pluck(:benefit_type)
+            expect(target_appeal.request_issues.pluck(:contested_issue_description))
+              .to eq source_appeal.request_issues.pluck(:contested_issue_description)
+            expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
+            expect(target_appeal.request_issues.pluck(:decision_date))
+              .to eq source_appeal.request_issues.pluck(:decision_date)
+
+            # new request issues should not maintain decided status
+            expect(target_appeal.request_issues.any? { |ri| ri.closed_status || ri.closed_at }).to eql(false)
+
+            # There should not be any decision issues copied
+            expect(target_appeal.decision_issues.count).to eq 0
+          end
         end
       end
     end

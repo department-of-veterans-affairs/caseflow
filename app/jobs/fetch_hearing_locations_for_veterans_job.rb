@@ -36,7 +36,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                      LegacyAppeal,
                      select_fields: [:vacols_id]
                    ).first(QUERY_LIMIT / 2)
+
                    ama_appeals = find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
+
                    travel_board_appeals = find_travel_board_appeals_ready_for_geomatching(
                      legacy_appeals.map(&:vacols_id)
                    ).first(QUERY_TRAVEL_BOARD_LIMIT)
@@ -45,6 +47,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                  end
   end
 
+  NONACTIONABLE_ERRORS = [Caseflow::Error::VaDotGovMissingFacilityError].freeze
+
+  # rubocop:disable Metrics/MethodLength
   def perform
     setup_job
     current_appeal = 0
@@ -69,7 +74,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
           break
         rescue StandardError => error
-          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
+          actionable = !NONACTIONABLE_ERRORS.include?(error.class)
+          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id, actionable: actionable })
 
           # For unknown errors, we capture the exeception in Sentry. This error could represent
           # a broad range of things, so we just skip geomatching for the appeal, and expect
@@ -79,6 +85,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -113,7 +120,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def find_travel_board_appeals_ready_for_geomatching(exclude_ids)
     VACOLS::Case
       .where(
-        # Travle Board Hearing Request
+        # Travel Board Hearing Request
         bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
         # Current Location
         bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
@@ -123,6 +130,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         bfddec: nil
       )
       .where.not(bfkey: exclude_ids)
+      .includes(:correspondent, :folder, :case_issues)
       .map do |vacols_case|
         AppealRepository.build_appeal(vacols_case, true)
       end

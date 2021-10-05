@@ -16,7 +16,6 @@ import {
 } from './styles';
 
 import {
-  formatHearingType,
   vljFullnameOrEmptyString,
   formatSlotRatio,
   hearingDayHasJudge,
@@ -24,9 +23,11 @@ import {
   hearingRoomOrEmptyString
 } from '../../utils';
 
+import { DOCKET_READABLE_REQUEST_TYPE } from '../../constants';
+
 export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHearingDayChange }) => {
   // Format the pieces of information from hearingDay
-  const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
+  const formattedHearingType = DOCKET_READABLE_REQUEST_TYPE[hearingDay.requestType];
   const judgeOrRoom = hearingDayHasJudge(hearingDay) ?
     vljFullnameOrEmptyString(hearingDay) :
     hearingRoomOrEmptyString(hearingDay);

@@ -22,6 +22,7 @@ const ReceiptDateInput = ({
     type="date"
     strongLabel
     inputRef={register}
+    className={['cf-margin-bottom-2rem']}
   />
 );
 

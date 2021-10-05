@@ -3,5 +3,5 @@
 <p>
   For internal Board use:
   <%= appellant_state(@hearing&.appeal || @virtual_hearing.hearing.appeal) %>
-  <a href="<%= caseflow_url(@hearing&.appeal || @virtual_hearing.hearing.appeal) %>">CF</a>
+  <%= external_link caseflow_url(@hearing&.appeal || @virtual_hearing.hearing.appeal), display_text: "CF" %>
 </p>

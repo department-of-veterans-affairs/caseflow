@@ -9,11 +9,6 @@ RSpec.shared_context("with Clerk of the Board user") do
   end
 end
 
-RSpec.shared_context("with recognized_granted_substitution_after_dd feature toggle") do
-  before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
-  after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
-end
-
 RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle") do
   before { FeatureToggle.enable!(:hearings_substitution_death_dismissal) }
   after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
@@ -42,8 +37,13 @@ end
 
 RSpec.shared_examples("substitution unavailable") do
   it "does not show button to start substitution" do
+    appeal.reload
     visit "/queue/appeals/#{appeal.uuid}"
 
+    # Ensure we wait for page content to actually load
+    expect(page).to have_content appeal.veteran.last_name
+
+    # This is what we really care about
     expect(page).to_not have_content "+ Add Substitute"
   end
 end
@@ -51,6 +51,7 @@ end
 RSpec.shared_examples("fill substitution form") do
   it "allows user to designate a substitute appellant" do
     step "user sets basic info for substitution" do
+      appeal.reload
       visit "/queue/appeals/#{appeal.uuid}"
 
       # Navigate to substitution page
@@ -172,6 +173,11 @@ RSpec.shared_examples("fill substitution form") do
           evidence_submission_window_end_time + 1.day
         )
         expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
+      end
+
+      if docket_type.eql?("hearing")
+        # Ensure that we are displaying hearing info from source appeal
+        expect(page).to have_content "Hearings"
       end
 
       # New appeal should have the same docket

@@ -40,8 +40,7 @@ class QueueFlowPage extends React.PureComponent {
   });
 
   cancelAttorneyCheckoutMsg = () => {
-    return this.props.featureToggles.special_issues_revamp ?
-      COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES : COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT;
+    return COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES;
   }
 
   withUnblockedTransition = (callback = _.noop) => {
@@ -187,9 +186,6 @@ QueueFlowPage.propTypes = {
   cancelCheckoutModal: PropTypes.bool,
   continueBtnText: PropTypes.string,
   disableNext: PropTypes.bool,
-  featureToggles: PropTypes.shape({
-    special_issues_revamp: PropTypes.bool
-  }),
   hideCancelButton: PropTypes.bool,
   history: PropTypes.object,
   validateForm: PropTypes.func,
@@ -227,7 +223,6 @@ const mapStateToProps = (state, props) => {
 
   return {
     cancelCheckoutModal: state.ui.modals.cancelCheckout,
-    featureToggles: state.ui.featureToggles,
     savePending,
     saveSuccessful,
     stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),

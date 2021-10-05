@@ -3,7 +3,9 @@
 class VbmsUploadedDocument < CaseflowRecord
   include HasAppealUpdatedSince
 
-  belongs_to :appeal, polymorphic: true
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
+
   validates :document_type, presence: true
 
   attribute :file, :string
