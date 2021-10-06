@@ -93,6 +93,8 @@ module CaseflowCertification
         end
       end
     end
+
+    require_relative "../lib/helpers/check_task_tree"
     # :nocov:
   end
 end
