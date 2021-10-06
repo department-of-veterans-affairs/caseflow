@@ -174,19 +174,38 @@ class VaDotGovAddressValidator
   end
 
   def available_hearing_locations_response
-    @available_hearing_locations_response ||= VADotGovService.get_distance(
-      ids: RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions),
-      lat: valid_address[:lat],
-      long: valid_address[:long]
+    @available_hearing_locations_response ||= safely_get_distance(
+      RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions)
     )
   end
 
   def closest_ro_response
-    @closest_ro_response ||= VADotGovService.get_distance(
-      ids: ro_facility_ids_to_geomatch,
-      lat: valid_address[:lat],
-      long: valid_address[:long]
-    )
+    @closest_ro_response ||= safely_get_distance(ro_facility_ids_to_geomatch)
+  end
+
+  def safely_get_distance(facility_ids_to_geomatch)
+    retries = 0
+    begin
+      VADotGovService.get_distance(
+        ids: facility_ids_to_geomatch,
+        lat: valid_address[:lat],
+        long: valid_address[:long]
+      )
+    rescue Caseflow::Error::VaDotGovMissingFacilityError => error
+      facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
+      retry if (retries += 1) == 1
+      raise error
+    end
+  end
+
+  def remove_missing_facilities(facility_ids, error)
+    missing_facility_ids_result = ExternalApi::VADotGovService.check_facility_ids(ids: facility_ids)
+    unless missing_facility_ids_result.all_ids_present?
+      missing_ids = missing_facility_ids_result.missing_facility_ids
+      Raven.capture_exception(error, extra: {missing_facility_ids: missing_ids})
+      facility_ids -= missing_ids
+    end
+    facility_ids
   end
 
   def closest_ro_facility_id

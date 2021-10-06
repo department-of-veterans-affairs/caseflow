@@ -118,8 +118,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   # @return             [Array<LegacyAppeal]
   #   An array of travel board appeals that are ready for geomatching
   def find_travel_board_appeals_ready_for_geomatching(exclude_ids)
-    VACOLS::Case
-      .where(
+    VACOLS::Case.where(
         # Travel Board Hearing Request
         bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
         # Current Location
