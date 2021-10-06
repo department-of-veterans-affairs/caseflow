@@ -42,11 +42,28 @@ module Seeds
       )
     end
 
+    def create_pending_appeal(veteran: deceased_vet, docket_type: "direct_review")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
+
+      create(
+        :appeal,
+        number_of_claimants: 1,
+        veteran: veteran,
+        docket_type: docket_type,
+        receipt_date: date_of_death + 5.days,
+        closest_regional_office: "RO17",
+        associated_judge: judge,
+        associated_attorney: attorney
+      )
+    end
+
     def create_deceased_vet_and_dismissed_appeals
       ActiveRecord::Base.transaction do
         # Create appeals for each docket type
         %w[direct_review evidence_submission hearing].each do |docket_type|
           create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: docket_type)
+          create_pending_appeal(veteran: deceased_vet, docket_type: docket_type)
         end
 
         # Need to set date_of_death after creating appeal or various tasks won't get created
