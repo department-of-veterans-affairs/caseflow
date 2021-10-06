@@ -14,6 +14,11 @@ RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle"
   after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
 end
 
+RSpec.shared_context("with listed_granted_substitution_before_dismissal feature toggle") do
+  before { FeatureToggle.enable!(:listed_granted_substitution_before_dismissal) }
+  after { FeatureToggle.disable!(:listed_granted_substitution_before_dismissal) }
+end
+
 RSpec.shared_context "with existing relationships" do
   let(:veteran_file_number) { appeal.veteran.file_number }
   let(:relationships) do
