@@ -339,7 +339,7 @@ jobs:
 
       - run:
           name: yarn install
-          command:
+          command: |
             which python
             apt-get update
             apt-get install -y python
