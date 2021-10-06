@@ -9,21 +9,21 @@ describe AppellantSubstitution do
     let(:created_by_id) { created_by.id }
     subject do
       AppellantSubstitution.new(created_by_id: created_by_id,
-                                date_of_death_present: date_of_death_present).same_appeal_substitution_allowed?
+                                source_appeal_id: source_appeal.id).same_appeal_substitution_allowed?
     end
 
     context "when created_by is an admin cob user" do
       before do
         OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
       end
-      context "when date_of_death_present is false" do
-        let(:date_of_death_present) { false }
+      context "when date_of_death is not present" do
+        let(:source_appeal) { create(:appeal) }
         it "returns true" do
           expect(subject).to eq(true)
         end
       end
-      context "when date_of_death_present is true" do
-        let(:date_of_death_present) { true }
+      context "when date_of_death is present" do
+        let(:source_appeal) { create(:appeal, :with_deceased_veteran) }
         it "returns true" do
           expect(subject).to eq(true)
         end
@@ -34,14 +34,14 @@ describe AppellantSubstitution do
       before do
         ClerkOfTheBoard.singleton.add_user(created_by)
       end
-      context "when date_of_death_present is false" do
-        let(:date_of_death_present) { false }
+      context "when date_of_death is not present" do
+        let(:source_appeal) { create(:appeal) }
         it "returns false" do
           expect(subject).to eq(false)
         end
       end
-      context "when date_of_death_present is true" do
-        let(:date_of_death_present) { true }
+      context "when date_of_death is present" do
+        let(:source_appeal) { create(:appeal, :with_deceased_veteran) }
         it "returns true" do
           expect(subject).to eq(true)
         end
@@ -78,8 +78,7 @@ describe AppellantSubstitution do
           substitute_participant_id: substitute&.participant_id,
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
-          task_params: task_params,
-          date_of_death_present: false
+          task_params: task_params
         }
       end
 
@@ -435,8 +434,7 @@ describe AppellantSubstitution do
           substitute_participant_id: substitute&.participant_id,
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
-          task_params: task_params,
-          date_of_death_present: false
+          task_params: task_params
         }
       end
 
