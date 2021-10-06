@@ -340,9 +340,9 @@ jobs:
       - run:
           name: yarn install
           command: |
-            which python
             apt-get update
             apt-get install -y python
+            which python
             ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - run:
