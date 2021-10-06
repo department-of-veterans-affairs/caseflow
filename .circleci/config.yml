@@ -341,13 +341,14 @@ jobs:
       - checkout
 
       - run:
-          name: yarn install
+          name: python install
           command: |
             sudo apt-get update
-            sudo apt-get install -y python
+            sudo apt-get install -y python3
             which python
             python --version
-            ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - install_node_dependencies
 
       - run:
           name: Jest
