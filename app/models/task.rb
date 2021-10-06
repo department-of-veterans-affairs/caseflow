@@ -22,7 +22,7 @@ class Task < CaseflowRecord
   belongs_to :cancelled_by, class_name: "User"
 
   include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -421,6 +421,12 @@ class Task < CaseflowRecord
 
       [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
     end
+  end
+
+  def unscoped_assigned_to
+    return Organization.unscoped.find(assigned_to_id) if assigned_to_type == "Organization"
+
+    assigned_to
   end
 
   def assigned_to_same_org?(task_to_check)

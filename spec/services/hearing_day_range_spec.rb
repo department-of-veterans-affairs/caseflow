@@ -7,7 +7,7 @@ describe HearingDayRange, :all_dbs do
 
     subject { HearingDayRange.new(start_date, end_date, regional_office_key).load_days }
 
-    context "load Video days for a range date" do
+    context "load Video and Travel days for a range date" do
       let(:regional_office_key) { "RO13" }
       let!(:hearing_days) do
         [
@@ -22,12 +22,18 @@ describe HearingDayRange, :all_dbs do
             :video,
             regional_office: regional_office_key,
             scheduled_for: Time.zone.today + 1.day
+          ),
+          create(
+            :hearing_day,
+            :travel,
+            regional_office: regional_office_key,
+            scheduled_for: Time.zone.today + 1.day
           )
         ]
       end
 
       it "gets hearings for a date range" do
-        expect(subject.size).to eq 2
+        expect(subject.size).to eq 3
       end
     end
 
@@ -63,11 +69,12 @@ describe HearingDayRange, :all_dbs do
         end
       end
 
-      context "mix of virtual and video hearing days" do
+      context "mix of virtual, video, and travel hearing days" do
         let!(:hearing_days) do
           [
             create(:hearing_day, :virtual, scheduled_for: Time.zone.today),
             create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 1.day),
+            create(:hearing_day, :travel, scheduled_for: Time.zone.today + 1.day),
             create(:hearing_day, :video, scheduled_for: Time.zone.today + 2.days)
           ]
         end

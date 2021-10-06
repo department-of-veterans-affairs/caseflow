@@ -182,7 +182,7 @@ describe "SanitizedJsonExporter/Importer" do
         AttorneyCaseReview => ["task_id"],
         DecisionDocument => [],
         Claimant => ["decision_review_id"],
-        Task => %w[parent_id],
+        Task => %w[appeal_id parent_id],
         TaskTimer => ["task_id"],
         CavcRemand => %w[decision_issue_ids],
         DecisionIssue => ["decision_review_id"],
@@ -195,7 +195,12 @@ describe "SanitizedJsonExporter/Importer" do
         HearingTaskAssociation => %w[hearing_id hearing_task_id],
         HearingDay => [],
         VirtualHearing => ["hearing_id"],
-        OrganizationsUser => []
+        OrganizationsUser => [],
+        UnrecognizedAppellant => %w[claimant_id
+                                    current_version_id
+                                    unrecognized_party_detail_id
+                                    unrecognized_power_of_attorney_id],
+        UnrecognizedPartyDetail => []
       }
       # pp configuration.offset_id_fields.transform_keys(&:name)
       expect(configuration.offset_id_fields).to eq offset_id_fields
@@ -208,7 +213,7 @@ describe "SanitizedJsonExporter/Importer" do
         AttorneyCaseReview => ["appeal_id"],
         DecisionDocument => ["appeal_id"],
         JudgeCaseReview => ["appeal_id"],
-        Task => %w[assigned_to_id appeal_id]
+        Task => %w[assigned_to_id]
       }
       expect(configuration.reassociate_fields[:type]).to match_array reassociate_fields_for_polymorphics
 
@@ -233,7 +238,8 @@ describe "SanitizedJsonExporter/Importer" do
         Hearing => %w[updated_by_id judge_id created_by_id],
         HearingDay => %w[updated_by_id judge_id created_by_id],
         VirtualHearing => %w[updated_by_id created_by_id],
-        OrganizationsUser => ["user_id"]
+        OrganizationsUser => ["user_id"],
+        UnrecognizedAppellant => ["created_by_id"]
       }
       expect(configuration.reassociate_fields["User"]).to eq reassociate_fields_for_user
     end
@@ -583,7 +589,9 @@ describe "SanitizedJsonExporter/Importer" do
                           "hearings" => 1,
                           "hearing_task_associations" => 1,
                           "hearing_days" => 1,
-                          "virtual_hearings" => 1 }
+                          "virtual_hearings" => 1,
+                          "unrecognized_appellants" => 0,
+                          "unrecognized_party_details" => 0 }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
         reused_record_counts = {
           "organizations" => 2,
@@ -683,6 +691,28 @@ describe "SanitizedJsonExporter/Importer" do
       diffs = sji.differences(orig_appeals, additional_expected_diffs_fields: { Appeal => ["uuid"] })
       # pp "DIFFERENCES minus expected diffs", diffs
       expect(diffs.values.flatten).to be_empty
+    end
+  end
+
+  context "importing real appeals" do
+    let(:real_appeal) do
+      sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
+      sji.import
+      sji.imported_records[Appeal.table_name].first
+    end
+    context "when an appeal has an unrecognized appellant" do
+      let(:json_filename) { "appeal-113251.json" }
+      it "imports unrecognized appellant" do
+        expect(real_appeal.claimant.unrecognized_appellant.unrecognized_party_detail).not_to eq nil
+        expect(real_appeal.claimant.person).to eq nil
+      end
+    end
+    context "when an appeal has an unrecognized POA" do
+      let(:json_filename) { "appeal-167577.json" }
+      it "imports unrecognized POA" do
+        expect(real_appeal.claimant.unrecognized_appellant.unrecognized_party_detail).not_to eq nil
+        expect(real_appeal.claimant.unrecognized_appellant.unrecognized_power_of_attorney).not_to eq nil
+      end
     end
   end
 end

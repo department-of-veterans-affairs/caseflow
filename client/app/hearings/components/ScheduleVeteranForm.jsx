@@ -105,6 +105,7 @@ export const ScheduleVeteranForm = ({
 
     return <HearingTime
       regionalOffice={ro}
+      requestType={hearing?.hearingDay?.readableRequestType}
       errorMessage={errors?.scheduledTimeString}
       vertical
       label="Hearing Time"
