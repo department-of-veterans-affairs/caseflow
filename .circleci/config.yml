@@ -339,6 +339,8 @@ jobs:
     steps:
       - browser-tools/install-browser-tools
       - checkout
+      - run: which python3
+
 
       - install_node_dependencies
 
