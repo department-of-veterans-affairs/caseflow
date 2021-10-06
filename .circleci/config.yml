@@ -337,7 +337,9 @@ jobs:
     steps:
       - checkout
 
-      - install_node_dependencies
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - run:
           name: Jest
