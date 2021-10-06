@@ -194,7 +194,7 @@ class VaDotGovAddressValidator
     rescue Caseflow::Error::VaDotGovMissingFacilityError => error
       facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
       retry if (retries += 1) == 1
-      raise error
+      fail error
     end
   end
 
@@ -202,7 +202,7 @@ class VaDotGovAddressValidator
     missing_facility_ids_result = ExternalApi::VADotGovService.check_facility_ids(ids: facility_ids)
     unless missing_facility_ids_result.all_ids_present?
       missing_ids = missing_facility_ids_result.missing_facility_ids
-      Raven.capture_exception(error, extra: {missing_facility_ids: missing_ids})
+      Raven.capture_exception(error, extra: { missing_facility_ids: missing_ids })
       facility_ids -= missing_ids
     end
     facility_ids

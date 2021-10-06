@@ -12,7 +12,7 @@ describe VaDotGovAddressValidator do
       ]
     end
     let(:mock_address_validator) { VaDotGovAddressValidator.new(appeal: appeal) }
-    let(:closest_ro_response) {ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)}
+    let(:closest_ro_response) { ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response) }
 
     before do
       allow(closest_ro_response).to receive(:data).and_return(closest_ro_facilities)
@@ -42,8 +42,8 @@ describe VaDotGovAddressValidator do
     context "when va dot gov service returns a Caseflow::Error::VaDotGovMissingFacilityError" do
       let(:ro_facility_id) { "vba_301" } # Boston RO
       let(:missing_facility_id) { "vba_9999" }
-      let(:facility_ids) {[ro_facility_id, missing_facility_id]}
-      let(:facility_ids_response) {ExternalApi::VADotGovService::FacilitiesIdsResponse.new(mock_response, [])}
+      let(:facility_ids) { [ro_facility_id, missing_facility_id] }
+      let(:facility_ids_response) { ExternalApi::VADotGovService::FacilitiesIdsResponse.new(mock_response, []) }
 
       before do
         allow(mock_address_validator).to receive(:closest_ro_response).and_call_original
@@ -64,7 +64,7 @@ describe VaDotGovAddressValidator do
             times_called += 1
             if times_called == 1
               expect(args[:ids]).to eq(facility_ids)
-              raise Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+              fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
             end
             expect(args[:ids]).to eq([ro_facility_id])
             closest_ro_response
@@ -82,10 +82,10 @@ describe VaDotGovAddressValidator do
             times_called += 1
             if times_called == 1
               expect(args[:ids]).to eq(facility_ids)
-              raise Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+              fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
             end
             expect(args[:ids]).to eq([ro_facility_id])
-            raise Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+            fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
           end
         expect { subject }.to raise_error(an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError))
       end
