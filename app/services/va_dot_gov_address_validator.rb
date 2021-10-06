@@ -194,7 +194,7 @@ class VaDotGovAddressValidator
     rescue Caseflow::Error::VaDotGovMissingFacilityError => error
       facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
       retry if (retries += 1) == 1
-      fail error
+      raise error
     end
   end
 
