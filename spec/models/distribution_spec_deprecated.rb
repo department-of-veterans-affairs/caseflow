@@ -2,6 +2,7 @@
 
 # This is a slow, hard-to-maintain test for Distribution. We are rewriting it in distribution_spec.rb.
 # Parts of this test will be removed as the new test achieves parity, until nothing is left here.
+# We will lean on this as an end-to-end test until we can eventually rewrite that as well.
 
 describe Distribution, :all_dbs do
   let(:judge) { create(:user, :judge) }
