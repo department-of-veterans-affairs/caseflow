@@ -10,7 +10,7 @@ describe('BaseContainer', () => {
     wrapper = mount(<BaseContainer page="TestPage" otherProp="foo" />);
   });
 
-  context('sub-page', () => {
+  describe('sub-page', () => {
     it('renders', () => {
       expect(wrapper.find('.sub-page')).toHaveLength(1);
     });

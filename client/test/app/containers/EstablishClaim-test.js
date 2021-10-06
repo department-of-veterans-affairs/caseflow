@@ -16,7 +16,7 @@ let func = function() {
 };
 
 describe('EstablishClaim', () => {
-  context('.render', () => {
+  describe('.render', () => {
     let wrapper;
 
     beforeEach(() => {
@@ -64,7 +64,7 @@ describe('EstablishClaim', () => {
       );
     });
 
-    context('EstablishClaimForm', () => {
+    describe('EstablishClaimForm', () => {
       beforeEach(() => {
         store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
@@ -94,7 +94,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('EstablishClaimDecision', () => {
+    describe('EstablishClaimDecision', () => {
       beforeEach(() => {
         wrapper.
           find('EstablishClaim').
@@ -116,7 +116,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('EstablishClaimNote', () => {
+    describe('EstablishClaimNote', () => {
       beforeEach((done) => {
         store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
@@ -155,7 +155,7 @@ describe('EstablishClaim', () => {
     });
   });
 
-  context('.getClaimTypeFromDecision', () => {
+  describe('.getClaimTypeFromDecision', () => {
     let task;
 
     const mountApp = (decisionType, stationOfJurisdiction = '397') => {
@@ -219,7 +219,7 @@ describe('EstablishClaim', () => {
       /* eslint-enable camelcase */
     });
 
-    context('when ARC EP', () => {
+    describe('when ARC EP', () => {
       it('returns proper values for remand', () => {
         const wrapper = mountApp('Remand');
 
@@ -254,7 +254,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('when Routed EP', () => {
+    describe('when Routed EP', () => {
       it('returns proper value for remand', () => {
         const wrapper = mountApp('Remand', '301');
 

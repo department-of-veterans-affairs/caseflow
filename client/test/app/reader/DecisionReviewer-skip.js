@@ -63,6 +63,12 @@ const getWrapper = (store) => mount(
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
+  let testContext;
+
+  beforeEach(() => {
+    testContext = {};
+  });
+
   const setUpDocuments = (store) => {
     // We simulate receiving the documents from the endpoint, and dispatch the
     // required actions to skip past the loading screen and avoid stubing out
@@ -83,10 +89,12 @@ describe('DecisionReviewer', () => {
       /* eslint-disable no-underscore-dangle */
       autoSizerStub = sinon.stub(AutoSizer.prototype, 'render');
       autoSizerStub.callsFake(function () {
-        return <div ref={this._setRef}>
-          {this.props.children({ width: 200,
-            height: 100 })}
-        </div>;
+        return (
+          <div ref={testContext._setRef}>
+            {testContext.props.children({ width: 200,
+              height: 100 })}
+          </div>
+        );
       });
       /* eslint-enable no-underscore-dangle */
 
@@ -104,8 +112,8 @@ describe('DecisionReviewer', () => {
       autoSizerStub.restore();
     });
 
-    context('PDF list view', () => {
-      context('when expanded comments', () => {
+    describe('PDF list view', () => {
+      describe('when expanded comments', () => {
         it('can view comments', () => {
           expect(wrapper.text()).toEqual(expect.not.arrayContaining(['Test Comment']));
           findElementById(wrapper, 'expand-2-comments-button').simulate('click');
@@ -118,7 +126,7 @@ describe('DecisionReviewer', () => {
         }));
       });
 
-      context('when sorted by', () => {
+      describe('when sorted by', () => {
         it('date is ordered correctly', () => {
           expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).toHaveLength(1);
 
@@ -153,7 +161,7 @@ describe('DecisionReviewer', () => {
         });
       });
 
-      context('when searched by', () => {
+      describe('when searched by', () => {
         it('does and logic search', () => {
           wrapper.find('input').simulate('change',
             { target: { value: '/2017 mytag form' } });
@@ -319,7 +327,7 @@ describe('DecisionReviewer', () => {
         });
       });
 
-      context('when filtered by', () => {
+      describe('when filtered by', () => {
         const openMenu = (node, menuName) => {
           node.find(`#${menuName}-header`).find('svg').
             simulate('click');
@@ -384,7 +392,7 @@ describe('DecisionReviewer', () => {
       wrapper.detach();
     });
 
-    context('Loading Spinner', () => {
+    describe('Loading Spinner', () => {
       it('renders', () => {
         // eslint-disable-next-line no-empty-function
         const eternalPromise = new Promise(() => {});

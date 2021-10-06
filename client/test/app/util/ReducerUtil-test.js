@@ -1,7 +1,7 @@
 import ReducerUtil from '../../../app/util/ReducerUtil';
 
 describe('ReducerUtil', () => {
-  context('.changeFieldValue', () => {
+  describe('.changeFieldValue', () => {
     let action, currentState, newState;
 
     beforeEach(() => {

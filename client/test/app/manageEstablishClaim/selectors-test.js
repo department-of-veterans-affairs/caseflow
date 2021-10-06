@@ -1,7 +1,7 @@
 import { getQuotaTotals } from '../../../app/manageEstablishClaim/selectors';
 
 describe('manageEstablishClaim selectors', () => {
-  context('.getQuotaTotals', () => {
+  describe('.getQuotaTotals', () => {
     it('returns total values', () => {
       let userQuotas = [
         { taskCount: 5,

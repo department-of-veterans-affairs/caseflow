@@ -13,13 +13,13 @@ describe('EstablishClaimContainer', () => {
     });
   });
 
-  context('sub-page', () => {
+  describe('sub-page', () => {
     it('renders', () => {
       expect(wrapper.find('.sub-page')).toHaveLength(1);
     });
   });
 
-  context('renders alerts', () => {
+  describe('renders alerts', () => {
     it('hides alert if none in state', () => {
       expect(wrapper.state().alert).toBeNull();
       expect(wrapper.find('.usa-alert')).toHaveLength(0);

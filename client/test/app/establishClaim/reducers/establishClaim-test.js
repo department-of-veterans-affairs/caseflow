@@ -9,7 +9,7 @@ describe('establishClaimReducer', () => {
     initialState = getEstablishClaimInitialState();
   });
 
-  context(Constants.TOGGLE_CANCEL_TASK_MODAL, () => {
+  describe(Constants.TOGGLE_CANCEL_TASK_MODAL, () => {
     let state;
 
     beforeEach(() => {
@@ -23,7 +23,7 @@ describe('establishClaimReducer', () => {
     });
   });
 
-  context(Constants.REQUEST_CANCEL_FEEDBACK_FAILURE, () => {
+  describe(Constants.REQUEST_CANCEL_FEEDBACK_FAILURE, () => {
     let state;
 
     beforeEach(() => {

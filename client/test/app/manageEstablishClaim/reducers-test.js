@@ -58,7 +58,7 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.CHANGE_EMPLOYEE_COUNT, () => {
+  describe(Constants.CHANGE_EMPLOYEE_COUNT, () => {
     let state;
 
     beforeEach(() => {
@@ -73,7 +73,7 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.CLEAR_ALERT, () => {
+  describe(Constants.CLEAR_ALERT, () => {
     let state;
 
     beforeEach(() => {
@@ -86,7 +86,7 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.REQUEST_USER_QUOTAS_SUCCESS, () => {
+  describe(Constants.REQUEST_USER_QUOTAS_SUCCESS, () => {
     let state;
 
     beforeEach(() => {
@@ -153,7 +153,7 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.BEGIN_EDIT_TASK_COUNT, () => {
+  describe(Constants.BEGIN_EDIT_TASK_COUNT, () => {
     let state;
 
     beforeEach(() => {
@@ -173,7 +173,7 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.CHANGE_NEW_TASK_COUNT, () => {
+  describe(Constants.CHANGE_NEW_TASK_COUNT, () => {
     let state;
 
     beforeEach(() => {

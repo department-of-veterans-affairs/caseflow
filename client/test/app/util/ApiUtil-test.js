@@ -1,7 +1,7 @@
 import ApiUtil from '../../../app/util/ApiUtil';
 
 describe('ApiUtil', () => {
-  context('.convertToSnakeCase', () => {
+  describe('.convertToSnakeCase', () => {
 
     /* eslint-disable no-undefined */
     const camelCaseObject = {

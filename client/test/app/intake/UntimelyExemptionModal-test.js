@@ -27,7 +27,7 @@ describe('UntimelyExemptionModal', () => {
     onCancel: () => null
   };
 
-  context('renders', () => {
+  describe('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(<UntimelyExemptionModal {...defaultProps} onSkip={() => null} />, { wrappingComponent });
 

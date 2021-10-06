@@ -2,7 +2,7 @@ import { getSpecialIssuesInitialState } from
   '../../../../app/establishClaim/reducers/specialIssues';
 
 describe('SpecialIssuesReducer', () => {
-  context('.getSpecialIssuesInitialState', () => {
+  describe('.getSpecialIssuesInitialState', () => {
     let initialState, props;
 
     beforeEach(() => {

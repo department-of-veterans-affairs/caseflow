@@ -8,7 +8,7 @@ describe('UnidentifiedIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
 
-  context('renders', () => {
+  describe('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
         <UnidentifiedIssuesModal 

@@ -2,7 +2,7 @@ import StringUtil from '../../../app/util/StringUtil';
 import React from 'react';
 
 describe('StringUtil', () => {
-  context('.leftPad', () => {
+  describe('.leftPad', () => {
     it('returns a padded string when provided empty string', () => {
       expect(StringUtil.leftPad('', 4, '0')).toBe('0000');
     });
@@ -20,7 +20,7 @@ describe('StringUtil', () => {
     });
   });
 
-  context('.titleCase', () => {
+  describe('.titleCase', () => {
     it('handles snake_case', () => {
       expect(StringUtil.titleCase('snake_case')).toBe('Snake Case');
     });
@@ -34,7 +34,7 @@ describe('StringUtil', () => {
     });
   });
 
-  context('.nl2br', () => {
+  describe('.nl2br', () => {
     it('converts \\n to <br> element', () => {
       const input = 'lorem ipsum \n dolor sit amet';
       const output = StringUtil.nl2br(input);

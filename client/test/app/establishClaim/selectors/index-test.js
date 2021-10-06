@@ -1,7 +1,7 @@
 import { getStationOfJurisdiction } from '../../../../app/establishClaim/selectors';
 
 describe('EstablishClaim selectors', () => {
-  context('.setStationOfJurisdictionAction', () => {
+  describe('.setStationOfJurisdictionAction', () => {
     it('defaults to ARC', () => {
       let result = getStationOfJurisdiction({}, '300');
 

@@ -1,7 +1,7 @@
 import { formatDate, formatDateStr, doDatesMatch, formatArrayOfDateStrings } from '../../../app/util/DateUtil';
 
 describe('DateUtil', () => {
-  context('.formatDate', () => {
+  describe('.formatDate', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       let date = new Date('1/2/2017');
 
@@ -16,13 +16,13 @@ describe('DateUtil', () => {
     });
   });
 
-  context('.formatArrayOfDateStrings', () => {
+  describe('.formatArrayOfDateStrings', () => {
     it('returns a comma separated string of dates formatted mm/dd/yyyy', () => {
       expect(formatArrayOfDateStrings(['1/2/2017', '1/3/2017'])).toBe('01/02/2017, 01/03/2017');
     });
   });
 
-  context('.formatDateStr', () => {
+  describe('.formatDateStr', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       expect(formatDateStr('2017-04-24')).toBe('04/24/2017');
       expect(formatDateStr('1/2/2017')).toBe('01/02/2017');
@@ -30,7 +30,7 @@ describe('DateUtil', () => {
   });
 
   /* eslint-disable no-unused-expressions */
-  context('.doDatesMatch', () => {
+  describe('.doDatesMatch', () => {
     it('checks to see a string query is part of a date', () => {
       expect(doDatesMatch('2022-06-31', '06/31/2022')).toBe(true);
       expect(doDatesMatch('2017-06-28', '06-28-2017')).toBe(true);

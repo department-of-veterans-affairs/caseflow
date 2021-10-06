@@ -7,7 +7,7 @@ import {
 } from '../../../../app/establishClaim/util';
 import { MODIFIER_OPTIONS } from '../../../../app/establishClaim/constants';
 
-context('establishClaimUtil', () => {
+describe('establishClaimUtil', () => {
   let result;
   const regionalOfficeCities = {
     RO01: {
@@ -26,7 +26,7 @@ context('establishClaimUtil', () => {
     result = null;
   });
 
-  context('.formattedStationOfJurisdiction', () => {
+  describe('.formattedStationOfJurisdiction', () => {
 
     it('handles special issues with a unique SOJ', () => {
       result = formattedStationOfJurisdiction(
@@ -56,7 +56,7 @@ context('establishClaimUtil', () => {
     });
   });
 
-  context('.validModifiers', () => {
+  describe('.validModifiers', () => {
     it('returns modifiers', () => {
       result = validModifiers([]);
       expect(result).toEqual(MODIFIER_OPTIONS);
@@ -80,7 +80,7 @@ context('establishClaimUtil', () => {
     });
   });
 
-  context('.getSpecialIssuesRegionalOfficeCode', () => {
+  describe('.getSpecialIssuesRegionalOfficeCode', () => {
     const regionalOfficeKey = 'RO18';
 
     it('when a PMC special issue', () => {
@@ -103,14 +103,14 @@ context('establishClaimUtil', () => {
     });
   });
 
-  context('.getSpecialIssuesRegionalOffice', () => {
+  describe('.getSpecialIssuesRegionalOffice', () => {
     it('returns a human readable version of the special regional office', () => {
       result = getSpecialIssuesRegionalOffice('COWC', 'RO19', regionalOfficeCities);
       expect(result).toBe('RO84 - Philadelphia COWAC, PA');
     });
   });
 
-  context('.getSpecialIssuesEmail', () => {
+  describe('.getSpecialIssuesEmail', () => {
     const regionalOfficeKey = 'RO18';
 
     it('when a PMC special issue', () => {

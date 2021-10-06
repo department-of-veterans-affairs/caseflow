@@ -8,7 +8,7 @@ const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
 /* eslint-disable no-unused-expressions */
 describe('PdfUI', () => {
-  context('shallow create PdfUI', () => {
+  describe('shallow create PdfUI', () => {
     let wrapper;
     let doc;
 
@@ -32,7 +32,7 @@ describe('PdfUI', () => {
       />);
     });
 
-    context('.render', () => {
+    describe('.render', () => {
       it('renders the outer div', () => {
         expect(wrapper.find('.cf-pdf-container')).toHaveLength(1);
       });
@@ -60,7 +60,7 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'search' })).toHaveLength(1);
       });
 
-      context('when showClaimsFolderNavigation is true', () => {
+      describe('when showClaimsFolderNavigation is true', () => {
         it('renders the back button that directs to claims folder', () => {
           expect(wrapper.find({ name: 'backToClaimsFolder' })).toHaveLength(0);
 
@@ -70,7 +70,7 @@ describe('PdfUI', () => {
       });
     });
 
-    context('.onPageChange', () => {
+    describe('.onPageChange', () => {
       it('updates the state', () => {
         let currentPage = 2;
         let fitToScreenZoom = 3;
@@ -81,8 +81,8 @@ describe('PdfUI', () => {
       });
     });
 
-    context('clicking', () => {
-      context('backToClaimsFolder', () => {
+    describe('clicking', () => {
+      describe('backToClaimsFolder', () => {
         it('calls the stopPlacingAnnotation props', () => {
           const mockStopPlacingAnnotationClick = sinon.spy();
 
