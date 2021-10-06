@@ -340,14 +340,6 @@ jobs:
       - browser-tools/install-browser-tools
       - checkout
 
-      - run:
-          name: python install
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y python3
-            which python
-            python --version
-
       - install_node_dependencies
 
       - run:
