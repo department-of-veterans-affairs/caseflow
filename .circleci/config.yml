@@ -339,7 +339,11 @@ jobs:
 
       - run:
           name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+          command:
+            which python
+            apt-get update
+            apt-get install -y python
+            ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - run:
           name: Jest
