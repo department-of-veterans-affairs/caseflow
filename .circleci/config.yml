@@ -69,6 +69,8 @@ commands:
           environment:
             DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.2
 jobs:
   # build workspace
   build_workspace:
@@ -335,13 +337,14 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
+      - browser-tools/install-browser-tools
       - checkout
 
       - run:
           name: yarn install
           command: |
-            sudo apt-get update
-            sudo apt-get install -y python
+            # sudo apt-get update
+            # sudo apt-get install -y python
             which python
             python --version
             ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
