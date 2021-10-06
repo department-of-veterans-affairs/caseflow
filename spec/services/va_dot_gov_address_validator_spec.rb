@@ -57,7 +57,7 @@ describe VaDotGovAddressValidator do
           .and_return(facility_ids_response)
       end
 
-      fit "raises error once then tries again after removing the missing facility id" do
+      it "raises error once then tries again after removing the missing facility id" do
         times_called = 0
         expect(VADotGovService)
           .to receive(:get_distance).twice do |args|
