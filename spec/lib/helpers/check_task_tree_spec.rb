@@ -28,7 +28,7 @@ describe "CheckTaskTree" do
       before { appeal.tasks.of_type(:DistributionTask).first.assigned! }
       it { is_expected.to eq [appeal.tasks.open.last] }
       it "returns errors" do
-        expect(errors).to include "Open task should not have an on_hold parent task"
+        expect(errors).to include "Open task should have an on_hold parent task"
       end
     end
   end
@@ -74,6 +74,26 @@ describe "CheckTaskTree" do
       it { is_expected.not_to be_blank }
       it "returns errors" do
         expect(errors).to include "There should be no more than 1 open HearingTask"
+      end
+    end
+  end
+  describe "#extra_open_tasks" do
+    subject { CheckTaskTree.new(appeal).extra_open_tasks }
+    let(:appeal) { create(:appeal, :at_bva_dispatch) }
+    context "when tasks are valid" do
+      it { is_expected.to be_blank }
+      it "returns no errors" do expect(errors).to be_empty end
+    end
+    context "when tasks are invalid" do
+      let(:dispatch_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
+      let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
+      before do
+        JudgeDispatchReturnTask.create!(appeal: appeal, parent: dispatch_task, assigned_to: judge)
+        JudgeDispatchReturnTask.create!(appeal: appeal, parent: dispatch_task, assigned_to: judge)
+      end
+      it { is_expected.not_to be_blank }
+      it "returns errors" do
+        expect(errors).to include "There should be no more than 1 open task"
       end
     end
   end

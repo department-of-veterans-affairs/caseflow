@@ -7,14 +7,18 @@ class CheckTaskTree
     @errors = []
   end
 
+  # :reek:BooleanParameter
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
-    @errors << "Open task should not have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
+    @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
+
     @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
     @errors << "Open RootTask should have at least one 'proper' active task" if active_tasks_with_open_root_task.blank?
+
     @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
     @errors << "There should be no more than 1 open task" unless extra_open_tasks.blank?
+
     if verbose
       puts("--- ERRORS:", @errors) if @errors.any?
       puts("--- WARNINGS:", @warnings) if @warnings.any?
@@ -32,8 +36,9 @@ class CheckTaskTree
     @appeal.tasks.open if @appeal.root_task&.closed?
   end
 
-  # See AppealsWithNoTasksOrAllTasksOnHoldQuery
+  # Task types that are ignored when checking that an appeal is not stuck
   IGNORED_ACTIVE_TASKS = %w[RootTask TrackVeteranTask].freeze
+  # See AppealsWithNoTasksOrAllTasksOnHoldQuery
   def active_tasks_with_open_root_task
     @appeal.tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
@@ -44,9 +49,16 @@ class CheckTaskTree
     hearing_tasks.drop 1
   end
 
+  # Task types where only one is open at a time
+  SINGULAR_OPEN_TASKS = %w[RootTask DistributionTask
+                           HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
+                           JudgeAssignTask JudgeDecisionReviewTask
+                           AttorneyTask AttorneyRewriteTask
+                           JudgeQualityReviewTask AttorneyQualityReviewTask
+                           JudgeDispatchReturnTask AttorneyDispatchReturnTask
+                           VeteranRecordRequest].freeze
   def extra_open_tasks
-    hearing_tasks = @appeal.tasks.open.of_type(:HearingTask)
-    hearing_tasks.drop 1
+    @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
   end
 
   # See DecisionDateChecker
