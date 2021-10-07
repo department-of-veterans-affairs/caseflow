@@ -26,7 +26,7 @@ describe.skip('AssignHearings', () => {
       </MemoryRouter>
     );
 
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Regional Office']));
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Togus, ME']));
+    expect(wrapper.text().includes('Regional Office')).toBe(true);
+    expect(wrapper.text().includes('Togus, ME')).toBe(true);
   });
 });
