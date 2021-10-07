@@ -48,6 +48,7 @@ module Seeds
 
       create(
         :appeal,
+        :at_attorney_drafting,
         number_of_claimants: 1,
         veteran: veteran,
         docket_type: docket_type,
