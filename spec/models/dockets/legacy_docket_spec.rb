@@ -140,6 +140,54 @@ describe LegacyDocket do
   end
 
   context "#distribute_appeals" do
-    #
+    context "when really_distribute returns false" do
+      it "returns an empty array" do
+        #
+      end
+    end
+
+    context "when this is a priority distribution" do
+      it "calls distribute_priority_appeals" do
+        #
+      end
+    end
+
+    context "whe this is a non-priority distribution" do
+      it "calls distribute_nonpriority_appeals" do
+        #
+      end
+    end
+  end
+
+  context "#distribute_priority_appeals" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:genpop) { "any" } # this isn't significant here I don't think
+    let(:style) { "push" } # ..
+    let(:limit) { 1 } # ..
+    let(:distribution) { Distribution.create!(judge: judge) }
+    subject { docket.distribute_priority_appeals(distribution) }
+
+    context "when really_distribute returns false, blocking distribution" do
+      it "returns an empty array" do
+        expect(docket).to receive(:really_distribute)
+                            .with(distribution, genpop: genpop, style: style)
+                            .and_return([])
+        expect(subject).to eq []
+        subject
+      end
+    end
+
+    context "when really_distribute allows distribution" do
+      # Make sure AppealRepositorySpec covers distribute_priority_appeals well
+      it "uses AppealRepository's distribute_priority_appeals method" do
+        expect(AppealRepository).to receive(:distribute_priority_appeals)
+                                      .with(judge, genpop, limit)
+        subject
+        # This needs to .and_return something we can iterate over
+        # It should then call new_distributed_case for each
+        # Then save_dist_case, which checks legacy_das_deprecation
+      end
+
+    end
   end
 end
