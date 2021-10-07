@@ -42,7 +42,8 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_substitution_on_same_appeal
-    # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant to ensure substitute claimant is the correct type
+    # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant.
+    # This ensures that substitute claimant is the correct type.
     source_appeal.update!(veteran_is_not_claimant: true)
     Claimant.create!(
       participant_id: substitute_participant_id,
