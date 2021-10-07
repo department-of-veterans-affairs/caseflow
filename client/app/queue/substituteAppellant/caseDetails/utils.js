@@ -22,11 +22,6 @@ export const supportsSubstitutionPreDispatch = ({
   featureToggles,
   userIsCobAdmin,
 }) => {
-  console.log('supportsSubstitutionPreDispatch', appeal,
-    currentUserOnClerkOfTheBoard,
-    featureToggles,
-    userIsCobAdmin);
-
   return (
     appealSupportsSubstitution(appeal) &&
     currentUserOnClerkOfTheBoard &&
