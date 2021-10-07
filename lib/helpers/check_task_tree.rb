@@ -8,7 +8,7 @@
 # We have background jobs that check for bad invalid trees, but the alerts are sometimes overwhelming and
 # engineers may not address the problem in time (i.e., before the appeal is dispatched).
 #
-# Engineers should run this class after they modify a task tree:
+# Engineers should run this class before and after they modify a task tree:
 # `check_task_tree(appeal)` or `CheckTaskTree.call(appeal)` or
 # ```
 #   CheckTaskTree.patch_classes
@@ -76,6 +76,8 @@ class CheckTaskTree
 
     @errors << "Open task should have nil `cancelled_by_id`" unless open_tasks_with_cancelled_by_defined.blank?
     @errors << "Cancelled task should have non-nil `cancelled_by_id`" unless cancelled_tasks_without_cancelled_by.blank?
+
+    @errors << "Open task should not be assigned to inactive assignee" unless open_tasks_with_inactive_assignee.blank?
   end
 
   def check_parent_child_tasks
@@ -110,6 +112,11 @@ class CheckTaskTree
     @appeal.tasks.cancelled.where(cancelled_by_id: nil)
   end
 
+  def open_tasks_with_inactive_assignee
+    @appeal.tasks.open.where(assigned_to: User.inactive) +
+      @appeal.tasks.open.where(assigned_to: Organization.unscoped.inactive)
+  end
+
   def open_tasks_with_parent_not_on_hold
     tasks_with_parents.open.reject { |task| task.parent&.status == "on_hold" }
   end
@@ -122,6 +129,7 @@ class CheckTaskTree
   # Task types that are ignored when checking that an appeal is not stuck
   IGNORED_ACTIVE_TASKS = %w[TrackVeteranTask].freeze
   # Detects one of the problems from AppealsWithNoTasksOrAllTasksOnHoldQuery
+  # Should also emcompass OpenHearingTasksWithoutActiveDescendantsChecker
   def active_tasks_with_open_root_task
     tasks_with_parents.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
@@ -157,6 +165,7 @@ class CheckTaskTree
       .reject { |task| task.type == "BoardGrantEffectuationTask" }
   end
 
+  # See PendingIncompleteAndUncancelledTaskTimersChecker
   def open_task_timers_for_closed_tasks
     TaskTimer.processable.where(task: @appeal.tasks.closed)
   end

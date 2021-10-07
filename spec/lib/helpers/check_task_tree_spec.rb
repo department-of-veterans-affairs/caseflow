@@ -61,6 +61,7 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Closed task should have non-nil `closed_at`"
       end
     end
+
     describe "#open_tasks_with_cancelled_by_defined" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_cancelled_by_defined }
       it_behaves_like "when tasks are correct"
@@ -84,6 +85,21 @@ describe "CheckTaskTree" do
         end
         it { is_expected.to eq [distribution_task] }
         include_examples "has error message", "Cancelled task should have non-nil `cancelled_by_id`"
+      end
+    end
+
+    describe "#open_tasks_with_inactive_assignee" do
+      subject { CheckTaskTree.new(appeal).open_tasks_with_inactive_assignee }
+      let(:assignee) { create(:vso) }
+      before do
+        TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: assignee)
+      end
+      it_behaves_like "when tasks are correct"
+
+      context "when tasks are invalid" do
+        let(:assignee) { create(:vso, status: :inactive) }
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", "Open task should not be assigned to inactive assignee"
       end
     end
   end
