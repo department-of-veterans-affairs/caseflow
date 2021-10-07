@@ -71,7 +71,7 @@ class CheckTaskTree
 
     @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
 
-    if active_tasks_with_open_root_task&.empty?
+    if active_tasks_with_open_root_task && active_tasks_with_open_root_task.empty?
       @errors << "Open RootTask should have an active task assigned to the Board"
     end
   end
