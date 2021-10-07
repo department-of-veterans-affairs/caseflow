@@ -607,6 +607,45 @@ describe ClaimReview, :postgres do
         subject
       end
     end
+
+    context "when there is an established non-ITF EP for a SupplementalClaim" do
+      let(:claim_review) { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+      let(:ep_code) { '040SCR' }
+      let(:end_product_establishment) do
+        create(:end_product_establishment,
+               :active,
+               source: claim_review,
+               synced_status: 'PEND',
+               code: ep_code)
+      end
+      let(:old_issue) do
+        create(:request_issue,
+               decision_review: claim_review,
+               benefit_type: "compensation",
+               end_product_establishment: end_product_establishment)
+      end
+      let(:new_issue) do
+        create(:request_issue,
+               decision_review: claim_review,
+               benefit_type: "compensation")
+      end
+      let(:request_issues_update) do
+        create(:request_issues_update,
+               :requires_processing,
+               review: claim_review,
+               before_request_issue_ids: [old_issue.id],
+               after_request_issue_ids: [old_issue.id, new_issue.id])
+      end
+
+      subject { claim_review.create_issues!([new_issue], request_issues_update) }
+
+      it "adds ITF-eligible issues to the non-ITF EP" do
+        allow(new_issue).to receive(:end_product_code).and_return('040SCRGTY')
+        subject
+        expect(claim_review.end_product_establishments.count).to eq(1)
+        expect(new_issue.end_product_establishment.code).to eq(ep_code)
+      end
+    end
   end
 
   context "#establish!" do

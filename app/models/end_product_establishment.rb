@@ -42,12 +42,16 @@ class EndProductEstablishment < CaseflowRecord
       where.not("established_at IS NULL")
     end
 
+    def status_not_inactive
+      where("synced_status NOT IN (?) OR synced_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
+
     def active
       # We only know the set of inactive EP statuses
       # We also only know the EP status after fetching it from BGS
       # Therefore, our definition of active is when the EP is either
       #   not known or not known to be inactive
-      established.where("synced_status NOT IN (?) OR synced_status IS NULL", EndProduct::INACTIVE_STATUSES)
+      established.status_not_inactive
     end
   end
 

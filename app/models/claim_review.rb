@@ -244,11 +244,11 @@ class ClaimReview < DecisionReview
   def end_product_establishment_for_issue(issue, request_issues_update = nil)
     return unless issue.eligible? && processed_in_vbms?
 
-    end_product_establishments.find_by(
-      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
-      issue.end_product_code,
-      EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue, request_issues_update)
+    epe = end_product_establishments.status_not_inactive.find_by(code: issue.end_product_code)
+    if issue.end_product_code == "040SCRGTY"
+      epe ||= end_product_establishments.status_not_inactive.find_by(code: "040SCR")
+    end
+    epe || new_end_product_establishment(issue, request_issues_update)
   end
 
   def cancel_establishment!
