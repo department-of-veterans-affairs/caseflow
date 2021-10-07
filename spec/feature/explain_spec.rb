@@ -25,6 +25,10 @@ RSpec.feature "Explain JSON" do
       expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
 
       expect(page).to have_content("NOD received")
+
+      # Access page using record id
+      visit "explain/appeals/legacy-#{legacy_appeal.id}?sections=all"
+      expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
     end
   end
 
@@ -63,6 +67,10 @@ RSpec.feature "Explain JSON" do
       # intake.complete!(params)
 
       visit "explain/appeals/#{appeal.uuid}?sections=all"
+      expect(page).to have_content("Appeal.find(#{appeal.id})")
+
+      # Access page using record id
+      visit "explain/appeals/ama-#{appeal.id}?sections=all"
       expect(page).to have_content("Appeal.find(#{appeal.id})")
     end
 
@@ -124,6 +132,16 @@ RSpec.feature "Explain JSON" do
       sji.imported_records[Appeal.table_name].first
     end
     context "given a dispatched appeal" do
+      before do
+        real_appeal.root_task.tap do |task|
+          task.append_instruction "Adding instruction on RootTask"
+          task.append_instruction "Adding instruction to show task versions"
+        end
+        real_appeal.tasks.sample.tap do |task|
+          task.append_instruction "Adding instruction"
+          task.append_instruction "Adding instruction to show task versions"
+        end
+      end
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}?sections=all"
@@ -135,6 +153,10 @@ RSpec.feature "Explain JSON" do
         expect(page).to have_content("Hearing (no PII)")
         expect(page).to have_content("Appeal Narrative (showing PII)")
         expect(page).to have_content("Timeline visualization")
+
+        expect(page).to have_content("task.version_summary")
+        find(id: "#{real_appeal.root_task.id}_versions").click
+        expect(page).to have_content("Adding instruction to show task versions")
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
