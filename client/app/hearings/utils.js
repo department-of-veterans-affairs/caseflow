@@ -27,7 +27,11 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import {
+  VIDEO_HEARING_LABEL,
+  TRAVEL_BOARD_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL
+} from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -943,6 +947,70 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+export const hearingRequestTypeDropdownOptions = (hearing, appeal = null, virtual = false) => {
+  if (!hearing && !appeal) {
+    return {};
+  }
+
+  let currentOption;
+  let virtualHearing;
+  let list = [
+    {
+      value: false,
+      label: ''
+    },
+    {
+      value: true,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+
+  // If the function is being used in the ScheduleVeteranForm
+  if (appeal) {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
+      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+      // the HearingTypeDropdown
+      list[0].label = VIDEO_HEARING_LABEL;
+    } else {
+      // The default is video hearing if the appeal isn't associated with an RO.
+      list[0].label = appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
+    }
+
+    virtualHearing = virtual ? { status: 'pending' } : null;
+  // If the function is being used in the DetailsForm
+  } else {
+    list[0].label = hearing?.readableRequestType;
+    virtualHearing = hearing?.virtualHearing;
+  }
+
+  if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
+    currentOption = list[0];
+  } else {
+    currentOption = list[1];
+  }
+
+  list = list.filter((opt) => opt.label !== currentOption.label);
+
+  return { list, currentOption };
+};
+
+export const hearingRequestTypeDropdownOnchange = (currentLabel, updateHearing, convertHearing = null) => {
+  // Change from virtual if the current label is virtual
+  const type = currentLabel === VIRTUAL_HEARING_LABEL ? 'change_from_virtual' : 'change_to_virtual';
+
+  if (convertHearing) {
+    convertHearing(type);
+  }
+
+  updateHearing(
+    'virtualHearing',
+    { requestCancelled: currentLabel === VIRTUAL_HEARING_LABEL,
+      jobCompleted: false
+    }
+  );
 };
 
 /* eslint-enable camelcase */
