@@ -169,40 +169,41 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Auto-selects virtual if a virtual hearing was requested', () => {
-    const hearing = {
-      ...defaultHearing,
-      virtualHearing: { status: 'pending' }, // Simulate an onChange event
-      regionalOffice: defaultHearing.regionalOfficeKey,
-    };
-    const scheduleVeteran = mount(
-      <ScheduleVeteranForm
-        userCanCollectVideoCentralEmails
-        goBack={cancelSpy}
-        submit={submitSpy}
-        onChange={changeSpy}
-        appeal={{
-          ...legacyAppealForTravelBoard,
-          regionalOffice: defaultHearing.regionalOfficeKey,
-          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
-        }}
-        hearing={hearing}
-        virtual
-      />,
-      {
-        wrappingComponent: queueWrapper,
-      }
-    );
-
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(
-      scheduleVeteran.
-        find(HearingTypeDropdown).
-        find(SearchableDropdown).
-        prop('value')
-    ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
-    expect(scheduleVeteran).toMatchSnapshot();
-  });
+  // TODO: Move this test to ScheduleVeteran.test.js
+  // test('Auto-selects virtual if a virtual hearing was requested', () => {
+  //   const hearing = {
+  //     ...defaultHearing,
+  //     virtualHearing: { status: 'pending' }, // Simulate an onChange event
+  //     regionalOffice: defaultHearing.regionalOfficeKey,
+  //   };
+  //   const scheduleVeteran = mount(
+  //     <ScheduleVeteranForm
+  //       userCanCollectVideoCentralEmails
+  //       goBack={cancelSpy}
+  //       submit={submitSpy}
+  //       onChange={changeSpy}
+  //       appeal={{
+  //         ...legacyAppealForTravelBoard,
+  //         regionalOffice: defaultHearing.regionalOfficeKey,
+  //         readableHearingRequestType: VIRTUAL_HEARING_LABEL,
+  //       }}
+  //       hearing={hearing}
+  //       virtual
+  //     />,
+  //     {
+  //       wrappingComponent: queueWrapper,
+  //     }
+  //   );
+  //
+  //   expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
+  //   expect(
+  //     scheduleVeteran.
+  //       find(HearingTypeDropdown).
+  //       find(SearchableDropdown).
+  //       prop('value')
+  //   ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
+  //   expect(scheduleVeteran).toMatchSnapshot();
+  // });
 
   test('Displayes Unschedules Notes input', () => {
     const parentHearingTask = generateAmaTask({
