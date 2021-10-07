@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import { ReviewAssignments } from '../../../../app/hearings/components/ReviewAssignments';
+import { ReviewAssignments } from '../../../../../../client/app/hearings/components/ReviewAssignments';
 
 describe('ReviewAssignments', () => {
   it('renders the RO/CO alert', () => {
@@ -11,7 +11,7 @@ describe('ReviewAssignments', () => {
       </MemoryRouter>
     );
 
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['We have assigned your hearings days']));
+    expect(wrapper.text().includes(['We have assigned your hearings days'])).toBe(true);
   });
 
   it('renders the modal if displayConfirmationModal is true', () => {
@@ -21,7 +21,8 @@ describe('ReviewAssignments', () => {
       </MemoryRouter>
     );
 
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Please confirm Caseflow upload']));
+    expect(wrapper.text().includes('Please confirm Caseflow upload')).toBe(true);
+    // expect(2).equals(2);
   });
 
   // This test appears to no longer be applicable (and is failing after test suite updates)

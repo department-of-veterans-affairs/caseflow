@@ -88,7 +88,7 @@ describe('DecisionReviewer', () => {
 
       /* eslint-disable no-underscore-dangle */
       autoSizerStub = sinon.stub(AutoSizer.prototype, 'render');
-      autoSizerStub.callsFake(function () {
+      autoSizerStub.callsFake(() => {
         return (
           <div ref={testContext._setRef}>
             {testContext.props.children({ width: 200,
@@ -115,14 +115,14 @@ describe('DecisionReviewer', () => {
     describe('PDF list view', () => {
       describe('when expanded comments', () => {
         it('can view comments', () => {
-          expect(wrapper.text()).toEqual(expect.not.arrayContaining(['Test Comment']));
+          expect(wrapper.text().includes('Test Comment')).toBe(false);
           findElementById(wrapper, 'expand-2-comments-button').simulate('click');
-          expect(wrapper.text()).toEqual(expect.arrayContaining(['Test Comment']));
+          expect(wrapper.text().includes('Test Comment')).toBe(true);
         });
 
         it('page number is displayed', asyncTest(async() => {
           findElementById(wrapper, 'expand-2-comments-button').simulate('click');
-          expect(wrapper.text()).toEqual(expect.arrayContaining([`Page ${annotations[0].page}`]));
+          expect(wrapper.text().includes(`Page ${annotations[0].page}`)).toBe(true);
         }));
       });
 
@@ -196,7 +196,7 @@ describe('DecisionReviewer', () => {
             { target: { value: 'comment' } });
 
           // comment is already expanded and highlighted
-          expect(wrapper.html()).toEqual(expect.arrayContaining(['<mark class=" ">Comment</mark>']));
+          expect(wrapper.html().includes('<mark class=" ">Comment</mark>')).toBe(true);
         });
 
         it('does search highlighting for categories', () => {
@@ -398,7 +398,7 @@ describe('DecisionReviewer', () => {
         const eternalPromise = new Promise(() => {});
 
         sinon.stub(ApiUtil, 'get').returns(eternalPromise);
-        expect(wrapper.text()).toEqual(expect.arrayContaining(['Loading claims folder']));
+        expect(wrapper.text().includes('Loading claims folder')).toBe(true);
       });
     });
   });

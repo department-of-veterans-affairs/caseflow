@@ -47,8 +47,8 @@ describe('PdfUI', () => {
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
-        expect(wrapper.text()).toEqual(expect.not.arrayContaining(['Page 1 of 1']));
-        expect(wrapper.text()).toEqual(expect.arrayContaining(['Loading document']));
+        expect(wrapper.text().includes('Page 1 of 1')).toBe(false);
+        expect(wrapper.text().includes('Loading document')).toBe(true);
       });
 
       it('renders the zoom buttons', () => {

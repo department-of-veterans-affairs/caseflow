@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import BuildSchedule from '../../../../app/hearings/components/BuildSchedule';
+import BuildSchedule from '../../../../../../client/app/hearings/components/BuildSchedule';
 
 describe('BuildSchedule', () => {
   it('renders table with upload history', () => {
@@ -19,10 +19,10 @@ describe('BuildSchedule', () => {
       ]}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Judge']));
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['07/03/2018']));
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Justin Madigan']));
-    expect(wrapper.text()).toEqual(expect.arrayContaining(['Download']));
+    expect(wrapper.text().includes('Judge')).toBe(true);
+    expect(wrapper.text().includes('07/03/2018')).toBe(true);
+    expect(wrapper.text().includes('Justin Madigan')).toBe(true);
+    expect(wrapper.text().includes('Download')).toBe(true);
   });
 
   it('renders a success alert when a schedule period has been created', () => {
@@ -45,8 +45,6 @@ describe('BuildSchedule', () => {
       }}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).toEqual(
-      expect.arrayContaining(['You have successfully assigned judges to hearings'])
-    );
+    expect(wrapper.text().includes('You have successfully assigned judges to hearings')).toBe(true);
   });
 });
