@@ -8,7 +8,8 @@
 # We have background jobs that check for bad invalid trees, but the alerts are sometimes overwhelming and
 # engineers may not address the problem in time (i.e., before the appeal is dispatched).
 #
-# Engineers should run this class after they modify a task tree: `check_task_tree(appeal)` or `CheckTaskTree.call(appeal)` or
+# Engineers should run this class after they modify a task tree:
+# `check_task_tree(appeal)` or `CheckTaskTree.call(appeal)` or
 # ```
 #   CheckTaskTree.patch_classes
 #   appeal.check_task_tree
@@ -46,13 +47,14 @@ class CheckTaskTree
     @errors = []
   end
 
-  # :reek:BooleanParameter
+  # rubocop:disable Metrics/CyclomaticComplexity
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
     check_parent_child_tasks
     check_task_counts
 
+    @errors << "Task should be closed since there are no active issues" unless open_tasks_with_no_active_issues.blank?
     @errors << "Appeal is stuck" if @appeal.try(:stuck?)
 
     if verbose
@@ -62,12 +64,16 @@ class CheckTaskTree
 
     [@errors, @warnings]
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def check_parent_child_tasks
     @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
 
     @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
-    @errors << "Open RootTask should have at least one 'proper' active task" if active_tasks_with_open_root_task.blank?
+
+    if active_tasks_with_open_root_task&.empty?
+      @errors << "Open RootTask should have an active task assigned to the Board"
+    end
   end
 
   def check_task_counts
@@ -76,19 +82,19 @@ class CheckTaskTree
   end
 
   def open_tasks_with_parent_not_on_hold
-    @appeal.tasks.open.select(&:parent).reject { |task| task.parent&.status == "on_hold" }
+    tasks_with_parents.open.reject { |task| task.parent&.status == "on_hold" }
   end
 
   # See AppealsWithClosedRootTaskOpenChildrenQuery
   def open_tasks_with_closed_root_task
-    @appeal.tasks.open if @appeal.root_task&.closed?
+    tasks_with_parents.open if @appeal.root_task&.closed?
   end
 
   # Task types that are ignored when checking that an appeal is not stuck
-  IGNORED_ACTIVE_TASKS = %w[RootTask TrackVeteranTask].freeze
+  IGNORED_ACTIVE_TASKS = %w[TrackVeteranTask].freeze
   # Detects one of the problems from AppealsWithNoTasksOrAllTasksOnHoldQuery
   def active_tasks_with_open_root_task
-    @appeal.tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
+    tasks_with_parents.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
 
   # See AppealsWithMoreThanOneOpenHearingTaskChecker
@@ -111,10 +117,20 @@ class CheckTaskTree
     @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
   end
 
-  # See DecisionDateChecker
-  def request_issues_without_decision_date
-    @appeal.request_issues.where
-      .not(nonrating_issue_category: nil)
-      .where(decision_date: nil, closed_at: nil)
+  # See DecisionReviewTasksForInactiveAppealsChecker
+  def open_tasks_with_no_active_issues
+    has_active_issues = @appeal.request_issues.active.any?
+    return if has_active_issues
+
+    # Ignoring BoardGrantEffectuationTask (which can stay open with all issues decided),
+    # find all open tasks assigned to a BusinessLine
+    @appeal.tasks.open.assigned_to_any_org.where(assigned_to_id: BusinessLine.pluck(:id))
+      .reject { |task| task.type == "BoardGrantEffectuationTask" }
+  end
+
+  private
+
+  def tasks_with_parents
+    @appeal.tasks.where.not(parent_id: nil)
   end
 end

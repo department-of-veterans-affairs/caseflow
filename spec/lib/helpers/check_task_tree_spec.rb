@@ -14,7 +14,7 @@ describe "CheckTaskTree" do
     it "calls CheckTaskTree.check" do
       expect_any_instance_of(CheckTaskTree).to receive(:check).and_call_original
       errors, warnings = subject
-      expect(errors).to match_array ["Open RootTask should have at least one 'proper' active task", "Appeal is stuck"]
+      expect(errors).to include "Appeal is stuck"
       expect(warnings).to eq []
     end
   end
@@ -65,9 +65,10 @@ describe "CheckTaskTree" do
       include_examples "no error message"
     end
     context "when tasks are invalid" do
-      before { appeal.root_task.completed! }
+      let(:distribution_task) { appeal.tasks.find_by_type(:DistributionTask) }
+      before { distribution_task.completed! }
       it { is_expected.to be_blank }
-      include_examples "has error message", "Open RootTask should have at least one 'proper' active task"
+      include_examples "has error message", "Open RootTask should have an active task assigned to the Board"
     end
   end
 
@@ -100,6 +101,30 @@ describe "CheckTaskTree" do
       end
       it { is_expected.not_to be_blank }
       include_examples "has error message", /There should be no more than 1 open task of type/
+    end
+  end
+
+  describe "#open_tasks_with_no_active_issues" do
+    subject { CheckTaskTree.new(appeal).open_tasks_with_no_active_issues }
+    let(:appeal) { create(:appeal, :dispatched) }
+    let(:education) { create(:business_line, url: "education") }
+    let!(:request_issue) { create(:request_issue, :decided, decision_review: appeal) }
+    let(:review_task) { DecisionReviewTask.create!(appeal: appeal, assigned_to: education) }
+    before do
+      review_task.cancelled!
+      BoardGrantEffectuationTask.create!(appeal: appeal, assigned_to: education)
+    end
+    context "when tasks are valid" do
+      it { is_expected.to be_blank }
+      include_examples "no error message"
+    end
+    context "when tasks are invalid" do
+      let(:review_task) { DecisionReviewTask.create!(appeal: appeal, assigned_to: education) }
+      before do
+        review_task.assigned!
+      end
+      it { is_expected.not_to be_blank }
+      include_examples "has error message", "Task should be closed since there are no active issues"
     end
   end
 end
