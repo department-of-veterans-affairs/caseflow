@@ -89,6 +89,7 @@ describe "CheckTaskTree" do
   end
 
   context "check_parent_child_tasks" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
     describe "#open_tasks_with_parent_not_on_hold" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_parent_not_on_hold }
       let(:appeal) { create(:appeal, :mail_blocking_distribution) }
@@ -102,7 +103,6 @@ describe "CheckTaskTree" do
     end
     describe "#open_tasks_with_closed_root_task" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_closed_root_task }
-      let(:appeal) { create(:appeal, :ready_for_distribution) }
       it_behaves_like "when tasks are correct"
       
       context "when tasks are invalid" do
@@ -113,7 +113,6 @@ describe "CheckTaskTree" do
     end
     describe "#active_tasks_with_open_root_task" do
       subject { CheckTaskTree.new(appeal).active_tasks_with_open_root_task }
-      let(:appeal) { create(:appeal, :ready_for_distribution) }
       before { TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:vso)) }
       context "when tasks are correct" do
         it { is_expected.not_to be_blank }
@@ -167,6 +166,7 @@ describe "CheckTaskTree" do
     let(:review_task) { DecisionReviewTask.create!(appeal: appeal, assigned_to: education) }
     before do
       review_task.cancelled!
+      review_task.update(cancelled_by: create(:user))
       BoardGrantEffectuationTask.create!(appeal: appeal, assigned_to: education)
     end
     it_behaves_like "when tasks are correct"
@@ -178,6 +178,23 @@ describe "CheckTaskTree" do
       end
       it { is_expected.not_to be_blank }
       include_examples "has error message", "Task should be closed since there are no active issues"
+    end
+  end
+
+  describe "#open_task_timers_for_closed_tasks" do
+    subject { CheckTaskTree.new(appeal).open_task_timers_for_closed_tasks }
+    let(:appeal) { create(:appeal, :assigned_to_judge) }
+    let(:judge_task) { appeal.tasks.find_by_type(:JudgeAssignTask) }
+    let!(:task_timer) { create(:task_timer, task: judge_task) }
+    it_behaves_like "when tasks are correct"
+
+    context "when tasks are invalid" do
+      before do
+        judge_task.cancelled!
+        task_timer.update_columns(canceled_at: nil)
+      end
+      it { is_expected.not_to be_blank }
+      include_examples "has error message", "Closed task should not have processable TaskTimer"
     end
   end
 end

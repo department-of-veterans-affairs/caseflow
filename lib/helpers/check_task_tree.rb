@@ -57,7 +57,7 @@ class CheckTaskTree
 
     # Associated records
     @errors << "Task should be closed since there are no active issues" unless open_tasks_with_no_active_issues.blank?
-    @errors << "Closed task should not have processable TaskTimer" unless closed_tasks_with_open_task_timer.blank?
+    @errors << "Closed task should not have processable TaskTimer" unless open_task_timers_for_closed_tasks.blank?
 
     @errors << "Appeal is stuck" if @appeal.try(:stuck?)
 
@@ -155,9 +155,8 @@ class CheckTaskTree
       .reject { |task| task.type == "BoardGrantEffectuationTask" }
   end
 
-  def closed_tasks_with_open_task_timer
-    @appeal.tasks.closed
-    nil
+  def open_task_timers_for_closed_tasks
+    TaskTimer.processable.where(task: @appeal.tasks.closed)
   end
 
   private
