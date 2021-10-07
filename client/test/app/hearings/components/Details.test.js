@@ -7,11 +7,11 @@ import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHeari
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
 import {
-  userWithVirtualHearingsFeatureEnabled,
-  userWithConvertCentralHearingsEnabled,
+  anyUser,
   legacyHearing,
   amaHearing,
-  defaultHearing
+  defaultHearing,
+  virtualHearing
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -57,7 +57,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           defaultHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -96,7 +96,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithConvertCentralHearingsEnabled,
+          anyUser,
           amaHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -116,7 +116,7 @@ describe('Details', () => {
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
-  test('Displays HearingConversion when converting from video and feature flag enabled', () => {
+  test('Displays HearingConversion when converting from video', () => {
     const details = mount(
       <Details
         hearing={defaultHearing}
@@ -129,6 +129,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
+          anyUser,
           defaultHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -152,10 +153,10 @@ describe('Details', () => {
     expect(details).toMatchSnapshot();
   });
 
-  test('Displays VirtualHearingModal when converting from video', () => {
+  test('Displays HearingConversion when converting from virtual', () => {
     const details = mount(
       <Details
-        hearing={defaultHearing}
+        hearing={virtualHearing}
         saveHearing={saveHearingSpy}
         setHearing={setHearingSpy}
         goBack={goBackSpy}
@@ -165,7 +166,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           defaultHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -182,9 +183,7 @@ describe('Details', () => {
       simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
-    // Ensure the modal is displayed
-    expect(details.find(VirtualHearingModal)).toHaveLength(1);
-    expect(details.find(HearingConversion)).toHaveLength(0);
+    expect(details.find(HearingConversion)).toHaveLength(1);
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
@@ -202,7 +201,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           amaHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -242,7 +241,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           legacyHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -281,7 +280,7 @@ describe('Details', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           amaHearing
         ),
         wrappingComponentProps: { store: detailsStore },
