@@ -103,8 +103,8 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
           let(:appeal) do
             create(:appeal,
                    :assigned_to_judge,
-                   associated_judge: judge,
                    :held_hearing,
+                   associated_judge: judge,
                    docket_type: docket_type,
                    receipt_date: veteran.date_of_death + 5.days,
                    veteran: veteran)
