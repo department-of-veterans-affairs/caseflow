@@ -27,23 +27,10 @@ class DirectReviewDocket < Docket
   end
 
   def nonpriority_receipts_per_year
-    # This conditional should be removed on March 1, 2020
-    if current_date_earlier_than_feb_29_2020?
-      prorated_nonpriority_appeals_per_year_based_on_days_since_march_first_2019
-    else
-      number_of_nonpriority_appeals_received_in_the_past_year
-    end
+    number_of_nonpriority_appeals_received_in_the_past_year
   end
 
   private
-
-  def current_date_earlier_than_feb_29_2020?
-    today < Date.new(2020, 2, 29)
-  end
-
-  def prorated_nonpriority_appeals_per_year_based_on_days_since_march_first_2019
-    ((nonpriority_appeals_since_march_first_2019 * 365) / days_since_march_first_2019).round
-  end
 
   def number_of_nonpriority_appeals_received_in_the_past_year
     all_nonpriority.where("receipt_date > ?", 1.year.ago).ids.size
@@ -51,18 +38,6 @@ class DirectReviewDocket < Docket
 
   def today
     @today ||= Time.zone.today
-  end
-
-  def nonpriority_appeals_since_march_first_2019
-    all_nonpriority.where("receipt_date > ?", march_first).ids.size
-  end
-
-  def days_since_march_first_2019
-    Integer(today - march_first)
-  end
-
-  def march_first
-    @march_first ||= Date.new(2019, 3, 1)
   end
 
   def all_nonpriority
