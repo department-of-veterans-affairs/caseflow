@@ -7,50 +7,46 @@ class CheckTaskTree
     @errors = []
   end
 
-  def check
-    puts "Checking #{@appeal.class.name} #{@appeal.id} ..."
+  def check(verbose: true)
+    puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
-    @errors << "Open task should not have an on_hold parent task" if open_tasks_with_parent_not_on_hold
-    @errors << "Closed parent task should not have an open child task" if open_tasks_with_closed_parent
-    @errors << "Closed RootTask should not have open tasks" if open_tasks_with_closed_root_task.any?
-    pp active_tasks
-    pp appeal_status
-    @errors << "There should be no more than 1 open HearingTask" if open_hearing_tasks.count > 1
-
-    puts("--- ERRORS:", @errors) if @errors.any?
-    puts("--- WARNINGS:", @warnings) if @warnings.any?
+    @errors << "Open task should not have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
+    @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
+    @errors << "Open RootTask should have at least one 'proper' active task" if active_tasks_with_open_root_task.blank?
+    @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
+    @errors << "There should be no more than 1 open task" unless extra_open_tasks.blank?
+    if verbose
+      puts("--- ERRORS:", @errors) if @errors.any?
+      puts("--- WARNINGS:", @warnings) if @warnings.any?
+    end
 
     [@errors, @warnings]
   end
 
   def open_tasks_with_parent_not_on_hold
-    @appeal.tasks.open.map(&:status)
+    @appeal.tasks.open.select(&:parent).reject { |task| task.parent&.status == "on_hold" }
   end
 
   # See AppealsWithClosedRootTaskOpenChildrenQuery
   def open_tasks_with_closed_root_task
-    if @appeal.root_task&.closed?
-      @appeal.tasks.open.map(&:status)
-    else
-      @appeal.tasks.open.map(&:status)
-    end
-  end
-
-  def open_tasks_with_closed_parent
+    @appeal.tasks.open if @appeal.root_task&.closed?
   end
 
   # See AppealsWithNoTasksOrAllTasksOnHoldQuery
-  def active_tasks
-    @appeal.tasks.active
-  end
-
-  def appeal_status
-    @appeal.status.status == :unknown
+  IGNORED_ACTIVE_TASKS = %w[RootTask TrackVeteranTask].freeze
+  def active_tasks_with_open_root_task
+    @appeal.tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
 
   # See AppealsWithMoreThanOneOpenHearingTaskChecker
-  def open_hearing_tasks
-    []
+  def extra_open_hearing_tasks
+    hearing_tasks = @appeal.tasks.open.of_type(:HearingTask)
+    hearing_tasks.drop 1
+  end
+
+  def extra_open_tasks
+    hearing_tasks = @appeal.tasks.open.of_type(:HearingTask)
+    hearing_tasks.drop 1
   end
 
   # See DecisionDateChecker
