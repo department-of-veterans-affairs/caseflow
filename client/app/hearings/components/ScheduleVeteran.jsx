@@ -24,7 +24,13 @@ import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import {
+  getAppellantTitle,
+  processAlerts,
+  parseVirtualHearingErrors,
+  hearingRequestTypeDropdownOptions,
+  hearingRequestTypeDropdownOnchange
+} from '../utils';
 import { parentTasks } from '../../queue/utils';
 import {
   onChangeFormData,
@@ -393,8 +399,14 @@ export const ScheduleVeteran = ({
             hearing={hearing}
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
-            convertToVirtual={convertToVirtual}
             hearingTask={parentHearingTask}
+            convertToVirtual={convertToVirtual}
+            hearingTypeDropdownOnchange={hearingRequestTypeDropdownOnchange}
+            hearingTypeDropdownOptions={
+              hearingRequestTypeDropdownOptions(
+                hearing, appeal, virtual
+              )
+            }
           />
         )}
 

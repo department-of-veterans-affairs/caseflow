@@ -1,11 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  TRAVEL_BOARD_HEARING_LABEL,
-  VIDEO_HEARING_LABEL,
-  HEARING_CONVERSION_TYPES,
-} from '../constants';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -38,6 +34,8 @@ export const ScheduleVeteranForm = ({
   userCanViewTimeSlots,
   hearingTask,
   userCanCollectVideoCentralEmails,
+  hearingTypeDropdownOptions,
+  hearingTypeDropdownOnchange,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -56,19 +54,6 @@ export const ScheduleVeteranForm = ({
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
   const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
-  const getHearingRequestType = () => {
-    if (
-      appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
-    ) {
-      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-      // the HearingTypeDropdown
-      return VIDEO_HEARING_LABEL;
-    }
-
-    // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
-  };
 
   // Set the section props
   const sectionProps = {
@@ -133,10 +118,14 @@ export const ScheduleVeteranForm = ({
         <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
-            enableFullPageConversion
-            update={convertToVirtual}
-            originalRequestType={getHearingRequestType()}
-            virtualHearing={virtual ? { status: 'pending' } : null}
+            dropdownOptions={hearingTypeDropdownOptions?.list}
+            currentOption={hearingTypeDropdownOptions?.currentOption}
+            onChange={
+              () => hearingTypeDropdownOnchange(
+                hearingTypeDropdownOptions?.currentOption?.label,
+                convertToVirtual
+              )
+            }
           />
         </div>
         <div className="usa-width-one-whole" {...marginTop(30)}>
@@ -234,7 +223,9 @@ ScheduleVeteranForm.propTypes = {
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
-  hearingTask: PropTypes.object
+  hearingTask: PropTypes.object,
+  hearingTypeDropdownOptions: PropTypes.object,
+  hearingTypeDropdownOnchange: PropTypes.func
 };
 
 /* eslint-enable camelcase */

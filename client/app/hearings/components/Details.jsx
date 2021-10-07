@@ -20,7 +20,9 @@ import {
   getAppellantTitle,
   processAlerts,
   startPolling,
-  parseVirtualHearingErrors
+  parseVirtualHearingErrors,
+  hearingRequestTypeDropdownOptions,
+  hearingRequestTypeDropdownOnchange
 } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -35,7 +37,6 @@ import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-
 import COPY from '../../../COPY';
 
 /**
@@ -257,13 +258,13 @@ const HearingDetails = (props) => {
             <DetailsForm
               hearing={hearing}
               initialHearing={initialHearing}
-              update={updateHearing}
-              convertHearing={convertHearing}
               errors={virtualHearingErrors}
               isLegacy={isLegacy}
-              openVirtualHearingModal={openVirtualHearingModal}
               readOnly={disabled}
-              requestType={hearing?.readableRequestType}
+              hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions(hearing)}
+              hearingRequestTypeDropdownOnchange={hearingRequestTypeDropdownOnchange}
+              convertHearing={convertHearing}
+              update={updateHearing}
             />
             {shouldStartPolling && poll()}
           </div>

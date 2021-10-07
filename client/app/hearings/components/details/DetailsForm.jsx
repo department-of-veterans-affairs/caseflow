@@ -21,11 +21,11 @@ const DetailsForm = (props) => {
     initialHearing,
     update,
     isLegacy,
-    openVirtualHearingModal,
     readOnly,
-    requestType,
     errors,
-    convertHearing,
+    hearingRequestTypeDropdownOptions,
+    hearingRequestTypeDropdownOnchange,
+    convertHearing
   } = props;
 
   return (
@@ -53,18 +53,23 @@ const DetailsForm = (props) => {
         </div>
         <div {...rowThirds}>
           <HearingTypeDropdown
-            convertHearing={convertHearing}
-            virtualHearing={hearing?.virtualHearing}
-            originalRequestType={requestType}
-            update={update}
-            openModal={openVirtualHearingModal}
-            readOnly={
-              hearing?.scheduledForIsPast ||
-              ((hearing?.isVirtual || hearing?.wasVirtual) &&
-                !hearing?.virtualHearing?.jobCompleted)
-            }
             styling={columnThird}
+            dropdownOptions={hearingRequestTypeDropdownOptions?.list}
+            currentOption={hearingRequestTypeDropdownOptions?.currentOption}
+            readOnly={
+                hearing?.scheduledForIsPast ||
+                ((hearing?.isVirtual || hearing?.wasVirtual) &&
+                  !hearing?.virtualHearing?.jobCompleted)
+            }
+            onChange={
+              () => hearingRequestTypeDropdownOnchange(
+                hearingRequestTypeDropdownOptions?.currentOption?.label,
+                update,
+                convertHearing
+              )
+            }
           />
+
           <div>
             {!isLegacy && (
               <React.Fragment>
@@ -136,11 +141,11 @@ DetailsForm.propTypes = {
     virtualHearing: PropTypes.object
   }),
   isLegacy: PropTypes.bool,
-  openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
-  requestType: PropTypes.string,
   update: PropTypes.func,
   convertHearing: PropTypes.func,
+  hearingRequestTypeDropdownOptions: PropTypes.object,
+  hearingRequestTypeDropdownOnchange: PropTypes.func,
 };
 
 export default DetailsForm;
