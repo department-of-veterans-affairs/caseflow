@@ -30,6 +30,38 @@ describe "CheckTaskTree" do
     end
   end
 
+  let(:distribution_task) { appeal.tasks.find_by_type(:DistributionTask) }
+  describe "#open_tasks_with_closed_at_defined" do
+    subject { CheckTaskTree.new(appeal).open_tasks_with_closed_at_defined }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    context "when tasks are valid" do
+      it { is_expected.to be_blank }
+      include_examples "no error message"
+    end
+    context "when tasks are invalid" do
+      before do
+        distribution_task.cancelled!
+        distribution_task.update_columns(status: :assigned)
+      end
+      it { is_expected.to eq [distribution_task] }
+      include_examples "has error message", "Open task should have `closed_at` = nil"
+    end
+  end
+  describe "#open_tasks_with_cancelled_by_defined" do
+    subject { CheckTaskTree.new(appeal).open_tasks_with_cancelled_by_defined }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    context "when tasks are valid" do
+      it { is_expected.to be_blank }
+      include_examples "no error message"
+    end
+    context "when tasks are invalid" do
+      before do
+        distribution_task.update(cancelled_by: create(:user))
+      end
+      it { is_expected.to eq [distribution_task] }
+      include_examples "has error message", "Open task should have `cancelled_by_id` = nil"
+    end
+  end
   describe "#open_tasks_with_parent_not_on_hold" do
     subject { CheckTaskTree.new(appeal).open_tasks_with_parent_not_on_hold }
     let(:appeal) { create(:appeal, :mail_blocking_distribution) }
@@ -65,7 +97,6 @@ describe "CheckTaskTree" do
       include_examples "no error message"
     end
     context "when tasks are invalid" do
-      let(:distribution_task) { appeal.tasks.find_by_type(:DistributionTask) }
       before { distribution_task.completed! }
       it { is_expected.to be_blank }
       include_examples "has error message", "Open RootTask should have an active task assigned to the Board"

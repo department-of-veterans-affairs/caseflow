@@ -51,6 +51,7 @@ class CheckTaskTree
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
+    check_task_attributes
     check_parent_child_tasks
     check_task_counts
 
@@ -66,6 +67,11 @@ class CheckTaskTree
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  def check_task_attributes
+    @errors << "Open task should have `closed_at` = nil" unless open_tasks_with_closed_at_defined.blank?
+    @errors << "Open task should have `cancelled_by_id` = nil" unless open_tasks_with_cancelled_by_defined.blank?
+  end
+
   def check_parent_child_tasks
     @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
 
@@ -79,6 +85,15 @@ class CheckTaskTree
   def check_task_counts
     @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
     @errors << "There should be no more than 1 open task of type #{extra_open_tasks}" unless extra_open_tasks.blank?
+  end
+
+  # See OpenTasksWithClosedAtChecker
+  def open_tasks_with_closed_at_defined
+    @appeal.tasks.open.where.not(closed_at: nil)
+  end
+
+  def open_tasks_with_cancelled_by_defined
+    @appeal.tasks.open.where.not(cancelled_by_id: nil)
   end
 
   def open_tasks_with_parent_not_on_hold
