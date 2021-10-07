@@ -2,25 +2,25 @@
 
 ##
 # Checks for invalid task trees, which could cause an appeal to become stuck or be processed incorrectly.
-# An invalid task tree is one that do not conform to our expectations of typical task trees
-# or to scenarios that our code expects.
+# An invalid task tree is one that does not conform to our expectations of typical task trees
+# or to scenarios that the code expects.
 #
-# We have background jobs that check for bad task trees, but the alerts are sometimes overwhelming and
+# We have background jobs that check for bad invalid trees, but the alerts are sometimes overwhelming and
 # engineers may not address the problem in time (i.e., before the appeal is dispatched).
 #
 # Engineers should run this class after they modify a task tree: `CheckTaskTree.call(appeal)` or
 # ```
-#  CheckTaskTree.patch_classes
-#  appeal.check_task_tree
+#   CheckTaskTree.patch_classes
+#   appeal.check_task_tree
 # ```
 # It will show problems with the task tree so the engineer can immediately remedy them
 # and prevent downstream appeal processing problems.
 #
-# List specific problems by calling specific methods like so:
+# Get more details and list specific problems by calling specific methods like so:
 # ```
-#  ctt = CheckTaskTree.new(appeal)
-#  errors, warnings = ctt.check
-#  ctt.open_tasks_with_parent_not_on_hold
+#   ctt = CheckTaskTree.new(appeal)
+#   errors, warnings = ctt.check
+#   ctt.open_tasks_with_parent_not_on_hold
 # ```
 
 class CheckTaskTree
