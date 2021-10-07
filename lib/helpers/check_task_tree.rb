@@ -55,7 +55,10 @@ class CheckTaskTree
     check_parent_child_tasks
     check_task_counts
 
+    # Associated records
     @errors << "Task should be closed since there are no active issues" unless open_tasks_with_no_active_issues.blank?
+    @errors << "Closed task should not have processable TaskTimer" unless closed_tasks_with_open_task_timer.blank?
+
     @errors << "Appeal is stuck" if @appeal.try(:stuck?)
 
     if verbose
@@ -68,8 +71,10 @@ class CheckTaskTree
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def check_task_attributes
-    @errors << "Open task should have `closed_at` = nil" unless open_tasks_with_closed_at_defined.blank?
-    @errors << "Open task should have `cancelled_by_id` = nil" unless open_tasks_with_cancelled_by_defined.blank?
+    @errors << "Open task should have nil `closed_at`" unless open_tasks_with_closed_at_defined.blank?
+    @errors << "Closed task should have non-nil `closed_at`" unless closed_tasks_without_closed_at.blank?
+
+    @errors << "Open task should have nil `cancelled_by_id`" unless open_tasks_with_cancelled_by_defined.blank?
   end
 
   def check_parent_child_tasks
@@ -90,6 +95,10 @@ class CheckTaskTree
   # See OpenTasksWithClosedAtChecker
   def open_tasks_with_closed_at_defined
     @appeal.tasks.open.where.not(closed_at: nil)
+  end
+
+  def closed_tasks_without_closed_at
+    @appeal.tasks.closed.where(closed_at: nil)
   end
 
   def open_tasks_with_cancelled_by_defined
@@ -141,6 +150,11 @@ class CheckTaskTree
     # find all open tasks assigned to a BusinessLine
     @appeal.tasks.open.assigned_to_any_org.where(assigned_to_id: BusinessLine.pluck(:id))
       .reject { |task| task.type == "BoardGrantEffectuationTask" }
+  end
+
+  def closed_tasks_with_open_task_timer
+    @appeal.tasks.closed
+    nil
   end
 
   private
