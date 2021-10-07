@@ -38,7 +38,7 @@ describe "CheckTaskTree" do
     describe "#open_tasks_with_closed_at_defined" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_closed_at_defined }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before do
           distribution_task.cancelled!
@@ -51,7 +51,7 @@ describe "CheckTaskTree" do
     describe "#closed_tasks_without_closed_at" do
       subject { CheckTaskTree.new(appeal).closed_tasks_without_closed_at }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before do
           distribution_task.cancelled!
@@ -64,7 +64,7 @@ describe "CheckTaskTree" do
     describe "#open_tasks_with_cancelled_by_defined" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_cancelled_by_defined }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before do
           distribution_task.update(cancelled_by: create(:user))
@@ -94,7 +94,7 @@ describe "CheckTaskTree" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_parent_not_on_hold }
       let(:appeal) { create(:appeal, :mail_blocking_distribution) }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before { appeal.tasks.of_type(:DistributionTask).first.assigned! }
         it { is_expected.to eq [appeal.tasks.open.last] }
@@ -104,7 +104,7 @@ describe "CheckTaskTree" do
     describe "#open_tasks_with_closed_root_task" do
       subject { CheckTaskTree.new(appeal).open_tasks_with_closed_root_task }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before { appeal.root_task.completed! }
         it { is_expected.not_to be_blank }
@@ -133,7 +133,7 @@ describe "CheckTaskTree" do
       subject { CheckTaskTree.new(appeal).extra_open_hearing_tasks }
       let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         before { HearingTask.create!(appeal: appeal, parent: appeal.root_task) }
         it { is_expected.not_to be_blank }
@@ -144,7 +144,7 @@ describe "CheckTaskTree" do
       subject { CheckTaskTree.new(appeal).extra_open_tasks }
       let(:appeal) { create(:appeal, :at_bva_dispatch) }
       it_behaves_like "when tasks are correct"
-      
+
       context "when tasks are invalid" do
         let(:dispatch_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
         let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
@@ -170,7 +170,7 @@ describe "CheckTaskTree" do
       BoardGrantEffectuationTask.create!(appeal: appeal, assigned_to: education)
     end
     it_behaves_like "when tasks are correct"
-    
+
     context "when tasks are invalid" do
       let(:review_task) { DecisionReviewTask.create!(appeal: appeal, assigned_to: education) }
       before do

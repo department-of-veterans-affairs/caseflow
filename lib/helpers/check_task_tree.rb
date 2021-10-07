@@ -47,7 +47,7 @@ class CheckTaskTree
     @errors = []
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
@@ -68,7 +68,7 @@ class CheckTaskTree
 
     [@errors, @warnings]
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def check_task_attributes
     @errors << "Open task should have nil `closed_at`" unless open_tasks_with_closed_at_defined.blank?
@@ -97,6 +97,7 @@ class CheckTaskTree
   def open_tasks_with_closed_at_defined
     @appeal.tasks.open.where.not(closed_at: nil)
   end
+
   def closed_tasks_without_closed_at
     @appeal.tasks.closed.where(closed_at: nil)
   end
@@ -104,6 +105,7 @@ class CheckTaskTree
   def open_tasks_with_cancelled_by_defined
     @appeal.tasks.open.where.not(cancelled_by_id: nil)
   end
+
   def cancelled_tasks_without_cancelled_by
     @appeal.tasks.cancelled.where(cancelled_by_id: nil)
   end
