@@ -21,7 +21,7 @@ class AppellantSubstitution < CaseflowRecord
 
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
-  after_create :initialize_tasks, unless: :same_appeal_substitution_allowed?
+  after_create :initialize_tasks
 
   def substitute_claimant
     target_appeal.claimant
@@ -42,6 +42,8 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_substitution_on_same_appeal
+    # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant to ensure substitute claimant is the correct type
+    source_appeal.update!(veteran_is_not_claimant: true)
     Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
@@ -49,7 +51,6 @@ class AppellantSubstitution < CaseflowRecord
       decision_review_id: source_appeal.id,
       decision_review_type: "Appeal"
     )
-    source_appeal.update!(veteran_is_not_claimant: true)
     source_appeal.reload
     self.target_appeal = source_appeal
   end

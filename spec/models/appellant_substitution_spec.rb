@@ -416,7 +416,7 @@ describe AppellantSubstitution do
                veteran: deceased_veteran)
       end
       let(:substitution_date) { 1.day.ago.to_date }
-      let(:substitute) { create(:claimant) }
+      let(:substitute) { create(:claimant, type: "DependentClaimant") }
 
       let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
       let(:poa_participant_id) { substitutes_poa.poa_participant_id }
