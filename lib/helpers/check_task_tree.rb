@@ -8,7 +8,7 @@
 # We have background jobs that check for bad invalid trees, but the alerts are sometimes overwhelming and
 # engineers may not address the problem in time (i.e., before the appeal is dispatched).
 #
-# Engineers should run this class after they modify a task tree: `CheckTaskTree.call(appeal)` or
+# Engineers should run this class after they modify a task tree: `check_task_tree(appeal)` or `CheckTaskTree.call(appeal)` or
 # ```
 #   CheckTaskTree.patch_classes
 #   appeal.check_task_tree
@@ -86,7 +86,7 @@ class CheckTaskTree
 
   # Task types that are ignored when checking that an appeal is not stuck
   IGNORED_ACTIVE_TASKS = %w[RootTask TrackVeteranTask].freeze
-  # See AppealsWithNoTasksOrAllTasksOnHoldQuery
+  # Detects one of the problems from AppealsWithNoTasksOrAllTasksOnHoldQuery
   def active_tasks_with_open_root_task
     @appeal.tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
