@@ -73,6 +73,19 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Open task should have nil `cancelled_by_id`"
       end
     end
+    describe "#cancelled_tasks_without_cancelled_by" do
+      subject { CheckTaskTree.new(appeal).cancelled_tasks_without_cancelled_by }
+      it_behaves_like "when tasks are correct"
+
+      context "when tasks are invalid" do
+        before do
+          distribution_task.cancelled!
+          distribution_task.update(cancelled_by: nil)
+        end
+        it { is_expected.to eq [distribution_task] }
+        include_examples "has error message", "Cancelled task should have non-nil `cancelled_by_id`"
+      end
+    end
   end
 
   context "check_parent_child_tasks" do

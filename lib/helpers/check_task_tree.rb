@@ -75,6 +75,7 @@ class CheckTaskTree
     @errors << "Closed task should have non-nil `closed_at`" unless closed_tasks_without_closed_at.blank?
 
     @errors << "Open task should have nil `cancelled_by_id`" unless open_tasks_with_cancelled_by_defined.blank?
+    @errors << "Cancelled task should have non-nil `cancelled_by_id`" unless cancelled_tasks_without_cancelled_by.blank?
   end
 
   def check_parent_child_tasks
@@ -96,13 +97,15 @@ class CheckTaskTree
   def open_tasks_with_closed_at_defined
     @appeal.tasks.open.where.not(closed_at: nil)
   end
-
   def closed_tasks_without_closed_at
     @appeal.tasks.closed.where(closed_at: nil)
   end
 
   def open_tasks_with_cancelled_by_defined
     @appeal.tasks.open.where.not(cancelled_by_id: nil)
+  end
+  def cancelled_tasks_without_cancelled_by
+    @appeal.tasks.cancelled.where(cancelled_by_id: nil)
   end
 
   def open_tasks_with_parent_not_on_hold
