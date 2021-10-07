@@ -3,7 +3,21 @@
 require "helpers/check_task_tree"
 
 describe "CheckTaskTree" do
-  let(:errors) { CheckTaskTree.new(appeal).check(verbose: false).first }
+  let(:errors) { CheckTaskTree.call(appeal, verbose: false).first }
+  let(:appeal) { create(:appeal) }
+
+  describe "CheckTaskTree#patch_classes" do
+    before do
+      CheckTaskTree.patch_classes
+    end
+    subject { appeal.check_task_tree(verbose: false) }
+    it "calls CheckTaskTree.check" do
+      expect_any_instance_of(CheckTaskTree).to receive(:check).and_call_original
+      errors, warnings = subject
+      expect(errors).to match_array ["Open RootTask should have at least one 'proper' active task", "Appeal is stuck"]
+      expect(warnings).to eq []
+    end
+  end
 
   shared_examples "no error message" do
     it "returns no errors" do

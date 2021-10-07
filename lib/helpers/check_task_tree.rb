@@ -1,6 +1,45 @@
 # frozen_string_literal: true
 
+##
+# Checks for invalid task trees, which could cause an appeal to become stuck or be processed incorrectly.
+# An invalid task tree is one that do not conform to our expectations of typical task trees
+# or to scenarios that our code expects.
+#
+# We have background jobs that check for bad task trees, but the alerts are sometimes overwhelming and
+# engineers may not address the problem in time (i.e., before the appeal is dispatched).
+#
+# Engineers should run this class after they modify a task tree: `CheckTaskTree.call(appeal)` or
+# ```
+#  CheckTaskTree.patch_classes
+#  appeal.check_task_tree
+# ```
+# It will show problems with the task tree so the engineer can immediately remedy them
+# and prevent downstream appeal processing problems.
+#
+# List specific problems by calling specific methods like so:
+# ```
+#  ctt = CheckTaskTree.new(appeal)
+#  errors, warnings = ctt.check
+#  ctt.open_tasks_with_parent_not_on_hold
+# ```
+
 class CheckTaskTree
+  module TaskTreeCheckable
+    def check_task_tree(verbose: true)
+      CheckTaskTree.call(self, verbose: verbose)
+    end
+  end
+
+  class << self
+    def call(appeal, verbose: true)
+      CheckTaskTree.new(appeal).check(verbose: verbose)
+    end
+
+    def patch_classes
+      Appeal.include TaskTreeCheckable
+    end
+  end
+
   def initialize(appeal)
     @appeal = appeal
     @warnings = []
@@ -13,6 +52,8 @@ class CheckTaskTree
 
     check_parent_child_tasks
     check_task_counts
+
+    @errors << "Appeal is stuck" if @appeal.try(:stuck?)
 
     if verbose
       puts("--- ERRORS:", @errors) if @errors.any?
@@ -56,7 +97,9 @@ class CheckTaskTree
     hearing_tasks.drop 1
   end
 
-  # Task types where only one should be open at a time
+  # Task types where only one should be open at a time.
+  # Some of these have Rails validations to prevent more than 1 open of the task type
+  # but the validations can be subverted, so let's check them here just in case.
   SINGULAR_OPEN_TASKS = %w[RootTask DistributionTask
                            HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
                            JudgeAssignTask JudgeDecisionReviewTask
