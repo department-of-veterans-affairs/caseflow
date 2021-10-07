@@ -11,13 +11,8 @@ class CheckTaskTree
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
-    @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
-
-    @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
-    @errors << "Open RootTask should have at least one 'proper' active task" if active_tasks_with_open_root_task.blank?
-
-    @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
-    @errors << "There should be no more than 1 open task" unless extra_open_tasks.blank?
+    check_parent_child_tasks
+    check_task_counts
 
     if verbose
       puts("--- ERRORS:", @errors) if @errors.any?
@@ -25,6 +20,18 @@ class CheckTaskTree
     end
 
     [@errors, @warnings]
+  end
+
+  def check_parent_child_tasks
+    @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
+
+    @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
+    @errors << "Open RootTask should have at least one 'proper' active task" if active_tasks_with_open_root_task.blank?
+  end
+
+  def check_task_counts
+    @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
+    @errors << "There should be no more than 1 open task of type #{extra_open_tasks}" unless extra_open_tasks.blank?
   end
 
   def open_tasks_with_parent_not_on_hold
@@ -49,7 +56,7 @@ class CheckTaskTree
     hearing_tasks.drop 1
   end
 
-  # Task types where only one is open at a time
+  # Task types where only one should be open at a time
   SINGULAR_OPEN_TASKS = %w[RootTask DistributionTask
                            HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
                            JudgeAssignTask JudgeDecisionReviewTask
