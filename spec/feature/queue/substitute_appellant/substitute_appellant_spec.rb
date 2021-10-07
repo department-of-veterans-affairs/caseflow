@@ -58,9 +58,12 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   end
 
   describe "with a pending appeal" do
+    let(:judge) { create(:user, :judge) }
     let(:veteran) { create(:veteran, date_of_death: Time.zone.parse("2021-07-04")) }
     let(:appeal) do
       create(:appeal,
+             :assigned_to_judge,
+             associated_judge: judge,
              docket_type: docket_type,
              receipt_date: veteran.date_of_death + 5.days,
              veteran: veteran)
@@ -69,6 +72,9 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     let(:user) { create(:user) }
 
     context "without feature toggle" do
+      include_context "with Clerk of the Board user"
+      let(:docket_type) { "direct_review" }
+
       it_should_behave_like "substitution unavailable"
     end
 
@@ -96,6 +102,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
           let(:docket_type) { Constants.AMA_DOCKETS.hearing }
           let(:appeal) do
             create(:appeal,
+                   :ready_for_distribution,
                    :held_hearing,
                    docket_type: docket_type,
                    receipt_date: veteran.date_of_death + 5.days,
