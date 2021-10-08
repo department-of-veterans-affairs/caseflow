@@ -876,6 +876,8 @@
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
+  "UNTIMELY_EXEMPTION_COPY": "Did the applicant request an extension to the date requirements",
+  "UNTIMELY_EXEMPTION_COPY_VHA": "OR is this issue related to a VHA Caregiver appeal",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
