@@ -200,6 +200,9 @@ safe:  ## TODO
 clear-eps:  ## TODO
 	redis-cli KEYS "end_product_records_development:*" | xargs redis-cli DEL
 
+karma:  ## TODO
+	cd client && node_modules/.bin/karma start
+
 erd-etl:	## Create ERD diagram for the ETL database
 	ERD_BASE=ETL::Record bundle exec erd --filename docs/schema/etl-erd --title 'ODS/ETL Data Model'
 
