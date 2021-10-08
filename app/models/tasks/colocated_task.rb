@@ -32,7 +32,7 @@ class ColocatedTask < Task
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
           new_task_type = valid_type(params[:type])
           create_params[:assigned_to] ||= new_task_type.default_assignee
-          create_params.merge!(type: new_task_type.name)
+          create_params[:type] = new_task_type.name
         end
 
         team_tasks = super(params_array, user)
@@ -102,10 +102,11 @@ class ColocatedTask < Task
     "#{label} completed"
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def available_actions(user)
     if assigned_to == user ||
-      Colocated.singleton.user_is_admin?(user) &&
-        (task_is_assigned_to_user_within_organization?(user) || task_is_assigned_to_users_organization?(user))
+       Colocated.singleton.user_is_admin?(user) &&
+       (task_is_assigned_to_user_within_organization?(user) || task_is_assigned_to_users_organization?(user))
 
       actions = [
         return_to_assigner_action,
@@ -127,6 +128,7 @@ class ColocatedTask < Task
 
     []
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def return_to_assigner_action
     # Use assigner so that we handle creation of the ColocatedTask from LegacyTasks gracefully.

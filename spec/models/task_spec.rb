@@ -1892,7 +1892,7 @@ describe Task, :all_dbs do
     let(:task) { create(:ama_task, assigned_to: assignee) }
     let(:organization) { create(:organization) }
 
-    subject { task.task_is_assigned_to_organization?(organization)}
+    subject { task.task_is_assigned_to_organization?(organization) }
 
     context "when assigned to an individual" do
       let(:assignee) { create(:user) }
@@ -1907,6 +1907,5 @@ describe Task, :all_dbs do
         expect(subject).to be_truthy
       end
     end
-
   end
 end
