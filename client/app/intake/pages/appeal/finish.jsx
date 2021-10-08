@@ -34,8 +34,7 @@ class FinishNextButton extends React.PureComponent {
 
   render() {
     const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
-    console.log(this.props.addedIssues);
-    const hasVhaIssues = _.some(this.props.addedIssues, (issue) => issue.benefitType === "vha");
+    const hasVhaIssues = _.some(this.props.appeal.addedIssues, (issue) => issue.benefitType === "vha");
     const buttonAction = hasVhaIssues ? "Submit" : "Establish";
 
     return <Button
