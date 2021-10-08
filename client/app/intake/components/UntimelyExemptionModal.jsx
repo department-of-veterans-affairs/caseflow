@@ -99,7 +99,7 @@ export const UntimelyExemptionModal = ({
   const extensionLabel = () => {
     let radioLabelParts = [COPY.UNTIMELY_EXEMPTION_COPY, COPY.UNTIMELY_EXEMPTION_COPY_VHA, "?"];
     if (issue.benefitType !== 'vha') {
-      radioLabelParts.splice(1);
+      radioLabelParts.splice(1, 1);
     };
     return radioLabelParts;
   };
