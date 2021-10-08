@@ -204,7 +204,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, vhaPreDocketWorkflow } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -305,7 +305,7 @@ class AddIssuesPage extends React.Component {
       });
     }
 
-    let issueChangeClassname = () => {
+    let additionalRowClasses = () => {
       // no-op unless the issue banner needs to be displayed
     };
 
@@ -317,7 +317,7 @@ class AddIssuesPage extends React.Component {
         field: '',
         content: issuesChangedBanner
       });
-      issueChangeClassname = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
+      additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
     let rowObjects = fieldsForFormType;
@@ -384,6 +384,19 @@ class AddIssuesPage extends React.Component {
 
         return rowObjects;
       });
+
+    const reviewHasVhaIssues = issues.some((issue) => issue.benefitType === "vha");
+
+    if (!editPage && reviewHasVhaIssues && vhaPreDocketWorkflow) {
+      rowObjects = rowObjects.concat({
+        field: '',
+        content: (
+          <p>{COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE}</p>
+        )
+      });
+    };
+
+    additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
@@ -461,7 +474,7 @@ class AddIssuesPage extends React.Component {
 
         {editPage && this.establishmentCredits()}
 
-        <Table columns={columns} rowObjects={rowObjects} rowClassNames={issueChangeClassname} slowReRendersAreOk />
+        <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
 
         {!_.isEmpty(issuesPendingWithdrawal) && (
           <div className="cf-gray-box cf-decision-date">

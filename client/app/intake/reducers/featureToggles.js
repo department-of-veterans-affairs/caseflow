@@ -5,6 +5,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
+    vhaPreDocketWorkflow: {
+      $set: Boolean(featureToggles.vhaPreDocketWorkflow)
+    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -21,6 +24,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
   updateFromServerFeatures(
     {
       useAmaActivationDate: false,
+      vhaPreDocketWorkflow: false,
       correctClaimReviews: false,
       filedByVaGovHlr: false
     },

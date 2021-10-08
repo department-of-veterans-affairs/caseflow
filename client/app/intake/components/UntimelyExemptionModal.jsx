@@ -96,7 +96,7 @@ export const UntimelyExemptionModal = ({
     return errorMsg;
   };
 
-  const extensionLabel = () = > {
+  const extensionLabel = () => {
     let radioLabelParts = [COPY.UNTIMELY_EXEMPTION_COPY, COPY.UNTIMELY_EXEMPTION_COPY_VHA, "?"];
     if (issue.benefitType !== 'vha') {
       radioLabelParts.splice(1);

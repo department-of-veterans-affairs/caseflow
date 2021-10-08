@@ -13,6 +13,7 @@ import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
+import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -43,7 +44,8 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
-      dateError: ''
+      dateError: '',
+      vhaPreDocketWorkflow: props.featureToggles.vhaPreDocketWorkflow
     };
   }
 
@@ -241,7 +243,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     const { formType, intakeData, onCancel } = this.props;
-    const { benefitType, category, selectedNonratingIssueId } = this.state;
+    const { benefitType, category, selectedNonratingIssueId, vhaPreDocketWorkflow } = this.state;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -251,6 +253,8 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
         this.getAdditionalDetails() :
         null;
+
+    const showPreDocketBanner = issue.benefitType == "vha" && vhaPreDocketWorkflow;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
@@ -283,6 +287,7 @@ class NonratingRequestIssueModal extends React.Component {
             <div className="add-nonrating-request-issue-description">
               {nonratingRequestIssueSelection}
               {additionalDetails}
+              {showPreDocketBanner && <p className = "intake-issue-flash"> {VHA_PRE_DOCKET_ISSUE_BANNER}</p>}
             </div>
           </div>
         </Modal>

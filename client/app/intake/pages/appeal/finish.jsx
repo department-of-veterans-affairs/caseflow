@@ -34,6 +34,8 @@ class FinishNextButton extends React.PureComponent {
 
   render() {
     const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
+    const hasVhaIssues = addedIssues.some((issue) => issue.benefitType === "vha");
+    const buttonAction = hasVhaIssues ? "Submit" : "Establish"
 
     return <Button
       name="finish-intake"
@@ -41,7 +43,7 @@ class FinishNextButton extends React.PureComponent {
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       disabled={disableSubmit}
     >
-        Establish appeal
+        {`${buttonAction} appeal`}
     </Button>;
   }
 }

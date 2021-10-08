@@ -107,7 +107,8 @@ class IntakesController < ApplicationController
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
-        filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user)
+        filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
+        vhaPreDocketWorkflow: FeatureToggle.enabled?(:vha_pre_docket_workflow, user: current_user)
       }
     }
   rescue StandardError => error
