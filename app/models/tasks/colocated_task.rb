@@ -31,8 +31,11 @@ class ColocatedTask < Task
           create_params = params.clone
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
           new_task_type = valid_type(params[:type])
-          create_params[:assigned_to] ||= new_task_type.default_assignee
+          unless create_params[:assigned_to_id] && create_params[:assigned_to_type]
+            create_params[:assigned_to] ||= new_task_type.default_assignee
+          end
           create_params[:type] = new_task_type.name
+          create_params
         end
 
         team_tasks = super(params_array, user)
