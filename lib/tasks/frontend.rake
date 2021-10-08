@@ -2,14 +2,14 @@
 
 require "rainbow"
 
-desc "Runs the frontend React mocha tests"
-task :mocha do
-  mocha_result = ShellCommand.run("cd ./client && yarn run test")
+desc "Runs the frontend React tests"
+task :js_tests do
+  js_test_results = ShellCommand.run("cd ./client && yarn run test")
 
-  if mocha_result
+  if js_test_results
     puts Rainbow("Passed. All frontend react tests look good").green
   else
-    puts Rainbow("Failed. Please check the mocha tests in client/test").red
+    puts Rainbow("Failed. Please check tests in client/test").red
     exit(1)
   end
 end
