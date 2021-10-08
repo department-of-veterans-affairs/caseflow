@@ -7,14 +7,17 @@ import { mount } from 'enzyme';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
-import { userWithVirtualHearingsFeatureEnabled, anyUser, amaHearing, defaultHearing, centralHearing } from 'test/data';
+import { anyUser, amaHearing, defaultHearing, centralHearing } from 'test/data';
 
 describe('DetailsForm', () => {
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(
-      <DetailsForm hearing={defaultHearing} />,
+      <DetailsForm
+        hearing={defaultHearing}
+        hearingRequestTypeDropdownOptions={{ list: [] }}
+      />,
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -25,9 +28,13 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for legacy hearing', () => {
     const form = mount(
-      <DetailsForm isLegacy hearing={defaultHearing} />,
+      <DetailsForm
+        isLegacy
+        hearing={defaultHearing}
+        hearingRequestTypeDropdownOptions={{ list: [] }}
+      />,
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -39,9 +46,13 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for AMA hearing', () => {
     const form = mount(
-      <DetailsForm isLegacy={false} hearing={defaultHearing} />,
+      <DetailsForm
+        isLegacy={false}
+        hearing={defaultHearing}
+        hearingRequestTypeDropdownOptions={{ list: [] }}
+      />,
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -52,31 +63,5 @@ describe('DetailsForm', () => {
     expect(
       form.findWhere((node) => node.props().name === 'evidenceWindowWaived' && node.type() === CheckBox)
     ).toHaveLength(1);
-  });
-
-  test('Matches snapshot if user does not have the enable virtual hearings feature flag enabled', () => {
-    const form = mount(
-      <DetailsForm hearing={defaultHearing} />,
-      {
-        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
-        wrappingComponentProps: { store: detailsStore }
-      }
-    );
-
-    expect(form).toMatchSnapshot();
-    expect(form.find(HearingTypeDropdown)).toHaveLength(0);
-  });
-
-  test('Matches snapshot if user does not have the enable convert central hearings feature flag enabled', () => {
-    const form = mount(
-      <DetailsForm hearing={centralHearing} />,
-      {
-        wrappingComponent: hearingDetailsWrapper(anyUser, centralHearing),
-        wrappingComponentProps: { store: detailsStore }
-      }
-    );
-
-    expect(form).toMatchSnapshot();
-    expect(form.find(HearingTypeDropdown)).toHaveLength(0);
   });
 });
