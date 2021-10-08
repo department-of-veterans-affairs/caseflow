@@ -6,7 +6,7 @@ import { mount } from 'enzyme';
 import { EstablishClaim, ASSOCIATE_PAGE } from 'app/containers/EstablishClaimPage/EstablishClaim';
 
 // Test helpers
-import { WrappingComponent } from 'test/karma/establishClaim/WrappingComponent';
+import { WrappingComponent } from 'test/app/establishClaim/WrappingComponent';
 import { findElementById } from 'test/helpers';
 import { task, regionalOfficeCities } from 'test/data';
 
