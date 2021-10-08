@@ -1,10 +1,10 @@
 import React from 'react';
 
-import CCBadge from './CCBadge';
+import ContestedClaimBadge from './ContestedClaimBadge';
 
 export default {
   title: 'Commons/Components/Badges/CC Badge',
-  component: CCBadge,
+  component: ContestedClaimBadge,
   parameters: {
     layout: 'centered',
   },
@@ -16,6 +16,6 @@ export default {
   }
 };
 
-const Template = (args) => <CCBadge {...args} />;
+const Template = (args) => <ContestedClaimBadge {...args} />;
 
 export const ContestedBadge = Template.bind({});

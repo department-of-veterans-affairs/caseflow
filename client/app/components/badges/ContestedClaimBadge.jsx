@@ -9,7 +9,7 @@ import { COLORS } from 'app/constants/AppConstants';
  * Component to display if the appeal is a contested claim.
  */
 
-const CCBadge = (props) => {
+const ContestedClaimBadge = (props) => {
   const { appeal, longTooltip } = props;
 
   if (!appeal.contested_claim) {
@@ -23,9 +23,9 @@ const CCBadge = (props) => {
   return <Badge name="contested" displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
 };
 
-CCBadge.propTypes = {
+ContestedClaimBadge.propTypes = {
   appeal: PropTypes.object,
   longTooltip: PropTypes.bool
 };
 
-export default CCBadge;
+export default ContestedClaimBadge;
