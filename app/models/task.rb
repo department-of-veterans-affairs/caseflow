@@ -545,6 +545,12 @@ class Task < CaseflowRecord
     end
   end
 
+  # N.B. that this does not check permissions, only assignee
+  # Use task_is_assigned_to_users_organization? if that is needed.
+  def task_is_assigned_to_organization?(org)
+    assigned_to.is_a?(Organization) && assigned_to == org
+  end
+
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
