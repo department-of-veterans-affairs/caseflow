@@ -64,9 +64,13 @@ describe VaDotGovAddressValidator do
             times_called += 1
             if times_called == 1
               expect(args[:ids]).to eq(facility_ids)
+              # Fail on the first call
               fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+            else
+              # Succeed on the second call
+              expect(args[:ids]).to eq([ro_facility_id])
             end
-            expect(args[:ids]).to eq([ro_facility_id])
+
             closest_ro_response
           end
         expect(Raven).to receive(:capture_exception).once.with(
@@ -75,6 +79,17 @@ describe VaDotGovAddressValidator do
         )
         expect(subject).to eq("RO01")
       end
+
+      it "only retries once" do
+        expect(VADotGovService)
+          .to receive(:get_distance).twice do
+            fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+          end
+        subject
+        # Suppress exception so we can count how many times this is called
+        rescue Caseflow::Error::VaDotGovMissingFacilityError
+      end
+
       it "expresses the error if fails more than once" do
         times_called = 0
         expect(VADotGovService)
@@ -82,9 +97,10 @@ describe VaDotGovAddressValidator do
             times_called += 1
             if times_called == 1
               expect(args[:ids]).to eq(facility_ids)
-              fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+            else
+              expect(args[:ids]).to eq([ro_facility_id])
             end
-            expect(args[:ids]).to eq([ro_facility_id])
+            # Fail on every call
             fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
           end
         expect { subject }.to raise_error(an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError))
