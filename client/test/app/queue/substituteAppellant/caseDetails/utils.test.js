@@ -103,7 +103,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     userIsCobAdmin: false,
   };
 
-  describe('with sensible defaults', () => {
+  describe('with requisite values', () => {
     it('returns true', () => {
       const args = { ...defaults };
 
@@ -202,7 +202,7 @@ describe('supportsSubstitutionPostDispatch', () => {
     userIsCobAdmin: false,
   };
 
-  describe('with sensible defaults', () => {
+  describe('with requisite values', () => {
     it('returns true', () => {
       const args = { ...defaults };
 
