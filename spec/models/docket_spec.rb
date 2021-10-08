@@ -253,30 +253,44 @@ describe Docket, :all_dbs do
         expect(subject).to eq(aod_age_appeal.ready_for_distribution_at)
       end
 
-      context "days waiting for age_of_oldest_priority_appeal" do
-        let!(:old_priority_direct_review_case) do
-          appeal = create(:appeal,
-                          :with_post_intake_tasks,
-                          :advanced_on_docket_due_to_age,
-                          docket_type: Constants.AMA_DOCKETS.direct_review,
-                          receipt_date: 1.month.ago)
-          appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.week.ago)
-        end
-        let(:docket) { DirectReviewDocket.new }
-
-        subject { docket.oldest_priority_appeal_days_waiting }
-
-        it "returns today's date less the age" do
-          expect(subject).to eq(7)
-        end
-      end
-
       context "when there are no ready priority appeals" do
         let(:docket) { EvidenceSubmissionDocket.new }
 
         it "returns nil" do
           expect(subject.nil?).to be true
         end
+      end
+    end
+
+    context "days waiting for age_of_oldest_priority_appeal" do
+      let!(:old_priority_direct_review_case) do
+        appeal = create(:appeal,
+                        :with_post_intake_tasks,
+                        :advanced_on_docket_due_to_age,
+                        docket_type: Constants.AMA_DOCKETS.direct_review,
+                        receipt_date: 1.month.ago)
+        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.week.ago)
+      end
+      let(:docket) { DirectReviewDocket.new }
+
+      subject { docket.oldest_priority_appeal_days_waiting }
+
+      it "returns today's date less the age" do
+        expect(subject).to eq(7)
+      end
+    end
+
+    context "ready priority appeal ids" do
+      let(:docket) { DirectReviewDocket.new }
+
+      subject { docket.ready_priority_appeal_ids }
+      it "returns the uuids of the ready priority appeals" do
+        expect(subject).to_not include appeal.uuid
+        expect(subject).to_not include denied_aod_motion_appeal.uuid
+        expect(subject).to_not include inapplicable_aod_motion_appeal.uuid
+        expect(subject).to include aod_age_appeal.uuid
+        expect(subject).to include aod_motion_appeal.uuid
+        expect(subject).to include cavc_appeal.uuid
       end
     end
 
