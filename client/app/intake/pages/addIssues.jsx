@@ -22,6 +22,7 @@ import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
 import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
+import Alert from 'app/components/Alert';
 
 import {
   toggleAddingIssue,
@@ -323,6 +324,9 @@ class AddIssuesPage extends React.Component {
     let rowObjects = fieldsForFormType;
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
+      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === "vha");
+      const showPreDocketBanner = !editPage && formType === 'appeal'&& reviewHasVhaIssues && vhaPreDocketWorkflow;
+
       return {
         field: fieldTitle,
         content: (
@@ -341,6 +345,7 @@ class AddIssuesPage extends React.Component {
               userCanWithdrawIssues={userCanWithdrawIssues}
               editPage={editPage}
             />
+          {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
           </div>
         )
       };
@@ -384,17 +389,6 @@ class AddIssuesPage extends React.Component {
 
         return rowObjects;
       });
-
-    const reviewHasVhaIssues = issues.some((issue) => issue.benefitType === "vha");
-
-    if (!editPage && reviewHasVhaIssues && vhaPreDocketWorkflow) {
-      rowObjects = rowObjects.concat({
-        field: '',
-        content: (
-          <p>{COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE}</p>
-        )
-      });
-    };
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
