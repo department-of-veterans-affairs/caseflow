@@ -213,7 +213,6 @@ describe ColocatedTask, :all_dbs do
                                                 appeal: appeal_1,
                                                 appeal_type: "LegacyAppeal",
                                                 assigned_by: attorney,
-                                                assigned_to: create(:user),
                                                 type: colocated_subclass.name,
                                                 instructions: ["second"]
                                               }], attorney).last
@@ -226,7 +225,6 @@ describe ColocatedTask, :all_dbs do
                                                   appeal: appeal_1,
                                                   appeal_type: "LegacyAppeal",
                                                   assigned_by: attorney,
-                                                  assigned_to: create(:user),
                                                   type: PoaClarificationColocatedTask.name
                                                 }], attorney)
         end
