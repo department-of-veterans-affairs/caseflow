@@ -29,9 +29,9 @@ class ColocatedTask < Task
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          create_params[:assigned_to] ||= new_task_type.default_assignee
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
           new_task_type = valid_type(params[:type])
+          create_params[:assigned_to] ||= new_task_type.default_assignee
           create_params.merge!(type: new_task_type.name)
         end
 
