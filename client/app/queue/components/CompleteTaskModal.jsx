@@ -76,8 +76,9 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
   },
   docket_appeal: {
-    buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION, appeal.veteranFullName, appeal.docketNumber)
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_TITLE),
+      detail: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_DETAIL)
     }),
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
