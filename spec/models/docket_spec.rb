@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-SingleCov.covered!
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
