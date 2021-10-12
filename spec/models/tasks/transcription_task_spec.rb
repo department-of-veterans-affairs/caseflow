@@ -170,13 +170,14 @@ describe TranscriptionTask, :postgres do
           admin
         end
 
-        it "shows no actions on either child or parent when parent task is on_hold" do
+        it "shows actions on assigned child task" do
           expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
-          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
-          # child TranscriptionTask has no actions, even for the tr_team_admin
           expect(child_task.available_actions_unwrapper(transcription_user).size).to be > 0
-          expect(transcription_task.available_actions_unwrapper(tr_team_admin).size).to eq 0
-          # parent TranscriptionTask has no actions, even for the tr_team_admin
+          expect(child_task.available_actions_unwrapper(tr_team_admin).size).to be > 0
+        end
+
+        it "shows no actions on on_hold parent task" do
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
           expect(transcription_task.available_actions_unwrapper(transcription_user).size).to eq 0
           expect(transcription_task.available_actions_unwrapper(tr_team_admin).size).to eq 0
         end
