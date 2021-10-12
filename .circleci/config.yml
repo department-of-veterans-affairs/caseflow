@@ -86,7 +86,7 @@ jobs:
     resource_class: large
     steps:
       - checkout
-
+      - browser-tools/install-browser-tools
       - install_node_dependencies
 
       - run:
