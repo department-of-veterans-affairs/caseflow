@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class FixFileNumberWizard
-
   ASSOCIATIONS = [
     Appeal,
     AvailableHearingLocations,
@@ -14,7 +13,8 @@ class FixFileNumberWizard
     LegacyAppeal,
     RampElection,
     RampRefiling,
-    SupplementalClaim]
+    SupplementalClaim
+  ].freeze
 
   class Collection
     attr_accessor :klass, :records, :column
@@ -52,6 +52,7 @@ class FixFileNumberWizard
   end
 
   class << self
+    # :reek:LongParameterList
     def run(*args, veteran: nil, ssn: nil, appeal: nil)
       arg_count = [veteran, ssn, appeal].compact.count
       if args.any? || arg_count == 0 || arg_count > 1
@@ -76,46 +77,50 @@ class FixFileNumberWizard
     @veteran = veteran
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
   def call
     if veteran.ssn != veteran.file_number
-      puts "Veteran's file number is different from SSN. This may be already fixed, or another situation."
-      return
+      stop("Veteran's file number is different from SSN. This may be already fixed, or another situation.")
     end
 
     RequestStore[:current_user] = User.system_user if RequestStore[:current_user].nil?
 
     file_number = BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
     if file_number == veteran.file_number
-      puts "Veteran's file number is already up-to-date."
-      return
+      stop("Veteran's file number is already up-to-date.")
     elsif file_number.nil?
-      puts "Veteran's file number could not be found in BGS."
-      return
+      stop("Veteran's file number could not be found in BGS.")
     elsif Veteran.find_by(file_number: file_number).present?
-      puts "Duplicate veteran record found. Handling this scenario is not supported yet."
-      return
+      stop("Duplicate veteran record found. Handling this scenario is not supported yet.")
     end
 
     collections = ASSOCIATIONS.map { |klass| Collection.new(klass, veteran.ssn) }
     if collections.map(&:count).sum == 0
-      puts "No associated records found for the current file number. Aborting because this is very strange."
-      return
+      stop("No associated records found for the current file number. Aborting because this is very strange.")
     end
 
     prompt = "Updating this file number will also update the following associated records:\n"
     collections.each do |collection|
       prompt += "#{collection.count} #{collection.klass.name} records\n" if collection.count > 0
     end
-    return unless get_input(prompt + "Continue") == 'y'
+    stop unless get_input(prompt + "Continue") == "y"
 
     collections.each { |collection| collection.update!(file_number) }
     veteran.update!(file_number: file_number)
-  rescue Interrupt => err
+  rescue Interrupt
+    puts "Exiting interactive session."
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def get_input(prompt, *opts)
-    opts << ['y', 'yes; continue'] if opts.empty?
-    opts << ['q', 'quit; do not continue any further']
+    opts << ["y", "yes; continue"] if opts.empty?
+    opts << ["q", "quit; do not continue any further"]
     input_chars = opts.map(&:first)
     loop do
       print "#{prompt} [#{input_chars.join(',')},?]? "
@@ -127,8 +132,14 @@ class FixFileNumberWizard
         puts "? - print help"
         next
       end
-      raise Interrupt if input == 'q'
+      fail Interrupt if input == "q"
+
       return input
     end
+  end
+
+  def stop(message = nil)
+    puts(message) if message.present?
+    fail Interrupt
   end
 end
