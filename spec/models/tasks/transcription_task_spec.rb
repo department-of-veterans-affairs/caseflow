@@ -169,17 +169,29 @@ describe TranscriptionTask, :postgres do
           OrganizationsUser.make_user_admin(admin, TranscriptionTeam.singleton)
           admin
         end
-        it "completes the child and parent task" do
-          expect(child_task.available_actions_unwrapper(transcription_user).size).to be > 0
 
-          # parent TranscriptionTask has no action, even for the tr_team_admin
+        it "shows no actions on either child or parent when parent task is on_hold" do
+          expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+          # child TranscriptionTask has no actions, even for the tr_team_admin
+          expect(child_task.available_actions_unwrapper(transcription_user).size).to be > 0
+          expect(transcription_task.available_actions_unwrapper(tr_team_admin).size).to eq 0
+          # parent TranscriptionTask has no actions, even for the tr_team_admin
           expect(transcription_task.available_actions_unwrapper(transcription_user).size).to eq 0
           expect(transcription_task.available_actions_unwrapper(tr_team_admin).size).to eq 0
+        end
 
+        it "completes both child and parent task" do
           child_task.update_from_params(update_params, transcription_user)
-
           expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
           expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+
+        let(:update_params_cancel) { { status: Constants.TASK_STATUSES.cancelled } }
+        it "cancels both child and parent task" do
+          child_task.update_from_params(update_params_cancel, transcription_user)
+          expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
     end
