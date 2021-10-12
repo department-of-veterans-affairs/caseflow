@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Badge from 'app/components/badges/Badge';
-import { COLORS } from '../../constants/AppConstants';
+import { COLORS } from '../../../constants/AppConstants';
 
 /**
  * Component to display if the provided appeal has been approved for overtime work.

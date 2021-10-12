@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { COLORS } from '../../constants/AppConstants';
+import { COLORS } from '../../../constants/AppConstants';
 import Badge from 'app/components/badges/Badge';
 
 /**

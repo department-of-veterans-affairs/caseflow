@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ContestedClaimBadgeComponent from './ContestedClaimBadge';
+import ContestedClaimBadgeComponent from '../ContestedClaimBadge';
 
 export default {
   title: 'Commons/Components/Badges/CC Badge',

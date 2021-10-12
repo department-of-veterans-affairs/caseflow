@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { DateString } from '../../util/DateUtil';
-import { tooltipListStyling } from '../../queue/components/style';
+import { DateString } from '../../../util/DateUtil';
+import { tooltipListStyling } from '../../../queue/components/style';
 import { connect } from 'react-redux';
 import COPY from '../../../COPY';
 
