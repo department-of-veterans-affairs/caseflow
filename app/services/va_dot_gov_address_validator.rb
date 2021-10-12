@@ -184,18 +184,22 @@ class VaDotGovAddressValidator
   end
 
   def safely_get_distance(facility_ids_to_geomatch)
-    retries = 0
-    begin
-      VADotGovService.get_distance(
-        ids: facility_ids_to_geomatch,
-        lat: valid_address[:lat],
-        long: valid_address[:long]
-      )
-    rescue Caseflow::Error::VaDotGovMissingFacilityError => error
-      facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
-      retry if (retries += 1) == 1
-      raise error
-    end
+    VADotGovService.get_distance(
+      ids: facility_ids_to_geomatch,
+      lat: valid_address[:lat],
+      long: valid_address[:long]
+    )
+  rescue Caseflow::Error::VaDotGovMissingFacilityError => error
+    retry_getting_distance(facility_ids_to_geomatch, error)
+  end
+
+  def retry_getting_distance(facility_ids_to_geomatch, error)
+    facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
+    VADotGovService.get_distance(
+      ids: facility_ids_to_geomatch,
+      lat: valid_address[:lat],
+      long: valid_address[:long]
+    )
   end
 
   def remove_missing_facilities(facility_ids, error)
