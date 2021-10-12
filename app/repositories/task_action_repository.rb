@@ -447,6 +447,14 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
+    def docket_appeal_data(*)
+      {
+        modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
+        modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        redirect_after: "/organizations/#{BvaIntake.singleton.url}"
+      }
+    end
+
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,

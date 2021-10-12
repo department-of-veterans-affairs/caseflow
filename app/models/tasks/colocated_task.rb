@@ -23,16 +23,19 @@ class ColocatedTask < Task
       create!(params)
     end
 
-    # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          new_task_type = valid_type(params[:type])
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
-          create_params.merge!(type: new_task_type.name, assigned_to: new_task_type.default_assignee)
+          new_task_type = valid_type(params[:type])
+          unless create_params[:assigned_to_id] && create_params[:assigned_to_type]
+            create_params[:assigned_to] ||= new_task_type.default_assignee
+          end
+          create_params[:type] = new_task_type.name
+          create_params
         end
 
         team_tasks = super(params_array, user)
@@ -102,9 +105,11 @@ class ColocatedTask < Task
     "#{label} completed"
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def available_actions(user)
     if assigned_to == user ||
-       (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
+       Colocated.singleton.user_is_admin?(user) &&
+       (task_is_assigned_to_user_within_organization?(user) || task_is_assigned_to_users_organization?(user))
 
       actions = [
         return_to_assigner_action,
@@ -114,16 +119,22 @@ class ColocatedTask < Task
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
 
-      actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
-
+      if Colocated.singleton.user_is_admin?(user)
+        if task_is_assigned_to_user_within_organization?(user)
+          actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h)
+        elsif task_is_assigned_to_organization?(Colocated.singleton)
+          actions.unshift(Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h)
+        end
+      end
       return actions
     end
 
     []
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def return_to_assigner_action
-    # Use assigner so that we handle creation of the ColcoatedTask from LegacyTasks gracefully.
+    # Use assigner so that we handle creation of the ColocatedTask from LegacyTasks gracefully.
     if JudgeTeam.for_judge(assigned_by)
       Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.to_h
     else
@@ -144,6 +155,14 @@ class ColocatedTask < Task
       instructions: params[:instructions],
       assigned_to: task_type&.default_assignee
     )
+  end
+
+  # In CASEFLOW-1125, we ceased creating a user task automatically for ColocatedTasks (per the Board's request).
+  # This change means that update_task_type no longer creates a user task for ColocatedTasks, even if one existed
+  # on the original task whose type is being changed. This appears to be consistent with what the Board wants, but
+  # is worth calling out in case it leads to potential unexpected side-effects.
+  def update_task_type(params)
+    super(params)
   end
 
   private

@@ -54,8 +54,9 @@ class DecisionReviewIntake < Intake
         request_params[:unlisted_claimant],
         request_params[:poa]
       )
+    else
+      update_person!
     end
-    update_person!
   end
 
   # :nocov:
@@ -128,10 +129,12 @@ class DecisionReviewIntake < Intake
   end
 
   # If user has specified a different claimant, use that
-  # Otherwise we use the veteran's participant_id, even for OtherClaimant
   def participant_id
-    if %w[VeteranClaimant OtherClaimant].include? claimant_class_name
+    case claimant_class_name
+    when "VeteranClaimant"
       veteran.participant_id
+    when "OtherClaimant"
+      ""
     else
       request_params[:claimant]
     end

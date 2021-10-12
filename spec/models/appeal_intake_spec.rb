@@ -150,7 +150,7 @@ describe AppealIntake, :all_dbs do
         expect(subject).to be_truthy
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimant).to have_attributes(
-          participant_id: intake.veteran.participant_id,
+          participant_id: "",
           payee_code: nil,
           decision_review: intake.detail,
           type: "OtherClaimant",

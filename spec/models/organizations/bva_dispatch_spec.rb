@@ -52,7 +52,7 @@ describe BvaDispatch, :postgres do
       expect(subject).to eq(true)
     end
 
-    context "when there are no members of the BVA Dispatch team" do
+    context "when the BVA Dispatch team has no members" do
       before do
         OrganizationsUser.where(organization: bva_dispatch_org).delete_all
       end

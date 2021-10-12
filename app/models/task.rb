@@ -22,7 +22,7 @@ class Task < CaseflowRecord
   belongs_to :cancelled_by, class_name: "User"
 
   include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -545,6 +545,12 @@ class Task < CaseflowRecord
     end
   end
 
+  # N.B. that this does not check permissions, only assignee
+  # Use task_is_assigned_to_users_organization? if that is needed.
+  def task_is_assigned_to_organization?(org)
+    assigned_to.is_a?(Organization) && assigned_to == org
+  end
+
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
@@ -680,6 +686,18 @@ class Task < CaseflowRecord
         closed_at: Time.zone.now
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def version_summary
+    versions.map do |version|
+      {
+        who: [User.find_by_id(version.whodunnit)].compact
+          .map { |user| "#{user.css_id} (#{user.id}, #{user.full_name})" }.first,
+        when: version.created_at,
+        changeset: version.changeset
+      }
     end
   end
 
