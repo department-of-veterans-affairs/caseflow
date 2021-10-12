@@ -21,7 +21,7 @@ class AppellantSubstitution < CaseflowRecord
 
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
-  after_create :initialize_tasks
+  after_commit :initialize_tasks
 
   def substitute_claimant
     target_appeal.claimant
