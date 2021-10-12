@@ -1,0 +1,112 @@
+# Tech Spec: Find appellants in CorpDB (without a known relationship) using MPI
+
+### Overview
+
+When adding a appellant to an AMA appeal in Intake, Caseflow's current implementation is to fetch known relationships to the Veteran from CorpDB using BGS. This means that Caseflow is recording certain appellants as "unrecognized" when, in reality, they are just not recognized in a relationship to that particular Veteran. By using MPI (Master Person's Index) to search for a record of the appellant (regardless of Veteran relationship within CorpDB) we can reduce the amount of information Mail Intake users need to input and also reduce the number of appeals where Caseflow is a source of truth about the appellant's information. 
+
+#### Services Involved
+- BGS (Benefits Gateway Service): How Caseflow retrieves Veteran's known relationships
+- CorpDB: Database where all known relationships are stored
+- MPI (Master Person's Index): The authoritative source for Veteran, Beneficiary, Client, Employe, and other person type data
+
+#### Relevant Stories/Epics
+- [EPIC: Integrate with MPI as Source of Truth for Claimant/Appellant/Beneficiary Information](https://vajira.max.gov/browse/CASEFLOW-387)
+- [EPIC: Find appellants in CorpDB (without a known relationship) using MPI](https://vajira.max.gov/browse/CASEFLOW-2147)
+    - [Analyze the data structure XML for various MPI endpoints](https://vajira.max.gov/browse/CASEFLOW-2256)
+    - [Create Caseflow Backend Service for making API calls to MPI](https://vajira.max.gov/browse/CASEFLOW-2272)
+    - [Build a page to display data that will be retrieved from MPI](https://vajira.max.gov/browse/CASEFLOW-2255)
+    - [Testing: Validate successful connection with the MPI SOAP API](https://vajira.max.gov/browse/CASEFLOW-2281)
+    - [Create a fake implementation of MPI returning Data to Caseflow in the Back-End](https://vajira.max.gov/browse/CASEFLOW-2254)
+    - [Ruby gem for handling SOAP communication with MPI](https://vajira.max.gov/browse/CASEFLOW-2271)
+
+### Requirements and/or Acceptance Criteria
+
+Caseflow allows staff to perform an enterprise search if the appellant, who is the requester of the decision review, cannot be located in CorpDB based upon the information provided via form 10182. 
+
+The VA MPI integration touch points for the Caseflow integration are the following:
+•	1305 Search Person (Attended, Returning Corresponding IDs) - Caseflow will perform a VA MPI Search Person (Attended Search) operation to obtain identity data and corresponding identifiers needed to locate information on an appellant.
+•	1305 Retrieve Person (Returning Corresponding IDs with Relationships) - Caseflow will perform a VA MPI Retrieve Person operation to obtain the primary view associated with the identifier provided. 
+
+#### 1305 Search Person Attended
+
+Caseflow calls MPI’s **Search for Person (Attended)** Service to obtain MPI person records based on submitted traits. The MPI service performs a probabilistic trait-based search in the MPI data store and return matches according to established business rules. Up to 10 possible matches can be returned by the service; if more than 10 records meet the minimum threshold, MPI returns a message indicating the search exceeded 10 records. MPI also returns all identifiers associated with the person record.
+
+##### Integration Requirements
+
+- Caseflow shall send a Search for Person (Attended, Returning Corresponding IDs) message to VA MPI.
+- Caseflow shall include numerous traits or elements (parameters) that satisfies the criteria established in the Search Sample Scenarios Matrix in its search query to VA MPI. 
+    - Last Name: Required
+    - First Name
+    - Middle Name
+    - DOB
+    - Gender
+    - Address
+- Caseflow shall have the capability to receive and process results of the Search for Person (Attended, Returning Corresponding IDs) request. A successful return message will include either a Primary View or Primary Views (up to 10), with each record including an ICN, or an indicator that no record was found. ICN (Integration Control Number) is the unique VA enterprise identifier used in MPI. The ICN is only being stored temporarily for use as an identifier when making the Retrieve Person request from VA MPI as part of a specific inquiry. VA MPI can return any of the following results:
+    - VA MPI Unavailable
+    - VA MPI Available:
+        - Error
+        - Successful
+
+#### 1305 Retrieve Person using ICN Identifier
+
+Caseflow calls MPI's **Retrieve Person using ICN Identifier** to obtain the Primary View associated with the identifier provided. Caseflow shall initiate the Retrieve Person Service using the ICN to obtain the Primary View Profile associated with the person record. Primary View (PV profile) provides a "gold" copy of person data. The PV Profile is referenced in VA information systems by an associated ICN
+
+### Open Questions
+
+1. What data will we store, where will we store it, and how will we store it?
+    - Cache PV profile records? We were told ICN should not be stored 
+2. Should we make more parameters other than "Last name" required in the UI? Given that the MPI Database has over 40 million person records, and we can only receive a max of 10 people per request, how are we going to ensure users are able to make successful search requests while also maintaining current required information? 10182 form asks for Appellant's First name, Middle initial, last name, DOB, Preferred mailing address, preferred telephone number, preferred email. 
+3. How are we initializing a request to CorpDB via BGS once we have received a Primary view record from MPI?
+
+### Implementation
+
+- A file titled `mpi_service.rb` will be added to `caseflow/app/services/external_api`. This file will create a new class `ExternalApi::MPIService`, which will include methods made available to the Caseflow client to make the necessary request to the MPI service. 
+
+##### Methods to Include
+
+- `initialize` - Format our client proxy. Depending on if/what we end up caching, will create instance variables here to cache our requests. 
+
+- `search_person_info(last_name: '')` - Method to make 1305 request to "Search Person (Attended)" endpoint
+
+- `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
+
+- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production.
+
+- There will need to be an `mpi.rb` file added to `caseflow/config/initializers`, which will determine which MPI Service to use (Prod or Fakes)
+
+
+### Installation
+Add this line to Gemfile
+```ruby
+gem 'mpi'
+```
+Execute:
+```ruby
+$ bundle install
+```
+
+Create mpi_service.rb file in `caseflow/app/services/external_api` and import gem
+```ruby
+require 'mpi'
+```
+
+### MPI Gem File Structure
+- lib folder
+    - mpi folder
+        - services folder
+        - base.rb file
+            - Format the initialization of the client
+            - Parse XML using Nokogiri
+            - Aware of MPI's URL patterns
+- spec folder
+
+MPI endpoints will live in this repo
+
+
+### Test Plan
+### Rollout Plan
+### Research Notes
+
+To Do
+- Fakes implementation
+- After discussion around parameters, build out methods
