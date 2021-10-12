@@ -85,9 +85,7 @@ describe VaDotGovAddressValidator do
           .to receive(:get_distance).twice do
             fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
           end
-        subject
-        # Suppress exception so we can count how many times this is called
-        rescue Caseflow::Error::VaDotGovMissingFacilityError
+        expect { subject }.to raise_error(an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError))
       end
 
       it "expresses the error if fails more than once" do
