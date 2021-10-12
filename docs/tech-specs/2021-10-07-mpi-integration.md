@@ -60,37 +60,11 @@ Caseflow calls MPI's **Retrieve Person using ICN Identifier** to obtain the Prim
 
 ### Implementation
 
-- A file titled `mpi_service.rb` will be added to `caseflow/app/services/external_api`. This file will create a new class `ExternalApi::MPIService`, which will include methods made available to the Caseflow client to make the necessary request to the MPI service. 
+Implementing this service is going to involve writing code in two locations. The Caseflow repository (where this tech spec currently resides) and a seperate repository, which will be titled `ruby-mpi` and will live in the [VA Github](https://github.com/department-of-veterans-affairs). This gem will serves as a SOAP client to facilitate connection with MPI.
 
-##### Methods to Include
+#### MPI Gem Repository
+##### File Structure
 
-- `initialize` - Format our client proxy. Depending on if/what we end up caching, will create instance variables here to cache our requests. 
-
-- `search_person_info(last_name: '')` - Method to make 1305 request to "Search Person (Attended)" endpoint
-
-- `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
-
-- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production.
-
-- There will need to be an `mpi.rb` file added to `caseflow/config/initializers`, which will determine which MPI Service to use (Prod or Fakes)
-
-
-### Installation
-Add this line to Gemfile
-```ruby
-gem 'mpi'
-```
-Execute:
-```ruby
-$ bundle install
-```
-
-Create mpi_service.rb file in `caseflow/app/services/external_api` and import gem
-```ruby
-require 'mpi'
-```
-
-### MPI Gem File Structure
 - lib folder
     - mpi folder
         - services folder
@@ -101,12 +75,37 @@ require 'mpi'
 - spec folder
 
 MPI endpoints will live in this repo
+#### Caseflow Repository
+##### Installing Gem in Caseflow
+
+Add this line to Gemfile
+```ruby
+gem 'mpi', git: "https://github.com/department-of-veterans-affairs/ruby-mpi.git", ref: "latest-commit-hash"
+```
+It is important to include the most recent version of the repository in the `ref:` field here to ensure we are referencing the most current code. 
+
+Execute:
+```ruby
+$ bundle install
+```
+
+Create mpi_service.rb file in `caseflow/app/services/external_api` and import gem
+```ruby
+require 'mpi'
+```
+##### Files to add in Caseflow
+
+- A file titled `mpi_service.rb` will be added to `caseflow/app/services/external_api`. This file will create a new class `ExternalApi::MPIService`, which will include methods made available to the Caseflow client to make the necessary requests to the MPI service.
+    - Methods to include:
+        - `initialize` - Format our client proxy. Depending on if/what we end up caching, will create instance variables here to cache our requests. 
+        - `search_person_info(last_name: '')` - Method to make 1305 request to "Search Person (Attended)" endpoint
+        - `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
+
+- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production.
+
+- An `mpi.rb` file added to `caseflow/config/initializers`, which will determine which MPI Service to use (Prod or Fakes)
 
 
 ### Test Plan
 ### Rollout Plan
 ### Research Notes
-
-To Do
-- Fakes implementation
-- After discussion around parameters, build out methods
