@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import { COLORS } from '../../constants/AppConstants';
-import Badge from './Badge';
+import Badge from 'app/components/badges/Badge';
 
 /**
  * Component to display a FNOD badge if Veteran.date_of_death is not null and
