@@ -50,32 +50,30 @@ Caseflow calls MPI’s **Search for Person (Attended)** Service to obtain MPI pe
 #### 1305 Retrieve Person using ICN Identifier
 
 Caseflow calls MPI's **Retrieve Person using ICN Identifier** to obtain the Primary View associated with the identifier provided. Caseflow shall initiate the Retrieve Person Service using the ICN to obtain the Primary View Profile associated with the person record. Primary View (PV profile) provides a "gold" copy of person data. The PV Profile is referenced in VA information systems by an associated ICN
-
-### Open Questions
-
-1. What data will we store, where will we store it, and how will we store it?
-    - Cache PV profile records? We were told ICN should not be stored 
-2. Should we make more parameters other than "Last name" required in the UI? Given that the MPI Database has over 40 million person records, and we can only receive a max of 10 people per request, how are we going to ensure users are able to make successful search requests while also maintaining current required information? 10182 form asks for Appellant's First name, Middle initial, last name, DOB, Preferred mailing address, preferred telephone number, preferred email. 
-3. How are we initializing a request to CorpDB via BGS once we have received a Primary view record from MPI?
-
 ### Implementation
 
 Implementing this service is going to involve writing code in two locations. The Caseflow repository (where this tech spec currently resides) and a seperate repository, which will be titled `ruby-mpi` and will live in the [VA Github](https://github.com/department-of-veterans-affairs). This gem will serves as a SOAP client to facilitate connection with MPI.
 
-#### MPI Gem Repository
-##### File Structure
+#### MPI Gem
+##### File Structure - **WIP** (Needs to be fleshed out. But this is what the basic structuring of the Gem will look like)
 
 - lib folder
     - mpi folder
         - services folder
-        - base.rb file
-            - Format the initialization of the client
-            - Parse XML using Nokogiri
-            - Aware of MPI's URL patterns
+            - person.rb
+        - base.rb
+            - Format the initialization of the Savon client
+        - error.rb
+        - services.rb
+            - `require "mpi/services/person"`
+    - mpi.rb
 - spec folder
+    - base_spec.rb
+    - errors_spec.rb
+    - services_spec.rb
 
 MPI endpoints will live in this repo
-#### Caseflow Repository
+#### Caseflow
 ##### Installing Gem in Caseflow
 
 Add this line to Gemfile
@@ -101,11 +99,12 @@ require 'mpi'
         - `search_person_info(last_name: '')` - Method to make 1305 request to "Search Person (Attended)" endpoint
         - `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
 
-- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production.
+- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production. **(WIP)**
 
 - An `mpi.rb` file added to `caseflow/config/initializers`, which will determine which MPI Service to use (Prod or Fakes)
+### Open Questions
 
-
-### Test Plan
-### Rollout Plan
-### Research Notes
+1. What data will we store, where will we store it, and how will we store it?
+    - Cache PV profile records? We were told ICN should not be stored 
+2. Should we make more parameters other than "Last name" required in the UI? Given that the MPI Database has over 40 million person records, and we can only receive a max of 10 people per request, how are we going to ensure users are able to make successful search requests while also maintaining current required information? 10182 form asks for Appellant's First name, Middle initial, last name, DOB, Preferred mailing address, preferred telephone number, preferred email. 
+3. How are we initializing a request to CorpDB via BGS once we have received a Primary view record from MPI?
