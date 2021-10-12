@@ -86,7 +86,6 @@ jobs:
     resource_class: large
     steps:
       - checkout
-      - browser-tools/install-browser-tools
       - install_node_dependencies
 
       - run:
@@ -203,6 +202,7 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
+      - browser-tools/install-browser-tools
       - install_ruby_dependencies
 
       - install_dockerize
