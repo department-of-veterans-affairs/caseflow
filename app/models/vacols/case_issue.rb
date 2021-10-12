@@ -7,7 +7,7 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   class IssueError < StandardError; end
 
-  attribute :issdesc, :ascii_string
+  attribute :issdesc, :ascii_string, limit: 100
 
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 

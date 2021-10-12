@@ -36,26 +36,30 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           )
         end
 
+        let!(:child_task) do
+          create(
+            :ama_colocated_task,
+            old_task_type_trait,
+            appeal: parent_task.appeal,
+            parent: parent_task,
+            instructions: [old_instructions],
+            assigned_by: assigner,
+            assigned_to: create(:user, :vlj_support_user)
+          )
+        end
+
         it "should update successfully" do
           subject
 
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
-          expect(response_body.length).to eq 4
-          expect(response_body.first["id"]).not_to eq task.id.to_s
-          expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
-          expect(response_body.first["attributes"]["status"]).to eq task.status
-          expect(response_body.first["attributes"]["instructions"]).to include old_instructions
-          expect(response_body.first["attributes"]["instructions"]).to include new_instructions
-          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
-          expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
-          expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
+          expect(response_body.length).to eq 3
 
-          new_parent_id = Task.find(response_body.first["id"]).parent_id
+          new_parent_id = response_body.first["id"]
           new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
           expect(new_parent["id"]).not_to eq parent_task.id.to_s
           expect(new_parent["attributes"]["label"]).to eq new_task_type.label
-          expect(new_parent["attributes"]["status"]).to eq parent_task.status
+          expect(new_parent["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
           expect(new_parent["attributes"]["instructions"]).to include old_instructions
           expect(new_parent["attributes"]["instructions"]).to include new_instructions
           expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
@@ -126,36 +130,39 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           )
         end
 
+        let!(:user_task) do
+          old_task_type.create!(
+            appeal: parent_task.appeal,
+            parent_id: parent_task.id,
+            assigned_to: create(:user),
+            assigned_by: assigner,
+            instructions: [old_instructions]
+          )
+        end
+
         it "should update successfully" do
           subject
 
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
-          expect(response_body.length).to eq 6
+
+          # This is the parent of the task we started, because Colocated tasks do not auto-assign user tasks.
+          expect(response_body.length).to eq 5
           expect(response_body.first["id"]).not_to eq task.id.to_s
           expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
           expect(response_body.first["attributes"]["status"]).to eq task.status
+          expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
           expect(response_body.first["attributes"]["instructions"]).to include old_instructions
           expect(response_body.first["attributes"]["instructions"]).to include new_instructions
-          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
-          expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
+          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
+          expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
           expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
 
-          new_parent_id = Task.find(response_body.first["id"]).parent_id
-          new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
-          expect(new_parent["id"]).not_to eq parent_task.id.to_s
-          expect(new_parent["attributes"]["label"]).to eq new_task_type.label
-          expect(new_parent["attributes"]["status"]).to eq parent_task.status
-          expect(new_parent["attributes"]["instructions"]).to include old_instructions
-          expect(new_parent["attributes"]["instructions"]).to include new_instructions
-          expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
-          expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
-          expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
-
-          new_grandparent_id = Task.find(new_parent["id"]).parent_id
+          # This refers to the organization task of the same type, but assigned to the Mail Team:
+          new_grandparent_id = Task.find(response_body.first["id"]).parent_id
           new_grandparent = response_body.find { |t| t["id"] == new_grandparent_id.to_s }
           expect(new_grandparent["id"]).not_to eq grandparent_task.id.to_s
-          expect(new_grandparent["attributes"]["status"]).to eq parent_task.status
+          expect(new_grandparent["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
           expect(new_grandparent["attributes"]["label"]).to eq new_task_type.label
           expect(new_grandparent["attributes"]["assigned_to"]["id"]).to eq grandparent_task.assigned_to_id
           expect(new_grandparent["attributes"]["assigned_by"]["pg_id"]).to eq grandparent_task.assigned_by_id
@@ -213,6 +220,18 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           appeal: root_task.appeal,
           parent_id: root_task.id,
           assigned_by: assigner,
+          instructions: [old_instructions]
+        )
+      end
+
+      let!(:child_task) do
+        create(
+          :ama_colocated_task,
+          :ihp,
+          appeal: parent_task.appeal,
+          parent: parent_task,
+          assigned_by: assigner,
+          assigned_to: create(:user),
           instructions: [old_instructions]
         )
       end
