@@ -555,7 +555,6 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def create_contentions_in_vbms(contentions)
-    binding.pry
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
