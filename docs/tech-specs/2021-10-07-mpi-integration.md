@@ -60,17 +60,23 @@ Implementing this service is going to involve writing code in two locations. The
 - lib folder
     - mpi folder
         - services folder
-            - person.rb
-        - base.rb
+            - `person.rb`
+                -   Methods - Not a complete list
+                    - Class method - `service_name` - This is how we will reference this service in the caseflow repo
+                    - Instance method - `search_person_info(last_name: '')` - Find up to 10 people who satisfy the search criteria provided in the parameters. The only parameter required by MPI for this request is `last_name`
+                    - Instance method - `retrieve_person_info(icn)` - Request a PV profile record in MPI with the ICN that maps to the appropriate record
+        - `base.rb`
             - Format the initialization of the Savon client
-        - error.rb
-        - services.rb
+        - `error.rb`
+            - Array of `TRANSIENT_ERRORS` returned from MPI
+            - Array of `KNOWN_ERRORS` returned from MPI
+        - `services.rb`
             - `require "mpi/services/person"`
-    - mpi.rb
+    - `mpi.rb`
 - spec folder
-    - base_spec.rb
-    - errors_spec.rb
-    - services_spec.rb
+    - `base_spec.rb`
+    - `errors_spec.rb`
+    - `services_spec.rb`
 
 MPI endpoints will live in this repo
 #### Caseflow
