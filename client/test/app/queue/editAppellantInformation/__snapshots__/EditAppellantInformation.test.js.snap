@@ -2645,7 +2645,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                         }
                         max="9999-12-31"
                         name="dateOfBirth"
-                        onChange={[Function]}
                         optional={true}
                         placeholder="mm/dd/yyyy"
                         required={false}
