@@ -24,6 +24,9 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:caseflow_coordinator) do
     User.find_by_css_id_or_create_with_default_station_id(coordinator.sdomainid)
   end
+  let!(:hearing_day) do
+    create(:hearing_day, request_type: "C", room: "2", judge_id: judge.id)
+  end
 
   before do
     HearingsManagement.singleton.add_user(caseflow_coordinator)
@@ -63,11 +66,12 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the Coordinator on the docket" do
-      click_dropdown(name: "coordinator", index: 0)
+      click_dropdown(name: "coordinator", index: 1)
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
       expect(page).to have_content("#{coordinator.snamef} #{coordinator.snamel}")
+      expect(hearing_day.reload.bva_poc).to eq("#{coordinator.snamef} #{coordinator.snamel}")
     end
 
     it "can make changes to the Notes on the docket" do
@@ -81,10 +85,6 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   end
 
   context "when request type is 'Central'" do
-    let!(:hearing_day) do
-      create(:hearing_day, request_type: "C", room: "2", judge_id: judge.id)
-    end
-
     include_examples "always editable fields"
   end
 
@@ -113,7 +113,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   context "when request type is 'Travel'" do
     let!(:hearing_day) do
-      create(:hearing_day, request_type: "T", room: "2", judge_id: judge.id)
+      create(:hearing_day, request_type: "T", regional_office: "RO17", room: "2", judge_id: judge.id)
     end
 
     include_examples "always editable fields"
@@ -122,14 +122,15 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   context "when hearings have already been scheduled" do
     let!(:hearings) do
       [
-        create(:hearing, regional_office: "RO62", hearing_day: hearing_day, scheduled_time: "11:30AM")
+        create(:hearing, regional_office: "RO17", hearing_day: hearing_day, scheduled_time: "11:30AM")
       ]
     end
 
     scenario "cannot change docket type" do
-      navigate_to_docket
+      navigate_to_docket(hearings)
 
-      expect(page).to have_field("requestType", disabled: true)
+      expect(page).to have_field("Type of Docket", disabled: true, visible: false)
+      expect(page).to have_content(COPY::DOCKET_HAS_HEARINGS_SCHEDULED)
     end
   end
 end
