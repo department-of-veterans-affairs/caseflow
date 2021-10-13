@@ -22,11 +22,10 @@ import Alert from 'app/components/Alert';
 // Styles and Utils
 import { saveButton, cancelButton } from 'app/hearings/components/details/style';
 import { fullWidth } from 'app/queue/constants';
-import { REQUEST_TYPE_OPTIONS } from 'app/hearings/constants';
 
 import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
-import { docketTypes, getRegionalOffice } from 'app/hearings/utils';
+import { docketTypes, getRegionalOffice, readableDocketType } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
 
 export const EditDocket = (props) => {
@@ -38,10 +37,7 @@ export const EditDocket = (props) => {
     firstSlotTime: props?.docket?.beginsAt || '08:30',
     slotLength: props?.docket?.slotLengthMinutes,
     slotCount: props?.docket?.totalSlots,
-    requestType: {
-      label: REQUEST_TYPE_OPTIONS.filter((type) => type.value === props.docket.requestType)[0]?.label,
-      value: props?.docket?.requestType,
-    },
+    requestType: readableDocketType(props?.docket?.readableRequestType),
     regionalOffice: getRegionalOffice(props.docket.regionalOfficeKey, dropdowns?.regionalOffices?.options),
     judgeId: props?.docket?.judgeId?.toString(),
     bvaPoc: props?.docket?.bvaPoc,
@@ -86,7 +82,7 @@ export const EditDocket = (props) => {
   });
 
   // Flag whether this is a virtual docket
-  const virtual = fields.requestType.value === HEARING_REQUEST_TYPES.virtual;
+  const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
   const isScheduled = !isEmpty(props?.hearings);
   const zoneOffset = moment(props?.docket?.scheduledFor).isDST() ? '04:00' : '05:00';
 

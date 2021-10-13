@@ -957,6 +957,9 @@ export const docketTypes = (originalType) => {
   ];
 };
 
+export const readableDocketType = (docketType) =>
+  REQUEST_TYPE_OPTIONS.find((type) => docketType?.includes(type.label));
+
 export const getRegionalOffice = (roKey, list) => {
   if (!list?.length) {
     return {
