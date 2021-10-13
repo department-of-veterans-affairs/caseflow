@@ -312,7 +312,7 @@ class EndProductCodeSelector
   def request_issues_older_than_a_year?
     return false unless FeatureToggle.enabled?(:itf_supplemental_claims)
 
-    decision_review.request_issues.active.rating.any? do |request_issue|
+    decision_review.request_issues.active.rating_not_unidentified.any? do |request_issue|
       request_issue.decision_date < (decision_review.receipt_date - 1.year)
     end
   end
