@@ -1,0 +1,13 @@
+<h3>Task versions (<span class="show_pii_true">possibly showing PII</span>)</h3>
+
+<code style="color: green">
+  Appeal.find(<%= appeal.id %>).tasks.map{ |task| [task.type, task.id, task.version_summary] }
+</code>
+<ul>
+<% tasks_versions.each do |task_versions|  %>
+  <li><details id="<%=task_versions[:task_id]%>_versions">
+    <summary><%= task_versions[:task_type] %> <%= task_versions[:task_id] %></summary>
+    <pre style="font-size:0.84em; padding:10px; background-color: lightyellow;"><code><%= task_versions[:summary] %></code></pre>
+  </details></li>
+<% end %>
+</ul>

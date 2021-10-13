@@ -14,6 +14,7 @@ require "digest"
 #
 class ExternalApi::VADotGovService
   BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
+  FACILITY_IDS_ENDPOINT = "va_facilities/v0/ids"
   FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
 
@@ -122,6 +123,19 @@ class ExternalApi::VADotGovService
       response = send_va_dot_gov_request(address_validation_request(address))
 
       ExternalApi::VADotGovService::AddressValidationResponse.new(response)
+    end
+
+    # Gets full list of facility IDs available from the VA.gov API
+    #
+    # @param ids [Array<String, Symbol>] facility ids to check
+    #
+    # @return    [ExternalApi::VADotGovService::FacilitiesIdsResponse]
+    #   An API response that contains the full list of facility IDs available at API.gov, and
+    #     helper methods to check for missing IDs
+    def check_facility_ids(ids: [])
+      response = send_facilities_ids_request
+
+      ExternalApi::VADotGovService::FacilitiesIdsResponse.new(response, ids)
     end
 
     private
@@ -298,6 +312,19 @@ class ExternalApi::VADotGovService
       track_pages(page)
 
       response
+    end
+
+    # Queries the VA.gov facilities API for a list of facility ids
+    #
+    # @return      [ExternalApi::VADotGovService::FacilitiesIdsResponse]
+    #   An aggregated API response that contains all the queried facilities (see #send_facilities_request)
+    def send_facilities_ids_request
+      cache_key = "send_facilities_ids_request"
+      Rails.cache.fetch(cache_key, expires_in: 2.hours) do
+        send_va_dot_gov_request(
+          endpoint: FACILITY_IDS_ENDPOINT
+        )
+      end
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)

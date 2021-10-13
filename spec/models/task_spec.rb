@@ -1887,4 +1887,25 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe "#task_is_assigned_to_organization?" do
+    let(:task) { create(:ama_task, assigned_to: assignee) }
+    let(:organization) { create(:organization) }
+
+    subject { task.task_is_assigned_to_organization?(organization) }
+
+    context "when assigned to an individual" do
+      let(:assignee) { create(:user) }
+      it "returns false" do
+        expect(subject).to be_falsey
+      end
+    end
+
+    context "when assigned to an organization" do
+      let(:assignee) { organization }
+      it "returns true" do
+        expect(subject).to be_truthy
+      end
+    end
+  end
 end
