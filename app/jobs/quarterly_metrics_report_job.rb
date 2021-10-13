@@ -17,7 +17,7 @@ class QuarterlyMetricsReportJob < RecurringMetricsReportJob
   # rubocop:disable Metrics/LineLength
   def additional_metrics
     hearings_show_rate = Metrics::HearingsShowRate.new(Metrics::DateRange.new(start_date, end_date))
-    ep_creation_rate = Metrics::NonDenialDecisions.new(Metrics::DateRange.new(start_date, end_date), run_date_range_validation: false)
+    ep_creation_rate = Metrics::NonDenialDecisions.new(Metrics::DateRange.new(start_date, end_date))
 
     [
       "#{hearings_show_rate.name}: #{(hearings_show_rate.call * 100).round(2)}%",
