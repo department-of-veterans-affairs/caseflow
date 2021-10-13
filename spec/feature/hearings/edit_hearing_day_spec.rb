@@ -84,8 +84,25 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
   end
 
+  shared_examples "convert to virtual" do
+    it "can convert docket type to virtual" do
+      click_dropdown(name: "requestType", index: 1)
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.request_type).to eq(HearingDay::REQUEST_TYPES[:virtual])
+    end
+  end
+
+  shared_examples "edit virtual docket" do
+    it "can edit virtual docket specific fields" do
+      
+    end
+  end
+
   context "when request type is 'Central'" do
     include_examples "always editable fields"
+    include_examples "convert to virtual"
   end
 
   context "when request type is 'Virtual'" do
@@ -106,6 +123,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     include_examples "always editable fields"
+    include_examples "convert to virtual"
 
     scenario "cannot change regional office" do
     end
@@ -117,6 +135,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     include_examples "always editable fields"
+    include_examples "convert to virtual"
   end
 
   context "when hearings have already been scheduled" do

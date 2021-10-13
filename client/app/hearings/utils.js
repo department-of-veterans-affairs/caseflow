@@ -958,17 +958,14 @@ export const docketTypes = (originalType) => {
 };
 
 export const getRegionalOffice = (roKey, list) => {
-  if (list?.length) {
-    return list.reduce((item, values) => {
-      if (item?.value?.key === roKey) {
-        return item?.value;
-      }
-
-      return values;
-    }, {});
+  if (!list?.length) {
+    return {
+      ...REGIONAL_OFFICE_INFORMATION[roKey],
+      key: roKey
+    };
   }
 
-  return { key: roKey || 'C', timezone: COMMON_TIMEZONES[0] };
+  return list.find((item) => item.value.key === roKey).value;
 };
 
 /* eslint-enable camelcase */

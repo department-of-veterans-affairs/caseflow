@@ -22,6 +22,8 @@ import Alert from 'app/components/Alert';
 // Styles and Utils
 import { saveButton, cancelButton } from 'app/hearings/components/details/style';
 import { fullWidth } from 'app/queue/constants';
+import { REQUEST_TYPE_OPTIONS } from 'app/hearings/constants';
+
 import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
 import { docketTypes, getRegionalOffice } from 'app/hearings/utils';
@@ -37,7 +39,7 @@ export const EditDocket = (props) => {
     slotLength: props?.docket?.slotLengthMinutes,
     slotCount: props?.docket?.totalSlots,
     requestType: {
-      label: props?.docket?.readableRequestType,
+      label: REQUEST_TYPE_OPTIONS.filter((type) => type.value === props.docket.requestType)[0]?.label,
       value: props?.docket?.requestType,
     },
     regionalOffice: getRegionalOffice(props.docket.regionalOfficeKey, dropdowns?.regionalOffices?.options),
@@ -121,6 +123,7 @@ export const EditDocket = (props) => {
             excludeVirtualHearingsOption={!virtual}
             onChange={handleChange('regionalOffice')}
             value={fields?.regionalOffice?.key}
+            options={dropdowns?.regionalOffices?.options}
           />
           <JudgeDropdown
             label="Select VLJ"

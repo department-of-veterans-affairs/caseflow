@@ -34,8 +34,8 @@ import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import EditDocket from 'app/hearings/components/dailyDocket/EditDocket';
 import Alert from '../../components/Alert';
 
-export const DocketLoadWrapper = ({ hearingDay, hearings, loadHearingDay, children }) => {
-  if (!hearingDay || !hearings) {
+export const DocketLoadWrapper = ({ docketId, hearingDay, loadHearingDay, children }) => {
+  if (docketId !== hearingDay?.id.toString()) {
     return (
       <LoadingDataDisplay
         createLoadPromise={loadHearingDay}
@@ -217,6 +217,7 @@ export class DailyDocketContainer extends React.Component {
   render() {
     return (
       <DocketLoadWrapper
+        docketId={this.props.match.params.hearingDayId}
         loadHearingDay={this.loadHearingDay}
         hearingDay={this.props.hearingDay}
         hearings={this.props.hearings}
