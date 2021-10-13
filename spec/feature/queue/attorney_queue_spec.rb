@@ -139,13 +139,15 @@ RSpec.feature "Attorney queue", :all_dbs do
           assigned_by: attorney
         )
       end
-      let!(:colocated_person_task) { colocated_org_task.children.first }
+      let!(:colocated_person_task) do
+        create(:colocated_task, appeal: appeal, parent: colocated_org_task, assigned_to: create(:user))
+      end
 
       before do
-        Colocated.singleton.add_user(create(:user))
+        new_user = create(:user, :vlj_support_user)
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: Colocated.singleton.next_assignee.id
+          assigned_to_id: new_user.id
         }
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end

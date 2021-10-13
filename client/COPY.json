@@ -170,6 +170,8 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select a valid date for the court's decision",
+  "CC_BADGE_TOOLTIP_LONG": "This is a Contested Claim and needs to be processed by the Specialty\nCase team. Please include all parties and POA in correspondence.",
+  "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
   "JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMPR you must select at least one issue to proceed",
   "MDR_SELECTION_ISSUE_INFO_BANNER": "For a MDR you must select at least one issue to proceed",
@@ -260,7 +262,7 @@
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
-  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGESS_TAB_TITLE": "In Progress Tasks",
+  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",

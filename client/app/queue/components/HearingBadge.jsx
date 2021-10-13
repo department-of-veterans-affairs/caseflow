@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { COLORS } from '../../constants/AppConstants';
 import { tooltipListStyling } from './style';
 
-import Badge from './Badge';
+import Badge from 'app/components/badges/Badge';
 import ApiUtil from '../../util/ApiUtil';
 import { DateString } from '../../util/DateUtil';
 import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
