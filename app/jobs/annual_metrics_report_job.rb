@@ -11,4 +11,12 @@ class AnnualMetricsReportJob < RecurringMetricsReportJob
 
     run
   end
+
+  private
+
+  def additional_metrics
+    reader_adoption_rate = Metrics::ReaderAdoptionRate.new(Metrics::DateRange.new(start_date, end_date))
+    
+    ["#{reader_adoption_rate.name}: #{(reader_adoption_rate.call * 100).round(2)}%"]
+  end
 end

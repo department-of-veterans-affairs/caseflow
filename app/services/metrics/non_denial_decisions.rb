@@ -4,13 +4,13 @@
 # Metric definition: (Number EPs with date<=7 days after outcoding date/number non-denial decisions)
 
 class Metrics::NonDenialDecisions < Metrics::Base
-  def initialize(date_range, appeal_type: "Appeal", within: 7)
+  def initialize(date_range, appeal_type: "Appeal", within: 7, run_date_range_validation: true)
     super(date_range)
 
     @appeal_type = appeal_type
     @within = within.to_i
 
-    if start_or_end_date_within_n_days
+    if run_date_range_validation && start_or_end_date_within_n_days
       fail Metrics::DateRange::DateRangeError, "Start and end dates must be #{within} days or more ago"
     end
   end

@@ -30,6 +30,11 @@ class RecurringMetricsReportJob < CaseflowJob
     slack_service.send_notification(msg, self.class.to_s)
   end
 
+  # Override this in the subclasses that provide additional 
+  def additional_metrics
+    []
+  end
+
   # rubocop:disable Metrics/LineLength
   def build_report(appeals, async_stats, certification_metric)
     certification_paperless_metric = certification_metric.call[:paperless_metric]
@@ -42,6 +47,9 @@ class RecurringMetricsReportJob < CaseflowJob
     report << "Appeals established within 7 days: #{appeals} (100%)"
     report << "Supplemental Claims within 7 days: #{sc_stats[:established_within_seven_days]} (#{sc_stats[:established_within_seven_days_percent]}%)"
     report << "Higher Level Reviews within 7 days: #{hlr_stats[:established_within_seven_days]} (#{hlr_stats[:established_within_seven_days_percent]}%)"
+
+    report.concat(additional_metrics) if additional_metrics.any?
+
     report << async_stats.as_csv
     report.join("\n")
   end
