@@ -92,11 +92,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  hearingRequestTypeDropdownOptions={
-    Object {
-      "list": Array [],
-    }
-  }
 >
   <ContentSection
     header="Hearing Details"
@@ -6877,7 +6872,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            dropdownOptions={Array []}
             onChange={[Function]}
             readOnly={false}
             styling={
@@ -6892,7 +6886,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               loading={false}
               name="hearingType"
               onChange={[Function]}
-              options={Array []}
               readOnly={false}
               strongLabel={true}
               styling={
@@ -6950,7 +6943,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       onMenuClose={[Function]}
                       onMenuOpen={[Function]}
-                      options={Array []}
                       shouldKeyDownEventCreateNewOption={[Function]}
                       styles={
                         Object {
@@ -13021,11 +13013,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       "wasVirtual": false,
       "witness": null,
       "worksheetIssues": Object {},
-    }
-  }
-  hearingRequestTypeDropdownOptions={
-    Object {
-      "list": Array [],
     }
   }
   isLegacy={false}
@@ -19809,7 +19796,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            dropdownOptions={Array []}
             onChange={[Function]}
             readOnly={false}
             styling={
@@ -19824,7 +19810,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               loading={false}
               name="hearingType"
               onChange={[Function]}
-              options={Array []}
               readOnly={false}
               strongLabel={true}
               styling={
@@ -19882,7 +19867,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       onMenuClose={[Function]}
                       onMenuOpen={[Function]}
-                      options={Array []}
                       shouldKeyDownEventCreateNewOption={[Function]}
                       styles={
                         Object {
@@ -25953,11 +25937,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
       "wasVirtual": false,
       "witness": null,
       "worksheetIssues": Object {},
-    }
-  }
-  hearingRequestTypeDropdownOptions={
-    Object {
-      "list": Array [],
     }
   }
   isLegacy={true}
@@ -32741,7 +32720,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            dropdownOptions={Array []}
             onChange={[Function]}
             readOnly={false}
             styling={
@@ -32756,7 +32734,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               loading={false}
               name="hearingType"
               onChange={[Function]}
-              options={Array []}
               readOnly={false}
               strongLabel={true}
               styling={
@@ -32814,7 +32791,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       onChange={[Function]}
                       onMenuClose={[Function]}
                       onMenuOpen={[Function]}
-                      options={Array []}
                       shouldKeyDownEventCreateNewOption={[Function]}
                       styles={
                         Object {

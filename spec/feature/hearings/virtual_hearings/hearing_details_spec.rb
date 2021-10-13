@@ -234,7 +234,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         click_dropdown(name: "hearingType", index: 0)
 
         # Confirm the Modal change to cancel the virtual hearing
-        click_button(COPY::CONVERT_HEARING_TITLE % hearing.readable_request_type)
+        click_button("button-save")
 
         expect(page).to have_content(expected_alert)
 

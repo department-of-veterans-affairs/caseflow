@@ -7,14 +7,13 @@ import { mount } from 'enzyme';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
-import { anyUser, amaHearing, defaultHearing, centralHearing } from 'test/data';
+import { anyUser, amaHearing, defaultHearing } from 'test/data';
 
 describe('DetailsForm', () => {
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(
       <DetailsForm
         hearing={defaultHearing}
-        hearingRequestTypeDropdownOptions={{ list: [] }}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
@@ -31,7 +30,6 @@ describe('DetailsForm', () => {
       <DetailsForm
         isLegacy
         hearing={defaultHearing}
-        hearingRequestTypeDropdownOptions={{ list: [] }}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
@@ -49,7 +47,6 @@ describe('DetailsForm', () => {
       <DetailsForm
         isLegacy={false}
         hearing={defaultHearing}
-        hearingRequestTypeDropdownOptions={{ list: [] }}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
