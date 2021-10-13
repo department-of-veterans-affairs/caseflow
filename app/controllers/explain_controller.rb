@@ -31,7 +31,8 @@ class ExplainController < ApplicationController
   def access_allowed?
     current_user.admin? ||
       BoardProductOwners.singleton.user_has_access?(current_user) ||
-      CaseflowSupport.singleton.user_has_access?(current_user)
+      CaseflowSupport.singleton.user_has_access?(current_user) ||
+      Rails.env.development?
   end
 
   helper_method :legacy_appeal?, :appeal,
