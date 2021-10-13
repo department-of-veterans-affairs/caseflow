@@ -30,7 +30,7 @@ class RecurringMetricsReportJob < CaseflowJob
     slack_service.send_notification(msg, self.class.to_s)
   end
 
-  # Override this in the subclasses that provide additional 
+  # Override this in the subclasses that provide additional metrics.
   def additional_metrics
     []
   end
