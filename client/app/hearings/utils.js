@@ -27,7 +27,7 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL, REQUEST_TYPE_OPTIONS } from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -943,6 +943,32 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+export const docketTypes = (originalType) => {
+  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
+
+  return [
+    option,
+    {
+      value: HEARING_REQUEST_TYPES.virtual,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+};
+
+export const getRegionalOffice = (roKey, list) => {
+  if (list?.length) {
+    return list.reduce((item, values) => {
+      if (item?.value?.key === roKey) {
+        return item?.value;
+      }
+
+      return values;
+    }, {});
+  }
+
+  return { key: roKey || 'C', timezone: COMMON_TIMEZONES[0] };
 };
 
 /* eslint-enable camelcase */
