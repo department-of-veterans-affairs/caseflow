@@ -960,15 +960,9 @@ export const docketTypes = (originalType) => {
 export const readableDocketType = (docketType) =>
   REQUEST_TYPE_OPTIONS.find((type) => docketType?.includes(type.label));
 
-export const getRegionalOffice = (roKey, list) => {
-  if (!list?.length) {
-    return {
-      ...REGIONAL_OFFICE_INFORMATION[roKey],
-      key: roKey
-    };
-  }
-
-  return list.find((item) => item.value.key === roKey).value;
-};
+export const getRegionalOffice = (roKey) => ({
+  ...REGIONAL_OFFICE_INFORMATION[roKey],
+  key: roKey || 'C'
+});
 
 /* eslint-enable camelcase */

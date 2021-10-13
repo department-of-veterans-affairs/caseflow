@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import { filter, isEqual, forEach, find } from 'lodash';
+import { filter, isEqual, find } from 'lodash';
 import LoadingLabel from './LoadingLabel';
 import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import SearchableDropdown from '../SearchableDropdown';

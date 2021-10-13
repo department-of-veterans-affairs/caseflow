@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.feature "Edit a Hearing Day", :all_dbs do
+  let(:sample_notes) { "Some example notes" }
+  let(:default_slot_length) { "30 minutes" }
+  let(:default_num_slots) { 4 }
+  let(:default_start_time) { "8:45 AM" }
+
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     HearingsManagement.singleton.add_user(user)
@@ -20,7 +25,6 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:coordinator) do
     create(:staff, :hearing_coordinator)
   end
-  let(:sample_notes) { "Some example notes" }
   let!(:caseflow_coordinator) do
     User.find_by_css_id_or_create_with_default_station_id(coordinator.sdomainid)
   end
@@ -96,7 +100,19 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   shared_examples "edit virtual docket" do
     it "can edit virtual docket specific fields" do
-      
+      # If the docket is not already virtual, first convert it
+      if hearing_day.request_type != HearingDay::REQUEST_TYPES[:virtual]
+        click_dropdown(name: "requestType", index: 1)
+      end
+
+      click_dropdown(name: "numberOfSlots", text: default_num_slots)
+      click_dropdown(name: "slotLengthMinutes", text: default_slot_length)
+      click_dropdown(name: "optionalHearingTime0", text: default_start_time)
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.slot_length_minutes).to eq(default_slot_length)
+      expect(hearing_day.reload.number_of_slots).to eq(default_num_slots)
+      expect(hearing_day.reload.first_slot_time).to eq(default_start_time)
     end
   end
 
@@ -111,9 +127,14 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     include_examples "always editable fields"
+    include_examples "edit virtual docket"
 
-    scenario "Time slot preview shown by default" do
-      navigate_to_docket
+    it "can convert docket type to original" do
+      click_dropdown(name: "requestType", index: 1)
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.request_type).to eq(HearingDay::REQUEST_TYPES[:central])
     end
   end
 
