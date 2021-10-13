@@ -369,7 +369,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content("Confirm removing task")
       expect(page).to have_content("IHP")
       click_button(COPY::MODAL_CONFIRM_BUTTON)
-
       click_button(text: "Continue")
       # Should now be on confirmation page
       expect(page).to have_current_path(

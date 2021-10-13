@@ -240,7 +240,9 @@ describe BulkTaskReassignment, :all_dbs do
 
         context "when the organization uses automatic assignment of tasks" do
           let(:team_member_count) { task_count * 2 }
-          let(:parent_assignee) { Colocated.singleton }
+          let(:parent_assignee) { BvaDispatch.singleton }
+          let(:parent_task_type) { :bva_dispatch_task }
+          let(:task_type) { :bva_dispatch_task }
 
           before do
             team_member_count.times { |_| parent_assignee.add_user(create(:user)) }
@@ -397,7 +399,7 @@ describe BulkTaskReassignment, :all_dbs do
 
       context "when the organization uses automatic assignment of tasks" do
         let(:team_member_count) { task_count * 2 }
-        let(:parent_assignee) { Colocated.singleton }
+        let(:parent_assignee) { BvaDispatch.singleton }
 
         before do
           team_member_count.times { |_| parent_assignee.add_user(create(:user)) }
