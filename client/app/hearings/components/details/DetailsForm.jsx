@@ -24,8 +24,8 @@ const DetailsForm = (props) => {
     readOnly,
     errors,
     hearingRequestTypeDropdownOptions,
-    hearingRequestTypeDropdownOnchange,
-    convertHearing
+    hearingRequestTypeDropdownCurrentOption,
+    hearingRequestTypeDropdownOnchange
   } = props;
 
   return (
@@ -54,20 +54,14 @@ const DetailsForm = (props) => {
         <div {...rowThirds}>
           <HearingTypeDropdown
             styling={columnThird}
-            dropdownOptions={hearingRequestTypeDropdownOptions?.list}
-            currentOption={hearingRequestTypeDropdownOptions?.currentOption}
+            dropdownOptions={hearingRequestTypeDropdownOptions}
+            currentOption={hearingRequestTypeDropdownCurrentOption}
             readOnly={
                 hearing?.scheduledForIsPast ||
                 ((hearing?.isVirtual || hearing?.wasVirtual) &&
                   !hearing?.virtualHearing?.jobCompleted)
             }
-            onChange={
-              () => hearingRequestTypeDropdownOnchange(
-                hearingRequestTypeDropdownOptions?.currentOption?.label,
-                update,
-                convertHearing
-              )
-            }
+            onChange={hearingRequestTypeDropdownOnchange}
           />
 
           <div>
@@ -143,8 +137,8 @@ DetailsForm.propTypes = {
   isLegacy: PropTypes.bool,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  convertHearing: PropTypes.func,
-  hearingRequestTypeDropdownOptions: PropTypes.object,
+  hearingRequestTypeDropdownOptions: PropTypes.array,
+  hearingRequestTypeDropdownCurrentOption: PropTypes.object,
   hearingRequestTypeDropdownOnchange: PropTypes.func,
 };
 

@@ -156,6 +156,17 @@ export const ENDPOINT_NAMES = {
   UPCOMING_HEARING_DAYS: 'upcoming-hearing-days'
 };
 
+export const ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS = [
+  {
+    value: false,
+    label: ''
+  },
+  {
+    value: true,
+    label: VIRTUAL_HEARING_LABEL
+  }
+];
+
 /* eslint-disable id-length */
 export const REQUEST_TYPE_LABELS = {
   R: 'Virtual',

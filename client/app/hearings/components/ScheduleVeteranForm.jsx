@@ -30,12 +30,12 @@ export const ScheduleVeteranForm = ({
   errors,
   initialRegionalOffice,
   initialHearingDay,
-  convertToVirtual,
   userCanViewTimeSlots,
   hearingTask,
   userCanCollectVideoCentralEmails,
-  hearingTypeDropdownOptions,
-  hearingTypeDropdownOnchange,
+  hearingRequestTypeDropdownOptions,
+  hearingRequestTypeDropdownCurrentOption,
+  hearingRequestTypeDropdownOnchange,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -118,14 +118,9 @@ export const ScheduleVeteranForm = ({
         <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
-            dropdownOptions={hearingTypeDropdownOptions?.list}
-            currentOption={hearingTypeDropdownOptions?.currentOption}
-            onChange={
-              () => hearingTypeDropdownOnchange(
-                hearingTypeDropdownOptions?.currentOption?.label,
-                convertToVirtual
-              )
-            }
+            dropdownOptions={hearingRequestTypeDropdownOptions}
+            currentOption={hearingRequestTypeDropdownCurrentOption}
+            onChange={hearingRequestTypeDropdownOnchange}
           />
         </div>
         <div className="usa-width-one-whole" {...marginTop(30)}>
@@ -224,8 +219,9 @@ ScheduleVeteranForm.propTypes = {
   userCanViewTimeSlots: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
   hearingTask: PropTypes.object,
-  hearingTypeDropdownOptions: PropTypes.object,
-  hearingTypeDropdownOnchange: PropTypes.func
+  hearingRequestTypeDropdownOptions: PropTypes.array,
+  hearingRequestTypeDropdownCurrentOption: PropTypes.object,
+  hearingRequestTypeDropdownOnchange: PropTypes.func
 };
 
 /* eslint-enable camelcase */

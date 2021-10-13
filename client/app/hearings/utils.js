@@ -30,7 +30,8 @@ import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/App
 import {
   VIDEO_HEARING_LABEL,
   TRAVEL_BOARD_HEARING_LABEL,
-  VIRTUAL_HEARING_LABEL
+  VIRTUAL_HEARING_LABEL,
+  ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS
 } from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
@@ -949,68 +950,40 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
     'Caseflow won’t send notifications immediately after scheduling.';
 };
 
-export const hearingRequestTypeDropdownOptions = (hearing, appeal = null, virtual = false) => {
-  if (!hearing && !appeal) {
-    return {};
+export const allScheduleVeteranDropdownOptions = (appeal) => {
+  const virtualHearingOption = ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS[1];
+  const firstOption = ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS[0];
+
+  if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
+    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+    // the HearingTypeDropdown
+    return [{ ...firstOption, ...{ label: VIDEO_HEARING_LABEL } }, virtualHearingOption];
   }
 
-  let currentOption;
-  let virtualHearing;
-  let list = [
-    {
-      value: false,
-      label: ''
-    },
-    {
-      value: true,
-      label: VIRTUAL_HEARING_LABEL
-    }
-  ];
-
-  // If the function is being used in the ScheduleVeteranForm
-  if (appeal) {
-    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
-      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-      // the HearingTypeDropdown
-      list[0].label = VIDEO_HEARING_LABEL;
-    } else {
-      // The default is video hearing if the appeal isn't associated with an RO.
-      list[0].label = appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
-    }
-
-    virtualHearing = virtual ? { status: 'pending' } : null;
-  // If the function is being used in the DetailsForm
-  } else {
-    list[0].label = hearing?.readableRequestType;
-    virtualHearing = hearing?.virtualHearing;
+  // The default is video hearing if the appeal isn't associated with an RO.
+  if (appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL) {
+    return [{ ...firstOption, ...{ label: VIDEO_HEARING_LABEL } }, virtualHearingOption];
   }
-
-  if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
-    currentOption = list[0];
-  } else {
-    currentOption = list[1];
-  }
-
-  list = list.filter((opt) => opt.label !== currentOption.label);
-
-  return { list, currentOption };
 };
 
-export const hearingRequestTypeDropdownOnchange = (currentLabel, updateHearing, convertHearing = null) => {
-  // Change from virtual if the current label is virtual
-  const type = currentLabel === VIRTUAL_HEARING_LABEL ? 'change_from_virtual' : 'change_to_virtual';
+export const allDetailsDropdownOptions = (hearing) => {
+  const virtualHearingOption = ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS[1];
+  const firstOption = ALL_HEARING_REQUEST_TYPE_DROPDOWN_OPTIONS[0];
 
-  if (convertHearing) {
-    convertHearing(type);
+  return [{ ...firstOption, ...{ label: hearing?.readableRequestType } }, virtualHearingOption];
+};
+
+export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
+  if (!virtualHearing || !virtualHearing?.status || virtualHearing?.status === 'cancelled') {
+    return options[0];
   }
 
-  updateHearing(
-    'virtualHearing',
-    { requestCancelled: currentLabel === VIRTUAL_HEARING_LABEL,
-      jobCompleted: false
-    }
-  );
+  return options[1];
+};
+
+export const hearingRequestTypeOptions = (allOptions, currentOption) => {
+  return allOptions.filter((opt) => opt.label !== currentOption.label);
 };
 
 /* eslint-enable camelcase */

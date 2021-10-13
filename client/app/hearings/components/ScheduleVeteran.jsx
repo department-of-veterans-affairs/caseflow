@@ -13,7 +13,11 @@ import { isNil, maxBy, omit, find, get } from 'lodash';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
 import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
-import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
+import {
+  CENTRAL_OFFICE_HEARING_LABEL,
+  VIDEO_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL
+} from '../constants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
@@ -28,8 +32,9 @@ import {
   getAppellantTitle,
   processAlerts,
   parseVirtualHearingErrors,
-  hearingRequestTypeDropdownOptions,
-  hearingRequestTypeDropdownOnchange
+  allScheduleVeteranDropdownOptions,
+  hearingRequestTypeOptions,
+  hearingRequestTypeCurrentOption
 } from '../utils';
 import { parentTasks } from '../../queue/utils';
 import {
@@ -122,6 +127,19 @@ export const ScheduleVeteran = ({
 
   const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
 
+  const virtualHearing = virtual ? { status: 'pending' } : null;
+
+  const allDropdownOptions = allScheduleVeteranDropdownOptions(appeal);
+
+  const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
+    allDropdownOptions,
+    virtualHearing
+  );
+
+  const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
+    allDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption
+  );
   // Get parent hearing task of this task which could be
   // Schedule Hearing Task or Assign Hearing Disposition Task
   const parentHearingTask = parentTasks(
@@ -366,6 +384,15 @@ export const ScheduleVeteran = ({
     return props.onChangeFormData('assignHearing', { requestType: VIRTUAL_HEARING_LABEL });
   };
 
+  const scheduleVeteranRequestTypeDropdownOnchange = (selectedOption) => {
+    convertToVirtual(
+      'virtualHearing',
+      { requestCancelled: selectedOption.label !== VIRTUAL_HEARING_LABEL,
+        jobCompleted: false
+      }
+    );
+  };
+
   // Create the header styling based on video/virtual type
   const headerStyle = setMargin('0 0 45px 0');
 
@@ -401,12 +428,9 @@ export const ScheduleVeteran = ({
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
             hearingTask={parentHearingTask}
             convertToVirtual={convertToVirtual}
-            hearingTypeDropdownOnchange={hearingRequestTypeDropdownOnchange}
-            hearingTypeDropdownOptions={
-              hearingRequestTypeDropdownOptions(
-                hearing, appeal, virtual
-              )
-            }
+            hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions}
+            hearingRequestTypeDropdownCurrentOption={hearingRequestTypeDropdownCurrentOption}
+            hearingRequestTypeDropdownOnchange={scheduleVeteranRequestTypeDropdownOnchange}
           />
         )}
 

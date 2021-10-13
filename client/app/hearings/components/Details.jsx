@@ -21,8 +21,9 @@ import {
   processAlerts,
   startPolling,
   parseVirtualHearingErrors,
-  hearingRequestTypeDropdownOptions,
-  hearingRequestTypeDropdownOnchange
+  allDetailsDropdownOptions,
+  hearingRequestTypeOptions,
+  hearingRequestTypeCurrentOption
 } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -38,6 +39,7 @@ import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 import COPY from '../../../COPY';
+import { VIRTUAL_HEARING_LABEL } from '../constants';
 
 /**
  * Hearing Details Component
@@ -213,6 +215,26 @@ const HearingDetails = (props) => {
     props
   });
 
+  const virtualHearing = hearing?.virtualHearing;
+
+  const allDropdownOptions = allDetailsDropdownOptions(hearing);
+
+  const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
+    allDropdownOptions,
+    virtualHearing
+  );
+
+  const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
+    allDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption
+  );
+
+  const detailsRequestTypeDropdownOnchange = (selectedOption) => {
+    const type = selectedOption.label === VIRTUAL_HEARING_LABEL ? 'change_to_virtual' : 'change_from_virtual';
+
+    convertHearing(type);
+  };
+
   const editedEmailsAndTz = getEditedEmailsAndTz();
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
@@ -261,9 +283,9 @@ const HearingDetails = (props) => {
               errors={virtualHearingErrors}
               isLegacy={isLegacy}
               readOnly={disabled}
-              hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions(hearing)}
-              hearingRequestTypeDropdownOnchange={hearingRequestTypeDropdownOnchange}
-              convertHearing={convertHearing}
+              hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions}
+              hearingRequestTypeDropdownCurrentOption={hearingRequestTypeDropdownCurrentOption}
+              hearingRequestTypeDropdownOnchange={detailsRequestTypeDropdownOnchange}
               update={updateHearing}
             />
             {shouldStartPolling && poll()}
