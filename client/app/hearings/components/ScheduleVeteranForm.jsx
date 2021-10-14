@@ -214,7 +214,6 @@ ScheduleVeteranForm.propTypes = {
   initialRegionalOffice: PropTypes.string,
   initialHearingDay: PropTypes.object,
   appellantTitle: PropTypes.string,
-  convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
