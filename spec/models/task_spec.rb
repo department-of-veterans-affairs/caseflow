@@ -253,7 +253,7 @@ describe Task, :all_dbs do
     end
   end
 
-  describe "#child_user_tasks_of_same_type" do
+  describe "#hide_from_case_timeline" do
     let(:root_task) { create(:root_task) }
     let(:mail_user) { create(:user) }
     let!(:mail_grandparent_organization_task) do
@@ -268,15 +268,15 @@ describe Task, :all_dbs do
 
     context "when there are duplicate organization tasks" do
       it "returns array of user tasks when there is a duplicate descendent task assigned to a user" do
-        expect(mail_grandparent_organization_task.child_user_tasks_of_same_type).to eq([mail_task])
+        expect(mail_grandparent_organization_task.hide_from_case_timeline).to eq(true)
       end
 
       it "returns array of user tasks when there is a duplicate child task assigned to a user" do
-        expect(mail_parent_organization_task.child_user_tasks_of_same_type).to eq([mail_task])
+        expect(mail_parent_organization_task.hide_from_case_timeline).to eq(true)
       end
 
       it "returns empty array otherwise" do
-        expect(mail_task.child_user_tasks_of_same_type).to eq([])
+        expect(mail_task.hide_from_case_timeline).to eq(false)
       end
     end
   end
