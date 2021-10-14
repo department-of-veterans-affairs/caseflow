@@ -489,7 +489,7 @@ class Task < CaseflowRecord
 
   def hide_from_task_snapshot
     # We want to hide org tasks if there is an open user task of same type
-    # However, if user task has been cancelled, we need org task in order to be able to to assign to user
+    # However, if user task has been cancelled, show the org task so that an org admin can assign to another user
     child_user_tasks_of_same_type.any? { |child_task| !child_task.cancelled? }
   end
 
@@ -789,7 +789,7 @@ class Task < CaseflowRecord
     return [] unless assigned_to_type == "Organization"
 
     descendants.select do |child_task|
-      User.name == child_task.assigned_to_type && type == child_task.type
+      child_task.assigned_to_type == "User" && type == child_task.type
     end
   end
 
