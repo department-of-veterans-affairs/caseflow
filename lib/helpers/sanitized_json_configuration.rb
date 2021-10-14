@@ -392,8 +392,11 @@ class SanitizedJsonConfiguration
         )
     end
     unless remaining_id_fields.blank?
-      puts "!! For #{klass}, expecting these *'_id' fields be adjusted: " \
-           "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
+      puts "!! For #{klass}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}" \
+           "\n\tobj_hash: #{obj_hash}" \
+           "\n\tPossible fixes:" \
+           "\n\t- Check for a `belongs_to:` association in #{klass}" \
+           "\n\t- Check @configuration.reassociate_fields"
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
