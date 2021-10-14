@@ -231,6 +231,12 @@ const HearingDetails = (props) => {
     const type = selectedOption.label === VIRTUAL_HEARING_LABEL ? 'change_to_virtual' : 'change_from_virtual';
 
     convertHearing(type);
+    updateHearing(
+      'virtualHearing',
+      {
+        requestCancelled: selectedOption.label !== VIRTUAL_HEARING_LABEL,
+        jobCompleted: false
+      });
   };
 
   const editedEmailsAndTz = getEditedEmailsAndTz();
