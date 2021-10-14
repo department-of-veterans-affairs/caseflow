@@ -960,9 +960,18 @@ export const docketTypes = (originalType) => {
 export const readableDocketType = (docketType) =>
   REQUEST_TYPE_OPTIONS.find((type) => docketType?.includes(type.label));
 
-export const getRegionalOffice = (roKey) => ({
-  ...REGIONAL_OFFICE_INFORMATION[roKey],
-  key: roKey || 'C'
-});
+export const getRegionalOffice = (roKey) => {
+  if (!roKey) {
+    return {
+      timezone: COMMON_TIMEZONES[0],
+      key: 'C',
+    };
+  }
+
+  return ({
+    ...REGIONAL_OFFICE_INFORMATION[roKey],
+    key: roKey
+  });
+};
 
 /* eslint-enable camelcase */
