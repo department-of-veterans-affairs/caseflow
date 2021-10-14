@@ -483,18 +483,21 @@ class Task < CaseflowRecord
     self.class.hide_from_queue_table_view
   end
 
-  def duplicate_org_task
-    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
+  def child_user_tasks_of_same_type
+    return [] unless assigned_to.is_a?(Organization)
+
+    descendants.select do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
     end
   end
 
   def hide_from_case_timeline
-    duplicate_org_task
+    !child_user_tasks_of_same_type.empty?
   end
 
   def hide_from_task_snapshot
-    duplicate_org_task
+    child_tasks = child_user_tasks_of_same_type
+    !child_tasks.empty? && child_tasks.any? { |child_task| !child_task.cancelled? }
   end
 
   def legacy?
