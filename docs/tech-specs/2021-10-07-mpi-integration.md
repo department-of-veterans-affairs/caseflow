@@ -2,7 +2,7 @@
 
 ### Overview
 
-When adding a appellant to an AMA appeal in Intake, Caseflow's current implementation is to fetch known relationships to the Veteran from CorpDB using BGS. This means that Caseflow is recording certain appellants as "unrecognized" when, in reality, they are just not recognized in a relationship to that particular Veteran. By using MPI (Master Person's Index) to search for a record of the appellant (regardless of Veteran relationship within CorpDB) we can reduce the amount of information Mail Intake users need to input and also reduce the number of appeals where Caseflow is a source of truth about the appellant's information. 
+When adding an appellant to an AMA appeal in Intake, Caseflow's current implementation is to fetch known relationships to the Veteran from CorpDB using BGS. This means that Caseflow is recording certain appellants as "unrecognized" when, in reality, they are just not recognized in a relationship to that particular Veteran. By using MPI (Master Person's Index) to search for a record of the appellant (regardless of Veteran relationship within CorpDB) we can reduce the amount of information Mail Intake users need to input and also reduce the number of appeals where Caseflow is a source of truth about the appellant's information. 
 
 #### Services Involved
 - BGS (Benefits Gateway Service): How Caseflow retrieves Veteran's known relationships
@@ -24,12 +24,12 @@ When adding a appellant to an AMA appeal in Intake, Caseflow's current implement
 Caseflow allows staff to perform an enterprise search if the appellant, who is the requester of the decision review, cannot be located in CorpDB based upon the information provided via form 10182. 
 
 The VA MPI integration touch points for the Caseflow integration are the following:
-•	1305 Search Person (Attended, Returning Corresponding IDs) - Caseflow will perform a VA MPI Search Person (Attended Search) operation to obtain identity data and corresponding identifiers needed to locate information on an appellant.
-•	1305 Retrieve Person (Returning Corresponding IDs with Relationships) - Caseflow will perform a VA MPI Retrieve Person operation to obtain the primary view associated with the identifier provided. 
+- 1305 Search Person (Attended, Returning Corresponding IDs) - Caseflow will perform a VA MPI Search Person (Attended Search) operation to obtain identity data and corresponding identifiers needed to locate information on an appellant.
+- 1305 Retrieve Person (Returning Corresponding IDs with Relationships) - Caseflow will perform a VA MPI Retrieve Person operation to obtain the primary view associated with the identifier provided. 
 
 #### 1305 Search Person Attended
 
-Caseflow calls MPI’s **Search for Person (Attended)** Service to obtain MPI person records based on submitted traits. The MPI service performs a probabilistic trait-based search in the MPI data store and return matches according to established business rules. Up to 10 possible matches can be returned by the service; if more than 10 records meet the minimum threshold, MPI returns a message indicating the search exceeded 10 records. MPI also returns all identifiers associated with the person record.
+Caseflow calls MPI’s **Search for Person (Attended)** Service to obtain MPI person records based on submitted traits. The MPI service performs a probabilistic trait-based search in the MPI data store and returns matches according to established business rules. Up to 10 possible matches can be returned by the service; if more than 10 records meet the minimum threshold, MPI returns a message indicating the search exceeded 10 records. MPI also returns all identifiers associated with the person record.
 
 ##### Integration Requirements
 
