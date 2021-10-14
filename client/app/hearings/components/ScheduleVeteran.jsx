@@ -126,9 +126,7 @@ export const ScheduleVeteran = ({
   };
 
   const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
-
   const virtualHearing = virtual ? { status: 'pending' } : null;
-
   const allDropdownOptions = allScheduleVeteranDropdownOptions(appeal);
 
   const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
@@ -140,6 +138,7 @@ export const ScheduleVeteran = ({
     allDropdownOptions,
     hearingRequestTypeDropdownCurrentOption
   );
+
   // Get parent hearing task of this task which could be
   // Schedule Hearing Task or Assign Hearing Disposition Task
   const parentHearingTask = parentTasks(
@@ -384,13 +383,8 @@ export const ScheduleVeteran = ({
     return props.onChangeFormData('assignHearing', { requestType: VIRTUAL_HEARING_LABEL });
   };
 
-  const scheduleVeteranRequestTypeDropdownOnchange = (selectedOption) => {
-    convertToVirtual(
-      'virtualHearing',
-      { requestCancelled: selectedOption.label !== VIRTUAL_HEARING_LABEL,
-        jobCompleted: false
-      }
-    );
+  const scheduleVeteranRequestTypeDropdownOnchange = () => {
+    convertToVirtual();
   };
 
   // Create the header styling based on video/virtual type

@@ -215,13 +215,11 @@ const HearingDetails = (props) => {
     props
   });
 
-  const virtualHearing = hearing?.virtualHearing;
-
   const allDropdownOptions = allDetailsDropdownOptions(hearing);
 
   const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
     allDropdownOptions,
-    virtualHearing
+    hearing?.virtualHearing
   );
 
   const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
