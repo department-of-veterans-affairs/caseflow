@@ -352,7 +352,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(5)
+            expect(response_body.size).to eq(3)
 
             # Ensure the parent task is also returned
             expect(response_body.first["attributes"]["label"]).to eq "Review"
@@ -360,26 +360,18 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             expect(response_body.first["id"]).to eq parent.id.to_s
 
             # Ensure there is a colocated org parent task for the AddressVerificationColocatedTask
-            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
+            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.second["attributes"]["assigned_to"]["name"]).to eq "VLJ Support Staff"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.second["attributes"]["label"]).to eq "Address verification"
 
-            # Ensure there is a AddressVerificationColocatedTask user task created
+            # Ensure there is a colocated org MissingRecordsColocatedTask created
             expect(response_body.third["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.third["attributes"]["assigned_to"]["name"]).to eq "VLJ Support Staff"
             expect(response_body.third["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.third["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.third["attributes"]["label"]).to eq "Address verification"
-
-            # Ensure there is a MissingRecordsColocatedTask user task created
-            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
-
-            # Assignee should be the same person for the two user tasks
-            id = response_body.third["attributes"]["assigned_to"]["id"]
-            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
+            expect(response_body.third["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.third["attributes"]["label"]).to eq "Missing records"
           end
         end
 
@@ -475,16 +467,19 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(4)
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
+            expect(response_body.size).to eq(2)
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.first["attributes"]["assigned_to"]["name"]).to eq "VLJ Support Staff"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["label"]).to eq "Address verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.first["attributes"]["assigned_to"]["name"]).to eq "VLJ Support Staff"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.second["attributes"]["label"]).to eq "Missing records"
+
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
@@ -510,7 +505,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(2)
+            expect(response_body.size).to eq(1)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
@@ -532,7 +527,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(2)
+
+            expect(response_body.size).to eq(1)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
@@ -964,7 +960,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 4
+        expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
@@ -1045,7 +1041,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 4
+        expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
@@ -1066,7 +1062,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           assert_response :success
           response_body = JSON.parse(response.body)
-          expect(response_body["tasks"].length).to eq 4
+          expect(response_body["tasks"].length).to eq 3
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal.vacols_id)
           expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
