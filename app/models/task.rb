@@ -484,7 +484,7 @@ class Task < CaseflowRecord
   end
 
   def child_user_tasks_of_same_type
-    return [] unless assigned_to.is_a?(Organization)
+    return [] unless assigned_to_type == "Organization"
 
     descendants.select do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
