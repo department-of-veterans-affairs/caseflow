@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,3988.5,3625.4",
+	graph [bb="0,0,3988.5,2843.7",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -953,6 +953,8 @@ digraph belongs_to_erd_subclasses {
 		shape=cds,
 		style=filled,
 		];
+	DecisionReviewIntake -> Veteran	[label=veteran,
+		];
 	AppealIntake	[fillcolor="#ffffcc",
 		label="AppealIntake\n  (assoc with User)",
 		shape=cds,
@@ -985,6 +987,8 @@ digraph belongs_to_erd_subclasses {
 		shape=cds,
 		style=filled,
 		];
+	RampElectionIntake -> Veteran	[label=veteran,
+		];
 	RampElectionIntake -> RampElection	[color="#0000ff",
 		fontcolor="#0000ff",
 		label="RampElectionIntake#detail",
@@ -994,6 +998,8 @@ digraph belongs_to_erd_subclasses {
 		shape=cds,
 		style=filled,
 		];
+	RampRefilingIntake -> Veteran	[label=veteran,
+		];
 	RampRefilingIntake -> RampRefiling	[color="#0000ff",
 		fontcolor="#0000ff",
 		label="RampRefilingIntake#detail",
@@ -1001,6 +1007,10 @@ digraph belongs_to_erd_subclasses {
 	AppealIntake -> Appeal	[color="#0000ff",
 		fontcolor="#0000ff",
 		label="AppealIntake#detail",
+		];
+	AppealIntake -> Veteran	[label=veteran,
+		];
+	ClaimReviewIntake -> Veteran	[label=veteran,
 		];
 	HigherLevelReviewIntake	[fillcolor="#ffffcc",
 		label="HigherLevelReviewIntake\n  (assoc with User)",
@@ -1027,9 +1037,13 @@ digraph belongs_to_erd_subclasses {
 		fontcolor="#0000ff",
 		label="ClaimReviewIntake#detail",
 		];
+	HigherLevelReviewIntake -> Veteran	[label=veteran,
+		];
 	HigherLevelReviewIntake -> HigherLevelReview	[color="#0000ff",
 		fontcolor="#0000ff",
 		label="HigherLevelReviewIntake#detail",
+		];
+	SupplementalClaimIntake -> Veteran	[label=veteran,
 		];
 	SupplementalClaimIntake -> SupplementalClaim	[color="#0000ff",
 		fontcolor="#0000ff",
