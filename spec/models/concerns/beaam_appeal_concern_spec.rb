@@ -2,6 +2,8 @@
 
 describe BeaamAppealConcern do
   describe "#beaam?" do
+    before { allow(Rails.env).to receive(:production?).and_return(true) }
+
     let(:appeal) { create(:appeal, id: 1) }
     subject { appeal.beaam? }
     context "non-BEAAM appeal" do
