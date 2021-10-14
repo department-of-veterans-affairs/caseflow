@@ -7,6 +7,7 @@
 module BeaamAppealConcern
   extend ActiveSupport::Concern
 
+  # Copied from https://github.com/department-of-veterans-affairs/caseflow/pull/8733/files
   BEAAM_CASE_IDS = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
                     36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
                     50, 51,
