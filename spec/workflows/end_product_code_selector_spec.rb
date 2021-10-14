@@ -190,7 +190,7 @@ describe "Request Issue Correction Cleaner", :postgres do
             :request_issue,
             :nonrating,
             decision_review: decision_review,
-            benefit_type: decision_review.benefit_type,
+            benefit_type: decision_review.benefit_type
           )
         end
 
