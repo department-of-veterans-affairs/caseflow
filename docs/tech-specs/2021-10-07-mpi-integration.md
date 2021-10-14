@@ -105,7 +105,7 @@ require 'mpi'
         - `search_person_info(last_name: '', first_name: nil, middle_name: nil, dob: nil, gender: nil, address: nil)` - Method to make 1305 request to "Search Person (Attended)" endpoint
         - `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
 
-- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production. **(WIP)**
+- Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production. Development here will come down the road from PI9.
 
 - An `mpi.rb` file added to `caseflow/config/initializers`, which will determine which MPI Service to use (Prod or Fakes)
 ### Open Questions
