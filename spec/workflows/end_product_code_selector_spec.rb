@@ -147,7 +147,7 @@ describe "Request Issue Correction Cleaner", :postgres do
                receipt_date: receipt_date)
       end
 
-      context "request issue contesting a decision older than one year" do
+      context "rating request issue contesting a decision older than one year" do
         let(:request_issue) do
           create(
             :request_issue,
