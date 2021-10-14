@@ -496,8 +496,7 @@ class Task < CaseflowRecord
   end
 
   def hide_from_task_snapshot
-    child_tasks = child_user_tasks_of_same_type
-    !child_tasks.empty? && child_tasks.any? { |child_task| !child_task.cancelled? }
+    child_user_tasks_of_same_type.any? { |child_task| !child_task.cancelled? }
   end
 
   def legacy?
