@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import CaseDetailsLink from './CaseDetailsLink';
 import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
-import BadgeArea from './components/BadgeArea';
+import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import Badge from 'app/components/badges/Badge';
-import { COLORS } from '../../../constants/AppConstants';
+import Badge from '../Badge';
+import { COLORS } from 'app/constants/AppConstants';
 
 /**
  * Component to display if the provided appeal has been approved for overtime work.

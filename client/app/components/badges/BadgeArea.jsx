@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import ContestedClaimBadge from 'app/components/badges/ContestedClaimBadge';
-import HearingBadge from 'app/components/badges/HearingBadge/HearingBadge';
-import OvertimeBadge from 'app/components/badges/OvertimeBadge/OvertimeBadge';
-import QueueFnodBadge from 'app/components/badges/FnodBadge/QueueFnodBadge';
-import { mostRecentHeldHearingForAppeal } from '../../queue/utils';
+import ContestedClaimBadge from './ContestedBadge/ContestedClaimBadge';
+import HearingBadge from './HearingBadge/HearingBadge';
+import OvertimeBadge from './OvertimeBadge/OvertimeBadge';
+import QueueFnodBadge from './FnodBadge/QueueFnodBadge';
+import { mostRecentHeldHearingForAppeal } from 'app/queue/utils';
 
 /**
  * Component to display a set of badges, currently limited to hearing, overtime badges, and FNOD badges.

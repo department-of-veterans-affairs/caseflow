@@ -1447,6 +1447,29 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  describe "contested claim badge" do
+    let(:request_issues) do
+      [
+        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
+      ]
+    end
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let!(:tracking_task) do
+      create(
+        :track_veteran_task,
+        :completed,
+        appeal: appeal,
+        parent: appeal.root_task
+      )
+    end
+
+    it "should not show the tracking task in case timeline" do
+      visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+
+      expect(page).to have_selector("#contested-badge")
+    end
+  end
+
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
       let(:appeal) { create(:appeal) }
