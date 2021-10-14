@@ -129,7 +129,7 @@ describe "Request Issue Correction Cleaner", :postgres do
       let(:benefit_type) { "compensation" }
 
       it "returns a rating EP code" do
-        expect(subject).to eq("030HLRR")
+        expect(subject).to eq("040SCR")
       end
     end
 
@@ -147,23 +147,11 @@ describe "Request Issue Correction Cleaner", :postgres do
                receipt_date: receipt_date)
       end
 
-      context "request issues are rating and/or rating_decision and both contesting a decision older than one year"
+      context "request issue contesting a decision older than one year" do
         let(:rating_request_issue) do
           create(
             :request_issue,
             :rating,
-            contested_rating_issue_reference_id: "def456",
-            decision_review: decision_review,
-            benefit_type: decision_review.benefit_type,
-            contested_issue_description: "PTSD denied",
-            decision_date: decision_date
-          )
-        end
-
-        let(:rating_decision_request_issue) do
-          create(
-            :request_issue,
-            :rating_decision,
             contested_rating_issue_reference_id: "def456",
             decision_review: decision_review,
             benefit_type: decision_review.benefit_type,
