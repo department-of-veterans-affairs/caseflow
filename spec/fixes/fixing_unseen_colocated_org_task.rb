@@ -22,13 +22,13 @@ feature "Missing org task in Case Details" do
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
-    let(:ihpOrgTask) { Task.find(2002053616) }
-    let(:ihpUserTask) { ihpOrgTask.children.first }
-    before { ihpOrgTask.update!(assigned_to: Colocated.singleton) }
+    let(:ihp_org_task) { Task.find(2002053616) }
+    let(:ihp_user_ask) { ihp_org_task.children.first }
+    before { ihp_org_task.update!(assigned_to: Colocated.singleton) }
 
     scenario "produces error and user can't reassign to attorney" do
-      expect(ihpOrgTask.status).to eq "assigned"
-      expect(ihpUserTask.status).to eq "cancelled"
+      expect(ihp_org_task.status).to eq "assigned"
+      expect(ihp_user_ask.status).to eq "cancelled"
 
       visit "/queue/appeals/#{appeal.uuid}"
 
