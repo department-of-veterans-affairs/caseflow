@@ -26,7 +26,7 @@ feature "Missing org task in Case Details" do
       User.authenticate!(user: admin_user)
     end
 
-    scenario "produces error and user can't reassign to attorney" do
+    scenario "admin_user has task actions to select" do
       visit "/queue/appeals/#{appeal.uuid}"
 
       click_dropdown(prompt: "Select an action", text: "Assign to person")
