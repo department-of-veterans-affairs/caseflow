@@ -30,12 +30,12 @@ import { getRegionalOffice, readableDocketType } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
 
 export const EditDocket = (props) => {
+  // Initialize the state
   const { dropdowns } = useSelector((state) => state.components);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fields, setFields] = useState({
-    firstSlotTime: props?.docket?.beginsAt || '08:30',
+    firstSlotTime: props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('hh:mm') : '08:30',
     slotLengthMinutes: props?.docket?.slotLengthMinutes,
     numberOfSlots: props?.docket?.totalSlots,
     requestType: readableDocketType(props?.docket?.requestType),
@@ -45,6 +45,10 @@ export const EditDocket = (props) => {
     notes: props?.docket?.notes,
   });
 
+  // Flag whether this is a virtual docket
+  const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
+  const isScheduled = !isEmpty(props?.hearings);
+  const zoneOffset = moment(props?.docket?.scheduledFor).isDST() ? '04:00' : '05:00';
   const invalidDocketRo =
     fields.requestType.value !== HEARING_REQUEST_TYPES.central &&
     fields?.regionalOffice?.key === HEARING_REQUEST_TYPES.central;
@@ -102,11 +106,6 @@ export const EditDocket = (props) => {
       [key]: value,
     });
   };
-
-  // Flag whether this is a virtual docket
-  const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
-  const isScheduled = !isEmpty(props?.hearings);
-  const zoneOffset = moment(props?.docket?.scheduledFor).isDST() ? '04:00' : '05:00';
 
   return (
     <React.Fragment>
