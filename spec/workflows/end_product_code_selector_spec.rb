@@ -125,11 +125,11 @@ describe "Request Issue Correction Cleaner", :postgres do
 
     context "for an unidentified issue" do
       let(:is_unidentified) { true }
-      let(:decision_review) { higher_level_review }
+      let(:decision_review) { supplemental_claim }
       let(:benefit_type) { "compensation" }
 
       it "returns a rating EP code" do
-        expect(subject).to eq("030HLRR")
+        expect(subject).to eq("040SCR")
       end
     end
 
@@ -147,20 +147,56 @@ describe "Request Issue Correction Cleaner", :postgres do
                receipt_date: receipt_date)
       end
 
-      let(:request_issue) do
-        create(
-          :request_issue,
-          :rating,
-          contested_rating_issue_reference_id: "def456",
-          decision_review: decision_review,
-          benefit_type: decision_review.benefit_type,
-          contested_issue_description: "PTSD denied",
-          decision_date: decision_date
-        )
+      context "for a rating request issue contesting a decision older than one year" do
+        let(:request_issue) do
+          create(
+            :request_issue,
+            :rating,
+            contested_rating_issue_reference_id: "def456",
+            decision_review: decision_review,
+            benefit_type: decision_review.benefit_type,
+            contested_issue_description: "PTSD denied",
+            decision_date: decision_date
+          )
+        end
+
+        it "returns a itf_rating EP code" do
+          expect(subject).to eq("040SCRGTY")
+        end
       end
 
-      it "returns a itf_rating EP code" do
-        expect(subject).to eq("040SCRGTY")
+      context "for a rating request issue contesting a decision within the past year" do
+        let(:decision_date) { Time.zone.today - 1.day }
+        let(:request_issue) do
+          create(
+            :request_issue,
+            :rating,
+            contested_rating_issue_reference_id: "def456",
+            decision_review: decision_review,
+            benefit_type: decision_review.benefit_type,
+            contested_issue_description: "PTSD denied",
+            decision_date: decision_date
+          )
+        end
+
+        it "returns a rating EP code" do
+          expect(subject).to eq("040SCR")
+        end
+      end
+
+      context "for a nonrating issue" do
+        let(:request_issue) do
+          create(
+            :request_issue,
+            :nonrating,
+            decision_review: decision_review,
+            benefit_type: decision_review.benefit_type
+          )
+        end
+
+        it "returns a nonrating EP code" do
+          expect(subject).to eq("040SCNR")
+        end
       end
     end
 
