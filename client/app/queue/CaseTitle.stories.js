@@ -15,7 +15,7 @@ export default {
   args: {
     appeal: {
       canViewOvertimeStatus: false,
-      contested_claim: true,
+      contestedClaim: true,
       overtime: true,
       hearings: [
         {
@@ -30,7 +30,7 @@ export default {
     task: {
       appeal: {
         canViewOvertimeStatus: false,
-        contested_claim: true,
+        contestedClaim: true,
         overtime: true
       },
     }
