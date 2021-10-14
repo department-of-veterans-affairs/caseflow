@@ -45,7 +45,16 @@ export const EditDocket = (props) => {
     notes: props?.docket?.notes,
   });
 
+  const invalidDocketRo =
+    fields.requestType.value !== HEARING_REQUEST_TYPES.central &&
+    fields?.regionalOffice?.key === HEARING_REQUEST_TYPES.central;
+
   const saveEdit = () => {
+    // Validate that the docket type and regional office match
+    if (invalidDocketRo) {
+      return;
+    }
+
     // Reset the loading/error state
     setError(null);
     setLoading(true);
@@ -130,11 +139,7 @@ export const EditDocket = (props) => {
             onChange={handleChange('regionalOffice')}
             value={fields?.regionalOffice?.key}
             options={dropdowns?.regionalOffices?.options}
-            errorMessage={
-              fields.requestType.value !== HEARING_REQUEST_TYPES.central &&
-              fields?.regionalOffice?.key === HEARING_REQUEST_TYPES.central &&
-              'The Central Office cannot be used for dockets types other than Central'
-            }
+            errorMessage={invalidDocketRo && COPY.DOCKET_INVALID_RO_TYPE}
           />
           <JudgeDropdown
             label="Select VLJ"

@@ -90,7 +90,12 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   shared_examples "convert to virtual" do
     it "can convert docket type to virtual" do
-      click_dropdown(name: "requestType", index: 1)
+      # If the docket Central, change the RO to prevent the error state
+      if hearing_day.request_type == HearingDay::REQUEST_TYPES[:central]
+        click_dropdown(name: "regionalOffice", index: 1)
+      end
+
+      click_dropdown(name: "requestType", text: "Virtual")
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
@@ -102,7 +107,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     it "can edit virtual docket specific fields" do
       # If the docket is not already virtual, first convert it
       if hearing_day.request_type != HearingDay::REQUEST_TYPES[:virtual]
-        click_dropdown(name: "requestType", index: 1)
+        click_dropdown(name: "requestType", text: "Virtual")
       end
 
       click_dropdown(name: "numberOfSlots", text: default_num_slots)
@@ -119,6 +124,15 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   context "when request type is 'Central'" do
     include_examples "always editable fields"
     include_examples "convert to virtual"
+
+    it "requires changing the regional office when docket type is changed" do
+      click_dropdown(name: "requestType", text: "Virtual")
+      expect(page).to have_content(COPY::DOCKET_INVALID_RO_TYPE)
+
+      # Ensure the change is not persisted
+      find("button", text: "Save Changes").click
+      expect(hearing_day.reload.request_type).to eq(HearingDay::REQUEST_TYPES[:central])
+    end
   end
 
   context "when request type is 'Virtual'" do
@@ -129,8 +143,8 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "edit virtual docket"
 
-    it "can convert docket type to original" do
-      click_dropdown(name: "requestType", index: 1)
+    it "can convert docket type" do
+      click_dropdown(name: "requestType", text: "Virtual")
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
@@ -145,9 +159,6 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
     include_examples "always editable fields"
     include_examples "convert to virtual"
-
-    scenario "cannot change regional office" do
-    end
   end
 
   context "when request type is 'Travel'" do

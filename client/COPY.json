@@ -236,6 +236,7 @@
   "EDIT_POA_SUCCESS_ALERT_MESSAGE": "To make further changes, please submit a yourIT ticket.",
 
   "DOCKET_HAS_HEARINGS_SCHEDULED": "The docket type can't be changed because there are hearings scheduled.",
+  "DOCKET_INVALID_RO_TYPE": "The Central Office cannot be used for dockets types other than Central",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
