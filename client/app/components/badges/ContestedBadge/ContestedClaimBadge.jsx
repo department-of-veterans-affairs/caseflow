@@ -12,7 +12,7 @@ import { COLORS } from 'app/constants/AppConstants';
 const ContestedClaimBadge = (props) => {
   const { appeal, longTooltip } = props;
 
-  if (!appeal.contested_claim) {
+  if (!appeal.contestedClaim) {
     return null;
   }
 
@@ -20,7 +20,7 @@ const ContestedClaimBadge = (props) => {
     { longTooltip ? CC_BADGE_TOOLTIP_LONG : CC_BADGE_TOOLTIP }
   </div>;
 
-  return <Badge name="contested" id="contested-badge"
+  return <Badge name="contested"
     displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
 };
 

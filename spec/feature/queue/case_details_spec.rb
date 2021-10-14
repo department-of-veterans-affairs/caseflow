@@ -38,6 +38,16 @@ RSpec.feature "Case details", :all_dbs do
       snamel: judge_last_name
     )
   end
+  let(:veteran_first_name) { "Linda" }
+  let(:veteran_last_name) { "Verne" }
+  let!(:veteran) do
+    create(
+      :veteran,
+      first_name: veteran_first_name,
+      last_name: veteran_last_name,
+      file_number: 123_456_789
+    )
+  end
 
   let(:colocated_user) { create(:user) }
   let!(:vacols_colocated) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
@@ -47,16 +57,16 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   context "hearings panel on attorney task detail view" do
-    let(:veteran_first_name) { "Linda" }
-    let(:veteran_last_name) { "Verne" }
-    let!(:veteran) do
-      create(
-        :veteran,
-        first_name: veteran_first_name,
-        last_name: veteran_last_name,
-        file_number: 123_456_789
-      )
-    end
+    # let(:veteran_first_name) { "Linda" }
+    # let(:veteran_last_name) { "Verne" }
+    # let!(:veteran) do
+    #   create(
+    #     :veteran,
+    #     first_name: veteran_first_name,
+    #     last_name: veteran_last_name,
+    #     file_number: 123_456_789
+    #   )
+    # end
     let!(:post_remanded_appeal) do
       create(
         :legacy_appeal,
@@ -1447,7 +1457,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  describe "contested claim badge" do
+  fdescribe "case title" do
     let(:request_issues) do
       [
         create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
@@ -1463,10 +1473,12 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    it "should not show the tracking task in case timeline" do
-      visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+    context "contested claim" do
+      it "should show the contested claim badge" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
 
-      expect(page).to have_selector("#contested-badge")
+        expect(page).to have_selector(".cf-contested-badge")
+      end
     end
   end
 
