@@ -22,10 +22,11 @@ import Alert from 'app/components/Alert';
 // Styles and Utils
 import { saveButton, cancelButton } from 'app/hearings/components/details/style';
 import { fullWidth } from 'app/queue/constants';
+import { REQUEST_TYPE_OPTIONS } from 'app/hearings/constants';
 
 import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
-import { docketTypes, getRegionalOffice, readableDocketType } from 'app/hearings/utils';
+import { getRegionalOffice, readableDocketType } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
 
 export const EditDocket = (props) => {
@@ -35,8 +36,8 @@ export const EditDocket = (props) => {
   const [error, setError] = useState(null);
   const [fields, setFields] = useState({
     firstSlotTime: props?.docket?.beginsAt || '08:30',
-    slotLength: props?.docket?.slotLengthMinutes,
-    slotCount: props?.docket?.totalSlots,
+    slotLengthMinutes: props?.docket?.slotLengthMinutes,
+    numberOfSlots: props?.docket?.totalSlots,
     requestType: readableDocketType(props?.docket?.readableRequestType),
     regionalOffice: getRegionalOffice(props.docket.regionalOfficeKey, dropdowns?.regionalOffices?.options),
     judgeId: props?.docket?.judgeId?.toString(),
@@ -56,12 +57,12 @@ export const EditDocket = (props) => {
       requestType: fields.requestType.value,
     });
 
-    ApiUtil.put(`/hearings/hearing_day/${props.docket.id}`, { data }).
-      then((response) => {
+    ApiUtil.put(`/hearings/hearing_day/${props.docket.id}`, { data }).then(
+      (response) => {
         // Format the data for the UI
         const editedHearingDay = {
           ...ApiUtil.convertToCamelCase(response.body),
-          requestType: fields.requestType
+          requestType: fields.requestType,
         };
 
         // Refresh the docket data and set the update to true so we receive the success banner
@@ -70,16 +71,28 @@ export const EditDocket = (props) => {
 
         // Navigate back to the docket details page
         props.history.push(`/schedule/docket/${props.docket.id}`);
-      }, () => {
+      },
+      () => {
         setLoading(false);
         setError('You are unable to complete this action.');
-      });
+      }
+    );
   };
 
-  const handleChange = (key) => (value) => setFields({
-    ...fields,
-    [key]: value
-  });
+  const handleChange = (key) => (value) => {
+    if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.central) {
+      return setFields({
+        ...fields,
+        regionalOffice: getRegionalOffice(null),
+        [key]: value,
+      });
+    }
+
+    return setFields({
+      ...fields,
+      [key]: value,
+    });
+  };
 
   // Flag whether this is a virtual docket
   const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
@@ -90,7 +103,7 @@ export const EditDocket = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <div {...fullWidth} className="hearing-day-container">
-          {error && (<Alert type="error" title="An Error Occurred">{error}</Alert>)}
+          {error && (<Alert type="error" title="An Error Occurred"> {error} </Alert>)}
           <h1>Edit Hearing Day</h1>
           <DateSelector
             inputProps={{ disabled: true }}
@@ -107,19 +120,21 @@ export const EditDocket = (props) => {
             strongLabel
             value={fields?.requestType}
             onChange={handleChange('requestType')}
-            options={docketTypes(props.docket.requestType)}
+            options={REQUEST_TYPE_OPTIONS}
           />
           {isScheduled && (<HelperText label={COPY.DOCKET_HAS_HEARINGS_SCHEDULED} />)}
           <RegionalOfficeDropdown
-            readOnly={!([
-              HEARING_REQUEST_TYPES.central,
-              HEARING_REQUEST_TYPES.travel,
-            ].includes(props?.docket?.requestType) && virtual)}
+            readOnly={fields.requestType?.value === HEARING_REQUEST_TYPES.central}
             label="Regional Office (RO)"
             excludeVirtualHearingsOption={!virtual}
             onChange={handleChange('regionalOffice')}
             value={fields?.regionalOffice?.key}
             options={dropdowns?.regionalOffices?.options}
+            errorMessage={
+              fields.requestType.value !== HEARING_REQUEST_TYPES.central &&
+              fields?.regionalOffice?.key === HEARING_REQUEST_TYPES.central &&
+              'The Central Office cannot be used for dockets types other than Central'
+            }
           />
           <JudgeDropdown
             label="Select VLJ"
@@ -133,12 +148,17 @@ export const EditDocket = (props) => {
             onChange={handleChange('bvaPoc')}
             placeholder="Select..."
           />
-          <TextareaField strongLabel name="Notes" onChange={handleChange('notes')} value={fields.notes} />
+          <TextareaField
+            strongLabel
+            name="Notes"
+            onChange={handleChange('notes')}
+            value={fields.notes}
+          />
           {virtual && (
             <React.Fragment>
               <div className="cf-help-divider usa-width-one-whole" />
-              <TimeSlotCount onChange={handleChange('slotCount')} value={fields.slotCount} />
-              <TimeSlotLength onChange={handleChange('slotLength')} value={fields.slotLength} />
+              <TimeSlotCount onChange={handleChange('numberOfSlots')} value={fields.numberOfSlots} />
+              <TimeSlotLength onChange={handleChange('slotLengthMinutes')} value={fields.slotLengthMinutes} />
               <HearingTime
                 disableRadioOptions
                 regionalOffice={fields?.regionalOffice?.key}
@@ -155,8 +175,8 @@ export const EditDocket = (props) => {
                   disableToggle
                   preview
                   slotStartTime={`${props?.docket?.scheduledFor}T${fields?.firstSlotTime}:00-${zoneOffset}`}
-                  slotLength={fields?.slotLength}
-                  slotCount={fields?.slotCount}
+                  slotLength={fields?.slotLengthMinutes}
+                  slotCount={fields?.numberOfSlots}
                   hearingDate={props?.docket?.scheduledFor}
                   label="Preview Time Slots"
                   ro={fields.regionalOffice?.key}
