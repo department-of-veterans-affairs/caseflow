@@ -38,7 +38,7 @@ export const EditDocket = (props) => {
     firstSlotTime: props?.docket?.beginsAt || '08:30',
     slotLengthMinutes: props?.docket?.slotLengthMinutes,
     numberOfSlots: props?.docket?.totalSlots,
-    requestType: readableDocketType(props?.docket?.readableRequestType),
+    requestType: readableDocketType(props?.docket?.requestType),
     regionalOffice: getRegionalOffice(props.docket.regionalOfficeKey, dropdowns?.regionalOffices?.options),
     judgeId: props?.docket?.judgeId?.toString(),
     bvaPoc: props?.docket?.bvaPoc,
