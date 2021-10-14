@@ -14,6 +14,6 @@ module BeaamAppealConcern
                     53].freeze
 
   def beaam?
-    BEAAM_CASE_IDS.include?(id)
+    BEAAM_CASE_IDS.include?(id) && Rails.env.production?
   end
 end
