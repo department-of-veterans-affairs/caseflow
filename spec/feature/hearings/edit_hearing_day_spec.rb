@@ -111,20 +111,26 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
         click_dropdown(name: "requestType", text: "Virtual")
       end
 
+      if hearing_day.request_type == HearingDay::REQUEST_TYPES[:central]
+        click_dropdown(name: "regionalOffice", index: 1)
+      end
+
       click_dropdown(name: "numberOfSlots", text: default_num_slots)
       click_dropdown(name: "slotLengthMinutes", text: default_slot_length)
       click_dropdown(name: "optionalHearingTime0", text: default_start_time)
+      find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
-      expect(hearing_day.reload.slot_length_minutes).to eq(default_slot_length)
+      expect(hearing_day.reload.slot_length_minutes).to eq(30)
       expect(hearing_day.reload.number_of_slots).to eq(default_num_slots)
-      expect(hearing_day.reload.first_slot_time).to eq(default_start_time)
+      expect(hearing_day.reload.first_slot_time).to eq("08:45")
     end
   end
 
   context "when request type is 'Central'" do
     include_examples "always editable fields"
     include_examples "convert to virtual"
+    include_examples "edit virtual docket"
 
     it "requires changing the regional office when docket type is changed" do
       click_dropdown(name: "requestType", text: "Virtual")
@@ -160,6 +166,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
     include_examples "always editable fields"
     include_examples "convert to virtual"
+    include_examples "edit virtual docket"
   end
 
   context "when request type is 'Travel'" do
@@ -169,6 +176,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
     include_examples "always editable fields"
     include_examples "convert to virtual"
+    include_examples "edit virtual docket"
   end
 
   context "when hearings have already been scheduled" do
