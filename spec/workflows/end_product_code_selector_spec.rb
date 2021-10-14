@@ -125,7 +125,7 @@ describe "Request Issue Correction Cleaner", :postgres do
 
     context "for an unidentified issue" do
       let(:is_unidentified) { true }
-      let(:decision_review) { higher_level_review }
+      let(:decision_review) { supplemental_claim }
       let(:benefit_type) { "compensation" }
 
       it "returns a rating EP code" do
@@ -147,20 +147,34 @@ describe "Request Issue Correction Cleaner", :postgres do
                receipt_date: receipt_date)
       end
 
-      let(:request_issue) do
-        create(
-          :request_issue,
-          :rating,
-          contested_rating_issue_reference_id: "def456",
-          decision_review: decision_review,
-          benefit_type: decision_review.benefit_type,
-          contested_issue_description: "PTSD denied",
-          decision_date: decision_date
-        )
-      end
+      context "request issues are rating and/or rating_decision and both contesting a decision older than one year"
+        let(:rating_request_issue) do
+          create(
+            :request_issue,
+            :rating,
+            contested_rating_issue_reference_id: "def456",
+            decision_review: decision_review,
+            benefit_type: decision_review.benefit_type,
+            contested_issue_description: "PTSD denied",
+            decision_date: decision_date
+          )
+        end
 
-      it "returns a itf_rating EP code" do
-        expect(subject).to eq("040SCRGTY")
+        let(:rating_decision_request_issue) do
+          create(
+            :request_issue,
+            :rating_decision,
+            contested_rating_issue_reference_id: "def456",
+            decision_review: decision_review,
+            benefit_type: decision_review.benefit_type,
+            contested_issue_description: "PTSD denied",
+            decision_date: decision_date
+          )
+        end
+
+        it "returns a itf_rating EP code" do
+          expect(subject).to eq("040SCRGTY")
+        end
       end
     end
 
