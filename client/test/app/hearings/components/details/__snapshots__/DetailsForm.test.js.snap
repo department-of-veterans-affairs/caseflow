@@ -6872,7 +6872,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            onChange={[Function]}
             readOnly={false}
             styling={
               Object {
@@ -6885,7 +6884,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               label="Hearing Type"
               loading={false}
               name="hearingType"
-              onChange={[Function]}
               readOnly={false}
               strongLabel={true}
               styling={
@@ -19796,7 +19794,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            onChange={[Function]}
             readOnly={false}
             styling={
               Object {
@@ -19809,7 +19806,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               label="Hearing Type"
               loading={false}
               name="hearingType"
-              onChange={[Function]}
               readOnly={false}
               strongLabel={true}
               styling={
@@ -32720,7 +32716,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
-            onChange={[Function]}
             readOnly={false}
             styling={
               Object {
@@ -32733,7 +32728,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               label="Hearing Type"
               loading={false}
               name="hearingType"
-              onChange={[Function]}
               readOnly={false}
               strongLabel={true}
               styling={
