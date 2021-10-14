@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-# This concern is used to identify appeals associated with the BEAAM program
+# This concern is used to identify appeals associated with the BEAAM program.
+# Fulfills goal 2 of option 1 in the Tech Spec: Enable application code to identify BEAAM appeals.
 # See https://github.com/department-of-veterans-affairs/caseflow/wiki/BEAAM-Appeals
-# and fulfills goal 2 of option 1 in the Tech Spec: Enable application code to identify BEAAM appeals
+# and Tech Spec https://github.com/department-of-veterans-affairs/caseflow/issues/16508
 module BeaamAppealConcern
   extend ActiveSupport::Concern
 
