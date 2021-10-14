@@ -396,7 +396,8 @@ class SanitizedJsonConfiguration
            "\n\tobj_hash: #{obj_hash}" \
            "\n\tPossible fixes:" \
            "\n\t- Check for a `belongs_to:` association in #{klass}" \
-           "\n\t- Check @configuration.reassociate_fields"
+           "\n\t- Check @configuration.reassociate_fields, specifically:" \
+           "\n\t  AssocationWrapper.new(#{klass}).fieldnames_of_untyped_associations_with(assoc_class)"
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument

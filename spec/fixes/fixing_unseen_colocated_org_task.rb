@@ -22,7 +22,7 @@ feature "Missing org task in Case Details" do
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
-    let(:ihp_org_task) { Task.find(2002053616) }
+    let(:ihp_org_task) { appeal.tasks.open.assigned_to_any_org.find_by(type: :IhpColocatedTask) }
     let(:ihp_user_ask) { ihp_org_task.children.first }
     before { ihp_org_task.update!(assigned_to: Colocated.singleton) }
 
@@ -32,7 +32,6 @@ feature "Missing org task in Case Details" do
 
       visit "/queue/appeals/#{appeal.uuid}"
 
-      # Clicking on "Assign to attorney" shows the "Assign task" modal.
       # click_dropdown(prompt: "Select an action", text: "Assign to attorney")
 
       # Clicking on "Select a user" shows "Other".
