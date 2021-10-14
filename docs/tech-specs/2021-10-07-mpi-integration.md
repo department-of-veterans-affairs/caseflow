@@ -55,13 +55,13 @@ Caseflow calls MPI's **Retrieve Person using ICN Identifier** to obtain the Prim
 Implementing this service is going to involve writing code in two locations. The Caseflow repository (where this tech spec currently resides) and a seperate repository, which will be titled `ruby-mpi` and will live in the [VA Github](https://github.com/department-of-veterans-affairs). This gem will serves as a SOAP client to facilitate connection with MPI.
 
 #### MPI Gem
-##### File Structure - **WIP** (Needs to be fleshed out. But this is what the basic structuring of the Gem will look like)
+##### File Structure
 
 - lib folder
     - mpi folder
         - services folder
             - `person.rb`
-                -   Methods - Not a complete list
+                -   Methods to include
                     - Class method - `service_name` - This is how we will reference this service in the caseflow repo
                     - Instance method - `search_person_info(last_name:, first_name: nil, middle_name: nil, dob: nil, gender: nil, address: nil)` - Find up to 10 people who satisfy the search criteria provided in the parameters. The only parameter required by MPI for this request is `last_name`
                     - Instance method - `retrieve_person_info(icn)` - Request a PV profile record in MPI with the ICN that maps to the appropriate record
