@@ -38,16 +38,6 @@ RSpec.feature "Case details", :all_dbs do
       snamel: judge_last_name
     )
   end
-  let(:veteran_first_name) { "Linda" }
-  let(:veteran_last_name) { "Verne" }
-  let!(:veteran) do
-    create(
-      :veteran,
-      first_name: veteran_first_name,
-      last_name: veteran_last_name,
-      file_number: 123_456_789
-    )
-  end
 
   let(:colocated_user) { create(:user) }
   let!(:vacols_colocated) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
@@ -57,16 +47,16 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   context "hearings panel on attorney task detail view" do
-    # let(:veteran_first_name) { "Linda" }
-    # let(:veteran_last_name) { "Verne" }
-    # let!(:veteran) do
-    #   create(
-    #     :veteran,
-    #     first_name: veteran_first_name,
-    #     last_name: veteran_last_name,
-    #     file_number: 123_456_789
-    #   )
-    # end
+    let(:veteran_first_name) { "Linda" }
+    let(:veteran_last_name) { "Verne" }
+    let!(:veteran) do
+      create(
+        :veteran,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name,
+        file_number: 123_456_789
+      )
+    end
     let!(:post_remanded_appeal) do
       create(
         :legacy_appeal,
