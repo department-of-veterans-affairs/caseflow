@@ -63,7 +63,7 @@ Implementing this service is going to involve writing code in two locations. The
             - `person.rb`
                 -   Methods - Not a complete list
                     - Class method - `service_name` - This is how we will reference this service in the caseflow repo
-                    - Instance method - `search_person_info(last_name: '')` - Find up to 10 people who satisfy the search criteria provided in the parameters. The only parameter required by MPI for this request is `last_name`
+                    - Instance method - `search_person_info(last_name:, first_name: nil, middle_name: nil, dob: nil, gender: nil, address: nil)` - Find up to 10 people who satisfy the search criteria provided in the parameters. The only parameter required by MPI for this request is `last_name`
                     - Instance method - `retrieve_person_info(icn)` - Request a PV profile record in MPI with the ICN that maps to the appropriate record
         - `base.rb`
             - Format the initialization of the Savon client
@@ -102,7 +102,7 @@ require 'mpi'
 - A file titled `mpi_service.rb` will be added to `caseflow/app/services/external_api`. This file will create a new class `ExternalApi::MPIService`, which will include methods made available to the Caseflow client to make the necessary requests to the MPI service.
     - Methods to include:
         - `initialize` - Format our client proxy. Depending on if/what we end up caching, will create instance variables here to cache our requests. 
-        - `search_person_info(last_name: '')` - Method to make 1305 request to "Search Person (Attended)" endpoint
+        - `search_person_info(last_name: '', first_name: nil, middle_name: nil, dob: nil, gender: nil, address: nil)` - Method to make 1305 request to "Search Person (Attended)" endpoint
         - `retrieve_person_info(icn)` - Method to make 1305 request to "Retrieve Person using ICN identifier" endpoint. Similar to `fetch_person_info(participant_id)` method in bgs_service.rb 
 
 - Another file titled `mpi_service.rb` will be created, this time added to `caseflow/lib/fakes`. Here will exist a class `Fakes::MPIService`, which will serve back-end data mimicing the expected data returned from MPI. No tests are needed for this feature as this is a mock implementation and not meant for production. **(WIP)**
