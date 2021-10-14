@@ -201,8 +201,8 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
-  "COMPLETE_TASK": {
-    "label": "Complete task",
+  "READY_FOR_REVIEW": {
+    "label": "Ready for Review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },

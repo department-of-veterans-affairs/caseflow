@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import TextareaField from '../../components/TextareaField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
+import RadioField from '../../components/RadioField';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
 import COPY from '../../../COPY';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
@@ -42,6 +43,71 @@ MarkTaskCompleteModal.propTypes = {
   state: PropTypes.object
 };
 
+const ReadyForReviewModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+  const dbTypeOpts = [
+    { displayText: 'VBMS', value: 'vbms' },
+    { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
+    { displayText: 'Other', value: 'other' }
+  ];
+
+  const handleRadioChange = (value) => {
+    setState({ radio: value });
+    if (value === 'other') {
+      setState({ otherInstructions: '' });
+    }
+  };
+  const handleTextFieldChange = (value) => {
+    setState({ otherInstructions: value });
+  };
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <RadioField
+            name="vhaCompleteTaskDocLocation"
+            id="vhaCompleteTaskDocLocation"
+            label="Where were documents regarding this appeal stored?"
+            inputRef={props.register}
+            vertical
+            onChange={handleRadioChange}
+            value={state.radio}
+            options={dbTypeOpts}
+          />
+          {state.radio === 'other' &&
+            <TextareaField
+              label='If "Other" was chosen indicate the source.'
+              name="otherVhaCompleteTaskDocLocation"
+              id="vhaCompleteTaskOtherInstructions"
+              onChange={handleTextFieldChange}
+              value={state.otherInstructions}
+              styling={marginTop(4)}
+              textAreaStyling={slimHeight}
+            />}
+          <TextareaField
+            label="Provide details, such as folder structure or file path:"
+            name="instructions"
+            id="vhaCompleteTaskInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+ReadyForReviewModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+};
+
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
   <React.Fragment>
     {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
@@ -67,6 +133,14 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
+  ready_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
       title: sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, appeal.veteranFullName, teamName)
@@ -81,7 +155,9 @@ class CompleteTaskModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      instructions: ''
+      instructions: '',
+      radio: '',
+      otherInstructions: ''
     };
   }
 
@@ -115,11 +191,16 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
+    const detail = 'Detail:';
+    // const boldText = detail.replace(new RegExp(`(^|\\s)(${ detail })(\\s|$)`, 'ig'), '$1<b>$2</b>$3');
+    const modifiedInstructions =
+      `Documents for this appeal are stored in ${this.state.radio === 'other' ? this.state.otherInstructions :
+        this.state.radio}\n\n**${detail}** ${this.state.instructions}`;
     const payload = {
       data: {
         task: {
           status: 'completed',
-          instructions: this.state.instructions
+          instructions: modifiedInstructions
         }
       }
     };
