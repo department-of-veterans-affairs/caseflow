@@ -1,23 +1,22 @@
 import React from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from '../../../app/queue/reducers';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-
-import rootReducer from 'app/queue/reducers';
-import HearingBadgeComponent from './HearingBadge';
+import HearingBadge from './HearingBadge';
 
 export default {
   title: 'Commons/Components/Badges/Hearing Badge',
-  component: HearingBadgeComponent,
+  component: HearingBadge,
   parameters: {
     layout: 'centered',
   },
   args: {
     hearing: {
-      heldBy: 'ExampleJudgeName',
-      disposition: 'ExampleDispositionText',
-      date: '2020-01-15',
-      type: 'AMA'
+        heldBy: 'ExampleJudgeName',
+        disposition: 'ExampleDispositionText',
+        date: '2020-01-15',
+        type: 'AMA'
     },
   }
 };
@@ -27,8 +26,8 @@ const store = getStore();
 
 const Template = (args) => (
   <Provider store={store}>
-    <HearingBadgeComponent {...args} />
+    <HearingBadge {...args} />
   </Provider>
 );
 
-export const HearingBadge = Template.bind({});
+export const HEARINGBadge = Template.bind({});
