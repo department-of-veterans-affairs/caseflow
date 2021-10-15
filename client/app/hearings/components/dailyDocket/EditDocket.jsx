@@ -48,8 +48,9 @@ export const EditDocket = (props) => {
   // Flag whether this is a virtual docket
   const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
   const isScheduled = !isEmpty(props?.hearings);
-  const zoneOffset = moment(props?.docket?.scheduledFor).
-    format('Z'); // -04:00 (when DST) or -05:00 for America/New_York
+
+  // -04:00 (when DST) or -05:00 for America/New_York
+  const zoneOffset = moment(props?.docket?.scheduledFor).format('Z');
   const invalidDocketRo =
     fields.requestType.value !== HEARING_REQUEST_TYPES.central &&
     fields?.regionalOffice?.key === HEARING_REQUEST_TYPES.central;
