@@ -3,8 +3,11 @@ import { shallow, mount } from 'enzyme';
 
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
-import { virtualHearing } from 'test/data/hearings';
+import {
+  CENTRAL_OFFICE_HEARING_LABEL,
+  VIDEO_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL
+} from 'app/hearings/constants';
 import Select from 'react-select';
 
 // Set the default options
@@ -14,7 +17,7 @@ const centralOpts = [
     value: false
   },
   {
-    label: 'Virtual',
+    label: VIRTUAL_HEARING_LABEL,
     value: true
   }
 ];
@@ -28,67 +31,35 @@ const videoOpts = [
 ];
 
 // Create the method spies
-const updateSpy = jest.fn();
-const openModalSpy = jest.fn();
-const convertHearingSpy = jest.fn();
+const onChange = jest.fn();
 
 describe('HearingTypeDropdown', () => {
-  test('Matches snapshot with default props for central office hearings', () => {
+  test('Matches snapshot with default props', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
+        dropdownOptions={centralOpts}
+        currentOption={centralOpts[0]}
+        onChange={onChange}
+        readOnly={false}
       />
     );
 
     // Assertions
-    expect(hearingType).toMatchSnapshot();
     expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
     expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual([centralOpts[1]]);
+    expect(hearingType.prop('options')).toEqual(centralOpts);
     expect(hearingType.prop('value')).toEqual(centralOpts[0]);
-  });
-
-  test('Matches snapshot with default props for video hearings', () => {
-    // Render the address component
-    const hearingType = shallow(
-      <HearingTypeDropdown
-        originalRequestType={VIDEO_HEARING_LABEL}
-      />
-    );
-
-    // Assertions
     expect(hearingType).toMatchSnapshot();
-    expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
-    expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual([videoOpts[1]]);
-    expect(hearingType.prop('value')).toEqual(videoOpts[0]);
-  });
-
-  test('Matches snapshot with default props for virtual hearings', () => {
-    // Render the address component
-    const hearingType = shallow(
-      <HearingTypeDropdown
-        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
-        virtualHearing={virtualHearing.virtualHearing}
-      />
-    );
-
-    // Assertions
-    expect(hearingType).toMatchSnapshot();
-    expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
-    expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual([centralOpts[0]]);
-    expect(hearingType.prop('value')).toEqual(centralOpts[1]);
   });
 
   test('Can change from central office hearing', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
-        convertHearing={convertHearingSpy}
-        update={updateSpy}
+        dropdownOptions={centralOpts}
+        currentOption={centralOpts[0]}
+        onChange={onChange}
       />
     );
     const dropdown = hearingType.find(SearchableDropdown);
@@ -106,8 +77,7 @@ describe('HearingTypeDropdown', () => {
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[1]);
-    expect(convertHearingSpy).toHaveBeenCalledWith(HEARING_CONVERSION_TYPES[0]);
-    expect(updateSpy).toHaveBeenCalledWith('virtualHearing', { requestCancelled: false, jobCompleted: false });
+    expect(onChange).toHaveBeenCalled();
     expect(hearingType).toMatchSnapshot();
   });
 
@@ -115,9 +85,9 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        originalRequestType={VIDEO_HEARING_LABEL}
-        openModal={openModalSpy}
-        update={updateSpy}
+        dropdownOptions={videoOpts}
+        currentOption={videoOpts[0]}
+        onChange={onChange}
       />
     );
     const dropdown = hearingType.find(SearchableDropdown);
@@ -135,8 +105,7 @@ describe('HearingTypeDropdown', () => {
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[1]);
-    expect(openModalSpy).toHaveBeenCalledWith({ type: HEARING_CONVERSION_TYPES[0] });
-    expect(updateSpy).toHaveBeenCalledWith('virtualHearing', { requestCancelled: false, jobCompleted: false });
+    expect(onChange).toHaveBeenCalled();
     expect(hearingType).toMatchSnapshot();
   });
 
@@ -144,10 +113,9 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
-        virtualHearing={virtualHearing.virtualHearing}
-        convertHearing={convertHearingSpy}
-        update={updateSpy}
+        dropdownOptions={centralOpts}
+        currentOption={centralOpts[1]}
+        onChange={onChange}
       />
     );
     const dropdown = hearingType.find(SearchableDropdown);
@@ -165,8 +133,7 @@ describe('HearingTypeDropdown', () => {
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[0]);
-    expect(convertHearingSpy).toHaveBeenCalledWith(HEARING_CONVERSION_TYPES[1]);
-    expect(updateSpy).toHaveBeenCalledWith('virtualHearing', { requestCancelled: true, jobCompleted: false });
+    expect(onChange).toHaveBeenCalled();
     expect(hearingType).toMatchSnapshot();
   });
 
@@ -174,10 +141,9 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        originalRequestType={VIDEO_HEARING_LABEL}
-        virtualHearing={virtualHearing.virtualHearing}
-        openModal={openModalSpy}
-        update={updateSpy}
+        dropdownOptions={videoOpts}
+        currentOption={videoOpts[1]}
+        onChange={onChange}
       />
     );
     const dropdown = hearingType.find(SearchableDropdown);
@@ -195,8 +161,7 @@ describe('HearingTypeDropdown', () => {
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[0]);
-    expect(openModalSpy).toHaveBeenCalledWith({ type: HEARING_CONVERSION_TYPES[1] });
-    expect(updateSpy).toHaveBeenCalledWith('virtualHearing', { requestCancelled: true, jobCompleted: false });
+    expect(onChange).toHaveBeenCalled();
     expect(hearingType).toMatchSnapshot();
   });
 })
