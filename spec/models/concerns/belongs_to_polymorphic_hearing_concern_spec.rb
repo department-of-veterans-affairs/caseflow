@@ -15,7 +15,7 @@ describe BelongsToPolymorphicHearingConcern do
 
     it "`legacy_hearing` returns the legacy hearing" do
       expect(legacy_sent_hearing_email_event.legacy_hearing).to eq legacy_sent_hearing_email_event.hearing
-    end 
+    end
   end
 
   context "concern is included in HearingEmailRecipient" do
