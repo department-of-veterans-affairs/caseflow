@@ -320,7 +320,6 @@ class TaskActionRepository
       {
         options: organizations_to_options(VhaRegionalOffice.all),
         modal_title: COPY::VHA_COMPLETE_TAKS_MODAL_TITLE,
-        # modal_body: COPY::VHA_COMPLETE_TASK_MODAL_BODY,
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
