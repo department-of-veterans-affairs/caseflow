@@ -31,11 +31,11 @@ Please explain the changes you made here.
 
 * [ ] Add typical timestamps (`created_at`, `updated_at`) for new tables
 * [ ] Update column comments; include a "PII" prefix to indicate definite or potential [PII data content](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/caseflow-team/0-how-we-work/pii-handbook.md#what-is-pii)
-* [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`)
+* [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`) (see [Writing DB migrations](https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations))
 * [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
 * [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)
 * [ ] Add appropriate indexes (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
-* [ ] Run `make check-fks`; add any missing foreign keys or add to `config/initializers/immigrant.rb`
+* [ ] Run `make check-fks`; add any missing foreign keys or add to `config/initializers/immigrant.rb` (see [Record associations and Foreign Keys](https://github.com/department-of-veterans-affairs/caseflow/wiki/Record-associations-and-Foreign-Keys))
 * [ ] Add `belongs_to` for associations to enable the [schema diagrams](https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/schema_diagrams) to be automatically updated
 * [ ] Post this PR in #appeals-schema with a summary
 * [ ] Document any non-obvious semantics or logic useful for interpreting database data at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
