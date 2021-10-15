@@ -67,7 +67,7 @@ describe LegacyDocket do
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { Distribution.create!(judge: judge) }
     let(:style) { "request" }
-    let(:genpop) { "any" } # Is this a general population ("genpop") case, or is it tied to a VLJ?
+    let(:genpop) { "any" }
 
     subject { docket.really_distribute(distribution, style: style, genpop: genpop) }
 
@@ -140,18 +140,44 @@ describe LegacyDocket do
   end
 
   context "#distribute_appeals" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:distribution) { Distribution.create!(judge: judge) }
+    let(:style) { "request" }
+    let(:genpop) { "any" }
+    let(:priority) { false }
+    let(:limit) { 10 }
+
+    subject { docket.distribute_appeals(distribution, style: style, priority: priority, genpop: genpop, limit: limit) }
+
     context "when really_distribute returns false" do
       it "returns an empty array" do
+        expect(docket).to receive(:really_distribute)
+          .with(distribution, style: style, genpop: genpop)
+          .and_return(false)
+
+        expect(subject).to eq []
       end
     end
 
     context "when this is a priority distribution" do
+      let(:priority) { true }
+
       it "calls distribute_priority_appeals" do
+        expect(docket).to receive(:distribute_priority_appeals)
+          .with(distribution, style: style, genpop: genpop, limit: limit)
+
+        subject
       end
     end
 
     context "when this is a non-priority distribution" do
+      let(:priority) { false }
+
       it "calls distribute_nonpriority_appeals" do
+        expect(docket).to receive(:distribute_nonpriority_appeals)
+          .with(distribution, style: style, genpop: genpop, limit: limit)
+
+        subject
       end
     end
   end

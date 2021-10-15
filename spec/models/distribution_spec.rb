@@ -31,11 +31,26 @@ describe Distribution, :all_dbs do
     end
   end
 
-  context ".pending_for_judge" do
-    # This is really just pure ActiveRecord
-  end
-
   context "#distribute!" do
+    let(:statistics) do
+      {
+        batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
+        evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
+        legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0
+      }
+    end
+
+    it "updates status and started_at" do
+      expect(new_distribution).to receive(:update!)
+        .with(status: :started, started_at: Time.zone.now)
+        .exactly(1).times
+      expect(new_distribution).to receive(:update!)
+        .with(status: "completed", completed_at: Time.zone.now, statistics: statistics)
+        .exactly(1).times
+
+      new_distribution.distribute!
+    end
+
     context "when status is an invalid value" do
       let(:status) { "invalid!" }
 
@@ -44,14 +59,6 @@ describe Distribution, :all_dbs do
       end
     end
 
-    it "updates status and started_at" do
-      expect(new_distribution).to receive(:update!).exactly(2).times
-      # TODO: We can't be more specific because it gets called twice when successful
-      new_distribution.distribute!
-    end
-
-    # So my thinking for this and the below test is that we can test the specifics in much greater detail
-    # later on in separate tests.
     context "for a requested distribution" do
       let(:priority_push) { false }
 
@@ -76,14 +83,18 @@ describe Distribution, :all_dbs do
   end
 
   context "priority push distributions" do
-    # This seems like the simpler case
-    # We can start modeling this off of what's in ACD#priority_push_distribution
-    # We do need to handle limits, though.
-
     let(:priority_push) { true }
 
     context "when there is no limit" do
-      it "distributed priority appeals on the legacy and hearing dockets" do
+      let(:limit) { nil }
+
+      it "distributes priority appeals on the legacy and hearing dockets" do
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:legacy, limit, priority: true, genpop: "not_genpop", style: "push")
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:hearing, limit, priority: true, genpop: "not_genpop", style: "push")
+
+        new_distribution.distribute!(limit)
       end
     end
 
@@ -116,15 +127,40 @@ describe Distribution, :all_dbs do
 
         # What have I done? This doesn't test what it says it tests.
       end
-
-      it "distributes priority cases from all dockets" do
-      end
     end
   end
 
   context "requested distributions" do
-    # This looks more involved
-    # See ACD#requested_distribution
-    # PLus there's the priority_acd feature flag
+    context "when priority_acd is enabled" do
+      let(:limit) { 10 }
+      let(:batch_size) { Distribution::ALTERNATIVE_BATCH_SIZE }
+
+      before { FeatureToggle.enable!(:priority_acd) }
+
+      it "calls distribute_appeals with bust_backlog set along with the other calls" do
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:legacy, batch_size, priority: false, genpop: "not_genpop", bust_backlog: true, style: "request")
+
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:legacy, batch_size, priority: true, genpop: "not_genpop", style: "request")
+
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:hearing, batch_size, priority: true, genpop: "not_genpop", style: "request")
+
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:legacy, batch_size, priority: false, genpop: "not_genpop", range: 0, style: "request")
+
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:hearing, batch_size, priority: false, genpop: "not_genpop", style: "request")
+
+        expect(new_distribution).to receive(:distribute_limited_priority_appeals_from_all_dockets)
+          .with(15, style: "request")
+
+        expect(new_distribution).to receive(:deduct_distributed_actuals_from_remaining_docket_proportions)
+          .with(:legacy, :hearing)
+
+        new_distribution.distribute!(limit)
+      end
+    end
   end
 end
