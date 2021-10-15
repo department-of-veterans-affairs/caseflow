@@ -6,7 +6,7 @@
 
 class SentHearingEmailEvent < CaseflowRecord
   include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing(:hearing)
+  belongs_to_polymorphic_hearing :hearing
 
   belongs_to :sent_by, class_name: "User"
   belongs_to :email_recipient, class_name: "HearingEmailRecipient"
