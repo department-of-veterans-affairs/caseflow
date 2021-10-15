@@ -28,6 +28,17 @@ describe AppellantSubstitution do
           expect(subject).to eq(true)
         end
       end
+      context "when there is a death dismissal" do
+        let!(:source_appeal) do
+          create(:appeal, :with_deceased_veteran,
+                 :with_decision_issue,
+                 disposition: "dismissed_death",
+                 docket_type: "evidence_submission")
+        end
+        it "returns false" do
+          expect(subject).to eq(false)
+        end
+      end
     end
 
     context "when created_by is a nonadmin" do

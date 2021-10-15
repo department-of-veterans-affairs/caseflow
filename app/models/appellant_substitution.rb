@@ -36,7 +36,8 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def same_appeal_substitution_allowed?
-    ClerkOfTheBoard.singleton.user_is_admin?(created_by) || !!source_appeal.veteran.date_of_death
+    (ClerkOfTheBoard.singleton.user_is_admin?(created_by) || !!source_appeal.veteran.date_of_death) &&
+      source_appeal.request_issues.none?(&:death_dismissed?)
   end
 
   private

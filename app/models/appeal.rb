@@ -541,11 +541,6 @@ class Appeal < DecisionReview
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
-  def eligible_for_death_dismissal?(_user)
-    # Death dismissal processing is only for VACOLs/Legacy appeals
-    false
-  end
-
   # We are ready for BVA dispatch if
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
