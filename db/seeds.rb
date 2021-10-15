@@ -32,14 +32,18 @@ class SeedDB
   def seed
     call_and_log_seed_step :clean_db
 
+    call_and_log_seed_step Seeds::Annotations
+    call_and_log_seed_step Seeds::Tags
+    call_and_log_seed_step Seeds::Users # TODO must run this before others
+
     # Updates to the updated_by database fields use the current_user from the RequestStore,
     # so log in as the system_user so that all attempts to create records with updated_by
     # fields succeed even if we don't have a user in the RequestStore yet.
     RequestStore.store[:current_user] = User.system_user
 
-    call_and_log_seed_step Seeds::Annotations
-    call_and_log_seed_step Seeds::Tags
-    call_and_log_seed_step Seeds::Users # TODO must run this before others
+    puts RequestStore.store[:current_user].inspect
+    fail "Failure"
+
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
