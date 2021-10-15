@@ -41,9 +41,6 @@ class SeedDB
     # fields succeed even if we don't have a user in the RequestStore yet.
     RequestStore.store[:current_user] = User.system_user
 
-    puts RequestStore.store[:current_user].inspect
-    fail "Failure"
-
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
