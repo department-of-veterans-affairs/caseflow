@@ -168,6 +168,7 @@ Rails.application.routes.draw do
   get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
   get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
