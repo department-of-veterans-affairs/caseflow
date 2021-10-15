@@ -53,8 +53,7 @@ class AppellantSubstitution < CaseflowRecord
       decision_review_id: source_appeal.id,
       decision_review_type: "Appeal"
     )
-    source_appeal.reload
-    self.target_appeal = source_appeal
+    self.target_appeal = source_appeal.reload
   end
 
   def establish_separate_appeal_stream
