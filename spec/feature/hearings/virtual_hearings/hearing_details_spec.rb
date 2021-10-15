@@ -231,17 +231,18 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
       scenario "email notifications and links display correctly" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
+
         click_dropdown(name: "hearingType", index: 0)
 
         # Confirm the Modal change to cancel the virtual hearing
-        click_button("button-save")
+        click_button("Convert to #{hearing.readable_request_type} Hearing")
 
         expect(page).to have_content(expected_alert)
 
         # Reload to get the updated page contents
         hearing.reload
-
         virtual_hearing.reload
+
         expect(virtual_hearing.cancelled?).to eq(true)
         expect(page).to have_content(hearing.readable_request_type)
 
