@@ -7,8 +7,6 @@ class WorkQueue::AppealSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
-  attribute :contested_claim, &:contested_claim?
-
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {

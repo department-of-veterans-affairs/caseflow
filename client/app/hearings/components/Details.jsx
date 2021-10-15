@@ -14,14 +14,16 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
-import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
   getAppellantTitle,
   processAlerts,
   startPolling,
-  parseVirtualHearingErrors
+  parseVirtualHearingErrors,
+  allDetailsDropdownOptions,
+  hearingRequestTypeOptions,
+  hearingRequestTypeCurrentOption
 } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -36,8 +38,8 @@ import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-
 import COPY from '../../../COPY';
+import { VIRTUAL_HEARING_LABEL } from '../constants';
 
 /**
  * Hearing Details Component
@@ -47,9 +49,6 @@ import COPY from '../../../COPY';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
-
-  // Pull out feature flag
-  const { userUseFullPageVideoToVirtual } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -190,9 +189,7 @@ const HearingDetails = (props) => {
         // API errors from the server need to be bubbled up to the VirtualHearingModal so it can
         // update the email components with the validation error messages.
         const changingFromVideoToVirtualWithModalFlow = (
-          hearing?.readableRequestType === 'Video' &&
-          !hearing.isVirtual &&
-          !userUseFullPageVideoToVirtual
+          hearing?.readableRequestType === 'Video' && !hearing.isVirtual
         );
 
         if (changingFromVideoToVirtualWithModalFlow) {
@@ -217,6 +214,30 @@ const HearingDetails = (props) => {
     dispatch,
     props
   });
+
+  const allDropdownOptions = allDetailsDropdownOptions(hearing);
+
+  const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
+    allDropdownOptions,
+    hearing?.virtualHearing
+  );
+
+  const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
+    allDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption
+  );
+
+  const detailsRequestTypeDropdownOnchange = (selectedOption) => {
+    const type = selectedOption.label === VIRTUAL_HEARING_LABEL ? 'change_to_virtual' : 'change_from_virtual';
+
+    convertHearing(type);
+    updateHearing(
+      'virtualHearing',
+      {
+        requestCancelled: selectedOption.label !== VIRTUAL_HEARING_LABEL,
+        jobCompleted: false
+      });
+  };
 
   const editedEmailsAndTz = getEditedEmailsAndTz();
   const convertLabel = convertingToVirtual ?
@@ -263,13 +284,13 @@ const HearingDetails = (props) => {
             <DetailsForm
               hearing={hearing}
               initialHearing={initialHearing}
-              update={updateHearing}
-              convertHearing={convertHearing}
               errors={virtualHearingErrors}
               isLegacy={isLegacy}
-              openVirtualHearingModal={openVirtualHearingModal}
               readOnly={disabled}
-              requestType={hearing?.readableRequestType}
+              hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions}
+              hearingRequestTypeDropdownCurrentOption={hearingRequestTypeDropdownCurrentOption}
+              hearingRequestTypeDropdownOnchange={detailsRequestTypeDropdownOnchange}
+              update={updateHearing}
             />
             {shouldStartPolling && poll()}
           </div>
