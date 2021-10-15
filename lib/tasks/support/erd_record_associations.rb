@@ -97,7 +97,7 @@ module ErdRecordAssociations
   end
 
   def target_node_for_association(graph, klass, assoc)
-    label_suffix = label_suffix(assoc)
+    label_suffix = label_suffix(graph, klass, assoc)
     if label_suffix
       # set label for source node
       graph.add_node(klass.name, label: "#{klass.name}#{label_suffix}")
@@ -120,21 +120,36 @@ module ErdRecordAssociations
     end
   end
 
-  def label_suffix(assoc)
-    suffixes = []
+  def label_suffix(graph, klass, assoc)
+    assoc_label = case assoc.class_name
+                  when "User"
+                    (assoc.name == :user) ? assoc.class_name : "#{assoc.name} User"
+                  when "Veteran", "Task"
+                    assoc.class_name
+                  end
 
-    if assoc.class_name == "User"
-      user_string = (assoc.name == :user) ? "User" : "#{assoc.name} User"
-      suffixes << user_string
+    return nil unless assoc_label
+
+    suffixes = add_label_suffix(graph, klass, assoc_label)
+    "\n(assoc with #{suffixes.join('\nand ')})"
+  end
+
+  def add_label_suffix(graph, klass, assoc_label)
+    node_label_suffixes = node_label_suffixes_for(graph)
+
+    suffixes = node_label_suffixes.fetch(klass.name, [])
+    if suffixes.exclude?(assoc_label)
+      suffixes << assoc_label
+      node_label_suffixes[klass.name] ||= suffixes
     end
+    suffixes
+  end
 
-    if assoc.class_name == "Veteran"
-      suffixes << "Veteran"
-    end
-
-    return nil if suffixes.empty?
-
-    "\n(assoc with #{suffixes.join(' and ')})"
+  def node_label_suffixes_for(graph)
+    @graph_node_label_suffixes ||= {}
+    node_label_suffixes = @graph_node_label_suffixes.fetch(graph, {})
+    @graph_node_label_suffixes[graph] ||= node_label_suffixes
+    node_label_suffixes
   end
 
   DECISION_REVIEW_TYPES ||= %w[Appeal SupplementalClaim HigherLevelReview].freeze
