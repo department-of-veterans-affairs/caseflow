@@ -27,7 +27,7 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import { VIDEO_HEARING_LABEL, TRAVEL_BOARD_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -943,6 +943,43 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+const virtualHearingOption = {
+  value: true,
+  label: VIRTUAL_HEARING_LABEL
+};
+
+export const allScheduleVeteranDropdownOptions = (appeal) => {
+  const videoHearingOption = { value: false, label: VIDEO_HEARING_LABEL };
+
+  if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
+    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+    // the HearingTypeDropdown
+    return [videoHearingOption, virtualHearingOption];
+  }
+
+  // The default is video hearing if the appeal isn't associated with an RO.
+  if (appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL) {
+    return [videoHearingOption, virtualHearingOption];
+  }
+};
+
+export const allDetailsDropdownOptions = (hearing) => {
+  return [{ value: false, label: hearing?.readableRequestType }, virtualHearingOption];
+};
+
+export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
+  if (!virtualHearing || !virtualHearing?.status || virtualHearing?.status === 'cancelled') {
+    return options[0];
+  }
+
+  return options[1];
+};
+
+export const hearingRequestTypeOptions = (allOptions, currentOption) => {
+  return allOptions.filter((opt) => opt.label !== currentOption.label);
 };
 
 /* eslint-enable camelcase */

@@ -20,7 +20,10 @@ import {
   getAppellantTitle,
   processAlerts,
   startPolling,
-  parseVirtualHearingErrors
+  parseVirtualHearingErrors,
+  allDetailsDropdownOptions,
+  hearingRequestTypeOptions,
+  hearingRequestTypeCurrentOption
 } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -35,8 +38,8 @@ import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-
 import COPY from '../../../COPY';
+import { VIRTUAL_HEARING_LABEL } from '../constants';
 
 /**
  * Hearing Details Component
@@ -212,6 +215,30 @@ const HearingDetails = (props) => {
     props
   });
 
+  const allDropdownOptions = allDetailsDropdownOptions(hearing);
+
+  const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
+    allDropdownOptions,
+    hearing?.virtualHearing
+  );
+
+  const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
+    allDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption
+  );
+
+  const detailsRequestTypeDropdownOnchange = (selectedOption) => {
+    const type = selectedOption.label === VIRTUAL_HEARING_LABEL ? 'change_to_virtual' : 'change_from_virtual';
+
+    convertHearing(type);
+    updateHearing(
+      'virtualHearing',
+      {
+        requestCancelled: selectedOption.label !== VIRTUAL_HEARING_LABEL,
+        jobCompleted: false
+      });
+  };
+
   const editedEmailsAndTz = getEditedEmailsAndTz();
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
@@ -257,13 +284,13 @@ const HearingDetails = (props) => {
             <DetailsForm
               hearing={hearing}
               initialHearing={initialHearing}
-              update={updateHearing}
-              convertHearing={convertHearing}
               errors={virtualHearingErrors}
               isLegacy={isLegacy}
-              openVirtualHearingModal={openVirtualHearingModal}
               readOnly={disabled}
-              requestType={hearing?.readableRequestType}
+              hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions}
+              hearingRequestTypeDropdownCurrentOption={hearingRequestTypeDropdownCurrentOption}
+              hearingRequestTypeDropdownOnchange={detailsRequestTypeDropdownOnchange}
+              update={updateHearing}
             />
             {shouldStartPolling && poll()}
           </div>

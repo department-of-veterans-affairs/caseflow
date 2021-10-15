@@ -8,11 +8,6 @@ export const anyUser = {
   addressZip: '20001',
 };
 
-export const userWithVirtualHearingsFeatureEnabled = {
-  ...anyUser,
-  userCanScheduleVirtualHearings: true,
-};
-
 export const userWithJudgeRole = {
   ...anyUser,
   userHasHearingPrepRole: true,
