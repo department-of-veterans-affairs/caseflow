@@ -76,7 +76,14 @@ export default class HearingsApp extends React.PureComponent {
       {...this.propsForAssignHearingsContainer()}
     />
   );
-  routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
+
+  routeForDailyDocket = (print, edit = false) => () => (
+    <DailyDocketContainer
+      user={this.userPermissionProps()}
+      print={print}
+      editDocket={edit}
+    />
+  );
 
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
@@ -145,6 +152,12 @@ export default class HearingsApp extends React.PureComponent {
               path="/schedule/add_hearing_day"
               title="Add Hearing Day"
               render={this.routeForListScheduleContainer}
+            />
+            <PageRoute
+              exact
+              path="/schedule/docket/:hearingDayId/edit"
+              title="Edit Hearing Day"
+              render={this.routeForDailyDocket(false, true)}
             />
             <PageRoute
               exact
