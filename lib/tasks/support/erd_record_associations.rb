@@ -64,9 +64,9 @@ module ErdRecordAssociations
 
   def add_subclass_edges_for(graph, klass)
     (klass.subclasses & record_classes).each do |subclass|
-      parent_node = graph.add_nodes(klass.name, shape: "record", style: "dashed",
-                                                color: SUBCLASS_COLOR,
-                                                fontcolor: SUBCLASS_COLOR)
+      parent_node = graph.add_node(klass.name, shape: "record", style: "dashed",
+                                               color: SUBCLASS_COLOR,
+                                               fontcolor: SUBCLASS_COLOR)
 
       # skip if edge already exists
       next if parent_node.neighbors.find { |target_node| target_node.id == subclass.name }
@@ -93,9 +93,11 @@ module ErdRecordAssociations
   end
 
   def target_node_for_association(graph, klass, assoc)
-    if assoc.class_name == "User"
-      user_string = (assoc.name == :user) ? "User" : "#{assoc.name} User"
-      graph.add_node(klass.name, label: "#{klass.name}\n  (assoc with #{user_string})")
+    label_suffix = label_suffix(assoc)
+    if label_suffix
+      # set label for source node
+      graph.add_node(klass.name, label: "#{klass.name}#{label_suffix}")
+      # return nil so that an edge is not created
       return nil
     end
 
@@ -105,15 +107,30 @@ module ErdRecordAssociations
         nil
       else
         # return polymorphic node
-        graph.add_nodes(assoc.foreign_type, label: "#{assoc.class_name}\n(#{assoc.foreign_type})",
-                                            shape: "box", style: "dashed")
+        graph.add_node(assoc.foreign_type, label: "#{assoc.class_name}\n(#{assoc.foreign_type})",
+                                           shape: "box", style: "dashed")
       end
     else
-      # return specific node
-      # subclasses = assoc.class_name.constantize.descendants.map(&:name)
-      # add_polymorphic_node(graph, assoc.class_name, subclasses)
-      graph.add_nodes(assoc.class_name)
+      # return class-specific (non-polymorphic) node
+      graph.add_node(assoc.class_name)
     end
+  end
+
+  def label_suffix(assoc)
+    suffixes = []
+
+    if assoc.class_name == "User"
+      user_string = (assoc.name == :user) ? "User" : "#{assoc.name} User"
+      suffixes << user_string
+    end
+
+    if assoc.class_name == "Veteran"
+      suffixes << "Veteran"
+    end
+
+    return nil if suffixes.empty?
+
+    "\n(assoc with #{suffixes.join(' and ')})"
   end
 
   DECISION_REVIEW_TYPES ||= %w[Appeal SupplementalClaim HigherLevelReview].freeze
