@@ -34,6 +34,8 @@ require "helpers/association_wrapper.rb"
 module BelongsToPolymorphicHearingConcern
   extend ActiveSupport::Concern
 
+  include BelongsToPolymorphicConcern
+
   class_methods do
     # Since we can't pass an argument to a concern, call this method instead
     def belongs_to_polymorphic_hearing(associated_class_symbol)
@@ -48,39 +50,10 @@ module BelongsToPolymorphicHearingConcern
       scope :ama, -> { where(type_column => "Hearing") }
       scope :legacy, -> { where(type_column => "LegacyHearing") }
 
-      add_method_for_polymorphic_association("Hearing", association)
-      add_method_for_polymorphic_association("LegacyHearing", association)
-    end
-
-    private
-
-    # This method creates a belongs_to association and method. For example, for type_name = "Hearing":
-    # belongs_to :ama_hearing, -> { includes(base_table_name).where(base_table_name => {type_column => "Hearing"}) },
-    #    class_name: "Hearing", foreign_key: id_column.to_s, optional: true
-    #
-    # def ama_hearing
-    #   super() if self.send(type_column) == "Hearing"  # ensure nil is returned if type is not an AMA hearing
-    # end
-    #
-    # For type_name = "LegacyHearing", the method_name will be legacy_hearing.
-    def add_method_for_polymorphic_association(type_name, association)
       # Use `:ama_hearing` instead of `:hearing`
       # because `.hearing` is already defined by `belongs_to associated_class_symbol, polymorphic: true` above
-      method_name = (type_name == "Hearing") ? :ama_hearing : type_name.underscore.to_sym
-
-      type_column = association.foreign_type
-      id_column = association.foreign_key
-      # Define self_table_name here so it can be used in the belongs_to lambda, where `self.table_name` is different
-      self_table_name = table_name
-
-      belongs_to method_name,
-                 -> { includes(self_table_name).where(self_table_name => { type_column => type_name }) },
-                 class_name: type_name, foreign_key: id_column.to_s, optional: true
-
-      define_method method_name do
-        # `super()` will call the method created by the `belongs_to` above
-        super() if send(type_column) == type_name
-      end
+      add_method_for_polymorphic_association("Hearing", association, :ama_hearing)
+      add_method_for_polymorphic_association("LegacyHearing", association)
     end
   end
 end
