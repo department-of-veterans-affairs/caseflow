@@ -131,7 +131,9 @@ module ErdRecordAssociations
     return nil unless assoc_label
 
     suffixes = add_label_suffix(graph, klass, assoc_label)
-    "\n(assoc with #{suffixes.join('\nand ')})"
+    return "\n(associated with: #{suffixes.first})" if suffixes.length == 1
+
+    "\n(associated with:\n#{suffixes.join(',\n')})"
   end
 
   def add_label_suffix(graph, klass, assoc_label)
