@@ -5,7 +5,7 @@ describe Distribution, :all_dbs do
   let(:judge) { create(:user, :with_vacols_judge_record) }
   let(:status) { "pending" }
   let(:priority_push) { false }
-  let(:params) { {judge: judge, status: status, priority_push: priority_push} }
+  let(:params) { { judge: judge, status: status, priority_push: priority_push } }
 
   before do
     Timecop.freeze(Time.zone.now)
@@ -15,8 +15,8 @@ describe Distribution, :all_dbs do
     subject { new_distribution }
 
     before do
-      allow_any_instance_of(described_class).to receive(:distributed_cases).
-        and_return([DistributedCase.new])
+      allow_any_instance_of(described_class).to receive(:distributed_cases)
+        .and_return([DistributedCase.new])
     end
 
     it "returns 0 when the distribution is not completed" do
@@ -84,7 +84,6 @@ describe Distribution, :all_dbs do
 
     context "when there is no limit" do
       it "distributed priority appeals on the legacy and hearing dockets" do
-        #
       end
     end
 
@@ -102,14 +101,15 @@ describe Distribution, :all_dbs do
 
       it "distributes only up to the limit" do
         expect(new_distribution).to receive(:num_oldest_priority_appeals_by_docket)
-                                      .with(limit)
-                                      .and_return stubbed_appeals
+          .with(limit)
+          .and_return stubbed_appeals
 
         # Wait, where _is_ this limit enforced?
 
         expect(new_distribution).to receive(:distribute_appeals).with(:legacy, 5, priority: true, style: "push")
         expect(new_distribution).to receive(:distribute_appeals).with(:direct_review, 4, priority: true, style: "push")
-        expect(new_distribution).to receive(:distribute_appeals).with(:evidence_submission, 3, priority: true, style: "push")
+        expect(new_distribution).to receive(:distribute_appeals)
+          .with(:evidence_submission, 3, priority: true, style: "push")
         expect(new_distribution).to receive(:distribute_appeals).with(:hearing, 2, priority: true, style: "push")
 
         new_distribution.distribute!(limit)
@@ -118,7 +118,6 @@ describe Distribution, :all_dbs do
       end
 
       it "distributes priority cases from all dockets" do
-        #
       end
     end
   end

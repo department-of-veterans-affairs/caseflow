@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 SingleCov.covered!
 
 describe LegacyDocket do
@@ -68,7 +69,7 @@ describe LegacyDocket do
     let(:style) { "request" }
     let(:genpop) { "any" } # Is this a general population ("genpop") case, or is it tied to a VLJ?
 
-    subject { docket.really_distribute(distribution, style: style, genpop: genpop)}
+    subject { docket.really_distribute(distribution, style: style, genpop: genpop) }
 
     context "with tied cases" do
       let(:genpop) { "not_genpop" }
@@ -81,7 +82,6 @@ describe LegacyDocket do
     context "with genpop cases" do
       let(:genpop) { "any" }
       context "when the JudgeTeam is set AMA only for the relevant type" do
-
         context "when this is a push distribution" do
           let(:style) { "push" }
 
@@ -89,14 +89,15 @@ describe LegacyDocket do
             JudgeTeam.for_judge(judge).update!(ama_only_push: true, ama_only_request: false)
           end
 
-          it "should return false since this is a legacy (non-AMA) docket", skip: "This reveals a bug we need to fix!" do
+          it "should return false since this is a legacy (non-AMA) docket", skip: "This exposes a bug to fix!" do
             # These are only for debugging
             expect(JudgeTeam.for_judge(distribution.judge).ama_only_push).to be_truthy
             expect(JudgeTeam.for_judge(distribution.judge).ama_only_request).to be_falsey
             expect(style).to eq "push"
 
             # Bug? When ama_only_request is false (the default), really-distribute will always return true.
-            # We essentially just invert the value of ama_only_request on the last line. I think we want to check if it's a request?
+            # We essentially just invert the value of ama_only_request on the last line.
+            # I think we want to check if it's a request?
             expect(subject).to be_falsey
           end
         end
@@ -136,25 +137,21 @@ describe LegacyDocket do
         end
       end
     end
-
   end
 
   context "#distribute_appeals" do
     context "when really_distribute returns false" do
       it "returns an empty array" do
-        #
       end
     end
 
     context "when this is a priority distribution" do
       it "calls distribute_priority_appeals" do
-        #
       end
     end
 
     context "when this is a non-priority distribution" do
       it "calls distribute_nonpriority_appeals" do
-        #
       end
     end
   end
@@ -170,8 +167,8 @@ describe LegacyDocket do
     context "when really_distribute returns false, blocking distribution" do
       it "returns an empty array" do
         expect(docket).to receive(:really_distribute)
-                            .with(distribution, genpop: genpop, style: style)
-                            .and_return(false)
+          .with(distribution, genpop: genpop, style: style)
+          .and_return(false)
         expect(subject).to eq []
         subject
       end
@@ -189,17 +186,16 @@ describe LegacyDocket do
       # for which we have good coverage. Just unit-test our part here:
       it "uses AppealRepository's distribute_priority_appeals method" do
         expect(docket).to receive(:really_distribute)
-                            .with(distribution, genpop: genpop, style: style)
-                            .and_return(true)
+          .with(distribution, genpop: genpop, style: style)
+          .and_return(true)
         expect(AppealRepository).to receive(:distribute_priority_appeals)
-                                      .with(judge, genpop, limit)
-                                      .and_return(some_appeals)
+          .with(judge, genpop, limit)
+          .and_return(some_appeals)
 
         # dist_case in distribute_priority_appeals creates a mostly-empty record which isn't valid.
         # The stubbing above is inadequate.
         subject
       end
-
     end
   end
 end
