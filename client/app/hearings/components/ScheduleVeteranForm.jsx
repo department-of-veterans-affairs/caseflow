@@ -1,11 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  TRAVEL_BOARD_HEARING_LABEL,
-  VIDEO_HEARING_LABEL,
-  HEARING_CONVERSION_TYPES,
-} from '../constants';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -33,11 +29,13 @@ export const ScheduleVeteranForm = ({
   hearing,
   errors,
   initialRegionalOffice,
-  initialHearingDate,
-  convertToVirtual,
+  initialHearingDay,
   userCanViewTimeSlots,
   hearingTask,
   userCanCollectVideoCentralEmails,
+  hearingRequestTypeDropdownOptions,
+  hearingRequestTypeDropdownCurrentOption,
+  hearingRequestTypeDropdownOnchange,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -56,19 +54,6 @@ export const ScheduleVeteranForm = ({
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
   const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
-  const getHearingRequestType = () => {
-    if (
-      appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
-    ) {
-      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-      // the HearingTypeDropdown
-      return VIDEO_HEARING_LABEL;
-    }
-
-    // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL;
-  };
 
   // Set the section props
   const sectionProps = {
@@ -105,6 +90,7 @@ export const ScheduleVeteranForm = ({
 
     return <HearingTime
       regionalOffice={ro}
+      requestType={hearing?.hearingDay?.readableRequestType}
       errorMessage={errors?.scheduledTimeString}
       vertical
       label="Hearing Time"
@@ -132,10 +118,9 @@ export const ScheduleVeteranForm = ({
         <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
-            enableFullPageConversion
-            update={convertToVirtual}
-            originalRequestType={getHearingRequestType()}
-            virtualHearing={virtual ? { status: 'pending' } : null}
+            dropdownOptions={hearingRequestTypeDropdownOptions}
+            currentOption={hearingRequestTypeDropdownCurrentOption}
+            onChange={hearingRequestTypeDropdownOnchange}
           />
         </div>
         <div className="usa-width-one-whole" {...marginTop(30)}>
@@ -176,7 +161,7 @@ export const ScheduleVeteranForm = ({
                   errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
                   regionalOffice={ro}
-                  value={hearing.hearingDay || initialHearingDate}
+                  value={hearing.hearingDay || initialHearingDay}
                   onChange={(hearingDay) => {
                     // Call fetch scheduled hearings only if passed
                     fetchScheduledHearings(hearingDay)(dispatch);
@@ -227,13 +212,15 @@ ScheduleVeteranForm.propTypes = {
   errors: PropTypes.object,
   hearing: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  initialHearingDate: PropTypes.string,
+  initialHearingDay: PropTypes.object,
   appellantTitle: PropTypes.string,
-  convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
-  hearingTask: PropTypes.object
+  hearingTask: PropTypes.object,
+  hearingRequestTypeDropdownOptions: PropTypes.array,
+  hearingRequestTypeDropdownCurrentOption: PropTypes.object,
+  hearingRequestTypeDropdownOnchange: PropTypes.func
 };
 
 /* eslint-enable camelcase */

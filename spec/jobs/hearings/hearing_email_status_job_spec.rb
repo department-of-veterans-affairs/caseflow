@@ -28,12 +28,12 @@ describe Hearings::HearingEmailStatusJob do
       it "captures error and allows job to continue running" do
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: appellant_sent_hearing_email_event)
+          .with(email_event: appellant_sent_hearing_email_event)
           .and_raise(Caseflow::Error::GovDeliveryApiError.new(code: 401, message: "error"))
 
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: representative_sent_hearing_email_event)
+          .with(email_event: representative_sent_hearing_email_event)
           .and_return(success_status)
 
         subject
@@ -53,12 +53,12 @@ describe Hearings::HearingEmailStatusJob do
       it "handles invalid status and does not update send_successful" do
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: appellant_sent_hearing_email_event)
+          .with(email_event: appellant_sent_hearing_email_event)
           .and_return(success_status)
 
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: representative_sent_hearing_email_event)
+          .with(email_event: representative_sent_hearing_email_event)
           .and_return(invalid_status)
 
         subject
@@ -93,12 +93,12 @@ describe Hearings::HearingEmailStatusJob do
       it "handles failure status and sets send_successful", :aggregate_failures do
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: appellant_sent_hearing_email_event)
+          .with(email_event: appellant_sent_hearing_email_event)
           .and_return(failure_status)
 
         allow(ExternalApi::GovDeliveryService)
           .to receive(:get_sent_status_from_event)
-          .once.with(email_event: representative_sent_hearing_email_event)
+          .with(email_event: representative_sent_hearing_email_event)
           .and_return(failure_status)
 
         subject

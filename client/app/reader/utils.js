@@ -1,10 +1,9 @@
-import _ from 'lodash';
+import { clamp, compact, get, isEmpty, sortBy, some } from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
 
-export const categoryFieldNameOfCategoryName =
-  (categoryName) => `category_${categoryName}`;
+export const categoryFieldNameOfCategoryName = (categoryName) => `category_${categoryName}`;
 
 export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 
@@ -53,8 +52,8 @@ export const rotateCoordinates = ({ x, y }, container, rotation) => {
 
 export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {
   const constrainedRootCoords = {
-    x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
-    y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
+    x: clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
+    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
   };
 
   return rotateCoordinates(pageCoordsOfRootCoords(constrainedRootCoords, container, scale), container, rotation);
@@ -99,39 +98,36 @@ const immutabilityHelperSpecOfPath = (objPath, spec, specVal) => {
  * For example usage, see the reducer and the tests.
  */
 export const moveModel = (state, srcPath, destPath, id) =>
-  update(
-    state,
-    {
-      ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),
-      ...immutabilityHelperSpecOfPath([...destPath, id], '$set', _.get(state, [...srcPath, id]))
-    }
-  );
+  update(state, {
+    ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),
+    ...immutabilityHelperSpecOfPath([...destPath, id], '$set', get(state, [...srcPath, id]))
+  });
 
 export const isValidWholeNumber = (number) => {
   return !isNaN(number) && number % 1 === 0;
 };
 
-export const sortAnnotations = (annotations) =>
-  _(annotations).
-    sortBy('page', 'y').
-    compact().
-    value();
+export const sortAnnotations = (annotations) => compact(sortBy(annotations, 'page', 'y'));
 
-export const isUserEditingText = () => _.some(
-  document.querySelectorAll('input,textarea'),
-  (elem) => document.activeElement === elem
-);
+export const isUserEditingText = () =>
+  some(document.querySelectorAll('input,textarea'), (elem) => document.activeElement === elem);
 
 export const getHearingWorksheetLink = (hearings) => {
   return (
     <span>
       {hearings.map((hearing, key) => {
-        return <div>
-          <a target="_blank"
-            href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearing.external_id}`}
-            rel="noopener noreferrer"
-            key={key}>Hearing Worksheet</a>
-        </div>;
+        return (
+          <div>
+            <a
+              target="_blank"
+              href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearing.external_id}`}
+              rel="noopener noreferrer"
+              key={key}
+            >
+              Hearing Worksheet
+            </a>
+          </div>
+        );
       })}
     </span>
   );
@@ -139,7 +135,7 @@ export const getHearingWorksheetLink = (hearings) => {
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let appealHasHearing = (claim.hearings && claim.hearings.length > 0);
+  let appealHasHearing = claim.hearings && claim.hearings.length > 0;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -149,23 +145,25 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'AOD';
   }
 
-  return <div className="claim-detail-container">
-    <span className="claim-detail-type-info">{appealTypeInfo}</span>
-    { appealHasHearing && getHearingWorksheetLink(claim.hearings) }
-  </div>;
+  return (
+    <div className="claim-detail-container">
+      <span className="claim-detail-type-info">{appealTypeInfo}</span>
+      {appealHasHearing && getHearingWorksheetLink(claim.hearings)}
+    </div>
+  );
 };
 
 export const handleErrorWithSafeNavigation = (response) => {
-  const isJson = _.get(response, 'response.type') === 'application/json';
+  const isJson = get(response, 'response.type') === 'application/json';
 
   if (!isJson) {
     return null;
   }
-  const jsonResponse = _.get(response, 'response.body');
-  const error = _.get(jsonResponse, 'errors[0].detail', null);
+  const jsonResponse = get(response, 'response.body');
+  const error = get(jsonResponse, 'errors[0].detail', null);
 
   return error;
 };
 
-export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
-    ((appeal.vacols_id || appeal.external_id) !== vacolsIdFromUrl));
+export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) =>
+  isEmpty(appeal) || (appeal.vacols_id || appeal.external_id) !== vacolsIdFromUrl;

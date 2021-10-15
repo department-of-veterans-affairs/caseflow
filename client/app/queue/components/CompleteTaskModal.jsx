@@ -57,7 +57,7 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
-const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
+const MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { contact }) => ({
       title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
@@ -74,6 +74,22 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
     getContent: SendColocatedTaskModal,
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+  },
+  docket_appeal: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION, appeal.veteranFullName, appeal.docketNumber)
+    }),
+    title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
+    getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  vha_send_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
 
@@ -123,7 +139,7 @@ class CompleteTaskModal extends React.Component {
         }
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
+    const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
       appeal,
       this.getContentArgs()
     );
@@ -134,14 +150,17 @@ class CompleteTaskModal extends React.Component {
   };
 
   render = () => {
+    const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+
     return (
       <QueueFlowModal
-        title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
-        button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
+        title={modalAttributes.title(this.getContentArgs())}
+        button={modalAttributes.buttonText}
         submit={this.submit}
+        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
-          SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].getContent(this.getContentArgs()) :
+          modalAttributes.getContent(this.getContentArgs()) :
           null}
       </QueueFlowModal>
     );

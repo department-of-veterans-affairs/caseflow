@@ -68,23 +68,19 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     context "when the signed in user is not on cavc litigation support" do
       before do
         User.authenticate!(user: create(:user))
-        FeatureToggle.enable!(:cavc_remand)
       end
-      after { FeatureToggle.disable!(:cavc_remand) }
 
       it_behaves_like "does not display the add remand button"
     end
 
     context "when the signed in user is on cavc litigation support and the feature toggle is on" do
       before do
-        FeatureToggle.enable!(:cavc_remand)
         FeatureToggle.enable!(:mdr_cavc_remand)
         FeatureToggle.enable!(:reversal_cavc_remand)
         FeatureToggle.enable!(:dismissal_cavc_remand)
         User.authenticate!(user: org_admin)
       end
       after do
-        FeatureToggle.disable!(:cavc_remand)
         FeatureToggle.disable!(:mdr_cavc_remand)
         FeatureToggle.disable!(:reversal_cavc_remand)
         FeatureToggle.disable!(:dismissal_cavc_remand)
@@ -485,14 +481,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
     context "with feature toggles enabled" do
       before do
-        FeatureToggle.enable!(:cavc_remand)
         FeatureToggle.enable!(:mdr_cavc_remand)
         FeatureToggle.enable!(:reversal_cavc_remand)
         FeatureToggle.enable!(:dismissal_cavc_remand)
         FeatureToggle.enable!(:can_edit_cavc_remands)
       end
       after do
-        FeatureToggle.disable!(:cavc_remand)
         FeatureToggle.disable!(:mdr_cavc_remand)
         FeatureToggle.disable!(:reversal_cavc_remand)
         FeatureToggle.disable!(:dismissal_cavc_remand)

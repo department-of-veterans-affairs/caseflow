@@ -744,6 +744,52 @@ describe User, :all_dbs do
     end
   end
 
+  describe "can_edit_unrecognized_poa?" do
+    let(:user) { create(:user) }
+    subject { user.can_edit_unrecognized_poa? }
+
+    context "when current user is a member of LitigationSupport org" do
+      it "returns true" do
+        LitigationSupport.singleton.add_user(user)
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user is a member of ClerkOfTheBoard org" do
+      it "returns true" do
+        ClerkOfTheBoard.singleton.add_user(user)
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user is a member of BoardProductOwners org" do
+      it "returns true" do
+        BoardProductOwners.singleton.add_user(user)
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user is a member of BvaIntake org" do
+      it "returns true" do
+        BvaIntake.singleton.add_user(user)
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user is colocated in VACOLS" do
+      it "returns true" do
+        allow(user).to receive(:vacols_roles).and_return(["colocated"])
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user isn't a member of allowed organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe ".can_withdraw_issues?" do
     let(:user) { create(:user) }
 
