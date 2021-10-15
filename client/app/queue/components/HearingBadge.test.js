@@ -1,12 +1,12 @@
 import React from 'react';
-import { axe } from 'jest-axe';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from '../../../app/queue/reducers';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { axe } from 'jest-axe';
 import { render, screen, waitFor } from '@testing-library/react';
 
-import rootReducer from 'app/queue/reducers';
-import HearingBadge from './HearingBadge';
+import HearingBadge from 'app/queue/components/HearingBadge';
 
 describe('HearingBadge', () => {
 

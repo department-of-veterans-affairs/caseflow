@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 
-import Badge from '../Badge';
-import { CC_BADGE_TOOLTIP, CC_BADGE_TOOLTIP_LONG } from 'app/../COPY';
+import Badge from './Badge';
+import { CC_BADGE_TOOLTIP, CC_BADGE_TOOLTIP_LONG } from '../../../COPY';
 import { COLORS } from 'app/constants/AppConstants';
 
 /**
@@ -12,7 +12,7 @@ import { COLORS } from 'app/constants/AppConstants';
 const ContestedClaimBadge = (props) => {
   const { appeal, longTooltip } = props;
 
-  if (!appeal.contestedClaim) {
+  if (!appeal.contested_claim) {
     return null;
   }
 
@@ -20,8 +20,7 @@ const ContestedClaimBadge = (props) => {
     { longTooltip ? CC_BADGE_TOOLTIP_LONG : CC_BADGE_TOOLTIP }
   </div>;
 
-  return <Badge name="contested"
-    displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
+  return <Badge name="contested" displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
 };
 
 ContestedClaimBadge.propTypes = {

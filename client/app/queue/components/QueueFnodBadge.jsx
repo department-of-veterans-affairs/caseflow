@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { DateString } from '../../util/DateUtil';
+import { tooltipListStyling } from './style';
 import { connect } from 'react-redux';
-
-import { DateString } from 'app/util/DateUtil';
-import { tooltipListStyling } from 'app/components/badges/style';
-import COPY from 'app/../COPY';
+import COPY from '../../../COPY';
 
 import FnodBadge from './FnodBadge';
 
