@@ -2,10 +2,11 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import QueueFnodBadge from './QueueFnodBadge';
-import HearingBadge from './HearingBadge';
-import OvertimeBadge from './OvertimeBadge';
-import { mostRecentHeldHearingForAppeal } from '../utils';
+import ContestedClaimBadge from './ContestedBadge/ContestedClaimBadge';
+import HearingBadge from './HearingBadge/HearingBadge';
+import OvertimeBadge from './OvertimeBadge/OvertimeBadge';
+import QueueFnodBadge from './FnodBadge/QueueFnodBadge';
+import { mostRecentHeldHearingForAppeal } from 'app/queue/utils';
 
 /**
  * Component to display a set of badges, currently limited to hearing, overtime badges, and FNOD badges.
@@ -30,12 +31,18 @@ class BadgeArea extends React.PureComponent {
 
     if (appeal) {
       badges = <React.Fragment>
+        <ContestedClaimBadge
+          appeal={appeal}
+          longTooltip={isHorizontal} />
         <QueueFnodBadge appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
+        <ContestedClaimBadge
+          appeal={task.appeal}
+          longTooltip={isHorizontal} />
         <QueueFnodBadge appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
