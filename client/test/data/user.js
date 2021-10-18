@@ -8,16 +8,6 @@ export const anyUser = {
   addressZip: '20001',
 };
 
-export const userWithVirtualHearingsFeatureEnabled = {
-  ...anyUser,
-  userCanScheduleVirtualHearings: true,
-};
-
-export const userWithConvertCentralHearingsEnabled = {
-  ...anyUser,
-  userCanConvertCentralHearings: true,
-};
-
 export const userWithJudgeRole = {
   ...anyUser,
   userHasHearingPrepRole: true,
@@ -28,11 +18,6 @@ export const vsoUser = {
   userCanVsoHearingSchedule: true,
   userCanAssignHearingSchedule: false
 }
-
-export const userUseFullPageVideoToVirtual = {
-  ...userWithVirtualHearingsFeatureEnabled,
-  userUseFullPageVideoToVirtual: true,
-};
 
 const attyTemplate = ({ id }) => {
   const name = faker.name.findName();

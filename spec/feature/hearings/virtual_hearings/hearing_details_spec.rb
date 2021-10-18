@@ -61,9 +61,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
     HearingsManagement.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
-    FeatureToggle.enable!(:schedule_virtual_hearings)
-    FeatureToggle.enable!(:full_page_video_to_virtual)
-    FeatureToggle.enable!(:schedule_virtual_hearings_for_central)
     stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end
 
@@ -234,17 +231,18 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
       scenario "email notifications and links display correctly" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
+
         click_dropdown(name: "hearingType", index: 0)
 
         # Confirm the Modal change to cancel the virtual hearing
-        click_button(COPY::CONVERT_HEARING_TITLE % hearing.readable_request_type)
+        click_button("Convert to #{hearing.readable_request_type} Hearing")
 
         expect(page).to have_content(expected_alert)
 
         # Reload to get the updated page contents
         hearing.reload
-
         virtual_hearing.reload
+
         expect(virtual_hearing.cancelled?).to eq(true)
         expect(page).to have_content(hearing.readable_request_type)
 

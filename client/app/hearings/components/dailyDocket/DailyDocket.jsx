@@ -246,6 +246,7 @@ export default class DailyDocket extends React.Component {
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <DailyDocketEditLinks
+              history={history}
               dailyDocket={dailyDocket}
               hearings={docketHearings.concat(prevHearings)}
               user={user}

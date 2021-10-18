@@ -131,7 +131,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:current_user) do
       HearingsManagement.singleton.add_user(user)
       User.authenticate!(user: user)
-      FeatureToggle.enable!(:schedule_virtual_hearings)
     end
 
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
@@ -149,9 +148,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
       click_dropdown(name: "hearingType", index: 0)
-      fill_in "appellant-email", with: "email@testingEmail.com"
-      fill_in "representative-email", with: "email@testingEmail.com"
-      click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+      fill_in "Veteran Email (for these notifications only)", with: "email@testingEmail.com"
+      fill_in "POA/Representative Email (for these notifications only)", with: "email@testingEmail.com"
+      click_button("button-Save")
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
