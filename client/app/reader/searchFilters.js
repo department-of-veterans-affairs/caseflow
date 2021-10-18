@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, pickBy, sortBy, toPairs, map, forEach, some, find, filter } from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
@@ -9,45 +9,43 @@ export const getUpdatedFilteredResults = (state) => {
   const searchCategoryHighlights = update(state.documentList.searchCategoryHighlights, {});
 
   const { docFilterCriteria } = state.documentList;
-  const activeCategoryFilters = _(docFilterCriteria.category).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => categoryFieldNameOfCategoryName(key)).
-    value();
+  const activeCategoryFilters = map(
+    filter(toPairs(docFilterCriteria.category), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => categoryFieldNameOfCategoryName(key)
+  );
 
-  const activeTagFilters = _(docFilterCriteria.tag).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => key).
-    value();
+  const activeTagFilters = map(
+    filter(toPairs(docFilterCriteria.tag), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => key
+  );
 
-  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+  const searchQuery = get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
-
-  const filteredIds = _(updatedNextState.documents).
-    filter(
-      (doc) => !activeCategoryFilters.length ||
-        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-    ).
-    filter(
-      (doc) => !activeTagFilters.length ||
-        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
-    ).
-    filter(
-      searchString(searchQuery, updatedNextState)
-    ).
-    sortBy(docFilterCriteria.sort.sortBy).
-    map('id').
-    value();
+  const filteredIds = map(
+    sortBy(
+      filter(
+        filter(
+          filter(
+            updatedNextState.documents,
+            (doc) => !activeCategoryFilters.length ||
+              some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+          ),
+          (doc) => !activeTagFilters.length || some(activeTagFilters, (tagText) => find(doc.tags, { text: tagText }))
+        ),
+        searchString(searchQuery, updatedNextState)),
+      docFilterCriteria.sort.sortBy
+    ),
+    'id'
+  );
 
   // looping through all the documents to update category highlights and expanding comments
-  _.forEach(updatedNextState.documents, (doc) => {
+  forEach(updatedNextState.documents, (doc) => {
     const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
 
     // getting all the truthy values from the object
     // {'medical': true, 'procedural': false } turns into {'medical': true}
-    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+    const matchesCategories = pickBy(categoryContainsWords(searchQuery, doc));
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.documentList.searchCategoryHighlights[doc.id]) {

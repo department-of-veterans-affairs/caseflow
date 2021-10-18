@@ -268,4 +268,19 @@ describe Hearing, :postgres do
       end
     end
   end
+
+  context "when the associated hearing_day has been soft-deleted" do
+    let!(:hearing) { create(:hearing) }
+
+    before do
+      hearing.hearing_day.update!(deleted_at: Time.zone.today - 30.days)
+      hearing.reload
+    end
+
+    it "returns nil for functions that expect an associated hearing_day" do
+      expect(hearing.request_type).to eq(nil)
+      expect(hearing.hearing_day_full?).to eq(nil)
+      expect(hearing.hearing_day_regional_office).to eq(nil)
+    end
+  end
 end

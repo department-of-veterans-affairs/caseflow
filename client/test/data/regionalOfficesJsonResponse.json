@@ -205,7 +205,7 @@
       "timezone": "America/Chicago",
       "state": "AL",
       "alternate_locations": null,
-      "facility_locator_id": "vba_322",
+      "facility_locator_id": "vha_619",
       "city": "Montgomery"
     },
     "RO23": {
@@ -214,7 +214,7 @@
       "timezone": "America/Chicago",
       "state": "MS",
       "alternate_locations": null,
-      "facility_locator_id": "vba_323",
+      "facility_locator_id": "vha_586",
       "city": "Jackson"
     },
     "RO25": {
@@ -552,7 +552,7 @@
       "timezone": "America/Los_Angeles",
       "state": "NV",
       "alternate_locations": [
-        "vba_354a"
+        "vha_593", "vc_0505V"
       ],
       "facility_locator_id": "vba_354",
       "city": "Reno"

@@ -4,110 +4,241 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   include IntakeHelpers
 
   before do
+    FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_predocket_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
     program_office.add_user(program_office_user)
+    regional_office.add_user(regional_office_user)
   end
 
-  after { FeatureToggle.disable!(:vha_predocket_appeals) }
+  after do
+    FeatureToggle.disable!(:vha_predocket_workflow)
+    FeatureToggle.disable!(:vha_predocket_appeals)
+  end
 
   let(:bva_intake) { BvaIntake.singleton }
-  let(:bva_intake_user) { create(:intake_user) }
+  let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
   let(:program_office) { create(:vha_program_office) }
   let(:program_office_user) { create(:user) }
+  let(:regional_office) { create(:vha_regional_office) }
+  let(:regional_office_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
-  let(:instructions) { "Please look for this veteran's documents." }
+  let(:po_instructions) { "Please look for this veteran's documents." }
+  let(:ro_instructions) { "No docs here. Please look for this veteran's documents." }
 
-  context "as a BVA Intake user" do
-    before { User.authenticate!(user: bva_intake_user) }
+  context "when a VHA case goes through intake" do
+    before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
 
-    it "intaking VHA issues creates pre-docket task instead of regular docketing tasks" do
-      start_appeal(veteran, intake_user: bva_intake_user)
-      visit "/intake"
+    it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
+      step "BVA Intake user intakes a VHA case" do
+        User.authenticate!(user: bva_intake_user)
+        start_appeal(veteran, intake_user: bva_intake_user)
+        complete_vha_intake
+        appeal = Appeal.last
+        visit "/queue/appeals/#{appeal.external_id}"
+        expect(page).to have_content("Pre-Docket")
+      end
 
-      expect(page).to have_current_path("/intake/review_request")
+      step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
+        appeal = Appeal.last
+        User.authenticate!(user: camo_user)
+        visit "/organizations/vha-camo?tab=inProgressTab"
+        expect(page).to have_content("Assess Documentation")
 
-      click_intake_continue
+        created_task_types = Set.new(appeal.tasks.map(&:type))
+        pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
 
-      expect(page).to have_content("Add / Remove Issues")
+        docket_tasks = Set.new %w[
+          DistributionTask
+          TrackVeteranTask
+          InformalHearingPresentationTask
+          EvidenceSubmissionWindowTask
+          TranslationTask
+        ]
 
-      click_intake_add_issue
-      add_intake_nonrating_issue(
-        benefit_type: "Veterans Health Administration",
-        category: "Caregiver",
-        description: "I am a VHA issue",
-        date: 1.month.ago.mdY
-      )
-      click_intake_finish
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+        expect(pre_docket_tasks.subset?(created_task_types)).to be true
+        expect(docket_tasks.subset?(created_task_types)).to be false
+      end
 
-      appeal = Appeal.last
-      visit "/queue/appeals/#{appeal.external_id}"
-      expect(page).to have_content("Pre Docket Task")
+      step "CAMO user assigns to Program Office" do
+        User.authenticate!(user: camo_user)
+        visit "/organizations/vha-camo?tab=inProgressTab"
+        expect(page).to have_content(COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL)
 
-      User.authenticate!(user: camo_user)
-      visit "/organizations/vha-camo?tab=inProgressTab"
-      expect(page).to have_content("Assess Documentation")
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.label).click
+        expect(page).to have_content(COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
+        find("div", class: "cf-select__option", text: program_office.name).click
+        fill_in("Provide instructions and context for this action:", with: po_instructions)
+        find("button", class: "usa-button", text: "Submit").click
 
-      created_task_types = Set.new(appeal.tasks.map(&:type))
-      pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
+        expect(page).to have_current_path("/organizations/#{camo.url}?tab=inProgressTab&page=1")
+        expect(page).to have_content("Task assigned to #{program_office.name}")
 
-      docket_tasks = Set.new %w[
-        DistributionTask
-        TrackVeteranTask
-        InformalHearingPresentationTask
-        EvidenceSubmissionWindowTask
-        TranslationTask
-      ]
+        expect(AssessDocumentationTask.last).to have_attributes(
+          type: "AssessDocumentationTask",
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_by: camo_user,
+          assigned_to_id: program_office.id
+        )
+      end
 
-      expect(pre_docket_tasks.subset?(created_task_types)).to be true
-      expect(docket_tasks.subset?(created_task_types)).to be false
+      step "Program Office has AssessDocumentationTask in queue" do
+        User.authenticate!(user: program_office_user)
+        visit "/queue"
 
-      # CAMO user assigns to Program Office
+        click_on("Switch views")
+        click_on("#{program_office.name} team cases")
 
-      User.authenticate!(user: camo_user)
-      visit "/organizations/vha-camo?tab=inProgressTab"
-      expect(page).to have_content(COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_content("Assess Documentation Task")
 
-      find_link("#{veteran.name} (#{veteran.file_number})").click
-      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.label).click
-      expect(page).to have_content(COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE)
-      expect(page).to have_content(COPY::VHA_MODAL_BODY)
-      find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
-      find("div", class: "cf-select__option", text: program_office.name).click
-      fill_in("Provide instructions and context for this action:", with: instructions)
-      find("button", class: "usa-button", text: "Submit").click
+        find_link("#{veteran.name} (#{veteran.file_number})").click
 
-      expect(page).to have_current_path("/organizations/#{camo.url}?tab=inProgressTab&page=1")
-      expect(page).to have_content("Task assigned to #{program_office.name}")
+        expect(page).to have_content("ASSIGNED TO\n#{program_office.name}")
 
-      expect(AssessDocumentationTask.last).to have_attributes(
-        type: "AssessDocumentationTask",
-        status: Constants.TASK_STATUSES.assigned,
-        assigned_by: camo_user,
-        assigned_to_id: program_office.id
-      )
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(po_instructions)
+      end
 
-      User.authenticate!(user: program_office_user)
-      visit "/queue"
+      step "Program Office can assign AssessDocumentationTask to Regional Office" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.label).click
+        expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
+        find("div", class: "cf-select__option", text: regional_office.name).click
+        fill_in("Provide instructions and context for this action:", with: ro_instructions)
+        find("button", class: "usa-button", text: "Submit").click
 
-      click_on("Switch views")
-      click_on("#{program_office.name} team cases")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_content("Task assigned to #{regional_office.name}")
+      end
 
-      expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
-      expect(page).to have_content("Assess Documentation Task")
+      step "Regional Office has AssessDocumentationTask in queue" do
+        User.authenticate!(user: regional_office_user)
+        visit "/queue"
 
-      find_link("#{veteran.name} (#{veteran.file_number})").click
+        click_on("Switch views")
+        click_on("#{regional_office.name} team cases")
 
-      expect(page).to have_content("ASSIGNED TO\n#{program_office.name}")
+        expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_content("Assess Documentation Task")
 
-      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-      expect(page).to have_content(instructions)
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        expect(page).to have_content("ASSIGNED TO\n#{regional_office.name}")
+
+        first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(ro_instructions)
+      end
+
+      step "CAMO can return the appeal to BVA Intake" do
+        appeal = Appeal.last
+        camo_task = VhaDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        # Remove this section once the steps completing these tasks is available
+        camo_task.children.each { |task| task.update!(status: "completed") }
+
+        User.authenticate!(user: camo_user)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
+
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
+
+        fill_in("Instructions:", with: "This appeal is ready to be docketed.")
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
+        expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      end
+
+      step "BVA Intake can docket an appeal" do
+        appeal = Appeal.last
+        camo_task = VhaDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        User.authenticate!(user: bva_intake_user)
+        visit "/queue/appeals/#{appeal.external_id}"
+        bva_intake_dockets_appeal
+
+        expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
+        expect(page).to have_content("Docket number: #{appeal.docket_number}")
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+        distribution_task = appeal.tasks.of_type(:DistributionTask).first
+        docket_related_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+
+        expect(distribution_task.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(docket_related_task.status).to eq Constants.TASK_STATUSES.assigned
+      end
     end
+
+    # This test confirms that BVA Intake can still perform this action while the Assess Documentation task is
+    # in progress and the Pre-Docket task is on hold.
+    it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
+      User.authenticate!(user: bva_intake_user)
+      start_appeal(veteran, intake_user: bva_intake_user)
+      complete_vha_intake
+      appeal = Appeal.last
+      camo_task = VhaDocumentSearchTask.last
+      bva_intake_task = PreDocketTask.last
+
+      visit "/queue/appeals/#{appeal.external_id}"
+      bva_intake_dockets_appeal
+
+      expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
+      expect(page).to have_content("Docket number: #{appeal.docket_number}")
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+      distribution_task = appeal.tasks.of_type(:DistributionTask).first
+      docket_related_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+
+      expect(distribution_task.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(docket_related_task.status).to eq Constants.TASK_STATUSES.assigned
+    end
+  end
+
+  def complete_vha_intake
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+    click_intake_continue
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    add_intake_nonrating_issue(
+      benefit_type: "Veterans Health Administration",
+      category: "Caregiver",
+      description: "I am a VHA issue",
+      date: 1.month.ago.mdY
+    )
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+  end
+
+  def bva_intake_dockets_appeal
+    expect(page).to have_content("Pre-Docket")
+
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
+
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+
+    fill_in("Instructions:", with: "I confirmed the documents are in VBMS.")
+    find("button", class: "usa-button", text: "Submit").click
   end
 end

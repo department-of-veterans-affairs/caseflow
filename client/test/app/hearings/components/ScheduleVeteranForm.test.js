@@ -3,9 +3,8 @@ import { mount } from 'enzyme';
 
 import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
-import { SearchableDropdown } from 'app/components/SearchableDropdown';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { amaAppeal, defaultHearing, legacyAppealForTravelBoard, virtualHearing } from 'test/data';
+import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
 import { generateAmaTask } from 'test/data/tasks';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
@@ -45,17 +44,6 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Assertions
-    expect(
-      scheduleVeteran.find(`[label="${amaAppeal?.appellantTitle} Address"]`).
-        prop('text').props
-    ).toMatchObject(
-      {
-        addressLine1: amaAppeal.appellantAddress.address_line_1,
-        addressCity: amaAppeal.appellantAddress.city,
-        addressZip: amaAppeal.appellantAddress.zip,
-        addressState: amaAppeal.appellantAddress.state
-      }
-    );
     expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
@@ -87,7 +75,6 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(AddressLine)).toHaveLength(1);
 
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(0);
     expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(0);
@@ -178,41 +165,6 @@ describe('ScheduleVeteranForm', () => {
     // Assertions
     expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown).prop('errorMessage')).toEqual(error);
-    expect(scheduleVeteran).toMatchSnapshot();
-  });
-
-  test('Auto-selects virtual if a virtual hearing was requested', () => {
-    const hearing = {
-      ...defaultHearing,
-      virtualHearing: { status: 'pending' }, // Simulate an onChange event
-      regionalOffice: defaultHearing.regionalOfficeKey,
-    };
-    const scheduleVeteran = mount(
-      <ScheduleVeteranForm
-        userCanCollectVideoCentralEmails
-        goBack={cancelSpy}
-        submit={submitSpy}
-        onChange={changeSpy}
-        appeal={{
-          ...legacyAppealForTravelBoard,
-          regionalOffice: defaultHearing.regionalOfficeKey,
-          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
-        }}
-        hearing={hearing}
-        virtual
-      />,
-      {
-        wrappingComponent: queueWrapper,
-      }
-    );
-
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(
-      scheduleVeteran.
-        find(HearingTypeDropdown).
-        find(SearchableDropdown).
-        prop('value')
-    ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
     expect(scheduleVeteran).toMatchSnapshot();
   });
 

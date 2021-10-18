@@ -220,6 +220,126 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
     end
   end
 
+  context "When adding a Travel Hearing Day" do
+    scenario "When adding a hearing day and selecting Video verify correct fields present" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Day").click
+      expect(page).to have_content("Add a Hearing Day")
+      click_dropdown(index: "T", text: "Travel")
+
+      # Confirm presence of available times
+      expect(page).to have_content("Available Times")
+
+      # Confirm fields present
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
+      expect(page).to have_content("VLJ")
+      expect(page).to have_content("Hearing Coordinator")
+
+      # Confirm fields not present
+      expect(page.has_no_content?("Number of Time Slots")).to eq(true)
+      expect(page.has_no_content?("Length of Time Slots")).to eq(true)
+      expect(page.has_no_content?("Start Time of Slots")).to eq(true)
+      expect(page.has_no_content?("Preview Time Slots")).to eq(true)
+      expect(page).not_to have_selector(".cf-help-divider")
+    end
+
+    scenario "Fill out all fields and confirm to save" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Day").click
+      expect(page).to have_content("Add a Hearing Day")
+      fill_in "hearingDate", with: "04152019"
+      click_dropdown(index: "T", text: "Travel")
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
+      dropdowns = page.all(".cf-select__control")
+      dropdowns[1].click
+      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
+      fill_in "vlj", with: "Sallie L Anderson"
+      fill_in "coordinator", with: "Casimir R Funk"
+      fill_in "Notes", with: "Test notes."
+      find("button", text: "Add Hearing Day").click
+      expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 30)
+    end
+
+    scenario "Leave Regional Office without a selection, expect error" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Day").click
+      expect(page).to have_content("Add a Hearing Day")
+      fill_in "hearingDate", with: "04152019"
+      click_dropdown(index: "T", text: "Travel")
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
+      fill_in "vlj", with: "Sallie L Anderson"
+      fill_in "coordinator", with: "Casimir R Funk"
+      fill_in "Notes", with: "Test notes."
+      find("button", text: "Add Hearing Day").click
+      expect(page).to have_content("Hearing type is a Video hearing")
+      expect(page).to have_content("Please make sure you select a Regional Office")
+    end
+
+    context "When adding a full or half day dockets" do
+      shared_examples "adding full or half day dockets" do
+        scenario "fill out form and submit successfully" do
+          visit "hearings/schedule"
+          find("button", text: "Add Hearing Day").click
+          fill_in "hearingDate", with: "04152019"
+          click_dropdown(index: "T", text: "Travel")
+
+          # Confirm presence of available times
+          expect(page).to have_content("Available Times")
+          radio_choices = page.all(".cf-form-radio-option")
+          expect(radio_choices[0]).to have_content("Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Eastern)")
+          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 9:00 AM Eastern")
+          expect(radio_choices[2]).to have_content("Half-Day PM (5 slots at 1:00 PM Eastern")
+
+          expect(page).to have_content("Regional Office (RO)", wait: 30)
+          dropdowns = page.all(".cf-select__control")
+          dropdowns[1].click
+          dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Los Angeles, CA").click
+
+          radio_choices = page.all(".cf-form-radio-option > label")
+          expect(radio_choices[0]).to have_content("Full-Day AM & PM (10 slots at 9:00 AM & 1:00 PM Pacific)")
+          expect(radio_choices[1]).to have_content("Half-Day AM (5 slots at 9:00 AM Pacific / 12:00 PM Eastern)")
+          expect(radio_choices[2]).to have_content("Half-Day PM (5 slots at 1:00 PM Pacific / 4:00 PM Eastern)")
+
+          radio_choices[choice].click
+          find("button", text: "Add Hearing Day").click
+          expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 30)
+
+          # Verify db values
+          expect(HearingDay.last.reload.total_slots).to eq(total_slots)
+          expect(HearingDay.last.first_slot_time).to eq(first_slot_time)
+          expect(HearingDay.last.begins_at).to eq(begins_at)
+        end
+      end
+
+      context "Full day" do
+        let(:choice) { 0 }
+        let(:total_slots) { HearingDay::SLOTS_BY_REQUEST_TYPE["V"][:default] } # T
+        let(:first_slot_time) { nil }
+        let(:begins_at) { nil }
+        include_examples "adding full or half day dockets"
+      end
+
+      context "Half day AM" do
+        let(:choice) { 1 }
+        let(:total_slots) { 5 }
+        let(:first_slot_time) { "12:00" }
+        let(:begins_at) { "2019-04-15T12:00:00-04:00" }
+        include_examples "adding full or half day dockets"
+      end
+
+      context "Half day PM" do
+        let(:choice) { 2 }
+        let(:total_slots) { 5 }
+        let(:first_slot_time) { "16:00" }
+        let(:begins_at) { "2019-04-15T16:00:00-04:00" }
+        include_examples "adding full or half day dockets"
+      end
+    end
+  end
+
   context "has a judge and coordinator to select from the dropdown" do
     let!(:judge) do
       judge = create(:user)

@@ -115,7 +115,7 @@ class HearingRepository
                                                  legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
           set_vacols_values(hearing, vacols_record)
         rescue RegionalOffice::NotFoundError => error
-          Raven.capture_exception(error)
+          Raven.capture_exception(error, extra: { legacy_hearing_vacols_id: vacols_record.hearing_pkseq })
           next
         end
       end.flatten.compact
@@ -271,7 +271,7 @@ class HearingRepository
     #   A hash of setter names on a `LegacyHearing` to values
     def regional_office_for_scheduled_timezone(hearing, vacols_record)
       ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
-                 vacols_record.hearing_venue || vacols_record.bfregoff
+                 vacols_record.hearing_venue
                else
                  hearing.hearing_day&.regional_office || "C"
                end

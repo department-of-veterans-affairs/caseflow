@@ -170,6 +170,8 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select a valid date for the court's decision",
+  "CC_BADGE_TOOLTIP_LONG": "This is a Contested Claim and needs to be processed by the Specialty\nCase team. Please include all parties and POA in correspondence.",
+  "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
   "JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMPR you must select at least one issue to proceed",
   "MDR_SELECTION_ISSUE_INFO_BANNER": "For a MDR you must select at least one issue to proceed",
@@ -230,6 +232,12 @@
   "EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE": "New NOD Date Not Saved",
   "EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE": "*If you believe this information needs to be updated, please reach out to the Clerk of the Board at [BVA.Clerk@va.gov](mailto:BVA.Clerk@va.gov).*",
 
+  "EDIT_POA_SUCCESS_ALERT_TITLE": "You have successfully updated the Appellant's POA Information",
+  "EDIT_POA_SUCCESS_ALERT_MESSAGE": "To make further changes, please submit a yourIT ticket.",
+
+  "DOCKET_HAS_HEARINGS_SCHEDULED": "The docket type can't be changed because there are hearings scheduled.",
+  "DOCKET_INVALID_RO_TYPE": "The Central Office cannot be used for dockets types other than Central",
+
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
   "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
@@ -257,7 +265,7 @@
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
-  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGESS_TAB_TITLE": "In Progress Tasks",
+  "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed Tasks",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
@@ -640,6 +648,7 @@
   "TEAM_MANAGEMENT_NAME_COLUMN_HEADING": "Name",
   "TEAM_MANAGEMENT_URL_COLUMN_HEADING": "URL",
   "TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING": "Priority Case Distribution",
+  "TEAM_MANAGEMENT_REQUESTED_DISTRIBUTION_COLUMN_HEADING": "Request More Cases Distribution",
   "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
   "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
   "TEAM_MANAGEMENT_ADD_JUDGE_LABEL": "Judge Teams",
@@ -1006,7 +1015,7 @@
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
   "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
   "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
-  "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "Changes to the email are used to send notifications for this hearing only",
+  "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "This email address will be used to send notifications for this hearing only.",
 
   "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
   "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the %s, POA / Representative, and Veterans Law Judge (VLJ).",
@@ -1123,8 +1132,18 @@
   "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
   "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
 
+  "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
+  "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
+  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by VHA are available in VBMS before docketing this appeal.",
+  "DOCKET_APPEAL_CONFIRMATION": "%s's appeal has successfully been docketed (Docket number: %s)",
+  "DOCKET_APPEAL_INSTRUCTIONS_NOTE": "This appeal has been docketed, and this task is no longer necessary.",
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
-  "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office"
+  "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
+  "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
 }

@@ -65,12 +65,12 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
     </div>
   </TextField>
   <HelperText
-    label="Changes to the email are used to send notifications for this hearing only"
+    label="This email address will be used to send notifications for this hearing only."
   >
     <div
       className="helper-text"
     >
-      Changes to the email are used to send notifications for this hearing only
+      This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
 </VirtualHearingEmail>
@@ -94,7 +94,7 @@ exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
     value="123@gmail.com"
   />
   <HelperText
-    label="Changes to the email are used to send notifications for this hearing only"
+    label="This email address will be used to send notifications for this hearing only."
   />
 </Fragment>
 `;
@@ -159,12 +159,12 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
     </div>
   </TextField>
   <HelperText
-    label="Changes to the email are used to send notifications for this hearing only"
+    label="This email address will be used to send notifications for this hearing only."
   >
     <div
       className="helper-text"
     >
-      Changes to the email are used to send notifications for this hearing only
+      This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
 </VirtualHearingEmail>

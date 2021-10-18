@@ -368,7 +368,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "addressState": "DC",
               "addressZip": "20001",
               "name": "John Smith",
-              "userCanScheduleVirtualHearings": true,
             }
           }
           virtualHearing={
@@ -521,7 +520,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "addressState": "DC",
                   "addressZip": "20001",
                   "name": "John Smith",
-                  "userCanScheduleVirtualHearings": true,
                 }
               }
               virtualHearing={
@@ -679,7 +677,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "addressState": "DC",
                       "addressZip": "20001",
                       "name": "John Smith",
-                      "userCanScheduleVirtualHearings": true,
                     }
                   }
                   virtualHearing={
@@ -828,7 +825,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "addressState": "DC",
                         "addressZip": "20001",
                         "name": "John Smith",
-                        "userCanScheduleVirtualHearings": true,
                       }
                     }
                     virtualHearing={
@@ -17292,12 +17288,12 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   </div>
                 </TextField>
                 <HelperText
-                  label="Changes to the email are used to send notifications for this hearing only"
+                  label="This email address will be used to send notifications for this hearing only."
                 >
                   <div
                     className="helper-text"
                   >
-                    Changes to the email are used to send notifications for this hearing only
+                    This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
               </VirtualHearingEmail>
@@ -33475,12 +33471,12 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   </div>
                 </TextField>
                 <HelperText
-                  label="Changes to the email are used to send notifications for this hearing only"
+                  label="This email address will be used to send notifications for this hearing only."
                 >
                   <div
                     className="helper-text"
                   >
-                    Changes to the email are used to send notifications for this hearing only
+                    This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
               </VirtualHearingEmail>
@@ -33748,7 +33744,6 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
               "addressState": "DC",
               "addressZip": "20001",
               "name": "John Smith",
-              "userCanScheduleVirtualHearings": true,
             }
           }
           wasVirtual={false}
@@ -33883,7 +33878,6 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "addressState": "DC",
                   "addressZip": "20001",
                   "name": "John Smith",
-                  "userCanScheduleVirtualHearings": true,
                 }
               }
               wasVirtual={false}
