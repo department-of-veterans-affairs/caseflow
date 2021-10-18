@@ -224,4 +224,43 @@ describe LegacyDocket do
       end
     end
   end
+
+  context "#distribute_nonpriority_appeals" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:genpop) { "any" } # this isn't significant here I don't think
+    let(:style) { "push" } # ..
+    let(:limit) { 1 } # ..
+    let(:range) { nil }
+    let(:bust_backlog) { false }
+    let(:distribution) { Distribution.create!(judge: judge) }
+    subject { docket.distribute_nonpriority_appeals(distribution, range: range) }
+
+    context "when really_distribute returns false, blocking distribution" do
+      before do
+        expect(docket).to receive(:really_distribute).and_return(false)
+      end
+
+      it "returns an empty array" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "when range is zero or less" do
+      let(:range) { 0 }
+      it "returns an empty array" do
+        expect(subject).to eq []
+        expect(AppealRepository).not_to receive(:distribute_nonpriority_appeals)
+      end
+    end
+
+    context "when really_distribute returns true and range is nil or >= 0" do
+      it "calls AppealRepository.distribute_nonpriority_appeals" do
+        # Ideally this would return some mocked cases we could run further assertions on.
+        expect(AppealRepository).to receive(:distribute_nonpriority_appeals)
+          .with(judge, genpop, range, limit, bust_backlog)
+          .and_return([])
+        subject
+      end
+    end
+  end
 end
