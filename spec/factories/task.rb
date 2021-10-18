@@ -412,7 +412,7 @@ FactoryBot.define do
       factory :ama_attorney_task, class: AttorneyTask do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
         assigned_by { create(:user) }
-        assigned_to { create(:user) }
+        assigned_to { create(:user, :with_vacols_attorney_record) }
 
         after(:build) do |_task, evaluator|
           if evaluator.assigned_by
