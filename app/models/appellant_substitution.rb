@@ -19,8 +19,9 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  before_create :establish_appeal_stream
-  after_create :initialize_tasks
+  before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
+  before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
+  after_commit :initialize_tasks
 
   def substitute_claimant
     target_appeal.claimant
@@ -34,9 +35,28 @@ class AppellantSubstitution < CaseflowRecord
     poa_participant_id ? BgsPowerOfAttorney.find_by(poa_participant_id: poa_participant_id) : nil
   end
 
+  def same_appeal_substitution_allowed?
+    (ClerkOfTheBoard.singleton.user_is_admin?(created_by) || !!source_appeal.veteran.date_of_death) &&
+      source_appeal.request_issues.none?(&:death_dismissed?)
+  end
+
   private
 
-  def establish_appeal_stream
+  def establish_substitution_on_same_appeal
+    # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant.
+    # This ensures that substitute claimant is the correct type.
+    source_appeal.update!(veteran_is_not_claimant: true)
+    Claimant.create!(
+      participant_id: substitute_participant_id,
+      payee_code: nil,
+      type: claimant_type,
+      decision_review_id: source_appeal.id,
+      decision_review_type: "Appeal"
+    )
+    self.target_appeal = source_appeal.reload
+  end
+
+  def establish_separate_appeal_stream
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,

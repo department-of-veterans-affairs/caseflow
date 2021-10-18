@@ -73,8 +73,8 @@ feature "BVA Dispatch Return Flow", :all_dbs do
     end
     step "Judge reviews the corrections and returns the case to BVA Dispatch" do
       judge_checkout
-      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-      sleep 5
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name,
+                                   wait: 5)
     end
     step "BVA Dispatch has received the case" do
       User.authenticate!(user: bva_dispatch_user)
@@ -106,12 +106,13 @@ def attorney_checkout
   click_on "Continue"
 end
 
+# rubocop:disable Metrics/AbcSize
 def judge_checkout
   User.authenticate!(user: judge_user)
   visit "/queue"
   click_on "(#{appeal.veteran_file_number})"
   click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-  click_on "Continue"
+  click_on "Continue" if page.has_content?("No Special Issues")
   click_on "Continue"
   find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
   text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
@@ -123,3 +124,4 @@ def judge_checkout
   fill_in "additional-factors", with: dummy_note
   click_on "Continue"
 end
+# rubocop:enable Metrics/AbcSize
