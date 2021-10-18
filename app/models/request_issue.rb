@@ -98,6 +98,10 @@ class RequestIssue < CaseflowRecord
       rating_issue.or(rating_decision).or(unidentified)
     end
 
+    def rating_not_unidentified
+      rating_issue.or(rating_decision)
+    end
+
     def rating_issue
       where.not(contested_rating_issue_reference_id: nil)
     end
