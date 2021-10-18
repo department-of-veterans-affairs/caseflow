@@ -66,11 +66,15 @@ class CaseListTable extends React.PureComponent {
       _.find(this.props.appeals, (appeal) => appeal.overtime)
     );
 
+    const anyAppealsAreContestedClaims = Boolean(
+      _.find(this.props.appeals, (appeal) => appeal.contestedClaim)
+    );
+
     const badgeColumn = {
       valueFunction: (appeal) => <BadgeArea appeal={appeal} />
     };
 
-    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus || anyAppealsHaveFnod) {
+    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus || anyAppealsHaveFnod || anyAppealsAreContestedClaims) {
       columns.unshift(badgeColumn);
     }
 
