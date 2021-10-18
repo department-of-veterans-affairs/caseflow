@@ -6,9 +6,9 @@ import { bindActionCreators } from 'redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { COLORS } from 'app/constants/AppConstants';
-import BadgeArea from 'app/components/badges/BadgeArea';
-import CopyTextButton from 'app/components/CopyTextButton';
+import { COLORS } from '../constants/AppConstants';
+import CopyTextButton from '../components/CopyTextButton';
+import BadgeArea from './components/BadgeArea';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({

@@ -5,12 +5,12 @@ import React from 'react';
 import { HearingTime } from '../HearingTime';
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 import COPY from '../../../../COPY';
-import DocketTypeBadge from 'app/components/DocketTypeBadge';
-import { PowerOfAttorneyName } from 'app/queue/PowerOfAttorneyDetail';
+import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 
-import FnodBadge from 'app/components/badges/FnodBadge/FnodBadge';
-import { tooltipListStyling } from 'app/components/badges/style';
-import { DateString } from 'app/util/DateUtil';
+import FnodBadge from '../../../queue/components/FnodBadge';
+import { tooltipListStyling } from '../../../queue/components/style';
+import { DateString } from '../../../util/DateUtil';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
