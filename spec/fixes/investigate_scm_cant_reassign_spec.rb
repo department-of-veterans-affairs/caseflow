@@ -4,10 +4,6 @@ require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_importer.rb"
 
 feature "CaseMovementTeam task actions" do
-  before do
-    User.authenticate!(css_id: "SANFORDBVAM")
-  end
-
   let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Talam") }
   let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
 
@@ -19,6 +15,11 @@ feature "CaseMovementTeam task actions" do
       sji = SanitizedJsonImporter.from_file("spec/records/scm-cant-reassign.json", verbosity: 0)
       sji.import
       sji.imported_records[Appeal.table_name].first
+    end
+    let(:scm_user) { User.find_by_css_id("SANFORDBVAM") }
+
+    before do
+      User.authenticate!(user: scm_user)
     end
 
     scenario "produces error and user can't reassign to attorney" do
