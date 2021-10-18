@@ -688,7 +688,7 @@ intakes,type,string,,,,,x,The class name of the intake.
 intakes,updated_at,datetime,,,,,x,
 intakes,user_id,integer ∗ FK,x,,x,,x,The ID of the user who created the intake.
 intakes,veteran_file_number,string,,,,,x,PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran.
-intakes,veteran_id,integer (8) FK,,,x,,x,The ID of the veteran record associated with this intake
+intakes,veteran_id,integer (8),,,,,x,The ID of the veteran record associated with this intake
 job_notes,,,,,,,,
 job_notes,created_at,datetime ∗,x,,,,,Default created_at/updated_at
 job_notes,id,integer (8) PK,x,x,,,,
