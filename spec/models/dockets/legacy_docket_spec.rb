@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-SingleCov.covered!
-
 describe LegacyDocket do
   let(:docket) do
     LegacyDocket.new
