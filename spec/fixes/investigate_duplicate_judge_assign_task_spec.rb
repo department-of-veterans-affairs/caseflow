@@ -9,11 +9,6 @@ require "helpers/intake_renderer.rb"
 require "helpers/hearing_renderer.rb"
 
 feature "duplicate JudgeAssignTask investigation" do
-  before do
-    User.authenticate!(css_id: "PETERSBVAM")
-    Functions.grant!("System Admin", users: ["PETERSBVAM"]) # enable access to `export` endpoint
-  end
-
   # Ticket: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/174
   # Target state: should only have 1 open JudgeAssignTask
   describe "Judge cancels AttorneyTask in 2 browser windows" do
@@ -22,10 +17,16 @@ feature "duplicate JudgeAssignTask investigation" do
       sji.import
       appeal = sji.imported_records[Appeal.table_name].first
 
-      judge = User.find_by_css_id("PETERSBVAM")
       create(:staff, :judge_role, user: judge)
 
       appeal.reload
+    end
+
+    let(:judge) { User.find_by_css_id("PETERSBVAM") }
+
+    before do
+      User.authenticate!(user: judge)
+      Functions.grant!("System Admin", users: [judge.css_id]) # enable access to `export` endpoint
     end
 
     scenario "Caseflow creates 2 open JudgeAssignTasks" do
