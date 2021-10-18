@@ -3,7 +3,8 @@ import { associateTasksWithAppeals,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks,
   prepareMostRecentlyHeldHearingForStore,
-  prepareTasksForStore } from './utils';
+  prepareTasksForStore,
+  prepareAppealForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -148,6 +149,16 @@ export const loadAppealDocCount = (appealId) => (dispatch) => {
       appealId
     }
   });
+};
+
+export const fetchAppealDetails = (appealId) => async (dispatch) => {
+  try {
+    const { body: { appeal } } = await ApiUtil.get(`/appeals/${appealId}`);
+
+    dispatch(onReceiveAppealDetails(prepareAppealForStore([appeal])));
+  } catch (error) {
+    console.error('Error fetching appeal details', error);
+  }
 };
 
 export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
