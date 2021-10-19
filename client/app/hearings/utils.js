@@ -1018,4 +1018,16 @@ export const formatRoomOption = (room) => {
   });
 };
 
+export const readOnlyEmails = (hearing, readOnly) => {
+  if (readOnly) {
+    return true;
+  }
+
+  if (hearing?.isVirtual && hearing?.virtualHearing) {
+    return !hearing?.virtualHearing?.jobCompleted || hearing.scheduledForIsPast;
+  }
+
+  return hearing.scheduledForIsPast;
+};
+
 /* eslint-enable camelcase */

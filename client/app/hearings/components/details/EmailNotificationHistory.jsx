@@ -59,9 +59,9 @@ export const EmailNotificationHistory = ({ rows }) => (
   >
     <Accordion
       header={
-        <h2>
+        <h3>
           {COPY.EMAIL_NOTIFICATION_HISTORY_TITLE}
-        </h2>
+        </h3>
       }
       defaultActiveKey={[COPY.EMAIL_NOTIFICATION_HISTORY_TITLE]}
     >
