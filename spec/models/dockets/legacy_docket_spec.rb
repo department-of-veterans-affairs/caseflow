@@ -60,6 +60,33 @@ describe LegacyDocket do
     it { is_expected.to eq(12.4) }
   end
 
+  context "#oldest_priority_appeals_days_waiting" do
+    subject { docket.oldest_priority_appeal_days_waiting }
+
+    context "when there is no oldest priority appeal" do
+      it "returns zero" do
+        expect(docket).to receive(:age_of_oldest_priority_appeal).and_return(nil)
+        expect(subject).to eq 0
+      end
+    end
+
+    context "when there is an oldest priority appeal" do
+      let(:start_time) { Time.zone.local(2020, 1, 1) }
+      let(:number_of_days) { 10 }
+      let(:end_time) { start_time + number_of_days.days }
+
+      before { Timecop.freeze(end_time) }
+
+      it "returns the age in days" do
+        expect(docket).to receive(:age_of_oldest_priority_appeal)
+          .and_return(start_time)
+          .exactly(2).times
+
+        expect(subject).to eq number_of_days
+      end
+    end
+  end
+
   context "#really_distribute" do
     # This is really a "should_distribute?" method. We should rename it.
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
@@ -198,27 +225,20 @@ describe LegacyDocket do
       end
     end
 
-    context "when really_distribute allows distribution", skip: "Incomplete; fixme" do
-      let!(:some_appeals) do
-        [
-          create(:legacy_appeal, vacols_id: "5643"),
-          create(:legacy_appeal, vacols_id: "1234")
-        ]
-      end
+    context "when really_distribute allows distribution" do
+      let!(:some_cases) { create_list(:case, 2) }
 
       # AppealRepository doesn't do much but call VACOLS::CaseDocket.distribute_appeals,
       # for which we have good coverage. Just unit-test our part here:
-      it "uses AppealRepository's distribute_priority_appeals method" do
+      it "uses AppealRepository's distribute_priority_appeals method and returns VACOLS cases" do
         expect(docket).to receive(:really_distribute)
           .with(distribution, genpop: genpop, style: style)
           .and_return(true)
         expect(AppealRepository).to receive(:distribute_priority_appeals)
           .with(judge, genpop, limit)
-          .and_return(some_appeals)
+          .and_return(some_cases)
 
-        # dist_case in distribute_priority_appeals creates a mostly-empty record which isn't valid.
-        # The stubbing above is inadequate.
-        subject
+        expect(subject.size).to eq some_cases.size
       end
     end
   end
@@ -252,12 +272,20 @@ describe LegacyDocket do
     end
 
     context "when really_distribute returns true and range is nil or >= 0" do
-      it "calls AppealRepository.distribute_nonpriority_appeals" do
-        # Ideally this would return some mocked cases we could run further assertions on.
+      let(:two_cases_as_hashes) do
+        cases = create_list(:case, 2)
+        i = 0
+        cases.map do |kase|
+          { bfkey: kase.bfkey, bfdloout: kase.bfdloout, vlj: judge.css_id, docket_index: i += 1 }.stringify_keys
+        end
+      end
+
+      it "calls AppealRepository.distribute_nonpriority_appeals and returns cases" do
         expect(AppealRepository).to receive(:distribute_nonpriority_appeals)
           .with(judge, genpop, range, limit, bust_backlog)
-          .and_return([])
-        subject
+          .and_return(two_cases_as_hashes)
+
+        expect(subject.size).to eq 2
       end
     end
   end
