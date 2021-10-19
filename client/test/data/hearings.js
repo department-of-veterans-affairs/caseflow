@@ -492,6 +492,7 @@ export const scheduleVeteranResponse = {
     }
   }
 };
+
 export const getHearingType = (hearing) => {
   const lastRowLabel = `${hearing.caseType} · ${hearing.readableRequestType} · View Case Details`;
 
