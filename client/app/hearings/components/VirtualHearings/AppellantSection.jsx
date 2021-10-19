@@ -8,7 +8,7 @@ import Alert from '../../../components/Alert';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
-import { VirtualHearingEmail } from './Emails';
+import { HearingEmail } from '../details/HearingEmail';
 import { Timezone } from './Timezone';
 import { marginTop } from '../details/style';
 import { ReadOnly } from '../details/ReadOnly';
@@ -105,7 +105,7 @@ export const AppellantSection = ({
         */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(columnWidthClass)} >
-          <VirtualHearingEmail
+          <HearingEmail
             required={schedulingToVirtual}
             optional={!schedulingToVirtual}
             readOnly={readOnly}

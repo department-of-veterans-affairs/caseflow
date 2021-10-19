@@ -3,13 +3,13 @@ import React from 'react';
 import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 
-import { HelperText } from './HelperText';
+import { HelperText } from '../VirtualHearings/HelperText';
 import { ReadOnly } from '../details/ReadOnly';
 import { enablePadding } from '../details/style';
 import COPY from '../../../../COPY';
 import TextField from '../../../components/TextField';
 
-export const VirtualHearingEmail = ({
+export const HearingEmail = ({
   email,
   emailType,
   label,
@@ -47,7 +47,7 @@ export const VirtualHearingEmail = ({
     </React.Fragment>
   );
 
-VirtualHearingEmail.propTypes = {
+HearingEmail.propTypes = {
   email: PropTypes.string,
   emailType: PropTypes.string,
   label: PropTypes.string,
