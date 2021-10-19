@@ -1,5 +1,4 @@
 import React from 'react';
-import { expect } from 'chai';
 import { mount } from 'enzyme';
 
 import { MemoryRouter } from 'react-router-dom';
@@ -64,6 +63,12 @@ const getWrapper = (store) => mount(
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
+  let testContext;
+
+  beforeEach(() => {
+    testContext = {};
+  });
+
   const setUpDocuments = (store) => {
     // We simulate receiving the documents from the endpoint, and dispatch the
     // required actions to skip past the loading screen and avoid stubing out
@@ -83,11 +88,13 @@ describe('DecisionReviewer', () => {
 
       /* eslint-disable no-underscore-dangle */
       autoSizerStub = sinon.stub(AutoSizer.prototype, 'render');
-      autoSizerStub.callsFake(function () {
-        return <div ref={this._setRef}>
-          {this.props.children({ width: 200,
-            height: 100 })}
-        </div>;
+      autoSizerStub.callsFake(() => {
+        return (
+          <div ref={testContext._setRef}>
+            {testContext.props.children({ width: 200,
+              height: 100 })}
+          </div>
+        );
       });
       /* eslint-enable no-underscore-dangle */
 
@@ -105,56 +112,56 @@ describe('DecisionReviewer', () => {
       autoSizerStub.restore();
     });
 
-    context('PDF list view', () => {
-      context('when expanded comments', () => {
+    describe('PDF list view', () => {
+      describe('when expanded comments', () => {
         it('can view comments', () => {
-          expect(wrapper.text()).to.not.include('Test Comment');
+          expect(wrapper.text().includes('Test Comment')).toBe(false);
           findElementById(wrapper, 'expand-2-comments-button').simulate('click');
-          expect(wrapper.text()).to.include('Test Comment');
+          expect(wrapper.text().includes('Test Comment')).toBe(true);
         });
 
         it('page number is displayed', asyncTest(async() => {
           findElementById(wrapper, 'expand-2-comments-button').simulate('click');
-          expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
+          expect(wrapper.text().includes(`Page ${annotations[0].page}`)).toBe(true);
         }));
       });
 
-      context('when sorted by', () => {
+      describe('when sorted by', () => {
         it('date is ordered correctly', () => {
-          expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).to.have.length(1);
+          expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).toHaveLength(1);
 
           let textArray = wrapper.find('tr').map((node) => node.text());
 
-          expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
-          expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
+          expect(textArray[1]).toEqual(expect.arrayContaining([formatDateStr(documents[1].received_at)]));
+          expect(textArray[2]).toEqual(expect.arrayContaining([formatDateStr(documents[0].received_at)]));
 
           findElementById(wrapper, 'receipt-date-header').simulate('click');
-          expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
+          expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).toHaveLength(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
-          expect(textArray[2]).to.include(formatDateStr(documents[1].received_at));
+          expect(textArray[1]).toEqual(expect.arrayContaining([formatDateStr(documents[0].received_at)]));
+          expect(textArray[2]).toEqual(expect.arrayContaining([formatDateStr(documents[1].received_at)]));
         });
 
         it('type ordered correctly', () => {
           findElementById(wrapper, 'type-header').simulate('click');
-          expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
+          expect(wrapper.find('#type-header .cf-sort-arrowdown')).toHaveLength(1);
 
           let textArray = wrapper.find('tr').map((node) => node.text());
 
-          expect(textArray[1]).to.include(documents[0].type);
-          expect(textArray[2]).to.include(documents[1].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[0].type]));
+          expect(textArray[2]).toEqual(expect.arrayContaining([documents[1].type]));
 
           findElementById(wrapper, 'type-header').simulate('click');
-          expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
+          expect(wrapper.find('#type-header .cf-sort-arrowup')).toHaveLength(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray[1]).to.include(documents[1].type);
-          expect(textArray[2]).to.include(documents[0].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
+          expect(textArray[2]).toEqual(expect.arrayContaining([documents[0].type]));
         });
       });
 
-      context('when searched by', () => {
+      describe('when searched by', () => {
         it('does and logic search', () => {
           wrapper.find('input').simulate('change',
             { target: { value: '/2017 mytag form' } });
@@ -162,15 +169,15 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
 
-          expect(textArray).to.have.length(1);
-          expect(textArray[0]).to.include('form 9');
+          expect(textArray).toHaveLength(1);
+          expect(textArray[0]).toEqual(expect.arrayContaining(['form 9']));
 
           wrapper.find('input').simulate('change',
             { target: { value: '/2017 mytag do not show' } });
 
           textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
-          expect(textArray).to.have.length(0);
+          expect(textArray).toHaveLength(0);
         });
 
         it('does search highlighting for matched keywords', () => {
@@ -181,15 +188,15 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('mark').
             map((node) => node.text());
 
-          expect(doesArrayIncludeString(textArray, 'form')).to.be.true;
-          expect(doesArrayIncludeString(textArray, 'mytag')).to.be.true;
+          expect(doesArrayIncludeString(textArray, 'form')).toBe(true);
+          expect(doesArrayIncludeString(textArray, 'mytag')).toBe(true);
 
           // searching for a comment
           wrapper.find('input').simulate('change',
             { target: { value: 'comment' } });
 
           // comment is already expanded and highlighted
-          expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
+          expect(wrapper.html().includes('<mark class=" ">Comment</mark>')).toBe(true);
         });
 
         it('does search highlighting for categories', () => {
@@ -202,8 +209,8 @@ describe('DecisionReviewer', () => {
             find('li').
             first();
 
-          expect(textArray.prop('aria-label')).to.equal('Medical');
-          expect(textArray.hasClass('highlighted')).to.be.true;
+          expect(textArray.prop('aria-label')).toBe('Medical');
+          expect(textArray.hasClass('highlighted')).toBe(true);
         });
 
         it('date displays properly', () => {
@@ -215,12 +222,12 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and one filtered row.
-          expect(textArray).to.have.length(2);
-          expect(textArray[1]).to.include(receivedAt);
+          expect(textArray).toHaveLength(2);
+          expect(textArray[1]).toEqual(expect.arrayContaining([receivedAt]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
 
         it('receipt date search works properly', () => {
@@ -232,25 +239,25 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
 
-          expect(textArray).to.have.length(1);
-          expect(textArray[0]).to.include(receivedAt);
-          expect(textArray[0]).to.include(documents[1].type);
+          expect(textArray).toHaveLength(1);
+          expect(textArray[0]).toEqual(expect.arrayContaining([receivedAt]));
+          expect(textArray[0]).toEqual(expect.arrayContaining([documents[1].type]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
-          expect(textArray).to.have.length(2);
+          expect(textArray).toHaveLength(2);
 
           wrapper.find('input').simulate('change', { target: { value: '/2017' } });
           textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
-          expect(textArray).to.have.length(2);
+          expect(textArray).toHaveLength(2);
 
           wrapper.find('input').simulate('change', { target: { value: '03' } });
           textArray = wrapper.find('tbody').find('tr').
             map((node) => node.text());
-          expect(textArray).to.have.length(1);
-          expect(textArray[0]).to.include('form 9');
+          expect(textArray).toHaveLength(1);
+          expect(textArray[0]).toEqual(expect.arrayContaining(['form 9']));
         });
 
         it('type displays properly', () => {
@@ -260,12 +267,12 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and one filtered row.
-          expect(textArray).to.have.length(2);
-          expect(textArray[1]).to.include(documents[1].type);
+          expect(textArray).toHaveLength(2);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
 
         it('comment displays properly', () => {
@@ -275,14 +282,14 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and one filtered row.
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
 
           // Should only display the second document
-          expect(textArray[1]).to.include(documents[1].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
 
         it('category displays properly', () => {
@@ -292,14 +299,14 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and one filtered row.
-          expect(textArray).to.have.length(2);
+          expect(textArray).toHaveLength(2);
 
           // Should only display the first document
-          expect(textArray[1]).to.include(documents[0].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[0].type]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
 
         it('tag displays properly', () => {
@@ -309,18 +316,18 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and two filtered row.
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
 
           // Should only display the second document
-          expect(textArray[1]).to.include(documents[1].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
 
           wrapper.find('input').simulate('change', { target: { value: '' } });
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
       });
 
-      context('when filtered by', () => {
+      describe('when filtered by', () => {
         const openMenu = (node, menuName) => {
           node.find(`#${menuName}-header`).find('svg').
             simulate('click');
@@ -341,15 +348,15 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and one filtered row.
-          expect(textArray).to.have.length(2);
+          expect(textArray).toHaveLength(2);
 
           // Should only display the first document
-          expect(textArray[1]).to.include(documents[1].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
 
           checkBox(wrapper, 'Procedural', false);
 
           textArray = wrapper.find('tr').map((node) => node.text());
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
         });
 
         it('tag displays properly', () => {
@@ -360,10 +367,10 @@ describe('DecisionReviewer', () => {
           let textArray = wrapper.find('tr').map((node) => node.text());
 
           // Header and two filtered row.
-          expect(textArray).to.have.length(3);
+          expect(textArray).toHaveLength(3);
 
           // Should only display the second document
-          expect(textArray[1]).to.include(documents[1].type);
+          expect(textArray[1]).toEqual(expect.arrayContaining([documents[1].type]));
 
           checkBox(wrapper, 'mytag', false);
         });
@@ -385,13 +392,13 @@ describe('DecisionReviewer', () => {
       wrapper.detach();
     });
 
-    context('Loading Spinner', () => {
+    describe('Loading Spinner', () => {
       it('renders', () => {
         // eslint-disable-next-line no-empty-function
         const eternalPromise = new Promise(() => {});
 
         sinon.stub(ApiUtil, 'get').returns(eternalPromise);
-        expect(wrapper.text()).to.include('Loading claims folder');
+        expect(wrapper.text().includes('Loading claims folder')).toBe(true);
       });
     });
   });
