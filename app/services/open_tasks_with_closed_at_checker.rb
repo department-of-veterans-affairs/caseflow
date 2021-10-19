@@ -38,6 +38,7 @@ class OpenTasksWithClosedAtChecker < DataIntegrityChecker
   # - TrackVeteranTask -- https://dsva.slack.com/archives/CJL810329/p1634581182080100?thread_ts=1634553075.073600&cid=CJL810329
   IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT = MailTask.descendants.map(&:name) + ["TrackVeteranTask"]
   def ignored_tasks_with_closed_root_task_parent
-    Task.open.joins(:parent).includes(:parent).where(type: IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT).where(parents_tasks: { type: "RootTask", status: %w[completed cancelled] })
+    Task.open.joins(:parent).includes(:parent).where(type: IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT)
+      .where(parents_tasks: { type: "RootTask", status: %w[completed cancelled] })
   end
 end
