@@ -20,5 +20,7 @@ module ProductionConsoleMethods
     # Print instance ID so you can scp file locally
     instance_id = `curl http://169.254.169.254/latest/meta-data/instance-id`
     puts "Run this on your machine: scp #{instance_id}:#{filename} spec/records/"
+
+    sje
   end
 end
