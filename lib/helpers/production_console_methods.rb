@@ -11,7 +11,8 @@ module ProductionConsoleMethods
   # Export an appeal for testing locally
   # https://github.com/department-of-veterans-affairs/caseflow/wiki/Exporting-and-Importing-Appeals
   # See examples in spec/fixes/
-  def export_appeal(appeal, filename: "/tmp/appeal-#{appeal.id}.json", purpose: 'to diagnose appeal', verbosity: 5)
+  # :reek:LongParameterList
+  def export_appeal(appeal, filename: "/tmp/appeal-#{appeal.id}.json", purpose: "to diagnose appeal", verbosity: 5)
     sje = SanitizedJsonExporter.new(appeal, verbosity: verbosity)
 
     # Save to a file that is accessible by a non-root user like /tmp
