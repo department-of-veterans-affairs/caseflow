@@ -5,6 +5,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let(:default_slot_length) { "30 minutes" }
   let(:default_num_slots) { 4 }
   let(:default_start_time) { "8:45 AM" }
+  let(:sample_room) { "1 (1W200A)" }
 
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
@@ -88,6 +89,26 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
   end
 
+  shared_examples "edit room" do
+    it "can make changes to the Room on the docket" do
+      click_dropdown(name: "room", text: sample_room)
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.room).to eq(sample_room.first)
+      expect(page).to have_content(sample_room)
+    end
+
+    it "can remove the Room from the docket" do
+      click_dropdown(name: "room", text: "None")
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.room).to eq(nil)
+      expect(page).to have_content
+    end
+  end
+
   shared_examples "convert to virtual" do
     it "can convert docket type to virtual" do
       click_dropdown(name: "requestType", text: "Virtual")
@@ -131,6 +152,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "convert to virtual"
     include_examples "edit virtual docket"
+    include_examples "edit room"
 
     it "requires changing the regional office when docket type is changed" do
       click_dropdown(name: "requestType", text: "Virtual")
@@ -150,6 +172,10 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "edit virtual docket"
 
+    it "cannot change the room" do
+      expect(page).to have_field("Select Room", disabled: true, visible: false)
+    end
+
     it "can convert docket type" do
       click_dropdown(name: "requestType", text: "Central")
       find("button", text: "Save Changes").click
@@ -167,6 +193,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "convert to virtual"
     include_examples "edit virtual docket"
+    include_examples "edit room"
   end
 
   context "when request type is 'Travel'" do
@@ -177,6 +204,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "convert to virtual"
     include_examples "edit virtual docket"
+    include_examples "edit room"
   end
 
   context "when hearings have already been scheduled" do
