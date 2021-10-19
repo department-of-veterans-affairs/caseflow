@@ -9340,7 +9340,7 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email (for these notifications only)"
@@ -9382,7 +9382,7 @@ SAN FRANCISCO, CA 94103
                     </pre>
                   </div>
                 </ReadOnly>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -9564,7 +9564,7 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email (for these notifications only)"
@@ -9605,7 +9605,7 @@ SAN FRANCISCO, CA 94103
                     </pre>
                   </div>
                 </ReadOnly>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -34953,7 +34953,7 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="Bob.Smith@test.com"
                 emailType="appellantEmail"
                 label="Veteran Email (for these notifications only)"
@@ -35041,7 +35041,7 @@ SAN FRANCISCO, CA 94103
                     This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -51332,7 +51332,7 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email (for these notifications only)"
@@ -51419,7 +51419,7 @@ SAN FRANCISCO, CA 94103
                     This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>

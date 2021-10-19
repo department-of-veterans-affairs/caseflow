@@ -3,19 +3,15 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithVirtualHearingsFeatureEnabled, amaHearing } from 'test/data';
+import { anyUser, amaHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
 import { AddressLine } from 'app/hearings/components/details/Address';
-import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
-import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { defaultHearing } from 'test/data/hearings';
-import { HearingLocationDropdown } from 'app/hearings/components/dailyDocket/DailyDocketRowInputs';
-import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
@@ -32,7 +28,7 @@ describe('HearingConversion', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           amaHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -49,7 +45,7 @@ describe('HearingConversion', () => {
     ).toEqual(DateUtil.formatDateStr(amaHearing.scheduledFor));
     expect(conversion.find(AddressLine)).toHaveLength(2);
     expect(conversion.find(Timezone)).toHaveLength(2);
-    expect(conversion.find(VirtualHearingEmail)).toHaveLength(2);
+    expect(conversion.find(HearingEmail)).toHaveLength(2);
     expect(conversion.find(JudgeDropdown)).toHaveLength(1);
     expect(conversion).toMatchSnapshot();
   });
@@ -65,7 +61,7 @@ describe('HearingConversion', () => {
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithVirtualHearingsFeatureEnabled,
+          anyUser,
           amaHearing
         ),
         wrappingComponentProps: { store: detailsStore },
@@ -87,7 +83,7 @@ describe('HearingConversion', () => {
     expect(conversion.find(Timezone)).toHaveLength(0);
 
     // Ensure the emails are read-only
-    conversion.find(VirtualHearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
+    conversion.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
 
     expect(conversion).toMatchSnapshot();
   });
