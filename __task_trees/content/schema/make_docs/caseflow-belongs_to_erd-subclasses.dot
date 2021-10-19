@@ -394,6 +394,42 @@ digraph belongs_to_erd_subclasses {
 		];
 	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
 		style=dotted];
+	VirtualHearing	[fillcolor="#66ccff",
+		label=VirtualHearing,
+		style=filled,
+		];
+	VirtualHearing -> hearing_type	[label=hearing,
+		];
+	Transcription	[fillcolor="#66ccff",
+		label=Transcription,
+		style=filled,
+		];
+	Transcription -> Hearing	[label=hearing,
+		];
+	HearingView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="HearingView\n(associated with: User)",
+		shape=component,
+		style=filled,
+		];
+	HearingView -> hearing_type	[label=hearing,
+		];
+	HearingLocation	[fillcolor="#66ccff",
+		label=HearingLocation,
+		style=filled,
+		];
+	HearingLocation -> hearing_type	[label=hearing,
+		];
+	HearingIssueNote	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=HearingIssueNote,
+		shape=component,
+		style=filled,
+		];
+	HearingIssueNote -> RequestIssue	[label=request_issue,
+		];
+	HearingIssueNote -> Hearing	[label=hearing,
+		];
 	SentHearingEmailEvent	[color="#aaaaaa",
 		fillcolor="#f2f2f2",
 		label="SentHearingEmailEvent\n(associated with: sent_by User)",
@@ -409,6 +445,16 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	LegacyHearing -> LegacyAppeal	[label=appeal,
+		];
+	AppealStreamSnapshot	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="AppealStreamSnapshot\n(a.k.a. hearing_appeal_stream_snapshots)",
+		shape=component,
+		style=filled,
+		];
+	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
+		];
+	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
 		];
 	CavcRemand	[
 		label=CavcRemand,
@@ -597,12 +643,6 @@ digraph belongs_to_erd_subclasses {
 		];
 	OrganizationsUser -> Organization	[label=organization,
 		];
-	VirtualHearing	[fillcolor="#66ccff",
-		label=VirtualHearing,
-		style=filled,
-		];
-	VirtualHearing -> hearing_type	[label=hearing,
-		];
 	AdvanceOnDocketMotion	[
 		label="AdvanceOnDocketMotion\n(associated with: User)",
 		];
@@ -628,16 +668,6 @@ digraph belongs_to_erd_subclasses {
 		label=ApiView,
 		];
 	ApiView -> ApiKey	[label=api_key,
-		];
-	AppealStreamSnapshot	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="AppealStreamSnapshot\n(a.k.a. hearing_appeal_stream_snapshots)",
-		shape=component,
-		style=filled,
-		];
-	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
-		];
-	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
 		];
 	AppellantSubstitution	[
 		label=AppellantSubstitution,
@@ -737,30 +767,6 @@ digraph belongs_to_erd_subclasses {
 		];
 	EndProductUpdate -> original_decision_review_type	[label=original_decision_review,
 		];
-	HearingIssueNote	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label=HearingIssueNote,
-		shape=component,
-		style=filled,
-		];
-	HearingIssueNote -> RequestIssue	[label=request_issue,
-		];
-	HearingIssueNote -> Hearing	[label=hearing,
-		];
-	HearingLocation	[fillcolor="#66ccff",
-		label=HearingLocation,
-		style=filled,
-		];
-	HearingLocation -> hearing_type	[label=hearing,
-		];
-	HearingView	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="HearingView\n(associated with: User)",
-		shape=component,
-		style=filled,
-		];
-	HearingView -> hearing_type	[label=hearing,
-		];
 	Allocation	[
 		label=Allocation,
 		];
@@ -771,12 +777,6 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	SentHearingAdminEmailEvent -> SentHearingEmailEvent	[label=sent_hearing_email_event,
-		];
-	Transcription	[fillcolor="#66ccff",
-		label=Transcription,
-		style=filled,
-		];
-	Transcription -> Hearing	[label=hearing,
 		];
 	VirtualHearingEstablishment	[fillcolor="#66ccff",
 		label=VirtualHearingEstablishment,
