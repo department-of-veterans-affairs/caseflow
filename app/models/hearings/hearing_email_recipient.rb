@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class HearingEmailRecipient < CaseflowRecord
-  include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing(:hearing)
-
   def self.email_error_message
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -19,6 +16,9 @@ class HearingEmailRecipient < CaseflowRecord
 
   validates :email_address, presence: true, on: :create
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id
+
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing(:hearing)
 
   def reminder_sent_at
     email_events
