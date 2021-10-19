@@ -191,7 +191,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Appellant Email (for these notifications only)"
@@ -261,7 +261,7 @@ SAN FRANCISCO, CA 94103
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -434,7 +434,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email={null}
           emailType="appellantEmail"
           label="Veteran Email (for these notifications only)"
@@ -459,7 +459,7 @@ SAN FRANCISCO, CA 94103
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
         <div>
           <Alert
             fixed={false}
@@ -651,7 +651,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           emailType="appellantEmail"
           label="Veteran Email (for these notifications only)"
           optional={false}
@@ -675,7 +675,7 @@ SAN FRANCISCO, CA 94103
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
         <div>
           <Alert
             fixed={false}
@@ -16991,7 +16991,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email (for these notifications only)"
@@ -17061,7 +17061,7 @@ SAN FRANCISCO, CA 94103
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17245,7 +17245,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email (for these notifications only)"
@@ -17270,7 +17270,7 @@ SAN FRANCISCO, CA 94103
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17412,7 +17412,7 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Appellant Email (for these notifications only)"
@@ -17482,7 +17482,7 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17665,7 +17665,7 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
           label="Veteran Email (for these notifications only)"
@@ -17735,7 +17735,7 @@ SAN FRANCISCO, CA 94103
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
