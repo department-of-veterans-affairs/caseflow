@@ -28,8 +28,13 @@ module Seeds
     def create_users
       User.system_user.save!
 
-      bvascasper = User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
-      create(:staff, :attorney_role, user: bvascasper)
+      create(
+        :user,
+        :with_vacols_attorney_record,
+        css_id: "BVASCASPER1",
+        station_id: 101,
+        full_name: "Steve Attorney_Cases Casper"
+      )
 
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
