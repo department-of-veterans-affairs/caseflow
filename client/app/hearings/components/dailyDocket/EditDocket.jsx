@@ -106,7 +106,15 @@ export const EditDocket = (props) => {
       return setFields({
         ...fields,
         regionalOffice: getRegionalOffice(null),
-        [key]: value,
+        [key]: value
+      });
+    }
+
+    if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.virtual) {
+      return setFields({
+        ...fields,
+        room: formatRoomOption(null),
+        [key]: value
       });
     }
 
