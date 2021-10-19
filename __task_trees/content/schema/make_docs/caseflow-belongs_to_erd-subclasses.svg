@@ -353,7 +353,7 @@
 <polygon fill="#000099" stroke="#000099" points="2736.98,-1846.62 2747.33,-1844.37 2737.84,-1839.67 2736.98,-1846.62"/>
 </g>
 <!-- source_type -->
-<g id="node66" class="node">
+<g id="node70" class="node">
 <title>source_type</title>
 <polygon fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="3184.01,-1973 3184.01,-2079 3345.01,-2079 3345.01,-1973 3184.01,-1973"/>
 <text text-anchor="middle" x="3264.51" y="-2063.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">source_type</text>
@@ -365,7 +365,7 @@
 <text text-anchor="middle" x="3264.51" y="-1980.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampElection</text>
 </g>
 <!-- EndProductEstablishment&#45;&gt;source_type -->
-<g id="edge65" class="edge">
+<g id="edge70" class="edge">
 <title>EndProductEstablishment&#45;&gt;source_type</title>
 <path fill="none" stroke="black" d="M2976.81,-2026C3041.98,-2026 3116.98,-2026 3173.92,-2026"/>
 <polygon fill="black" stroke="black" points="3173.98,-2029.5 3183.98,-2026 3173.98,-2022.5 3173.98,-2029.5"/>
@@ -798,8 +798,85 @@
 <path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M2302.8,-1475.85C2388.8,-1475.71 2520.97,-1475.5 2631.55,-1475.32"/>
 <polygon fill="#000099" stroke="#000099" points="2631.85,-1478.82 2641.84,-1475.31 2631.83,-1471.82 2631.85,-1478.82"/>
 </g>
-<!-- SentHearingEmailEvent -->
+<!-- VirtualHearing -->
 <g id="node40" class="node">
+<title>VirtualHearing</title>
+<ellipse fill="#66ccff" stroke="black" cx="2831.78" cy="-1637" rx="79.89" ry="18"/>
+<text text-anchor="middle" x="2831.78" y="-1633.3" font-family="Times,serif" font-size="14.00">VirtualHearing</text>
+</g>
+<!-- VirtualHearing&#45;&gt;hearing_type -->
+<g id="edge36" class="edge">
+<title>VirtualHearing&#45;&gt;hearing_type</title>
+<path fill="none" stroke="black" d="M2908.94,-1641.77C2974.77,-1643.87 3071.92,-1642.13 3153.56,-1621 3170.26,-1616.68 3187.41,-1609.68 3203.05,-1602.13"/>
+<polygon fill="black" stroke="black" points="3204.68,-1605.23 3212.07,-1597.64 3201.55,-1598.96 3204.68,-1605.23"/>
+<text text-anchor="middle" x="3096.56" y="-1642.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
+<!-- Transcription -->
+<g id="node41" class="node">
+<title>Transcription</title>
+<ellipse fill="#66ccff" stroke="black" cx="1648.69" cy="-1988" rx="73.39" ry="18"/>
+<text text-anchor="middle" x="1648.69" y="-1984.3" font-family="Times,serif" font-size="14.00">Transcription</text>
+</g>
+<!-- Transcription&#45;&gt;Hearing -->
+<g id="edge37" class="edge">
+<title>Transcription&#45;&gt;Hearing</title>
+<path fill="none" stroke="black" d="M1722.39,-1988C1802.67,-1988 1934.63,-1988 2041.07,-1988"/>
+<polygon fill="black" stroke="black" points="2041.29,-1991.5 2051.29,-1988 2041.29,-1984.5 2041.29,-1991.5"/>
+<text text-anchor="middle" x="1914.39" y="-1991.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
+<!-- HearingView -->
+<g id="node42" class="node">
+<title>HearingView</title>
+<polygon fill="#f2f2f2" stroke="#aaaaaa" points="2922.78,-1819 2740.78,-1819 2740.78,-1815 2736.78,-1815 2736.78,-1811 2740.78,-1811 2740.78,-1789 2736.78,-1789 2736.78,-1785 2740.78,-1785 2740.78,-1781 2922.78,-1781 2922.78,-1819"/>
+<polyline fill="none" stroke="#aaaaaa" points="2740.78,-1815 2744.78,-1815 2744.78,-1811 2740.78,-1811 "/>
+<polyline fill="none" stroke="#aaaaaa" points="2740.78,-1789 2744.78,-1789 2744.78,-1785 2740.78,-1785 "/>
+<text text-anchor="middle" x="2831.78" y="-1803.8" font-family="Times,serif" font-size="14.00">HearingView</text>
+<text text-anchor="middle" x="2831.78" y="-1788.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
+</g>
+<!-- HearingView&#45;&gt;hearing_type -->
+<g id="edge38" class="edge">
+<title>HearingView&#45;&gt;hearing_type</title>
+<path fill="none" stroke="black" d="M2922.99,-1800.24C2992.25,-1796.11 3087,-1780.63 3153.56,-1731 3196.88,-1698.7 3228.54,-1643.99 3246.47,-1606.72"/>
+<polygon fill="black" stroke="black" points="3249.65,-1608.19 3250.74,-1597.65 3243.32,-1605.21 3249.65,-1608.19"/>
+<text text-anchor="middle" x="3096.56" y="-1786.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
+<!-- HearingLocation -->
+<g id="node43" class="node">
+<title>HearingLocation</title>
+<ellipse fill="#66ccff" stroke="black" cx="2831.78" cy="-1745" rx="87.99" ry="18"/>
+<text text-anchor="middle" x="2831.78" y="-1741.3" font-family="Times,serif" font-size="14.00">HearingLocation</text>
+</g>
+<!-- HearingLocation&#45;&gt;hearing_type -->
+<g id="edge39" class="edge">
+<title>HearingLocation&#45;&gt;hearing_type</title>
+<path fill="none" stroke="black" d="M2913.77,-1738.53C2947.56,-1734.52 2986.93,-1728.12 3021.56,-1718 3083.42,-1699.92 3098.93,-1692.18 3153.56,-1658 3178.23,-1642.57 3203.4,-1622.15 3223.42,-1604.57"/>
+<polygon fill="black" stroke="black" points="3225.96,-1606.99 3231.1,-1597.73 3221.3,-1601.76 3225.96,-1606.99"/>
+<text text-anchor="middle" x="3096.56" y="-1715.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
+<!-- HearingIssueNote -->
+<g id="node44" class="node">
+<title>HearingIssueNote</title>
+<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1721.69,-1943 1575.69,-1943 1575.69,-1939 1571.69,-1939 1571.69,-1935 1575.69,-1935 1575.69,-1915 1571.69,-1915 1571.69,-1911 1575.69,-1911 1575.69,-1907 1721.69,-1907 1721.69,-1943"/>
+<polyline fill="none" stroke="#aaaaaa" points="1575.69,-1939 1579.69,-1939 1579.69,-1935 1575.69,-1935 "/>
+<polyline fill="none" stroke="#aaaaaa" points="1575.69,-1915 1579.69,-1915 1579.69,-1911 1575.69,-1911 "/>
+<text text-anchor="middle" x="1648.69" y="-1921.3" font-family="Times,serif" font-size="14.00">HearingIssueNote</text>
+</g>
+<!-- HearingIssueNote&#45;&gt;RequestIssue -->
+<g id="edge40" class="edge">
+<title>HearingIssueNote&#45;&gt;RequestIssue</title>
+<path fill="none" stroke="black" d="M1721.92,-1915.74C1799.65,-1904.91 1926.52,-1884.73 2033.39,-1856 2063.69,-1847.85 2096.17,-1836.8 2124.91,-1826.17"/>
+<polygon fill="black" stroke="black" points="2126.37,-1829.37 2134.51,-1822.59 2123.92,-1822.81 2126.37,-1829.37"/>
+<text text-anchor="middle" x="1914.39" y="-1908.8" font-family="Times,serif" font-size="14.00">request_issue</text>
+</g>
+<!-- HearingIssueNote&#45;&gt;Hearing -->
+<g id="edge41" class="edge">
+<title>HearingIssueNote&#45;&gt;Hearing</title>
+<path fill="none" stroke="black" d="M1721.82,-1933.11C1808.84,-1942.89 1957.19,-1959.56 2067.6,-1971.97"/>
+<polygon fill="black" stroke="black" points="2067.5,-1975.48 2077.83,-1973.12 2068.29,-1968.53 2067.5,-1975.48"/>
+<text text-anchor="middle" x="1914.39" y="-1971.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
+<!-- SentHearingEmailEvent -->
+<g id="node45" class="node">
 <title>SentHearingEmailEvent</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="1769.19,-1414 1528.19,-1414 1528.19,-1410 1524.19,-1410 1524.19,-1406 1528.19,-1406 1528.19,-1384 1524.19,-1384 1524.19,-1380 1528.19,-1380 1528.19,-1376 1769.19,-1376 1769.19,-1414"/>
 <polyline fill="none" stroke="#aaaaaa" points="1528.19,-1410 1532.19,-1410 1532.19,-1406 1528.19,-1406 "/>
@@ -808,55 +885,78 @@
 <text text-anchor="middle" x="1648.69" y="-1383.8" font-family="Times,serif" font-size="14.00">(associated with: sent_by User)</text>
 </g>
 <!-- SentHearingEmailEvent&#45;&gt;hearing_type -->
-<g id="edge36" class="edge">
+<g id="edge43" class="edge">
 <title>SentHearingEmailEvent&#45;&gt;hearing_type</title>
 <path fill="none" stroke="black" d="M1769.62,-1386.08C2008.9,-1370.41 2562.09,-1344.91 3021.56,-1404 3081.34,-1411.69 3102.3,-1403.32 3153.56,-1435 3190.74,-1457.97 3221.38,-1497.9 3240.78,-1527.84"/>
 <polygon fill="black" stroke="black" points="3237.89,-1529.81 3246.2,-1536.39 3243.81,-1526.06 3237.89,-1529.81"/>
 <text text-anchor="middle" x="2506.5" y="-1375.8" font-family="Times,serif" font-size="14.00">hearing</text>
 </g>
 <!-- SentHearingEmailEvent&#45;&gt;HearingEmailRecipient -->
-<g id="edge37" class="edge">
+<g id="edge42" class="edge">
 <title>SentHearingEmailEvent&#45;&gt;HearingEmailRecipient</title>
 <path fill="none" stroke="black" d="M1769.25,-1412.28C1870.48,-1426.91 2013.95,-1447.64 2109.44,-1461.44"/>
 <polygon fill="black" stroke="black" points="2108.99,-1464.91 2119.39,-1462.88 2109.99,-1457.98 2108.99,-1464.91"/>
 <text text-anchor="middle" x="1914.39" y="-1453.8" font-family="Times,serif" font-size="14.00">email_recipient</text>
 </g>
 <!-- LegacyHearing -->
-<g id="node41" class="node">
+<g id="node46" class="node">
 <title>LegacyHearing</title>
 <ellipse fill="#66ccff" stroke="black" cx="1648.69" cy="-2425" rx="128.89" ry="26.74"/>
 <text text-anchor="middle" x="1648.69" y="-2428.8" font-family="Times,serif" font-size="14.00">LegacyHearing</text>
 <text text-anchor="middle" x="1648.69" y="-2413.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- LegacyHearing&#45;&gt;LegacyAppeal -->
-<g id="edge38" class="edge">
+<g id="edge44" class="edge">
 <title>LegacyHearing&#45;&gt;LegacyAppeal</title>
 <path fill="none" stroke="black" d="M1750.08,-2408.39C1833.24,-2400.2 1950.78,-2402.1 2033.39,-2459 2048.45,-2469.37 2036.75,-2485.03 2051.39,-2496 2072.52,-2511.84 2099.68,-2519.67 2125.55,-2523.24"/>
 <polygon fill="black" stroke="black" points="2125.42,-2526.75 2135.76,-2524.45 2126.24,-2519.8 2125.42,-2526.75"/>
 <text text-anchor="middle" x="1914.39" y="-2462.8" font-family="Times,serif" font-size="14.00">appeal</text>
 </g>
+<!-- AppealStreamSnapshot -->
+<g id="node47" class="node">
+<title>AppealStreamSnapshot</title>
+<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1293,-2484 979,-2484 979,-2480 975,-2480 975,-2476 979,-2476 979,-2454 975,-2454 975,-2450 979,-2450 979,-2446 1293,-2446 1293,-2484"/>
+<polyline fill="none" stroke="#aaaaaa" points="979,-2480 983,-2480 983,-2476 979,-2476 "/>
+<polyline fill="none" stroke="#aaaaaa" points="979,-2454 983,-2454 983,-2450 979,-2450 "/>
+<text text-anchor="middle" x="1136" y="-2468.8" font-family="Times,serif" font-size="14.00">AppealStreamSnapshot</text>
+<text text-anchor="middle" x="1136" y="-2453.8" font-family="Times,serif" font-size="14.00">(a.k.a. hearing_appeal_stream_snapshots)</text>
+</g>
+<!-- AppealStreamSnapshot&#45;&gt;LegacyAppeal -->
+<g id="edge46" class="edge">
+<title>AppealStreamSnapshot&#45;&gt;LegacyAppeal</title>
+<path fill="none" stroke="black" d="M1293.29,-2472.37C1422.96,-2478.59 1612.19,-2487.91 1777.39,-2497 1899.57,-2503.72 2041.1,-2512.39 2128.14,-2517.82"/>
+<polygon fill="black" stroke="black" points="2128.02,-2521.32 2138.22,-2518.45 2128.46,-2514.34 2128.02,-2521.32"/>
+<text text-anchor="middle" x="1648.69" y="-2500.8" font-family="Times,serif" font-size="14.00">appeal</text>
+</g>
+<!-- AppealStreamSnapshot&#45;&gt;LegacyHearing -->
+<g id="edge45" class="edge">
+<title>AppealStreamSnapshot&#45;&gt;LegacyHearing</title>
+<path fill="none" stroke="black" d="M1293.35,-2452.75C1365.18,-2447.13 1449.37,-2440.53 1517.66,-2435.18"/>
+<polygon fill="black" stroke="black" points="1518.36,-2438.64 1528.05,-2434.37 1517.81,-2431.66 1518.36,-2438.64"/>
+<text text-anchor="middle" x="1406.5" y="-2454.8" font-family="Times,serif" font-size="14.00">hearing</text>
+</g>
 <!-- CavcRemand -->
-<g id="node42" class="node">
+<g id="node48" class="node">
 <title>CavcRemand</title>
 <ellipse fill="none" stroke="black" cx="2211.19" cy="-2469" rx="71.49" ry="18"/>
 <text text-anchor="middle" x="2211.19" y="-2465.3" font-family="Times,serif" font-size="14.00">CavcRemand</text>
 </g>
 <!-- CavcRemand&#45;&gt;Appeal -->
-<g id="edge39" class="edge">
+<g id="edge47" class="edge">
 <title>CavcRemand&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2274.85,-2477.4C2377.65,-2489.62 2575.53,-2506.19 2624,-2460 2665.44,-2420.5 2603,-2244.92 2642,-2203 2677.07,-2165.3 2739.21,-2163.44 2782.58,-2167.79"/>
 <polygon fill="black" stroke="black" points="2782.29,-2171.28 2792.63,-2168.94 2783.09,-2164.33 2782.29,-2171.28"/>
 <text text-anchor="middle" x="2506.5" y="-2494.8" font-family="Times,serif" font-size="14.00">source_appeal</text>
 </g>
 <!-- CavcRemand&#45;&gt;Appeal -->
-<g id="edge40" class="edge">
+<g id="edge48" class="edge">
 <title>CavcRemand&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2270.17,-2458.67C2304.61,-2452.83 2349.19,-2445.75 2389,-2441 2415.01,-2437.89 2605.46,-2440.51 2624,-2422 2658.55,-2387.49 2608.52,-2238.55 2642,-2203 2677.3,-2165.51 2739.39,-2163.61 2782.69,-2167.89"/>
 <polygon fill="black" stroke="black" points="2782.38,-2171.38 2792.71,-2169.02 2783.17,-2164.42 2782.38,-2171.38"/>
 <text text-anchor="middle" x="2506.5" y="-2444.8" font-family="Times,serif" font-size="14.00">remand_appeal</text>
 </g>
 <!-- Organization -->
-<g id="node43" class="node">
+<g id="node49" class="node">
 <title>Organization</title>
 <polygon fill="#d9d9ff" stroke="#000099" points="3210.01,-756 3210.01,-792 3319.01,-792 3319.01,-756 3210.01,-756"/>
 <text text-anchor="middle" x="3264.51" y="-770.3" font-family="Times,serif" font-size="14.00" fill="#000099">Organization</text>
@@ -1186,7 +1286,7 @@
 <polygon fill="#000099" stroke="#000099" points="3430.63,-1475.58 3441.21,-1475.05 3432.61,-1468.86 3430.63,-1475.58"/>
 </g>
 <!-- OrganizationsUser -->
-<g id="node44" class="node">
+<g id="node50" class="node">
 <title>OrganizationsUser</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="2922.78,-747 2740.78,-747 2740.78,-743 2736.78,-743 2736.78,-739 2740.78,-739 2740.78,-717 2736.78,-717 2736.78,-713 2740.78,-713 2740.78,-709 2922.78,-709 2922.78,-747"/>
 <polyline fill="none" stroke="#aaaaaa" points="2740.78,-743 2744.78,-743 2744.78,-739 2740.78,-739 "/>
@@ -1195,54 +1295,41 @@
 <text text-anchor="middle" x="2831.78" y="-716.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- OrganizationsUser&#45;&gt;Organization -->
-<g id="edge41" class="edge">
+<g id="edge49" class="edge">
 <title>OrganizationsUser&#45;&gt;Organization</title>
 <path fill="none" stroke="black" d="M2922.88,-733.48C2987.29,-737.91 3075.96,-745.05 3153.56,-755 3168.55,-756.92 3184.61,-759.44 3199.7,-762"/>
 <polygon fill="black" stroke="black" points="3199.51,-765.52 3209.97,-763.78 3200.71,-758.63 3199.51,-765.52"/>
 <text text-anchor="middle" x="3096.56" y="-758.8" font-family="Times,serif" font-size="14.00">organization</text>
 </g>
-<!-- VirtualHearing -->
-<g id="node45" class="node">
-<title>VirtualHearing</title>
-<ellipse fill="#66ccff" stroke="black" cx="2831.78" cy="-1637" rx="79.89" ry="18"/>
-<text text-anchor="middle" x="2831.78" y="-1633.3" font-family="Times,serif" font-size="14.00">VirtualHearing</text>
-</g>
-<!-- VirtualHearing&#45;&gt;hearing_type -->
-<g id="edge42" class="edge">
-<title>VirtualHearing&#45;&gt;hearing_type</title>
-<path fill="none" stroke="black" d="M2908.94,-1641.77C2974.77,-1643.87 3071.92,-1642.13 3153.56,-1621 3170.26,-1616.68 3187.41,-1609.68 3203.05,-1602.13"/>
-<polygon fill="black" stroke="black" points="3204.68,-1605.23 3212.07,-1597.64 3201.55,-1598.96 3204.68,-1605.23"/>
-<text text-anchor="middle" x="3096.56" y="-1642.8" font-family="Times,serif" font-size="14.00">hearing</text>
-</g>
 <!-- AdvanceOnDocketMotion -->
-<g id="node46" class="node">
+<g id="node51" class="node">
 <title>AdvanceOnDocketMotion</title>
 <ellipse fill="none" stroke="black" cx="2831.78" cy="-664" rx="139.1" ry="26.74"/>
 <text text-anchor="middle" x="2831.78" y="-667.8" font-family="Times,serif" font-size="14.00">AdvanceOnDocketMotion</text>
 <text text-anchor="middle" x="2831.78" y="-652.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- AdvanceOnDocketMotion&#45;&gt;appeal_type -->
-<g id="edge44" class="edge">
+<g id="edge51" class="edge">
 <title>AdvanceOnDocketMotion&#45;&gt;appeal_type</title>
 <path fill="none" stroke="black" d="M2967.37,-657.6C3031.46,-661.78 3104.61,-678.18 3153.56,-725 3178.65,-748.99 3162.8,-767.41 3171.56,-801 3198.2,-903.04 3233.25,-1022.15 3251.42,-1082.9"/>
 <polygon fill="black" stroke="black" points="3248.07,-1083.92 3254.29,-1092.49 3254.78,-1081.91 3248.07,-1083.92"/>
 <text text-anchor="middle" x="3096.56" y="-728.8" font-family="Times,serif" font-size="14.00">appeal</text>
 </g>
 <!-- AdvanceOnDocketMotion&#45;&gt;Person -->
-<g id="edge43" class="edge">
+<g id="edge50" class="edge">
 <title>AdvanceOnDocketMotion&#45;&gt;Person</title>
 <path fill="none" stroke="black" d="M2965.15,-656.16C2985.6,-650.24 3005.29,-641.31 3021.56,-628 3037.92,-614.63 3023.28,-597.46 3039.56,-584 3079.4,-551.07 3105.56,-580.16 3153.56,-561 3183.18,-549.18 3213.65,-529.34 3234.97,-513.97"/>
 <polygon fill="black" stroke="black" points="3237.25,-516.64 3243.24,-507.9 3233.11,-510.99 3237.25,-516.64"/>
 <text text-anchor="middle" x="3096.56" y="-587.8" font-family="Times,serif" font-size="14.00">person</text>
 </g>
 <!-- Document -->
-<g id="node47" class="node">
+<g id="node52" class="node">
 <title>Document</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-2976" rx="57.69" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-2972.3" font-family="Times,serif" font-size="14.00">Document</text>
 </g>
 <!-- Annotation -->
-<g id="node48" class="node">
+<g id="node53" class="node">
 <title>Annotation</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="219.69,-3051 37.69,-3051 37.69,-3047 33.69,-3047 33.69,-3043 37.69,-3043 37.69,-3021 33.69,-3021 33.69,-3017 37.69,-3017 37.69,-3013 219.69,-3013 219.69,-3051"/>
 <polyline fill="none" stroke="#aaaaaa" points="37.69,-3047 41.69,-3047 41.69,-3043 37.69,-3043 "/>
@@ -1251,76 +1338,53 @@
 <text text-anchor="middle" x="128.69" y="-3020.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- Annotation&#45;&gt;Document -->
-<g id="edge45" class="edge">
+<g id="edge52" class="edge">
 <title>Annotation&#45;&gt;Document</title>
 <path fill="none" stroke="black" d="M219.84,-3020.57C305.59,-3009.69 432.4,-2993.61 507.91,-2984.03"/>
 <polygon fill="black" stroke="black" points="508.74,-2987.45 518.22,-2982.72 507.86,-2980.51 508.74,-2987.45"/>
 <text text-anchor="middle" x="334.89" y="-3016.8" font-family="Times,serif" font-size="14.00">document</text>
 </g>
 <!-- ApiKey -->
-<g id="node49" class="node">
+<g id="node54" class="node">
 <title>ApiKey</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-3087" rx="42.79" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-3083.3" font-family="Times,serif" font-size="14.00">ApiKey</text>
 </g>
 <!-- ApiView -->
-<g id="node50" class="node">
+<g id="node55" class="node">
 <title>ApiView</title>
 <ellipse fill="none" stroke="black" cx="128.69" cy="-3087" rx="48.19" ry="18"/>
 <text text-anchor="middle" x="128.69" y="-3083.3" font-family="Times,serif" font-size="14.00">ApiView</text>
 </g>
 <!-- ApiView&#45;&gt;ApiKey -->
-<g id="edge46" class="edge">
+<g id="edge53" class="edge">
 <title>ApiView&#45;&gt;ApiKey</title>
 <path fill="none" stroke="black" d="M176.94,-3087C260.2,-3087 432.42,-3087 519.04,-3087"/>
 <polygon fill="black" stroke="black" points="519.17,-3090.5 529.17,-3087 519.17,-3083.5 519.17,-3090.5"/>
 <text text-anchor="middle" x="334.89" y="-3090.8" font-family="Times,serif" font-size="14.00">api_key</text>
 </g>
-<!-- AppealStreamSnapshot -->
-<g id="node51" class="node">
-<title>AppealStreamSnapshot</title>
-<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1293,-2484 979,-2484 979,-2480 975,-2480 975,-2476 979,-2476 979,-2454 975,-2454 975,-2450 979,-2450 979,-2446 1293,-2446 1293,-2484"/>
-<polyline fill="none" stroke="#aaaaaa" points="979,-2480 983,-2480 983,-2476 979,-2476 "/>
-<polyline fill="none" stroke="#aaaaaa" points="979,-2454 983,-2454 983,-2450 979,-2450 "/>
-<text text-anchor="middle" x="1136" y="-2468.8" font-family="Times,serif" font-size="14.00">AppealStreamSnapshot</text>
-<text text-anchor="middle" x="1136" y="-2453.8" font-family="Times,serif" font-size="14.00">(a.k.a. hearing_appeal_stream_snapshots)</text>
-</g>
-<!-- AppealStreamSnapshot&#45;&gt;LegacyAppeal -->
-<g id="edge48" class="edge">
-<title>AppealStreamSnapshot&#45;&gt;LegacyAppeal</title>
-<path fill="none" stroke="black" d="M1293.29,-2472.37C1422.96,-2478.59 1612.19,-2487.91 1777.39,-2497 1899.57,-2503.72 2041.1,-2512.39 2128.14,-2517.82"/>
-<polygon fill="black" stroke="black" points="2128.02,-2521.32 2138.22,-2518.45 2128.46,-2514.34 2128.02,-2521.32"/>
-<text text-anchor="middle" x="1648.69" y="-2500.8" font-family="Times,serif" font-size="14.00">appeal</text>
-</g>
-<!-- AppealStreamSnapshot&#45;&gt;LegacyHearing -->
-<g id="edge47" class="edge">
-<title>AppealStreamSnapshot&#45;&gt;LegacyHearing</title>
-<path fill="none" stroke="black" d="M1293.35,-2452.75C1365.18,-2447.13 1449.37,-2440.53 1517.66,-2435.18"/>
-<polygon fill="black" stroke="black" points="1518.36,-2438.64 1528.05,-2434.37 1517.81,-2431.66 1518.36,-2438.64"/>
-<text text-anchor="middle" x="1406.5" y="-2454.8" font-family="Times,serif" font-size="14.00">hearing</text>
-</g>
 <!-- AppellantSubstitution -->
-<g id="node52" class="node">
+<g id="node56" class="node">
 <title>AppellantSubstitution</title>
 <ellipse fill="none" stroke="black" cx="2211.19" cy="-2415" rx="112.38" ry="18"/>
 <text text-anchor="middle" x="2211.19" y="-2411.3" font-family="Times,serif" font-size="14.00">AppellantSubstitution</text>
 </g>
 <!-- AppellantSubstitution&#45;&gt;Appeal -->
-<g id="edge49" class="edge">
+<g id="edge54" class="edge">
 <title>AppellantSubstitution&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2319.85,-2410.31C2438.2,-2404.64 2613.19,-2394.55 2624,-2384 2652.92,-2355.76 2614.04,-2232.19 2642,-2203 2677.51,-2165.93 2739.27,-2163.86 2782.45,-2167.99"/>
 <polygon fill="black" stroke="black" points="2782.13,-2171.48 2792.45,-2169.09 2782.89,-2164.52 2782.13,-2171.48"/>
 <text text-anchor="middle" x="2506.5" y="-2410.8" font-family="Times,serif" font-size="14.00">source_appeal</text>
 </g>
 <!-- AppellantSubstitution&#45;&gt;Appeal -->
-<g id="edge50" class="edge">
+<g id="edge55" class="edge">
 <title>AppellantSubstitution&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2306.46,-2405.41C2328.51,-2400.65 2351.29,-2393.56 2371,-2383 2380.97,-2377.65 2378.75,-2369.79 2389,-2365 2436.5,-2342.8 2586.23,-2380.37 2624,-2344 2669.51,-2300.18 2597.66,-2248.01 2642,-2203 2677.92,-2166.53 2739.31,-2164.27 2782.3,-2168.19"/>
 <polygon fill="black" stroke="black" points="2781.95,-2171.67 2792.26,-2169.24 2782.69,-2164.71 2781.95,-2171.67"/>
 <text text-anchor="middle" x="2506.5" y="-2368.8" font-family="Times,serif" font-size="14.00">target_appeal</text>
 </g>
 <!-- BoardGrantEffectuation -->
-<g id="node53" class="node">
+<g id="node57" class="node">
 <title>BoardGrantEffectuation</title>
 <polygon fill="#ff5050" stroke="black" points="2299.19,-1724 2117.19,-1724 2117.19,-1688 2305.19,-1688 2305.19,-1718 2299.19,-1724"/>
 <polyline fill="none" stroke="black" points="2299.19,-1724 2299.19,-1718 "/>
@@ -1328,54 +1392,54 @@
 <text text-anchor="middle" x="2211.19" y="-1702.3" font-family="Times,serif" font-size="14.00">BoardGrantEffectuation</text>
 </g>
 <!-- BoardGrantEffectuation&#45;&gt;DecisionIssue -->
-<g id="edge52" class="edge">
+<g id="edge57" class="edge">
 <title>BoardGrantEffectuation&#45;&gt;DecisionIssue</title>
 <path fill="none" stroke="black" d="M2238.96,-1687.88C2272.44,-1666.23 2332.28,-1630.84 2389,-1614 2439.3,-1599.06 2588.42,-1629.57 2624,-1591 2664.05,-1547.59 2603.5,-572.8 2642,-528 2671.32,-493.88 2722.4,-486.89 2764.04,-487.88"/>
 <polygon fill="black" stroke="black" points="2764,-491.39 2774.13,-488.28 2764.28,-484.39 2764,-491.39"/>
 <text text-anchor="middle" x="2506.5" y="-1617.8" font-family="Times,serif" font-size="14.00">granted_decision_issue</text>
 </g>
 <!-- BoardGrantEffectuation&#45;&gt;EndProductEstablishment -->
-<g id="edge54" class="edge">
+<g id="edge59" class="edge">
 <title>BoardGrantEffectuation&#45;&gt;EndProductEstablishment</title>
 <path fill="none" stroke="black" d="M2305.23,-1707.71C2401.05,-1714.91 2546.92,-1742.06 2624,-1837 2667.15,-1890.16 2595.34,-1939.89 2642,-1990 2652.72,-2001.52 2665.9,-2010.01 2680.27,-2016.21"/>
 <polygon fill="black" stroke="black" points="2679.28,-2019.58 2689.87,-2019.96 2681.83,-2013.06 2679.28,-2019.58"/>
 <text text-anchor="middle" x="2506.5" y="-1840.8" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
 </g>
 <!-- BoardGrantEffectuation&#45;&gt;DecisionDocument -->
-<g id="edge53" class="edge">
+<g id="edge58" class="edge">
 <title>BoardGrantEffectuation&#45;&gt;DecisionDocument</title>
 <path fill="none" stroke="black" d="M2305.22,-1695.99C2332.21,-1693.52 2361.75,-1691.23 2389,-1690 2513.31,-1684.39 2657.5,-1686.29 2746.44,-1688.44"/>
 <polygon fill="black" stroke="black" points="2746.39,-1691.94 2756.48,-1688.69 2746.57,-1684.94 2746.39,-1691.94"/>
 <text text-anchor="middle" x="2506.5" y="-1693.8" font-family="Times,serif" font-size="14.00">decision_document</text>
 </g>
 <!-- BoardGrantEffectuation&#45;&gt;Appeal -->
-<g id="edge51" class="edge">
+<g id="edge56" class="edge">
 <title>BoardGrantEffectuation&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2305.34,-1715.07C2329.77,-1721.81 2353.99,-1733.13 2371,-1752 2401.23,-1785.55 2355.55,-1821.66 2389,-1852 2427.81,-1887.2 2587.18,-1833.72 2624,-1871 2665.17,-1912.68 2603.81,-2089.58 2642,-2134 2675.54,-2173.01 2736.55,-2180.37 2780.14,-2179.99"/>
 <polygon fill="black" stroke="black" points="2780.35,-2183.49 2790.27,-2179.76 2780.19,-2176.49 2780.35,-2183.49"/>
 <text text-anchor="middle" x="2506.5" y="-1874.8" font-family="Times,serif" font-size="14.00">appeal</text>
 </g>
 <!-- Certification -->
-<g id="node54" class="node">
+<g id="node58" class="node">
 <title>Certification</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-3141" rx="68.49" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-3137.3" font-family="Times,serif" font-size="14.00">Certification</text>
 </g>
 <!-- CertificationCancellation -->
-<g id="node55" class="node">
+<g id="node59" class="node">
 <title>CertificationCancellation</title>
 <ellipse fill="none" stroke="black" cx="128.69" cy="-3141" rx="126.18" ry="18"/>
 <text text-anchor="middle" x="128.69" y="-3137.3" font-family="Times,serif" font-size="14.00">CertificationCancellation</text>
 </g>
 <!-- CertificationCancellation&#45;&gt;Certification -->
-<g id="edge55" class="edge">
+<g id="edge60" class="edge">
 <title>CertificationCancellation&#45;&gt;Certification</title>
 <path fill="none" stroke="black" d="M255.03,-3141C331.74,-3141 427.48,-3141 493.4,-3141"/>
 <polygon fill="black" stroke="black" points="493.71,-3144.5 503.71,-3141 493.71,-3137.5 493.71,-3144.5"/>
 <text text-anchor="middle" x="334.89" y="-3144.8" font-family="Times,serif" font-size="14.00">certification</text>
 </g>
 <!-- ClaimEstablishment -->
-<g id="node56" class="node">
+<g id="node60" class="node">
 <title>ClaimEstablishment</title>
 <polygon fill="#ff5050" stroke="black" points="646.69,-2597 491.69,-2597 491.69,-2561 652.69,-2561 652.69,-2591 646.69,-2597"/>
 <polyline fill="none" stroke="black" points="646.69,-2597 646.69,-2591 "/>
@@ -1383,75 +1447,75 @@
 <text text-anchor="middle" x="572.19" y="-2575.3" font-family="Times,serif" font-size="14.00">ClaimEstablishment</text>
 </g>
 <!-- ClaimEstablishment&#45;&gt;Dispatch::Task -->
-<g id="edge56" class="edge">
+<g id="edge61" class="edge">
 <title>ClaimEstablishment&#45;&gt;Dispatch::Task</title>
 <path fill="none" stroke="black" d="M652.79,-2579C753.04,-2579 925.34,-2579 1034.54,-2579"/>
 <polygon fill="black" stroke="black" points="1034.58,-2582.5 1044.58,-2579 1034.58,-2575.5 1034.58,-2582.5"/>
 <text text-anchor="middle" x="855.5" y="-2582.8" font-family="Times,serif" font-size="14.00">task</text>
 </g>
 <!-- Distribution -->
-<g id="node57" class="node">
+<g id="node61" class="node">
 <title>Distribution</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-3204" rx="159.61" ry="26.74"/>
 <text text-anchor="middle" x="572.19" y="-3207.8" font-family="Times,serif" font-size="14.00">Distribution</text>
 <text text-anchor="middle" x="572.19" y="-3192.8" font-family="Times,serif" font-size="14.00">(associated with: judge User)</text>
 </g>
 <!-- DistributedCase -->
-<g id="node58" class="node">
+<g id="node62" class="node">
 <title>DistributedCase</title>
 <ellipse fill="none" stroke="black" cx="128.69" cy="-3204" rx="126.64" ry="26.74"/>
 <text text-anchor="middle" x="128.69" y="-3207.8" font-family="Times,serif" font-size="14.00">DistributedCase</text>
 <text text-anchor="middle" x="128.69" y="-3192.8" font-family="Times,serif" font-size="14.00">(associated with: Task)</text>
 </g>
 <!-- DistributedCase&#45;&gt;Distribution -->
-<g id="edge57" class="edge">
+<g id="edge62" class="edge">
 <title>DistributedCase&#45;&gt;Distribution</title>
 <path fill="none" stroke="black" d="M255.32,-3204C300.99,-3204 353.38,-3204 402.18,-3204"/>
 <polygon fill="black" stroke="black" points="402.22,-3207.5 412.22,-3204 402.22,-3200.5 402.22,-3207.5"/>
 <text text-anchor="middle" x="334.89" y="-3207.8" font-family="Times,serif" font-size="14.00">distribution</text>
 </g>
 <!-- DocketSwitch -->
-<g id="node59" class="node">
+<g id="node63" class="node">
 <title>DocketSwitch</title>
 <ellipse fill="none" stroke="black" cx="2211.19" cy="-2242" rx="126.64" ry="26.74"/>
 <text text-anchor="middle" x="2211.19" y="-2245.8" font-family="Times,serif" font-size="14.00">DocketSwitch</text>
 <text text-anchor="middle" x="2211.19" y="-2230.8" font-family="Times,serif" font-size="14.00">(associated with: Task)</text>
 </g>
 <!-- DocketSwitch&#45;&gt;Appeal -->
-<g id="edge58" class="edge">
+<g id="edge63" class="edge">
 <title>DocketSwitch&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2302.29,-2223.21C2330,-2217.96 2360.67,-2212.69 2389,-2209 2529.61,-2190.68 2696.82,-2181.63 2779.39,-2178"/>
 <polygon fill="black" stroke="black" points="2779.68,-2181.49 2789.52,-2177.57 2779.37,-2174.5 2779.68,-2181.49"/>
 <text text-anchor="middle" x="2506.5" y="-2212.8" font-family="Times,serif" font-size="14.00">old_docket_stream</text>
 </g>
 <!-- DocketSwitch&#45;&gt;Appeal -->
-<g id="edge59" class="edge">
+<g id="edge64" class="edge">
 <title>DocketSwitch&#45;&gt;Appeal</title>
 <path fill="none" stroke="black" d="M2310.3,-2258.82C2397.26,-2268.97 2525.39,-2271.99 2624,-2224 2635.05,-2218.62 2631.22,-2208.92 2642,-2203 2684.31,-2179.77 2739.67,-2174.24 2779.48,-2173.79"/>
 <polygon fill="black" stroke="black" points="2779.51,-2177.29 2789.51,-2173.78 2779.5,-2170.29 2779.51,-2177.29"/>
 <text text-anchor="middle" x="2506.5" y="-2268.8" font-family="Times,serif" font-size="14.00">new_docket_stream</text>
 </g>
 <!-- DocketSnapshot -->
-<g id="node60" class="node">
+<g id="node64" class="node">
 <title>DocketSnapshot</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-3267" rx="86.38" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-3263.3" font-family="Times,serif" font-size="14.00">DocketSnapshot</text>
 </g>
 <!-- DocketTracer -->
-<g id="node61" class="node">
+<g id="node65" class="node">
 <title>DocketTracer</title>
 <ellipse fill="none" stroke="black" cx="128.69" cy="-3267" rx="73.39" ry="18"/>
 <text text-anchor="middle" x="128.69" y="-3263.3" font-family="Times,serif" font-size="14.00">DocketTracer</text>
 </g>
 <!-- DocketTracer&#45;&gt;DocketSnapshot -->
-<g id="edge60" class="edge">
+<g id="edge65" class="edge">
 <title>DocketTracer&#45;&gt;DocketSnapshot</title>
 <path fill="none" stroke="black" d="M202.6,-3267C277.25,-3267 393.64,-3267 475.62,-3267"/>
 <polygon fill="black" stroke="black" points="475.7,-3270.5 485.7,-3267 475.7,-3263.5 475.7,-3270.5"/>
 <text text-anchor="middle" x="334.89" y="-3270.8" font-family="Times,serif" font-size="14.00">docket_snapshot</text>
 </g>
 <!-- DocumentView -->
-<g id="node62" class="node">
+<g id="node66" class="node">
 <title>DocumentView</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="219.69,-2995 37.69,-2995 37.69,-2991 33.69,-2991 33.69,-2987 37.69,-2987 37.69,-2965 33.69,-2965 33.69,-2961 37.69,-2961 37.69,-2957 219.69,-2957 219.69,-2995"/>
 <polyline fill="none" stroke="#aaaaaa" points="37.69,-2991 41.69,-2991 41.69,-2987 37.69,-2987 "/>
@@ -1460,14 +1524,14 @@
 <text text-anchor="middle" x="128.69" y="-2964.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- DocumentView&#45;&gt;Document -->
-<g id="edge61" class="edge">
+<g id="edge66" class="edge">
 <title>DocumentView&#45;&gt;Document</title>
 <path fill="none" stroke="black" d="M219.84,-2976C304.02,-2976 427.78,-2976 503.73,-2976"/>
 <polygon fill="black" stroke="black" points="504.12,-2979.5 514.12,-2976 504.12,-2972.5 504.12,-2979.5"/>
 <text text-anchor="middle" x="334.89" y="-2979.8" font-family="Times,serif" font-size="14.00">document</text>
 </g>
 <!-- DocumentsTag -->
-<g id="node63" class="node">
+<g id="node67" class="node">
 <title>DocumentsTag</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="189.69,-2929 67.69,-2929 67.69,-2925 63.69,-2925 63.69,-2921 67.69,-2921 67.69,-2901 63.69,-2901 63.69,-2897 67.69,-2897 67.69,-2893 189.69,-2893 189.69,-2929"/>
 <polyline fill="none" stroke="#aaaaaa" points="67.69,-2925 71.69,-2925 71.69,-2921 67.69,-2921 "/>
@@ -1475,54 +1539,54 @@
 <text text-anchor="middle" x="128.69" y="-2907.3" font-family="Times,serif" font-size="14.00">DocumentsTag</text>
 </g>
 <!-- DocumentsTag&#45;&gt;Document -->
-<g id="edge62" class="edge">
+<g id="edge67" class="edge">
 <title>DocumentsTag&#45;&gt;Document</title>
 <path fill="none" stroke="black" d="M189.7,-2919.83C273.52,-2932.18 424.9,-2954.46 509.58,-2966.93"/>
 <polygon fill="black" stroke="black" points="509.16,-2970.41 519.57,-2968.4 510.18,-2963.48 509.16,-2970.41"/>
 <text text-anchor="middle" x="334.89" y="-2953.8" font-family="Times,serif" font-size="14.00">document</text>
 </g>
 <!-- Tag -->
-<g id="node64" class="node">
+<g id="node68" class="node">
 <title>Tag</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-2900" rx="27.1" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-2896.3" font-family="Times,serif" font-size="14.00">Tag</text>
 </g>
 <!-- DocumentsTag&#45;&gt;Tag -->
-<g id="edge63" class="edge">
+<g id="edge68" class="edge">
 <title>DocumentsTag&#45;&gt;Tag</title>
 <path fill="none" stroke="black" d="M189.9,-2905.98C216.14,-2904.03 247.26,-2902.01 275.39,-2901 368.68,-2897.64 478.64,-2898.55 534.55,-2899.36"/>
 <polygon fill="black" stroke="black" points="534.61,-2902.86 544.67,-2899.51 534.72,-2895.86 534.61,-2902.86"/>
 <text text-anchor="middle" x="334.89" y="-2904.8" font-family="Times,serif" font-size="14.00">tag</text>
 </g>
 <!-- EndProductCodeUpdate -->
-<g id="node65" class="node">
+<g id="node69" class="node">
 <title>EndProductCodeUpdate</title>
 <ellipse fill="none" stroke="black" cx="2211.19" cy="-1925" rx="123.48" ry="18"/>
 <text text-anchor="middle" x="2211.19" y="-1921.3" font-family="Times,serif" font-size="14.00">EndProductCodeUpdate</text>
 </g>
 <!-- EndProductCodeUpdate&#45;&gt;EndProductEstablishment -->
-<g id="edge64" class="edge">
+<g id="edge69" class="edge">
 <title>EndProductCodeUpdate&#45;&gt;EndProductEstablishment</title>
 <path fill="none" stroke="black" d="M2330.98,-1929.53C2448.3,-1934.47 2611.96,-1942.75 2624,-1951 2639.75,-1961.79 2626.96,-1978.24 2642,-1990 2654.95,-2000.12 2669.91,-2007.68 2685.63,-2013.29"/>
 <polygon fill="black" stroke="black" points="2684.91,-2016.74 2695.5,-2016.54 2687.09,-2010.09 2684.91,-2016.74"/>
 <text text-anchor="middle" x="2506.5" y="-1954.8" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
 </g>
 <!-- EndProductUpdate -->
-<g id="node67" class="node">
+<g id="node71" class="node">
 <title>EndProductUpdate</title>
 <ellipse fill="none" stroke="black" cx="2211.19" cy="-2314" rx="128.89" ry="26.74"/>
 <text text-anchor="middle" x="2211.19" y="-2317.8" font-family="Times,serif" font-size="14.00">EndProductUpdate</text>
 <text text-anchor="middle" x="2211.19" y="-2302.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
 </g>
 <!-- EndProductUpdate&#45;&gt;EndProductEstablishment -->
-<g id="edge66" class="edge">
+<g id="edge71" class="edge">
 <title>EndProductUpdate&#45;&gt;EndProductEstablishment</title>
 <path fill="none" stroke="black" d="M2332.26,-2304.57C2347.05,-2298.65 2360.6,-2290.12 2371,-2278 2407.99,-2234.89 2347.44,-2061.73 2389,-2023 2410.62,-2002.85 2566.42,-2008.05 2686.95,-2015.39"/>
 <polygon fill="black" stroke="black" points="2686.83,-2018.89 2697.02,-2016.01 2687.26,-2011.9 2686.83,-2018.89"/>
 <text text-anchor="middle" x="2506.5" y="-2026.8" font-family="Times,serif" font-size="14.00">end_product_establishment</text>
 </g>
 <!-- original_decision_review_type -->
-<g id="node68" class="node">
+<g id="node72" class="node">
 <title>original_decision_review_type</title>
 <polygon fill="#ffff00" stroke="#0000ff" points="2716.78,-2299.5 2716.78,-2360.5 2946.78,-2360.5 2946.78,-2299.5 2716.78,-2299.5"/>
 <text text-anchor="middle" x="2831.78" y="-2345.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">original_decision_review_type</text>
@@ -1531,101 +1595,37 @@
 <text text-anchor="middle" x="2831.78" y="-2307.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview</text>
 </g>
 <!-- EndProductUpdate&#45;&gt;original_decision_review_type -->
-<g id="edge67" class="edge">
+<g id="edge72" class="edge">
 <title>EndProductUpdate&#45;&gt;original_decision_review_type</title>
 <path fill="none" stroke="black" d="M2339.24,-2317.29C2446.71,-2320.07 2599.81,-2324.03 2706.48,-2326.79"/>
 <polygon fill="black" stroke="black" points="2706.57,-2330.29 2716.66,-2327.05 2706.75,-2323.29 2706.57,-2330.29"/>
 <text text-anchor="middle" x="2506.5" y="-2328.8" font-family="Times,serif" font-size="14.00">original_decision_review</text>
 </g>
-<!-- HearingIssueNote -->
-<g id="node69" class="node">
-<title>HearingIssueNote</title>
-<polygon fill="#f2f2f2" stroke="#aaaaaa" points="1721.69,-1943 1575.69,-1943 1575.69,-1939 1571.69,-1939 1571.69,-1935 1575.69,-1935 1575.69,-1915 1571.69,-1915 1571.69,-1911 1575.69,-1911 1575.69,-1907 1721.69,-1907 1721.69,-1943"/>
-<polyline fill="none" stroke="#aaaaaa" points="1575.69,-1939 1579.69,-1939 1579.69,-1935 1575.69,-1935 "/>
-<polyline fill="none" stroke="#aaaaaa" points="1575.69,-1915 1579.69,-1915 1579.69,-1911 1575.69,-1911 "/>
-<text text-anchor="middle" x="1648.69" y="-1921.3" font-family="Times,serif" font-size="14.00">HearingIssueNote</text>
-</g>
-<!-- HearingIssueNote&#45;&gt;RequestIssue -->
-<g id="edge68" class="edge">
-<title>HearingIssueNote&#45;&gt;RequestIssue</title>
-<path fill="none" stroke="black" d="M1721.92,-1915.74C1799.65,-1904.91 1926.52,-1884.73 2033.39,-1856 2063.69,-1847.85 2096.17,-1836.8 2124.91,-1826.17"/>
-<polygon fill="black" stroke="black" points="2126.37,-1829.37 2134.51,-1822.59 2123.92,-1822.81 2126.37,-1829.37"/>
-<text text-anchor="middle" x="1914.39" y="-1908.8" font-family="Times,serif" font-size="14.00">request_issue</text>
-</g>
-<!-- HearingIssueNote&#45;&gt;Hearing -->
-<g id="edge69" class="edge">
-<title>HearingIssueNote&#45;&gt;Hearing</title>
-<path fill="none" stroke="black" d="M1721.82,-1933.11C1808.84,-1942.89 1957.19,-1959.56 2067.6,-1971.97"/>
-<polygon fill="black" stroke="black" points="2067.5,-1975.48 2077.83,-1973.12 2068.29,-1968.53 2067.5,-1975.48"/>
-<text text-anchor="middle" x="1914.39" y="-1971.8" font-family="Times,serif" font-size="14.00">hearing</text>
-</g>
-<!-- HearingLocation -->
-<g id="node70" class="node">
-<title>HearingLocation</title>
-<ellipse fill="#66ccff" stroke="black" cx="2831.78" cy="-1801" rx="87.99" ry="18"/>
-<text text-anchor="middle" x="2831.78" y="-1797.3" font-family="Times,serif" font-size="14.00">HearingLocation</text>
-</g>
-<!-- HearingLocation&#45;&gt;hearing_type -->
-<g id="edge70" class="edge">
-<title>HearingLocation&#45;&gt;hearing_type</title>
-<path fill="none" stroke="black" d="M2919.61,-1801.33C2989.25,-1797.39 3086.17,-1781.98 3153.56,-1731 3196.66,-1698.4 3228.37,-1643.76 3246.37,-1606.59"/>
-<polygon fill="black" stroke="black" points="3249.54,-1608.08 3250.66,-1597.54 3243.22,-1605.08 3249.54,-1608.08"/>
-<text text-anchor="middle" x="3096.56" y="-1786.8" font-family="Times,serif" font-size="14.00">hearing</text>
-</g>
-<!-- HearingView -->
-<g id="node71" class="node">
-<title>HearingView</title>
-<polygon fill="#f2f2f2" stroke="#aaaaaa" points="2922.78,-1765 2740.78,-1765 2740.78,-1761 2736.78,-1761 2736.78,-1757 2740.78,-1757 2740.78,-1735 2736.78,-1735 2736.78,-1731 2740.78,-1731 2740.78,-1727 2922.78,-1727 2922.78,-1765"/>
-<polyline fill="none" stroke="#aaaaaa" points="2740.78,-1761 2744.78,-1761 2744.78,-1757 2740.78,-1757 "/>
-<polyline fill="none" stroke="#aaaaaa" points="2740.78,-1735 2744.78,-1735 2744.78,-1731 2740.78,-1731 "/>
-<text text-anchor="middle" x="2831.78" y="-1749.8" font-family="Times,serif" font-size="14.00">HearingView</text>
-<text text-anchor="middle" x="2831.78" y="-1734.8" font-family="Times,serif" font-size="14.00">(associated with: User)</text>
-</g>
-<!-- HearingView&#45;&gt;hearing_type -->
-<g id="edge71" class="edge">
-<title>HearingView&#45;&gt;hearing_type</title>
-<path fill="none" stroke="black" d="M2923.2,-1737.8C2954.74,-1733.57 2990.1,-1727.28 3021.56,-1718 3083.37,-1699.76 3098.93,-1692.18 3153.56,-1658 3178.23,-1642.57 3203.4,-1622.15 3223.42,-1604.57"/>
-<polygon fill="black" stroke="black" points="3225.96,-1606.99 3231.1,-1597.73 3221.3,-1601.76 3225.96,-1606.99"/>
-<text text-anchor="middle" x="3096.56" y="-1715.8" font-family="Times,serif" font-size="14.00">hearing</text>
-</g>
 <!-- Allocation -->
-<g id="node72" class="node">
+<g id="node73" class="node">
 <title>Allocation</title>
 <ellipse fill="none" stroke="black" cx="572.19" cy="-2633" rx="56.59" ry="18"/>
 <text text-anchor="middle" x="572.19" y="-2629.3" font-family="Times,serif" font-size="14.00">Allocation</text>
 </g>
 <!-- Allocation&#45;&gt;SchedulePeriod -->
-<g id="edge72" class="edge">
+<g id="edge73" class="edge">
 <title>Allocation&#45;&gt;SchedulePeriod</title>
 <path fill="none" stroke="black" d="M627.39,-2636.93C702.88,-2643.13 843.63,-2657.3 961,-2684 999.79,-2692.82 1042.24,-2706.64 1075.49,-2718.46"/>
 <polygon fill="black" stroke="black" points="1074.47,-2721.81 1085.06,-2721.9 1076.83,-2715.23 1074.47,-2721.81"/>
 <text text-anchor="middle" x="855.5" y="-2687.8" font-family="Times,serif" font-size="14.00">schedule_period</text>
 </g>
 <!-- SentHearingAdminEmailEvent -->
-<g id="node73" class="node">
+<g id="node74" class="node">
 <title>SentHearingAdminEmailEvent</title>
 <ellipse fill="#66ccff" stroke="black" cx="1136" cy="-1395" rx="153.27" ry="18"/>
 <text text-anchor="middle" x="1136" y="-1391.3" font-family="Times,serif" font-size="14.00">SentHearingAdminEmailEvent</text>
 </g>
 <!-- SentHearingAdminEmailEvent&#45;&gt;SentHearingEmailEvent -->
-<g id="edge73" class="edge">
+<g id="edge74" class="edge">
 <title>SentHearingAdminEmailEvent&#45;&gt;SentHearingEmailEvent</title>
 <path fill="none" stroke="black" d="M1289.53,-1395C1362.23,-1395 1448.27,-1395 1517.8,-1395"/>
 <polygon fill="black" stroke="black" points="1517.93,-1398.5 1527.93,-1395 1517.93,-1391.5 1517.93,-1398.5"/>
 <text text-anchor="middle" x="1406.5" y="-1398.8" font-family="Times,serif" font-size="14.00">sent_hearing_email_event</text>
-</g>
-<!-- Transcription -->
-<g id="node74" class="node">
-<title>Transcription</title>
-<ellipse fill="#66ccff" stroke="black" cx="1648.69" cy="-1988" rx="73.39" ry="18"/>
-<text text-anchor="middle" x="1648.69" y="-1984.3" font-family="Times,serif" font-size="14.00">Transcription</text>
-</g>
-<!-- Transcription&#45;&gt;Hearing -->
-<g id="edge74" class="edge">
-<title>Transcription&#45;&gt;Hearing</title>
-<path fill="none" stroke="black" d="M1722.39,-1988C1802.67,-1988 1934.63,-1988 2041.07,-1988"/>
-<polygon fill="black" stroke="black" points="2041.29,-1991.5 2051.29,-1988 2041.29,-1984.5 2041.29,-1991.5"/>
-<text text-anchor="middle" x="1914.39" y="-1991.8" font-family="Times,serif" font-size="14.00">hearing</text>
 </g>
 <!-- VirtualHearingEstablishment -->
 <g id="node75" class="node">
