@@ -8,6 +8,7 @@ import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
 
 import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
+import { fetchAppealDetails } from 'app/queue/QueueActions';
 
 import COPY from 'app/../COPY';
 
@@ -89,6 +90,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     try {
       const res = await dispatch(completeSubstituteAppellant(payload));
+      const { targetAppeal } = res.payload;
 
       // Redirect to Case Details page... but maybe for new appeal...?
       dispatch(
@@ -97,6 +99,8 @@ export const SubstituteAppellantReviewContainer = () => {
           detail: COPY.SUBSTITUTE_APPELLANT_SUCCESS_DETAIL,
         })
       );
+
+      await dispatch(fetchAppealDetails(targetAppeal.uuid));
 
       // Route to new appeal stream
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
