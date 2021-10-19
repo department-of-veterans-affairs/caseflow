@@ -3,7 +3,7 @@ import React from 'react';
 import { DetailsHeader } from 'app/hearings/components/details/DetailsHeader';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
-import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHearingForm';
+import { VirtualHearingFields } from 'app/hearings/components/details/VirtualHearingFields';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
 import {
@@ -69,10 +69,10 @@ describe('Details', () => {
     expect(details.find(DetailsForm)).toHaveLength(1);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingForm).children()).toHaveLength(0);
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
@@ -253,10 +253,10 @@ describe('Details', () => {
     expect(details.find(DetailsForm)).toHaveLength(1);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingForm).children()).toHaveLength(0);
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
 
     // Ensure the transcription form is not displayed for legacy hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(0);
@@ -288,10 +288,10 @@ describe('Details', () => {
     );
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       amaHearing.virtualHearing
     );
-    expect(details.find(VirtualHearingForm).children().length).toBeGreaterThan(
+    expect(details.find(VirtualHearingFields).children().length).toBeGreaterThan(
       0
     );
 
