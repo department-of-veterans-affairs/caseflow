@@ -2,18 +2,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
-import { EmailNotificationHistory } from './EmailNotificationHistory';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown,
 } from '../../../components/DataDropdowns/index';
 import { TranscriptionFormSection } from './TranscriptionFormSection';
-import { VirtualHearingForm } from './VirtualHearingForm';
+import { VirtualHearingFields } from './VirtualHearingFields';
 import { columnThird, maxWidthFormInput, rowThirds } from './style';
 import Checkbox from '../../../components/Checkbox';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextareaField from '../../../components/TextareaField';
+import { EmailNotificationFields } from './EmailNotificationFields';
 
 const DetailsForm = (props) => {
   const {
@@ -95,7 +95,7 @@ const DetailsForm = (props) => {
         </div>
       </ContentSection>
 
-      <VirtualHearingForm
+      <VirtualHearingFields
         errors={errors}
         hearing={hearing}
         initialHearing={initialHearing}
@@ -104,9 +104,18 @@ const DetailsForm = (props) => {
         update={update}
       />
 
-      {hearing?.emailEvents?.length > 0 && (
-        <EmailNotificationHistory rows={hearing?.emailEvents} />
-      )}
+      <EmailNotificationFields
+        header="Email Notifications"
+        errors={errors}
+        hearing={hearing}
+        initialHearing={initialHearing}
+        readOnly={readOnly}
+        update={update}
+        time={hearing.scheduledTimeString}
+        roTimezone={hearing?.regionalOfficeTimezone}
+        requestType={hearing.readableRequestType}
+        initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
+      />
 
       {!isLegacy && (
         <TranscriptionFormSection
@@ -130,6 +139,8 @@ DetailsForm.propTypes = {
     transcription: PropTypes.object,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
+    scheduledTimeString: PropTypes.string,
+    readableRequestType: PropTypes.string
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object
