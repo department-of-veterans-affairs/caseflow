@@ -28,14 +28,14 @@ export const EmailNotificationFields = ({
   return (
     <ContentSection header={header}>
       <React.Fragment>
+        <h3>{appellantTitle}</h3>
         <div id="email-section" className="usa-grid">
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              required={hearing?.isVirtual}
-              optional={!hearing?.isVirtual}
+              required
               errorMessage={errors?.appellantTz}
-              value={hearing?.appellantTz}
-              onChange={(appellantTz) => update('hearing', { appellantTz })}
+              value={HearingEmail?.appellantTz}
+              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
               readOnly={disableField}
               time={time}
               roTimezone={roTimezone}
@@ -46,11 +46,10 @@ export const EmailNotificationFields = ({
           </div>
           <div className="usa-width-one-third">
             <HearingEmail
-              required={hearing?.isVirtual}
-              optional={!hearing?.isVirtual}
+              required
               disabled={disableField}
               label={`${appellantTitle} Email`}
-              emailType="appellantEmailAddress"
+              emailType="appellantEmail"
               email={hearing?.appellantEmailAddress}
               error={errors?.appellantEmailAddress}
               update={update}
@@ -58,14 +57,14 @@ export const EmailNotificationFields = ({
           </div>
         </div>
         <div className="cf-help-divider" />
+        <h3>Power of Attorney</h3>
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              required={Boolean(hearing?.representativeEmailAddress)}
-              optional={!hearing?.representativeEmailAddress}
               errorMessage={errors?.representativeTz}
+              required={Boolean(hearing?.representativeEmail)}
               value={hearing?.representativeTz}
-              onChange={(representativeTz) => update('hearing', { representativeTz })}
+              onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
               readOnly={disableField || !hearing?.representativeEmailAddress}
               time={time}
               roTimezone={roTimezone}
@@ -76,10 +75,9 @@ export const EmailNotificationFields = ({
           </div>
           <div className="usa-width-one-third">
             <HearingEmail
-              optional
               disabled={disableField}
               label="POA/Representative Email"
-              emailType="representativeEmailAddress"
+              emailType="representativeEmail"
               email={hearing?.representativeEmailAddress}
               error={errors?.representativeEmailAddress}
               update={(key, value) => {
