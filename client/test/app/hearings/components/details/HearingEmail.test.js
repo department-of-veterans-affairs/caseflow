@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 
-import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { HelperText } from 'app/hearings/components/VirtualHearings/HelperText';
-import COPY from 'COPY';
+import COPY from '../../../../../COPY';
 import TextField from 'app/components/TextField';
 
 const email = '123@gmail.com';
@@ -15,7 +15,7 @@ describe('VirtualHearingEmails', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const emails = shallow(
-      <VirtualHearingEmail label={label} emailType={emailType} email={email} />
+      <HearingEmail label={label} emailType={emailType} email={email} />
     );
 
     // Assertions
@@ -27,7 +27,7 @@ describe('VirtualHearingEmails', () => {
   test('Respects required prop', () => {
     // Run the test
     const emails = mount(
-      <VirtualHearingEmail label={label} emailType={emailType} email={email} required />
+      <HearingEmail label={label} emailType={emailType} email={email} required />
     );
 
     // Assertions
@@ -38,7 +38,7 @@ describe('VirtualHearingEmails', () => {
   test('Does not allow editing when ReadOnly', () => {
     // Run the test
     const emails = shallow(
-      <VirtualHearingEmail label={label} emailType={emailType} email={email} readOnly />
+      <HearingEmail label={label} emailType={emailType} email={email} readOnly />
     );
 
     // Assertions
@@ -52,7 +52,7 @@ describe('VirtualHearingEmails', () => {
   test('Does not show required when ReadOnly', () => {
     // Run the test
     const emails = mount(
-      <VirtualHearingEmail label={label} emailType={emailType} email={email} disabled required />
+      <HearingEmail label={label} emailType={emailType} email={email} disabled required />
     );
 
     // Assertions

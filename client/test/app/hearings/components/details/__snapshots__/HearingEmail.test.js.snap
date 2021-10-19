@@ -8,7 +8,7 @@ exports[`VirtualHearingEmails Does not allow editing when ReadOnly 1`] = `
 `;
 
 exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
-<VirtualHearingEmail
+<HearingEmail
   disabled={true}
   email="123@gmail.com"
   emailType="appellantTz"
@@ -73,7 +73,7 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
       This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
-</VirtualHearingEmail>
+</HearingEmail>
 `;
 
 exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
@@ -100,7 +100,7 @@ exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
 `;
 
 exports[`VirtualHearingEmails Respects required prop 1`] = `
-<VirtualHearingEmail
+<HearingEmail
   email="123@gmail.com"
   emailType="appellantTz"
   label="Appellant Email"
@@ -167,5 +167,5 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
       This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
-</VirtualHearingEmail>
+</HearingEmail>
 `;
