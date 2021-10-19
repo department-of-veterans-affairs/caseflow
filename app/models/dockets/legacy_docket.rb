@@ -48,15 +48,13 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  def really_distribute(distribution, style: "push", genpop: "any")
+  def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
-      !JudgeTeam.for_judge(distribution.judge).ama_only_request
+      (style == "request" && !JudgeTeam.for_judge(distribution.judge).ama_only_request)
   end
 
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
-
     if priority
       distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     else
@@ -65,7 +63,7 @@ class LegacyDocket
   end
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
@@ -83,7 +81,7 @@ class LegacyDocket
                                      range: nil,
                                      limit: 1,
                                      bust_backlog: false)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     return [] if !range.nil? && range <= 0
 
