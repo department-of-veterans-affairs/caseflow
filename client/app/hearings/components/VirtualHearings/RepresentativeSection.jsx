@@ -7,7 +7,7 @@ import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
-import { VirtualHearingEmail } from './Emails';
+import { HearingEmail } from '../details/HearingEmail';
 import { Timezone } from './Timezone';
 import { marginTop } from '../details/style';
 
@@ -67,7 +67,7 @@ export const RepresentativeSection = ({
     )}
     <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
       <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
-        <VirtualHearingEmail
+        <HearingEmail
           optional
           readOnly={readOnly}
           emailType="representativeEmail"
