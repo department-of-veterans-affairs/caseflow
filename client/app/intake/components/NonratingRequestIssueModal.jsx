@@ -45,8 +45,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
-      dateError: '',
-      vhaPreDocketWorkflow: props.featureToggles.vhaPreDocketWorkflow
+      dateError: ''
     };
   }
 
@@ -243,8 +242,9 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   render() {
-    const { formType, intakeData, onCancel } = this.props;
-    const { benefitType, category, selectedNonratingIssueId, vhaPreDocketWorkflow } = this.state;
+    const { formType, intakeData, onCancel, featureToggles } = this.props;
+    const { benefitType, category, selectedNonratingIssueId } = this.state;
+    const vhaPreDocketWorkflow = featureToggles.vhaPreDocketWorkflow;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -255,7 +255,7 @@ class NonratingRequestIssueModal extends React.Component {
         this.getAdditionalDetails() :
         null;
 
-    const showPreDocketBanner = benefitType == "vha" && vhaPreDocketWorkflow;
+    const showPreDocketBanner = benefitType === 'vha' && vhaPreDocketWorkflow;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
@@ -289,7 +289,7 @@ class NonratingRequestIssueModal extends React.Component {
               {nonratingRequestIssueSelection}
               {additionalDetails}
             </div>
-              {showPreDocketBanner && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
+            {showPreDocketBanner && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
           </div>
         </Modal>
       </div>
@@ -308,7 +308,8 @@ NonratingRequestIssueModal.propTypes = {
   formType: PropTypes.string,
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
-  addedIssues: PropTypes.array
+  addedIssues: PropTypes.array,
+  featureToggles: PropTypes.object
 };
 
 NonratingRequestIssueModal.defaultProps = {

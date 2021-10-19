@@ -324,8 +324,8 @@ class AddIssuesPage extends React.Component {
     let rowObjects = fieldsForFormType;
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
-      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === "vha");
-      const showPreDocketBanner = !editPage && formType === 'appeal'&& reviewHasVhaIssues && vhaPreDocketWorkflow;
+      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues && vhaPreDocketWorkflow;
 
       return {
         field: fieldTitle,
@@ -345,7 +345,7 @@ class AddIssuesPage extends React.Component {
               userCanWithdrawIssues={userCanWithdrawIssues}
               editPage={editPage}
             />
-          {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
+            {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
           </div>
         )
       };

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '../../../components/Button';
@@ -34,8 +35,8 @@ class FinishNextButton extends React.PureComponent {
 
   render() {
     const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
-    const hasVhaIssues = _.some(this.props.appeal.addedIssues, (issue) => issue.benefitType === "vha");
-    const buttonAction = hasVhaIssues ? "Submit" : "Establish";
+    const hasVhaIssues = _.some(this.props.appeal.addedIssues, (issue) => issue.benefitType === 'vha');
+    const buttonAction = hasVhaIssues ? 'Submit' : 'Establish';
 
     return <Button
       name="finish-intake"
@@ -43,10 +44,20 @@ class FinishNextButton extends React.PureComponent {
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       disabled={disableSubmit}
     >
-        {`${buttonAction} appeal`}
+      {`${buttonAction} appeal`}
     </Button>;
   }
 }
+
+FinishNextButton.propTypes = {
+  intakeId: PropTypes.number,
+  appeal: PropTypes.object,
+  completeIntake: PropTypes.func,
+  issueCount: PropTypes.number,
+  requestState: PropTypes.string,
+  history: PropTypes.object,
+  addedIssues: PropTypes.array
+};
 
 const FinishNextButtonConnected = connect(
   ({ appeal, intake }) => ({
@@ -60,7 +71,7 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
-export class FinishButtons extends React.PureComponent {
+class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
@@ -68,3 +79,9 @@ export class FinishButtons extends React.PureComponent {
       <IssueCounterConnected />
     </div>
 }
+
+FinishButtons.propTypes = {
+  history: PropTypes.object
+};
+
+export { FinishButtons };

@@ -31,7 +31,9 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def fetch_status
-    if active?
+    if open_pre_docket_task?
+      :pre_docketed
+    elsif active?
       fetch_pre_decision_status
     else
       fetch_post_decision_status
@@ -39,9 +41,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def fetch_pre_decision_status
-    if open_pre_docket_task?
-      :pre_docketed
-    elsif pending_schedule_hearing_task?
+    if pending_schedule_hearing_task?
       :pending_hearing_scheduling
     elsif hearing_pending?
       :scheduled_hearing
