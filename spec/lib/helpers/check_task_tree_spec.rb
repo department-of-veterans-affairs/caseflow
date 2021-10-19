@@ -182,12 +182,12 @@ describe "CheckTaskTree" do
         let(:dispatch_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
         let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
         before do
+          dispatch_task.completed!
           org_task = appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask)
           org_task.cancelled!
           BvaDispatchTask.create(appeal: appeal, parent: appeal.root_task, assigned_to: BvaDispatch.singleton)
           org_task.assigned!
           org_task.update(cancelled_by_id: nil)
-          dispatch_task.completed!
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message", /There should be no more than 1 open org task of type .*BvaDispatchTask/
@@ -246,7 +246,7 @@ describe "CheckTaskTree" do
         jdr_task.destroy
       end
       it { is_expected.not_to be_blank }
-      include_examples "has error message", "BvaDispatchTask requires [completed JudgeDecisionReviewTask]"
+      include_examples "has error message", "BvaDispatchTask requires [\"completed JudgeDecisionReviewTask\"]"
     end
   end
 end
