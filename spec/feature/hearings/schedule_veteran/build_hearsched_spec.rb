@@ -806,7 +806,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
-        click_dropdown(name: "hearingType", text: "Virtual")
+        # Because the dropdown list only displays unselected options (which is unusual)
+        # check that "Virtual" is not selected before trying to select it
+        selected_value = dropdown_selected_value(find(".dropdown-hearingType .cf-select__control"))
+        if selected_value != "Virtual"
+          click_dropdown(name: "hearingType", text: "Virtual")
+        end
         click_dropdown(name: "hearingDate", index: 0)
 
         # Ensure the new email notification label is visible
