@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { date, text, boolean } from '@storybook/addon-knobs';
 import { addDecorator } from '@storybook/react';
 
-import { VirtualHearingForm } from './VirtualHearingForm';
+import { VirtualHearingFields } from './VirtualHearingFields';
 import {
   updateHearingDispatcher,
   HearingsFormContext,
@@ -14,7 +14,7 @@ import { amaHearing } from '../../../../test/data/hearings';
 
 export default {
   title: 'Hearings/Components/Hearing Details/VirtualHearingForm',
-  component: VirtualHearingForm,
+  component: VirtualHearingFields,
 };
 
 const Wrapper = (props) => {
@@ -33,7 +33,7 @@ const Wrapped = (props) => {
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   return (
-    <VirtualHearingForm
+    <VirtualHearingFields
       update={updateHearing}
       hearing={hearing}
       {...props}
