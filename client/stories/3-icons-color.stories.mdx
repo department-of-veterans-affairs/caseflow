@@ -1,0 +1,162 @@
+import { Meta, Story, Preview, Canvas } from '@storybook/addon-docs/blocks';
+// import as PascalCase to avoid React component render error. 
+import { 
+    LoadingSymbol,
+    closeSymbolHtml as CloseSymbol,
+    successSymbolHtml as SuccessSymbol,
+    missingSymbolHtml as MissingSymbol,
+    checkSymbolHtml as CheckSymbol,
+    crossSymbolHtml as CrossSymbol,
+    GithubIcon,
+    SelectedFilterIcon,
+    UnselectedFilterIcon,
+    rightTriangle as RightTriangle,
+    commentIcon as CommentIcon,
+    closeIcon as CloseIcon,
+    lockIcon as LockIcon,
+    MagnifyingGlass,
+    LeftChevron,
+    RightChevron,
+    ArrowUp,
+    ArrowDown,
+    ArrowLeft,
+    ArrowRight,
+    Keyboard,
+    ChevronDown,
+    ChevronUp,
+    SortArrowUp,
+    SortArrowDown,
+    DoubleArrow,
+    trashCan as TrashCan,
+    ClipboardIcon,
+    NewFileIcon,
+    GreenCheckmark,
+    CancelIcon,
+    GrayDot,
+    LinkSymbol,
+    pencilSymbol as PencilSymbol,
+    clockIcon as ClockIcon
+} from '../app/components/RenderFunctions.jsx';
+
+import { COLORS, LOGO_COLORS } from '../app/constants/AppConstants';
+
+<Meta 
+    title="Commons/Icons/Color"
+    decorators={[
+    (Story) => (
+      <div style={{ height: '10rem', width: '10rem', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Story />
+      </div>
+    ),
+  ]}
+/>
+
+# Icons
+
+These are all of the icons used throughout the Caseflow project. The goal here is to keep our interface predictable and familiar to the user. Note: We also use Font Awesome - <a href="https://fontawesome.com/v5.15/how-to-use/on-the-web/referencing-icons/basic-use" target="_blank">Docs</a>.
+
+## Color Icons
+
+To be used on white backgrounds.
+
+<Canvas> 
+    <Story name="Loading Icon">
+        <LoadingSymbol />
+    </Story>
+    <Story name="Close Icon">
+        <CloseSymbol />
+    </Story>
+    <Story name="Success Icon">
+        <SuccessSymbol />
+    </Story>
+    <Story name="Missing Icon">
+        <MissingSymbol />
+    </Story>
+    <Story name="Check Icon">
+        <CheckSymbol />
+    </Story>
+    <Story name="Cross Icon">
+        <CrossSymbol />
+    </Story>
+    <Story name="Github Icon">
+        <GithubIcon />
+    </Story>
+    <Story name="Selected Filter Icon">
+        <SelectedFilterIcon />
+    </Story>
+    <Story name="Unfiltered Icon">
+        <UnselectedFilterIcon />
+    </Story>
+    <Story name="Right Triangle">
+        <RightTriangle />
+    </Story>
+    <Story name="Comment Icon">
+        <CommentIcon />
+    </Story>
+    <Story name="Close Icon">
+        <CloseIcon />
+    </Story>
+    <Story name="Lock Icon">
+        <LockIcon />
+    </Story>
+    <Story name="Magnifying Glass Icon">
+        <MagnifyingGlass />
+    </Story>
+    <Story name="Chevron Down">
+        <ChevronDown />
+    </Story>
+    <Story name="Chevron Up">
+        <ChevronUp />
+    </Story>
+    <Story name="Arrow Up">
+        <ArrowUp />
+    </Story>
+    <Story name="Arrow Down">
+        <ArrowDown />
+    </Story>
+    <Story name="Arrow Left">
+        <ArrowLeft />
+    </Story>
+    <Story name="Arrow Right">
+        <ArrowRight />
+    </Story>
+    <Story name="Keyboard Icon">
+        <Keyboard />
+    </Story>
+    <Story name="Sort Arrow Up">
+        <SortArrowUp />
+    </Story>
+    <Story name="Sort Arrow Down">
+        <SortArrowDown />
+    </Story>
+    <Story name="Double Arrow">
+        <DoubleArrow />
+    </Story>
+    <Story name="Trashcan Icon">
+        <TrashCan />
+    </Story>
+    <Story name="Clipboard Icon">
+        <ClipboardIcon />
+    </Story>
+    <Story name="New File Icon">
+        <NewFileIcon />
+    </Story>
+    <Story name="Green Check Mark">
+        <GreenCheckmark />
+    </Story>
+    <Story name="Cancel Icon">
+        <CancelIcon />
+    </Story>
+    <Story name="Grey Dot">
+        <GrayDot />
+    </Story>
+    <Story name="Link Symbol">
+        <LinkSymbol />
+    </Story>
+    <Story name="Pencil Icon">
+        <PencilSymbol />
+    </Story>
+    <Story name="Clock Icon">
+        <ClockIcon />
+    </Story>
+</Canvas>

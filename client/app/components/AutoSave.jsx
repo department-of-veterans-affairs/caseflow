@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Alert from './Alert';
 import Button from './Button';
-import { loadingSymbolHtml } from '../components/RenderFunctions';
+import { LoadingSymbol } from '../components/RenderFunctions';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import _ from 'lodash';
 
@@ -52,7 +52,13 @@ export default class AutoSave extends React.Component {
       const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
       return <div className="saving">
-        <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
+        <div className="loadingSymbol">
+          <LoadingSymbol
+            text="Saving..."
+            size="20px"
+            color={color}
+          />
+        </div>
       </div>;
     }
 
