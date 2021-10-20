@@ -1081,6 +1081,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
         FeatureToggle.enable!(:enable_hearing_time_slots)
+        FeatureToggle.enable!(:collect_video_and_central_emails)
       end
 
       # These are the only feature tests that create 'R' virtual
