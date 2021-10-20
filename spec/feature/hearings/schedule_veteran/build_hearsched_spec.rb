@@ -814,10 +814,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
         click_dropdown(name: "hearingDate", index: 0)
 
-        # Ensure the new email notification label is visible
-        expect(page).to have_content("Email Notifications")
-        expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
-          "Judge will receive an email with connection information for the virtual hearing.")
+        # Ensure the new email notification label is visible for non-central hearing days
+        if ro_key != "C"
+          expect(page).to have_content("Email Notifications")
+          expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
+            "Judge will receive an email with connection information for the virtual hearing.")
+        end
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
