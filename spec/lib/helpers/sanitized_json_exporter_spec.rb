@@ -136,12 +136,10 @@ describe "SanitizedJsonExporter/Importer" do
     subject { SjConfiguration.new.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
-      it "returns sentence without any of the original longer words" do
-        obf_words = subject.split
-        sentence.split.select { |word| word.length > 2 }.each do |word|
-          expect(subject).not_to include word
-          obf_words.each { |obf_word| expect(obf_word.chars).not_to match_array word.chars }
-        end
+
+      it "calls Lorem::Faker.sentence" do
+        expect(Faker::Lorem).to receive(:sentence).and_return("something new!")
+        expect(subject).to eq("something new!")
       end
     end
     context "given empty sentence" do
@@ -255,8 +253,8 @@ describe "SanitizedJsonExporter/Importer" do
       it "sets a new array with new values" do
         expect(sje.instance_variable_get("@configuration")).to receive(:obfuscate_sentence)
           .and_call_original.at_least(:once)
+        expect(Faker::Lorem).to receive(:sentence).exactly(2).times
         subject
-        expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
     end
   end

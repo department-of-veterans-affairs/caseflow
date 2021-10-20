@@ -129,7 +129,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsSequenceId: issue.vacols_sequence_id,
       vacolsIssue: issue.vacols_issue,
       endProductCleared: issue.end_product_cleared,
-      endProductCode: issue.end_product_code,
+      endProductCode: issue.end_product_establishment_code || issue.end_product_code,
       withdrawalDate: issue.withdrawal_date,
       editable: issue.editable,
       examRequested: issue.exam_requested,
