@@ -28,11 +28,11 @@ export const EmailNotificationFields = ({
   return (
     <ContentSection header={header}>
       <React.Fragment>
-        <h3>{appellantTitle}</h3>
         <div id="email-section" className="usa-grid">
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              required
+              required={hearing?.virtual}
+              optional={!hearing?.virtual}
               errorMessage={errors?.appellantTz}
               value={hearing?.appellantTz}
               onChange={(appellantTz) => update('hearing', { appellantTz })}
@@ -46,7 +46,8 @@ export const EmailNotificationFields = ({
           </div>
           <div className="usa-width-one-third">
             <HearingEmail
-              required
+              required={hearing?.virtual}
+              optional={!hearing?.virtual}
               disabled={disableField}
               label={`${appellantTitle} Email`}
               emailType="appellantEmailAddress"
@@ -57,12 +58,12 @@ export const EmailNotificationFields = ({
           </div>
         </div>
         <div className="cf-help-divider" />
-        <h3>Power of Attorney</h3>
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              errorMessage={errors?.representativeTz}
               required={Boolean(hearing?.representativeEmail)}
+              optional={!hearing?.representativeEmail}
+              errorMessage={errors?.representativeTz}
               value={hearing?.representativeTz}
               onChange={(representativeTz) => update('hearing', { representativeTz })}
               readOnly={disableField || !hearing?.representativeEmailAddress}
@@ -75,6 +76,7 @@ export const EmailNotificationFields = ({
           </div>
           <div className="usa-width-one-third">
             <HearingEmail
+              optional
               disabled={disableField}
               label="POA/Representative Email"
               emailType="representativeEmailAddress"
