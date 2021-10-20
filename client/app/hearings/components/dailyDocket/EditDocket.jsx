@@ -109,7 +109,7 @@ export const EditDocket = (props) => {
         [key]: value
       });
     }
-// If changing the requestType to virtual, clear out the room since virtual hearings do not have assigned rooms
+    // If changing the requestType to virtual, clear out the room since virtual hearings do not have assigned rooms
     if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.virtual) {
       return setFields({
         ...fields,
@@ -157,14 +157,15 @@ export const EditDocket = (props) => {
             options={dropdowns?.regionalOffices?.options}
             errorMessage={invalidDocketRo && COPY.DOCKET_INVALID_RO_TYPE}
           />
-          <HearingRoomDropdown
-            name="room"
-            label="Select Room"
-            readOnly={virtual}
-            value={fields.room?.value}
-            onChange={(_, label) => handleChange('room')(formatRoomOption(label))}
-            placeholder="Select..."
-          />
+          {!virtual && (
+            <HearingRoomDropdown
+              name="room"
+              label="Select Room"
+              value={fields.room?.value}
+              onChange={(_, label) => handleChange('room')(formatRoomOption(label))}
+              placeholder="Select..."
+            />
+          )}
           <JudgeDropdown
             label="Select VLJ"
             value={fields.judgeId}

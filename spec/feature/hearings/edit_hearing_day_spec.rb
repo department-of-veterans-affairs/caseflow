@@ -171,8 +171,8 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "edit virtual docket"
 
-    it "cannot change the room" do
-      expect(page).to have_field("Select Room", disabled: true, visible: false)
+    it "form does not the room" do
+      expect(page).not_to have_field("Select Room")
     end
 
     it "can convert docket type" do
