@@ -1,8 +1,9 @@
 import React from 'react';
 import { css } from 'glamor';
 import { LoadingSymbol } from '../RenderFunctions';
+import PropTypes from 'prop-types';
 
-const LoadingLabel = ({ text = '' }) => (
+const LoadingLabel = () => (
   <span {...css({
     '& > *': {
       display: 'inline-block',
@@ -13,8 +14,16 @@ const LoadingLabel = ({ text = '' }) => (
       text=""
       size="15px"
     />
-    {text}
+    {this.props.text}
   </span>
 );
+
+LoadingLabel.propTypes = {
+  text: PropTypes.string,
+};
+
+LoadingLabel.defaultProps = {
+  text: ''
+};
 
 export default LoadingLabel;

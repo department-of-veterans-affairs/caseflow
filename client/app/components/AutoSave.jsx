@@ -99,7 +99,8 @@ AutoSave.propTypes = {
   intervalInMs: PropTypes.number,
   save: PropTypes.func.isRequired,
   timeSaved: PropTypes.string.isRequired,
-  saveFailed: PropTypes.bool
+  saveFailed: PropTypes.bool,
+  saveSuccessTimeout: PropTypes.number,
 };
 
 AutoSave.defaultProps = {
