@@ -1018,16 +1018,11 @@ export const formatRoomOption = (room) => {
   });
 };
 
-export const readOnlyEmails = (hearing, readOnly) => {
-  if (readOnly) {
-    return true;
-  }
+const isVirtualHearingJobCompleted = (hearing) =>
+  (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted);
 
-  if (hearing?.isVirtual && hearing?.virtualHearing) {
-    return !hearing?.virtualHearing?.jobCompleted || hearing.scheduledForIsPast;
-  }
-
-  return hearing.scheduledForIsPast;
+export const readOnlyEmails = (hearing) => {
+  return isVirtualHearingJobCompleted(hearing) || hearing?.scheduledForIsPast;
 };
 
 /* eslint-enable camelcase */
