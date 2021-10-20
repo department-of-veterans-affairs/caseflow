@@ -232,7 +232,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
   }
 >
   <ContentSection
-    header="Virtual Hearing Linksq"
+    header="Virtual Hearing Links"
   >
     <div
       className="cf-app-segment"
@@ -240,7 +240,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
       <h2
         data-css-3rhuy2=""
       >
-        Virtual Hearing Linksq
+        Virtual Hearing Links
       </h2>
       <div
         data-css-1571z6o=""
@@ -1209,7 +1209,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
   update={[MockFunction]}
 >
   <ContentSection
-    header="Virtual Hearing Linksq"
+    header="Virtual Hearing Links"
   >
     <div
       className="cf-app-segment"
@@ -1217,7 +1217,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
       <h2
         data-css-3rhuy2=""
       >
-        Virtual Hearing Linksq
+        Virtual Hearing Links
       </h2>
       <div
         data-css-1571z6o=""

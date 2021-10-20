@@ -34,7 +34,7 @@ export const EmailNotificationFields = ({
             <Timezone
               required
               errorMessage={errors?.appellantTz}
-              value={HearingEmail?.appellantTz}
+              value={hearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
               readOnly={disableField}
               time={time}

@@ -32513,497 +32513,360 @@ exports[`EmailNotificationFields Display timezone and divider for Central 1`] = 
           }
         >
           <div
-            className="cf-app-segment"
-            data-css-1ry9yw6=""
-            id="virtualHearingEmailEvents"
+            data-css-1fctrka=""
           >
-            <Accordion
-              defaultActiveKey={
+            <div
+              className="cf-help-divider"
+            />
+            <Table
+              columns={
                 Array [
-                  "Email Notification History",
+                  Object {
+                    "align": "left",
+                    "header": "Sent To",
+                    "valueName": "sentTo",
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Email Address",
+                    "valueName": "emailAddress",
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Date Sent",
+                    "valueFunction": [Function],
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Sent By",
+                    "valueName": "sentBy",
+                  },
                 ]
               }
-              header={
-                <h3>
-                  Email Notification History
-                </h3>
+              getKeyForRow={[Function]}
+              rowObjects={
+                Array [
+                  Object {
+                    "emailAddress": "tom.brady@caseflow.gov",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.620-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "POA/Representative Email",
+                  },
+                  Object {
+                    "emailAddress": "Bob.Smith@test.com",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.501-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "Appellant Email",
+                  },
+                ]
               }
             >
-              <Collapse
-                accordion={false}
-                defaultActiveKey={
-                  Array [
-                    "Email Notification History",
-                  ]
-                }
-                destroyInactivePanel={false}
-                onChange={[Function]}
-                prefixCls="rc-collapse"
+              <table
+                className="usa-table-borderless "
               >
-                <div
-                  className="rc-collapse"
-                  role={null}
-                >
-                  <CollapsePanel
-                    accordion={false}
-                    destroyInactivePanel={false}
-                    forceRender={false}
-                    header={
-                      <h3>
-                        Email Notification History
-                      </h3>
-                    }
-                    headerClass="usa-accordion-button"
-                    isActive={true}
-                    key=".$Email Notification History"
-                    onItemClick={[Function]}
-                    openAnimation={
+                <HeaderRow
+                  columns={
+                    Array [
                       Object {
-                        "enter": [Function],
-                        "leave": [Function],
-                      }
-                    }
-                    panelKey="Email Notification History"
-                    prefixCls="rc-collapse"
-                    showArrow={true}
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                  headerClassName=""
+                  setSortOrder={[Function]}
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <thead
+                    className=""
                   >
-                    <div
-                      className="rc-collapse-item rc-collapse-item-active"
-                    >
-                      <div
-                        aria-expanded="true"
-                        className="rc-collapse-header usa-accordion-button"
-                        onClick={[Function]}
-                        onKeyPress={[Function]}
-                        role="button"
-                        tabIndex={0}
+                    <tr>
+                      <th
+                        className="cf-txt-l"
+                        key="0"
+                        scope="col"
                       >
-                        <i
-                          className="arrow"
-                        />
-                        <h3>
-                          Email Notification History
-                        </h3>
-                      </div>
-                      <Animate
-                        animation={
+                        <span>
+                          Sent To
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="1"
+                        scope="col"
+                      >
+                        <span>
+                          Email Address
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="2"
+                        scope="col"
+                      >
+                        <span>
+                          Date Sent
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="3"
+                        scope="col"
+                      >
+                        <span>
+                          Sent By
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                </HeaderRow>
+                <BodyRows
+                  bodyClassName=""
+                  columns={
+                    Array [
+                      Object {
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                  getKeyForRow={[Function]}
+                  rowClassNames={[Function]}
+                  rowObjects={
+                    Array [
+                      Object {
+                        "emailAddress": "tom.brady@caseflow.gov",
+                        "emailType": "confirmation",
+                        "sentAt": "2020-06-29T14:55:12.620-04:00",
+                        "sentBy": "BVASYELLOW",
+                        "sentTo": "POA/Representative Email",
+                      },
+                      Object {
+                        "emailAddress": "Bob.Smith@test.com",
+                        "emailType": "confirmation",
+                        "sentAt": "2020-06-29T14:55:12.501-04:00",
+                        "sentBy": "BVASYELLOW",
+                        "sentTo": "Appellant Email",
+                      },
+                    ]
+                  }
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <tbody
+                    className=""
+                  >
+                    <Row
+                      columns={
+                        Array [
                           Object {
-                            "enter": [Function],
-                            "leave": [Function],
-                          }
+                            "align": "left",
+                            "header": "Sent To",
+                            "valueName": "sentTo",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Email Address",
+                            "valueName": "emailAddress",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Date Sent",
+                            "valueFunction": [Function],
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Sent By",
+                            "valueName": "sentBy",
+                          },
+                        ]
+                      }
+                      key="0"
+                      rowClassNames={[Function]}
+                      rowId={0}
+                      rowObject={
+                        Object {
+                          "emailAddress": "tom.brady@caseflow.gov",
+                          "emailType": "confirmation",
+                          "sentAt": "2020-06-29T14:55:12.620-04:00",
+                          "sentBy": "BVASYELLOW",
+                          "sentTo": "POA/Representative Email",
                         }
-                        component=""
-                        componentProps={Object {}}
-                        exclusive={true}
-                        onAppear={[Function]}
-                        onEnd={[Function]}
-                        onEnter={[Function]}
-                        onLeave={[Function]}
-                        showProp="isActive"
-                        transitionAppear={false}
-                        transitionEnter={true}
-                        transitionLeave={true}
+                      }
+                    >
+                      <tr
+                        className=""
+                        id="table-row-0"
                       >
-                        <AnimateChild
-                          animation={
-                            Object {
-                              "enter": [Function],
-                              "leave": [Function],
-                            }
-                          }
-                          key="rc_animate_2020-07-06T06:00:00.000-04:00"
-                          transitionAppear={false}
-                          transitionEnter={true}
-                          transitionLeave={true}
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="0"
                         >
-                          <PanelContent
-                            destroyInactivePanel={false}
-                            forceRender={false}
-                            isActive={true}
-                            key="rc_animate_2020-07-06T06:00:00.000-04:00"
-                            prefixCls="rc-collapse"
-                            role={null}
-                          >
-                            <div
-                              className="rc-collapse-content rc-collapse-content-active"
-                              role={null}
-                            >
-                              <div
-                                className="rc-collapse-content-box"
-                              >
-                                <div
-                                  className="usa-accordion-content"
-                                  data-css-1571z6o=""
-                                >
-                                  <div
-                                    data-css-1fctrka=""
-                                  >
-                                    Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them
-                                  </div>
-                                  <div
-                                    data-css-1fctrka=""
-                                  >
-                                    <Table
-                                      columns={
-                                        Array [
-                                          Object {
-                                            "align": "left",
-                                            "header": "Sent To",
-                                            "valueName": "sentTo",
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Email Address",
-                                            "valueName": "emailAddress",
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Date Sent",
-                                            "valueFunction": [Function],
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Sent By",
-                                            "valueName": "sentBy",
-                                          },
-                                        ]
-                                      }
-                                      getKeyForRow={[Function]}
-                                      rowObjects={
-                                        Array [
-                                          Object {
-                                            "emailAddress": "tom.brady@caseflow.gov",
-                                            "emailType": "confirmation",
-                                            "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                            "sentBy": "BVASYELLOW",
-                                            "sentTo": "POA/Representative Email",
-                                          },
-                                          Object {
-                                            "emailAddress": "Bob.Smith@test.com",
-                                            "emailType": "confirmation",
-                                            "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                            "sentBy": "BVASYELLOW",
-                                            "sentTo": "Appellant Email",
-                                          },
-                                        ]
-                                      }
-                                    >
-                                      <table
-                                        className="usa-table-borderless "
-                                      >
-                                        <HeaderRow
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                          headerClassName=""
-                                          setSortOrder={[Function]}
-                                          sortAscending={true}
-                                          sortColIdx={null}
-                                        >
-                                          <thead
-                                            className=""
-                                          >
-                                            <tr>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="0"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Sent To
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="1"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Email Address
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="2"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Date Sent
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="3"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Sent By
-                                                </span>
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                        </HeaderRow>
-                                        <BodyRows
-                                          bodyClassName=""
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                          getKeyForRow={[Function]}
-                                          rowClassNames={[Function]}
-                                          rowObjects={
-                                            Array [
-                                              Object {
-                                                "emailAddress": "tom.brady@caseflow.gov",
-                                                "emailType": "confirmation",
-                                                "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                                "sentBy": "BVASYELLOW",
-                                                "sentTo": "POA/Representative Email",
-                                              },
-                                              Object {
-                                                "emailAddress": "Bob.Smith@test.com",
-                                                "emailType": "confirmation",
-                                                "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                                "sentBy": "BVASYELLOW",
-                                                "sentTo": "Appellant Email",
-                                              },
-                                            ]
-                                          }
-                                          sortAscending={true}
-                                          sortColIdx={null}
-                                        >
-                                          <tbody
-                                            className=""
-                                          >
-                                            <Row
-                                              columns={
-                                                Array [
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent To",
-                                                    "valueName": "sentTo",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Email Address",
-                                                    "valueName": "emailAddress",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Date Sent",
-                                                    "valueFunction": [Function],
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent By",
-                                                    "valueName": "sentBy",
-                                                  },
-                                                ]
-                                              }
-                                              key="0"
-                                              rowClassNames={[Function]}
-                                              rowId={0}
-                                              rowObject={
-                                                Object {
-                                                  "emailAddress": "tom.brady@caseflow.gov",
-                                                  "emailType": "confirmation",
-                                                  "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                                  "sentBy": "BVASYELLOW",
-                                                  "sentTo": "POA/Representative Email",
-                                                }
-                                              }
-                                            >
-                                              <tr
-                                                className=""
-                                                id="table-row-0"
-                                              >
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="0"
-                                                >
-                                                  POA/Representative Email
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="1"
-                                                >
-                                                  tom.brady@caseflow.gov
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="2"
-                                                >
-                                                  Jun 29, 2020, 2:55 pm EST
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="3"
-                                                >
-                                                  BVASYELLOW
-                                                </td>
-                                              </tr>
-                                            </Row>
-                                            <Row
-                                              columns={
-                                                Array [
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent To",
-                                                    "valueName": "sentTo",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Email Address",
-                                                    "valueName": "emailAddress",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Date Sent",
-                                                    "valueFunction": [Function],
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent By",
-                                                    "valueName": "sentBy",
-                                                  },
-                                                ]
-                                              }
-                                              key="1"
-                                              rowClassNames={[Function]}
-                                              rowId={1}
-                                              rowObject={
-                                                Object {
-                                                  "emailAddress": "Bob.Smith@test.com",
-                                                  "emailType": "confirmation",
-                                                  "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                                  "sentBy": "BVASYELLOW",
-                                                  "sentTo": "Appellant Email",
-                                                }
-                                              }
-                                            >
-                                              <tr
-                                                className=""
-                                                id="table-row-1"
-                                              >
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="0"
-                                                >
-                                                  Appellant Email
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="1"
-                                                >
-                                                  Bob.Smith@test.com
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="2"
-                                                >
-                                                  Jun 29, 2020, 2:55 pm EST
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="3"
-                                                >
-                                                  BVASYELLOW
-                                                </td>
-                                              </tr>
-                                            </Row>
-                                          </tbody>
-                                        </BodyRows>
-                                        <FooterRow
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                        >
-                                          <tfoot />
-                                        </FooterRow>
-                                      </table>
-                                    </Table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </PanelContent>
-                        </AnimateChild>
-                      </Animate>
-                    </div>
-                  </CollapsePanel>
-                </div>
-              </Collapse>
-            </Accordion>
+                          POA/Representative Email
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="1"
+                        >
+                          tom.brady@caseflow.gov
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="2"
+                        >
+                          Jun 29, 2020, 2:55 pm EST
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="3"
+                        >
+                          BVASYELLOW
+                        </td>
+                      </tr>
+                    </Row>
+                    <Row
+                      columns={
+                        Array [
+                          Object {
+                            "align": "left",
+                            "header": "Sent To",
+                            "valueName": "sentTo",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Email Address",
+                            "valueName": "emailAddress",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Date Sent",
+                            "valueFunction": [Function],
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Sent By",
+                            "valueName": "sentBy",
+                          },
+                        ]
+                      }
+                      key="1"
+                      rowClassNames={[Function]}
+                      rowId={1}
+                      rowObject={
+                        Object {
+                          "emailAddress": "Bob.Smith@test.com",
+                          "emailType": "confirmation",
+                          "sentAt": "2020-06-29T14:55:12.501-04:00",
+                          "sentBy": "BVASYELLOW",
+                          "sentTo": "Appellant Email",
+                        }
+                      }
+                    >
+                      <tr
+                        className=""
+                        id="table-row-1"
+                      >
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="0"
+                        >
+                          Appellant Email
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="1"
+                        >
+                          Bob.Smith@test.com
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="2"
+                        >
+                          Jun 29, 2020, 2:55 pm EST
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="3"
+                        >
+                          BVASYELLOW
+                        </td>
+                      </tr>
+                    </Row>
+                  </tbody>
+                </BodyRows>
+                <FooterRow
+                  columns={
+                    Array [
+                      Object {
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                >
+                  <tfoot />
+                </FooterRow>
+              </table>
+            </Table>
           </div>
         </EmailNotificationHistory>
       </div>
@@ -65525,497 +65388,360 @@ exports[`EmailNotificationFields Display timezone and divider for Video 1`] = `
           }
         >
           <div
-            className="cf-app-segment"
-            data-css-1ry9yw6=""
-            id="virtualHearingEmailEvents"
+            data-css-1fctrka=""
           >
-            <Accordion
-              defaultActiveKey={
+            <div
+              className="cf-help-divider"
+            />
+            <Table
+              columns={
                 Array [
-                  "Email Notification History",
+                  Object {
+                    "align": "left",
+                    "header": "Sent To",
+                    "valueName": "sentTo",
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Email Address",
+                    "valueName": "emailAddress",
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Date Sent",
+                    "valueFunction": [Function],
+                  },
+                  Object {
+                    "align": "left",
+                    "header": "Sent By",
+                    "valueName": "sentBy",
+                  },
                 ]
               }
-              header={
-                <h3>
-                  Email Notification History
-                </h3>
+              getKeyForRow={[Function]}
+              rowObjects={
+                Array [
+                  Object {
+                    "emailAddress": "tom.brady@caseflow.gov",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.620-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "POA/Representative Email",
+                  },
+                  Object {
+                    "emailAddress": "Bob.Smith@test.com",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.501-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "Appellant Email",
+                  },
+                ]
               }
             >
-              <Collapse
-                accordion={false}
-                defaultActiveKey={
-                  Array [
-                    "Email Notification History",
-                  ]
-                }
-                destroyInactivePanel={false}
-                onChange={[Function]}
-                prefixCls="rc-collapse"
+              <table
+                className="usa-table-borderless "
               >
-                <div
-                  className="rc-collapse"
-                  role={null}
-                >
-                  <CollapsePanel
-                    accordion={false}
-                    destroyInactivePanel={false}
-                    forceRender={false}
-                    header={
-                      <h3>
-                        Email Notification History
-                      </h3>
-                    }
-                    headerClass="usa-accordion-button"
-                    isActive={true}
-                    key=".$Email Notification History"
-                    onItemClick={[Function]}
-                    openAnimation={
+                <HeaderRow
+                  columns={
+                    Array [
                       Object {
-                        "enter": [Function],
-                        "leave": [Function],
-                      }
-                    }
-                    panelKey="Email Notification History"
-                    prefixCls="rc-collapse"
-                    showArrow={true}
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                  headerClassName=""
+                  setSortOrder={[Function]}
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <thead
+                    className=""
                   >
-                    <div
-                      className="rc-collapse-item rc-collapse-item-active"
-                    >
-                      <div
-                        aria-expanded="true"
-                        className="rc-collapse-header usa-accordion-button"
-                        onClick={[Function]}
-                        onKeyPress={[Function]}
-                        role="button"
-                        tabIndex={0}
+                    <tr>
+                      <th
+                        className="cf-txt-l"
+                        key="0"
+                        scope="col"
                       >
-                        <i
-                          className="arrow"
-                        />
-                        <h3>
-                          Email Notification History
-                        </h3>
-                      </div>
-                      <Animate
-                        animation={
+                        <span>
+                          Sent To
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="1"
+                        scope="col"
+                      >
+                        <span>
+                          Email Address
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="2"
+                        scope="col"
+                      >
+                        <span>
+                          Date Sent
+                        </span>
+                      </th>
+                      <th
+                        className="cf-txt-l"
+                        key="3"
+                        scope="col"
+                      >
+                        <span>
+                          Sent By
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                </HeaderRow>
+                <BodyRows
+                  bodyClassName=""
+                  columns={
+                    Array [
+                      Object {
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                  getKeyForRow={[Function]}
+                  rowClassNames={[Function]}
+                  rowObjects={
+                    Array [
+                      Object {
+                        "emailAddress": "tom.brady@caseflow.gov",
+                        "emailType": "confirmation",
+                        "sentAt": "2020-06-29T14:55:12.620-04:00",
+                        "sentBy": "BVASYELLOW",
+                        "sentTo": "POA/Representative Email",
+                      },
+                      Object {
+                        "emailAddress": "Bob.Smith@test.com",
+                        "emailType": "confirmation",
+                        "sentAt": "2020-06-29T14:55:12.501-04:00",
+                        "sentBy": "BVASYELLOW",
+                        "sentTo": "Appellant Email",
+                      },
+                    ]
+                  }
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <tbody
+                    className=""
+                  >
+                    <Row
+                      columns={
+                        Array [
                           Object {
-                            "enter": [Function],
-                            "leave": [Function],
-                          }
+                            "align": "left",
+                            "header": "Sent To",
+                            "valueName": "sentTo",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Email Address",
+                            "valueName": "emailAddress",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Date Sent",
+                            "valueFunction": [Function],
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Sent By",
+                            "valueName": "sentBy",
+                          },
+                        ]
+                      }
+                      key="0"
+                      rowClassNames={[Function]}
+                      rowId={0}
+                      rowObject={
+                        Object {
+                          "emailAddress": "tom.brady@caseflow.gov",
+                          "emailType": "confirmation",
+                          "sentAt": "2020-06-29T14:55:12.620-04:00",
+                          "sentBy": "BVASYELLOW",
+                          "sentTo": "POA/Representative Email",
                         }
-                        component=""
-                        componentProps={Object {}}
-                        exclusive={true}
-                        onAppear={[Function]}
-                        onEnd={[Function]}
-                        onEnter={[Function]}
-                        onLeave={[Function]}
-                        showProp="isActive"
-                        transitionAppear={false}
-                        transitionEnter={true}
-                        transitionLeave={true}
+                      }
+                    >
+                      <tr
+                        className=""
+                        id="table-row-0"
                       >
-                        <AnimateChild
-                          animation={
-                            Object {
-                              "enter": [Function],
-                              "leave": [Function],
-                            }
-                          }
-                          key="rc_animate_2020-07-06T06:00:00.000-04:00"
-                          transitionAppear={false}
-                          transitionEnter={true}
-                          transitionLeave={true}
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="0"
                         >
-                          <PanelContent
-                            destroyInactivePanel={false}
-                            forceRender={false}
-                            isActive={true}
-                            key="rc_animate_2020-07-06T06:00:00.000-04:00"
-                            prefixCls="rc-collapse"
-                            role={null}
-                          >
-                            <div
-                              className="rc-collapse-content rc-collapse-content-active"
-                              role={null}
-                            >
-                              <div
-                                className="rc-collapse-content-box"
-                              >
-                                <div
-                                  className="usa-accordion-content"
-                                  data-css-1571z6o=""
-                                >
-                                  <div
-                                    data-css-1fctrka=""
-                                  >
-                                    Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them
-                                  </div>
-                                  <div
-                                    data-css-1fctrka=""
-                                  >
-                                    <Table
-                                      columns={
-                                        Array [
-                                          Object {
-                                            "align": "left",
-                                            "header": "Sent To",
-                                            "valueName": "sentTo",
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Email Address",
-                                            "valueName": "emailAddress",
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Date Sent",
-                                            "valueFunction": [Function],
-                                          },
-                                          Object {
-                                            "align": "left",
-                                            "header": "Sent By",
-                                            "valueName": "sentBy",
-                                          },
-                                        ]
-                                      }
-                                      getKeyForRow={[Function]}
-                                      rowObjects={
-                                        Array [
-                                          Object {
-                                            "emailAddress": "tom.brady@caseflow.gov",
-                                            "emailType": "confirmation",
-                                            "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                            "sentBy": "BVASYELLOW",
-                                            "sentTo": "POA/Representative Email",
-                                          },
-                                          Object {
-                                            "emailAddress": "Bob.Smith@test.com",
-                                            "emailType": "confirmation",
-                                            "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                            "sentBy": "BVASYELLOW",
-                                            "sentTo": "Appellant Email",
-                                          },
-                                        ]
-                                      }
-                                    >
-                                      <table
-                                        className="usa-table-borderless "
-                                      >
-                                        <HeaderRow
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                          headerClassName=""
-                                          setSortOrder={[Function]}
-                                          sortAscending={true}
-                                          sortColIdx={null}
-                                        >
-                                          <thead
-                                            className=""
-                                          >
-                                            <tr>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="0"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Sent To
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="1"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Email Address
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="2"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Date Sent
-                                                </span>
-                                              </th>
-                                              <th
-                                                className="cf-txt-l"
-                                                key="3"
-                                                scope="col"
-                                              >
-                                                <span>
-                                                  Sent By
-                                                </span>
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                        </HeaderRow>
-                                        <BodyRows
-                                          bodyClassName=""
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                          getKeyForRow={[Function]}
-                                          rowClassNames={[Function]}
-                                          rowObjects={
-                                            Array [
-                                              Object {
-                                                "emailAddress": "tom.brady@caseflow.gov",
-                                                "emailType": "confirmation",
-                                                "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                                "sentBy": "BVASYELLOW",
-                                                "sentTo": "POA/Representative Email",
-                                              },
-                                              Object {
-                                                "emailAddress": "Bob.Smith@test.com",
-                                                "emailType": "confirmation",
-                                                "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                                "sentBy": "BVASYELLOW",
-                                                "sentTo": "Appellant Email",
-                                              },
-                                            ]
-                                          }
-                                          sortAscending={true}
-                                          sortColIdx={null}
-                                        >
-                                          <tbody
-                                            className=""
-                                          >
-                                            <Row
-                                              columns={
-                                                Array [
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent To",
-                                                    "valueName": "sentTo",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Email Address",
-                                                    "valueName": "emailAddress",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Date Sent",
-                                                    "valueFunction": [Function],
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent By",
-                                                    "valueName": "sentBy",
-                                                  },
-                                                ]
-                                              }
-                                              key="0"
-                                              rowClassNames={[Function]}
-                                              rowId={0}
-                                              rowObject={
-                                                Object {
-                                                  "emailAddress": "tom.brady@caseflow.gov",
-                                                  "emailType": "confirmation",
-                                                  "sentAt": "2020-06-29T14:55:12.620-04:00",
-                                                  "sentBy": "BVASYELLOW",
-                                                  "sentTo": "POA/Representative Email",
-                                                }
-                                              }
-                                            >
-                                              <tr
-                                                className=""
-                                                id="table-row-0"
-                                              >
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="0"
-                                                >
-                                                  POA/Representative Email
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="1"
-                                                >
-                                                  tom.brady@caseflow.gov
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="2"
-                                                >
-                                                  Jun 29, 2020, 2:55 pm EST
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="3"
-                                                >
-                                                  BVASYELLOW
-                                                </td>
-                                              </tr>
-                                            </Row>
-                                            <Row
-                                              columns={
-                                                Array [
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent To",
-                                                    "valueName": "sentTo",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Email Address",
-                                                    "valueName": "emailAddress",
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Date Sent",
-                                                    "valueFunction": [Function],
-                                                  },
-                                                  Object {
-                                                    "align": "left",
-                                                    "header": "Sent By",
-                                                    "valueName": "sentBy",
-                                                  },
-                                                ]
-                                              }
-                                              key="1"
-                                              rowClassNames={[Function]}
-                                              rowId={1}
-                                              rowObject={
-                                                Object {
-                                                  "emailAddress": "Bob.Smith@test.com",
-                                                  "emailType": "confirmation",
-                                                  "sentAt": "2020-06-29T14:55:12.501-04:00",
-                                                  "sentBy": "BVASYELLOW",
-                                                  "sentTo": "Appellant Email",
-                                                }
-                                              }
-                                            >
-                                              <tr
-                                                className=""
-                                                id="table-row-1"
-                                              >
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="0"
-                                                >
-                                                  Appellant Email
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="1"
-                                                >
-                                                  Bob.Smith@test.com
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="2"
-                                                >
-                                                  Jun 29, 2020, 2:55 pm EST
-                                                </td>
-                                                <td
-                                                  className="cf-txt-l"
-                                                  colSpan={1}
-                                                  key="3"
-                                                >
-                                                  BVASYELLOW
-                                                </td>
-                                              </tr>
-                                            </Row>
-                                          </tbody>
-                                        </BodyRows>
-                                        <FooterRow
-                                          columns={
-                                            Array [
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent To",
-                                                "valueName": "sentTo",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Email Address",
-                                                "valueName": "emailAddress",
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Date Sent",
-                                                "valueFunction": [Function],
-                                              },
-                                              Object {
-                                                "align": "left",
-                                                "header": "Sent By",
-                                                "valueName": "sentBy",
-                                              },
-                                            ]
-                                          }
-                                        >
-                                          <tfoot />
-                                        </FooterRow>
-                                      </table>
-                                    </Table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </PanelContent>
-                        </AnimateChild>
-                      </Animate>
-                    </div>
-                  </CollapsePanel>
-                </div>
-              </Collapse>
-            </Accordion>
+                          POA/Representative Email
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="1"
+                        >
+                          tom.brady@caseflow.gov
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="2"
+                        >
+                          Jun 29, 2020, 2:55 pm EST
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="3"
+                        >
+                          BVASYELLOW
+                        </td>
+                      </tr>
+                    </Row>
+                    <Row
+                      columns={
+                        Array [
+                          Object {
+                            "align": "left",
+                            "header": "Sent To",
+                            "valueName": "sentTo",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Email Address",
+                            "valueName": "emailAddress",
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Date Sent",
+                            "valueFunction": [Function],
+                          },
+                          Object {
+                            "align": "left",
+                            "header": "Sent By",
+                            "valueName": "sentBy",
+                          },
+                        ]
+                      }
+                      key="1"
+                      rowClassNames={[Function]}
+                      rowId={1}
+                      rowObject={
+                        Object {
+                          "emailAddress": "Bob.Smith@test.com",
+                          "emailType": "confirmation",
+                          "sentAt": "2020-06-29T14:55:12.501-04:00",
+                          "sentBy": "BVASYELLOW",
+                          "sentTo": "Appellant Email",
+                        }
+                      }
+                    >
+                      <tr
+                        className=""
+                        id="table-row-1"
+                      >
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="0"
+                        >
+                          Appellant Email
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="1"
+                        >
+                          Bob.Smith@test.com
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="2"
+                        >
+                          Jun 29, 2020, 2:55 pm EST
+                        </td>
+                        <td
+                          className="cf-txt-l"
+                          colSpan={1}
+                          key="3"
+                        >
+                          BVASYELLOW
+                        </td>
+                      </tr>
+                    </Row>
+                  </tbody>
+                </BodyRows>
+                <FooterRow
+                  columns={
+                    Array [
+                      Object {
+                        "align": "left",
+                        "header": "Sent To",
+                        "valueName": "sentTo",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Email Address",
+                        "valueName": "emailAddress",
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Date Sent",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "align": "left",
+                        "header": "Sent By",
+                        "valueName": "sentBy",
+                      },
+                    ]
+                  }
+                >
+                  <tfoot />
+                </FooterRow>
+              </table>
+            </Table>
           </div>
         </EmailNotificationHistory>
       </div>

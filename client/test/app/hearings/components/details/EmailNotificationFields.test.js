@@ -26,7 +26,6 @@ describe('EmailNotificationFields', () => {
       prop('value')).toEqual(amaHearing.representativeTz);
 
     // Other components
-    expect(fields.find('.cf-help-divider')).toHaveLength(1);
     expect(fields).toMatchSnapshot();
   };
 
