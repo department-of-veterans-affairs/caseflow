@@ -815,8 +815,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(name: "hearingDate", index: 0)
 
         expect(page).to have_content("Email Notifications")
-        expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
-          "Judge will receive an email with connection information for the virtual hearing.")
+        # Check that the sentence about emails is there, this text is common between both
+        # possible messages
+        expect(page).to have_content("will receive")
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
