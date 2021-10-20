@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-import TextareaField from '../../components/TextareaField';
+import TextareaField from 'app/components/TextareaField';
+import Alert from 'app/components/Alert';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
 import COPY from '../../../COPY';
 
@@ -17,13 +18,17 @@ import QueueFlowModal from './QueueFlowModal';
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+  const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
 
   return (
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label="Instructions:"
+          label={instructionsLabel || 'Instructions:'}
           name="instructions"
           id="completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
@@ -82,7 +87,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    buttonText: COPY.MODAL_CONFIRM_BUTTON
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({

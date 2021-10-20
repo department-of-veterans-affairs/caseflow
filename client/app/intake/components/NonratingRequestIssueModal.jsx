@@ -244,7 +244,7 @@ class NonratingRequestIssueModal extends React.Component {
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId } = this.state;
-    const vhaPreDocketWorkflow = featureToggles.vhaPreDocketWorkflow;
+    const vhaPreDocketAppeals = featureToggles.vhaPreDocketAppeals;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -255,7 +255,7 @@ class NonratingRequestIssueModal extends React.Component {
         this.getAdditionalDetails() :
         null;
 
-    const showPreDocketBanner = benefitType === 'vha' && vhaPreDocketWorkflow;
+    const showPreDocketBanner = benefitType === 'vha' && vhaPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);

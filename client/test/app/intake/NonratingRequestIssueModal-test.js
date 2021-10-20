@@ -14,6 +14,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
         formType={formType}
         intakeData={intakeData}
+        featureToggles={{ vhaPreDocketAppeals: false }}
         onSkip={() => null} />
       );
 

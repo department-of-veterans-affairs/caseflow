@@ -43,6 +43,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("Pre-Docket")
       end
 
+      step "Use can search the case and see the Pre Docketed status" do
+        appeal = Appeal.last
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
+        expect(page).to have_content ("Pre Docketed")
+      end
+
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
@@ -173,8 +181,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         visit "/queue/appeals/#{appeal.external_id}"
         bva_intake_dockets_appeal
 
-        expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
-        expect(page).to have_content("Docket number: #{appeal.docket_number}")
+        expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_TITLE)
+        expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_DETAIL)
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
         expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
 
@@ -199,8 +207,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       visit "/queue/appeals/#{appeal.external_id}"
       bva_intake_dockets_appeal
 
-      expect(page).to have_content("#{appeal.veteran.person.name}'s appeal has successfully been docketed")
-      expect(page).to have_content("Docket number: #{appeal.docket_number}")
+      expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_TITLE)
+      expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_DETAIL)
       expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
 
@@ -223,8 +231,13 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       benefit_type: "Veterans Health Administration",
       category: "Caregiver",
       description: "I am a VHA issue",
-      date: 1.month.ago.mdY
+      date: 1.month.ago.mdY,
+      submit_issue: false
     )
+    expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+    safe_click ".add-issue"
+    expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
+    expect(page).to have_button("Submit appeal")
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
@@ -237,8 +250,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
-    fill_in("Instructions:", with: "I confirmed the documents are in VBMS.")
-    find("button", class: "usa-button", text: "Submit").click
+    find("button", class: "usa-button", text: "Confirm").click
   end
 end

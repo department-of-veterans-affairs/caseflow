@@ -103,7 +103,7 @@ export const UntimelyExemptionModal = ({
       radioLabelParts.splice(1, 1);
     }
 
-    return radioLabelParts;
+    return radioLabelParts.join('');
   };
 
   return (
