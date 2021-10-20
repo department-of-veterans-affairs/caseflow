@@ -3,9 +3,9 @@ title: "Tasks Overview"
 categories: "overview"
 ---
 
-| [README](../intro/README.md) | [All tasks](alltasks.md) | [DR tasks](docket-DR/tasklist.md) | [ES tasks](docket-ES/tasklist.md) | [H tasks](docket-H/tasklist.md) |
+| [README](../intro/task_trees.md) | [All tasks](alltasks.md) | [DR tasks](docket-DR/tasklist.md) | [ES tasks](docket-ES/tasklist.md) | [H tasks](docket-H/tasklist.md) |
 
-See [How to use](../README.md#how-to-use-and-interpret-this-documentation) for a description of the docket types: Direct Review (DR), Evidence Submission (ES), and Hearing (H).
+Docket types: Direct Review (DR), Evidence Submission (ES), and Hearing (H).
 
 Appeals Process: [mural](https://app.mural.co/t/workqueue2001/m/workqueue2001/1561671251478/5b71dc3125e2075289be03161b4cf6f42896184d)
 
