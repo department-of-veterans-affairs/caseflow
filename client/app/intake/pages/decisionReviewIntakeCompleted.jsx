@@ -62,7 +62,6 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
 };
 
 const getChecklistItems = (featureToggles, formType, requestIssues, isInformalConferenceRequested) => {
-  console.log(requestIssues);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
