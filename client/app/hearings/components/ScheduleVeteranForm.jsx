@@ -78,7 +78,7 @@ export const ScheduleVeteranForm = ({
     const onTimeChange =
       (scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString);
 
-    if (hearingDayIsVideo && hearing.hearingDay?.beginsAt) {
+    if (hearingDayIsVideo && hearing.hearingDay?.beginsAt && hearing.hearingDay?.totalSlots < 10) {
       return (
         <ReadOnlyHearingTimeWithZone
           hearingStartTime={hearing.hearingDay?.beginsAt}
