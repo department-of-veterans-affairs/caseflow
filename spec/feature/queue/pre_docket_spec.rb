@@ -37,7 +37,26 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "BVA Intake user intakes a VHA case" do
         User.authenticate!(user: bva_intake_user)
         start_appeal(veteran, intake_user: bva_intake_user)
-        complete_vha_intake
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        click_intake_continue
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+        fill_in "Benefit type", with: "Veterans Health Administration"
+        find("#issue-benefit-type").send_keys :enter
+        fill_in "Issue category", with: "Caregiver"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "I am a VHA issue"
+        fill_in "Decision date", with: 1.month.ago.mdY
+
+        expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+        safe_click ".add-issue"
+        expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
+        expect(page).to have_button("Submit appeal")
+        click_intake_finish
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+
         appeal = Appeal.last
         visit "/queue/appeals/#{appeal.external_id}"
         expect(page).to have_content("Pre-Docket")
@@ -199,7 +218,23 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
       User.authenticate!(user: bva_intake_user)
       start_appeal(veteran, intake_user: bva_intake_user)
-      complete_vha_intake
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      click_intake_continue
+      expect(page).to have_content("Add / Remove Issues")
+
+      click_intake_add_issue
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Caregiver"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      safe_click ".add-issue"
+      expect(page).to have_button("Submit appeal")
+      click_intake_finish
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+
       appeal = Appeal.last
       camo_task = VhaDocumentSearchTask.last
       bva_intake_task = PreDocketTask.last
@@ -218,28 +253,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       expect(distribution_task.status).to eq Constants.TASK_STATUSES.on_hold
       expect(docket_related_task.status).to eq Constants.TASK_STATUSES.assigned
     end
-  end
-
-  def complete_vha_intake
-    visit "/intake"
-    expect(page).to have_current_path("/intake/review_request")
-    click_intake_continue
-    expect(page).to have_content("Add / Remove Issues")
-
-    click_intake_add_issue
-    fill_in "Benefit type", with: "Veterans Health Administration"
-    find("#issue-benefit-type").send_keys :enter
-    fill_in "Issue category", with: "Caregiver"
-    find("#issue-category").send_keys :enter
-    fill_in "Issue description", with: "I am a VHA issue"
-    fill_in "Decision date", with: 1.month.ago.mdY
-
-    expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
-    safe_click ".add-issue"
-    expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
-    expect(page).to have_button("Submit appeal")
-    click_intake_finish
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
 
   def bva_intake_dockets_appeal
