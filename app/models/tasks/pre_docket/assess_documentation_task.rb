@@ -7,7 +7,7 @@
 
 class AssessDocumentationTask < Task
   validates :parent, presence: true,
-                     parentTask: { task_type: VhaDocumentSearchTask },
+                    #  parentTask: { task_type: VhaDocumentSearchTask },
                      on: :create
 
   def self.label
