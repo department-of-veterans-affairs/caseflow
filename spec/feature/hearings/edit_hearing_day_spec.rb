@@ -105,7 +105,6 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
       expect(page).to have_content("You have successfully updated this hearing day.")
       expect(hearing_day.reload.room).to eq(nil)
-      expect(page).to have_content
     end
   end
 
