@@ -16,7 +16,7 @@ export const VirtualHearingFields = (
 
   return (
     <ContentSection
-      header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Linksq`}
+      header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
       <HearingLinks
         user={user}
