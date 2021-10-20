@@ -7,6 +7,7 @@ import { sample1 } from './testData';
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
+  const featureToggles = { vhaPreDocketAppeals: false }
 
   describe('renders', () => {
     it('renders button text', () => {
@@ -14,6 +15,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
         formType={formType}
         intakeData={intakeData}
+        featureToggles={featureToggles}
         onSkip={() => null} />
       );
 
@@ -41,6 +43,7 @@ describe('NonratingRequestIssueModal', () => {
        <NonratingRequestIssueModal
        formType={formType}
        intakeData={intakeData}
+       featureToggles={featureToggles}
        />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
@@ -53,7 +56,8 @@ describe('NonratingRequestIssueModal', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
         formType={formType}
-        intakeData={intakeData} />
+        intakeData={intakeData}
+        featureToggles={featureToggles} />
         );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
