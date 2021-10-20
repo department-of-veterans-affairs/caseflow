@@ -34,8 +34,8 @@ export const EmailNotificationFields = ({
             <Timezone
               required
               errorMessage={errors?.appellantTz}
-              value={HearingEmail?.appellantTz}
-              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
+              value={hearing?.appellantTz}
+              onChange={(appellantTz) => update('hearing', { appellantTz })}
               readOnly={disableField}
               time={time}
               roTimezone={roTimezone}
@@ -49,7 +49,7 @@ export const EmailNotificationFields = ({
               required
               disabled={disableField}
               label={`${appellantTitle} Email`}
-              emailType="appellantEmail"
+              emailType="appellantEmailAddress"
               email={hearing?.appellantEmailAddress}
               error={errors?.appellantEmailAddress}
               update={update}
@@ -64,7 +64,7 @@ export const EmailNotificationFields = ({
               errorMessage={errors?.representativeTz}
               required={Boolean(hearing?.representativeEmail)}
               value={hearing?.representativeTz}
-              onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
+              onChange={(representativeTz) => update('hearing', { representativeTz })}
               readOnly={disableField || !hearing?.representativeEmailAddress}
               time={time}
               roTimezone={roTimezone}
@@ -77,7 +77,7 @@ export const EmailNotificationFields = ({
             <HearingEmail
               disabled={disableField}
               label="POA/Representative Email"
-              emailType="representativeEmail"
+              emailType="representativeEmailAddress"
               email={hearing?.representativeEmailAddress}
               error={errors?.representativeEmailAddress}
               update={(key, value) => {
