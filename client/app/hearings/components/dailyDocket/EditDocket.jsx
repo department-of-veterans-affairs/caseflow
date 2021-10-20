@@ -109,7 +109,7 @@ export const EditDocket = (props) => {
         [key]: value
       });
     }
-
+// If changing the requestType to virtual, clear out the room since virtual hearings do not have assigned rooms
     if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.virtual) {
       return setFields({
         ...fields,
