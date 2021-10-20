@@ -48,7 +48,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.veteran_file_number
         find("#submit-search-searchBarEmptyList").click
-        expect(page).to have_content ("Pre Docketed")
+        expect(page).to have_content("Pre Docketed")
       end
 
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
@@ -227,13 +227,13 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     expect(page).to have_content("Add / Remove Issues")
 
     click_intake_add_issue
-    add_intake_nonrating_issue(
-      benefit_type: "Veterans Health Administration",
-      category: "Caregiver",
-      description: "I am a VHA issue",
-      date: 1.month.ago.mdY,
-      submit_issue: false
-    )
+    fill_in "Benefit type", with: "Veterans Health Administration"
+    find("#issue-benefit-type").send_keys :enter
+    fill_in "Issue category", with: "Caregiver"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "I am a VHA issue"
+    fill_in "Decision date", with: 1.month.ago.mdY
+
     expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     safe_click ".add-issue"
     expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)

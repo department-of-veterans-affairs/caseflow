@@ -267,8 +267,7 @@ module IntakeHelpers
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
-    legacy_issues: false,
-    submit_issue: true
+    legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
@@ -286,7 +285,7 @@ module IntakeHelpers
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
     expect(page).to have_button(add_button_text, disabled: false)
-    safe_click ".add-issue" if submit_issue
+    safe_click ".add-issue"
   end
 
   def add_intake_vha_issue(
