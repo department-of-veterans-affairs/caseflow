@@ -31,8 +31,8 @@ export const EmailNotificationFields = ({
         <div id="email-section" className="usa-grid">
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              required={hearing?.virtual}
-              optional={!hearing?.virtual}
+              required={hearing?.isVirtual}
+              optional={!hearing?.isVirtual}
               errorMessage={errors?.appellantTz}
               value={hearing?.appellantTz}
               onChange={(appellantTz) => update('hearing', { appellantTz })}
@@ -46,8 +46,8 @@ export const EmailNotificationFields = ({
           </div>
           <div className="usa-width-one-third">
             <HearingEmail
-              required={hearing?.virtual}
-              optional={!hearing?.virtual}
+              required={hearing?.isVirtual}
+              optional={!hearing?.isVirtual}
               disabled={disableField}
               label={`${appellantTitle} Email`}
               emailType="appellantEmailAddress"
@@ -61,8 +61,8 @@ export const EmailNotificationFields = ({
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-third" {...input8px}>
             <Timezone
-              required={Boolean(hearing?.representativeEmail)}
-              optional={!hearing?.representativeEmail}
+              required={Boolean(hearing?.representativeEmailAddress)}
+              optional={!hearing?.representativeEmailAddress}
               errorMessage={errors?.representativeTz}
               value={hearing?.representativeTz}
               onChange={(representativeTz) => update('hearing', { representativeTz })}
