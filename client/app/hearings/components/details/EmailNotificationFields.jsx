@@ -22,7 +22,7 @@ export const EmailNotificationFields = ({
   header
 }) => {
 
-  const disableField = readOnlyEmails(hearing, readOnly);
+  const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   return (
