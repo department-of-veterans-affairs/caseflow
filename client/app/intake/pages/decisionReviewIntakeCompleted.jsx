@@ -61,13 +61,14 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   return leadMessageArr;
 };
 
-const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (featureToggles, formType, requestIssues, isInformalConferenceRequested) => {
+  console.log(requestIssues);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
-    if (checkIssuesForVha(requestIssues)) {
+    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
       statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 
@@ -129,6 +130,7 @@ class VacolsOptInList extends React.PureComponent {
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
+      featureToggles,
       veteran,
       formType,
       intakeStatus,
@@ -170,7 +172,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
     let title = 'Intake completed';
 
-    if (checkIssuesForVha(requestIssues)) {
+    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
       title = 'Appeal recorded in pre-docket queue';
     }
 
@@ -204,6 +206,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       }
       checklist={
         getChecklistItems(
+          featureToggles,
           formType,
           requestIssues,
           informalConference
@@ -226,6 +229,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
 export default connect(
   (state) => ({
+    featureToggles: state.featureToggles,
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,
