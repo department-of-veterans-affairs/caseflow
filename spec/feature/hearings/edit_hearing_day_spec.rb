@@ -171,7 +171,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "always editable fields"
     include_examples "edit virtual docket"
 
-    it "form does not the room" do
+    it "form does not contain the room field" do
       expect(page).not_to have_field("Select Room")
     end
 
