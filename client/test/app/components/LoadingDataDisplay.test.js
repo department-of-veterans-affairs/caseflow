@@ -76,14 +76,14 @@ describe('LoadingDataDisplay', () => {
     expect(await screen.findByText('Fail message')).toBeInTheDocument();
   });
 
-  // This is where the issue starts. Default 'message' prop is never updated.
-  // Timeout in this test never triggers an isSlow boolean in LoadingDataDisplay.jsx?
-
   it('displays slow loading state', async () => {
     jest.useFakeTimers('modern');
-    const slowLoadThresholdMs = TIMEOUT_MS / 1000000;
+    const slowLoadThresholdMs = TIMEOUT_MS / 10;
 
     renderComponent({ slowLoadThresholdMs });
+
+    // Ensure that enough time has passed for this prop to be passed.
+    jest.advanceTimersByTime(slowLoadThresholdMs + 100);
 
     await waitFor(() => {
       expect(screen.getByText(COPY.SLOW_LOADING_MESSAGE)).toBeInTheDocument();
@@ -95,6 +95,9 @@ describe('LoadingDataDisplay', () => {
     const timeoutMs = TIMEOUT_MS / 10;
 
     renderComponent({ timeoutMs });
+
+    // Ensure that enough time has passed for this prop to be passed.
+    jest.advanceTimersByTime(timeoutMs + 100);
 
     await waitFor(() => {
       expect(screen.getByText(COPY.DEFAULT_UNKNOWN_ERROR_MESSAGE)).toBeInTheDocument();
