@@ -3,8 +3,9 @@ import {
   appealHasSubstitution,
   appealSupportsSubstitution,
   supportsSubstitutionPostDispatch,
-  supportsSubstitutionPreDispatch
-} from 'app/queue/substituteAppellant/caseDetails/utils';
+  supportsSubstitutionPreDispatch,
+  isAppealDispatched,
+  isSubstitutionSameAppeal } from 'app/queue/substituteAppellant/caseDetails/utils';
 
 describe('appealHasDeathDismissal', () => {
   const appeal = {
@@ -307,4 +308,63 @@ describe('supportsSubstitutionPostDispatch', () => {
       });
     });
   });
+});
+
+describe('isAppealDispatched', () => {
+  it('returns true for an appeal post dispatch', () => {
+    const appealPostDispatch = {
+      status: 'post_dispatch'
+    };
+
+    expect(isAppealDispatched(appealPostDispatch)).toBe(true);
+  });
+
+  it('returns true for a dispatched appeal', () => {
+    const appealDispatched = {
+      status: 'dispatched'
+    };
+
+    expect(isAppealDispatched(appealDispatched)).toBe(true);
+  });
+
+  it('returns false for a pre dispatch appeal', () => {
+    const appealPreDispatch = {
+      status: 'in_progress'
+    };
+
+    expect(isAppealDispatched(appealPreDispatch)).toBe(false);
+  });
+});
+
+describe('isSubstitutionSameAppeal', () => {
+  describe('pre dispatch appeal', () => {
+    const appeal = {
+      status: 'in_progress',
+    };
+
+    it('returns true', () => {
+      expect(isSubstitutionSameAppeal(appeal)).toBe(true);
+    });
+  });
+
+  describe('dispatched appeal', () => {
+    const appeal = {
+      status: 'post_dispatch',
+    };
+
+    it('returns false for an appeal with a death dismissal', () => {
+      const decisionIssues = [{
+        disposition: 'dismissed_death'
+      }];
+
+      expect(isSubstitutionSameAppeal({ ...appeal, decisionIssues })).toBe(false);
+    });
+
+    it('returns false for an appeal with no death dismissal', () => {
+      const decisionIssues = [];
+
+      expect(isSubstitutionSameAppeal({ ...appeal, decisionIssues })).toBe(false);
+    });
+  });
+
 });
