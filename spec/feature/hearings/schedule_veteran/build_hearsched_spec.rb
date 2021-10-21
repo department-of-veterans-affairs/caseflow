@@ -51,7 +51,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
+        name = appeal.veteran_is_not_claimant ? appeal.appellant_name : appeal.veteran.name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % name
       end
 
       def navigate_to_schedule_veteran
@@ -102,7 +103,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
+        veteran_name = "#{appeal.veteran_first_name} #{appeal.veteran_last_name}"
+        name = appeal.veteran_is_not_claimant ? appeal.appellant_name : veteran_name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % name
       end
 
       def navigate_to_schedule_veteran
@@ -813,6 +816,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(name: "hearingType", text: "Virtual")
         end
         click_dropdown(name: "hearingDate", index: 0)
+        click_dropdown(name: "appealHearingLocation", index: 0)
 
         expect(page).to have_content("Email Notifications")
         # Check that the sentence about emails is there, this text is common between both

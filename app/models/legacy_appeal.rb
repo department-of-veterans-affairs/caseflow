@@ -227,6 +227,10 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant_name
+    "#{claimant[:first_name]} #{claimant[:last_name]}"
+  end
+
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
