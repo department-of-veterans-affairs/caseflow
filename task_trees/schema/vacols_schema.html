@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq      Also check out visualization of table relationships.">
+<meta name="description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE JOIN ON     Brieff Corres bfcorkey = stafkey   Folder Corres ticorkey = stafkey   Brieff Folder bfkey = ticknum   Brieff Attach bfkey = imgtkky   Brieff Assign bfkey = tsktknum   Brieff Mail bfkey = mlfolder   Brieff Cova bfkey = cvfolder   Brieff PriorLoc bfkey = lockey   Brieff Issues bfkey = isskey   Brieff Hearsched bfkey = folder_nr   Brieff Decass bfkey = defolder   Brieff Othdocs bfkey = ticknum   Staff Employee stafkey = login_id   Issues Rmdrea isskey = rmdkey   Issues Rmdrea issseq = rmdissseq      Also check out visualization of table relationships.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="VACOLS Schema" />
-<meta property="og:description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE Join     Brieff Corres bfcorkey to stafkey   Folder Corres ticorkey to stafkey   Brieff Folder bfkey to ticknum   Brieff Attach bfkey to imgtkky   Brieff Assign bfkey to tsktknum   Brieff Mail bfkey to mlfolder   Brieff Cova bfkey to cvfolder   Brieff PriorLoc bfkey to lockey   Brieff Issues bfkey to isskey   Brieff Hearsched bfkey to folder_nr   Brieff Decass bfkey to defolder   Brieff Othdocs bfkey to ticknum   Issues Rmdrea isskey to rmdkey     issseq to rmdissseq      Also check out visualization of table relationships." />
+<meta property="og:description" content="VACOLS Schema #  VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE JOIN ON     Brieff Corres bfcorkey = stafkey   Folder Corres ticorkey = stafkey   Brieff Folder bfkey = ticknum   Brieff Attach bfkey = imgtkky   Brieff Assign bfkey = tsktknum   Brieff Mail bfkey = mlfolder   Brieff Cova bfkey = cvfolder   Brieff PriorLoc bfkey = lockey   Brieff Issues bfkey = isskey   Brieff Hearsched bfkey = folder_nr   Brieff Decass bfkey = defolder   Brieff Othdocs bfkey = ticknum   Staff Employee stafkey = login_id   Issues Rmdrea isskey = rmdkey   Issues Rmdrea issseq = rmdissseq      Also check out visualization of table relationships." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html" /><meta property="article:section" content="schema" />
 
@@ -16,7 +16,7 @@
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.c5f233e8296477b2ab923a5bad0f8d48a1e5817d924e1c0a711c010227115539.js" integrity="sha256-xfIz6Clkd7KrkjpbrQ&#43;NSKHlgX2SThwKcRwBAicRVTk=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.0b94568350d3bcb5149679ce7938ef5e8962f9e3f8ace63b173a1a0ea3f5348d.js" integrity="sha256-C5RWg1DTvLUUlnnOeTjvXoli&#43;eP4rOY7FzoaDqP1NI0=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -652,79 +652,84 @@ https://github.com/alex-shpak/hugo-book
 <tr>
 <th>TABLE</th>
 <th>TABLE</th>
-<th>Join</th>
+<th>JOIN ON</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Brieff</td>
 <td>Corres</td>
-<td>bfcorkey to stafkey</td>
+<td>bfcorkey = stafkey</td>
 </tr>
 <tr>
 <td>Folder</td>
 <td>Corres</td>
-<td>ticorkey to stafkey</td>
+<td>ticorkey = stafkey</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Folder</td>
-<td>bfkey to ticknum</td>
+<td>bfkey = ticknum</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Attach</td>
-<td>bfkey to imgtkky</td>
+<td>bfkey = imgtkky</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Assign</td>
-<td>bfkey to tsktknum</td>
+<td>bfkey = tsktknum</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Mail</td>
-<td>bfkey to mlfolder</td>
+<td>bfkey = mlfolder</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Cova</td>
-<td>bfkey to cvfolder</td>
+<td>bfkey = cvfolder</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>PriorLoc</td>
-<td>bfkey to lockey</td>
+<td>bfkey = lockey</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Issues</td>
-<td>bfkey to isskey</td>
+<td>bfkey = isskey</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Hearsched</td>
-<td>bfkey to folder_nr</td>
+<td>bfkey = folder_nr</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Decass</td>
-<td>bfkey to defolder</td>
+<td>bfkey = defolder</td>
 </tr>
 <tr>
 <td>Brieff</td>
 <td>Othdocs</td>
-<td>bfkey to ticknum</td>
+<td>bfkey = ticknum</td>
+</tr>
+<tr>
+<td>Staff</td>
+<td>Employee</td>
+<td>stafkey = login_id</td>
 </tr>
 <tr>
 <td>Issues</td>
 <td>Rmdrea</td>
-<td>isskey to rmdkey</td>
+<td>isskey = rmdkey</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td>issseq to rmdissseq</td>
+<td>Issues</td>
+<td>Rmdrea</td>
+<td>issseq = rmdissseq</td>
 </tr>
 </tbody>
 </table>
@@ -6412,7 +6417,8 @@ https://github.com/alex-shpak/hugo-book
   </div>
 </details>
 
-</div></article>
+</div>
+</article>
  
       
 
