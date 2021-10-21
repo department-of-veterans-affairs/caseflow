@@ -10,15 +10,15 @@ const centerTextStyling = css({
   marginTop: '75px'
 });
 
-const LoadingScreen = () =>
+const LoadingScreen = ({ spinnerColor, message }) =>
   <AppSegment filledBackground>
     <div {...centerTextStyling}>
       <LoadingSymbol
         text=""
         size="150px"
-        color={this.props.spinnerColor}
+        color={spinnerColor}
       />
-      <p>{this.props.message}</p>
+      <p>{message}</p>
     </div>
   </AppSegment>;
 
