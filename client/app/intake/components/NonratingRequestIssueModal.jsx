@@ -2,17 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
-import { COLORS } from '../../constants/AppConstants';
+import { COLORS } from 'app/constants/AppConstants';
 
 import BenefitType from '../components/BenefitType';
-import Modal from '../../components/Modal';
-import RadioField from '../../components/RadioField';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextField from '../../components/TextField';
-import DateSelector from '../../components/DateSelector';
+import Modal from 'app/components/Modal';
+import RadioField from 'app/components/RadioField';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import TextField from 'app/components/TextField';
+import DateSelector from 'app/components/DateSelector';
+import Alert from 'app/components/Alert';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr } from 'app/util/DateUtil';
+import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -240,8 +242,9 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   render() {
-    const { formType, intakeData, onCancel } = this.props;
+    const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId } = this.state;
+    const vhaPreDocketAppeals = featureToggles.vhaPreDocketAppeals;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -251,6 +254,8 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
         this.getAdditionalDetails() :
         null;
+
+    const showPreDocketBanner = benefitType === 'vha' && vhaPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
@@ -284,6 +289,7 @@ class NonratingRequestIssueModal extends React.Component {
               {nonratingRequestIssueSelection}
               {additionalDetails}
             </div>
+            {showPreDocketBanner && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
           </div>
         </Modal>
       </div>
@@ -302,7 +308,8 @@ NonratingRequestIssueModal.propTypes = {
   formType: PropTypes.string,
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
-  addedIssues: PropTypes.array
+  addedIssues: PropTypes.array,
+  featureToggles: PropTypes.object
 };
 
 NonratingRequestIssueModal.defaultProps = {
