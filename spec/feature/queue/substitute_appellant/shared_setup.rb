@@ -114,14 +114,19 @@ RSpec.shared_examples("fill substitution form") do
 
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
       expect(page).to have_text("Listed below are all the tasks from the original appeal")
-      expect(page).to have_css(".usa-table-borderless.css-nil")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Status")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
+      # If it is a separate appeal substitution, the distribution task won't display
+      if !same_appeal_substitution_allowed?(appeal) || docket_type.eql?("evidence_submission")
+        expect(page).to have_css(".usa-table-borderless.css-nil")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Status")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
+      end
 
-      # there should always be a distrubution task
-      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
+      # If it is a separate appeal substitution, the distribution task won't display
+      if !same_appeal_substitution_allowed?(appeal)
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
+      end
 
       # example appeal has an evidence submission task
       if docket_type.eql?("evidence_submission")
@@ -207,4 +212,9 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
     end
   end
+end
+
+def same_appeal_substitution_allowed?(source_appeal)
+  (ClerkOfTheBoard.singleton.user_is_admin?(current_user) || !!source_appeal.veteran.date_of_death) &&
+    source_appeal.request_issues.none?(&:death_dismissed?)
 end
