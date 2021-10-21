@@ -983,12 +983,12 @@ const virtualHearingOption = {
   label: VIRTUAL_HEARING_LABEL
 };
 
-export const allScheduleVeteranDropdownOptions = (readableRequestType) => {
-  if (!readableRequestType) {
-    return [{ value: false, label: VIDEO_HEARING_LABEL }, virtualHearingOption];
+export const allScheduleVeteranDropdownOptions = (readableHearingRequestType, readableOriginalHearingRequestType) => {
+  if (readableHearingRequestType === 'Virtual') {
+    return [{ value: false, label: readableOriginalHearingRequestType }, virtualHearingOption];
   }
 
-  return [{ value: false, label: readableRequestType }, virtualHearingOption];
+  return [{ value: false, label: readableHearingRequestType }, virtualHearingOption];
 };
 
 export const allDetailsDropdownOptions = (hearing) => {

@@ -127,7 +127,11 @@ export const ScheduleVeteran = ({
 
   const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
   const virtualHearing = virtual ? { status: 'pending' } : null;
-  const allDropdownOptions = allScheduleVeteranDropdownOptions(selectedHearingDay?.readableRequestType);
+
+  const allDropdownOptions = allScheduleVeteranDropdownOptions(
+    appeal?.readableHearingRequestType,
+    appeal?.readableOriginalHearingRequestType
+  );
 
   const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
     allDropdownOptions,
