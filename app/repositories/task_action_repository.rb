@@ -318,7 +318,6 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        options: organizations_to_options(VhaRegionalOffice.all),
         modal_title: COPY::VHA_COMPLETE_TAKS_MODAL_TITLE,
         instructions: [],
         type: AssessDocumentationTask.name,

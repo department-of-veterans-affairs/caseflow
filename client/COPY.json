@@ -1138,5 +1138,6 @@
   "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
   "VHA_COMPLETE_TAKS_MODAL_TITLE": "Where were documents regarding this appeal stored?",
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details, such as file structure or file path:",
-  "VHA_COMPLETE_TASK_CONFIRMATION": "Appeal has been marked as ready for review and sent to the CAMO team for review."
+  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
+  "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review."
 }

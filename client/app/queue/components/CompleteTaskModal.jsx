@@ -134,8 +134,10 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   ready_for_review: {
-    buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION, appeal.veteranFullName)
+    buildSuccessMsg: (appeal, { assignedTo }) => ({
+      title: assignedTo === 'VhaProgramOffice' ?
+        sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
+        sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_COMPLETE_TASK_LABEL,
     getContent: ReadyForReviewModal,
@@ -180,11 +182,20 @@ class CompleteTaskModal extends React.Component {
     return taskActionData(this.props) || {};
   };
 
+  getTaskAssignedToType = () => {
+    const {
+      task: { assignedTo }
+    } = this.props;
+
+    return `${assignedTo.type}`;
+  };
+
   getContentArgs = () => ({
     contact: this.getTaskConfiguration().contact || this.getTaskAssignerName(),
     teamName: this.props.task.label,
     appeal: this.props.appeal,
     props: this.props,
+    assignedTo: this.getTaskAssignedToType(),
     state: this.state,
     setState: this.setState.bind(this)
   });
@@ -192,7 +203,6 @@ class CompleteTaskModal extends React.Component {
   submit = () => {
     const { task, appeal } = this.props;
     const detail = 'Detail:';
-    // const boldText = detail.replace(new RegExp(`(^|\\s)(${ detail })(\\s|$)`, 'ig'), '$1<b>$2</b>$3');
     const modifiedInstructions =
       `Documents for this appeal are stored in ${this.state.radio === 'other' ? this.state.otherInstructions :
         this.state.radio}\n\n**${detail}** ${this.state.instructions}`;
@@ -241,6 +251,9 @@ CompleteTaskModal.propTypes = {
     assignedBy: PropTypes.shape({
       firstName: PropTypes.string,
       lastName: PropTypes.string
+    }),
+    assignedTo: PropTypes.shape({
+      type: PropTypes.string
     }),
     label: PropTypes.string,
     taskId: PropTypes.string
