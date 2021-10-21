@@ -15,22 +15,23 @@ weight: 31
 ## Table Joins
 
 {{< details "Table joins" >}}
-| TABLE  | TABLE | Join |
+| TABLE  | TABLE | JOIN ON |
 | -------- | -------- | -------- |
-| Brieff | Corres | bfcorkey to stafkey |
-| Folder | Corres | ticorkey to stafkey |
-| Brieff | Folder | bfkey to ticknum |
-| Brieff | Attach | bfkey to imgtkky |
-| Brieff | Assign | bfkey to tsktknum |
-| Brieff | Mail | bfkey to mlfolder |
-| Brieff | Cova | bfkey to cvfolder |
-| Brieff | PriorLoc | bfkey to lockey |
-| Brieff | Issues | bfkey to isskey |
-| Brieff | Hearsched | bfkey to folder_nr |
-| Brieff | Decass | bfkey to defolder |
-| Brieff | Othdocs | bfkey to ticknum |
-| Issues | Rmdrea | isskey to rmdkey |
-|  |  | issseq to rmdissseq |
+| Brieff | Corres | bfcorkey = stafkey |
+| Folder | Corres | ticorkey = stafkey |
+| Brieff | Folder | bfkey = ticknum |
+| Brieff | Attach | bfkey = imgtkky |
+| Brieff | Assign | bfkey = tsktknum |
+| Brieff | Mail | bfkey = mlfolder |
+| Brieff | Cova | bfkey = cvfolder |
+| Brieff | PriorLoc | bfkey = lockey |
+| Brieff | Issues | bfkey = isskey |
+| Brieff | Hearsched | bfkey = folder_nr |
+| Brieff | Decass | bfkey = defolder |
+| Brieff | Othdocs | bfkey = ticknum |
+| Staff | Employee | stafkey = login_id |
+| Issues | Rmdrea | isskey = rmdkey |
+| Issues | Rmdrea | issseq = rmdissseq |
 {{< /details >}}
 
 Also check out [visualization of table relationships](https://dbdiagram.io/d/5f8225973a78976d7b77234f).
