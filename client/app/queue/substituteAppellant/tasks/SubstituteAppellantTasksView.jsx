@@ -35,7 +35,7 @@ export const SubstituteAppellantTasksView = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  const sameAppealSubstitution = isSubstitutionSameAppeal();
+  const sameAppealSubstitution = isSubstitutionSameAppeal(appeal);
 
   const filteredTasks = useMemo(() => {
     return prepTaskDataForUi({ taskData: allTasks,
