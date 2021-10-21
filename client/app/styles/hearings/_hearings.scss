@@ -677,3 +677,11 @@ $form-width: 575px;
     width: 280px;
   }
 }
+
+.hearing-day-date:disabled {
+  background-color: $color-gray-lightest;
+}
+
+.usa-input-error .cf-select {
+  max-width: $form-width;
+}

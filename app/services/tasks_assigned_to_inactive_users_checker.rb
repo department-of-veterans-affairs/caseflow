@@ -18,7 +18,7 @@ class TasksAssignedToInactiveUsersChecker < DataIntegrityChecker
   end
 
   def tasks_for_inactive_users
-    @tasks_for_inactive_users ||= Task.open.where(assigned_to: inactive_users)
+    @tasks_for_inactive_users ||= Task.open.where(assigned_to: User.inactive)
   end
 
   private
@@ -28,10 +28,6 @@ class TasksAssignedToInactiveUsersChecker < DataIntegrityChecker
       .pluck(:type, :appeal_type, :appeal_id, :id, :assigned_to_id, :status)
       .map { |task_attribs| task_attribs.join(", ") }
       .join("\n")
-  end
-
-  def inactive_users
-    User.where(status: :inactive)
   end
 
   def task_count_by_assignee

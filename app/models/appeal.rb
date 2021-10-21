@@ -8,6 +8,7 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include AppealConcern
+  include BeaamAppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -539,11 +540,6 @@ class Appeal < DecisionReview
 
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
-  end
-
-  def eligible_for_death_dismissal?(_user)
-    # Death dismissal processing is only for VACOLs/Legacy appeals
-    false
   end
 
   # We are ready for BVA dispatch if

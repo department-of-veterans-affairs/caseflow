@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithVirtualHearingsFeatureEnabled, userUseFullPageVideoToVirtual, amaHearing } from 'test/data';
+import { userWithVirtualHearingsFeatureEnabled, amaHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
