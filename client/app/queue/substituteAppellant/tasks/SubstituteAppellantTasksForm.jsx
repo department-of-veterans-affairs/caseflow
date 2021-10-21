@@ -9,7 +9,7 @@ import {
   SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
   SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
   SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE,
-  SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION,
+  SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION,
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
@@ -17,6 +17,7 @@ import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
 import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
+import { TasksToCopy } from './TasksToCopy';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -32,6 +33,7 @@ export const SubstituteAppellantTasksForm = ({
   onCancel,
   onSubmit,
   tasks = [],
+  activeTasks = []
 }) => {
   const methods = useForm({
     // Use this for repopulating form from redux when user navigates back
@@ -76,9 +78,9 @@ export const SubstituteAppellantTasksForm = ({
 
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
-            <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
+            <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION} /></div>
             {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-            <TaskSelectionTable tasks={adjustedTasks} />
+            <TasksToCopy tasks={adjustedTasks} />
           </div>
         </AppSegment>
         <div className="controls cf-app-segment">
@@ -106,6 +108,19 @@ SubstituteAppellantTasksForm.propTypes = {
     PropTypes.string,
   ]),
   tasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      appealId: PropTypes.number,
+      closedAt: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
+      externalAppealId: PropTypes.string,
+      parentId: PropTypes.number,
+      taskId: PropTypes.oneOfType[(PropTypes.string, PropTypes.number)],
+      type: PropTypes.string,
+    })
+  ),
+  activeTasks: PropTypes.arrayOf(
     PropTypes.shape({
       appealId: PropTypes.number,
       closedAt: PropTypes.oneOfType([
