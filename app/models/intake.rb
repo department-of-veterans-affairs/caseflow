@@ -217,6 +217,7 @@ class Intake < CaseflowRecord
   end
 
   def create_end_product_and_contentions
+    binding.pry
     detail.create_end_products_and_contentions!
   rescue StandardError => error
     abort_completion!
