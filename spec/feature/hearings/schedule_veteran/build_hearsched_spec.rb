@@ -51,8 +51,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
 
       let!(:expected_alert) do
-        name = appeal.veteran_is_not_claimant ? appeal.appellant_name : appeal.veteran.name
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -103,9 +102,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
       let!(:expected_alert) do
-        veteran_name = "#{appeal.veteran_first_name} #{appeal.veteran_last_name}"
-        name = appeal.veteran_is_not_claimant ? appeal.appellant_name : veteran_name
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -809,19 +806,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
-        # Because the dropdown list only displays unselected options (which is unusual)
-        # check that "Virtual" is not selected before trying to select it
-        selected_value = dropdown_selected_value(find(".dropdown-hearingType .cf-select__control"))
-        if selected_value != "Virtual"
-          click_dropdown(name: "hearingType", text: "Virtual")
-        end
+        click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 0)
-        click_dropdown(name: "appealHearingLocation", index: 0)
 
+        # Ensure the new email notification label is visible
         expect(page).to have_content("Email Notifications")
-        # Check that the sentence about emails is there, this text is common between both
-        # possible messages
-        expect(page).to have_content("will receive")
+        expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
+          "Judge will receive an email with connection information for the virtual hearing.")
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
@@ -1086,7 +1077,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
         FeatureToggle.enable!(:enable_hearing_time_slots)
-        FeatureToggle.enable!(:collect_video_and_central_emails)
       end
 
       # These are the only feature tests that create 'R' virtual
