@@ -356,7 +356,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         benefit_type: "Compensation",
-        category: "Apportionment",
+        category: "Contested Claims - Apportionment",
         description: "Description for Apportionment",
         date: 2.days.ago.to_date.mdY
       )
@@ -618,8 +618,8 @@ feature "Appeal Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "appeals/#{appeal.uuid}/edit"
         # remove all request issues
-        click_remove_intake_issue_dropdown("Apportionment")
-        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
+        click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
         click_remove_intake_issue_dropdown("PTSD denied")
         click_remove_intake_issue_dropdown("Military Retired Pay")
 
@@ -645,8 +645,8 @@ feature "Appeal Edit issues", :all_dbs do
           visit "appeals/#{appeal.uuid}/edit"
 
           # remove all request issues
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
           click_remove_intake_issue_dropdown("PTSD denied")
           click_remove_intake_issue_dropdown("Military Retired Pay")
           click_edit_submit_and_confirm
@@ -660,8 +660,8 @@ feature "Appeal Edit issues", :all_dbs do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "appeals/#{appeal.uuid}/edit"
 
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
           click_remove_intake_issue_dropdown("PTSD denied")
           click_remove_intake_issue_dropdown("Military Retired Pay")
           click_edit_submit_and_confirm
@@ -674,8 +674,8 @@ feature "Appeal Edit issues", :all_dbs do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
 
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
+          click_remove_intake_issue_dropdown("Contested Claims - Apportionment")
           click_remove_intake_issue_dropdown("PTSD denied")
           click_remove_intake_issue_dropdown("Military Retired Pay")
 
