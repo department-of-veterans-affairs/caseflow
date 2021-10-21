@@ -332,8 +332,6 @@ jobs:
           - JEST_DIR: /home/circleci/test-results/jest
           - TEST_REPORTER: jest-junit
           - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
@@ -353,13 +351,6 @@ jobs:
             mkdir -p ~/test-results/jest
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
-
-      - run:
-          name: Karma
-          command: |
-            mkdir -p ~/test-results/karma
-            pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit,dots"
 
       - store_test_results:
           name: Store test results as summary

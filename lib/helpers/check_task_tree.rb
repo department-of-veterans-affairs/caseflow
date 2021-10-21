@@ -54,6 +54,7 @@ class CheckTaskTree
     check_task_attributes
     check_parent_child_tasks
     check_task_counts
+    check_task_prerequisites
 
     # Associated records
     @errors << "Task should be closed since there are no active issues" unless open_tasks_with_no_active_issues.blank?
@@ -93,6 +94,15 @@ class CheckTaskTree
   def check_task_counts
     @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
     @errors << "There should be no more than 1 open task of type #{extra_open_tasks}" unless extra_open_tasks.blank?
+    unless extra_open_org_tasks.blank?
+      @errors << "There should be no more than 1 open org task of type #{extra_open_org_tasks}"
+    end
+  end
+
+  def check_task_prerequisites
+    unless missing_dispatch_task_prerequisite.blank?
+      @errors << "BvaDispatchTask requires #{missing_dispatch_task_prerequisite}"
+    end
   end
 
   # See OpenTasksWithClosedAtChecker
@@ -143,6 +153,8 @@ class CheckTaskTree
   # Task types where only one should be open at a time.
   # Some of these have Rails validations to prevent more than 1 open of the task type
   # but the validations can be subverted, so let's check them here just in case.
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html
+  # Example: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/217#issuecomment-906779760
   SINGULAR_OPEN_TASKS = %w[RootTask DistributionTask
                            HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
                            JudgeAssignTask JudgeDecisionReviewTask
@@ -150,8 +162,17 @@ class CheckTaskTree
                            JudgeQualityReviewTask AttorneyQualityReviewTask
                            JudgeDispatchReturnTask AttorneyDispatchReturnTask
                            VeteranRecordRequest].freeze
+  SINGULAR_OPEN_ORG_TASKS = %w[
+    QualityReviewTask
+    BvaDispatchTask
+  ].freeze
   def extra_open_tasks
     @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
+  end
+
+  def extra_open_org_tasks
+    @appeal.tasks.select(:type).open.assigned_to_any_org.of_type(SINGULAR_OPEN_ORG_TASKS)
+      .group(:type).having("count(*) > 1").count
   end
 
   # See DecisionReviewTasksForInactiveAppealsChecker
@@ -168,6 +189,18 @@ class CheckTaskTree
   # See PendingIncompleteAndUncancelledTaskTimersChecker
   def open_task_timers_for_closed_tasks
     TaskTimer.processable.where(task: @appeal.tasks.closed)
+  end
+
+  # BvaDispatchTask should not be open if there is no completed JudgeDecisionReviewTask task
+  def missing_dispatch_task_prerequisite
+    dispatch_task = @appeal.tasks.open.find_by_type(:BvaDispatchTask)
+    return unless dispatch_task
+
+    missing = []
+    jdr_task = @appeal.tasks.completed.find_by_type(:JudgeDecisionReviewTask)
+    missing << "completed JudgeDecisionReviewTask" unless jdr_task
+
+    missing
   end
 
   private
