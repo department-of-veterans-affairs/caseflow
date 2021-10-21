@@ -16,7 +16,7 @@ class HearingRequestDocket < Docket
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
-  # Grabs all ready priority appeals that are not tied to a judge
+  # Returns number of ready priority appeals that are not tied to a judge
   def genpop_priority_count
     HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
