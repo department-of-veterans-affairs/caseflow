@@ -19,9 +19,10 @@ import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
+import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
+import Alert from 'app/components/Alert';
 
 import {
   toggleAddingIssue,
@@ -105,8 +106,10 @@ class AddIssuesPage extends React.Component {
 
   // eslint-disable-next-line class-methods-use-this
   requestIssuesWithoutDecisionDates(intakeData) {
-    return intakeData.requestIssues?.some((issue) => !issue.ratingIssueReferenceId &&
-     !issue.isUnidentified && !issue.approx_decision_date);
+    const requestIssues = formatRequestIssues(intakeData.requestIssues, intakeData.contestableIssues);
+
+    return !requestIssues.every((issue) => issue.ratingIssueReferenceId ||
+      issue.isUnidentified || issue.decisionDate);
   }
 
   willRedirect(intakeData, hasClearedEp) {
@@ -202,14 +205,14 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, vhaPreDocketAppeals } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
     }
 
-    if (this.requestIssuesWithoutDecisionDates(intakeData)) {
+    if (intakeData && this.requestIssuesWithoutDecisionDates(intakeData)) {
       return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
 
@@ -303,7 +306,7 @@ class AddIssuesPage extends React.Component {
       });
     }
 
-    let issueChangeClassname = () => {
+    let additionalRowClasses = () => {
       // no-op unless the issue banner needs to be displayed
     };
 
@@ -315,12 +318,15 @@ class AddIssuesPage extends React.Component {
         field: '',
         content: issuesChangedBanner
       });
-      issueChangeClassname = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
+      additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
     let rowObjects = fieldsForFormType;
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
+      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues && vhaPreDocketAppeals;
+
       return {
         field: fieldTitle,
         content: (
@@ -339,6 +345,7 @@ class AddIssuesPage extends React.Component {
               userCanWithdrawIssues={userCanWithdrawIssues}
               editPage={editPage}
             />
+            {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
           </div>
         )
       };
@@ -382,6 +389,8 @@ class AddIssuesPage extends React.Component {
 
         return rowObjects;
       });
+
+    additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
@@ -459,7 +468,7 @@ class AddIssuesPage extends React.Component {
 
         {editPage && this.establishmentCredits()}
 
-        <Table columns={columns} rowObjects={rowObjects} rowClassNames={issueChangeClassname} slowReRendersAreOk />
+        <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
 
         {!_.isEmpty(issuesPendingWithdrawal) && (
           <div className="cf-gray-box cf-decision-date">

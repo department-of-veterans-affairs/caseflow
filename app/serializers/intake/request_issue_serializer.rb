@@ -24,6 +24,9 @@ class Intake::RequestIssueSerializer
   attribute :withdrawal_date
   attribute :contested_issue_description
   attribute :end_product_code
+  attribute :end_product_establishment_code do |object|
+    object&.end_product_establishment&.code
+  end
   attribute :verified_unidentified_issue
   attribute :editable, &:editable?
   attribute :exam_requested, &:exam_requested?
@@ -33,4 +36,5 @@ class Intake::RequestIssueSerializer
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?
   end
+  attribute :benefit_type
 end

@@ -8,15 +8,11 @@
 class OtherClaimant < Claimant
   delegate :name, :first_name, :middle_name, :last_name, :suffix,
            :address, :address_line_1, :address_line_2, :address_line_3,
-           :city, :state, :zip, :country,
+           :city, :state, :zip, :country, :date_of_birth,
            :email_address, :phone_number,
            :power_of_attorney, :party_type,
            to: :unrecognized_appellant,
            allow_nil: true
-
-  def date_of_birth
-    nil
-  end
 
   def advanced_on_docket?(appeal)
     advanced_on_docket_motion_granted?(appeal)

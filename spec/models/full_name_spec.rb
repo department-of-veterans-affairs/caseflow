@@ -26,6 +26,19 @@ describe FullName do
       end
     end
 
+    context "readable_full_nonformatted" do
+      let(:first) { "charles" }
+      let(:format) { :readable_full_nonformatted }
+
+      it { is_expected.to eq("charles E Cheese") }
+
+      context "parts of the name are missing" do
+        let(:middle) { nil }
+        let(:last) { nil }
+        it { is_expected.to eq("charles") }
+      end
+    end
+
     context "readable_short" do
       let(:format) { :readable_short }
 

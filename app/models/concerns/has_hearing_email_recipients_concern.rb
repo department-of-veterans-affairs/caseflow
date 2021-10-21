@@ -92,6 +92,26 @@ module HasHearingEmailRecipientsConcern
     end
   end
 
+  def veteran_email_address
+    appellant_email_address
+  end
+
+  def appellant_email_address
+    appellant_recipient&.email_address&.presence || appeal&.appellant_email_address
+  end
+
+  def appellant_tz
+    appellant_recipient&.timezone&.presence || appeal&.appellant_tz
+  end
+
+  def representative_email_address
+    representative_recipient&.email_address&.presence || appeal&.representative_email_address
+  end
+
+  def representative_tz
+    representative_recipient&.timezone&.presence || appeal&.representative_tz
+  end
+
   private
 
   def update_email_events(recipient, roles)

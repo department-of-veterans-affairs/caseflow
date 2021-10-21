@@ -10,7 +10,7 @@ class ExplainController < ApplicationController
   include ExplainNetworkConcern
 
   def show
-    return render_access_error unless current_user.admin?
+    return render_access_error unless access_allowed?
 
     no_cache
 
@@ -28,11 +28,18 @@ class ExplainController < ApplicationController
 
   private
 
+  def access_allowed?
+    current_user.admin? ||
+      BoardProductOwners.singleton.user_has_access?(current_user) ||
+      CaseflowSupport.singleton.user_has_access?(current_user) ||
+      Rails.env.development?
+  end
+
   helper_method :legacy_appeal?, :appeal,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
-                :task_tree_as_text, :intake_as_text, :hearing_as_text,
+                :tasks_versions, :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
                 :timeline_data,
                 :network_graph_data,
@@ -56,6 +63,17 @@ class ExplainController < ApplicationController
 
   def available_fields
     (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
+  end
+
+  # :reek:FeatureEnvy
+  def tasks_versions
+    appeal.tasks.order(:id).select { |task| task.versions.any? }.map do |task|
+      {
+        task_id: task.id,
+        task_type: task.type,
+        summary: JSON.pretty_generate(task.version_summary)
+      }
+    end
   end
 
   def task_tree_as_text
@@ -129,8 +147,14 @@ class ExplainController < ApplicationController
   end
 
   def fetch_appeal
-    if Appeal::UUID_REGEX.match?(appeal_id)
-      Appeal.find_by(uuid: appeal_id)
+    if appeal_id.start_with?("ama-")
+      record_id = appeal_id.delete_prefix("ama-")
+      Appeal.find_by_id(record_id)
+    elsif appeal_id.start_with?("legacy-")
+      record_id = appeal_id.delete_prefix("legacy-")
+      LegacyAppeal.find_by_id(record_id)
+    elsif Appeal::UUID_REGEX.match?(appeal_id)
+      Appeal.find_by_uuid(appeal_id)
     else
       LegacyAppeal.find_by_vacols_id(appeal_id)
     end

@@ -10,6 +10,7 @@ class Organization < CaseflowRecord
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
+  validates :participant_id, allow_blank: true, uniqueness: true
 
   before_save :clean_url
 
@@ -27,6 +28,15 @@ class Organization < CaseflowRecord
 
     def find_by_name_or_url(string)
       find_by(name: string) || find_by(url: string)
+    end
+
+    # Needed to handle URLs like "loan_guaranty", which are in prod and were never converted/cleaned
+    def find_by_url(url)
+      find_by(url: convert_url(url))
+    end
+
+    def convert_url(url)
+      url&.parameterize&.dasherize
     end
 
     def default_active_tab
@@ -139,6 +149,8 @@ class Organization < CaseflowRecord
   def serialize
     {
       accepts_priority_pushed_cases: accepts_priority_pushed_cases,
+      ama_only_push: ama_only_push,
+      ama_only_request: ama_only_request,
       id: id,
       name: name,
       participant_id: participant_id,
@@ -151,6 +163,6 @@ class Organization < CaseflowRecord
   private
 
   def clean_url
-    self.url = url&.parameterize&.dasherize
+    self.url = self.class.convert_url(url)
   end
 end

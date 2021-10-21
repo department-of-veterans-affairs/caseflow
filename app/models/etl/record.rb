@@ -30,6 +30,24 @@ class ETL::Record < ApplicationRecord
       primary_key
     end
 
+    # :reek:LongParameterList
+    def check_equal(record_id, attribute, expected, actual)
+      return if expected == actual
+
+      @messages ||= []
+      @messages << "#{record_id}: Expected #{attribute} to equal #{expected} but got #{actual}" if @messages.size < 300
+    end
+
+    def messages
+      return nil unless @messages&.any?
+
+      @messages
+    end
+
+    def clear_messages
+      @messages = []
+    end
+
     private
 
     def org_cache(org_id)

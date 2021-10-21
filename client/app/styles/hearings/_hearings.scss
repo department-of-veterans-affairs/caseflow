@@ -581,7 +581,7 @@ $form-width: 575px;
   max-width: 300px;
 
   pre {
-    white-space: normal;
+    white-space: pre-wrap;
     word-wrap: break-word;
     width: 200px;
   }
@@ -676,4 +676,12 @@ $form-width: 575px;
   .time-slot-button {
     width: 280px;
   }
+}
+
+.hearing-day-date:disabled {
+  background-color: $color-gray-lightest;
+}
+
+.usa-input-error .cf-select {
+  max-width: $form-width;
 }

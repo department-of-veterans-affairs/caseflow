@@ -173,6 +173,12 @@ describe HearingRequestTypeConcern do
 
         it { is_expected.to be_nil }
       end
+
+      context "when hearing_request_type is none in VACOLS" do
+        let(:vacols_case) { create(:case, bfhr: "5") }
+
+        it { is_expected.to be_nil }
+      end
     end
 
     context "#readable_previous_hearing_request_type_for_task and #readable_current_hearing_request_type_for_task" do

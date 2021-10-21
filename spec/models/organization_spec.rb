@@ -31,6 +31,19 @@ describe Organization, :postgres do
     end
   end
 
+  describe "#add_user" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    subject { org.add_user(user) }
+
+    it "adds the user to the organization" do
+      subject
+
+      expect(org.users.first).to eq user
+    end
+  end
+
   describe ".status" do
     let(:org) { create(:organization) }
 

@@ -5,6 +5,7 @@ FactoryBot.define do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    filed_by_va_gov { false }
     sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
@@ -182,8 +183,10 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+        appeal.conditionally_set_aod_based_on_age # since claimants has changed
+      end
     end
 
     trait :active do
@@ -457,23 +460,15 @@ FactoryBot.define do
     end
 
     trait :with_decision_issue do
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
-      notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|
-        request_issue = create(:request_issue,
-                               :rating,
-                               :with_rating_decision_issue,
-                               decision_review: appeal,
-                               veteran_participant_id: appeal.veteran.participant_id,
-                               contested_issue_description: description,
-                               notes: notes)
-        decision_issue = create(:decision_issue,
-                                :rating,
-                                decision_review: appeal,
-                                disposition: evaluator.disposition,
-                                description: "Issue description",
-                                decision_text: "Decision text")
-        request_issue.decision_issues << decision_issue
+        create(
+          :decision_issue,
+          :rating,
+          decision_review: appeal,
+          disposition: evaluator.disposition,
+          description: "Issue description",
+          decision_text: "Decision text"
+        )
       end
     end
 

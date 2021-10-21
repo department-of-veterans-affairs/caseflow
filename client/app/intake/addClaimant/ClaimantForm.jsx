@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Controller, useFormContext } from 'react-hook-form';
 
-import SearchableDropdown from 'app/components/SearchableDropdown';
-import RadioField from 'app/components/RadioField';
-import TextField from 'app/components/TextField';
-import AddressForm from 'app/components/AddressForm';
-import Address from 'app/queue/components/Address';
 import * as Constants from '../constants';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 import { fetchAttorneys, formatAddress } from './utils';
-import { debounce } from 'lodash';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+
+import Address from 'app/queue/components/Address';
+import AddressForm from 'app/components/AddressForm';
+import DateSelector from 'app/components/DateSelector';
+import RadioField from 'app/components/RadioField';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import TextField from 'app/components/TextField';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -49,18 +51,19 @@ const filterOption = () => true;
 export const ClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
+  dateOfBirthFieldToggle = true,
   ...props
 }) => {
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue, errors } = methods;
 
-  const emailValidationError = errors ?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
+  const emailValidationError = errors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
+  const dobValidationError = errors?.dateOfBirth && errors.dateOfBirth.message;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
-
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
@@ -87,7 +90,7 @@ export const ClaimantForm = ({
       <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
       <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+        {!props.POA && <Controller
           control={control}
           name="relationship"
           defaultValue={null}
@@ -102,7 +105,7 @@ export const ClaimantForm = ({
               strongLabel
             />
           )}
-        />
+        />}
         <br />
         {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
@@ -113,7 +116,7 @@ export const ClaimantForm = ({
               <FieldDiv>
                 <SearchableDropdown
                   {...rest}
-                  label="Claimant's name"
+                  label={`${props.POA ? 'Representative' : 'Claimant'}'s name`}
                   filterOption={filterOption}
                   async={asyncFn}
                   defaultOptions
@@ -134,7 +137,7 @@ export const ClaimantForm = ({
         {listedAttorney && watchListedAttorney?.address && (
           <div>
             <ClaimantAddress>
-              <strong>Claimant's address</strong>
+              <strong>{props.POA ? 'Representative' : 'Claimant'}'s address</strong>
             </ClaimantAddress>
             <br />
             <Address address={watchListedAttorney?.address} />
@@ -144,7 +147,7 @@ export const ClaimantForm = ({
         {showPartyType && (
           <RadioField
             name="partyType"
-            label="Is the claimant an organization or individual?"
+            label={`Is the ${props.POA ? 'representative' : 'claimant'} an organization or individual?`}
             inputRef={register}
             strongLabel
             vertical
@@ -180,7 +183,7 @@ export const ClaimantForm = ({
                 strongLabel
               />
             </FieldDiv>
-            <Suffix>
+            <SuffixDOB>
               <TextField
                 name="suffix"
                 label="Suffix"
@@ -188,7 +191,19 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-            </Suffix>
+              { dateOfBirthFieldToggle && !props.POA &&
+                <DateSelector
+                  optional
+                  inputRef={register({
+                    valueAsDate: true
+                  })}
+                  name="dateOfBirth"
+                  label={<b>Date of birth</b>}
+                  type="date"
+                  validationError={dobValidationError}
+                />
+              }
+            </SuffixDOB>
           </>
         )}
         {partyType === 'organization' && (
@@ -242,18 +257,22 @@ ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  dateOfBirthFieldToggle: PropTypes.bool,
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
-  hideListedAttorney: PropTypes.bool
+  hideListedAttorney: PropTypes.bool,
+  POA: PropTypes.bool
 };
 
 const FieldDiv = styled.div`
   margin-bottom: 1.5em;
 `;
 
-const Suffix = styled.div`
-  max-width: 8em;
+const SuffixDOB = styled.div`
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 7.5em 19em;
 `;
 
 const PhoneNumber = styled.div`

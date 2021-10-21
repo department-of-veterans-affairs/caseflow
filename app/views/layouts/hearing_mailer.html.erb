@@ -16,6 +16,7 @@
     <%= yield :test_your_connection %>
     <%= yield :help_desk %>
     <%= yield :rescheduling_or_canceling_your_hearing %>
+    <%= yield :additional_reminder_details %>
     <%= yield :signature %>
     <% if @representative_reminder != true %>
       <%= render "hearing_mailer/sections/internal_use" %>

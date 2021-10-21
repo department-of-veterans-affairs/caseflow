@@ -98,6 +98,10 @@ class RequestIssue < CaseflowRecord
       rating_issue.or(rating_decision).or(unidentified)
     end
 
+    def rating_not_unidentified
+      rating_issue.or(rating_decision)
+    end
+
     def rating_issue
       where.not(contested_rating_issue_reference_id: nil)
     end
@@ -509,6 +513,9 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
+    user = RequestStore.store[:current_user]
+    return false if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user)
+
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
@@ -593,6 +600,10 @@ class RequestIssue < CaseflowRecord
 
   def editable?
     !contention_connected_to_rating?
+  end
+
+  def death_dismissed?
+    decision_issues.where(disposition: "dismissed_death").any?
   end
 
   def remanded?

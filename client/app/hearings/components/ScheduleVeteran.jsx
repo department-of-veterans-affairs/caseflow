@@ -13,7 +13,11 @@ import { isNil, maxBy, omit, find, get } from 'lodash';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
 import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
-import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
+import {
+  CENTRAL_OFFICE_HEARING_LABEL,
+  VIDEO_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL
+} from '../constants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
@@ -23,8 +27,15 @@ import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
-import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import { setMargin, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import {
+  getAppellantTitle,
+  processAlerts,
+  parseVirtualHearingErrors,
+  allScheduleVeteranDropdownOptions,
+  hearingRequestTypeOptions,
+  hearingRequestTypeCurrentOption
+} from '../utils';
 import { parentTasks } from '../../queue/utils';
 import {
   onChangeFormData,
@@ -54,6 +65,7 @@ export const ScheduleVeteran = ({
   scheduledHearingsList,
   ...props
 }) => {
+
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +91,6 @@ export const ScheduleVeteran = ({
   const header = `Schedule ${appellantTitle} for a Hearing`;
 
   // Determine the Request Type for the hearing
-  const virtual = assignHearingForm?.virtualHearing;
   const requestType = selectedHearingDay?.regionalOffice === 'C' ?
     CENTRAL_OFFICE_HEARING_LABEL :
     VIDEO_HEARING_LABEL;
@@ -93,7 +104,8 @@ export const ScheduleVeteran = ({
   // Create a hearing object for the form
   const hearing = {
     ...assignHearingForm,
-    regionalOffice: assignHearingForm?.regionalOffice?.key,
+    requestType: assignHearingForm?.requestType || appeal?.readableHearingRequestType,
+    regionalOffice: assignHearingForm?.regionalOffice?.key || initialRegionalOffice,
     regionalOfficeTimezone: assignHearingForm?.regionalOffice?.timezone,
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
@@ -113,6 +125,20 @@ export const ScheduleVeteran = ({
     veteranFullName: appeal?.veteranFullName
   };
 
+  const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
+  const virtualHearing = virtual ? { status: 'pending' } : null;
+  const allDropdownOptions = allScheduleVeteranDropdownOptions(appeal);
+
+  const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
+    allDropdownOptions,
+    virtualHearing
+  );
+
+  const hearingRequestTypeDropdownOptions = hearingRequestTypeOptions(
+    allDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption
+  );
+
   // Get parent hearing task of this task which could be
   // Schedule Hearing Task or Assign Hearing Disposition Task
   const parentHearingTask = parentTasks(
@@ -130,7 +156,7 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
+    if (!hearing?.virtualHearing?.appellantTz || !hearing.virtualHearing?.representativeTz) {
       props.onChangeFormData(
         'assignHearing',
         {
@@ -196,14 +222,16 @@ export const ScheduleVeteran = ({
     //
     // `omit` returns an empty object if `null` is provided as an argument, so the `isNil` check here
     // prevents `omit` from returning an empty object.`
-    const virtualHearing = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
+    const emailRecipients = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
+    const recipients = emailRecipients ? ApiUtil.convertToSnakeCase(emailRecipients) : null;
 
     // Format the shared hearing values
     const hearingValues = {
+      email_recipients: recipients,
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
+      virtual_hearing_attributes: virtual && recipients,
       notes: hearing.notes
     };
 
@@ -245,15 +273,15 @@ export const ScheduleVeteran = ({
         hearingDay: (hearing.hearingDay && hearing.hearingDay.hearingId) ?
           null :
           'Please select a hearing date',
-        hearingLocation: hearing.hearingLocation || hearing.virtualHearing ? null : 'Please select a hearing location',
+        hearingLocation: hearing.hearingLocation || virtual ? null : 'Please select a hearing location',
         scheduledTimeString: hearing.scheduledTimeString ? null : 'Please select a hearing time',
-        regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
+        regionalOffice: hearing.regionalOffice || virtual ? null : 'Please select a Regional Office '
       };
 
       const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
       const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
-      const emailOrTzErrors = hearing?.virtualHearing && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
+      const emailOrTzErrors = virtual && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
 
       if (emailOrTzErrors) {
         document.getElementById('email-section').scrollIntoView();
@@ -293,7 +321,7 @@ export const ScheduleVeteran = ({
 
       const alerts = body?.tasks?.alerts;
 
-      if (alerts && hearing.virtualHearing) {
+      if (alerts && virtual) {
         processAlerts(alerts, props, () => props.startPollingHearing(mostRecentTask?.attributes?.external_hearing_id));
       } else {
         props.showSuccessMessage(getSuccessMsg());
@@ -349,25 +377,18 @@ export const ScheduleVeteran = ({
   // Method to handle changing the form fields when toggling between virtual
   const convertToVirtual = () => {
     if (virtual) {
-      return props.onChangeFormData('assignHearing', {
-        virtualHearing: null
-      });
+      return props.onChangeFormData('assignHearing', { requestType });
     }
 
-    return props.onChangeFormData('assignHearing', {
-      virtualHearing: {
-        status: 'pending',
-        appellantTz: appeal.appellantTz,
-        representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal.appellantTz
-      }
-    });
+    return props.onChangeFormData('assignHearing', { requestType: VIRTUAL_HEARING_LABEL });
+  };
+
+  const scheduleVeteranRequestTypeDropdownOnchange = () => {
+    convertToVirtual();
   };
 
   // Create the header styling based on video/virtual type
-  const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
-  const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
-  const recipients = hearing?.representative ? `${appellantTitle}, power of attorney,` : `${appellantTitle}`;
-  const helperLabel = sprintf(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL, recipients);
+  const headerStyle = setMargin('0 0 45px 0');
 
   // This protects against users navigating directly to this page without the correct data in the store
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
@@ -377,10 +398,6 @@ export const ScheduleVeteran = ({
       <AppSegment filledBackground extraClassNames="schedule-veteran-page">
         <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
-        {virtual ?
-          <div {...helperTextStyle}>{helperLabel}</div> :
-          !fullHearingDay && <div {...marginTop(45)} />}
-
         {fullHearingDay && (
           <Alert
             title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
@@ -391,10 +408,11 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            userCanCollectVideoCentralEmails={props.userCanCollectVideoCentralEmails}
             scheduledHearingsList={scheduledHearingsList}
             fetchingHearings={fetchingHearings}
             userCanViewTimeSlots={userCanViewTimeSlots}
-            initialHearingDate={selectedHearingDay?.hearingDate}
+            initialHearingDay={selectedHearingDay}
             initialRegionalOffice={initialRegionalOffice}
             errors={errors}
             appeal={appeal}
@@ -402,8 +420,11 @@ export const ScheduleVeteran = ({
             hearing={hearing}
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
-            convertToVirtual={convertToVirtual}
             hearingTask={parentHearingTask}
+            convertToVirtual={convertToVirtual}
+            hearingRequestTypeDropdownOptions={hearingRequestTypeDropdownOptions}
+            hearingRequestTypeDropdownCurrentOption={hearingRequestTypeDropdownCurrentOption}
+            hearingRequestTypeDropdownOnchange={scheduleVeteranRequestTypeDropdownOnchange}
           />
         )}
 
@@ -459,6 +480,7 @@ ScheduleVeteran.propTypes = {
     appellantTz: PropTypes.string
   }),
   assignHearingForm: PropTypes.shape({
+    requestType: PropTypes.string,
     apiFormattedValues: PropTypes.object,
     errorMessages: PropTypes.shape({
       hasErrorMessages: PropTypes.bool,
@@ -483,6 +505,7 @@ ScheduleVeteran.propTypes = {
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
   userCanViewTimeSlots: PropTypes.bool,
+  userCanCollectVideoCentralEmails: PropTypes.bool,
   allHearingTasks: PropTypes.array
 };
 

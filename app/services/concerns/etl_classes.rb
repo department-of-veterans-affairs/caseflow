@@ -8,8 +8,10 @@ module ETLClasses
   ETL_SYNCER_KLASSES = %w[
     Appeal
     AttorneyCaseReview
+    DecisionDocument
     DecisionIssue
     Hearing
+    JudgeCaseReview
     LegacyHearing
     Organization
     OrganizationsUser

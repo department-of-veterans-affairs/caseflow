@@ -21,27 +21,35 @@ export const RepresentativeSection = ({
   update,
   appellantTitle,
   showTimezoneField,
-  schedulingToVirtual
+  schedulingToVirtual,
+  userCanCollectVideoCentralEmails,
+  showDivider,
+  formFieldsOnly
 }) => (
-  <VirtualHearingSection label="Power of Attorney">
+  <VirtualHearingSection formFieldsOnly={formFieldsOnly} label="Power of Attorney (POA)" showDivider={showDivider}>
     {hearing?.representative ? (
       <React.Fragment>
-        <AddressLine
-          label={hearing?.representativeType}
-          name={hearing?.representativeName || hearing?.representative}
-          addressLine1={hearing?.representativeAddress?.addressLine1}
-          addressState={hearing?.representativeAddress?.state}
-          addressCity={hearing?.representativeAddress?.city}
-          addressZip={hearing?.representativeAddress?.zip}
-        />
+        {formFieldsOnly ? (
+          <ReadOnly label={hearing?.representativeType} text={hearing?.representativeName || hearing?.representative} />
+        ) : (
+          <AddressLine
+            label={hearing?.representativeType}
+            name={hearing?.representativeName || hearing?.representative}
+            addressLine1={hearing?.representativeAddress?.addressLine1}
+            addressState={hearing?.representativeAddress?.state}
+            addressCity={hearing?.representativeAddress?.city}
+            addressZip={hearing?.representativeAddress?.zip}
+          />
+        )}
       </React.Fragment>
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    {showTimezoneField && schedulingToVirtual && (
+    {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
+            optional={!virtualHearing?.representativeEmail}
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
             value={virtualHearing?.representativeTz}
@@ -60,9 +68,10 @@ export const RepresentativeSection = ({
     <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
       <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
         <VirtualHearingEmail
+          optional
           readOnly={readOnly}
           emailType="representativeEmail"
-          label="POA/Representative Email"
+          label="POA/Representative Email (for these notifications only)"
           email={virtualHearing?.representativeEmail}
           error={errors?.representativeEmail}
           type={type}
@@ -74,7 +83,8 @@ export const RepresentativeSection = ({
 );
 
 RepresentativeSection.defaultProps = {
-  schedulingToVirtual: true
+  schedulingToVirtual: true,
+  formFieldsOnly: false
 };
 
 RepresentativeSection.propTypes = {
@@ -87,5 +97,8 @@ RepresentativeSection.propTypes = {
   fullWidth: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showTimezoneField: PropTypes.bool,
-  schedulingToVirtual: PropTypes.bool
+  userCanCollectVideoCentralEmails: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool,
+  showDivider: PropTypes.bool,
+  formFieldsOnly: PropTypes.bool
 };

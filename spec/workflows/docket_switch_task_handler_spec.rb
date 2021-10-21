@@ -107,14 +107,11 @@ describe DocketSwitch::TaskHandler, :all_dbs do
 
         new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
         persistent_task_copy = new_docket_stream.tasks.assigned_to_any_user.find_by(type: "TranslationTask")
-        new_admin_action = new_docket_stream.tasks.find do |task|
-          task.type == "AojColocatedTask" && task.assigned_to_type == "User"
-        end
 
         expect(new_docket_task).to be_active
+        expect(new_docket_task.assigned_to_type).to eq "Organization"
         expect(persistent_task_copy).to be_active
         expect(new_docket_stream.tasks.find { |task| task.type == "FoiaTask" }).to be nil
-        expect(new_admin_action).to be_active
       end
     end
 
@@ -136,15 +133,12 @@ describe DocketSwitch::TaskHandler, :all_dbs do
 
         new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
         persistent_task_copy = new_docket_stream.tasks.assigned_to_any_user.find_by(type: "TranslationTask")
-        new_admin_action = new_docket_stream.tasks.find do |task|
-          task.type == "AojColocatedTask" && task.assigned_to_type == "User"
-        end
 
         expect(new_docket_task).to be_active
+        expect(new_docket_task.assigned_to_type).to eq "Organization"
         expect(persistent_task_copy).to be_active
         removed_task = old_docket_stream_tasks.find { |task| !selected_task_ids.include?(task.id.to_s) }
         expect(new_docket_stream.tasks.find { |task| task.type == removed_task.type }).to be nil
-        expect(new_admin_action).to be_active
       end
     end
 

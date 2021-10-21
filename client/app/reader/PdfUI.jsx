@@ -316,7 +316,6 @@ export class PdfUI extends React.Component {
           documentPathBase={this.props.documentPathBase}
           documentType={this.props.doc.type}
           file={this.props.doc.content_url}
-          pdfWorker={this.props.pdfWorker}
           id={this.props.id}
           history={this.props.history}
           onPageClick={this.props.onPageClick}
@@ -333,7 +332,7 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const pdfDocument = _.get(state.pdf.pdfDocuments, [props.doc.content_url]);
-  const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
+  const numPages = pdfDocument ? pdfDocument.numPages : null;
 
   return {
     ..._.pick(state.documentList, 'filteredDocIds'),
@@ -387,7 +386,6 @@ PdfUI.propTypes = {
   numPages: PropTypes.any,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  pdfWorker: PropTypes.string.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   prevDocId: PropTypes.number,
   resetJumpToPage: PropTypes.func,

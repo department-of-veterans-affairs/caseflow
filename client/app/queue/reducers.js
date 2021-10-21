@@ -10,7 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
-import teamManagementReducer from './teamManagement/reducers';
+import teamManagementReducer from './teamManagement/teamManagement.slice';
 
 import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
@@ -779,7 +779,7 @@ const rootReducer = combineReducers({
   docketSwitch: docketSwitchReducer,
   mtv: mtvReducer,
   substituteAppellant: substituteAppellantReducer,
-  editClaimantReducer: editClaimantReducer
+  editClaimantReducer
 });
 
 export default timeFunction(

@@ -3,14 +3,45 @@
 RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
-  let!(:judge_schedule_period) { create(:judge_schedule_period) }
+  let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
+  let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
+
+  shared_context "hearing_days" do
+    let!(:hearing_days) do
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
+             judge: judge_doris,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 8),
+             judge: judge_doris,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 15),
+             judge: judge_stuart,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
+             judge: judge_stuart,
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 29),
+             judge: judge_doris,
+             regional_office: "RO13")
+    end
+  end
 
   context "index" do
     it "returns all schedule periods" do
       get :index, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["schedule_periods"].size).to eq 2
+      expect(response_body["schedule_periods"].size).to eq 1
     end
   end
 
@@ -33,43 +64,11 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     end
   end
 
-  context "show judge" do
-    let!(:co_hearing_days) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 1),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 7),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 16),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 22),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 23),
-             regional_office: "RO13")
-    end
-
-    it "returns a schedule period and its hearing days with judges assigned" do
-      get :show, params: { schedule_period_id: judge_schedule_period.id }, as: :json
-      expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)
-
-      expect(response_body["schedule_period"]["hearing_days"].count).to eq 5
-      expect(response_body["schedule_period"]["file_name"]).to eq "validJudgeSpreadsheet.xlsx"
-      expect(response_body["schedule_period"]["start_date"]).to eq "2018-04-01"
-      expect(response_body["schedule_period"]["end_date"]).to eq "2018-09-30"
-    end
-  end
-
   context "create" do
+    before do
+      CachedUser.sync_from_vacols
+    end
+
     it "creates a new schedule period" do
       id = SchedulePeriod.last.id + 1
       base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
@@ -118,6 +117,46 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       # Expect the template error
       expect(error["details"]).to include template_error
     end
+
+    context "judge assignment" do
+      include_context "hearing_days"
+
+      it "stages hearing days for judge assignment", skip: "flake" do
+        base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+        post :create, params: {
+          schedule_period: {
+            type: "JudgeSchedulePeriod",
+            file_name: "fakeFileName.xlsx",
+            file: base64_header + Base64.encode64(File.open("spec/support/validJudgeSpreadsheet.xlsx").read)
+          }
+        }
+
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["hearing_days"].count).to eq 2
+        response_body["hearing_days"].each do |hearing_day|
+          expect(HearingDay.find(hearing_day["id"]).judge_css_id).not_to eq hearing_day["judge_css_id"]
+        end
+      end
+    end
+
+    it "returns errors when uploading an invalid judge assignment spreadsheet" do
+      base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+      post :create, params: {
+        schedule_period: {
+          type: "JudgeSchedulePeriod",
+          file_name: "fakeFileName.xlsx",
+          file: base64_header + Base64.encode64(File.open("spec/support/judgeNotInDb.xlsx").read)
+        }
+      }
+
+      expect(response.status).to eq 400
+      response_body = JSON.parse(response.body)
+      error_title = HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase.to_s
+      expect(response_body["errors"][0]["title"]).to eq error_title
+      error_message = "These judges are not in the database: [[\"BVALAMPHERE\", \"Huels, Stuart\"]]"
+      expect(response_body["errors"][0]["details"]).to eq error_message
+    end
   end
 
   context "persist full schedule for a schedule period" do
@@ -152,37 +191,34 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     end
   end
 
-  context "assign judges to full schedule for a schedule period" do
-    let!(:hearing_days) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 1),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 8),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 15),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 22),
-             regional_office: "RO13")
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             scheduled_for: Date.new(2018, 5, 29),
-             regional_office: "RO13")
+  context "assign judges to hearing days" do
+    before do
+      ActiveRecord::Base.connection.reset_pk_sequence!("hearing_days")
     end
 
-    it "update judge assignments for a given schedulePeriod id" do
+    include_context "hearing_days"
+
+    it "update judge assignments for a list of hearing day ids" do
+      spreadsheet = Roo::Spreadsheet.open("spec/support/validJudgeSpreadsheet.xlsx", extension: :xlsx)
+      spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+      judge_assignments = spreadsheet_data.judge_assignments.map do |assignment|
+        assignment[:judge_css_id] = assignment[:judge_css_id]
+        assignment
+      end
+
       put :update, params: {
-        schedule_period_id: judge_schedule_period.id
+        schedule_period_id: "confirm_judge_assignments",
+        schedule_period: judge_assignments
       }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["id"]).to eq judge_schedule_period.id
+      expect(response_body["success"]).to eq true
+      judge_assignments.each do |assignment|
+        hearing_day = HearingDay.find(assignment[:hearing_day_id])
+        judge = User.find_by_css_id(assignment[:judge_css_id])
+        expect(hearing_day.judge.css_id).to eq judge.css_id
+        expect(hearing_day.updated_by_id).to eq user.id
+      end
     end
   end
 

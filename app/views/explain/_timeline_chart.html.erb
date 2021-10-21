@@ -3,6 +3,9 @@
 <% end %>
 
 <h3>Timeline</h3>
+
+<% enabledTimelineGroups = %w[phases tasks others] %>
+
 <details open>
   <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
   <div style="margin-left: 1em;">
@@ -10,8 +13,9 @@
       <button class="dropbtn">Groups</button>
       <div class="dropdown-content">
         <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
+          <% groupEnabled = enabledTimelineGroups.include?(groupName) %>
           <input id="<%=groupName%>_group_visible" value="<%=groupName%>"
-            type="checkbox" checked onchange="toggleTimelineEventGroup(this)">
+            type="checkbox"  <%=groupEnabled ? 'checked' : nil%> onchange="toggleTimelineEventGroup(this)">
           <label for="<%=groupName%>_group_visible"><%=groupName%></label>
         <% end %>
       </div>

@@ -9,7 +9,7 @@ export const getDocumentText = (pdfDocument, file) =>
         return page.getTextContent();
       });
     };
-    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+    const getTextPromises = _.range(pdfDocument.numPages).map((index) => getTextForPage(index));
 
     Promise.all(getTextPromises).then((pages) => {
       const textObject = pages.reduce((acc, page, pageIndex) => {

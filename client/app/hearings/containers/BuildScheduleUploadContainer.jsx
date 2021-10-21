@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
@@ -19,21 +19,30 @@ import {
   updateJudgeUploadFormErrors,
   unsetUploadErrors
 } from '../actions/hearingScheduleActions';
+
+import { onReceiveAlerts } from '../../components/common/actions';
+import COPY from '../../../COPY';
+
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
+import { ReviewAssignments } from '../components/ReviewAssignments';
 
-export class BuildScheduleUploadContainer extends React.Component {
+export const BuildScheduleUploadContainer = (props) => {
+  const [assignments, setAssignments] = useState(false);
+  const [assigningJudges, setAssigningJudges] = useState(false);
 
-  componentWillUnmount = () => {
-    this.props.unsetUploadErrors();
-  };
+  const dispatch = useDispatch();
 
-  validateDatesAndFile = (onFailure, startDate, endDate, file) => {
-    if (!(startDate && endDate && file)) {
+  useEffect(() => {
+    return () => props.unsetUploadErrors();
+  }, []);
+
+  const validateDatesAndFile = (onFailure, file, startDate, endDate) => {
+    if ((!startDate && !endDate && props.fileType !== SPREADSHEET_TYPES.JudgeSchedulePeriod.value) || !file) {
       onFailure(['Please make sure all required fields are filled in.']);
 
       return false;
     }
-    if (endDate < startDate) {
+    if (endDate < startDate && props.fileType !== SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       onFailure(['The end date must be after the start date.']);
 
       return false;
@@ -42,110 +51,150 @@ export class BuildScheduleUploadContainer extends React.Component {
     return true;
   };
 
-  validateData = () => {
-    if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-      return this.validateDatesAndFile(
-        this.props.updateRoCoUploadFormErrors,
-        this.props.roCoStartDate,
-        this.props.roCoEndDate,
-        this.props.roCoFileUpload
+  const validateData = () => {
+    if (props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+      return validateDatesAndFile(
+        props.updateRoCoUploadFormErrors,
+        props.roCoFileUpload,
+        props.roCoStartDate,
+        props.roCoEndDate,
       );
     }
-    if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-      return this.validateDatesAndFile(
-        this.props.updateJudgeUploadFormErrors,
-        this.props.judgeStartDate,
-        this.props.judgeEndDate,
-        this.props.judgeFileUpload
+    if (props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      return validateDatesAndFile(
+        props.updateJudgeUploadFormErrors,
+        props.judgeFileUpload
       );
     }
-    this.props.updateUploadFormErrors('Please select a file type.');
+    props.updateUploadFormErrors('Please select a file type.');
 
     return false;
   };
 
-  formatData = () => {
+  const formatData = () => {
     let schedulePeriod = {};
 
-    if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+    if (props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
-        file: this.props.roCoFileUpload.file,
-        startDate: this.props.roCoStartDate,
-        endDate: this.props.roCoEndDate,
-        type: this.props.fileType
+        file: props.roCoFileUpload.file,
+        startDate: props.roCoStartDate,
+        endDate: props.roCoEndDate,
+        type: props.fileType
       };
     }
 
-    if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+    if (props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       schedulePeriod = {
-        file: this.props.judgeFileUpload.file,
-        startDate: this.props.judgeStartDate,
-        endDate: this.props.judgeEndDate,
-        type: this.props.fileType
+        file: props.judgeFileUpload.file,
+        type: props.fileType
       };
     }
 
     return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
-  createSchedulePeriod = () => {
-    this.props.toggleUploadContinueLoading();
+  const confirmJudgeAssignments = () => {
+    setAssigningJudges(true);
 
-    if (!this.validateData()) {
-      this.props.toggleUploadContinueLoading();
+    const data = assignments.map((assignment) => ({
+      hearing_day_id: assignment.id,
+      judge_name: assignment.judgeName,
+      judge_css_id: assignment.judgeCssId,
+    }));
+
+    ApiUtil.patch('/hearings/schedule_periods/confirm_judge_assignments', { data: { schedule_period: data } }).
+      then(() => {
+        setAssigningJudges(false);
+
+        dispatch(onReceiveAlerts([{
+          type: 'success',
+          title: COPY.HEARING_SCHEDULE_SUCCESSFULLY_ASSIGNED_JUDGES,
+          timestamp: Date.now()
+        }]));
+
+        props.history.push('/schedule');
+      }).
+      catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const createSchedulePeriod = () => {
+    props.toggleUploadContinueLoading();
+
+    if (!validateData()) {
+      props.toggleUploadContinueLoading();
 
       return;
     }
 
-    const data = this.formatData();
+    const data = formatData();
 
     ApiUtil.post('/hearings/schedule_periods', { data: { schedule_period: data } }).
       then((response) => {
-        this.props.toggleUploadContinueLoading();
-        this.props.history.push(`/schedule/build/upload/${response.body.id}`);
+        props.toggleUploadContinueLoading();
+
+        if (props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          setAssignments(Object.values(ApiUtil.convertToCamelCase(response.body.hearing_days)));
+
+          return;
+        }
+
+        props.history.push(`/schedule/build/upload/${response.body.id}`);
       }).
       catch(({ response }) => {
         // Map unspecified errors
-        const errors = Array.isArray(response.body?.errors) ?
+        const errors = Array.isArray(response?.body?.errors) ?
           response.body.errors.map((error) => error.details) :
           ['ValidationError::UnspecifiedError'];
 
         // Display the errors based on the spreadsheet type
-        if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-          this.props.updateRoCoUploadFormErrors(errors);
-        } else if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-          this.props.updateJudgeUploadFormErrors(errors);
+        if (props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+          props.updateRoCoUploadFormErrors(errors);
+        } else if (props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          props.updateJudgeUploadFormErrors(errors);
         }
 
         // Toggle the continue upload
-        this.props.toggleUploadContinueLoading();
+        props.toggleUploadContinueLoading();
       });
   };
 
-  render() {
-    return <BuildScheduleUpload
-      fileType={this.props.fileType}
-      onFileTypeChange={this.props.onFileTypeChange}
-      roCoStartDate={this.props.roCoStartDate}
-      onRoCoStartDateChange={this.props.onRoCoStartDateChange}
-      roCoEndDate={this.props.roCoEndDate}
-      onRoCoEndDateChange={this.props.onRoCoEndDateChange}
-      roCoFileUpload={this.props.roCoFileUpload}
-      onRoCoFileUpload={this.props.onRoCoFileUpload}
-      judgeStartDate={this.props.judgeStartDate}
-      onJudgeStartDateChange={this.props.onJudgeStartDateChange}
-      judgeEndDate={this.props.judgeEndDate}
-      onJudgeEndDateChange={this.props.onJudgeEndDateChange}
-      judgeFileUpload={this.props.judgeFileUpload}
-      onJudgeFileUpload={this.props.onJudgeFileUpload}
-      uploadFormErrors={this.props.uploadFormErrors}
-      uploadRoCoFormErrors={this.props.uploadRoCoFormErrors}
-      uploadJudgeFormErrors={this.props.uploadJudgeFormErrors}
-      uploadContinueLoading={this.props.uploadContinueLoading}
-      onUploadContinue={this.createSchedulePeriod}
-    />;
-  }
-}
+  return assignments ? (
+    <ReviewAssignments
+      assigningJudges={assigningJudges}
+      onClickConfirmAssignments={confirmJudgeAssignments}
+      onClickGoBack={() => setAssignments(false)}
+      schedulePeriod={{
+        type: props.fileType,
+        hearingDays: assignments
+      }}
+    />
+  ) : (
+    <BuildScheduleUpload
+      fileType={props.fileType}
+      onFileTypeChange={props.onFileTypeChange}
+      roCoStartDate={props.roCoStartDate}
+      onRoCoStartDateChange={props.onRoCoStartDateChange}
+      roCoEndDate={props.roCoEndDate}
+      onRoCoEndDateChange={props.onRoCoEndDateChange}
+      roCoFileUpload={props.roCoFileUpload}
+      onRoCoFileUpload={props.onRoCoFileUpload}
+      judgeStartDate={props.judgeStartDate}
+      onJudgeStartDateChange={props.onJudgeStartDateChange}
+      judgeEndDate={props.judgeEndDate}
+      onJudgeEndDateChange={props.onJudgeEndDateChange}
+      judgeFileUpload={props.judgeFileUpload}
+      onJudgeFileUpload={props.onJudgeFileUpload}
+      uploadFormErrors={props.uploadFormErrors}
+      uploadRoCoFormErrors={props.uploadRoCoFormErrors}
+      uploadJudgeFormErrors={props.uploadJudgeFormErrors}
+      uploadContinueLoading={props.uploadContinueLoading}
+      onUploadContinue={createSchedulePeriod}
+    />
+
+  );
+};
 
 BuildScheduleUploadContainer.propTypes = {
 

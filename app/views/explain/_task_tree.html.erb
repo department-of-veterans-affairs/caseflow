@@ -1,30 +1,37 @@
 <h3>Task tree</h3>
 
-<span id="treeefields">
-  <%
-    taskFields={}
-    remainingFields = available_fields
-    remainingFields -= (taskFields[:time_fields] = remainingFields.select{|f| f.end_with?("_at", "_DATE", "_TIME")})
-    remainingFields -= (taskFields[:assign_fields] = remainingFields.select{|f| f.start_with?("assigned_", "ASGN_")})
-    taskFields[:remaining_fields] = remainingFields
-  %>
-  <% taskFields.each do |name, field_names| %>
-    <div class="dropdown">
-      <button class="dropbtn"><%=name.to_s.titleize%></button>
-      <div class="dropdown-content">
-        <% field_names.sort.each do |field_name| %>
-          <% if treee_fields.include?(field_name.to_sym) %>
-            <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()">
-          <% else %>
-            <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()">
+<div style="border: 1px solid lightgray; padding: 5px;">
+  <span id="treeefields">
+    <%
+      # Don't offer fields that are always displayed in the task tree output
+      remainingFields = available_fields - ["appeal_id", "appeal_type", "type", "parent_id"]
+      # Group fields by category
+      remainingFields -= (timeFields = remainingFields.select{|f| f.end_with?("_at", "_DATE", "_TIME")})
+      remainingFields -= (assignFields = remainingFields.select{|f| f.start_with?("assigned_", "ASGN_")})
+
+      # The ordering of this hash determines the button ordering in the UI.
+      # The hash keys determine the button labels.
+      taskFields = {
+        misc_fields: remainingFields,
+        assign_fields: assignFields,
+        time_fields: timeFields
+      }
+    %>
+    <% taskFields.each do |name, field_names| %>
+      <div class="dropdown">
+        <button class="dropbtn"><%=name.to_s.titleize%></button>
+        <div class="dropdown-content">
+          <% field_names.sort.each do |field_name| %>
+            <% fieldIncluded = treee_fields.include?(field_name.to_sym) %>
+            <input type="checkbox" id="<%=field_name%>" <%=fieldIncluded ? 'checked' : nil%> onchange="updateTaskTreeLink()">
+            <label for="<%=field_name%>"><%=field_name%></label>
           <% end %>
-          <label for="<%=field_name%>"><%=field_name%></label>
-        <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
-</span>
-<a id="task_tree_link" href="">Update task tree</a>
+    <% end %>
+  </span>
+  <a id="task_tree_link" href="">Update task tree</a>
+</div>
 <br/>
 
 <code style="color: green">

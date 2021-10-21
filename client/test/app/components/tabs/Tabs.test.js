@@ -234,12 +234,6 @@ describe('Tabs', () => {
     // Press the TAB key
     userEvent.tab();
 
-    // Focus should now be in the correct tabpanel
-    expect(screen.getByRole('tabpanel')).toBe(document.activeElement);
-
-    // Press the TAB key again
-    userEvent.tab();
-
     // Focus should now be on the first link in the active tabpanel
     expect(screen.getByText('Link 1')).toBe(document.activeElement);
   });

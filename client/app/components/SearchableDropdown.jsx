@@ -151,6 +151,7 @@ export class SearchableDropdown extends React.Component {
       searchable,
       styling,
       optional,
+      onInputChange
     } = this.props;
 
     const labelContents = (
@@ -230,6 +231,7 @@ export class SearchableDropdown extends React.Component {
               loadOptions={async}
               isLoading={loading}
               onChange={this.onChange}
+              onInputChange={onInputChange}
               value={value}
               placeholder={
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
@@ -387,6 +389,7 @@ SearchableDropdown.propTypes = {
    */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
+  onInputChange: PropTypes.func,
   options: SelectOpts,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
@@ -395,7 +398,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array]),
 };
 
 /* eslint-disable no-undefined */

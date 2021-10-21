@@ -23,6 +23,15 @@ feature "Unrecognized appellants", :postgres do
     )
   end
 
+  let(:appeal_with_no_poa) do
+    appeal = create(
+      :appeal,
+      has_unrecognized_appellant: true
+    )
+    appeal.claimant.unrecognized_appellant.update(unrecognized_power_of_attorney_id: nil)
+    appeal
+  end
+
   let!(:user) do
     create(:user, full_name: "Test User")
   end
@@ -124,6 +133,98 @@ feature "Unrecognized appellants", :postgres do
       expect(ua.first_name).to eq("Updated First Name")
       expect(ua.versions.count).to eq(2)
       expect(page).to have_content("Name: Updated First Name Smith")
+    end
+  end
+
+  context "with attorney unrecognized appellant poa" do
+    before do
+      FeatureToggle.enable!(:edit_unrecognized_appellant_poa)
+      FeatureToggle.enable!(:poa_button_refresh)
+    end
+    after do
+      FeatureToggle.disable!(:edit_unrecognized_appellant_poa)
+      FeatureToggle.disable!(:poa_button_refresh)
+    end
+
+    it "should not show the edit information button if there's a POA already" do
+      visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
+      expect(page).not_to have_content("Edit Information")
+    end
+
+    context "update POA information" do
+      let(:attorneys) do
+        Array.new(15) { create(:bgs_attorney) }
+      end
+      let(:attorney) { attorneys.last }
+
+      it "should show the update POA button" do
+        allow(user).to receive(:vacols_roles).and_return(["colocated"])
+        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+        expect(page).to have_content("Update POA")
+      end
+
+      it "should successfully allow update, unlisted POA" do
+        allow(user).to receive(:vacols_roles).and_return(["colocated"])
+        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+
+        click_on "Update POA"
+        expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")
+        expect(page).to have_content("Update Appellant's POA")
+        expect(page).to have_button("Save", disabled: true)
+
+        fill_in("Representative's name", with: "Not Listed").send_keys :enter
+        click_dropdown({ index: 0 }, find(".dropdown-listedAttorney"))
+
+        within_fieldset("Is the representative an organization or individual?") do
+          find("label", text: "Individual", match: :prefer_exact).click
+        end
+        fill_in("First name", with: "FirstName")
+        fill_in("Street address 1", with: "Address1")
+        fill_in("City", with: "City")
+        fill_in("State", with: "CA").send_keys :enter
+        fill_in("Country", with: "Country")
+
+        expect(page).to have_button("Save", disabled: false)
+
+        click_on "Save"
+        expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}")
+        expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_TITLE)
+        expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_MESSAGE)
+
+        appellant = appeal_with_no_poa.claimant.unrecognized_appellant
+        expect(appellant).to have_attributes(poa_participant_id: nil)
+
+        expect(appellant.power_of_attorney).to have_attributes(
+          address_line_1: "Address1",
+          city: "City",
+          country: "Country",
+          name: "FirstName",
+          state: "California"
+        )
+      end
+
+      it "should successfully allow update, listed POA" do
+        allow(user).to receive(:vacols_roles).and_return(["colocated"])
+        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+
+        click_on "Update POA"
+        expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")
+        expect(page).to have_content("Update Appellant's POA")
+        expect(page).to have_button("Save", disabled: true)
+
+        fill_in("Representative's name", with: attorney.name)
+        click_dropdown({ index: 0 }, find(".dropdown-listedAttorney"))
+
+        expect(page).to have_button("Save", disabled: false)
+
+        click_on "Save"
+        expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}")
+        expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_TITLE)
+        expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_MESSAGE)
+
+        appellant = appeal_with_no_poa.claimant.unrecognized_appellant
+        expect(appellant).to have_attributes(poa_participant_id: attorney.participant_id)
+      end
     end
   end
 end

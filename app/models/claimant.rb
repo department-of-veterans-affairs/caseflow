@@ -7,7 +7,9 @@
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
-  belongs_to :decision_review, polymorphic: true
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :decision_review
+
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
@@ -45,6 +47,10 @@ class Claimant < CaseflowRecord
            allow_nil: true
 
   delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
+
+  def suffix
+    person.name_suffix
+  end
 
   def self.create_without_intake!(participant_id:, payee_code:, type:)
     claimant = create!(

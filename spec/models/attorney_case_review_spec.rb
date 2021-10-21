@@ -258,6 +258,9 @@ describe AttorneyCaseReview, :all_dbs do
           expect(subject.note).to eq note
           expect(subject.reviewing_judge).to eq judge
           expect(subject.attorney).to eq attorney
+
+          expect(subject.appeal_type).to eq "LegacyAppeal"
+          expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
         end
       end
 
@@ -455,7 +458,14 @@ describe AttorneyCaseReview, :all_dbs do
           subject
           expect(judge_task.reload.assigned_by).to eq(attorney)
         end
-        it "should create an AttorneyCaseReview record"
+        it "should create an AttorneyCaseReview record" do
+          case_review = subject
+          expect(case_review.appeal_type).to eq "Appeal"
+          expect(case_review.appeal_id).to eq attorney_task.appeal.id
+
+          expect(attorney_task.appeal.attorney_case_reviews).to eq [case_review]
+          expect(attorney_task.appeal.judge_case_reviews).to eq []
+        end
         it "should check for erroneous AMA states"
       end
     end

@@ -39,10 +39,6 @@ export default class BuildSchedule extends React.Component {
       {
         title: SPREADSHEET_TYPES.RoSchedulePeriod.display,
         target: SPREADSHEET_TYPES.RoSchedulePeriod.template
-      },
-      {
-        title: SPREADSHEET_TYPES.JudgeSchedulePeriod.display,
-        target: SPREADSHEET_TYPES.JudgeSchedulePeriod.template
       }
     ];
 

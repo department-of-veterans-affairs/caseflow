@@ -443,8 +443,6 @@ RSpec.feature "Assign Hearings Table" do
         expect(table_row).to have_content("Video", wait: 30)
         table_row = page.find("tr", id: "table-row-1")
         expect(table_row).to have_content("Travel")
-        table_row = page.find("tr", id: "table-row-2")
-        expect(table_row).to have_content("former Travel, Virtual")
       end
 
       context "Filter by Hearing Type column" do

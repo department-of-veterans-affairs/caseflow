@@ -111,10 +111,18 @@ class VaDotGovAddressValidator
   # Gets a list of RO facility ids to geomatch with.
   #
   # @return            [Array<String>]
-  #   An array of RO facility ids that are in the same state as the veteran/appellant.
+  #   Array of all RO facility ids for Travel board appeals or RO facility IDs by state for all other appeal types
   def ro_facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
+
+    # Return the list of RO facility IDs
+    if appeal.current_hearing_request_type == :travel_board
+      Rails.logger.info("Travel Board Appeal Geomatching | Appeal ID: #{appeal.class.name}#{appeal.id}")
+      # Exclude the DC regional office, unlikely that would be a "Travel" hearing
+      # and the facility_id is invalid according to the VA.gov API
+      return RegionalOffice.ro_facility_ids - ["vba_372"]
+    end
 
     facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
 
@@ -166,19 +174,42 @@ class VaDotGovAddressValidator
   end
 
   def available_hearing_locations_response
-    @available_hearing_locations_response ||= VADotGovService.get_distance(
-      ids: RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions),
+    @available_hearing_locations_response ||= safely_get_distance(
+      RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions)
+    )
+  end
+
+  def closest_ro_response
+    @closest_ro_response ||= safely_get_distance(ro_facility_ids_to_geomatch)
+  end
+
+  def safely_get_distance(facility_ids_to_geomatch)
+    VADotGovService.get_distance(
+      ids: facility_ids_to_geomatch,
+      lat: valid_address[:lat],
+      long: valid_address[:long]
+    )
+  rescue Caseflow::Error::VaDotGovMissingFacilityError => error
+    retry_getting_distance(facility_ids_to_geomatch, error)
+  end
+
+  def retry_getting_distance(facility_ids_to_geomatch, error)
+    facility_ids_to_geomatch = remove_missing_facilities(facility_ids_to_geomatch, error)
+    VADotGovService.get_distance(
+      ids: facility_ids_to_geomatch,
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
   end
 
-  def closest_ro_response
-    @closest_ro_response ||= VADotGovService.get_distance(
-      ids: ro_facility_ids_to_geomatch,
-      lat: valid_address[:lat],
-      long: valid_address[:long]
-    )
+  def remove_missing_facilities(facility_ids, error)
+    missing_facility_ids_result = ExternalApi::VADotGovService.check_facility_ids(ids: facility_ids)
+    unless missing_facility_ids_result.all_ids_present?
+      missing_ids = missing_facility_ids_result.missing_facility_ids
+      Raven.capture_exception(error, extra: { missing_facility_ids: missing_ids })
+      facility_ids -= missing_ids
+    end
+    facility_ids
   end
 
   def closest_ro_facility_id

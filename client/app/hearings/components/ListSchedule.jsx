@@ -62,14 +62,18 @@ const clearfix = css({
 });
 
 const exportHeaders = [
+  { label: 'ID',
+    key: 'id' },
   { label: 'Scheduled For',
     key: 'scheduledFor' },
   { label: 'Type',
-    key: 'requestType' },
+    key: 'readableRequestType' },
   { label: 'Regional Office',
     key: 'regionalOffice' },
   { label: 'Room',
     key: 'room' },
+  { label: 'CSS ID',
+    key: 'judgeCssId' },
   { label: 'VLJ',
     key: 'vlj' }
 ];
@@ -171,6 +175,7 @@ class ListSchedule extends React.Component {
         readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
+        judgeCssId: hearingDay.judgeCssId,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
         ...this.props.user.userCanViewAndDownloadHearingScheduledColumn &&
           { hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots) }

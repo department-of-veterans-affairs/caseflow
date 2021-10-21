@@ -15,9 +15,22 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
+const checkIssuesForVha = (requestIssues) => {
+  let hasVhaIssues = false;
+
+  requestIssues.forEach((ri) => {
+    if (ri.benefitType === 'vha') {
+      hasVhaIssues = true;
+    }
+  });
+
+  return hasVhaIssues;
+};
+
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  const vhaHasIssues = checkIssuesForVha(requestIssues);
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
@@ -39,19 +52,27 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
     leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
-  leadMessageArr.push(
-    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-  );
+  if (!vhaHasIssues) {
+    leadMessageArr.push(
+      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+    );
+  }
 
   return leadMessageArr;
 };
 
-const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (featureToggles, formType, requestIssues, isInformalConferenceRequested) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
+    let statusMessage = 'Appeal created:';
+
+    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
+      statusMessage = 'Appeal created and sent to VHA for document assessment.';
+    }
+
     return [<Fragment>
-      <strong>Appeal created:</strong>
+      <strong>{statusMessage}</strong>
       {eligibleRequestIssues.map((ri, i) => <p key={`appeal-issue-${i}`}>Issue: {ri.contentionText}</p>)}
     </Fragment>];
   }
@@ -108,6 +129,7 @@ class VacolsOptInList extends React.PureComponent {
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
+      featureToggles,
       veteran,
       formType,
       intakeStatus,
@@ -147,6 +169,12 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
+    let title = 'Intake completed';
+
+    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
+      title = 'Appeal recorded in pre-docket queue';
+    }
+
     const deceasedVeteranAlert = () => {
       return (
         <div className="cf-msg-screen-deck">
@@ -163,7 +191,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType === 'appeal' && !completedReview.veteranIsNotClaimant;
 
     return <div><StatusMessage
-      title="Intake completed"
+      title={title}
       type="success"
       leadMessageList={
         leadMessageList({
@@ -177,6 +205,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       }
       checklist={
         getChecklistItems(
+          featureToggles,
           formType,
           requestIssues,
           informalConference
@@ -199,6 +228,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
 export default connect(
   (state) => ({
+    featureToggles: state.featureToggles,
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,
