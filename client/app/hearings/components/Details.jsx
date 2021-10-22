@@ -37,7 +37,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
-import VirtualHearingModal from './VirtualHearingModal';
+import EmailModalConfirmation from './EmailModalConfirmation';
 import COPY from '../../../COPY';
 import { VIRTUAL_HEARING_LABEL } from '../constants';
 
@@ -99,13 +99,13 @@ const HearingDetails = (props) => {
 
   const getEditedEmailsAndTz = () => {
     const changes = deepDiff(
-      initialHearing.virtualHearing,
-      hearing.virtualHearing || {}
+      initialHearing,
+      hearing || {}
     );
 
     return {
-      appellantEmailEdited: !isUndefined(changes.appellantEmail),
-      representativeEmailEdited: !isUndefined(changes.representativeEmail),
+      appellantEmailEdited: !isUndefined(changes.appellantEmailAddress),
+      representativeEmailEdited: !isUndefined(changes.representativeEmailAddress),
       representativeTzEdited: !isUndefined(changes.representativeTz),
       appellantTzEdited: !isUndefined(changes.appellantTz)
     };
@@ -114,25 +114,26 @@ const HearingDetails = (props) => {
   const submit = async (editedEmailsAndTz) => {
     try {
       // Determine the current state and whether to error
-      const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
-      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantEmail = !hearing?.appellantEmailAddress;
+
       const noRepTimezone = convertingToVirtual ?
-        !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail :
-        editedEmailsAndTz?.representativeEmailEdited && !hearing.virtualHearing?.representativeTz;
-      const noAppellantTimezone = convertingToVirtual ? !hearing.virtualHearing?.appellantTz :
-        editedEmailsAndTz?.appellantEmailEdited && !hearing.virtualHearing?.appellantTz;
+        !hearing?.representativeTz && hearing?.representativeEmailAddress :
+        editedEmailsAndTz?.representativeEmailEdited && !hearing?.representativeTz;
+
+      const noAppellantTimezone = convertingToVirtual ? !hearing?.appellantTz :
+        editedEmailsAndTz?.appellantEmailEdited && !hearing?.appellantTz;
 
       const emailUpdated = (
         editedEmailsAndTz?.appellantEmailEdited ||
-        (editedEmailsAndTz?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
+        (editedEmailsAndTz?.representativeEmailEdited && hearing?.representativeEmailAddress)
       );
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
 
-      if (virtual && errors) {
+      if (errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
@@ -318,7 +319,7 @@ const HearingDetails = (props) => {
         </span>
       </div>
       {virtualHearingModalOpen && (
-        <VirtualHearingModal
+        <EmailModalConfirmation
           hearing={hearing}
           virtualHearing={hearing?.virtualHearing}
           update={updateHearing}
