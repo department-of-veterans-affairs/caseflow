@@ -9,7 +9,12 @@ import { useSelector } from 'react-redux';
 // Component Dependencies
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
-import { RegionalOfficeDropdown, HearingCoordinatorDropdown, JudgeDropdown } from 'app/components/DataDropdowns';
+import {
+  RegionalOfficeDropdown,
+  HearingCoordinatorDropdown,
+  JudgeDropdown,
+  HearingRoomDropdown
+} from 'app/components/DataDropdowns';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TextareaField from 'app/components/TextareaField';
 import { HelperText } from 'app/hearings/components/VirtualHearings/HelperText';
@@ -23,10 +28,9 @@ import Alert from 'app/components/Alert';
 import { saveButton, cancelButton } from 'app/hearings/components/details/style';
 import { fullWidth } from 'app/queue/constants';
 import { REQUEST_TYPE_OPTIONS } from 'app/hearings/constants';
-
 import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
-import { getRegionalOffice, readableDocketType } from 'app/hearings/utils';
+import { getRegionalOffice, readableDocketType, formatRoomOption } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
 
 export const EditDocket = (props) => {
@@ -35,6 +39,7 @@ export const EditDocket = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fields, setFields] = useState({
+    room: formatRoomOption(props.docket.room),
     firstSlotTime: props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('hh:mm') : '08:30',
     slotLengthMinutes: props?.docket?.slotLengthMinutes,
     numberOfSlots: props?.docket?.totalSlots,
@@ -68,6 +73,7 @@ export const EditDocket = (props) => {
     // Format the data for the API
     const data = ApiUtil.convertToSnakeCase({
       ...fields,
+      room: fields.room.value,
       regionalOffice: fields.regionalOffice.key === 'C' ? null : fields.regionalOffice.key,
       requestType: fields.requestType.value,
     });
@@ -100,7 +106,15 @@ export const EditDocket = (props) => {
       return setFields({
         ...fields,
         regionalOffice: getRegionalOffice(null),
-        [key]: value,
+        [key]: value
+      });
+    }
+    // If changing the requestType to virtual, clear out the room since virtual hearings do not have assigned rooms
+    if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.virtual) {
+      return setFields({
+        ...fields,
+        room: formatRoomOption(null),
+        [key]: value
       });
     }
 
@@ -143,6 +157,15 @@ export const EditDocket = (props) => {
             options={dropdowns?.regionalOffices?.options}
             errorMessage={invalidDocketRo && COPY.DOCKET_INVALID_RO_TYPE}
           />
+          {!virtual && (
+            <HearingRoomDropdown
+              name="room"
+              label="Select Room"
+              value={fields.room?.value}
+              onChange={(_, label) => handleChange('room')(formatRoomOption(label))}
+              placeholder="Select..."
+            />
+          )}
           <JudgeDropdown
             label="Select VLJ"
             value={fields.judgeId}
