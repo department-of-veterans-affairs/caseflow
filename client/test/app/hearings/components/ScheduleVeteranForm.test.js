@@ -225,7 +225,8 @@ describe('ScheduleVeteranForm', () => {
         hearingId: 1,
         readableRequestType: 'Video',
         beginsAt: '2021-07-29T11:30:00-04:00',
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        totalSlots: 5
       }
     };
     const scheduleVeteran = mount(
