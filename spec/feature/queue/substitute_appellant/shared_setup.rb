@@ -115,7 +115,7 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
       expect(page).to have_text("Listed below are all the tasks from the original appeal")
       # If it is a same appeal substitution and not the evidence submission docket, no tasks will display
-      if !same_appeal_substitution_allowed?(appeal) || docket_type.eql?("evidence_submission")
+      unless same_appeal_substitution_allowed?(appeal) || docket_type.eql?("evidence_submission")
         expect(page).to have_css(".usa-table-borderless.css-nil")
         expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
         expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
@@ -124,7 +124,7 @@ RSpec.shared_examples("fill substitution form") do
       end
 
       # If it is a same appeal substitution, the distribution task won't display
-      if !same_appeal_substitution_allowed?(appeal)
+      unless same_appeal_substitution_allowed?(appeal)
         expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
       end
 
