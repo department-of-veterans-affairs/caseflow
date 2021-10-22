@@ -479,10 +479,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           include_examples "hearing time display"
         end
 
-        context "first slot time is '08:30'" do
+        context "first slot time is '08:30' and half day hearing" do
           let(:first_slot_time) { "10:30" }
           let(:expected_time) { "08:30" }
           let(:readonly_time_text) { "8:30 AM Mountain / 10:30 AM Eastern" }
+          hearing_day.update(total_slots: 5)
+          include_examples "hearing time display"
+        end
+
+        context "first slot time is '08:30' and full day hearing" do
+          let(:first_slot_time) { "10:30" }
+          let(:expected_time) { "12:30" }
+          hearing_day.update(total_slots: 10)
           include_examples "hearing time display"
         end
 
