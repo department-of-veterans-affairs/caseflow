@@ -85,7 +85,7 @@ feature "Nonrating Request Issue Modal", :postgres do
       test_issue_categories(
         decision_review_type: "appeal",
         benefit_type: "not applicable to appeal",
-        included_category: "Contested Claims - Apportionment",
+        included_category: "Apportionment",
         excluded_category: "Entitlement to Services"
       )
     end
