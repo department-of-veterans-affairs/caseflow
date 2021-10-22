@@ -9,12 +9,14 @@ import {
   SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
   SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
   SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE,
+  SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE,
+  SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION,
+  SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_TITLE,
   SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION,
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
-import { TaskSelectionTable } from './TaskSelectionTable';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
 import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
 import { TasksToCopy } from './TasksToCopy';
@@ -32,6 +34,7 @@ export const SubstituteAppellantTasksForm = ({
   onBack,
   onCancel,
   onSubmit,
+  pendingAppeal,
   tasks = [],
   activeTasks = []
 }) => {
@@ -78,9 +81,22 @@ export const SubstituteAppellantTasksForm = ({
 
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
-            <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION} /></div>
-            {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-            <TasksToCopy tasks={adjustedTasks} />
+
+            {pendingAppeal && (
+              <div className={sectionStyle}>
+                <div><strong>{SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE}</strong></div>
+                <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION} /></div>
+                {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
+                <TasksToCopy tasks={activeTasks} />
+              </div>
+            )}
+
+            <div className={sectionStyle}>
+              <div><strong>{SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_TITLE}</strong></div>
+              <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION} /></div>
+              {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
+              <TasksToCopy tasks={adjustedTasks} />
+            </div>
           </div>
         </AppSegment>
         <div className="controls cf-app-segment">
@@ -133,6 +149,7 @@ SubstituteAppellantTasksForm.propTypes = {
       type: PropTypes.string,
     })
   ),
+  pendingAppeal: PropTypes.bool,
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,

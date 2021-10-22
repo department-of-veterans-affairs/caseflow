@@ -56,3 +56,8 @@ ExistingValues.args = {
     taskIds: [2, 3]
   },
 };
+
+export const PendingAppeal = Template.bind({});
+PendingAppeal.args = {
+  pendingAppeal: true
+};
