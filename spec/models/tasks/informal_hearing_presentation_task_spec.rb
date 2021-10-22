@@ -86,7 +86,7 @@ describe InformalHearingPresentationTask, :postgres do
       end
     end
 
-    context "update_to_new_poa will" do
+    context "update to new IHP writing POA" do
       let(:new_poa_participant_id) { "2222222" }
       let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
       let!(:bgs_poa_for_claimant) do
@@ -95,7 +95,7 @@ describe InformalHearingPresentationTask, :postgres do
                poa_participant_id: new_poa_participant_id)
       end
 
-      it "cancel old IhpTask and create a new IhpTask assigned to the new POA" do
+      it "cancels old IhpTask and create a new IhpTask assigned to the new POA" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
         expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
                                                        assigned_to_id: old_poa.id).status).to eq("cancelled")
@@ -106,7 +106,7 @@ describe InformalHearingPresentationTask, :postgres do
       end
     end
 
-    context "update_to_new_poa will only" do
+    context "update to new non-IHP writing POA" do
       let(:new_poa_participant_id) { "3333333" }
       let!(:new_poa) { create(:bgs_attorney, name: "Bruce Wayne", participant_id: new_poa_participant_id) }
       let!(:bgs_poa_for_claimant) do
@@ -114,7 +114,17 @@ describe InformalHearingPresentationTask, :postgres do
                claimant_participant_id: appeal.claimant.participant_id,
                poa_participant_id: new_poa_participant_id)
       end
-      it "cancel old IhpTask if new POA cannot have an IhpTask" do
+      it "cancels old IhpTask" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: old_poa.id).status).to eq("cancelled")
+        expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 1
+        expect(Raven).to receive(:capture_exception).exactly(0).times
+      end
+    end
+
+    context "POA is removed" do
+      it "cancels old IhpTask" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
         expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
                                                        assigned_to_id: old_poa.id).status).to eq("cancelled")
