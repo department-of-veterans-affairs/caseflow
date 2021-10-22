@@ -40,7 +40,7 @@ export const EditDocket = (props) => {
   const [error, setError] = useState(null);
   const [fields, setFields] = useState({
     room: formatRoomOption(props.docket.room),
-    firstSlotTime: props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('hh:mm') : '08:30',
+    firstSlotTime: props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('hh:mm') : null,
     slotLengthMinutes: props?.docket?.slotLengthMinutes,
     numberOfSlots: props?.docket?.totalSlots,
     requestType: readableDocketType(props?.docket?.requestType),
