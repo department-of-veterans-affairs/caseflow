@@ -3,7 +3,7 @@ import { css } from 'glamor';
 import { LoadingSymbol } from '../RenderFunctions';
 import PropTypes from 'prop-types';
 
-const LoadingLabel = () => (
+const LoadingLabel = ({ text = '' }) => (
   <span {...css({
     '& > *': {
       display: 'inline-block',
@@ -14,7 +14,7 @@ const LoadingLabel = () => (
       text=""
       size="15px"
     />
-    {this.props.text}
+    {text}
   </span>
 );
 
