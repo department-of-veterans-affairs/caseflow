@@ -91,7 +91,7 @@ module AutomaticCaseDistribution
   end
 
   # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
-  # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
+  # appeals to distribute. A nil limit will distribute an infinite number of appeals, only to be used for non_genpop
   # distributions (distributions tied to a judge)
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
   def distribute_appeals(docket, limit = nil, priority: false, genpop: "any",
