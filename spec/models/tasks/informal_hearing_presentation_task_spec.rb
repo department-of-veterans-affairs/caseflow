@@ -124,7 +124,7 @@ describe InformalHearingPresentationTask, :postgres do
     end
 
     context "POA is removed" do
-      it "cancels old IhpTask" do
+      it "cancels old IhpTask for removed POA" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
         expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
                                                        assigned_to_id: old_poa.id).status).to eq("cancelled")
