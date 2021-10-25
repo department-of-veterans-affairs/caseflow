@@ -8,8 +8,8 @@ import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
 const allEvidenceSubmissionWindowTasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
-const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
-  allEvidenceSubmissionWindowTasks
+const filteredEvidenceSubmissionTasks = prepTaskDataForUi({ taskData:
+  allEvidenceSubmissionWindowTasks }
 );
 
 export default {

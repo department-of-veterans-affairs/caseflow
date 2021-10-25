@@ -67,7 +67,7 @@ export const ExistingValues = Template.bind({});
 ExistingValues.args = {
   existingValues: {
     substitutionDate: '2021-02-15',
-    taskIds: [2, 3]
+    taskIds: [2, 3],
   },
 };
 
