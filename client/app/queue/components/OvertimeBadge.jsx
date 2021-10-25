@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import Badge from './Badge';
+import Badge from 'app/components/badges/Badge';
 import { COLORS } from '../../constants/AppConstants';
 
 /**

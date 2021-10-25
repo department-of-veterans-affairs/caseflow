@@ -201,7 +201,7 @@
     "state": "AL",
     "timezone": "America/Chicago",
     "hold_hearings": true,
-    "facility_locator_id": "vba_322",
+    "facility_locator_id": "vha_619",
     "alternate_locations": null
   },
   "RO23": {
@@ -210,7 +210,7 @@
     "state": "MS",
     "timezone": "America/Chicago",
     "hold_hearings": true,
-    "facility_locator_id": "vba_323",
+    "facility_locator_id": "vha_586",
     "alternate_locations": null
   },
   "RO25": {
@@ -528,7 +528,7 @@
     "timezone": "America/Los_Angeles",
     "hold_hearings": true,
     "facility_locator_id": "vba_354",
-    "alternate_locations": ["vba_354a"]
+    "alternate_locations": ["vha_593", "vc_0505V"]
   },
   "RO55": {
     "label": "San Juan regional office",

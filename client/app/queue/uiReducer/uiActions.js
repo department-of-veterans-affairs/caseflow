@@ -90,6 +90,29 @@ export const setSelectingJudge = (selectingJudge) => ({
   }
 });
 
+export const setUserInfo = (userInfo) => ({
+  type: ACTIONS.SET_USER_INFO,
+  payload: { userInfo }
+});
+
+export const fetchUserInfo = (userId) => async (dispatch) => {
+  try {
+    const res = await ApiUtil.get('/user', { query: { user_id: userId } });
+    // eslint-disable-next-line camelcase
+    const { id, css_id, display_name, full_name } = res?.body?.user;
+    const userInfo = {
+      id,
+      cssId: css_id,
+      fullName: full_name,
+      displayName: display_name,
+    };
+
+    dispatch(setUserInfo(userInfo));
+  } catch (error) {
+    console.error('error fetching user info', error);
+  }
+};
+
 const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
