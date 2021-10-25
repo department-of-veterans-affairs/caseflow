@@ -4,22 +4,28 @@ import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
-import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import {
+  sampleTasksForDismissedEvidenceSubmissionDocket,
+  sampleTasksForPendingEvidenceSubmissionDocket,
+} from 'test/data/queue/substituteAppellant/tasks';
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
 const poaType = 'Attorney';
 
-const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
-  allEvidenceSubmissionWindowTasks, poaType
+const allDismissedEvidenceSubmissionWindowTasks = sampleTasksForDismissedEvidenceSubmissionDocket();
+const filteredDismissedEvidenceSubmissionTasks = prepTaskDataForUi(
+  allDismissedEvidenceSubmissionWindowTasks, poaType
+);
+
+const allPendingEvidenceSubmissionWindowTasks = sampleTasksForPendingEvidenceSubmissionDocket();
+const filteredPendingEvidenceSubmissionTasks = prepTaskDataForUi(
+  allPendingEvidenceSubmissionWindowTasks, poaType
 );
 
 // TODO: Move logic to utils.js and filter further as needed
-const activeTasks = allEvidenceSubmissionWindowTasks.filter((task) => {
+const activeTasks = allPendingEvidenceSubmissionWindowTasks.filter((task) => {
   return ['assigned', 'on_hold'].includes(task.status);
 });
-
-console.log('allEvidenceSubmissionWindowTasks', allEvidenceSubmissionWindowTasks);
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',
@@ -37,7 +43,7 @@ export default {
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),
-    cancelledTasks: filteredEvidenceSubmissionTasks,
+    cancelledTasks: filteredDismissedEvidenceSubmissionTasks,
     activeTasks,
   },
   argTypes: {
@@ -67,5 +73,7 @@ ExistingValues.args = {
 
 export const PendingAppeal = Template.bind({});
 PendingAppeal.args = {
+  cancelledTasks: filteredPendingEvidenceSubmissionTasks,
+  activeTasks,
   pendingAppeal: true
 };

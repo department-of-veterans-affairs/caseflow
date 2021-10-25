@@ -15,7 +15,7 @@ export const TasksToCopy = ({ tasks }) => {
       ...task,
       taskId: parseInt(task.taskId, 10),
       status: capitalize(task.status),
-      closedAt: format(parseISO(task.closedAt), 'MM/dd/yyyy'),
+      closedAt: task.closedAt ? format(parseISO(task.closedAt), 'MM/dd/yyyy') : null,
     }));
   }, [tasks]);
 

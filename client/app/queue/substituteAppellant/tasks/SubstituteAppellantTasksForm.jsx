@@ -20,6 +20,7 @@ import { pageHeader, sectionStyle } from '../styles';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
 import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
 import { TasksToCopy } from './TasksToCopy';
+import { TasksToCancel } from './TasksToCancel';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -87,7 +88,7 @@ export const SubstituteAppellantTasksForm = ({
                 <div><strong>{SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE}</strong></div>
                 <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION} /></div>
                 {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-                <TasksToCopy tasks={activeTasks} />
+                <TasksToCancel tasks={activeTasks} />
               </div>
             )}
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { Controller } from 'react-hook-form';
 
+import StringUtil from 'app/util/StringUtil';
 import Checkbox from 'app/components/Checkbox';
 
 const tableStyles = css({});
@@ -14,6 +15,10 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
   if (!tasks.length) {
     return <p>There is no task available to reopen</p>;
   }
+
+  const formatStatus = (status) => StringUtil.snakeCaseToCapitalized(status);
+
+  console.log('TaskSelectionTable', tasks);
 
   return (
     <table className={`usa-table-borderless ${tableStyles}`}>
@@ -43,7 +48,7 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
                     />
                   </td>
                   <td>{task.label.replace('Task', '')}</td>
-                  <td>{task.status}</td>
+                  <td>{formatStatus(task.status)}</td>
                   <td>{task.closedAt || task.createdAt}</td>
                 </tr>
               )

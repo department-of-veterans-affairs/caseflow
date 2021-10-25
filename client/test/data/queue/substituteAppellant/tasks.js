@@ -176,7 +176,7 @@ export const getAmaTasks = (taskArray) => {
   return tasks;
 };
 
-export const sampleTasksForEvidenceSubmissionDocket = () => {
+export const sampleTasksForDismissedEvidenceSubmissionDocket = () => {
   const taskTypes = [
     RootTask,
     {
@@ -221,6 +221,44 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
       assignedTo: {
         isOrganization: false,
       },
+    },
+  ];
+
+  return getAmaTasks(taskTypes);
+};
+
+export const sampleTasksForPendingEvidenceSubmissionDocket = () => {
+  const taskTypes = [
+    RootTask,
+    {
+      ...DistributionTask,
+      parentId: 1,
+    },
+    {
+      type: 'EvidenceSubmissionWindowTask',
+      label: 'Evidence Submission Window Task',
+      parentId: 2,
+      timerEndsAt: '2021-05-30T10:33:08.151-04:00',
+    },
+    {
+      type: 'JudgeAssignTask',
+      label: 'Assign',
+      parentId: 1,
+      closedAt: '2021-04-28T10:33:08.151-04:00',
+    },
+    {
+      type: 'JudgeDecisionReviewTask',
+      label: 'Review',
+      parentId: 1,
+      closedAt: null,
+      status: 'on_hold'
+    },
+    {
+      type: 'AttorneyTask',
+      label: 'Draft decision',
+      parentId: 4,
+      closedAt: null,
+      status: 'assigned'
     },
   ];
 

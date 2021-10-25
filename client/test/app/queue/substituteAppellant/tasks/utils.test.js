@@ -13,7 +13,7 @@ import {
   shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
   hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
 
-import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForDismissedEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { isSameDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
@@ -266,7 +266,7 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('filterTasks', () => {
-    const tasks = sampleTasksForEvidenceSubmissionDocket();
+    const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
     it('filters tasks', () => {
       const filtered = filterTasks(tasks);
@@ -299,7 +299,7 @@ describe('utility functions for task manipulation', () => {
 
 describe('prepTaskDataForUi', () => {
   describe('with basic evidence submission tasks', () => {
-    const tasks = sampleTasksForEvidenceSubmissionDocket();
+    const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
     it('returns correct result', () => {
       const res = prepTaskDataForUi(tasks);
@@ -356,7 +356,7 @@ describe('prepTaskDataForUi', () => {
 });
 
 describe('calculateEvidenceSubmissionEndDate', () => {
-  const tasks = sampleTasksForEvidenceSubmissionDocket();
+  const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
   it('outputs the expected result', () => {
     const args = {
