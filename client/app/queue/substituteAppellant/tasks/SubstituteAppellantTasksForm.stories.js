@@ -14,12 +14,12 @@ const poaType = 'Attorney';
 
 const allDismissedEvidenceSubmissionWindowTasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 const filteredDismissedEvidenceSubmissionTasks = prepTaskDataForUi(
-  allDismissedEvidenceSubmissionWindowTasks, poaType
+  { taskData: allDismissedEvidenceSubmissionWindowTasks, poaType }
 );
 
 const allPendingEvidenceSubmissionWindowTasks = sampleTasksForPendingEvidenceSubmissionDocket();
 const filteredPendingEvidenceSubmissionTasks = prepTaskDataForUi(
-  allPendingEvidenceSubmissionWindowTasks, poaType
+  { taskData: allPendingEvidenceSubmissionWindowTasks, poaType }
 );
 
 // TODO: Move logic to utils.js and filter further as needed

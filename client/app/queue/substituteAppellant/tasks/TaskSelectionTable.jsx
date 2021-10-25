@@ -18,8 +18,6 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
 
   const formatStatus = (status) => StringUtil.snakeCaseToCapitalized(status);
 
-  console.log('TaskSelectionTable', tasks);
-
   return (
     <table className={`usa-table-borderless ${tableStyles}`}>
       <thead>
