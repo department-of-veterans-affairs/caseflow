@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # require "mpi". Once mpi gem file is setup and bundled, need to require gem here
-require "nokogiri"
 
 class ExternalApi::MPIService
 
@@ -15,16 +14,6 @@ class ExternalApi::MPIService
     @people = {}
     @person_info = {}
   end
-
-# preprod = https://preprod.services.eauth.va.gov:9303/psim_webservice/preprod/IdMWebService?WSDL
-# prod = https://services.eauth.va.gov:9303/psim_webservice/IdMWebService?WSDL
-# https://int.services.eauth.va.gov:9303/psim_webservice/dev/IdMWebService?WSDL
-# 
-# Inside this block, you can access all methods from your own class, but local variables won’t work.
-  client = Savon::Client.new do
-    wsdl.document = "https://preprod.services.eauth.va.gov:9303/psim_webservice/preprod/IdMWebService?WSDL"
-  end
-
 
   def search_people_info(last_name:, first_name: nil, middle_name: nil, date_of_birth: nil, gender: nil, address: nil)
     DBService.release_db_connections
@@ -121,7 +110,14 @@ end
 
 # - Not included in all 3 - internalMessageId and senderCode
 
-
+# preprod = https://preprod.services.eauth.va.gov:9303/psim_webservice/preprod/IdMWebService?WSDL
+# prod = https://services.eauth.va.gov:9303/psim_webservice/IdMWebService?WSDL
+# https://int.services.eauth.va.gov:9303/psim_webservice/dev/IdMWebService?WSDL
+# 
+# Inside this block, you can access all methods from your own class, but local variables won’t work.
+client = Savon::Client.new do
+  wsdl.document = "https://preprod.services.eauth.va.gov:9303/psim_webservice/preprod/IdMWebService?WSDL"
+end
 
 
 
