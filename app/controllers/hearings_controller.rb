@@ -88,7 +88,8 @@ class HearingsController < HearingsApplicationController
   COMMON_HEARING_ATTRIBUTES = [
     :representative_name, :witness, :military_service, :summary,
     :notes, :disposition, :hold_open, :transcript_requested, :prepped,
-    :scheduled_time_string, :judge_id, :room, :bva_poc
+    :scheduled_time_string, :judge_id, :room, :bva_poc, :appellant_email_address,
+    :representative_email_address, :appellant_tz, :representative_tz
   ].freeze
 
   HEARING_LOCATION_ATTRIBUTES = [
@@ -107,7 +108,7 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :appellant_email, :judge_email, :representative_email, :request_cancelled, :appellant_tz, :representative_tz
+    :judge_email, :request_cancelled, :appellant_tz, :representative_tz
   ].freeze
 
   def update_params_legacy
