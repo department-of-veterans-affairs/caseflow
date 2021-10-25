@@ -1470,6 +1470,17 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_selector(".cf-contested-badge")
       end
     end
+
+    context "case list table" do
+      it "should show the contested claim badge" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+        page.all('a', text: 'View all cases').first.click
+
+        case_table = find(".cf-case-list-table")
+
+        expect(case_table).to have_selector(".cf-contested-badge")
+      end
+    end
   end
 
   describe "case timeline" do
