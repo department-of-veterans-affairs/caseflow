@@ -169,7 +169,28 @@ describe "CheckTaskTree" do
           JudgeDispatchReturnTask.create!(appeal: appeal, parent: dispatch_task, assigned_to: judge)
         end
         it { is_expected.not_to be_blank }
-        include_examples "has error message", /There should be no more than 1 open task of type/
+        include_examples "has error message",
+                         /There should be no more than 1 open task of type .*JudgeDispatchReturnTask/
+      end
+    end
+    describe "#extra_open_org_tasks" do
+      subject { CheckTaskTree.new(appeal).extra_open_org_tasks }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      it_behaves_like "when tasks are correct"
+
+      context "when tasks are invalid" do
+        let(:dispatch_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
+        let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
+        before do
+          dispatch_task.completed!
+          org_task = appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask)
+          org_task.cancelled!
+          BvaDispatchTask.create(appeal: appeal, parent: appeal.root_task, assigned_to: BvaDispatch.singleton)
+          org_task.assigned!
+          org_task.update(cancelled_by_id: nil)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", /There should be no more than 1 open org task of type .*BvaDispatchTask/
       end
     end
   end
@@ -211,6 +232,21 @@ describe "CheckTaskTree" do
       end
       it { is_expected.not_to be_blank }
       include_examples "has error message", "Closed task should not have processable TaskTimer"
+    end
+  end
+
+  describe "#missing_dispatch_task_prerequisite" do
+    subject { CheckTaskTree.new(appeal).missing_dispatch_task_prerequisite }
+    let(:appeal) { create(:appeal, :at_bva_dispatch) }
+    let(:jdr_task) { appeal.tasks.find_by_type(:JudgeDecisionReviewTask) }
+    it_behaves_like "when tasks are correct"
+
+    context "when tasks are invalid" do
+      before do
+        jdr_task.destroy
+      end
+      it { is_expected.not_to be_blank }
+      include_examples "has error message", "BvaDispatchTask requires [\"completed JudgeDecisionReviewTask\"]"
     end
   end
 end
