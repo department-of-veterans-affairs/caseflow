@@ -788,7 +788,8 @@ class Task < CaseflowRecord
   end
 
   def cascade_closure_from_child_task?(child_task)
-    type == child_task&.type && assigned_to.is_a?(User)
+    return if type === "AssessDocumentationTask"
+    type == child_task&.type
   end
 
   def set_assigned_at
