@@ -15,7 +15,6 @@ import { ReadOnly } from '../details/ReadOnly';
 
 export const AppellantSection = ({
   hearing,
-  virtualHearing,
   errors,
   type,
   readOnly,
@@ -37,7 +36,7 @@ export const AppellantSection = ({
     (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
 
   // determine whether to show a missing email underneath readonly email
-  const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
+  const showMissingAlert = readOnly && showMissingEmailAlert && !hearing?.appellantEmail;
 
   // Set the grid column width to respect fullWidth prop
   const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
@@ -88,8 +87,8 @@ export const AppellantSection = ({
             <Timezone
               required={schedulingToVirtual}
               optional={!schedulingToVirtual}
-              value={virtualHearing?.appellantTz}
-              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
+              value={hearing?.appellantTz}
+              onChange={(appellantTz) => update('hearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}
               label={`${appellantTitle} Timezone`}
@@ -110,9 +109,9 @@ export const AppellantSection = ({
             optional={!schedulingToVirtual}
             readOnly={readOnly}
             label={`${appellantTitle} Email (for these notifications only)`}
-            emailType="appellantEmail"
-            email={virtualHearing?.appellantEmail}
-            error={errors?.appellantEmail}
+            emailType="appellantEmailAddress"
+            email={hearing?.appellantEmailAddress}
+            error={errors?.appellantEmailAddress}
             type={type}
             update={update}
           />
@@ -137,7 +136,6 @@ AppellantSection.defaultProps = {
 
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
-  virtualHearing: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,
