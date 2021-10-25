@@ -297,6 +297,68 @@ describe ScheduleHearingTask, :all_dbs do
         end
       end
     end
+
+    context "when converting appeals" do
+      let!(:appeal) { create(:appeal, changed_hearing_request_type: "V") }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
+      let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
+      let(:user) { create(:user, roles: ["Edit HearSched"]) }
+
+      context "from video to virtual" do
+        let(:update_params) do
+          {
+            "status": "completed",
+            "business_payloads": {
+              "values": {
+                "changed_hearing_request_type": "R",
+                "closest_regional_office": "RO17"
+              }
+            }
+          }
+        end
+
+        it "updates changed hearing request type field" do
+          subject
+
+          expect(appeal.changed_hearing_request_type).to eq "R"
+          expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+        end
+      end
+
+      context "from virtual to virtual" do
+        let(:update_params) do
+          {
+            "status": "completed",
+            "business_payloads": {
+              "values": {
+                "changed_hearing_request_type": "R",
+                "closest_regional_office": "RO17"
+              }
+            }
+          }
+        end
+
+        it "does not do anything if changed_hearing_request_type is not changing" do
+          schedule_hearing_task.update_from_params(update_params, user)
+
+          update_params = {
+            "status": "completed",
+            "business_payloads": {
+              "values": {
+                "changed_hearing_request_type": "R",
+                "closest_regional_office": "RO17"
+              }
+            }
+          }
+
+          schedule_hearing_task.update_from_params(update_params, user)
+
+          expect(appeal.changed_hearing_request_type).to eq "R"
+          expect(appeal.tasks.where(type: "ChangeHearingRequestTypeTask").count).to eq 1
+        end
+      end
+    end
   end
 
   describe "#create_change_hearing_disposition_task" do

@@ -4,9 +4,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
+import TextareaField from 'app/components/TextareaField';
+import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
@@ -18,13 +19,17 @@ import QueueFlowModal from './QueueFlowModal';
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+  const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
 
   return (
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label="Instructions:"
+          label={instructionsLabel || 'Instructions:'}
           name="instructions"
           id="completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
@@ -123,7 +128,7 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
-const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
+const MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { contact }) => ({
       title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
@@ -150,6 +155,23 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
     getContent: SendColocatedTaskModal,
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+  },
+  docket_appeal: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_TITLE),
+      detail: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_DETAIL)
+    }),
+    title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
+    getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MODAL_CONFIRM_BUTTON
+  },
+  vha_send_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
 
@@ -214,7 +236,7 @@ class CompleteTaskModal extends React.Component {
         }
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
+    const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
       appeal,
       this.getContentArgs()
     );
@@ -225,14 +247,17 @@ class CompleteTaskModal extends React.Component {
   };
 
   render = () => {
+    const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+
     return (
       <QueueFlowModal
-        title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
-        button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
+        title={modalAttributes.title(this.getContentArgs())}
+        button={modalAttributes.buttonText}
         submit={this.submit}
+        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
-          SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].getContent(this.getContentArgs()) :
+          modalAttributes.getContent(this.getContentArgs()) :
           null}
       </QueueFlowModal>
     );

@@ -218,12 +218,16 @@ export const sortTasks = (taskData) => {
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const prepTaskDataForUi = (taskData, claimantPoa) => {
+export const prepTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);
 
-  return sortedTasks.map((taskInfo) => ({
+  const filteredBySubstitutionType = isSubstitutionSameAppeal ?
+    sortedTasks.filter((task) => task.type !== 'DistributionTask') :
+    sortedTasks;
+
+  return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
     disabled: shouldDisable(taskInfo),
