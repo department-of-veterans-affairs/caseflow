@@ -74,7 +74,8 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <BadgeArea appeal={appeal} />
     };
 
-    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus || anyAppealsHaveFnod || anyAppealsAreContestedClaims) {
+    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus ||
+        anyAppealsHaveFnod || anyAppealsAreContestedClaims) {
       columns.unshift(badgeColumn);
     }
 
