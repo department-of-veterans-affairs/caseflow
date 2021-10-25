@@ -44,7 +44,7 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
                   </td>
                   <td>{task.label.replace('Task', '')}</td>
                   <td>{task.status}</td>
-                  <td>{task.closedAt}</td>
+                  <td>{task.closedAt || task.createdAt}</td>
                 </tr>
               )
             )

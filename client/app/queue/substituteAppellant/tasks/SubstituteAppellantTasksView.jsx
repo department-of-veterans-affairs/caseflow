@@ -34,6 +34,11 @@ export const SubstituteAppellantTasksView = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
+  // TODO: Move logic to utils.js and filter further as needed
+  const activeTasks = allTasks.filter((task) => {
+    return ['assigned', 'on_hold'].includes(task.status);
+  });
+
   const filteredTasks = useMemo(() => {
     return prepTaskDataForUi(allTasks, poa);
   }, [allTasks, poa]);
@@ -79,7 +84,8 @@ export const SubstituteAppellantTasksView = () => {
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
       substitutionDate={substitutionDate}
-      tasks={filteredTasks}
+      cancelledTasks={filteredTasks}
+      activeTasks={activeTasks}
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}

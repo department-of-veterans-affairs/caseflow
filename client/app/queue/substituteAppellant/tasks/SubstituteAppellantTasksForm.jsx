@@ -35,7 +35,7 @@ export const SubstituteAppellantTasksForm = ({
   onCancel,
   onSubmit,
   pendingAppeal,
-  tasks = [],
+  cancelledTasks = [],
   activeTasks = []
 }) => {
   const methods = useForm({
@@ -45,7 +45,7 @@ export const SubstituteAppellantTasksForm = ({
       ...existingValues,
       taskIds:
         // eslint-disable-next-line max-len
-        existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+        existingValues?.taskIds?.length ? existingValues?.taskIds : (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
   });
 
@@ -53,14 +53,14 @@ export const SubstituteAppellantTasksForm = ({
   const selectedTaskIds = watch('taskIds');
 
   const adjustedTasks = useMemo(() =>
-    disabledTasksBasedOnSelections({ tasks, selectedTaskIds }),
-  [tasks, selectedTaskIds]
+    disabledTasksBasedOnSelections({ tasks: cancelledTasks, selectedTaskIds }),
+  [cancelledTasks, selectedTaskIds]
   );
 
   const shouldShowScheduleHearingTaskAlert = useMemo(() => {
-    return taskTypesSelected({ tasks, selectedTaskIds }).includes('ScheduleHearingTask');
+    return taskTypesSelected({ tasks: cancelledTasks, selectedTaskIds }).includes('ScheduleHearingTask');
   },
-  [tasks, selectedTaskIds]
+  [cancelledTasks, selectedTaskIds]
   );
 
   return (
@@ -123,7 +123,7 @@ SubstituteAppellantTasksForm.propTypes = {
     PropTypes.instanceOf(Date),
     PropTypes.string,
   ]),
-  tasks: PropTypes.arrayOf(
+  cancelledTasks: PropTypes.arrayOf(
     PropTypes.shape({
       appealId: PropTypes.number,
       closedAt: PropTypes.oneOfType([

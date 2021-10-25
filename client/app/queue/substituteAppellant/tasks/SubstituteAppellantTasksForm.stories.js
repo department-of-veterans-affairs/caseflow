@@ -14,6 +14,13 @@ const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
   allEvidenceSubmissionWindowTasks, poaType
 );
 
+// TODO: Move logic to utils.js and filter further as needed
+const activeTasks = allEvidenceSubmissionWindowTasks.filter((task) => {
+  return ['assigned', 'on_hold'].includes(task.status);
+});
+
+console.log('allEvidenceSubmissionWindowTasks', allEvidenceSubmissionWindowTasks);
+
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',
   component: SubstituteAppellantTasksForm,
@@ -30,7 +37,8 @@ export default {
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),
-    tasks: filteredEvidenceSubmissionTasks,
+    cancelledTasks: filteredEvidenceSubmissionTasks,
+    activeTasks,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
