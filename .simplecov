@@ -12,6 +12,7 @@ if ENV["RAILS_ENV"] == "test"
     add_filter "app/controllers/errors_controller.rb"
     add_filter "app/services/external_api/vbms_service.rb"
     add_filter "app/services/external_api/bgs_service.rb"
+    add_filter "app/services/redistributed_case.rb"
     add_filter "spec/factories"
     add_filter "spec/"
   end

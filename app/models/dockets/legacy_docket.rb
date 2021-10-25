@@ -48,6 +48,8 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
+  # This is not doing any distribution. It's only determining whether we _should_.
+  # I propose we rename this to should_distribute? or something
   def really_distribute(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||

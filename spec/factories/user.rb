@@ -32,6 +32,13 @@ FactoryBot.define do
       roles { ["Mail Intake"] }
     end
 
+    factory :intake_admin_user do
+      css_id { "INTAKEADMINUSER" }
+      full_name { "Shirley Warner" }
+      email { "shirley.warner@example.com" }
+      roles { ["Admin Intake"] }
+    end
+
     trait :inactive do
       status { "inactive" }
     end
@@ -75,6 +82,12 @@ FactoryBot.define do
     trait :with_vacols_acting_judge_record do
       after(:create) do |user|
         create(:staff, :attorney_judge_role, user: user)
+      end
+    end
+
+    trait :vlj_support_user do
+      after(:create) do |user|
+        Colocated.singleton.add_user(user)
       end
     end
 

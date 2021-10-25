@@ -122,11 +122,11 @@ export const VIRTUAL_HEARING_LABEL = 'Virtual';
 
 // Given a Docket request type return readable request type for that Docket.
 export const DOCKET_READABLE_REQUEST_TYPE = {
-  'R': VIRTUAL_HEARING_LABEL,
-  'V': VIDEO_HEARING_LABEL,
-  'T': TRAVEL_BOARD_HEARING_LABEL,
-  'C': CENTRAL_OFFICE_HEARING_LABEL
-}
+  R: VIRTUAL_HEARING_LABEL,
+  V: VIDEO_HEARING_LABEL,
+  T: TRAVEL_BOARD_HEARING_LABEL,
+  C: CENTRAL_OFFICE_HEARING_LABEL
+};
 
 export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',
@@ -145,6 +145,8 @@ export const REQUEST_TYPE_OPTIONS = [
     value: HEARING_REQUEST_TYPES.video },
   { label: 'Central',
     value: HEARING_REQUEST_TYPES.central },
+  { label: 'Travel',
+    value: HEARING_REQUEST_TYPES.travel },
   { label: 'Virtual',
     value: HEARING_REQUEST_TYPES.virtual }
 ];

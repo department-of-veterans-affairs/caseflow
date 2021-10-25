@@ -9,7 +9,7 @@ import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-export class Certification extends React.Component {
+export default class Certification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

@@ -2,31 +2,33 @@
 
 exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
 <HearingTypeDropdown
-  convertHearing={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "change_to_virtual",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
+  currentOption={
+    Object {
+      "label": "Central",
+      "value": false,
     }
   }
-  originalRequestType="Central"
-  update={
+  dropdownOptions={
+    Array [
+      Object {
+        "label": "Central",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  onChange={
     [MockFunction] {
       "calls": Array [
         Array [
-          "virtualHearing",
           Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
+            "label": "Virtual",
+            "value": true,
           },
+          null,
         ],
       ],
       "results": Array [
@@ -43,9 +45,31 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
     label="Hearing Type"
     loading={false}
     name="hearingType"
-    onChange={[Function]}
+    onChange={
+      [MockFunction] {
+        "calls": Array [
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+        ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
+      }
+    }
     options={
       Array [
+        Object {
+          "label": "Central",
+          "value": false,
+        },
         Object {
           "label": "Virtual",
           "value": true,
@@ -109,6 +133,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
             onMenuOpen={[Function]}
             options={
               Array [
+                Object {
+                  "label": "Central",
+                  "value": false,
+                },
                 Object {
                   "label": "Virtual",
                   "value": true,
@@ -177,6 +205,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
               options={
                 Array [
                   Object {
+                    "label": "Central",
+                    "value": false,
+                  },
+                  Object {
                     "label": "Virtual",
                     "value": true,
                   },
@@ -218,6 +250,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "Central",
+                      "value": false,
+                    },
                     Object {
                       "label": "Virtual",
                       "value": true,
@@ -274,6 +310,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "Central",
+                        "value": false,
+                      },
                       Object {
                         "label": "Virtual",
                         "value": true,
@@ -366,6 +406,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "Central",
+                            "value": false,
+                          },
+                          Object {
                             "label": "Virtual",
                             "value": true,
                           },
@@ -421,6 +465,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "Central",
+                              "value": false,
+                            },
                             Object {
                               "label": "Virtual",
                               "value": true,
@@ -521,6 +569,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Central",
+                                  "value": false,
+                                },
+                                Object {
                                   "label": "Virtual",
                                   "value": true,
                                 },
@@ -576,6 +628,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "Central",
+                                    "value": false,
+                                  },
                                   Object {
                                     "label": "Virtual",
                                     "value": true,
@@ -667,6 +723,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Central",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -722,6 +782,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Central",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -866,6 +930,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "Central",
+                                          "value": false,
+                                        },
+                                        Object {
                                           "label": "Virtual",
                                           "value": true,
                                         },
@@ -988,6 +1056,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "Central",
+                                            "value": false,
+                                          },
                                           Object {
                                             "label": "Virtual",
                                             "value": true,
@@ -1167,6 +1239,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Central",
+                                  "value": false,
+                                },
+                                Object {
                                   "label": "Virtual",
                                   "value": true,
                                 },
@@ -1222,6 +1298,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "Central",
+                                    "value": false,
+                                  },
                                   Object {
                                     "label": "Virtual",
                                     "value": true,
@@ -1304,6 +1384,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Central",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -1359,6 +1443,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Central",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -1452,6 +1540,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Central",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -1507,6 +1599,10 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Central",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -1650,40 +1746,40 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
 
 exports[`HearingTypeDropdown Can change from video hearing 1`] = `
 <HearingTypeDropdown
-  openModal={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          Object {
-            "type": "change_to_virtual",
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
+  currentOption={
+    Object {
+      "label": "Video",
+      "value": false,
     }
   }
-  originalRequestType="Video"
-  update={
+  dropdownOptions={
+    Array [
+      Object {
+        "label": "Video",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  onChange={
     [MockFunction] {
       "calls": Array [
         Array [
-          "virtualHearing",
           Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
+            "label": "Virtual",
+            "value": true,
           },
+          null,
         ],
         Array [
-          "virtualHearing",
           Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
+            "label": "Virtual",
+            "value": true,
           },
+          null,
         ],
       ],
       "results": Array [
@@ -1704,9 +1800,42 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
     label="Hearing Type"
     loading={false}
     name="hearingType"
-    onChange={[Function]}
+    onChange={
+      [MockFunction] {
+        "calls": Array [
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+        ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
+      }
+    }
     options={
       Array [
+        Object {
+          "label": "Video",
+          "value": false,
+        },
         Object {
           "label": "Virtual",
           "value": true,
@@ -1770,6 +1899,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
             onMenuOpen={[Function]}
             options={
               Array [
+                Object {
+                  "label": "Video",
+                  "value": false,
+                },
                 Object {
                   "label": "Virtual",
                   "value": true,
@@ -1838,6 +1971,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
               options={
                 Array [
                   Object {
+                    "label": "Video",
+                    "value": false,
+                  },
+                  Object {
                     "label": "Virtual",
                     "value": true,
                   },
@@ -1879,6 +2016,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "Video",
+                      "value": false,
+                    },
                     Object {
                       "label": "Virtual",
                       "value": true,
@@ -1935,6 +2076,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "Video",
+                        "value": false,
+                      },
                       Object {
                         "label": "Virtual",
                         "value": true,
@@ -2027,6 +2172,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "Video",
+                            "value": false,
+                          },
+                          Object {
                             "label": "Virtual",
                             "value": true,
                           },
@@ -2082,6 +2231,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "Video",
+                              "value": false,
+                            },
                             Object {
                               "label": "Virtual",
                               "value": true,
@@ -2182,6 +2335,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Video",
+                                  "value": false,
+                                },
+                                Object {
                                   "label": "Virtual",
                                   "value": true,
                                 },
@@ -2237,6 +2394,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "Video",
+                                    "value": false,
+                                  },
                                   Object {
                                     "label": "Virtual",
                                     "value": true,
@@ -2328,6 +2489,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Video",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -2383,6 +2548,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Video",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -2527,6 +2696,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "Video",
+                                          "value": false,
+                                        },
+                                        Object {
                                           "label": "Virtual",
                                           "value": true,
                                         },
@@ -2649,6 +2822,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "Video",
+                                            "value": false,
+                                          },
                                           Object {
                                             "label": "Virtual",
                                             "value": true,
@@ -2828,6 +3005,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Video",
+                                  "value": false,
+                                },
+                                Object {
                                   "label": "Virtual",
                                   "value": true,
                                 },
@@ -2883,6 +3064,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "Video",
+                                    "value": false,
+                                  },
                                   Object {
                                     "label": "Virtual",
                                     "value": true,
@@ -2965,6 +3150,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Video",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -3020,6 +3209,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Video",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -3113,6 +3306,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "Video",
+                                        "value": false,
+                                      },
+                                      Object {
                                         "label": "Virtual",
                                         "value": true,
                                       },
@@ -3168,6 +3365,10 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "Video",
+                                          "value": false,
+                                        },
                                         Object {
                                           "label": "Virtual",
                                           "value": true,
@@ -3311,85 +3512,63 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
 
 exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
 <HearingTypeDropdown
-  convertHearing={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "change_to_virtual",
-        ],
-        Array [
-          "change_from_virtual",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  originalRequestType="Central"
-  update={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": true,
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  virtualHearing={
+  currentOption={
     Object {
-      "aliasWithHost": "BVA0000009@care.evn.va.gov",
-      "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
-      "clientHost": "care.evn.va.gov",
-      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
-      "guestPin": "2684353125#",
-      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
-      "hostPin": "8600030#",
-      "jobCompleted": true,
-      "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
-      "requestCancelled": false,
-      "status": "active",
+      "label": "Virtual",
+      "value": true,
+    }
+  }
+  dropdownOptions={
+    Array [
+      Object {
+        "label": "Central",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          Object {
+            "label": "Virtual",
+            "value": true,
+          },
+          null,
+        ],
+        Array [
+          Object {
+            "label": "Virtual",
+            "value": true,
+          },
+          null,
+        ],
+        Array [
+          Object {
+            "label": "Central",
+            "value": false,
+          },
+          null,
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
 >
@@ -3398,12 +3577,56 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
     label="Hearing Type"
     loading={false}
     name="hearingType"
-    onChange={[Function]}
+    onChange={
+      [MockFunction] {
+        "calls": Array [
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Central",
+              "value": false,
+            },
+            null,
+          ],
+        ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
+      }
+    }
     options={
       Array [
         Object {
           "label": "Central",
           "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
         },
       ]
     }
@@ -3467,6 +3690,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                 Object {
                   "label": "Central",
                   "value": false,
+                },
+                Object {
+                  "label": "Virtual",
+                  "value": true,
                 },
               ]
             }
@@ -3535,6 +3762,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                     "label": "Central",
                     "value": false,
                   },
+                  Object {
+                    "label": "Virtual",
+                    "value": true,
+                  },
                 ]
               }
               pageSize={5}
@@ -3576,6 +3807,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                     Object {
                       "label": "Central",
                       "value": false,
+                    },
+                    Object {
+                      "label": "Virtual",
+                      "value": true,
                     },
                   ]
                 }
@@ -3632,6 +3867,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                       Object {
                         "label": "Central",
                         "value": false,
+                      },
+                      Object {
+                        "label": "Virtual",
+                        "value": true,
                       },
                     ],
                     "pageSize": 5,
@@ -3724,6 +3963,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                             "label": "Central",
                             "value": false,
                           },
+                          Object {
+                            "label": "Virtual",
+                            "value": true,
+                          },
                         ]
                       }
                       selectOption={[Function]}
@@ -3779,6 +4022,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                             Object {
                               "label": "Central",
                               "value": false,
+                            },
+                            Object {
+                              "label": "Virtual",
+                              "value": true,
                             },
                           ],
                           "pageSize": 5,
@@ -3879,6 +4126,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                   "label": "Central",
                                   "value": false,
                                 },
+                                Object {
+                                  "label": "Virtual",
+                                  "value": true,
+                                },
                               ]
                             }
                             selectOption={[Function]}
@@ -3934,6 +4185,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                   Object {
                                     "label": "Central",
                                     "value": false,
+                                  },
+                                  Object {
+                                    "label": "Virtual",
+                                    "value": true,
                                   },
                                 ],
                                 "pageSize": 5,
@@ -4025,6 +4280,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         "label": "Central",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -4080,6 +4339,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         Object {
                                           "label": "Central",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -4224,6 +4487,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                           "label": "Central",
                                           "value": false,
                                         },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
+                                        },
                                       ],
                                       "pageSize": 5,
                                       "placeholder": "Select...",
@@ -4346,6 +4613,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                           Object {
                                             "label": "Central",
                                             "value": false,
+                                          },
+                                          Object {
+                                            "label": "Virtual",
+                                            "value": true,
                                           },
                                         ],
                                         "pageSize": 5,
@@ -4525,6 +4796,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                   "label": "Central",
                                   "value": false,
                                 },
+                                Object {
+                                  "label": "Virtual",
+                                  "value": true,
+                                },
                               ]
                             }
                             selectOption={[Function]}
@@ -4580,6 +4855,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                   Object {
                                     "label": "Central",
                                     "value": false,
+                                  },
+                                  Object {
+                                    "label": "Virtual",
+                                    "value": true,
                                   },
                                 ],
                                 "pageSize": 5,
@@ -4662,6 +4941,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         "label": "Central",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -4717,6 +5000,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         Object {
                                           "label": "Central",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -4810,6 +5097,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         "label": "Central",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -4865,6 +5156,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         Object {
                                           "label": "Central",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -5005,100 +5300,74 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
 
 exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
 <HearingTypeDropdown
-  openModal={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          Object {
-            "type": "change_to_virtual",
-          },
-        ],
-        Array [
-          Object {
-            "type": "change_from_virtual",
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  originalRequestType="Video"
-  update={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": false,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": true,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "jobCompleted": false,
-            "requestCancelled": true,
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  virtualHearing={
+  currentOption={
     Object {
-      "aliasWithHost": "BVA0000009@care.evn.va.gov",
-      "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
-      "clientHost": "care.evn.va.gov",
-      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
-      "guestPin": "2684353125#",
-      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
-      "hostPin": "8600030#",
-      "jobCompleted": true,
-      "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
-      "requestCancelled": false,
-      "status": "active",
+      "label": "Virtual",
+      "value": true,
+    }
+  }
+  dropdownOptions={
+    Array [
+      Object {
+        "label": "Video",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          Object {
+            "label": "Virtual",
+            "value": true,
+          },
+          null,
+        ],
+        Array [
+          Object {
+            "label": "Virtual",
+            "value": true,
+          },
+          null,
+        ],
+        Array [
+          Object {
+            "label": "Central",
+            "value": false,
+          },
+          null,
+        ],
+        Array [
+          Object {
+            "label": "Video",
+            "value": false,
+          },
+          null,
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
 >
@@ -5107,12 +5376,67 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
     label="Hearing Type"
     loading={false}
     name="hearingType"
-    onChange={[Function]}
+    onChange={
+      [MockFunction] {
+        "calls": Array [
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Virtual",
+              "value": true,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Central",
+              "value": false,
+            },
+            null,
+          ],
+          Array [
+            Object {
+              "label": "Video",
+              "value": false,
+            },
+            null,
+          ],
+        ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
+      }
+    }
     options={
       Array [
         Object {
           "label": "Video",
           "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
         },
       ]
     }
@@ -5176,6 +5500,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                 Object {
                   "label": "Video",
                   "value": false,
+                },
+                Object {
+                  "label": "Virtual",
+                  "value": true,
                 },
               ]
             }
@@ -5244,6 +5572,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                     "label": "Video",
                     "value": false,
                   },
+                  Object {
+                    "label": "Virtual",
+                    "value": true,
+                  },
                 ]
               }
               pageSize={5}
@@ -5285,6 +5617,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                     Object {
                       "label": "Video",
                       "value": false,
+                    },
+                    Object {
+                      "label": "Virtual",
+                      "value": true,
                     },
                   ]
                 }
@@ -5341,6 +5677,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                       Object {
                         "label": "Video",
                         "value": false,
+                      },
+                      Object {
+                        "label": "Virtual",
+                        "value": true,
                       },
                     ],
                     "pageSize": 5,
@@ -5433,6 +5773,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                             "label": "Video",
                             "value": false,
                           },
+                          Object {
+                            "label": "Virtual",
+                            "value": true,
+                          },
                         ]
                       }
                       selectOption={[Function]}
@@ -5488,6 +5832,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                             Object {
                               "label": "Video",
                               "value": false,
+                            },
+                            Object {
+                              "label": "Virtual",
+                              "value": true,
                             },
                           ],
                           "pageSize": 5,
@@ -5588,6 +5936,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                   "label": "Video",
                                   "value": false,
                                 },
+                                Object {
+                                  "label": "Virtual",
+                                  "value": true,
+                                },
                               ]
                             }
                             selectOption={[Function]}
@@ -5643,6 +5995,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                   Object {
                                     "label": "Video",
                                     "value": false,
+                                  },
+                                  Object {
+                                    "label": "Virtual",
+                                    "value": true,
                                   },
                                 ],
                                 "pageSize": 5,
@@ -5734,6 +6090,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         "label": "Video",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -5789,6 +6149,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         Object {
                                           "label": "Video",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -5933,6 +6297,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                           "label": "Video",
                                           "value": false,
                                         },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
+                                        },
                                       ],
                                       "pageSize": 5,
                                       "placeholder": "Select...",
@@ -6055,6 +6423,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                           Object {
                                             "label": "Video",
                                             "value": false,
+                                          },
+                                          Object {
+                                            "label": "Virtual",
+                                            "value": true,
                                           },
                                         ],
                                         "pageSize": 5,
@@ -6234,6 +6606,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                   "label": "Video",
                                   "value": false,
                                 },
+                                Object {
+                                  "label": "Virtual",
+                                  "value": true,
+                                },
                               ]
                             }
                             selectOption={[Function]}
@@ -6289,6 +6665,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                   Object {
                                     "label": "Video",
                                     "value": false,
+                                  },
+                                  Object {
+                                    "label": "Virtual",
+                                    "value": true,
                                   },
                                 ],
                                 "pageSize": 5,
@@ -6371,6 +6751,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         "label": "Video",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -6426,6 +6810,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         Object {
                                           "label": "Video",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -6519,6 +6907,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         "label": "Video",
                                         "value": false,
                                       },
+                                      Object {
+                                        "label": "Virtual",
+                                        "value": true,
+                                      },
                                     ]
                                   }
                                   selectOption={[Function]}
@@ -6574,6 +6966,10 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         Object {
                                           "label": "Video",
                                           "value": false,
+                                        },
+                                        Object {
+                                          "label": "Virtual",
+                                          "value": true,
                                         },
                                       ],
                                       "pageSize": 5,
@@ -6712,76 +7108,31 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
 </HearingTypeDropdown>
 `;
 
-exports[`HearingTypeDropdown Matches snapshot with default props for central office hearings 1`] = `
+exports[`HearingTypeDropdown Matches snapshot with default props 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
-  onChange={[Function]}
-  options={
-    Array [
-      Object {
-        "label": "Virtual",
-        "value": true,
-      },
-    ]
-  }
-  strongLabel={true}
-  value={
-    Object {
-      "label": "Central",
-      "value": false,
-    }
-  }
-/>
-`;
-
-exports[`HearingTypeDropdown Matches snapshot with default props for video hearings 1`] = `
-<SearchableDropdown
-  clearOnSelect={false}
-  label="Hearing Type"
-  loading={false}
-  name="hearingType"
-  onChange={[Function]}
-  options={
-    Array [
-      Object {
-        "label": "Virtual",
-        "value": true,
-      },
-    ]
-  }
-  strongLabel={true}
-  value={
-    Object {
-      "label": "Video",
-      "value": false,
-    }
-  }
-/>
-`;
-
-exports[`HearingTypeDropdown Matches snapshot with default props for virtual hearings 1`] = `
-<SearchableDropdown
-  clearOnSelect={false}
-  label="Hearing Type"
-  loading={false}
-  name="hearingType"
-  onChange={[Function]}
+  onChange={[MockFunction]}
   options={
     Array [
       Object {
         "label": "Central",
         "value": false,
       },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
     ]
   }
+  readOnly={false}
   strongLabel={true}
   value={
     Object {
-      "label": "Virtual",
-      "value": true,
+      "label": "Central",
+      "value": false,
     }
   }
 />

@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import { filter, isEqual, forEach, find } from 'lodash';
+import { filter, isEqual, find } from 'lodash';
 import LoadingLabel from './LoadingLabel';
 import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import SearchableDropdown from '../SearchableDropdown';
+import { formatRegionalOfficeList } from 'app/util/FormatUtil';
 
 class RegionalOfficeDropdown extends React.Component {
   componentDidMount() {
@@ -38,29 +39,7 @@ class RegionalOfficeDropdown extends React.Component {
     ApiUtil.get('/regional_offices.json').then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
-      let regionalOfficeOptions = [];
-
-      forEach(
-        resp.regionalOffices,
-        (value, key) => {
-          let label;
-
-          if (!value.state && !value.city) {
-            label = value.label;
-          } else {
-            label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
-          }
-
-          regionalOfficeOptions.push({
-            label,
-            value: { key, ...value }
-          });
-        }
-      );
-
-      regionalOfficeOptions.sort((first, second) => (first.label < second.label ? -1 : 1));
-
-      this.props.onReceiveDropdownData('regionalOffices', regionalOfficeOptions);
+      this.props.onReceiveDropdownData('regionalOffices', formatRegionalOfficeList(resp?.regionalOffices));
     });
   }
 

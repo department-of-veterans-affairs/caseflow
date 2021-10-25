@@ -8,11 +8,18 @@ class VhaDocumentSearchTask < Task
   validates :parent, presence: true
 
   def available_actions(user)
-    return [] unless assigned_to.user_has_access?(user)
-
-    [Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h,
-     Constants.TASK_ACTIONS.RETURN_TO_CAMO.to_h]
+    if assigned_to.user_has_access?(user) &&
+       FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
+      TASK_ACTIONS
+    else
+      []
+    end
   end
+
+  TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h,
+    Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.to_h
+  ].freeze
 
   def self.label
     COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL

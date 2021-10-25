@@ -15,6 +15,7 @@ import {
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
   setFeatureToggles,
+  setUserId,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -108,6 +109,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserId(this.props.userId);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -177,7 +179,7 @@ class QueueApp extends React.PureComponent {
       userCanAccessReader={
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
-      hasVLJSupportRole={this.props.hasVLJSupportRole}
+      userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
     />
   );
 
@@ -333,6 +335,10 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteTaskModal = (props) => (
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
+  );
+
+  routedDocketAppeal = (props) => (
+    <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
 
   routedCancelTaskModal = (props) => (
@@ -526,6 +532,14 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   )
+
+  routedAssignToVhaProgramOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
+  routedCamoSendToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -838,6 +852,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.DOCKET_APPEAL.value
+                }`}
+              render={this.routedDocketAppeal}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
@@ -943,6 +963,18 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedAssignToVhaProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoSendToBoardIntake}
             />
 
             <PageRoute
@@ -1142,17 +1174,18 @@ QueueApp.propTypes = {
   featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
+  setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
-  hasVLJSupportRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
+  userCanEditUnrecognizedPOA: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
@@ -1174,6 +1207,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
+      setUserId,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

@@ -4,8 +4,6 @@ import { mount } from 'enzyme';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { omit } from 'lodash';
 
-import COPY from 'COPY';
-import ScheduleVeteran from 'app/hearings/components/ScheduleVeteran';
 import {
   amaAppeal,
   defaultHearing,
@@ -16,6 +14,7 @@ import {
   scheduleVeteranResponse,
   openHearingAppeal,
   legacyAppeal,
+  legacyAppealForTravelBoard
 } from 'test/data';
 import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
 import Button from 'app/components/Button';
@@ -25,6 +24,10 @@ import Alert from 'app/components/Alert';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
+import ScheduleVeteran from 'app/hearings/components/ScheduleVeteran';
+import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
+import { SearchableDropdown } from 'app/components/SearchableDropdown';
+
 import ApiUtil from 'app/util/ApiUtil';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
@@ -33,6 +36,7 @@ import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constan
 
 jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
+import { act } from 'react-dom/test-utils';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -607,5 +611,44 @@ describe('ScheduleVeteran', () => {
       'will receive an email with connection information for the virtual hearing.'
     );
     expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Auto-selects virtual if a virtual hearing was requested', () => {
+    act(() => {
+      const scheduleVeteran = mount(
+        <ScheduleVeteran
+          appeal={{
+            ...legacyAppealForTravelBoard,
+            regionalOffice: virtualHearing.regionalOfficeKey,
+            readableHearingRequestType: VIRTUAL_HEARING_LABEL,
+          }}
+        />,
+        {
+          wrappingComponent: queueWrapper,
+          wrappingComponentProps: {
+            components: {
+              forms: {
+                assignHearing: {
+                  ...scheduleHearingDetails,
+                  requestType: VIRTUAL_HEARING_LABEL,
+                  virtualHearing: virtualHearing.virtualHearing,
+                },
+              },
+            },
+          },
+        }
+      );
+
+      expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
+      expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
+      expect(
+        scheduleVeteran.
+          find(ScheduleVeteranForm).
+          find(HearingTypeDropdown).
+          find(SearchableDropdown).
+          prop('value')
+      ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
+      expect(scheduleVeteran).toMatchSnapshot();
+    });
   });
 });

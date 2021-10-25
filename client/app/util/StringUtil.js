@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { capitalize, words, map } from 'lodash';
 import React from 'react';
 import DOMPurify from 'dompurify';
 
@@ -48,10 +48,7 @@ const StringUtil = {
   },
 
   titleCase(string) {
-    return _(string).
-      words().
-      map(_.capitalize).
-      join(' ');
+    return map(words(string), capitalize).join(' ');
   },
 
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase
@@ -102,14 +99,11 @@ const StringUtil = {
     const regex = /(https?:\/\/|\b)[-\da-z.]+\.[a-z]{2,6}\/\S*/gi;
 
     // Add anchor tags
-    const replaced = str.replace(
-      regex,
-      `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`
-    );
+    const replaced = str.replace(regex, `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`);
 
     // Sanitize, but ensure we allow `target` attribute
     return DOMPurify.sanitize(replaced, {
-      ADD_ATTR: ['target'],
+      ADD_ATTR: ['target']
     });
   },
 
@@ -129,7 +123,7 @@ const StringUtil = {
         </React.Fragment>
       );
     });
-  },
+  }
 };
 
 export default StringUtil;
