@@ -1086,7 +1086,7 @@
 
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
-      "TITLE": "You have successfully scheduled %s's virtual hearing.",
+      "TITLE": "You have successfully scheduled %s's hearing.",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     },
     "CHANGED_FROM_VIRTUAL": {
@@ -1094,11 +1094,11 @@
       "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     },
     "CHANGED_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "TITLE": "You have successfully emailed the invite to %s's hearing.",
       "MESSAGE": ""
     },
     "CHANGED_HEARING_TIME": {
-      "TITLE": "You have successfully updated the time of %s's virtual hearing",
+      "TITLE": "You have successfully updated the time of %s's hearing",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },

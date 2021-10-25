@@ -19,31 +19,25 @@ class BaseHearingUpdateForm
                 :judge_id, :military_service, :notes, :prepped,
                 :representative_name, :room, :scheduled_time_string,
                 :summary, :transcript_requested, :virtual_hearing_attributes,
-                :witness
+                :witness, :appellant_email_address, :representative_email_address,
+                :appellant_tz, :representative_tz
 
   def update
-    virtual_hearing_changed = false
-
     ActiveRecord::Base.multi_transaction do
       update_hearing
+
       add_update_hearing_alert if show_update_alert?
-      if should_create_or_update_virtual_hearing?
-        create_or_update_virtual_hearing
+      create_or_update_virtual_hearing if should_create_or_update_virtual_hearing?
 
-        virtual_hearing_changed = true
-      end
-
+      update_email_recipients
       after_update_hearing
     end
+    # reload hearing so new virtual hearing changes are visible
+    hearing.reload
 
-    if virtual_hearing_changed
-      # reload hearing so new virtual hearing changes are visible
-      hearing.reload
+    start_async_job
 
-      start_async_job
-
-      add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
-    end
+    add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
   end
 
   def hearing_alerts
@@ -114,24 +108,26 @@ class BaseHearingUpdateForm
     #   2. Hearing time is being changed
     #   3. Judge is being changed
     (
-      virtual_hearing_attributes.present? ||
-      (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?))
+      hearing.virtual? &&
+      (virtual_hearing_attributes.present? ||
+      (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?)) ||
+      appellant_email_address.present? ||
+      representative_email_address.present? ||
+      appellant_tz.present? ||
+      representative_tz.present?)
     )
   end
 
   def only_time_updated_or_timezone_updated?
     # Always false if the virtual hearing was just created or if any emails were changed
-    if virtual_hearing_created? || virtual_hearing_attributes&.keys&.any? do |attribute|
-         %w[appellant_email representative_email].include? attribute
-       end
-      return false
-    end
+    virtual_hearing_created? ||
+      appellant_email_address.present? ||
+        representative_email_address.present?
 
     # True if hearing time was updated
     scheduled_time_string.present? ||
       # True if the representative timezone or appellant timezone is changed
-      virtual_hearing_attributes&.dig(:representative_tz).present? ||
-      virtual_hearing_attributes&.dig(:appellant_tz).present?
+      representative_tz.present? || appellant_tz.present?
   end
 
   def start_async_job?
@@ -167,19 +163,29 @@ class BaseHearingUpdateForm
   # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
     should_send_email = updates_requiring_email? ||
-                        virtual_hearing_attributes&.key?(:appellant_email) ||
-                        virtual_hearing_attributes&.key?(:appellant_tz)
+                        appellant_email_address.present? ||
+                        appellant_tz.present?
 
     # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   def appellant_email
-    virtual_hearing_attributes&.fetch(:appellant_email, nil)&.strip
+    virtual_hearing_attributes&.fetch(:appellant_email, nil)&.strip ||
+      appellant_email_address
   end
 
   def representative_email
-    virtual_hearing_attributes&.fetch(:representative_email, nil)&.strip
+    virtual_hearing_attributes&.fetch(:representative_email, nil)&.strip ||
+      representative_email_address
+  end
+
+  def appellant_timezone
+    virtual_hearing_updates[:appellant_tz] || @appellant_tz
+  end
+
+  def representative_timezone
+    virtual_hearing_updates[:representative_tz] || @representative_tz
   end
 
   def judge_email
@@ -190,7 +196,7 @@ class BaseHearingUpdateForm
   def representative_email_sent_flag
     should_send_email = updates_requiring_email? ||
                         representative_email.present? ||
-                        virtual_hearing_attributes&.key?(:representative_tz)
+                        representative_tz.present?
 
     # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
@@ -239,7 +245,7 @@ class BaseHearingUpdateForm
   def update_appellant_recipient
     update_params = {
       email_address: appellant_email.presence,
-      timezone: virtual_hearing_updates[:appellant_tz].presence,
+      timezone: appellant_timezone.presence,
       email_sent: virtual_hearing_updates&.key?(:appellant_email_sent) ? false : true
     }.compact
 
@@ -256,7 +262,7 @@ class BaseHearingUpdateForm
 
     if hearing.representative_recipient.present?
       update_params = {
-        timezone: virtual_hearing_updates[:representative_tz].presence,
+        timezone: representative_timezone.presence,
         email_sent: virtual_hearing_updates&.key?(:representative_email_sent) ? false : true
       }.compact
 
@@ -288,11 +294,13 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_email_recipients
-    hearing.create_or_update_recipients(
-      type: AppellantHearingEmailRecipient,
-      email_address: appellant_email,
-      timezone: virtual_hearing_updates[:appellant_tz]
-    )
+    if appellant_email.present?
+      hearing.create_or_update_recipients(
+        type: AppellantHearingEmailRecipient,
+        email_address: appellant_email,
+        timezone: virtual_hearing_updates[:appellant_tz]
+      )
+    end
 
     hearing.representative_recipient&.unset_email_address!
     if representative_email.present?
@@ -327,10 +335,8 @@ class BaseHearingUpdateForm
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       virtual_hearing.update!(request_cancelled: true)
-      update_email_recipients
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
-      update_email_recipients
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
@@ -340,8 +346,8 @@ class BaseHearingUpdateForm
   end
 
   def only_emails_updated?
-    email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
-                    virtual_hearing_attributes&.key?(:representative_email) ||
+    email_changed = appellant_email_address.present? ||
+                    representative_email_address.present? ||
                     judge_id.present?
 
     email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
