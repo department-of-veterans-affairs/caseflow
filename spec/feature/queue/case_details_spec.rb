@@ -1447,7 +1447,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  describe "case title" do
+  describe "contested claim" do
     let(:request_issues) do
       [
         create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
@@ -1463,7 +1463,7 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "contested claim" do
+    context "case title" do
       it "should show the contested claim badge" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
 
