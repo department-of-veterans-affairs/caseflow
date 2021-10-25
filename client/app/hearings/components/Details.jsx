@@ -114,7 +114,7 @@ const HearingDetails = (props) => {
   const submit = async (editedEmailsAndTz) => {
     try {
       // Determine the current state and whether to error
-      const noAppellantEmail = !hearing?.appellantEmailAddress && hearing.isVirtual;
+      const noAppellantEmail = !hearing?.appellantEmailAddress;
 
       const noRepTimezone = convertingToVirtual ?
         !hearing?.representativeTz && hearing?.representativeEmailAddress :

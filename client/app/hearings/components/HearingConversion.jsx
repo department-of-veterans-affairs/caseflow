@@ -49,15 +49,12 @@ export const HearingConversion = ({
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
     // Try to use the existing timezones if present
-    const { appellantTz, representativeTz } = (virtualHearing || {});
-
     update(
-      'virtualHearing', {
-        [!representativeTz && 'representativeTz']:
-          representativeTz || hearing?.representativeTz || hearing?.appellantTz,
-        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      'hearing', {
+        representativeTz: hearing?.representativeTz || hearing?.appellantTz,
+        appellantTz: hearing?.appellantTz,
+        appellantEmailAddress: appellantEmail,
+        representativeEmailAddress: hearing.representativeEmailAddress,
       });
   };
 
