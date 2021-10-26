@@ -3,7 +3,7 @@
 # require "mpi". Once mpi gem file is setup and bundled, need to require gem here
 
 class ExternalApi::MPIService
-  # attr_reader :client
+  attr_reader :client
 
   def initialize(client: init_client)
     @client = client
