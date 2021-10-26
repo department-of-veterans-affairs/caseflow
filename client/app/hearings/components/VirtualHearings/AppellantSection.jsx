@@ -36,7 +36,7 @@ export const AppellantSection = ({
     (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
 
   // determine whether to show a missing email underneath readonly email
-  const showMissingAlert = readOnly && showMissingEmailAlert && !hearing?.appellantEmail;
+  const showMissingAlert = readOnly && showMissingEmailAlert && !hearing?.appellantEmailAddress;
 
   // Set the grid column width to respect fullWidth prop
   const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
