@@ -162,6 +162,8 @@ class Appeal < DecisionReview
   end
 
   def contested_claim?
+    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
+
     category_substrings = ["Contested Claims", "Apportionment"]
 
     matching_issue_categories = Constants::ISSUE_CATEGORIES.values.flatten.select do |category|
