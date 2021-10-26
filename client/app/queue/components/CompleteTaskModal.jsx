@@ -139,8 +139,8 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   ready_for_review: {
-    buildSuccessMsg: (appeal, { assignedTo }) => ({
-      title: assignedTo === 'VhaProgramOffice' ?
+    buildSuccessMsg: (appeal, { assignedToType }) => ({
+      title: assignedToType === 'VhaProgramOffice' ?
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
@@ -217,7 +217,7 @@ class CompleteTaskModal extends React.Component {
     teamName: this.props.task.label,
     appeal: this.props.appeal,
     props: this.props,
-    assignedTo: this.getTaskAssignedToType(),
+    assignedToType: this.getTaskAssignedToType(),
     state: this.state,
     setState: this.setState.bind(this)
   });
