@@ -30,9 +30,9 @@ class HearingsController < HearingsApplicationController
 
   def update
     form = if hearing.is_a?(LegacyHearing)
-             LegacyHearingUpdateForm.new(update_params_legacy)
+             LegacyHearingUpdateForm.new(hearing_params)
            else
-             HearingUpdateForm.new(update_params)
+             HearingUpdateForm.new(hearing_params)
            end
     form.update
 
@@ -88,8 +88,7 @@ class HearingsController < HearingsApplicationController
   COMMON_HEARING_ATTRIBUTES = [
     :representative_name, :witness, :military_service, :summary,
     :notes, :disposition, :hold_open, :transcript_requested, :prepped,
-    :scheduled_time_string, :judge_id, :room, :bva_poc, :appellant_email_address,
-    :representative_email_address, :appellant_tz, :representative_tz
+    :scheduled_time_string, :judge_id, :room, :bva_poc
   ].freeze
 
   HEARING_LOCATION_ATTRIBUTES = [
@@ -108,7 +107,11 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :judge_email, :request_cancelled, :appellant_tz, :representative_tz
+    :judge_email, :request_cancelled
+  ].freeze
+
+  EMAIL_RECIPIENTS_ATTRIBUTES = [
+    :id, :timezone, :email_address, :type
   ].freeze
 
   def update_params_legacy
@@ -119,7 +122,8 @@ class HearingsController < HearingsApplicationController
         :aod,
         :scheduled_for,
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: EMAIL_RECIPIENTS_ATTRIBUTES
       )
       .merge(hearing: hearing)
   end
@@ -134,11 +138,20 @@ class HearingsController < HearingsApplicationController
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
         hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: EMAIL_RECIPIENTS_ATTRIBUTES
       )
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
+  end
+
+  def hearing_params
+    if hearing.is_a?(LegacyHearing)
+      update_params_legacy
+    else
+      update_params
+    end
   end
 
   def advance_on_docket_motion_params
