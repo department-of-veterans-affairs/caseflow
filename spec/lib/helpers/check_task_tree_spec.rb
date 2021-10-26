@@ -102,6 +102,23 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Open task should not be assigned to inactive assignee"
       end
     end
+
+    describe "#inconsistent_assignees" do
+      subject { CheckTaskTree.new(appeal).inconsistent_assignees }
+      let(:appeal) { create(:appeal, :ready_for_distribution) }
+      it_behaves_like "when tasks are correct"
+
+      context "when tasks are invalid" do
+        before do
+          distribution_task.update(assigned_to: QualityReview.singleton)
+          appeal.reload
+          # binding.pry
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                         /Task assignee is inconsistent with other tasks of the same type: .*DistributionTask/
+      end
+    end
   end
 
   context "check_parent_child_tasks" do

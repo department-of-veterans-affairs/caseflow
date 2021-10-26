@@ -79,6 +79,9 @@ class CheckTaskTree
     @errors << "Cancelled task should have non-nil `cancelled_by_id`" unless cancelled_tasks_without_cancelled_by.blank?
 
     @errors << "Open task should not be assigned to inactive assignee" unless open_tasks_with_inactive_assignee.blank?
+    unless inconsistent_assignees.blank?
+      @errors << "Task assignee is inconsistent with other tasks of the same type: #{inconsistent_assignees}"
+    end
   end
 
   def check_parent_child_tasks
@@ -125,6 +128,25 @@ class CheckTaskTree
   def open_tasks_with_inactive_assignee
     @appeal.tasks.open.where(assigned_to: User.inactive) +
       @appeal.tasks.open.where(assigned_to: Organization.unscoped.inactive)
+  end
+
+  def inconsistent_assignees
+    tasks_with_unexpected_assignee.map do |task|
+      [task.type, task.assigned_to_type, task.assigned_to_id]
+    end
+  end
+
+  # Don't use a constant for this hash as that could initialize the assignees before the DB is ready
+  def expected_assignee_hash
+    @expected_assignee_hash ||= {
+      DistributionTask => Bva.singleton
+    }
+  end
+
+  def tasks_with_unexpected_assignee
+    expected_assignee_hash.map do |task_class, assignee|
+      @appeal.tasks.select { |task| task.instance_of?(task_class) }.reject { |task| task.assigned_to == assignee }
+    end.select(&:any?).flatten
   end
 
   def open_tasks_with_parent_not_on_hold
