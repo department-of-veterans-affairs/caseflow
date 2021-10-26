@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { find } from 'lodash';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import DocketTypeBadge from '../components/DocketTypeBadge';
@@ -55,19 +55,19 @@ class CaseListTable extends React.PureComponent {
     ];
 
     const anyAppealsHaveFnod = Boolean(
-      _.find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
+      find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
     );
 
     const anyAppealsHaveHeldHearings = Boolean(
-      _.find(this.props.appeals, (appeal) => mostRecentHeldHearingForAppeal(appeal))
+      find(this.props.appeals, (appeal) => mostRecentHeldHearingForAppeal(appeal))
     );
 
     const anyAppealsHaveOvertimeStatus = Boolean(
-      _.find(this.props.appeals, (appeal) => appeal.overtime)
+      find(this.props.appeals, (appeal) => appeal.overtime)
     );
 
     const anyAppealsAreContestedClaims = Boolean(
-      _.find(this.props.appeals, (appeal) => appeal.contestedClaim)
+      find(this.props.appeals, (appeal) => appeal.contestedClaim)
     );
 
     const badgeColumn = {
