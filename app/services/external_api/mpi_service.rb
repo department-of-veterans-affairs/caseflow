@@ -3,7 +3,6 @@
 # require "mpi". Once mpi gem file is setup and bundled, need to require gem here
 
 class ExternalApi::MPIService
-
   # attr_reader :client
 
   def initialize(client: init_client)
@@ -27,7 +26,7 @@ class ExternalApi::MPIService
                             address = #{address}",
                             service: :mpi,
                             name: "people.search_people_info") do
-        client.people.search_people_info(
+      client.people.search_people_info(
           last_name: last_name,
           first_name: first_name,
           middle_name: middle_name,
@@ -45,7 +44,7 @@ class ExternalApi::MPIService
     mpi_info = MetricsService.record("MPI: fetch person info: #{icn}",
                                      service: :mpi,
                                      name: "people.fetch_person_info") do
-        client.people.fetch_person_info(icn)
+      client.people.fetch_person_info(icn)
     end
 
     return {} unless mpi_info
