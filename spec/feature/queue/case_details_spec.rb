@@ -1447,7 +1447,6 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-
   describe "contested claim" do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
@@ -1478,7 +1477,7 @@ RSpec.feature "Case details", :all_dbs do
     context "case list table" do
       it "should show the contested claim badge" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
-        page.all('a', text: 'View all cases').first.click
+        page.all("a", text: "View all cases").first.click
 
         case_table = find(".cf-case-list-table")
 
