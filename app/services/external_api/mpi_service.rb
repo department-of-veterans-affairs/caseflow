@@ -51,12 +51,8 @@ class ExternalApi::MPIService
 
     return {} unless mpi_info
 
-    # Need to verify format of return
-    # @person_info[icn] ||= {
-    #   first_name: mpi_info[:first_name],
-    #   last_name: mpi_info[:last_name],
-    #   middle_name: mpi_info[:middle_name],
-    # }
+    # Dependent on parsing format in MPI Gem. Will need to be updated
+    # @person_info[icn] ||= {}
   end
 
   private
