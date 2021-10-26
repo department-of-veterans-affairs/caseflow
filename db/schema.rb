@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_10_163649) do
+ActiveRecord::Schema.define(version: 2021_10_26_165124) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1427,6 +1427,13 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
     t.index ["updated_at"], name: "index_task_timers_on_updated_at"
   end
 
+  create_table "task_vamcs", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "task_id", null: false, comment: "References tasks table"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "vamc", null: false, comment: "VA Medical Center Code associated to an Assess Documentation task assigned to a VISN."
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "appeal_type", null: false
@@ -1769,6 +1776,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
   add_foreign_key "task_timers", "tasks"
+  add_foreign_key "task_vamcs", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
