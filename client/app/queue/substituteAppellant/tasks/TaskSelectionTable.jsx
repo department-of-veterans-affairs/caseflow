@@ -9,8 +9,13 @@ import Checkbox from 'app/components/Checkbox';
 const tableStyles = css({});
 const centerCheckboxPadding = css({ paddingTop: 'inherit' });
 
-export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, tasks }) => {
-
+export const TaskSelectionTable = ({
+  control,
+  onCheckChange,
+  selectionField,
+  selectedTaskIds,
+  tasks,
+}) => {
   // Error handling that should never be needed with real production data
   if (!tasks.length) {
     return <p>There is no task available to reopen</p>;
@@ -31,7 +36,7 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
       <tbody>
         <Controller
           control={control}
-          name="taskIds"
+          name={selectionField}
           render={({ onChange }) =>
             tasks.map((task) =>
               task.hidden ? null : (
@@ -40,9 +45,16 @@ export const TaskSelectionTable = ({ control, onCheckChange, selectedTaskIds, ta
                     <Checkbox
                       onChange={() => onChange(onCheckChange(task.taskId))}
                       value={selectedTaskIds?.includes(task.taskId)}
-                      name={`taskIds[${task.taskId}]`}
+                      name={`${selectionField}[${task.taskId}]`}
                       disabled={task.disabled}
-                      label={<>&nbsp;<span className="usa-sr-only">Select {task.label}</span></>}
+                      label={
+                        <>
+                          &nbsp;
+                          <span className="usa-sr-only">
+                            Select {task.label}
+                          </span>
+                        </>
+                      }
                     />
                   </td>
                   <td>{task.label.replace('Task', '')}</td>
@@ -63,4 +75,5 @@ TaskSelectionTable.propTypes = {
   onCheckChange: PropTypes.func,
   tasks: PropTypes.array,
   selectedTaskIds: PropTypes.array,
+  selectionField: PropTypes.string,
 };

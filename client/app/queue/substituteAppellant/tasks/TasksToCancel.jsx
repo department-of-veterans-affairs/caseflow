@@ -9,6 +9,7 @@ import { disabledTasksBasedOnSelections } from './utils';
 
 export const TasksToCancel = ({ tasks }) => {
   const { control, getValues, watch } = useFormContext();
+  const fieldName = 'openTaskIds';
 
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
@@ -21,7 +22,7 @@ export const TasksToCancel = ({ tasks }) => {
 
   // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
   const handleCheck = (changedId) => {
-    const { taskIds: ids } = getValues();
+    const { [fieldName]: ids } = getValues();
     const wasJustChecked = !ids?.includes(changedId);
     const nonDistributionTasks = tasks.filter((task) => task.type !== 'DistributionTask');
     // eslint-disable-next-line max-len
@@ -37,7 +38,7 @@ export const TasksToCancel = ({ tasks }) => {
   };
 
   // We use this to set `defaultChecked` for the task checkboxes
-  const selectedTaskIds = watch('taskIds');
+  const selectedTaskIds = watch(fieldName);
 
   return (
     <TaskSelectionTable
@@ -45,6 +46,7 @@ export const TasksToCancel = ({ tasks }) => {
       onCheckChange={handleCheck}
       tasks={formattedTasks}
       selectedTaskIds={selectedTaskIds}
+      selectionField={fieldName}
     />
   );
 };

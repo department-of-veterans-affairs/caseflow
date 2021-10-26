@@ -25,7 +25,7 @@ const filteredPendingEvidenceSubmissionTasks = prepTaskDataForUi(
 // TODO: Move logic to utils.js and filter further as needed
 const activeTasks = allPendingEvidenceSubmissionWindowTasks.filter((task) => {
   return ['assigned', 'on_hold'].includes(task.status);
-});
+}).map((task) => ({ ...task, selected: true }));
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',

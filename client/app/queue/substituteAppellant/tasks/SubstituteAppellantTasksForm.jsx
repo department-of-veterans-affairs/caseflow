@@ -23,7 +23,8 @@ import { TasksToCopy } from './TasksToCopy';
 import { TasksToCancel } from './TasksToCancel';
 
 const schema = yup.object().shape({
-  taskIds: yup.array(yup.number()),
+  closedTaskIds: yup.array(yup.number()),
+  openTaskIds: yup.array(yup.number()),
 });
 
 export const SubstituteAppellantTasksForm = ({
@@ -44,25 +45,33 @@ export const SubstituteAppellantTasksForm = ({
     resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
-      taskIds:
+      closedTaskIds:
         // eslint-disable-next-line max-len
-        existingValues?.taskIds?.length ? existingValues?.taskIds : (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+        existingValues?.closedTaskIds?.length ? existingValues?.closedTaskIds : (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+      openTaskIds:
+        // eslint-disable-next-line max-len
+        existingValues?.openTaskIds?.length ? existingValues?.openTaskIds : (activeTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
   });
 
   const { handleSubmit, watch } = methods;
-  const selectedTaskIds = watch('taskIds');
+  const selectedClosedTaskIds = watch('closedTaskIds');
 
-  const adjustedTasks = useMemo(() =>
-    disabledTasksBasedOnSelections({ tasks: cancelledTasks, selectedTaskIds }),
-  [cancelledTasks, selectedTaskIds]
+  const adjustedTasks = useMemo(
+    () =>
+      disabledTasksBasedOnSelections({
+        tasks: cancelledTasks,
+        selectedTaskIds: selectedClosedTaskIds,
+      }),
+    [cancelledTasks, selectedClosedTaskIds]
   );
 
   const shouldShowScheduleHearingTaskAlert = useMemo(() => {
-    return taskTypesSelected({ tasks: cancelledTasks, selectedTaskIds }).includes('ScheduleHearingTask');
-  },
-  [cancelledTasks, selectedTaskIds]
-  );
+    return taskTypesSelected({
+      tasks: cancelledTasks,
+      selectedTaskIds: selectedClosedTaskIds,
+    }).includes('ScheduleHearingTask');
+  }, [cancelledTasks, selectedClosedTaskIds]);
 
   return (
     <FormProvider {...methods}>
