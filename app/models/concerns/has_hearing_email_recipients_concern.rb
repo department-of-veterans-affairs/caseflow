@@ -4,15 +4,14 @@ module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
   def appellant_recipient
-    recipient = AppellantHearingEmailRecipient.find_by(hearing: self)
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
 
-    if recipient.blank? && virtual_hearing.present?
-      appellant_email = virtual_hearing[:appellant_email]
+    if recipient.blank? && appellant_email_address.present?
       recipient = create_or_update_recipients(
         type: AppellantHearingEmailRecipient,
-        email_address: appellant_email,
-        timezone: virtual_hearing[:appellant_tz],
-        email_sent: virtual_hearing[:appellant_email_sent]
+        email_address: appellant_email_address,
+        timezone: appellant_tz,
+        email_sent: true
       )
 
       update_email_events(recipient, recipient.roles)
@@ -22,21 +21,17 @@ module HasHearingEmailRecipientsConcern
   end
 
   def representative_recipient
-    recipient = RepresentativeHearingEmailRecipient.find_by(hearing: self)
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
 
-    if recipient.blank? && virtual_hearing.present?
-      rep_email = virtual_hearing[:representative_email]
+    if recipient.blank? && representative_email_address.present?
+      recipient = create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email_address,
+        timezone: representative_tz,
+        email_sent: true
+      )
 
-      if rep_email.present?
-        recipient = create_or_update_recipients(
-          type: RepresentativeHearingEmailRecipient,
-          email_address: rep_email,
-          email_sent: virtual_hearing[:representative_email_sent],
-          timezone: virtual_hearing[:representative_tz]
-        )
-
-        update_email_events(recipient, recipient.roles)
-      end
+      update_email_events(recipient, recipient.roles)
     end
 
     recipient
@@ -97,19 +92,19 @@ module HasHearingEmailRecipientsConcern
   end
 
   def appellant_email_address
-    appellant_recipient&.email_address&.presence || appeal&.appellant_email_address
+    appeal&.appellant_email_address
   end
 
   def appellant_tz
-    appellant_recipient&.timezone&.presence || appeal&.appellant_tz
+    appeal&.appellant_tz
   end
 
   def representative_email_address
-    representative_recipient&.email_address&.presence || appeal&.representative_email_address
+    appeal&.representative_email_address
   end
 
   def representative_tz
-    representative_recipient&.timezone&.presence || appeal&.representative_tz
+    appeal&.representative_tz
   end
 
   private
