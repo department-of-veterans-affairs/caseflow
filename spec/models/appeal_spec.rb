@@ -1173,7 +1173,7 @@ describe Appeal, :all_dbs do
       end
 
       context "contains string 'Apportionment'" do
-        let(:issue_category) { "Apportionment" }
+        let(:issue_category) { "Contested Claims - Apportionment" }
 
         it "returns true" do
           expect(subject).to be_truthy
