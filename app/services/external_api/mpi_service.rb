@@ -28,13 +28,13 @@ class ExternalApi::MPIService
                             service: :mpi,
                             name: "people.search_people_info") do
       client.people.search_people_info(
-          last_name: last_name,
-          first_name: first_name,
-          middle_name: middle_name,
-          date_of_birth: date_of_birth,
-          gender: gender,
-          address: address
-        )
+        last_name: last_name,
+        first_name: first_name,
+        middle_name: middle_name,
+        date_of_birth: date_of_birth,
+        gender: gender,
+        address: address
+      )
     end
     return {} unless mpi_info
   end
