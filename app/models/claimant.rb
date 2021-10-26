@@ -19,16 +19,17 @@ class Claimant < CaseflowRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  delegate :date_of_birth,
-           :advanced_on_docket?,
+  delegate :advanced_on_docket?,
            :advanced_on_docket_based_on_age?,
            :advanced_on_docket_motion_granted?,
            :name,
-           :first_name,
-           :last_name,
-           :middle_name,
-           :email_address,
            to: :person
+  delegate :first_name,
+           :middle_name,
+           :last_name,
+           :date_of_birth,
+           :email_address,
+           to: :person, allow_nil: true
   delegate :address,
            :address_line_1,
            :address_line_2,
@@ -49,7 +50,7 @@ class Claimant < CaseflowRecord
   delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
 
   def suffix
-    person.name_suffix
+    person ? person.name_suffix : nil
   end
 
   def self.create_without_intake!(participant_id:, payee_code:, type:)
