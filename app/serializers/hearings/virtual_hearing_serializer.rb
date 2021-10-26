@@ -3,10 +3,6 @@
 class VirtualHearingSerializer
   include FastJsonapi::ObjectSerializer
 
-  attribute :appellant_tz
-  attribute :representative_tz
-  attribute :appellant_email
-  attribute :representative_email
   attribute :status
   attribute :request_cancelled
   attribute :alias_with_host, &:formatted_alias_or_alias_with_host
