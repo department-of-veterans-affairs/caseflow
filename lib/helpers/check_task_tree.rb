@@ -137,15 +137,25 @@ class CheckTaskTree
   end
 
   # Don't use a constant for this hash as that could initialize the assignees before the DB is ready
+  # To check in prod: `DistributionTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
   def expected_assignee_hash
     @expected_assignee_hash ||= {
-      DistributionTask => Bva.singleton
+      RootTask => Bva.singleton,
+      DistributionTask => Bva.singleton,
+      HearingTask => Bva.singleton,
+      # Only for AMA. `ScheduleHearingTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
+      ScheduleHearingTask.ama => Bva.singleton,
+      TranscriptionTask.assigned_to_any_org => TranscriptionTeam.singleton,
+      BvaDispatchTask.assigned_to_any_org => BvaDispatch.singleton,
+      QualityReviewTask.assigned_to_any_org => QualityReview.singleton,
+      CavcTask => Bva.singleton,
+      FoiaTask.assigned_to_any_org => PrivacyTeam.singleton
     }
   end
 
   def tasks_with_unexpected_assignee
-    expected_assignee_hash.map do |task_class, assignee|
-      @appeal.tasks.select { |task| task.instance_of?(task_class) }.reject { |task| task.assigned_to == assignee }
+    expected_assignee_hash.map do |task_query, assignee|
+      task_query.where(appeal: @appeal).reject { |task| task.assigned_to == assignee }
     end.select(&:any?).flatten
   end
 

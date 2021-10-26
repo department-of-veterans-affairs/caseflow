@@ -108,15 +108,28 @@ describe "CheckTaskTree" do
       let(:appeal) { create(:appeal, :ready_for_distribution) }
       it_behaves_like "when tasks are correct"
 
-      context "when tasks are invalid" do
+      context "when DistributionTask is invalid" do
         before do
           distribution_task.update(assigned_to: QualityReview.singleton)
           appeal.reload
-          # binding.pry
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message",
                          /Task assignee is inconsistent with other tasks of the same type: .*DistributionTask/
+      end
+      context "when ScheduleHearingTask for AMA appeal is invalid" do
+        let(:appeal) { create(:appeal, :ready_for_distribution, :with_schedule_hearing_tasks) }
+        let(:hearing_task) { appeal.tasks.find_by_type(:HearingTask) }
+        let(:schedule_hearing_task) { appeal.tasks.find_by_type(:ScheduleHearingTask) }
+        before do
+          hearing_task.update(parent: distribution_task)
+          distribution_task.update(status: :on_hold)
+          schedule_hearing_task.update(assigned_to: QualityReview.singleton)
+          appeal.reload
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                        /Task assignee is inconsistent with other tasks of the same type: .*ScheduleHearingTask/
       end
     end
   end
