@@ -7,7 +7,7 @@
 class AttorneyClaimant < Claimant
   validate { |claimant| ClaimantValidator.new(claimant).validate }
 
-  delegate :name, to: :bgs_attorney
+  delegate :name, to: :bgs_attorney, allow_nil: true
 
   def advanced_on_docket?(_appeal)
     false

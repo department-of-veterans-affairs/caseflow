@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe WorkQueue::AppealSerializer, :all_dbs do
+  let(:user) { create(:user, :vso_role) }
   context "when an appeal has a decision issue with a decision date in the future" do
     let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
-    let(:user) { create(:user, :vso_role) }
     subject { described_class.new(appeal, params: { user: user }) }
 
     context "when a VSO user views an appeal" do
@@ -36,6 +36,17 @@ describe WorkQueue::AppealSerializer, :all_dbs do
             expect { subject.serializable_hash[:data][:attributes][:decision_issues] }.not_to raise_error
           end
         end
+      end
+    end
+  end
+
+  context "when an appeal's claimant is an attorney claimant" do
+    let(:claimant) { create(:claimant, :attorney) }
+    let(:appeal) { create(:appeal, claimants: [claimant]) }
+    subject { described_class.new(appeal, params: { user: user }) }
+    context "when the bgs attorney is nil" do
+      it "returns nil for the appellant's full name" do
+        expect(subject.serializable_hash[:data][:attributes][:appellant_full_name]).to be_nil
       end
     end
   end
