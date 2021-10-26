@@ -45,16 +45,11 @@ export const HearingConversion = ({
   };
 
   const prefillFields = () => {
-    // Determine which email to use
-    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
-
     // Try to use the existing timezones if present
     update(
       'hearing', {
-        representativeTz: hearing?.representativeTz || hearing?.appellantTz,
-        appellantTz: hearing?.appellantTz,
-        appellantEmailAddress: appellantEmail,
-        representativeEmailAddress: hearing.representativeEmailAddress,
+        ...hearing,
+        representativeTz: hearing?.representativeTz || hearing?.appellantTz
       });
   };
 
