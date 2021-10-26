@@ -1447,7 +1447,11 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+
   describe "contested claim" do
+    before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+    after { FeatureToggle.disable!(:indicator_for_contested_claims) }
+
     let(:request_issues) do
       [
         create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
