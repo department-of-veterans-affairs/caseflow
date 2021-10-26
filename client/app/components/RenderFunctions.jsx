@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -145,7 +145,7 @@ export const missingSymbolHtml = () => {
 };
 
 // not rendering as a component when passed to StyleGuideTabs.jsx
-// look for svg file from fontawesome and replace. This should fix the issue ^^
+// look for svg file from fontawesome and replace. This might fix the issue? ^^
 export const checkSymbolHtml = () => {
   return (
     <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
@@ -153,7 +153,7 @@ export const checkSymbolHtml = () => {
 };
 
 // not rendering as a component when passed to StyleGuideTabs.jsx
-// look for svg file from fontawesome and replace. This should fix the issue ^^
+// look for svg file from fontawesome and replace. This might fix the issue ^^
 export const crossSymbolHtml = () => {
   return (
     <i className="fa fa-times fa-1 cf-tab-cross" aria-hidden="true"></i>
