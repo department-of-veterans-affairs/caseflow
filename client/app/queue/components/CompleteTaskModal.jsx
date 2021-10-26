@@ -50,7 +50,7 @@ MarkTaskCompleteModal.propTypes = {
 
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  const dbTypeOpts = [
+  const locationTypeOpts = [
     { displayText: 'VBMS', value: 'vbms' },
     { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
     { displayText: 'Other', value: 'other' }
@@ -74,12 +74,12 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <RadioField
             name="vhaCompleteTaskDocLocation"
             id="vhaCompleteTaskDocLocation"
-            label="Where were documents regarding this appeal stored?"
+            label={COPY.VHA_COMPLETE_TASK_MODAL_TITLE}
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
             value={state.radio}
-            options={dbTypeOpts}
+            options={locationTypeOpts}
           />
           {state.radio === 'other' &&
             <TextareaField
@@ -92,7 +92,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               textAreaStyling={slimHeight}
             />}
           <TextareaField
-            label="Provide details, such as folder structure or file path:"
+            label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
             name="instructions"
             id="vhaCompleteTaskInstructions"
             onChange={(value) => setState({ instructions: value })}

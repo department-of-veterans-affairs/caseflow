@@ -320,7 +320,7 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::VHA_COMPLETE_TAKS_MODAL_TITLE,
+        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
