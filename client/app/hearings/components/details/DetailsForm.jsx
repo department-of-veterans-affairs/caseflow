@@ -114,7 +114,7 @@ const DetailsForm = (props) => {
         time={hearing.scheduledTimeString}
         roTimezone={hearing?.regionalOfficeTimezone}
         requestType={hearing.readableRequestType}
-        initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
+        initialRepresentativeTz={initialHearing?.representativeTz}
       />
 
       {!isLegacy && (

@@ -69,21 +69,9 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   };
 };
 
-const formatHearingsDailyDocket = (hearings) => {
-  const newHearings = {};
-
-  Object.entries(hearings || {}).forEach((hearing) => {
-    newHearings[hearing[0]] = { ...hearing[1], ...hearing[1].emailRecipients };
-  });
-
-  return newHearings;
-};
-
 export const sortHearings = (hearings) => {
-  const newHearings = formatHearingsDailyDocket(hearings);
-
   return orderBy(
-    Object.values(newHearings || {}),
+    Object.values(hearings || {}),
     // Convert to EST before sorting, this timezeon doesn't effect what's displayed
     //   we just need to pick one so the sorting works correctly if hearings were
     //   scheduled in different time zones.
