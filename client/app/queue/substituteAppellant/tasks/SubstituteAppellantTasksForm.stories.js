@@ -8,10 +8,14 @@ import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substitu
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
 const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
-const poaType = 'Attorney';
+const claimantPoa = 'Attorney';
 
-const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
-  allEvidenceSubmissionWindowTasks, poaType
+const filteredTasksSameAppealSubstitution = prepTaskDataForUi(
+  { taskData: allEvidenceSubmissionWindowTasks, claimantPoa, isSubstitutionSameAppeal: true }
+);
+
+const filteredTasksSeparateAppealSubstitution = prepTaskDataForUi(
+  { taskData: allEvidenceSubmissionWindowTasks, claimantPoa, isSubstitutionSameAppeal: false }
 );
 
 export default {
@@ -30,7 +34,7 @@ export default {
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),
-    tasks: filteredEvidenceSubmissionTasks,
+    tasks: filteredTasksSeparateAppealSubstitution,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
@@ -53,6 +57,11 @@ export const ExistingValues = Template.bind({});
 ExistingValues.args = {
   existingValues: {
     substitutionDate: '2021-02-15',
-    taskIds: [2, 3]
+    taskIds: [2, 3],
   },
+};
+
+export const SameAppealSubstitution = Template.bind({});
+SameAppealSubstitution.args = {
+  tasks: filteredTasksSameAppealSubstitution
 };
