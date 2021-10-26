@@ -57,3 +57,10 @@ export const supportsSubstitutionPostDispatch = ({
   );
 };
 
+export const isAppealDispatched = (appeal) => {
+  return ['dispatched', 'post_dispatch'].includes(appeal.status);
+};
+
+export const isSubstitutionSameAppeal = (appeal) => {
+  return !isAppealDispatched(appeal) && !appealHasDeathDismissal(appeal);
+};
