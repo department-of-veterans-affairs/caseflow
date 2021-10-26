@@ -41,7 +41,8 @@ describe WorkQueue::AppealSerializer, :all_dbs do
       context "when an appeal has an attorney claimant" do
         let(:participant_id) { "" }
         let!(:bgs_attorney) do
-          BgsAttorney.create!(participant_id: participant_id, name: "William Jennings Bryan", record_type: "POA Attorney")
+          BgsAttorney.create!(participant_id: participant_id,
+                              name: "William Jennings Bryan", record_type: "POA Attorney")
         end
         let(:claimant) { create(:claimant, :attorney, participant_id: participant_id) }
         let(:appeal) { create(:appeal, claimants: [claimant]) }
