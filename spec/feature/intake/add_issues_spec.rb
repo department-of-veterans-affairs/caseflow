@@ -127,7 +127,7 @@ feature "Intake Add Issues Page", :all_dbs do
         click_intake_no_matching_issues
         add_intake_nonrating_issue(
           benefit_type: "Compensation",
-          category: "Apportionment",
+          category: "Contested Claims - Apportionment",
           description: "Description for Apportionment",
           date: 2.days.ago.to_date.mdY
         )
