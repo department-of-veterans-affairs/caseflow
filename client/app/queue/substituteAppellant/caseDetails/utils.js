@@ -28,6 +28,8 @@ export const supportsSubstitutionPreDispatch = ({
     featureToggles?.listed_granted_substitution_before_dismissal && // eslint-disable-line camelcase
     // For now, only allow a single substitution from a given appeal
     !appealHasSubstitution(appeal) &&
+    // below is needed to avoid showing multiple substitution buttons on post-dispatch appeals
+    !appealHasDeathDismissal(appeal) &&
     // Only admins can perform sub on cases w/o FNOD status
     (userIsCobAdmin || appeal.veteranAppellantDeceased)
   );
@@ -55,3 +57,10 @@ export const supportsSubstitutionPostDispatch = ({
   );
 };
 
+export const isAppealDispatched = (appeal) => {
+  return ['dispatched', 'post_dispatch'].includes(appeal.status);
+};
+
+export const isSubstitutionSameAppeal = (appeal) => {
+  return !isAppealDispatched(appeal) && !appealHasDeathDismissal(appeal);
+};

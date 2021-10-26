@@ -54,6 +54,16 @@ describe Docket, :all_dbs do
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
+    context "docket type" do
+      # docket_type is implemented in the subclasses and should error if called here
+      context "when docket type is called directly" do
+        subject { Docket.new.docket_type }
+        it "throws an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MustImplementInSubclass)
+        end
+      end
+    end
+
     context "appeals" do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
@@ -64,6 +74,15 @@ describe Docket, :all_dbs do
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
+        end
+      end
+
+      context "when ready is false" do
+        subject { DirectReviewDocket.new.appeals(priority: true, ready: false) }
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "'ready for distribution' value cannot be false"
+          )
         end
       end
 
@@ -207,6 +226,15 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "genpop priority count" do
+      let(:docket) { DirectReviewDocket.new }
+      subject { docket.genpop_priority_count }
+
+      it "counts genpop priority appeals" do
+        expect(subject).to eq(3)
+      end
+    end
+
     context "age_of_n_oldest_genpop_priority_appeals" do
       subject { DirectReviewDocket.new.age_of_n_oldest_genpop_priority_appeals(1) }
 
@@ -231,6 +259,38 @@ describe Docket, :all_dbs do
         it "returns nil" do
           expect(subject.nil?).to be true
         end
+      end
+    end
+
+    context "days waiting for age_of_oldest_priority_appeal" do
+      let!(:old_priority_direct_review_case) do
+        appeal = create(:appeal,
+                        :with_post_intake_tasks,
+                        :advanced_on_docket_due_to_age,
+                        docket_type: Constants.AMA_DOCKETS.direct_review,
+                        receipt_date: 1.month.ago)
+        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.week.ago)
+      end
+      let(:docket) { DirectReviewDocket.new }
+
+      subject { docket.oldest_priority_appeal_days_waiting }
+
+      it "returns today's date less the age" do
+        expect(subject).to eq(7)
+      end
+    end
+
+    context "ready priority appeal ids" do
+      let(:docket) { DirectReviewDocket.new }
+
+      subject { docket.ready_priority_appeal_ids }
+      it "returns the uuids of the ready priority appeals" do
+        expect(subject).to_not include appeal.uuid
+        expect(subject).to_not include denied_aod_motion_appeal.uuid
+        expect(subject).to_not include inapplicable_aod_motion_appeal.uuid
+        expect(subject).to include aod_age_appeal.uuid
+        expect(subject).to include aod_motion_appeal.uuid
+        expect(subject).to include cavc_appeal.uuid
       end
     end
 

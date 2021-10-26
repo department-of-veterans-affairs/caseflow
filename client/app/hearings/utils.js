@@ -3,6 +3,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import {
+  findKey,
   flatMap,
   keyBy,
   isEmpty,
@@ -22,12 +23,13 @@ import {
   map
 } from 'lodash';
 
+import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { 
+import {
   VIDEO_HEARING_LABEL,
   TRAVEL_BOARD_HEARING_LABEL,
   VIRTUAL_HEARING_LABEL,
@@ -1014,6 +1016,15 @@ export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
 
 export const hearingRequestTypeOptions = (allOptions, currentOption) => {
   return allOptions.filter((opt) => opt.label !== currentOption.label);
+};
+
+export const formatRoomOption = (room) => {
+  const option = findKey(HEARING_ROOMS_LIST, { label: room });
+
+  return ({
+    label: option ? HEARING_ROOMS_LIST[option.toString()].label : 'None',
+    value: option ? option.toString() : null
+  });
 };
 
 /* eslint-enable camelcase */
