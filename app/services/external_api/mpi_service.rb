@@ -14,6 +14,7 @@ class ExternalApi::MPIService
     @person_info = {}
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def search_people_info(last_name:, first_name: nil, middle_name: nil, date_of_birth: nil, gender: nil, address: nil)
     DBService.release_db_connections
 
@@ -37,6 +38,7 @@ class ExternalApi::MPIService
     end
     return {} unless mpi_info
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def fetch_person_info(icn)
     DBService.release_db_connections
