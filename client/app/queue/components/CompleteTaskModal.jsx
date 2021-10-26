@@ -48,13 +48,14 @@ MarkTaskCompleteModal.propTypes = {
   state: PropTypes.object
 };
 
+const locationTypeOpts = [
+  { displayText: 'VBMS', value: 'vbms' },
+  { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
+  { displayText: 'Other', value: 'other' }
+];
+
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  const locationTypeOpts = [
-    { displayText: 'VBMS', value: 'vbms' },
-    { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
-    { displayText: 'Other', value: 'other' }
-  ];
 
   const handleRadioChange = (value) => {
     setState({ radio: value });
@@ -222,17 +223,34 @@ class CompleteTaskModal extends React.Component {
     setState: this.setState.bind(this)
   });
 
+  formatInstructions = () => {
+    const { instructions, radio, otherInstructions } = this.state;
+    let formattedInstructions = instructions;
+
+    if (radio) {
+      const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
+      const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
+        locationLabel}.`;
+
+      formattedInstructions = docLocationText;
+      if (instructions) {
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+
+        formattedInstructions += instructionsDetail;
+      }
+    }
+
+    return formattedInstructions;
+  };
+
   submit = () => {
     const { task, appeal } = this.props;
-    const detail = 'Detail:';
-    const modifiedInstructions =
-      `Documents for this appeal are stored in ${this.state.radio === 'other' ? this.state.otherInstructions :
-        this.state.radio}\n\n**${detail}** ${this.state.instructions}`;
+
     const payload = {
       data: {
         task: {
           status: 'completed',
-          instructions: modifiedInstructions
+          instructions: this.formatInstructions()
         }
       }
     };

@@ -29,6 +29,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
   let(:ro_instructions) { "No docs here. Please look for this veteran's documents." }
+  let(:ro_review_instructions) { "Look for PDFs of the decisions in the veteran's folder." }
 
   context "when a VHA case goes through intake" do
     before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
@@ -172,14 +173,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
         expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
-        find(
-          ".cf-form-radio-option",
-          text: "VBMS"
-        ).click
-        fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_instructions)
+        find("label", text: "VBMS").click
+        fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
         find("button", class: "usa-button", text: "Submit").click
-
         expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_VISN)
+
+        appeal = Appeal.last
+        visit "/queue/appeals/#{appeal.external_id}"
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content("Documents for this appeal are stored in Centralized Mail Portal")
+        expect(page).to have_content(ro_review_instructions)
       end
 
       step "CAMO can return the appeal to BVA Intake" do
