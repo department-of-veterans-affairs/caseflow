@@ -19,14 +19,14 @@ class ExternalApi::MPIService
     DBService.release_db_connections
 
     mpi_info = MetricsService.record("MPI: search people info: \
-                            last_name = #{last_name}, \
-                            first_name = #{first_name}, \
-                            middle_name = #{middle_name}, \
-                            date_of_birth = #{date_of_birth}, \
-                            gender = #{gender}, \
-                            address = #{address}",
-                            service: :mpi,
-                            name: "people.search_people_info") do
+                                     last_name = #{last_name}, \
+                                     first_name = #{first_name}, \
+                                     middle_name = #{middle_name}, \
+                                     date_of_birth = #{date_of_birth}, \
+                                     gender = #{gender}, \
+                                     address = #{address}",
+                                     service: :mpi,
+                                     name: "people.search_people_info") do
       client.people.search_people_info(
         last_name: last_name,
         first_name: first_name,
