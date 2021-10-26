@@ -16,6 +16,7 @@ import {
   updateData,
 } from '../substituteAppellant.slice';
 import { prepTaskDataForUi } from './utils';
+import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
 export const SubstituteAppellantTasksView = () => {
   const { appealId } = useParams();
@@ -34,8 +35,12 @@ export const SubstituteAppellantTasksView = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
+  const sameAppealSubstitution = isSubstitutionSameAppeal(appeal);
+
   const filteredTasks = useMemo(() => {
-    return prepTaskDataForUi(allTasks, poa);
+    return prepTaskDataForUi({ taskData: allTasks,
+      claimantPoa: poa,
+      isSubstitutionSameAppeal: sameAppealSubstitution });
   }, [allTasks, poa]);
 
   // These values will be used in the "key details" section

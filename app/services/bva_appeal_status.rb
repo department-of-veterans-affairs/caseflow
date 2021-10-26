@@ -19,7 +19,8 @@ class BVAAppealStatus
     misc: 11,
     unknown: 12,
     post_dispatch: 13,
-    docket_switched: 14
+    docket_switched: 14,
+    pre_docketed: 15
   }.freeze
 
   DEFINITIONS = {
@@ -36,7 +37,8 @@ class BVAAppealStatus
     on_hold: "ON HOLD",
     unknown: "UNKNOWN",
     post_dispatch: "9. Post dispatch tasks",
-    docket_switched: "10. Docket Switch (Inactive)"
+    docket_switched: "10. Docket Switch (Inactive)",
+    pre_docketed: "Pre-docketed"
   }.freeze
 
   MISC_TASK_NAMES = %w[
@@ -96,7 +98,9 @@ class BVAAppealStatus
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def compute
-    if open_distribution_task? && !open_timed_hold_task?
+    if open_pre_docket_task?
+      :pre_docketed
+    elsif open_distribution_task? && !open_timed_hold_task?
       :not_distributed
     elsif active_judge_assign_task?
       :distributed_to_judge
@@ -152,6 +156,10 @@ class BVAAppealStatus
 
   def completed_tasks
     @completed_tasks ||= tasks.completed
+  end
+
+  def open_pre_docket_task?
+    open_tasks.any? { |task| task.is_a?(PreDocketTask) }
   end
 
   def open_distribution_task?

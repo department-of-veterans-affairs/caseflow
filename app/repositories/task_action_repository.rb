@@ -451,6 +451,8 @@ class TaskActionRepository
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
+        instructions_label: COPY::VHA_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
