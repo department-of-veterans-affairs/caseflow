@@ -48,13 +48,9 @@ export const DetailsHeader = (
     {
       label: 'Hearing Date',
       value:
-        readableRequestType === 'Travel' ? (
+        <Link to={`/schedule/docket/${hearingDayId}`}>
           <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-        ) : (
-          <Link to={`/schedule/docket/${hearingDayId}`}>
-            <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-          </Link>
-        )
+        </Link>
     },
     {
       label: 'Docket Number',
