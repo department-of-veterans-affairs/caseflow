@@ -46,7 +46,8 @@ class HearingUpdateForm < BaseHearingUpdateForm
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
       transcription_attributes: transcription_attributes,
-      witness: witness
+      witness: witness,
+      email_recipients_attributes: email_recipients_attributes
     }.compact
   end
 end
