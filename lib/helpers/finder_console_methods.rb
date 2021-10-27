@@ -13,7 +13,7 @@ module FinderConsoleMethods
 
   # Convenience method to find an AMA Appeal or LegacyAppeal
   # The `identifier` argument is the UUID or VACOLS_ID in the Case Detail URL, or a docket_number
-  # Examples:
+  # Usage examples:
   #   _appeal "1c11a1ae-43bd-449b-9416-7ccb9cb06c11"
   #   _appeal 1234567
   #   amas, legacies = _appeal "211025-193327"
@@ -26,8 +26,12 @@ module FinderConsoleMethods
     [Appeal.where(stream_docket_number: docket_number), LegacyAppeal.where(vacols_id: vids)]
   end
 
-  def _veteran(id)
-    vet = Veteran.find_by_file_number_or_ssn(id)
+  # The `identifier` argument can be a file_number or SSN.
+  # Usage examples:
+  #   vet, appeals, legacies, crs = _veteran 123456789
+  #   vet = _veteran(123456789).first
+  def _veteran(identifier)
+    vet = Veteran.find_by_file_number_or_ssn(identifier)
     appeals = AppealFinder.find_appeals_with_file_numbers(vet.file_number)
     legacies = LegacyAppeal.fetch_appeals_by_file_number(vet.file_number)
     crs = ClaimReview.find_all_visible_by_file_number(vet.file_number)
@@ -36,7 +40,7 @@ module FinderConsoleMethods
   end
 
   # The case-insensitive `identifier` argument can be a record id, CSS_ID, VACOLS slogid, or part of a full name.
-  # Examples:
+  # Usage examples:
   #   pp _user 3
   #   pp _user "BvaAAbshire"
   #   pp _user 'ABS'
@@ -45,11 +49,11 @@ module FinderConsoleMethods
     user = User.find(identifier) if identifier.is_a? Numeric
     return user if user
 
-    user = User.find_by(css_id: identifier.upcase) if identifier.is_a? String
+    user = User.find_by_css_id(identifier.upcase) if identifier.is_a? String
     return user if user
 
     staff = VACOLS::Staff.find_by(slogid: identifier.upcase)
-    return User.find_by(css_id: staff.sdomainid) if staff
+    return User.find_by_css_id(staff.sdomainid) if staff
 
     users = User.where("full_name ILIKE ?", "%#{identifier}%")
     return users.first if users.count == 1
@@ -60,7 +64,7 @@ module FinderConsoleMethods
   # rubocop:enable Metrics/CyclomaticComplexity
 
   # The case-insensitive `identifier` argument can be a User, CSS_ID (sdomainid), VACOLS slogid, or partial last name.
-  # Examples:
+  # Usage examples:
   #   pp _staff User.last
   #   pp _staff "Abshir"
   def _staff(identifier)
