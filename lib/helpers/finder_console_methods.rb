@@ -5,6 +5,7 @@
 # See https://github.com/department-of-veterans-affairs/caseflow/wiki/Active-Record-Queries-Resource for more queries
 
 # :reek:FeatureEnvy
+# :reek:UtilityFunction
 module FinderConsoleMethods
   UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
   def uuid?(uuid)
