@@ -1149,6 +1149,12 @@
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
+  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
+  "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
+  "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
+  "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details, such as file structure or file path:",
+  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
+  "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
   "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."

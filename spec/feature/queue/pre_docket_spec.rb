@@ -29,6 +29,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
   let(:ro_instructions) { "No docs here. Please look for this veteran's documents." }
+  let(:ro_review_instructions) { "Look for PDFs of the decisions in the veteran's folder." }
 
   context "when a VHA case goes through intake" do
     before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
@@ -125,7 +126,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_on("#{program_office.name} team cases")
 
         expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
-        expect(page).to have_content("Assess Documentation Task")
+        expect(page).to have_content("Assess Documentation")
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
 
@@ -157,7 +158,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_on("#{regional_office.name} team cases")
 
         expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
-        expect(page).to have_content("Assess Documentation Task")
+        expect(page).to have_content("Assess Documentation")
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
 
@@ -165,6 +166,23 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(ro_instructions)
+      end
+
+      step "Regional Office can mark AssessDocumentationTask as Ready for Review" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
+        expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
+        find("label", text: "VBMS").click
+        fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
+        find("button", class: "usa-button", text: "Submit").click
+        expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_VISN)
+
+        appeal = Appeal.last
+        visit "/queue/appeals/#{appeal.external_id}"
+        find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
+        expect(page).to have_content("Documents for this appeal are stored in VBMS")
+        expect(page).to have_content(ro_review_instructions)
       end
 
       step "CAMO can return the appeal to BVA Intake" do
@@ -213,7 +231,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
     end
 
-    # This test confirms that BVA Intake can still perform this action while the Assess Documentation task is
+    # This test confirms that BVA Intake can still perform this action while tis
     # in progress and the Pre-Docket task is on hold.
     it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
       User.authenticate!(user: bva_intake_user)
