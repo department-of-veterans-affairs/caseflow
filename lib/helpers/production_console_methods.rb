@@ -5,6 +5,7 @@ require_relative "check_task_tree"
 module ProductionConsoleMethods
   # Prints a more readable version of PaperTrail versioning data
   # Usage: `pp _versions DistributionTask.last`
+  # :reek:UtilityFunction
   def _versions(record)
     record.try(:versions)&.map do |version|
       {
