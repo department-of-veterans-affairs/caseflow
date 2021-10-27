@@ -48,6 +48,26 @@ feature "Task queue", :all_dbs do
       )
     end
 
+    let!(:request_issues) do
+      [
+        create(
+          :request_issue,
+          benefit_type: "compensation",
+          nonrating_issue_category: "Contested Claims - Apportionment"
+        )
+      ]
+    end
+
+    let!(:contested_claim_appeal) { create(:appeal, request_issues: request_issues) }
+    let!(:attorney_task_2) do
+      create(
+        :ama_attorney_task,
+        :assigned,
+        assigned_to: attorney_user,
+        appeal: contested_claim_appeal
+      )
+    end
+
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
     let(:attorney_on_hold_task_count) { Task.where(status: :on_hold, assigned_to: attorney_user).count }
 
@@ -87,6 +107,16 @@ feature "Task queue", :all_dbs do
     it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
+
+    fcontext "contested claims" do
+      before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+      after { FeatureToggle.disable!(:indicator_for_contested_claims) }
+
+      it "should show indicator in user queue" do
+        visit "/queue"
+        expect(page).to have_selector(".cf-contested-badge")
+      end
     end
 
     context "hearings" do
