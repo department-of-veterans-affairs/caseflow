@@ -140,15 +140,20 @@ class CheckTaskTree
   # To check in prod: `DistributionTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
   def expected_assignee_hash
     @expected_assignee_hash ||= {
+      # These are always assigned to the BVA org
       RootTask => Bva.singleton,
       DistributionTask => Bva.singleton,
       HearingTask => Bva.singleton,
+      CavcTask => Bva.singleton,
+
       # Only for AMA. `ScheduleHearingTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
       ScheduleHearingTask.ama => Bva.singleton,
+
+      # Only for tasks assigned to an Organization.
+      # e.g., `TranscriptionTask.assigned_to_any_org.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
       TranscriptionTask.assigned_to_any_org => TranscriptionTeam.singleton,
       BvaDispatchTask.assigned_to_any_org => BvaDispatch.singleton,
       QualityReviewTask.assigned_to_any_org => QualityReview.singleton,
-      CavcTask => Bva.singleton,
       FoiaTask.assigned_to_any_org => PrivacyTeam.singleton
     }
   end
