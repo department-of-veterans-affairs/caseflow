@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module AutomaticCaseDistribution
   extend ActiveSupport::Concern
 
@@ -50,23 +51,9 @@ module AutomaticCaseDistribution
       end
     end
 
-    # Distribute priority appeals that are tied to judges (not genpop).
-    collect_appeals do
-      dockets[:legacy].distribute_appeals(self, priority: true, limit: @rem, style: "request", genpop: "not_genpop")
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: true, genpop: "not_genpop", style: "request")
-    end
+    distribute_tied_priority_appeals
+    distribute_tied_nonpriority_appeals
 
-    # Distribute nonpriority appeals that are tied to judges.
-    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    collect_appeals do
-      dockets[:legacy].distribute_nonpriority_appeals(self, limit: @rem, genpop: "not_genpop",
-                                                            range: legacy_docket_range, style: "request")
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: false, genpop: "not_genpop", style: "request")
-    end
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
@@ -83,9 +70,28 @@ module AutomaticCaseDistribution
     @appeals
   end
 
+  def distribute_tied_nonpriority_appeals
+    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
+    collect_appeals do
+      dockets[:legacy].distribute_nonpriority_appeals(self, limit: @rem, genpop: "not_genpop",
+                                                            range: legacy_docket_range, style: "request")
+    end
+    collect_appeals do
+      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: false, genpop: "not_genpop", style: "request")
+    end
+  end
+
+  def distribute_tied_priority_appeals
+    collect_appeals do
+      dockets[:legacy].distribute_appeals(self, priority: true, limit: @rem, style: "request", genpop: "not_genpop")
+    end
+    collect_appeals do
+      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: true, genpop: "not_genpop", style: "request")
+    end
+  end
+
   def collect_appeals
     appeals = yield
-    #appeals ||= [] # guard against blocks that could return nil
     @rem -= appeals.count
     @appeals += appeals
     appeals
@@ -165,3 +171,4 @@ module AutomaticCaseDistribution
       .transform_values(&:count)
   end
 end
+# rubocop:enable Metrics/ModuleLength
