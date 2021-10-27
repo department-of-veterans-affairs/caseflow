@@ -8,7 +8,7 @@ import {
   sampleTasksForDismissedEvidenceSubmissionDocket,
   sampleTasksForPendingEvidenceSubmissionDocket,
 } from 'test/data/queue/substituteAppellant/tasks';
-import { prepTaskDataForUi, prepActiveTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
+import { prepTaskDataForUi, prepOpenTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
 const poaType = 'Attorney';
 
@@ -27,7 +27,7 @@ const filteredPendingEvidenceSubmissionTasks = prepTaskDataForUi(
 //   return ['assigned', 'on_hold'].includes(task.status);
 // }).map((task) => ({ ...task, selected: true }));
 
-const activeTasks = prepActiveTaskDataForUi({
+const activeTasks = prepOpenTaskDataForUi({
   taskData: allPendingEvidenceSubmissionWindowTasks
 });
 

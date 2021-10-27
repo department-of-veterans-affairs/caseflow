@@ -10,10 +10,19 @@ import {
   shouldDisable,
   shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
-  hearingAdminActions, mailTasks, filterOpenTasks } from 'app/queue/substituteAppellant/tasks/utils';
+  shouldShowBasedOnOtherTasks,
+  shouldDisableBasedOnTaskType,
+  disabledTasksBasedOnSelections,
+  hearingAdminActions,
+  mailTasks,
+  filterOpenTasks,
+  prepOpenTaskDataForUi,
+} from 'app/queue/substituteAppellant/tasks/utils';
 
-import { sampleTasksForDismissedEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import {
+  sampleTasksForDismissedEvidenceSubmissionDocket,
+  sampleTasksForPendingEvidenceSubmissionDocket,
+} from 'test/data/queue/substituteAppellant/tasks';
 import { isSameDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
@@ -319,6 +328,16 @@ describe('utility functions for task manipulation', () => {
           expect.objectContaining({ type: 'AttorneyTask' }),
         ])
       );
+    });
+  });
+
+  describe('prepOpenTaskDataForUi', () => {
+    describe('with basic evidence submission tasks', () => {
+      const taskData = sampleTasksForPendingEvidenceSubmissionDocket();
+
+      it('returns expected results', () => {
+        expect(prepOpenTaskDataForUi({ taskData })).toMatchSnapshot();
+      });
     });
   });
 });

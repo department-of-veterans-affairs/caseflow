@@ -1028,3 +1028,5 @@ Array [
   },
 ]
 `;
+
+exports[`utility functions for task manipulation prepOpenTaskDataForUi with basic evidence submission tasks returns expected results 1`] = `Array []`;

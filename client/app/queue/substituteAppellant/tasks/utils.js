@@ -240,7 +240,7 @@ export const filterOpenTasks = (tasks) => tasks.filter((task) => {
   return ['assigned', 'on_hold'].includes(task.status);
 });
 
-export const prepActiveTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
+export const prepOpenTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
   const activeTasks = filterOpenTasks(taskData);
   const uniqTasks = filterTasks(activeTasks);
 
@@ -253,7 +253,6 @@ export const prepActiveTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionS
   return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
-    // disabled: shouldDisable(taskInfo),
     disabled: false, // TODO - what should be disabled?
     selected: true,
   }));

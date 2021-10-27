@@ -15,7 +15,7 @@ import {
   stepBack,
   updateData,
 } from '../substituteAppellant.slice';
-import { prepActiveTaskDataForUi, prepTaskDataForUi } from './utils';
+import { prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
 import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
 export const SubstituteAppellantTasksView = () => {
@@ -38,7 +38,7 @@ export const SubstituteAppellantTasksView = () => {
   );
 
   const activeTasks = useMemo(() => {
-    return prepActiveTaskDataForUi({ taskData: allTasks,
+    return prepOpenTaskDataForUi({ taskData: allTasks,
       claimantPoa: poa,
       isSubstitutionSameAppeal: sameAppealSubstitution });
   }, [allTasks, poa]);
