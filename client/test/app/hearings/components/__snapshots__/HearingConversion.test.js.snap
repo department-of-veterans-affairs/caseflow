@@ -123,9 +123,103 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
     [MockFunction] {
       "calls": Array [
         Array [
-          "virtualHearing",
+          "hearing",
           Object {
-            "false": "tom.brady@caseflow.gov",
+            "advanceOnDocketMotion": null,
+            "aod": false,
+            "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+            "appealId": 4,
+            "appellantAddressLine1": "9999 MISSION ST",
+            "appellantCity": "SAN FRANCISCO",
+            "appellantEmailAddress": "tom.brady@caseflow.gov",
+            "appellantFirstName": "Bob",
+            "appellantIsNotVeteran": false,
+            "appellantLastName": "Smith",
+            "appellantState": "CA",
+            "appellantTz": "America/Los_Angeles",
+            "appellantZip": "94103",
+            "availableHearingLocations": Object {},
+            "bvaPoc": null,
+            "caseType": "Original",
+            "centralOfficeTimeString": "03:30",
+            "claimantId": 4,
+            "closestRegionalOffice": null,
+            "currentIssueCount": 1,
+            "disposition": null,
+            "dispositionEditable": true,
+            "docketName": "hearing",
+            "docketNumber": "200628-4",
+            "emailEvents": Array [
+              Object {
+                "emailAddress": "tom.brady@caseflow.gov",
+                "emailType": "confirmation",
+                "sentAt": "2020-06-29T14:55:12.620-04:00",
+                "sentBy": "BVASYELLOW",
+                "sentTo": "POA/Representative Email",
+              },
+              Object {
+                "emailAddress": "Bob.Smith@test.com",
+                "emailType": "confirmation",
+                "sentAt": "2020-06-29T14:55:12.501-04:00",
+                "sentBy": "BVASYELLOW",
+                "sentTo": "Appellant Email",
+              },
+            ],
+            "evidenceWindowWaived": false,
+            "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+            "hearingDayId": 4,
+            "id": 4,
+            "isVirtual": true,
+            "judge": Object {
+              "createdAt": "2020-06-25T11:00:43.257-04:00",
+              "cssId": "BVAAABSHIRE",
+              "displayName": "BVAAABSHIRE (VACO)",
+              "efolderDocumentsFetchedAt": null,
+              "email": null,
+              "fullName": "Aaron Judge_HearingsAndCases Abshire",
+              "id": 3,
+              "lastLoginAt": null,
+              "roles": Object {},
+              "selectedRegionalOffice": null,
+              "stationId": "101",
+              "status": "active",
+              "statusUpdatedAt": null,
+              "updatedAt": "2020-06-25T11:00:43.257-04:00",
+            },
+            "judgeId": 3,
+            "location": null,
+            "militaryService": "",
+            "notes": null,
+            "paperCase": false,
+            "poaName": "AMERICAN LEGION",
+            "prepped": null,
+            "readableLocation": "Washington, DC",
+            "readableRequestType": "Central",
+            "regionalOfficeKey": "C",
+            "regionalOfficeName": "Central",
+            "regionalOfficeTimezone": "America/New_York",
+            "representative": "Clarence Darrow",
+            "representativeEmailAddress": "tom.brady@caseflow.gov",
+            "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+            "representativeTz": "America/Denver",
+            "room": "2",
+            "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+            "scheduledForIsPast": false,
+            "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+            "scheduledTimeString": "03:30",
+            "summary": null,
+            "transcriptRequested": null,
+            "transcription": Object {},
+            "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+            "veteranAge": 85,
+            "veteranEmailAddress": "Bob.Smith@test.com",
+            "veteranFileNumber": "500000003",
+            "veteranFirstName": "Bob",
+            "veteranGender": "M",
+            "veteranLastName": "Smith",
+            "wasVirtual": false,
+            "witness": null,
+            "worksheetIssues": Object {},
           },
         ],
       ],
@@ -9246,9 +9340,103 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
           [MockFunction] {
             "calls": Array [
               Array [
-                "virtualHearing",
+                "hearing",
                 Object {
-                  "false": "tom.brady@caseflow.gov",
+                  "advanceOnDocketMotion": null,
+                  "aod": false,
+                  "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                  "appealId": 4,
+                  "appellantAddressLine1": "9999 MISSION ST",
+                  "appellantCity": "SAN FRANCISCO",
+                  "appellantEmailAddress": "tom.brady@caseflow.gov",
+                  "appellantFirstName": "Bob",
+                  "appellantIsNotVeteran": false,
+                  "appellantLastName": "Smith",
+                  "appellantState": "CA",
+                  "appellantTz": "America/Los_Angeles",
+                  "appellantZip": "94103",
+                  "availableHearingLocations": Object {},
+                  "bvaPoc": null,
+                  "caseType": "Original",
+                  "centralOfficeTimeString": "03:30",
+                  "claimantId": 4,
+                  "closestRegionalOffice": null,
+                  "currentIssueCount": 1,
+                  "disposition": null,
+                  "dispositionEditable": true,
+                  "docketName": "hearing",
+                  "docketNumber": "200628-4",
+                  "emailEvents": Array [
+                    Object {
+                      "emailAddress": "tom.brady@caseflow.gov",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.620-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "POA/Representative Email",
+                    },
+                    Object {
+                      "emailAddress": "Bob.Smith@test.com",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.501-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "Appellant Email",
+                    },
+                  ],
+                  "evidenceWindowWaived": false,
+                  "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "hearingDayId": 4,
+                  "id": 4,
+                  "isVirtual": true,
+                  "judge": Object {
+                    "createdAt": "2020-06-25T11:00:43.257-04:00",
+                    "cssId": "BVAAABSHIRE",
+                    "displayName": "BVAAABSHIRE (VACO)",
+                    "efolderDocumentsFetchedAt": null,
+                    "email": null,
+                    "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                    "id": 3,
+                    "lastLoginAt": null,
+                    "roles": Object {},
+                    "selectedRegionalOffice": null,
+                    "stationId": "101",
+                    "status": "active",
+                    "statusUpdatedAt": null,
+                    "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                  },
+                  "judgeId": 3,
+                  "location": null,
+                  "militaryService": "",
+                  "notes": null,
+                  "paperCase": false,
+                  "poaName": "AMERICAN LEGION",
+                  "prepped": null,
+                  "readableLocation": "Washington, DC",
+                  "readableRequestType": "Central",
+                  "regionalOfficeKey": "C",
+                  "regionalOfficeName": "Central",
+                  "regionalOfficeTimezone": "America/New_York",
+                  "representative": "Clarence Darrow",
+                  "representativeEmailAddress": "tom.brady@caseflow.gov",
+                  "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                  "representativeTz": "America/Denver",
+                  "room": "2",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                  "scheduledForIsPast": false,
+                  "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                  "scheduledTimeString": "03:30",
+                  "summary": null,
+                  "transcriptRequested": null,
+                  "transcription": Object {},
+                  "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "veteranAge": 85,
+                  "veteranEmailAddress": "Bob.Smith@test.com",
+                  "veteranFileNumber": "500000003",
+                  "veteranFirstName": "Bob",
+                  "veteranGender": "M",
+                  "veteranLastName": "Smith",
+                  "wasVirtual": false,
+                  "witness": null,
+                  "worksheetIssues": Object {},
                 },
               ],
             ],
@@ -9340,9 +9528,9 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
-                email="Bob.Smith@test.com"
-                emailType="appellantEmail"
+              <HearingEmail
+                email="tom.brady@caseflow.gov"
+                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
@@ -9352,9 +9540,103 @@ SAN FRANCISCO, CA 94103
                   [MockFunction] {
                     "calls": Array [
                       Array [
-                        "virtualHearing",
+                        "hearing",
                         Object {
-                          "false": "tom.brady@caseflow.gov",
+                          "advanceOnDocketMotion": null,
+                          "aod": false,
+                          "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                          "appealId": 4,
+                          "appellantAddressLine1": "9999 MISSION ST",
+                          "appellantCity": "SAN FRANCISCO",
+                          "appellantEmailAddress": "tom.brady@caseflow.gov",
+                          "appellantFirstName": "Bob",
+                          "appellantIsNotVeteran": false,
+                          "appellantLastName": "Smith",
+                          "appellantState": "CA",
+                          "appellantTz": "America/Los_Angeles",
+                          "appellantZip": "94103",
+                          "availableHearingLocations": Object {},
+                          "bvaPoc": null,
+                          "caseType": "Original",
+                          "centralOfficeTimeString": "03:30",
+                          "claimantId": 4,
+                          "closestRegionalOffice": null,
+                          "currentIssueCount": 1,
+                          "disposition": null,
+                          "dispositionEditable": true,
+                          "docketName": "hearing",
+                          "docketNumber": "200628-4",
+                          "emailEvents": Array [
+                            Object {
+                              "emailAddress": "tom.brady@caseflow.gov",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.620-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "POA/Representative Email",
+                            },
+                            Object {
+                              "emailAddress": "Bob.Smith@test.com",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.501-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "Appellant Email",
+                            },
+                          ],
+                          "evidenceWindowWaived": false,
+                          "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "hearingDayId": 4,
+                          "id": 4,
+                          "isVirtual": true,
+                          "judge": Object {
+                            "createdAt": "2020-06-25T11:00:43.257-04:00",
+                            "cssId": "BVAAABSHIRE",
+                            "displayName": "BVAAABSHIRE (VACO)",
+                            "efolderDocumentsFetchedAt": null,
+                            "email": null,
+                            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                            "id": 3,
+                            "lastLoginAt": null,
+                            "roles": Object {},
+                            "selectedRegionalOffice": null,
+                            "stationId": "101",
+                            "status": "active",
+                            "statusUpdatedAt": null,
+                            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                          },
+                          "judgeId": 3,
+                          "location": null,
+                          "militaryService": "",
+                          "notes": null,
+                          "paperCase": false,
+                          "poaName": "AMERICAN LEGION",
+                          "prepped": null,
+                          "readableLocation": "Washington, DC",
+                          "readableRequestType": "Central",
+                          "regionalOfficeKey": "C",
+                          "regionalOfficeName": "Central",
+                          "regionalOfficeTimezone": "America/New_York",
+                          "representative": "Clarence Darrow",
+                          "representativeEmailAddress": "tom.brady@caseflow.gov",
+                          "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                          "representativeTz": "America/Denver",
+                          "room": "2",
+                          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                          "scheduledForIsPast": false,
+                          "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                          "scheduledTimeString": "03:30",
+                          "summary": null,
+                          "transcriptRequested": null,
+                          "transcription": Object {},
+                          "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "veteranAge": 85,
+                          "veteranEmailAddress": "Bob.Smith@test.com",
+                          "veteranFileNumber": "500000003",
+                          "veteranFirstName": "Bob",
+                          "veteranGender": "M",
+                          "veteranLastName": "Smith",
+                          "wasVirtual": false,
+                          "witness": null,
+                          "worksheetIssues": Object {},
                         },
                       ],
                     ],
@@ -9369,7 +9651,7 @@ SAN FRANCISCO, CA 94103
               >
                 <ReadOnly
                   label="Veteran Email (for these notifications only)"
-                  text="Bob.Smith@test.com"
+                  text="tom.brady@caseflow.gov"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -9378,11 +9660,11 @@ SAN FRANCISCO, CA 94103
                       Veteran Email (for these notifications only)
                     </strong>
                     <pre>
-                      Bob.Smith@test.com
+                      tom.brady@caseflow.gov
                     </pre>
                   </div>
                 </ReadOnly>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -9497,9 +9779,103 @@ SAN FRANCISCO, CA 94103
           [MockFunction] {
             "calls": Array [
               Array [
-                "virtualHearing",
+                "hearing",
                 Object {
-                  "false": "tom.brady@caseflow.gov",
+                  "advanceOnDocketMotion": null,
+                  "aod": false,
+                  "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                  "appealId": 4,
+                  "appellantAddressLine1": "9999 MISSION ST",
+                  "appellantCity": "SAN FRANCISCO",
+                  "appellantEmailAddress": "tom.brady@caseflow.gov",
+                  "appellantFirstName": "Bob",
+                  "appellantIsNotVeteran": false,
+                  "appellantLastName": "Smith",
+                  "appellantState": "CA",
+                  "appellantTz": "America/Los_Angeles",
+                  "appellantZip": "94103",
+                  "availableHearingLocations": Object {},
+                  "bvaPoc": null,
+                  "caseType": "Original",
+                  "centralOfficeTimeString": "03:30",
+                  "claimantId": 4,
+                  "closestRegionalOffice": null,
+                  "currentIssueCount": 1,
+                  "disposition": null,
+                  "dispositionEditable": true,
+                  "docketName": "hearing",
+                  "docketNumber": "200628-4",
+                  "emailEvents": Array [
+                    Object {
+                      "emailAddress": "tom.brady@caseflow.gov",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.620-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "POA/Representative Email",
+                    },
+                    Object {
+                      "emailAddress": "Bob.Smith@test.com",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.501-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "Appellant Email",
+                    },
+                  ],
+                  "evidenceWindowWaived": false,
+                  "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "hearingDayId": 4,
+                  "id": 4,
+                  "isVirtual": true,
+                  "judge": Object {
+                    "createdAt": "2020-06-25T11:00:43.257-04:00",
+                    "cssId": "BVAAABSHIRE",
+                    "displayName": "BVAAABSHIRE (VACO)",
+                    "efolderDocumentsFetchedAt": null,
+                    "email": null,
+                    "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                    "id": 3,
+                    "lastLoginAt": null,
+                    "roles": Object {},
+                    "selectedRegionalOffice": null,
+                    "stationId": "101",
+                    "status": "active",
+                    "statusUpdatedAt": null,
+                    "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                  },
+                  "judgeId": 3,
+                  "location": null,
+                  "militaryService": "",
+                  "notes": null,
+                  "paperCase": false,
+                  "poaName": "AMERICAN LEGION",
+                  "prepped": null,
+                  "readableLocation": "Washington, DC",
+                  "readableRequestType": "Central",
+                  "regionalOfficeKey": "C",
+                  "regionalOfficeName": "Central",
+                  "regionalOfficeTimezone": "America/New_York",
+                  "representative": "Clarence Darrow",
+                  "representativeEmailAddress": "tom.brady@caseflow.gov",
+                  "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                  "representativeTz": "America/Denver",
+                  "room": "2",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                  "scheduledForIsPast": false,
+                  "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                  "scheduledTimeString": "03:30",
+                  "summary": null,
+                  "transcriptRequested": null,
+                  "transcription": Object {},
+                  "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "veteranAge": 85,
+                  "veteranEmailAddress": "Bob.Smith@test.com",
+                  "veteranFileNumber": "500000003",
+                  "veteranFirstName": "Bob",
+                  "veteranGender": "M",
+                  "veteranLastName": "Smith",
+                  "wasVirtual": false,
+                  "witness": null,
+                  "worksheetIssues": Object {},
                 },
               ],
             ],
@@ -9564,9 +9940,9 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="tom.brady@caseflow.gov"
-                emailType="representativeEmail"
+                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
@@ -9575,9 +9951,103 @@ SAN FRANCISCO, CA 94103
                   [MockFunction] {
                     "calls": Array [
                       Array [
-                        "virtualHearing",
+                        "hearing",
                         Object {
-                          "false": "tom.brady@caseflow.gov",
+                          "advanceOnDocketMotion": null,
+                          "aod": false,
+                          "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                          "appealId": 4,
+                          "appellantAddressLine1": "9999 MISSION ST",
+                          "appellantCity": "SAN FRANCISCO",
+                          "appellantEmailAddress": "tom.brady@caseflow.gov",
+                          "appellantFirstName": "Bob",
+                          "appellantIsNotVeteran": false,
+                          "appellantLastName": "Smith",
+                          "appellantState": "CA",
+                          "appellantTz": "America/Los_Angeles",
+                          "appellantZip": "94103",
+                          "availableHearingLocations": Object {},
+                          "bvaPoc": null,
+                          "caseType": "Original",
+                          "centralOfficeTimeString": "03:30",
+                          "claimantId": 4,
+                          "closestRegionalOffice": null,
+                          "currentIssueCount": 1,
+                          "disposition": null,
+                          "dispositionEditable": true,
+                          "docketName": "hearing",
+                          "docketNumber": "200628-4",
+                          "emailEvents": Array [
+                            Object {
+                              "emailAddress": "tom.brady@caseflow.gov",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.620-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "POA/Representative Email",
+                            },
+                            Object {
+                              "emailAddress": "Bob.Smith@test.com",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.501-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "Appellant Email",
+                            },
+                          ],
+                          "evidenceWindowWaived": false,
+                          "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "hearingDayId": 4,
+                          "id": 4,
+                          "isVirtual": true,
+                          "judge": Object {
+                            "createdAt": "2020-06-25T11:00:43.257-04:00",
+                            "cssId": "BVAAABSHIRE",
+                            "displayName": "BVAAABSHIRE (VACO)",
+                            "efolderDocumentsFetchedAt": null,
+                            "email": null,
+                            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                            "id": 3,
+                            "lastLoginAt": null,
+                            "roles": Object {},
+                            "selectedRegionalOffice": null,
+                            "stationId": "101",
+                            "status": "active",
+                            "statusUpdatedAt": null,
+                            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                          },
+                          "judgeId": 3,
+                          "location": null,
+                          "militaryService": "",
+                          "notes": null,
+                          "paperCase": false,
+                          "poaName": "AMERICAN LEGION",
+                          "prepped": null,
+                          "readableLocation": "Washington, DC",
+                          "readableRequestType": "Central",
+                          "regionalOfficeKey": "C",
+                          "regionalOfficeName": "Central",
+                          "regionalOfficeTimezone": "America/New_York",
+                          "representative": "Clarence Darrow",
+                          "representativeEmailAddress": "tom.brady@caseflow.gov",
+                          "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                          "representativeTz": "America/Denver",
+                          "room": "2",
+                          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                          "scheduledForIsPast": false,
+                          "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                          "scheduledTimeString": "03:30",
+                          "summary": null,
+                          "transcriptRequested": null,
+                          "transcription": Object {},
+                          "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "veteranAge": 85,
+                          "veteranEmailAddress": "Bob.Smith@test.com",
+                          "veteranFileNumber": "500000003",
+                          "veteranFirstName": "Bob",
+                          "veteranGender": "M",
+                          "veteranLastName": "Smith",
+                          "wasVirtual": false,
+                          "witness": null,
+                          "worksheetIssues": Object {},
                         },
                       ],
                     ],
@@ -9605,7 +10075,7 @@ SAN FRANCISCO, CA 94103
                     </pre>
                   </div>
                 </ReadOnly>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -9744,9 +10214,103 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
     [MockFunction] {
       "calls": Array [
         Array [
-          "virtualHearing",
+          "hearing",
           Object {
-            "false": "tom.brady@caseflow.gov",
+            "advanceOnDocketMotion": null,
+            "aod": false,
+            "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+            "appealId": 4,
+            "appellantAddressLine1": "9999 MISSION ST",
+            "appellantCity": "SAN FRANCISCO",
+            "appellantEmailAddress": "tom.brady@caseflow.gov",
+            "appellantFirstName": "Bob",
+            "appellantIsNotVeteran": false,
+            "appellantLastName": "Smith",
+            "appellantState": "CA",
+            "appellantTz": "America/Los_Angeles",
+            "appellantZip": "94103",
+            "availableHearingLocations": Object {},
+            "bvaPoc": null,
+            "caseType": "Original",
+            "centralOfficeTimeString": "03:30",
+            "claimantId": 4,
+            "closestRegionalOffice": null,
+            "currentIssueCount": 1,
+            "disposition": null,
+            "dispositionEditable": true,
+            "docketName": "hearing",
+            "docketNumber": "200628-4",
+            "emailEvents": Array [
+              Object {
+                "emailAddress": "tom.brady@caseflow.gov",
+                "emailType": "confirmation",
+                "sentAt": "2020-06-29T14:55:12.620-04:00",
+                "sentBy": "BVASYELLOW",
+                "sentTo": "POA/Representative Email",
+              },
+              Object {
+                "emailAddress": "Bob.Smith@test.com",
+                "emailType": "confirmation",
+                "sentAt": "2020-06-29T14:55:12.501-04:00",
+                "sentBy": "BVASYELLOW",
+                "sentTo": "Appellant Email",
+              },
+            ],
+            "evidenceWindowWaived": false,
+            "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+            "hearingDayId": 4,
+            "id": 4,
+            "isVirtual": true,
+            "judge": Object {
+              "createdAt": "2020-06-25T11:00:43.257-04:00",
+              "cssId": "BVAAABSHIRE",
+              "displayName": "BVAAABSHIRE (VACO)",
+              "efolderDocumentsFetchedAt": null,
+              "email": null,
+              "fullName": "Aaron Judge_HearingsAndCases Abshire",
+              "id": 3,
+              "lastLoginAt": null,
+              "roles": Object {},
+              "selectedRegionalOffice": null,
+              "stationId": "101",
+              "status": "active",
+              "statusUpdatedAt": null,
+              "updatedAt": "2020-06-25T11:00:43.257-04:00",
+            },
+            "judgeId": 3,
+            "location": null,
+            "militaryService": "",
+            "notes": null,
+            "paperCase": false,
+            "poaName": "AMERICAN LEGION",
+            "prepped": null,
+            "readableLocation": "Washington, DC",
+            "readableRequestType": "Central",
+            "regionalOfficeKey": "C",
+            "regionalOfficeName": "Central",
+            "regionalOfficeTimezone": "America/New_York",
+            "representative": "Clarence Darrow",
+            "representativeEmailAddress": "tom.brady@caseflow.gov",
+            "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+            "representativeTz": "America/Denver",
+            "room": "2",
+            "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+            "scheduledForIsPast": false,
+            "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+            "scheduledTimeString": "03:30",
+            "summary": null,
+            "transcriptRequested": null,
+            "transcription": Object {},
+            "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+            "veteranAge": 85,
+            "veteranEmailAddress": "Bob.Smith@test.com",
+            "veteranFileNumber": "500000003",
+            "veteranFirstName": "Bob",
+            "veteranGender": "M",
+            "veteranLastName": "Smith",
+            "wasVirtual": false,
+            "witness": null,
+            "worksheetIssues": Object {},
           },
         ],
       ],
@@ -18750,9 +19314,103 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           [MockFunction] {
             "calls": Array [
               Array [
-                "virtualHearing",
+                "hearing",
                 Object {
-                  "false": "tom.brady@caseflow.gov",
+                  "advanceOnDocketMotion": null,
+                  "aod": false,
+                  "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                  "appealId": 4,
+                  "appellantAddressLine1": "9999 MISSION ST",
+                  "appellantCity": "SAN FRANCISCO",
+                  "appellantEmailAddress": "tom.brady@caseflow.gov",
+                  "appellantFirstName": "Bob",
+                  "appellantIsNotVeteran": false,
+                  "appellantLastName": "Smith",
+                  "appellantState": "CA",
+                  "appellantTz": "America/Los_Angeles",
+                  "appellantZip": "94103",
+                  "availableHearingLocations": Object {},
+                  "bvaPoc": null,
+                  "caseType": "Original",
+                  "centralOfficeTimeString": "03:30",
+                  "claimantId": 4,
+                  "closestRegionalOffice": null,
+                  "currentIssueCount": 1,
+                  "disposition": null,
+                  "dispositionEditable": true,
+                  "docketName": "hearing",
+                  "docketNumber": "200628-4",
+                  "emailEvents": Array [
+                    Object {
+                      "emailAddress": "tom.brady@caseflow.gov",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.620-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "POA/Representative Email",
+                    },
+                    Object {
+                      "emailAddress": "Bob.Smith@test.com",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.501-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "Appellant Email",
+                    },
+                  ],
+                  "evidenceWindowWaived": false,
+                  "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "hearingDayId": 4,
+                  "id": 4,
+                  "isVirtual": true,
+                  "judge": Object {
+                    "createdAt": "2020-06-25T11:00:43.257-04:00",
+                    "cssId": "BVAAABSHIRE",
+                    "displayName": "BVAAABSHIRE (VACO)",
+                    "efolderDocumentsFetchedAt": null,
+                    "email": null,
+                    "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                    "id": 3,
+                    "lastLoginAt": null,
+                    "roles": Object {},
+                    "selectedRegionalOffice": null,
+                    "stationId": "101",
+                    "status": "active",
+                    "statusUpdatedAt": null,
+                    "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                  },
+                  "judgeId": 3,
+                  "location": null,
+                  "militaryService": "",
+                  "notes": null,
+                  "paperCase": false,
+                  "poaName": "AMERICAN LEGION",
+                  "prepped": null,
+                  "readableLocation": "Washington, DC",
+                  "readableRequestType": "Central",
+                  "regionalOfficeKey": "C",
+                  "regionalOfficeName": "Central",
+                  "regionalOfficeTimezone": "America/New_York",
+                  "representative": "Clarence Darrow",
+                  "representativeEmailAddress": "tom.brady@caseflow.gov",
+                  "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                  "representativeTz": "America/Denver",
+                  "room": "2",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                  "scheduledForIsPast": false,
+                  "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                  "scheduledTimeString": "03:30",
+                  "summary": null,
+                  "transcriptRequested": null,
+                  "transcription": Object {},
+                  "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "veteranAge": 85,
+                  "veteranEmailAddress": "Bob.Smith@test.com",
+                  "veteranFileNumber": "500000003",
+                  "veteranFirstName": "Bob",
+                  "veteranGender": "M",
+                  "veteranLastName": "Smith",
+                  "wasVirtual": false,
+                  "witness": null,
+                  "worksheetIssues": Object {},
                 },
               ],
             ],
@@ -18852,7 +19510,7 @@ SAN FRANCISCO, CA 94103
                 required={true}
                 roTimezone="America/New_York"
                 time="03:30"
-                value="America/Denver"
+                value="America/Los_Angeles"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -19645,7 +20303,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value="America/Denver"
+                  value="America/Los_Angeles"
                 >
                   <div
                     className=""
@@ -20480,9 +21138,9 @@ SAN FRANCISCO, CA 94103
                           }
                           value={
                             Object {
-                              "index": -1,
-                              "label": "Mountain Time (US & Canada) (1:30 AM)",
-                              "value": "America/Denver",
+                              "index": -0,
+                              "label": "Pacific Time (US & Canada) (12:30 AM)",
+                              "value": "America/Los_Angeles",
                             }
                           }
                         >
@@ -21313,9 +21971,9 @@ SAN FRANCISCO, CA 94103
                             tabSelectsValue={true}
                             value={
                               Object {
-                                "index": -1,
-                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                "value": "America/Denver",
+                                "index": -0,
+                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                "value": "America/Los_Angeles",
                               }
                             }
                           >
@@ -22929,9 +23587,9 @@ SAN FRANCISCO, CA 94103
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
                                   "value": Object {
-                                    "index": -1,
-                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                    "value": "America/Denver",
+                                    "index": -0,
+                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                    "value": "America/Los_Angeles",
                                   },
                                 }
                               }
@@ -24597,9 +25255,9 @@ SAN FRANCISCO, CA 94103
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
                                         "value": Object {
-                                          "index": -1,
-                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                          "value": "America/Denver",
+                                          "index": -0,
+                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                          "value": "America/Los_Angeles",
                                         },
                                       }
                                     }
@@ -26273,9 +26931,9 @@ SAN FRANCISCO, CA 94103
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
                                               "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                "value": "America/Denver",
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
                                               },
                                             }
                                           }
@@ -26336,9 +26994,9 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 data={
                                                   Object {
-                                                    "index": -1,
-                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                    "value": "America/Denver",
+                                                    "index": -0,
+                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                    "value": "America/Los_Angeles",
                                                   }
                                                 }
                                                 getStyles={[Function]}
@@ -27941,9 +28599,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
                                                     },
                                                   }
                                                 }
@@ -28002,7 +28660,7 @@ SAN FRANCISCO, CA 94103
                                                   <div
                                                     className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Mountain Time (US & Canada) (1:30 AM)
+                                                    Pacific Time (US & Canada) (12:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
                                               </SingleValue>
@@ -28845,9 +29503,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
                                                     },
                                                   }
                                                 }
@@ -29729,9 +30387,9 @@ SAN FRANCISCO, CA 94103
                                                       "tabIndex": "0",
                                                       "tabSelectsValue": true,
                                                       "value": Object {
-                                                        "index": -1,
-                                                        "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                        "value": "America/Denver",
+                                                        "index": -0,
+                                                        "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                        "value": "America/Los_Angeles",
                                                       },
                                                     }
                                                   }
@@ -31484,9 +32142,9 @@ SAN FRANCISCO, CA 94103
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
                                               "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                "value": "America/Denver",
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
                                               },
                                             }
                                           }
@@ -33142,9 +33800,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
                                                     },
                                                   }
                                                 }
@@ -34811,9 +35469,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
                                                     },
                                                   }
                                                 }
@@ -34923,7 +35581,7 @@ SAN FRANCISCO, CA 94103
                                   <input
                                     name="appellantTz"
                                     type="hidden"
-                                    value="America/Denver"
+                                    value="America/Los_Angeles"
                                   />
                                 </div>
                               </EmotionCssPropInternal>
@@ -34953,9 +35611,9 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
-                email="Bob.Smith@test.com"
-                emailType="appellantEmail"
+              <HearingEmail
+                email="tom.brady@caseflow.gov"
+                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={false}
@@ -34965,9 +35623,103 @@ SAN FRANCISCO, CA 94103
                   [MockFunction] {
                     "calls": Array [
                       Array [
-                        "virtualHearing",
+                        "hearing",
                         Object {
-                          "false": "tom.brady@caseflow.gov",
+                          "advanceOnDocketMotion": null,
+                          "aod": false,
+                          "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                          "appealId": 4,
+                          "appellantAddressLine1": "9999 MISSION ST",
+                          "appellantCity": "SAN FRANCISCO",
+                          "appellantEmailAddress": "tom.brady@caseflow.gov",
+                          "appellantFirstName": "Bob",
+                          "appellantIsNotVeteran": false,
+                          "appellantLastName": "Smith",
+                          "appellantState": "CA",
+                          "appellantTz": "America/Los_Angeles",
+                          "appellantZip": "94103",
+                          "availableHearingLocations": Object {},
+                          "bvaPoc": null,
+                          "caseType": "Original",
+                          "centralOfficeTimeString": "03:30",
+                          "claimantId": 4,
+                          "closestRegionalOffice": null,
+                          "currentIssueCount": 1,
+                          "disposition": null,
+                          "dispositionEditable": true,
+                          "docketName": "hearing",
+                          "docketNumber": "200628-4",
+                          "emailEvents": Array [
+                            Object {
+                              "emailAddress": "tom.brady@caseflow.gov",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.620-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "POA/Representative Email",
+                            },
+                            Object {
+                              "emailAddress": "Bob.Smith@test.com",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.501-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "Appellant Email",
+                            },
+                          ],
+                          "evidenceWindowWaived": false,
+                          "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "hearingDayId": 4,
+                          "id": 4,
+                          "isVirtual": true,
+                          "judge": Object {
+                            "createdAt": "2020-06-25T11:00:43.257-04:00",
+                            "cssId": "BVAAABSHIRE",
+                            "displayName": "BVAAABSHIRE (VACO)",
+                            "efolderDocumentsFetchedAt": null,
+                            "email": null,
+                            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                            "id": 3,
+                            "lastLoginAt": null,
+                            "roles": Object {},
+                            "selectedRegionalOffice": null,
+                            "stationId": "101",
+                            "status": "active",
+                            "statusUpdatedAt": null,
+                            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                          },
+                          "judgeId": 3,
+                          "location": null,
+                          "militaryService": "",
+                          "notes": null,
+                          "paperCase": false,
+                          "poaName": "AMERICAN LEGION",
+                          "prepped": null,
+                          "readableLocation": "Washington, DC",
+                          "readableRequestType": "Central",
+                          "regionalOfficeKey": "C",
+                          "regionalOfficeName": "Central",
+                          "regionalOfficeTimezone": "America/New_York",
+                          "representative": "Clarence Darrow",
+                          "representativeEmailAddress": "tom.brady@caseflow.gov",
+                          "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                          "representativeTz": "America/Denver",
+                          "room": "2",
+                          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                          "scheduledForIsPast": false,
+                          "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                          "scheduledTimeString": "03:30",
+                          "summary": null,
+                          "transcriptRequested": null,
+                          "transcription": Object {},
+                          "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "veteranAge": 85,
+                          "veteranEmailAddress": "Bob.Smith@test.com",
+                          "veteranFileNumber": "500000003",
+                          "veteranFirstName": "Bob",
+                          "veteranGender": "M",
+                          "veteranLastName": "Smith",
+                          "wasVirtual": false,
+                          "witness": null,
+                          "worksheetIssues": Object {},
                         },
                       ],
                     ],
@@ -34993,7 +35745,7 @@ SAN FRANCISCO, CA 94103
                   strongLabel={true}
                   type="text"
                   useAriaLabel={false}
-                  value="Bob.Smith@test.com"
+                  value="tom.brady@caseflow.gov"
                 >
                   <div
                     className="cf-form-textinput cf-inline-field   "
@@ -35028,7 +35780,7 @@ SAN FRANCISCO, CA 94103
                       name="Veteran Email (for these notifications only)"
                       onChange={[Function]}
                       type="text"
-                      value="Bob.Smith@test.com"
+                      value="tom.brady@caseflow.gov"
                     />
                   </div>
                 </TextField>
@@ -35041,7 +35793,7 @@ SAN FRANCISCO, CA 94103
                     This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>
@@ -35156,9 +35908,103 @@ SAN FRANCISCO, CA 94103
           [MockFunction] {
             "calls": Array [
               Array [
-                "virtualHearing",
+                "hearing",
                 Object {
-                  "false": "tom.brady@caseflow.gov",
+                  "advanceOnDocketMotion": null,
+                  "aod": false,
+                  "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                  "appealId": 4,
+                  "appellantAddressLine1": "9999 MISSION ST",
+                  "appellantCity": "SAN FRANCISCO",
+                  "appellantEmailAddress": "tom.brady@caseflow.gov",
+                  "appellantFirstName": "Bob",
+                  "appellantIsNotVeteran": false,
+                  "appellantLastName": "Smith",
+                  "appellantState": "CA",
+                  "appellantTz": "America/Los_Angeles",
+                  "appellantZip": "94103",
+                  "availableHearingLocations": Object {},
+                  "bvaPoc": null,
+                  "caseType": "Original",
+                  "centralOfficeTimeString": "03:30",
+                  "claimantId": 4,
+                  "closestRegionalOffice": null,
+                  "currentIssueCount": 1,
+                  "disposition": null,
+                  "dispositionEditable": true,
+                  "docketName": "hearing",
+                  "docketNumber": "200628-4",
+                  "emailEvents": Array [
+                    Object {
+                      "emailAddress": "tom.brady@caseflow.gov",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.620-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "POA/Representative Email",
+                    },
+                    Object {
+                      "emailAddress": "Bob.Smith@test.com",
+                      "emailType": "confirmation",
+                      "sentAt": "2020-06-29T14:55:12.501-04:00",
+                      "sentBy": "BVASYELLOW",
+                      "sentTo": "Appellant Email",
+                    },
+                  ],
+                  "evidenceWindowWaived": false,
+                  "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "hearingDayId": 4,
+                  "id": 4,
+                  "isVirtual": true,
+                  "judge": Object {
+                    "createdAt": "2020-06-25T11:00:43.257-04:00",
+                    "cssId": "BVAAABSHIRE",
+                    "displayName": "BVAAABSHIRE (VACO)",
+                    "efolderDocumentsFetchedAt": null,
+                    "email": null,
+                    "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                    "id": 3,
+                    "lastLoginAt": null,
+                    "roles": Object {},
+                    "selectedRegionalOffice": null,
+                    "stationId": "101",
+                    "status": "active",
+                    "statusUpdatedAt": null,
+                    "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                  },
+                  "judgeId": 3,
+                  "location": null,
+                  "militaryService": "",
+                  "notes": null,
+                  "paperCase": false,
+                  "poaName": "AMERICAN LEGION",
+                  "prepped": null,
+                  "readableLocation": "Washington, DC",
+                  "readableRequestType": "Central",
+                  "regionalOfficeKey": "C",
+                  "regionalOfficeName": "Central",
+                  "regionalOfficeTimezone": "America/New_York",
+                  "representative": "Clarence Darrow",
+                  "representativeEmailAddress": "tom.brady@caseflow.gov",
+                  "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                  "representativeTz": "America/Denver",
+                  "room": "2",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                  "scheduledForIsPast": false,
+                  "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                  "scheduledTimeString": "03:30",
+                  "summary": null,
+                  "transcriptRequested": null,
+                  "transcription": Object {},
+                  "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                  "veteranAge": 85,
+                  "veteranEmailAddress": "Bob.Smith@test.com",
+                  "veteranFileNumber": "500000003",
+                  "veteranFirstName": "Bob",
+                  "veteranGender": "M",
+                  "veteranLastName": "Smith",
+                  "wasVirtual": false,
+                  "witness": null,
+                  "worksheetIssues": Object {},
                 },
               ],
             ],
@@ -35227,12 +36073,12 @@ SAN FRANCISCO, CA 94103
                 label="POA/Representative Timezone"
                 name="representativeTz"
                 onChange={[Function]}
-                optional={false}
+                optional={true}
                 readOnly={false}
-                required={true}
+                required={false}
                 roTimezone="America/New_York"
                 time="03:30"
-                value="America/Los_Angeles"
+                value="America/Denver"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -35240,7 +36086,7 @@ SAN FRANCISCO, CA 94103
                   loading={false}
                   name="representativeTz"
                   onChange={[Function]}
-                  optional={false}
+                  optional={true}
                   options={
                     Array [
                       Object {
@@ -36011,7 +36857,7 @@ SAN FRANCISCO, CA 94103
                   }
                   placeholder="Select a timezone"
                   readOnly={false}
-                  required={true}
+                  required={false}
                   strongLabel={true}
                   styling={
                     Object {
@@ -36025,7 +36871,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value="America/Los_Angeles"
+                  value="America/Denver"
                 >
                   <div
                     className=""
@@ -36043,15 +36889,15 @@ SAN FRANCISCO, CA 94103
                           <FormLabel
                             label="POA/Representative Timezone"
                             name="POA/Representative Timezone"
-                            optional={false}
-                            required={true}
+                            optional={true}
+                            required={false}
                           >
                             <span>
                               POA/Representative Timezone
                               <span
-                                className="cf-required"
+                                className="cf-optional"
                               >
-                                Required
+                                Optional
                               </span>
                             </span>
                           </FormLabel>
@@ -36860,9 +37706,9 @@ SAN FRANCISCO, CA 94103
                           }
                           value={
                             Object {
-                              "index": -0,
-                              "label": "Pacific Time (US & Canada) (12:30 AM)",
-                              "value": "America/Los_Angeles",
+                              "index": -1,
+                              "label": "Mountain Time (US & Canada) (1:30 AM)",
+                              "value": "America/Denver",
                             }
                           }
                         >
@@ -37693,9 +38539,9 @@ SAN FRANCISCO, CA 94103
                             tabSelectsValue={true}
                             value={
                               Object {
-                                "index": -0,
-                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                "value": "America/Los_Angeles",
+                                "index": -1,
+                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                "value": "America/Denver",
                               }
                             }
                           >
@@ -39309,9 +40155,9 @@ SAN FRANCISCO, CA 94103
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
                                   "value": Object {
-                                    "index": -0,
-                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                    "value": "America/Los_Angeles",
+                                    "index": -1,
+                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                    "value": "America/Denver",
                                   },
                                 }
                               }
@@ -40977,9 +41823,9 @@ SAN FRANCISCO, CA 94103
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
                                         "value": Object {
-                                          "index": -0,
-                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                          "value": "America/Los_Angeles",
+                                          "index": -1,
+                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                          "value": "America/Denver",
                                         },
                                       }
                                     }
@@ -42653,9 +43499,9 @@ SAN FRANCISCO, CA 94103
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
                                               "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                "value": "America/Los_Angeles",
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
                                               },
                                             }
                                           }
@@ -42716,9 +43562,9 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 data={
                                                   Object {
-                                                    "index": -0,
-                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                    "value": "America/Los_Angeles",
+                                                    "index": -1,
+                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                    "value": "America/Denver",
                                                   }
                                                 }
                                                 getStyles={[Function]}
@@ -44321,9 +45167,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
                                                     },
                                                   }
                                                 }
@@ -44382,7 +45228,7 @@ SAN FRANCISCO, CA 94103
                                                   <div
                                                     className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Pacific Time (US & Canada) (12:30 AM)
+                                                    Mountain Time (US & Canada) (1:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
                                               </SingleValue>
@@ -45225,9 +46071,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
                                                     },
                                                   }
                                                 }
@@ -46109,9 +46955,9 @@ SAN FRANCISCO, CA 94103
                                                       "tabIndex": "0",
                                                       "tabSelectsValue": true,
                                                       "value": Object {
-                                                        "index": -0,
-                                                        "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                        "value": "America/Los_Angeles",
+                                                        "index": -1,
+                                                        "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                        "value": "America/Denver",
                                                       },
                                                     }
                                                   }
@@ -47864,9 +48710,9 @@ SAN FRANCISCO, CA 94103
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
                                               "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                "value": "America/Los_Angeles",
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
                                               },
                                             }
                                           }
@@ -49522,9 +50368,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
                                                     },
                                                   }
                                                 }
@@ -51191,9 +52037,9 @@ SAN FRANCISCO, CA 94103
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
                                                     "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
                                                     },
                                                   }
                                                 }
@@ -51303,7 +52149,7 @@ SAN FRANCISCO, CA 94103
                                   <input
                                     name="representativeTz"
                                     type="hidden"
-                                    value="America/Los_Angeles"
+                                    value="America/Denver"
                                   />
                                 </div>
                               </EmotionCssPropInternal>
@@ -51332,9 +52178,9 @@ SAN FRANCISCO, CA 94103
             <div
               className="usa-width-one-half"
             >
-              <VirtualHearingEmail
+              <HearingEmail
                 email="tom.brady@caseflow.gov"
-                emailType="representativeEmail"
+                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={false}
@@ -51343,9 +52189,103 @@ SAN FRANCISCO, CA 94103
                   [MockFunction] {
                     "calls": Array [
                       Array [
-                        "virtualHearing",
+                        "hearing",
                         Object {
-                          "false": "tom.brady@caseflow.gov",
+                          "advanceOnDocketMotion": null,
+                          "aod": false,
+                          "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                          "appealId": 4,
+                          "appellantAddressLine1": "9999 MISSION ST",
+                          "appellantCity": "SAN FRANCISCO",
+                          "appellantEmailAddress": "tom.brady@caseflow.gov",
+                          "appellantFirstName": "Bob",
+                          "appellantIsNotVeteran": false,
+                          "appellantLastName": "Smith",
+                          "appellantState": "CA",
+                          "appellantTz": "America/Los_Angeles",
+                          "appellantZip": "94103",
+                          "availableHearingLocations": Object {},
+                          "bvaPoc": null,
+                          "caseType": "Original",
+                          "centralOfficeTimeString": "03:30",
+                          "claimantId": 4,
+                          "closestRegionalOffice": null,
+                          "currentIssueCount": 1,
+                          "disposition": null,
+                          "dispositionEditable": true,
+                          "docketName": "hearing",
+                          "docketNumber": "200628-4",
+                          "emailEvents": Array [
+                            Object {
+                              "emailAddress": "tom.brady@caseflow.gov",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.620-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "POA/Representative Email",
+                            },
+                            Object {
+                              "emailAddress": "Bob.Smith@test.com",
+                              "emailType": "confirmation",
+                              "sentAt": "2020-06-29T14:55:12.501-04:00",
+                              "sentBy": "BVASYELLOW",
+                              "sentTo": "Appellant Email",
+                            },
+                          ],
+                          "evidenceWindowWaived": false,
+                          "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "hearingDayId": 4,
+                          "id": 4,
+                          "isVirtual": true,
+                          "judge": Object {
+                            "createdAt": "2020-06-25T11:00:43.257-04:00",
+                            "cssId": "BVAAABSHIRE",
+                            "displayName": "BVAAABSHIRE (VACO)",
+                            "efolderDocumentsFetchedAt": null,
+                            "email": null,
+                            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                            "id": 3,
+                            "lastLoginAt": null,
+                            "roles": Object {},
+                            "selectedRegionalOffice": null,
+                            "stationId": "101",
+                            "status": "active",
+                            "statusUpdatedAt": null,
+                            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                          },
+                          "judgeId": 3,
+                          "location": null,
+                          "militaryService": "",
+                          "notes": null,
+                          "paperCase": false,
+                          "poaName": "AMERICAN LEGION",
+                          "prepped": null,
+                          "readableLocation": "Washington, DC",
+                          "readableRequestType": "Central",
+                          "regionalOfficeKey": "C",
+                          "regionalOfficeName": "Central",
+                          "regionalOfficeTimezone": "America/New_York",
+                          "representative": "Clarence Darrow",
+                          "representativeEmailAddress": "tom.brady@caseflow.gov",
+                          "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                          "representativeTz": "America/Denver",
+                          "room": "2",
+                          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                          "scheduledForIsPast": false,
+                          "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                          "scheduledTimeString": "03:30",
+                          "summary": null,
+                          "transcriptRequested": null,
+                          "transcription": Object {},
+                          "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                          "veteranAge": 85,
+                          "veteranEmailAddress": "Bob.Smith@test.com",
+                          "veteranFileNumber": "500000003",
+                          "veteranFirstName": "Bob",
+                          "veteranGender": "M",
+                          "veteranLastName": "Smith",
+                          "wasVirtual": false,
+                          "witness": null,
+                          "worksheetIssues": Object {},
                         },
                       ],
                     ],
@@ -51419,7 +52359,7 @@ SAN FRANCISCO, CA 94103
                     This email address will be used to send notifications for this hearing only.
                   </div>
                 </HelperText>
-              </VirtualHearingEmail>
+              </HearingEmail>
             </div>
           </div>
         </VirtualHearingSection>

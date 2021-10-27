@@ -427,8 +427,8 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   <div
                     className="usa-width-one-half"
                   >
-                    <VirtualHearingEmail
-                      emailType="appellantEmail"
+                    <HearingEmail
+                      emailType="appellantEmailAddress"
                       label="Veteran Email (for these notifications only)"
                       optional={false}
                       readOnly={true}
@@ -450,7 +450,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                           </pre>
                         </div>
                       </ReadOnly>
-                    </VirtualHearingEmail>
+                    </HearingEmail>
                     <div>
                       <Alert
                         fixed={false}
@@ -532,8 +532,8 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   <div
                     className="usa-width-one-half"
                   >
-                    <VirtualHearingEmail
-                      emailType="representativeEmail"
+                    <HearingEmail
+                      emailType="representativeEmailAddress"
                       label="POA/Representative Email (for these notifications only)"
                       optional={true}
                       readOnly={true}
@@ -554,7 +554,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                           </pre>
                         </div>
                       </ReadOnly>
-                    </VirtualHearingEmail>
+                    </HearingEmail>
                   </div>
                 </div>
               </VirtualHearingSection>

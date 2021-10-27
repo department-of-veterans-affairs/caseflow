@@ -18,6 +18,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -73,6 +74,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -161,9 +163,9 @@ SAN FRANCISCO, CA 94103
           label="POA/Representative Timezone"
           name="representativeTz"
           onChange={[Function]}
-          optional={false}
+          optional={true}
           readOnly={false}
-          required={true}
+          required={false}
           roTimezone="America/New_York"
           time="06:00"
           value="America/Los_Angeles"
@@ -174,7 +176,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="representativeTz"
             onChange={[Function]}
-            optional={false}
+            optional={true}
             options={
               Array [
                 Object {
@@ -945,7 +947,7 @@ SAN FRANCISCO, CA 94103
             }
             placeholder="Select a timezone"
             readOnly={false}
-            required={true}
+            required={false}
             strongLabel={true}
             styling={
               Object {
@@ -977,15 +979,15 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="POA/Representative Timezone"
                       name="POA/Representative Timezone"
-                      optional={false}
-                      required={true}
+                      optional={true}
+                      required={false}
                     >
                       <span>
                         POA/Representative Timezone
                         <span
-                          className="cf-required"
+                          className="cf-optional"
                         >
-                          Required
+                          Optional
                         </span>
                       </span>
                     </FormLabel>
@@ -16266,9 +16268,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
@@ -16335,7 +16337,7 @@ SAN FRANCISCO, CA 94103
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -16360,6 +16362,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -16415,6 +16418,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -16499,9 +16503,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           readOnly={true}
@@ -16523,7 +16527,7 @@ SAN FRANCISCO, CA 94103
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -16548,6 +16552,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -16603,6 +16608,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -16675,9 +16681,9 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
@@ -16744,7 +16750,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -16769,6 +16775,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -16824,6 +16831,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -16907,9 +16915,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
@@ -16976,7 +16984,7 @@ SAN FRANCISCO, CA 94103
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17158,9 +17166,9 @@ exports[`RepresentativeSection Shows Representative name when representative add
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
@@ -17227,7 +17235,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17402,9 +17410,9 @@ exports[`RepresentativeSection Shows Representative not present message when no 
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
+        <HearingEmail
           email="tom.brady@caseflow.gov"
-          emailType="representativeEmail"
+          emailType="representativeEmailAddress"
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           type="change_to_virtual"
@@ -17471,7 +17479,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
               This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
