@@ -96,15 +96,6 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
-  },
-  vha_program_office_return_to_camo: {
-    buildSuccessMsg: () => ({
-      title: sprintf(COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE),
-      detail: sprintf(COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL)
-    }),
-    title: () => COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
 

@@ -495,29 +495,13 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
-        modal_body: COPY::VHA_MODAL_BODY,
+        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
+        message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
     end
-
-    # def return_to_camo(task, _user)
-    #   org = VhaCamo.singleton
-    #   task.update!(status: Constants.TASK_STATUSES.cancelled)
-    #   task.parent.update!(status: Constants.TASK_STATUSES.in_progress)
-
-    #   queue_url = org.url
-    #   {
-    #     options: organizations_to_options(VhaRegionalOffice.all),
-    #     modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
-    #     modal_body: COPY::VHA_MODAL_BODY,
-    #     modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
-    #     instructions: [],
-    #     type: AssessDocumentationTask.name,
-    #     redirect_after: "/organizations/#{queue_url}"
-    #   }
-    # end
 
     private
 
