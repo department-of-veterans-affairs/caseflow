@@ -2,7 +2,9 @@
 
 RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-  let!(:hearing) { create(:hearing, :with_tasks) }
+  let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
+  let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
+  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "9:30AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
@@ -10,19 +12,22 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   shared_examples "always updatable fields" do
     scenario "user can select judge, hearing room, hearing coordinator, and add notes" do
-      # wait until the label displays before trying to interact with the dropdown
+      # wait until the label displays before trying to interact with the dropdowns
       find("div", class: "dropdown-judgeDropdown", text: COPY::DROPDOWN_LABEL_JUDGE)
-      click_dropdown(name: "judgeDropdown", index: 0)
-
       find("div", class: "dropdown-hearingCoordinatorDropdown", text: COPY::DROPDOWN_LABEL_HEARING_COORDINATOR)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0)
-
       find("div", class: "dropdown-hearingRoomDropdown", text: COPY::DROPDOWN_LABEL_HEARING_ROOM)
-      click_dropdown(name: "hearingRoomDropdown", index: 0)
 
-      find("label", text: "Yes, Waive 90 Day Evidence Hold").click
+      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
+      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
+      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+
+      if hearing.is_a?(Hearing)
+        find("label", text: "Yes, Waive 90 Day Evidence Hold").click
+      end
 
       fill_in "Notes", with: generate_words(10)
+
+      # Save the edited fields
       click_button("Save")
 
       expect(page).to have_content(expected_alert)
@@ -149,11 +154,6 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
-  before do
-    create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
-    create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
-  end
-
   context "with unauthorized user role (non-hearings management)" do
     let!(:current_user) { User.authenticate!(user: user) }
 
@@ -171,9 +171,9 @@ RSpec.feature "Hearing Details", :all_dbs do
     let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
 
     context "when hearing is AMA" do
-      let!(:hearing) { create(:hearing, :with_tasks) }
-
       context "when type is Video" do
+        let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06", scheduled_time: "9:30AM") }
+
         include_examples "always updatable fields"
         include_examples "AMA updatable fields"
         include_examples "non-virtual hearing type conversion"
@@ -186,27 +186,58 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       context "when type is Virtual" do
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            :initialized,
+            status: :active,
+            hearing: hearing,
+            appellant_email: "existing_veteran_email@caseflow.gov",
+            appellant_email_sent: true,
+            judge_email: "existing_judge_email@caseflow.gov",
+            judge_email_sent: true,
+            representative_email: nil
+          )
+        end
+
         include_examples "always updatable fields"
         include_examples "AMA updatable fields"
       end
     end
 
     context "when hearing is Legacy" do
-      let!(:hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
-
       context "when type is Video" do
+        let!(:hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06", scheduled_for: "9:30AM") }
+
         include_examples "always updatable fields"
         include_examples "Legacy updatable fields"
         include_examples "non-virtual hearing type conversion"
       end
 
       context "when type is Central" do
+        let!(:hearing) { create(:legacy_hearing, :with_tasks, regional_office: "C", scheduled_for: "9:30AM") }
+
         include_examples "always updatable fields"
         include_examples "Legacy updatable fields"
         include_examples "non-virtual hearing type conversion"
       end
 
       context "when type is Virtual" do
+        let!(:hearing) { create(:legacy_hearing, :with_tasks, regional_office: "C", scheduled_for: "9:30AM") }
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            :all_emails_sent,
+            status: :active,
+            hearing: hearing,
+            appellant_email: "existing_veteran_email@caseflow.gov",
+            appellant_email_sent: true,
+            judge_email: "existing_judge_email@caseflow.gov",
+            judge_email_sent: true,
+            representative_email: nil
+          )
+        end
+
         include_examples "always updatable fields"
         include_examples "Legacy updatable fields"
       end

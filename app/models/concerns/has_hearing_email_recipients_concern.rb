@@ -92,19 +92,19 @@ module HasHearingEmailRecipientsConcern
   end
 
   def appellant_email_address
-    appeal&.appellant_email_address
+    virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address
   end
 
   def appellant_tz
-    appeal&.appellant_tz
+    virtual_hearing.present? ? virtual_hearing[:appellant_tz] : appeal&.appellant_tz
   end
 
   def representative_email_address
-    appeal&.representative_email_address
+    virtual_hearing.present? ? virtual_hearing[:representative_email] : appeal&.representative_email_address
   end
 
   def representative_tz
-    appeal&.representative_tz
+    virtual_hearing.present? ? virtual_hearing[:representative_tz] : appeal&.representative_tz
   end
 
   private

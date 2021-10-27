@@ -130,7 +130,7 @@ const HearingDetails = (props) => {
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
 
-      if (errors) {
+      if (errors && hearing.isVirtual) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
@@ -167,7 +167,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isEmpty
         )
-      ];
+      ].filter((recipient) => Boolean(recipient.email_address));
 
       // Put the UI into a loading state
       setLoading(true);
@@ -176,14 +176,10 @@ const HearingDetails = (props) => {
       const response = await saveHearing({
         hearing: {
           ...(hearingChanges || {}),
-          transcription_attributes: {
-            // Always send full transcription details because a new record is created each update
-            ...(transcription ? hearing.transcription : {}),
-          },
-          virtual_hearing_attributes: {
-            ...(virtualHearing || {}),
-          },
-          email_recipients_attributes: emailRecipientAttributes
+          // Always send full transcription details because a new record is created each update
+          transcription_attributes: transcription ? hearing.transcription : {},
+          virtual_hearing_attributes: virtualHearing || {},
+          email_recipients_attributes: emailRecipientAttributes.length ? emailRecipientAttributes : {},
         },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
