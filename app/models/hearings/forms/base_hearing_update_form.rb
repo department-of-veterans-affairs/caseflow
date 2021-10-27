@@ -34,9 +34,10 @@ class BaseHearingUpdateForm
     hearing.reload
 
     email_sent_updates!
-    start_async_job
 
-    add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
+    add_virtual_hearing_alert if start_async_job?
+
+    start_async_job
   end
 
   def hearing_alerts
@@ -89,7 +90,7 @@ class BaseHearingUpdateForm
       appellant_email_sent_flag,
       representative_email_sent_flag,
       judge_email_sent_flag
-    ].any?(false)
+    ].any?(false) && (hearing.virtual? || virtual_hearing_cancelled?)
   end
 
   def should_create_or_update_virtual_hearing?
@@ -308,8 +309,8 @@ class BaseHearingUpdateForm
   end
 
   def only_emails_updated?
-    email_changed = appellant_email_address.present? ||
-                    representative_email_address.present? ||
+    email_changed = appellant_email.present? ||
+                    representative_email.present? ||
                     judge_id.present?
 
     email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
