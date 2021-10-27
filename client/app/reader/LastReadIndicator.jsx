@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { RightTriangle } from '../components/RenderFunctions';
+import PropTypes from 'prop-types';
 
 class LastReadIndicator extends React.PureComponent {
   render() {
@@ -21,4 +22,10 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
   shouldShow: state.documentList.pdfList.lastReadDocId === ownProps.docId
 });
 
+LastReadIndicator.propTypes = {
+  shouldShow: PropTypes.bool,
+  getRef: PropTypes.func
+};
+
 export default connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+

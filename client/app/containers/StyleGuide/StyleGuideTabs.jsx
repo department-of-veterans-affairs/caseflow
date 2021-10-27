@@ -4,6 +4,7 @@ import React from 'react';
 import TabWindow from '../../components/TabWindow';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import { CrossIcon, CheckIcon } from '../../components/RenderFunctions';
+import PropTypes from 'prop-types';
 
 export default class StyleGuideTabs extends React.PureComponent {
   render() {
@@ -76,3 +77,13 @@ export default class StyleGuideTabs extends React.PureComponent {
     </div>;
   }
 }
+
+StyleGuideTabs.propTypes = {
+  tabs: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
+  tabsWithIcons: PropTypes.arrayOf(PropTypes.shape({
+    disable: PropTypes.bool,
+    icon: PropTypes.node,
+    label: PropTypes.string,
+    page: PropTypes.string
+  }))
+};

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import EditComment from './EditComment';
@@ -52,6 +53,17 @@ class SideBarComments extends PureComponent {
     </div>;
   }
 }
+
+SideBarComments.propTypes = {
+  startPlacingAnnotation: PropTypes.func,
+  stopPlacingAnnotation: PropTypes.func,
+  comments: PropTypes.node,
+  error: PropTypes.node,
+  placedButUnsavedAnnotation: PropTypes.func,
+  updateNewAnnotationContent: PropTypes.func,
+  updateNewAnnotationRelevantDate: PropTypes.func,
+  createAnnotation: PropTypes.func
+};
 
 const mapStateToProps = (state) => {
   return {

@@ -69,7 +69,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 HearingWorksheetIssueDelete.propTypes = {
   issue: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  toggleIssueDeleteModal: PropTypes.func,
+  onDeleteIssue: PropTypes.func,
+  appealKey: PropTypes.number
 };
 
 export default connect(
