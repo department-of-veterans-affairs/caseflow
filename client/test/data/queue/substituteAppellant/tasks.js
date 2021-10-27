@@ -229,7 +229,11 @@ export const sampleTasksForDismissedEvidenceSubmissionDocket = () => {
 
 export const sampleTasksForPendingEvidenceSubmissionDocket = () => {
   const taskTypes = [
-    RootTask,
+    {
+      ...RootTask,
+      closedAt: null,
+      status: 'on_hold'
+    },
     {
       ...DistributionTask,
       parentId: 1,

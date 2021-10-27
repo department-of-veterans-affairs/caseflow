@@ -11,7 +11,7 @@ import {
   shouldHideBasedOnPoa,
   shouldHide,
   shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
-  hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
+  hearingAdminActions, mailTasks, filterOpenTasks } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForDismissedEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { isSameDay } from 'date-fns';
@@ -145,9 +145,12 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('shouldHide', () => {
-
     const otherOrgTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: true }, type: 'other task type' };
-    const otherUserTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false }, type: 'other task type' };
+    const otherUserTask = {
+      hideFromCaseTimeline: false,
+      assignedTo: { isOrganization: false },
+      type: 'other task type',
+    };
 
     describe('with hideFromCaseTimeline', () => {
       const userTaskInfo = { hideFromCaseTimeline: true, assignedTo: { isOrganization: false } };
@@ -216,7 +219,7 @@ describe('utility functions for task manipulation', () => {
 
     describe('tasks where hideFromCaseTimeline is false and the type is not in the automatedTasks array', () => {
       describe('the task type is only assigned to a user', () => {
-        const userTaskInfo = { hideFromCaseTimeline: false, type: 'RootTask', assignedTo: { isOrganization: false } };
+        const userTaskInfo = { hideFromCaseTimeline: false, type: 'FakeUserTask', assignedTo: { isOrganization: false } };
 
         const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
@@ -293,6 +296,29 @@ describe('utility functions for task manipulation', () => {
       expect(filtered.length).toBe(1);
       expect(filtered[0].closedAt).toBeTruthy();
       expect(filtered).toMatchSnapshot();
+    });
+  });
+
+  describe('filterOpenTasks', () => {
+    const allTasks = [
+      { type: 'RootTask', status: 'on_hold' },
+      { type: 'DistributionTask', status: 'completed' },
+      { type: 'JudgeAssignTask', status: 'completed' },
+      { type: 'JudgeDecisionReviewTask', status: 'on_hold' },
+      { type: 'AttorneyTask', status: 'assigned' },
+    ];
+
+    it('properly filters to just open tasks', () => {
+      const res = filterOpenTasks(allTasks);
+
+      expect(res.length).toBe(3);
+      expect(res).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ type: 'RootTask' }),
+          expect.objectContaining({ type: 'JudgeDecisionReviewTask' }),
+          expect.objectContaining({ type: 'AttorneyTask' }),
+        ])
+      );
     });
   });
 });

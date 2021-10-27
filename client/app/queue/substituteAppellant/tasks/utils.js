@@ -51,6 +51,7 @@ export const hearingAdminActions = [
 ];
 
 export const nonAutomatedTasksToHide = [
+  'RootTask',
   'AssignHearingDispositionTask',
   'ChangeHearingDispositionTask',
 ];
@@ -211,9 +212,9 @@ export const filterTasks = (taskData = []) => {
   return Object.values(uniqueTasksByType);
 };
 
-export const sortTasks = (taskData) => {
+export const sortTasks = (taskData, sortField = 'closedAt') => {
   return taskData.sort((task1, task2) =>
-    task1.closedAt > task2.closedAt ? -1 : 1
+    task1[sortField] > task2[sortField] ? -1 : 1
   );
 };
 
@@ -232,6 +233,29 @@ export const prepTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameApp
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
     disabled: shouldDisable(taskInfo),
     selected: shouldAutoSelect(taskInfo),
+  }));
+};
+
+export const filterOpenTasks = (tasks) => tasks.filter((task) => {
+  return ['assigned', 'on_hold'].includes(task.status);
+});
+
+export const prepActiveTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
+  const activeTasks = filterOpenTasks(taskData);
+  const uniqTasks = filterTasks(activeTasks);
+
+  const sortedTasks = sortTasks(uniqTasks, 'createdAt');
+
+  const filteredBySubstitutionType = isSubstitutionSameAppeal ?
+    sortedTasks.filter((task) => task.type !== 'DistributionTask') :
+    sortedTasks;
+
+  return filteredBySubstitutionType.map((taskInfo) => ({
+    ...taskInfo,
+    hidden: shouldHide(taskInfo, claimantPoa, taskData),
+    // disabled: shouldDisable(taskInfo),
+    disabled: false, // TODO - what should be disabled?
+    selected: true,
   }));
 };
 
