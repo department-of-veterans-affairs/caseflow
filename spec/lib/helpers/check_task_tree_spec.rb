@@ -111,7 +111,6 @@ describe "CheckTaskTree" do
       context "when DistributionTask is invalid" do
         before do
           distribution_task.update(assigned_to: QualityReview.singleton)
-          appeal.reload
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message",
@@ -125,7 +124,6 @@ describe "CheckTaskTree" do
           hearing_task.update(parent: distribution_task)
           distribution_task.update(status: :on_hold)
           schedule_hearing_task.update(assigned_to: QualityReview.singleton)
-          appeal.reload
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message",
@@ -143,7 +141,6 @@ describe "CheckTaskTree" do
     context "when TrackVeteranTask is invalid" do
       before do
         tv_task.update(assigned_to: Bva.singleton)
-        # appeal.reload
       end
       it { is_expected.not_to be_blank }
       include_examples "has error message", /TrackVeteranTask assignee should be a Representative/
