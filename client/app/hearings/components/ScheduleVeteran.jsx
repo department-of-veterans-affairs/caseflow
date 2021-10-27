@@ -273,6 +273,7 @@ export const ScheduleVeteran = ({
   const submit = async () => {
     try {
       // Check for form errors
+      debugger
       const formErrors = {
         hearingDay: (hearing.hearingDay && hearing.hearingDay.hearingId) ?
           null :
@@ -291,7 +292,7 @@ export const ScheduleVeteran = ({
         document.getElementById('email-section').scrollIntoView();
 
         return setErrors({
-          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });

@@ -27,7 +27,10 @@ export const AppellantSection = ({
   showTimezoneField,
   schedulingToVirtual,
   userCanCollectVideoCentralEmails,
-  formFieldsOnly
+  formFieldsOnly,
+  appellantTimezone,
+  appellantEmailAddress,
+  appellantEmailType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -87,7 +90,7 @@ export const AppellantSection = ({
             <Timezone
               required={schedulingToVirtual}
               optional={!schedulingToVirtual}
-              value={hearing?.appellantTz}
+              value={appellantTimezone}
               onChange={(appellantTz) => update('hearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}
@@ -109,8 +112,8 @@ export const AppellantSection = ({
             optional={!schedulingToVirtual}
             readOnly={readOnly}
             label={`${appellantTitle} Email (for these notifications only)`}
-            emailType="appellantEmailAddress"
-            email={hearing?.appellantEmailAddress}
+            emailType={appellantEmailType}
+            email={appellantEmailAddress}
             error={errors?.appellantEmailAddress}
             type={type}
             update={update}
@@ -149,5 +152,8 @@ AppellantSection.propTypes = {
   virtual: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool,
-  formFieldsOnly: PropTypes.bool
+  formFieldsOnly: PropTypes.bool,
+  appellantTimezone: PropTypes.string,
+  appellantEmailAddress: PropTypes.string,
+  appellantEmailType: PropTypes.string
 };
