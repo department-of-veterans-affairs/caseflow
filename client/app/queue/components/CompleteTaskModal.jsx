@@ -48,13 +48,14 @@ MarkTaskCompleteModal.propTypes = {
   state: PropTypes.object
 };
 
+const locationTypeOpts = [
+  { displayText: 'VBMS', value: 'vbms' },
+  { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
+  { displayText: 'Other', value: 'other' }
+];
+
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  const locationTypeOpts = [
-    { displayText: 'VBMS', value: 'vbms' },
-    { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
-    { displayText: 'Other', value: 'other' }
-  ];
 
   const handleRadioChange = (value) => {
     setState({ radio: value });
@@ -139,8 +140,8 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   ready_for_review: {
-    buildSuccessMsg: (appeal, { assignedTo }) => ({
-      title: assignedTo === 'VhaProgramOffice' ?
+    buildSuccessMsg: (appeal, { assignedToType }) => ({
+      title: assignedToType === 'VhaProgramOffice' ?
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
@@ -217,22 +218,39 @@ class CompleteTaskModal extends React.Component {
     teamName: this.props.task.label,
     appeal: this.props.appeal,
     props: this.props,
-    assignedTo: this.getTaskAssignedToType(),
+    assignedToType: this.getTaskAssignedToType(),
     state: this.state,
     setState: this.setState.bind(this)
   });
 
+  formatInstructions = () => {
+    const { instructions, radio, otherInstructions } = this.state;
+    let formattedInstructions = instructions;
+
+    if (radio) {
+      const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
+      const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
+        locationLabel}.`;
+
+      formattedInstructions = docLocationText;
+      if (instructions) {
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+
+        formattedInstructions += instructionsDetail;
+      }
+    }
+
+    return formattedInstructions;
+  };
+
   submit = () => {
     const { task, appeal } = this.props;
-    const detail = 'Detail:';
-    const modifiedInstructions =
-      `Documents for this appeal are stored in ${this.state.radio === 'other' ? this.state.otherInstructions :
-        this.state.radio}\n\n**${detail}** ${this.state.instructions}`;
+
     const payload = {
       data: {
         task: {
           status: 'completed',
-          instructions: modifiedInstructions
+          instructions: this.formatInstructions()
         }
       }
     };
