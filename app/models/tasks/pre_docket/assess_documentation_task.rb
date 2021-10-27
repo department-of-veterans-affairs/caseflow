@@ -6,8 +6,17 @@
 # will also need to move up the chain as well i.e. Regional -> Program etc.
 
 class AssessDocumentationTask < Task
+  validates :parent, presence: true,
+                     on: :create
+
+  def self.label
+    COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
+  end
+
+  # Actions that can be taken on both organization and user tasks
   DEFAULT_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+    Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h
   ].freeze
 
   PO_ACTIONS = [
@@ -32,5 +41,11 @@ class AssessDocumentationTask < Task
     end
 
     task_actions
+  end
+
+  def when_child_task_completed(child_task)
+    append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
+
+    super
   end
 end
