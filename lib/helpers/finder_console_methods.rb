@@ -7,7 +7,7 @@
 # :reek:FeatureEnvy
 # :reek:UtilityFunction
 module FinderConsoleMethods
-  UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
+  UUID_REGEX ||= /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
   def uuid?(uuid)
     UUID_REGEX.match?(uuid.to_s.downcase)
   end

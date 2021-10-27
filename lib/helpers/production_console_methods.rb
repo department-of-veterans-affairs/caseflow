@@ -3,13 +3,6 @@
 require_relative "check_task_tree"
 
 module ProductionConsoleMethods
-  # https://stackoverflow.com/questions/4914913/how-do-i-include-a-module-into-another-module-refactor-aasm-code-and-custom-sta
-  def self.included(klass)
-    klass.class_eval do
-      include FinderConsoleMethods
-    end
-  end
-
   # Prints a more readable version of PaperTrail versioning data
   # Usage: `pp _versions DistributionTask.last`
   def _versions(record)

@@ -182,7 +182,7 @@ class CheckTaskTree
   end
 
   # Task types that are ignored when checking that an appeal is not stuck
-  IGNORED_ACTIVE_TASKS = %w[TrackVeteranTask].freeze
+  IGNORED_ACTIVE_TASKS ||= %w[TrackVeteranTask].freeze
   # Detects one of the problems from AppealsWithNoTasksOrAllTasksOnHoldQuery
   # Should also emcompass OpenHearingTasksWithoutActiveDescendantsChecker
   def active_tasks_with_open_root_task
@@ -200,14 +200,14 @@ class CheckTaskTree
   # but the validations can be subverted, so let's check them here just in case.
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html
   # Example: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/217#issuecomment-906779760
-  SINGULAR_OPEN_TASKS = %w[RootTask DistributionTask
-                           HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
-                           JudgeAssignTask JudgeDecisionReviewTask
-                           AttorneyTask AttorneyRewriteTask
-                           JudgeQualityReviewTask AttorneyQualityReviewTask
-                           JudgeDispatchReturnTask AttorneyDispatchReturnTask
-                           VeteranRecordRequest].freeze
-  SINGULAR_OPEN_ORG_TASKS = %w[
+  SINGULAR_OPEN_TASKS ||= %w[RootTask DistributionTask
+                             HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
+                             JudgeAssignTask JudgeDecisionReviewTask
+                             AttorneyTask AttorneyRewriteTask
+                             JudgeQualityReviewTask AttorneyQualityReviewTask
+                             JudgeDispatchReturnTask AttorneyDispatchReturnTask
+                             VeteranRecordRequest].freeze
+  SINGULAR_OPEN_ORG_TASKS ||= %w[
     QualityReviewTask
     BvaDispatchTask
   ].freeze
