@@ -134,9 +134,7 @@ class CheckTaskTree
   end
 
   def inconsistent_assignees
-    tasks_with_unexpected_assignee.map do |task|
-      [task.type, task.assigned_to_type, task.assigned_to_id]
-    end
+    tasks_with_unexpected_assignee.pluck(:type, :assigned_to_type, :assigned_to_id)
   end
 
   # Don't use a constant for this hash as that could initialize the assignees before the DB is ready
@@ -167,7 +165,6 @@ class CheckTaskTree
     end.select(&:any?).flatten
   end
 
-  #
   # `Organization.unscoped{TrackVeteranTask.includes(:assigned_to).reject{|task| task.assigned_to.is_a?(Representative)}}`
   def track_veteran_task_assigned_to_non_representative
     Organization.unscoped do
