@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { toggleIssueDeleteModal, onDeleteIssue } from '../../actions/hearingWorksheetActions';
 import Modal from '../../../components/Modal';
-import { trashCan } from '../../../components/RenderFunctions';
+import { Trashcan } from '../../../components/RenderFunctions';
 
 class HearingWorksheetIssueDelete extends PureComponent {
 
@@ -36,7 +36,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
         name="Delete Issue"
         aria-label="Delete Issue"
         type="button">
-        {trashCan()}
+        <Trashcan />
       </button>
       { issue.isShowingModal && <Modal
         buttons = {[

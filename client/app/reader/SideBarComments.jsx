@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import EditComment from './EditComment';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
-import { plusIcon } from '../components/RenderFunctions';
+import { PlusIcon } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
@@ -30,7 +30,7 @@ class SideBarComments extends PureComponent {
         <Button
           name="AddComment"
           onClick={this.handleAddClick}>
-          <span>{plusIcon()} &nbsp; Add a comment</span>
+          <span><PlusIcon /> &nbsp; Add a comment</span>
         </Button>
       </span>
       <div style={{ clear: 'both' }}></div>

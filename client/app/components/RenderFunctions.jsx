@@ -102,7 +102,7 @@ LoadingSymbol.defaultProps = {
   color: LOGO_COLORS.DISPATCH.ACCENT
 };
 
-export let closeSymbolHtml = () => {
+export const CloseIcon = () => {
   return (
     <svg width="55" height="55" className="cf-icon-close"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
@@ -144,17 +144,13 @@ export const missingSymbolHtml = () => {
   );
 };
 
-// not rendering as a component when passed to StyleGuideTabs.jsx
-// look for svg file from fontawesome and replace. This might fix the issue? ^^
-export const checkSymbolHtml = () => {
+export const CheckIcon = () => {
   return (
     <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
   );
 };
 
-// not rendering as a component when passed to StyleGuideTabs.jsx
-// look for svg file from fontawesome and replace. This might fix the issue ^^
-export const crossSymbolHtml = () => {
+export const CrossIcon = () => {
   return (
     <i className="fa fa-times fa-1 cf-tab-cross" aria-hidden="true"></i>
   );
@@ -166,7 +162,7 @@ export const GithubIcon = () => {
   );
 };
 
-export const plusIcon = () => {
+export const PlusIcon = () => {
   return <svg width="12px" height="12px" viewBox="0 0 15 15">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={COLORS.WHITE}>
@@ -270,7 +266,7 @@ UnselectedFilterIcon.propTypes = {
   className: PropTypes.string
 };
 
-export const rightTriangle = () => {
+export const RightTriangle = () => {
   return <svg width="11px" height="18px" viewBox="0 0 21 35">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill="#000000">
@@ -282,6 +278,7 @@ export const rightTriangle = () => {
   </svg>;
 };
 
+// used in CommentIcon.jsx
 export const commentIcon = (selected, id) => {
   const filter = selected ? `url(#${id}-filter-1)` : '';
 
@@ -308,7 +305,7 @@ export const commentIcon = (selected, id) => {
   </svg>;
 };
 
-export const closeIcon = () => {
+export const CloseIconSmall = () => {
   return <svg width="12px" height="12px" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill="#000000">
@@ -320,7 +317,7 @@ export const closeIcon = () => {
   </svg>;
 };
 
-export const lockIcon = () =>
+export const LockIcon = () =>
   <svg width="16px" height="18px" viewBox="0 0 18 20" version="1.1"
     xmlns="http://www.w3.org/2000/svg" className="cf-lock-icon">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -348,8 +345,9 @@ export const lockIcon = () =>
     </g>
   </svg>;
 
-export const downloadIcon = (color = COLORS.WHITE) => {
-  // eslint-disable-next-line class-methods-use-this
+export const DownloadIcon = (props) => {
+  const { color } = props;
+
   return <svg width="14px" height="19px" viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill={color}>
@@ -360,6 +358,14 @@ export const downloadIcon = (color = COLORS.WHITE) => {
       </g>
     </g>
   </svg>;
+};
+
+DownloadIcon.propTypes = {
+  color: PropTypes.string
+};
+
+DownloadIcon.defaultProps = {
+  color: COLORS.WHITE
 };
 
 export const MagnifyingGlass = (props) => {
@@ -571,7 +577,7 @@ export const FitToScreen = () => {
   </svg>;
 };
 
-export const trashCan = () => {
+export const Trashcan = () => {
   return <svg id="trash-can" width="24px" height="26px" viewBox="0 0 24 26" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="Group-7" transform="translate(0.000000, 1.000000)">
@@ -694,7 +700,7 @@ export const LinkSymbol = () => {
   </svg>;
 };
 
-export const pencilSymbol = () => {
+export const PencilIcon = () => {
   return <svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-729.000000, -307.000000)" fill="#0071BC" fillRule="nonzero">
@@ -708,7 +714,7 @@ export const pencilSymbol = () => {
   </svg>;
 };
 
-export const clockIcon = () => {
+export const ClockIcon = () => {
   return <svg width="16px" height="16px" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="clock" className="svg-inline--fa fa-clock fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256,8C119,8,8,119,8,256S119,504,256,504,504,393,504,256,393,8,256,8Zm92.49,313h0l-20,25a16,16,0,0,1-22.49,2.5h0l-67-49.72a40,40,0,0,1-15-31.23V112a16,16,0,0,1,16-16h32a16,16,0,0,1,16,16V256l58,42.5A16,16,0,0,1,348.49,321Z"></path></svg>;
 };
 /* eslint-enable max-len */

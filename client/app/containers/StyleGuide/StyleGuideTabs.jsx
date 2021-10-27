@@ -3,7 +3,7 @@ import React from 'react';
 // components
 import TabWindow from '../../components/TabWindow';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
+import { CrossIcon, CheckIcon } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.PureComponent {
   render() {
@@ -30,17 +30,17 @@ export default class StyleGuideTabs extends React.PureComponent {
 
     tabsWithIcons = [{
       disable: false,
-      icon: checkSymbolHtml(),
+      icon: <CheckIcon />,
       label: 'Active Tab',
       page: ' '
     }, {
       disable: false,
-      icon: checkSymbolHtml(),
+      icon: <CheckIcon />,
       label: 'Enabled Tab',
       page: ' '
     }, {
       disable: true,
-      icon: crossSymbolHtml(),
+      icon: <CrossIcon />,
       label: 'Disabled Tab',
       page: ' '
     }

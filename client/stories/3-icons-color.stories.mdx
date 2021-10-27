@@ -2,18 +2,18 @@ import { Meta, Story, Preview, Canvas } from '@storybook/addon-docs/blocks';
 // import as PascalCase to avoid React component render error. 
 import { 
     LoadingSymbol,
-    closeSymbolHtml as CloseSymbol,
+    CloseIcon,
     successSymbolHtml as SuccessSymbol,
     missingSymbolHtml as MissingSymbol,
-    checkSymbolHtml as CheckSymbol,
-    crossSymbolHtml as CrossSymbol,
+    CheckIcon,
+    CrossIcon,
     GithubIcon,
     SelectedFilterIcon,
     UnselectedFilterIcon,
-    rightTriangle as RightTriangle,
+    RightTriangle,
     commentIcon as CommentIcon,
-    closeIcon as CloseIcon,
-    lockIcon as LockIcon,
+    CloseIconSmall,
+    LockIcon,
     MagnifyingGlass,
     LeftChevron,
     RightChevron,
@@ -27,15 +27,15 @@ import {
     SortArrowUp,
     SortArrowDown,
     DoubleArrow,
-    trashCan as TrashCan,
+    Trashcan,
     ClipboardIcon,
     NewFileIcon,
     GreenCheckmark,
     CancelIcon,
     GrayDot,
     LinkSymbol,
-    pencilSymbol as PencilSymbol,
-    clockIcon as ClockIcon
+    PencilIcon,
+    ClockIcon
 } from '../app/components/RenderFunctions.jsx';
 
 import { COLORS, LOGO_COLORS } from '../app/constants/AppConstants';
@@ -60,11 +60,11 @@ These are all of the icons used throughout the Caseflow project. The goal here i
 To be used on white backgrounds.
 
 <Canvas> 
-    <Story name="Loading Icon">
+    <Story name="Loading Symbol">
         <LoadingSymbol />
     </Story>
     <Story name="Close Icon">
-        <CloseSymbol />
+        <CloseIcon />
     </Story>
     <Story name="Success Icon">
         <SuccessSymbol />
@@ -73,10 +73,10 @@ To be used on white backgrounds.
         <MissingSymbol />
     </Story>
     <Story name="Check Icon">
-        <CheckSymbol />
+        <CheckIcon />
     </Story>
     <Story name="Cross Icon">
-        <CrossSymbol />
+        <CrossIcon />
     </Story>
     <Story name="Github Icon">
         <GithubIcon />
@@ -93,8 +93,8 @@ To be used on white backgrounds.
     <Story name="Comment Icon">
         <CommentIcon />
     </Story>
-    <Story name="Close Icon">
-        <CloseIcon />
+    <Story name="Close Icon Small">
+        <CloseIconSmall />
     </Story>
     <Story name="Lock Icon">
         <LockIcon />
@@ -133,7 +133,7 @@ To be used on white backgrounds.
         <DoubleArrow />
     </Story>
     <Story name="Trashcan Icon">
-        <TrashCan />
+        <Trashcan />
     </Story>
     <Story name="Clipboard Icon">
         <ClipboardIcon />
@@ -154,7 +154,7 @@ To be used on white backgrounds.
         <LinkSymbol />
     </Story>
     <Story name="Pencil Icon">
-        <PencilSymbol />
+        <PencilIcon />
     </Story>
     <Story name="Clock Icon">
         <ClockIcon />

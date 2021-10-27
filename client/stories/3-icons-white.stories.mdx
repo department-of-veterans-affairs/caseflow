@@ -1,8 +1,7 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 import { COLORS, LOGO_COLORS } from '../app/constants/AppConstants';
-// import as PascalCase to avoid React component render error. 
 import { 
-    plusIcon as PlusIcon,
+    PlusIcon,
     CategoryIcon,
     FilterIcon,
     PageArrowLeft,
@@ -12,6 +11,7 @@ import {
     FitToScreen,
     Rotate,
     SearchIcon,
+    DownloadIcon
 } from '../app/components/RenderFunctions.jsx';
 
 <Meta 
@@ -63,5 +63,8 @@ To be used on dark backgrounds.
     </Story>
     <Story name="Category Icon">
         <CategoryIcon />
+    </Story>
+    <Story name="Download Icon">
+        <DownloadIcon />
     </Story>
 </Canvas>
