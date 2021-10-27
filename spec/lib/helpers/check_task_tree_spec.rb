@@ -129,8 +129,24 @@ describe "CheckTaskTree" do
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message",
-                        /Task assignee is inconsistent with other tasks of the same type: .*ScheduleHearingTask/
+                         /Task assignee is inconsistent with other tasks of the same type: .*ScheduleHearingTask/
       end
+    end
+  end
+
+  describe "#track_veteran_task_assigned_to_non_representative" do
+    subject { CheckTaskTree.new(appeal).track_veteran_task_assigned_to_non_representative }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let!(:tv_task) { create(:track_veteran_task, parent: appeal.root_task, assigned_to: create(:vso)) }
+    it_behaves_like "when tasks are correct"
+
+    context "when TrackVeteranTask is invalid" do
+      before do
+        tv_task.update(assigned_to: Bva.singleton)
+        # appeal.reload
+      end
+      it { is_expected.not_to be_blank }
+      include_examples "has error message", /TrackVeteranTask assignee should be a Representative/
     end
   end
 
