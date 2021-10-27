@@ -374,10 +374,10 @@
     "value": "modal/assign_to_regional_office",
     "func": "vha_assign_to_regional_office_data"
   },
-  "RETURN_TO_CAMO": {
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
     "label": "Return to CAMO team",
     "value": "modal/return_to_camo",
-    "func": "return_to_camo"
+    "func": "vha_program_office_return_to_camo"
   },
   "VHA_SEND_TO_BOARD_INTAKE": {
     "label": "Send to Board Intake",

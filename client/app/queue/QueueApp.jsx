@@ -51,7 +51,6 @@ import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispos
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-import ReturnToCamo from './ReturnToCamo';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddDvcTeamModal from './AddDvcTeamModal';
@@ -293,10 +292,6 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
-  routedReturnToCamo = (props) => (
-    <ReturnToCamo {...props.match.params} />
-  );
-
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -339,6 +334,10 @@ class QueueApp extends React.PureComponent {
 
   routedDocketAppeal = (props) => (
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
+  );
+
+  routedReturnToCamo = (props) => (
+    <CancelTaskModal {...props.match.params} />
   );
 
   routedCancelTaskModal = (props) => (
@@ -870,7 +869,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.RETURN_TO_CAMO.value
+                  TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
                 }`}
               render={this.routedReturnToCamo}
             />

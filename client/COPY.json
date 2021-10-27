@@ -599,7 +599,6 @@
   "PULAC_CERULLO_REMINDER_MODAL_OPT_TRUE": "Yes, notify Pulac Cerullo team of jurisdictional conflict",
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
-  "RETURN_TASK_SUCCESS_MESSAGE": "You have successfully returned the task.",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
@@ -1152,5 +1151,8 @@
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from  you Queue and places in the CAMO team's Queue"
 }
