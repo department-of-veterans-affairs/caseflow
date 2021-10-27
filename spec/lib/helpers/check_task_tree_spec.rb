@@ -185,6 +185,23 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Open RootTask should have an active task assigned to the Board"
       end
     end
+    describe "#unexpected_child_task" do
+      subject { CheckTaskTree.new(appeal).unexpected_child_task }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
+      let(:dispatch_org_task) { appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask) }
+      # let(:dispatch_user_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
+      it_behaves_like "when tasks are correct"
+      context "when tasks are invalid" do
+        before do
+          # dispatch_user_task.parent.assigned!
+          # dispatch_user_task.update(parent: appeal.root_task)
+          JudgeDispatchReturnTask.create!(appeal: appeal, parent: dispatch_org_task, assigned_to: judge)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", /Unexpected child task: .*JudgeDispatchReturnTask/
+      end
+    end
   end
 
   context "check_task_counts" do

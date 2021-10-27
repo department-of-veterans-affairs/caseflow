@@ -95,6 +95,10 @@ class CheckTaskTree
     if active_tasks_with_open_root_task&.empty?
       @errors << "Open RootTask should have an active task assigned to the Board"
     end
+
+    unless unexpected_child_task.blank?
+      @errors << "Unexpected child task: #{unexpected_child_task.pluck(:type, :id)}"
+    end
   end
 
   def check_task_counts
@@ -173,12 +177,12 @@ class CheckTaskTree
   end
 
   def open_tasks_with_parent_not_on_hold
-    tasks_with_parents.open.reject { |task| task.parent&.status == "on_hold" }
+    child_tasks.open.reject { |task| task.parent&.status == "on_hold" }
   end
 
   # See AppealsWithClosedRootTaskOpenChildrenQuery
   def open_tasks_with_closed_root_task
-    tasks_with_parents.open if @appeal.root_task&.closed?
+    child_tasks.open if @appeal.root_task&.closed?
   end
 
   # Task types that are ignored when checking that an appeal is not stuck
@@ -186,7 +190,47 @@ class CheckTaskTree
   # Detects one of the problems from AppealsWithNoTasksOrAllTasksOnHoldQuery
   # Should also emcompass OpenHearingTasksWithoutActiveDescendantsChecker
   def active_tasks_with_open_root_task
-    tasks_with_parents.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
+    child_tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
+  end
+
+  def expected_child_task_hash
+    @expected_child_task_hash ||= {
+      # org-task that expect an associated user-task
+      InformalHearingPresentationTask.assigned_to_any_org => InformalHearingPresentationTask.assigned_to_any_user,
+      SendCavcRemandProcessedLetterTask.assigned_to_any_org => SendCavcRemandProcessedLetterTask.assigned_to_any_user,
+      EvidenceSubmissionWindowTask.assigned_to_any_org => EvidenceSubmissionWindowTask.assigned_to_any_user,
+      TranslationTask.assigned_to_any_org => TranslationTask.assigned_to_any_user,
+      QualityReviewTask.assigned_to_any_org => QualityReviewTask.assigned_to_any_user,
+      BvaDispatchTask.assigned_to_any_org => BvaDispatchTask.assigned_to_any_user,
+      FoiaTask.assigned_to_any_org => FoiaTask.assigned_to_any_user,
+
+      # Colocated org-task that expect an associated Colocated user-task
+      IhpColocatedTask.assigned_to_any_org => IhpColocatedTask.assigned_to_any_user,
+      ExtensionColocatedTask.assigned_to_any_org => ExtensionColocatedTask.assigned_to_any_user,
+      MissingRecordsColocatedTask.assigned_to_any_org => MissingRecordsColocatedTask.assigned_to_any_user,
+      PoaClarificationColocatedTask.assigned_to_any_org => PoaClarificationColocatedTask.assigned_to_any_user,
+      OtherColocatedTask.assigned_to_any_org => OtherColocatedTask.assigned_to_any_user,
+
+      # Mail org-task that expect an associated Mail user-task
+      DocketSwitchMailTask.assigned_to_any_org => DocketSwitchMailTask.assigned_to_any_user,
+
+      # different task types
+      FoiaColocatedTask.assigned_to_any_org => FoiaTask.assigned_to_any_org,
+      QualityReviewTask.assigned_to_any_user => JudgeQualityReviewTask.assigned_to_any_user,
+      BvaDispatchTask.assigned_to_any_user => JudgeDispatchReturnTask.assigned_to_any_user
+    }
+  end
+
+  # Based on high-count, 100% frequency stats from:
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html
+  def unexpected_child_task
+    expected_child_task_hash.map do |parent_task_query, child_task_query|
+      parent_task_query.where(appeal: @appeal).map do |parent|
+        parent.children - child_task_query.where(appeal: @appeal) - TimedHoldTask.where(appeal: @appeal)
+      end.select(&:any?)
+    end.select(&:any?).flatten
   end
 
   # See AppealsWithMoreThanOneOpenHearingTaskChecker
@@ -250,7 +294,7 @@ class CheckTaskTree
 
   private
 
-  def tasks_with_parents
+  def child_tasks
     @appeal.tasks.where.not(parent_id: nil)
   end
 end
