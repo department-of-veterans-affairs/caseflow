@@ -31,7 +31,6 @@ import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 import {
   VIDEO_HEARING_LABEL,
-  TRAVEL_BOARD_HEARING_LABEL,
   VIRTUAL_HEARING_LABEL,
   REQUEST_TYPE_OPTIONS
 } from './constants';
@@ -986,20 +985,12 @@ const virtualHearingOption = {
   label: VIRTUAL_HEARING_LABEL
 };
 
-export const allScheduleVeteranDropdownOptions = (appeal) => {
-  const videoHearingOption = { value: false, label: VIDEO_HEARING_LABEL };
-
-  if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
-    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-    // the HearingTypeDropdown
-    return [videoHearingOption, virtualHearingOption];
+export const allScheduleVeteranDropdownOptions = (readableHearingRequestType, readableOriginalHearingRequestType) => {
+  if (readableHearingRequestType === 'Virtual') {
+    return [{ value: false, label: readableOriginalHearingRequestType }, virtualHearingOption];
   }
 
-  // The default is video hearing if the appeal isn't associated with an RO.
-  if (appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL) {
-    return [videoHearingOption, virtualHearingOption];
-  }
+  return [{ value: false, label: readableHearingRequestType }, virtualHearingOption];
 };
 
 export const allDetailsDropdownOptions = (hearing) => {

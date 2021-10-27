@@ -201,6 +201,11 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
+  "READY_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data"
+  },
   "PLACE_TIMED_HOLD": {
     "label": "Put task on hold",
     "value": "modal/place_timed_hold"

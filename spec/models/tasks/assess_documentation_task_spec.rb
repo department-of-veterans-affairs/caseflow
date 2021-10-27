@@ -12,6 +12,7 @@ describe AssessDocumentationTask, :postgres do
 
     available_actions = [
       Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+      Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
       Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
       Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
     ]

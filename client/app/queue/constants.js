@@ -95,6 +95,8 @@ export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 
 export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
+export const slimHeight = css({ height: '4rem' });
+
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
@@ -119,7 +121,7 @@ export const APPELLANT_TYPES = {
   OTHER_CLAIMANT: 'OtherClaimant',
   ATTORNEY_CLAIMANT: 'AttorneyClaimant',
   VETERAN_CLAIMANT: 'VeteranClaimant',
-}
+};
 
 export const SEARCH_ERROR_FOR = {
   EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
