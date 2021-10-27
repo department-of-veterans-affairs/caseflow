@@ -194,7 +194,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
@@ -310,7 +309,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
@@ -592,7 +590,6 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
@@ -708,7 +705,6 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
@@ -990,7 +986,6 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
@@ -1106,7 +1101,6 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
@@ -1388,7 +1382,6 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="appellantEmailAddress"
                 label="Veteran Email (for these notifications only)"
                 optional={false}
                 readOnly={true}
@@ -1504,7 +1497,6 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
-                emailType="representativeEmailAddress"
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
                 readOnly={true}
