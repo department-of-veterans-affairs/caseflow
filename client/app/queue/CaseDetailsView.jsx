@@ -158,6 +158,10 @@ export const CaseDetailsView = (props) => {
         regionalOffice,
       });
     }
+
+    return () => {
+      props.resetSuccessMessages();
+    };
   }, []);
 
   const doPulacCerulloReminder = useMemo(
@@ -363,6 +367,7 @@ CaseDetailsView.propTypes = {
   error: PropTypes.object,
   featureToggles: PropTypes.object,
   resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
   userCanAccessReader: PropTypes.bool,

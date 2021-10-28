@@ -5,24 +5,22 @@ import Alert from 'app/components/Alert';
 
 import { SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION } from 'app/../COPY';
 
-const appealIsSameAppealSubstitution = ({ targetAppealId }) => {
-  return (targetAppealId === 'undefined' || targetAppealId === null);
-};
+export const AppealHasSubstitutionAlert = ({ targetAppealId, hasSameAppealSubstitution }) => {
 
-export const AppealHasSubstitutionAlert = ({ targetAppealId }) => {
   return (
     <Alert type="info">
       {SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION}{' '}
-      {!appealIsSameAppealSubstitution &&
-      <span>
+      {targetAppealId && !hasSameAppealSubstitution && (
+        <span>
           See the new{' '}
-        <Link to={`/queue/appeals/${targetAppealId}`}>appeal stream</Link>.
-      </span>
-      }
+          <Link to={`/queue/appeals/${targetAppealId}`}>appeal stream</Link>.
+        </span>
+      )}
     </Alert>
   );
 };
 
 AppealHasSubstitutionAlert.propTypes = {
   targetAppealId: PropTypes.string.isRequired,
+  hasSameAppealSubstitution: PropTypes.bool,
 };
