@@ -26,7 +26,7 @@ export const TasksToCancel = ({ tasks }) => {
   // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
   const handleCheck = (changedId) => {
     const { [fieldName]: ids } = getValues();
-    const selectedTasks = tasks.filter((task) => ids.includes(task.taskId));
+    const selectedTasks = tasks.filter((task) => ids.includes(Number(task.taskId)));
     const wasJustChecked = !ids?.includes(changedId);
 
     // if changedId is already in array of selected Ids, filter it out;
@@ -35,9 +35,9 @@ export const TasksToCancel = ({ tasks }) => {
       [...ids, changedId] :
       selectedTasks
           ?.filter(
-            (task) => task.taskId !== changedId && task.parentId !== changedId
+            (task) => Number(task.taskId) !== changedId && task.parentId !== changedId
           )
-          .map((task) => task.taskId);
+          .map((task) => Number(task.taskId));
   };
 
   return (

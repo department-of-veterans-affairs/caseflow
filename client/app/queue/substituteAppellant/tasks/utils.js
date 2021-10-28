@@ -255,13 +255,17 @@ export const shouldHideOpen = (taskInfo, claimantPoa, allTasks) => {
 // For open tasks, we want to prevent (de)selection of child tasks if parent tasks have been selected to be cancelled
 export const adjustOpenTasksBasedOnSelection = ({ tasks, selectedTaskIds }) => {
   const deselectedTaskIds = tasks.
-    filter((task) => !selectedTaskIds.includes(task.taskId)).
-    map((task) => task.taskId);
+    filter((task) => !selectedTaskIds.includes(Number(task.taskId))).
+    map((task) => Number(task.taskId));
 
   return tasks.map((task) => ({
     ...task,
-    disabled: task.disabled || deselectedTaskIds.includes(task.parentId),
-    selected: (selectedTaskIds.includes(task.taskId) && !deselectedTaskIds.includes(task.parentId)) || task.selected
+    disabled:
+      task.disabled || deselectedTaskIds.includes(Number(task.parentId)),
+    selected:
+      (selectedTaskIds.includes(Number(task.taskId)) &&
+        !deselectedTaskIds.includes(Number(task.parentId))) ||
+      task.selected,
   }));
 };
 
@@ -277,8 +281,8 @@ export const prepOpenTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSam
 
   return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHideOpen(taskInfo, claimantPoa, taskData), // TODO: should any actually be hidden?
-    disabled: false, // TODO: what should be disabled?
+    hidden: shouldHideOpen(taskInfo, claimantPoa, taskData),
+    disabled: false,
     selected: true,
   }));
 };
