@@ -58,8 +58,8 @@ describe Hearings::GeomatchAndCacheAppealJob do
 
           cached = CachedAppeal.first
 
-          expect(cached.closest_regional_office_city).to eq("San Diego")
-          expect(cached.closest_regional_office_key).to eq("RO77")
+          expect(cached.closest_regional_office_city).to eq("Manchester")
+          expect(cached.closest_regional_office_key).to eq("RO73")
           expect(cached.former_travel).to eq(false)
           expect(cached.hearing_request_type).to eq("Travel")
         end
