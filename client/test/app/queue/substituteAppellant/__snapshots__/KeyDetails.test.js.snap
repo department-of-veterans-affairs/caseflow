@@ -41,7 +41,7 @@ exports[`KeyDetails renders default state correctly 1`] = `
         href="/queue/appeals/abc123"
         target="_blank"
       >
-        View original case details 
+        View case details 
         <i
           class="fa fa-external-link"
         />
