@@ -56,7 +56,9 @@ export const nonAutomatedTasksToHide = [
   'ChangeHearingDispositionTask',
 ];
 
-export const tasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
+export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
+// This may be refined after user testing...
+export const openTasksToHide = [...nonAutomatedTasksToHide];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
@@ -172,7 +174,7 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
   // Some tasks should always be hidden, regardless of additional context
-  if (tasksToHide.includes(taskInfo.type)) {
+  if (closedTasksToHide.includes(taskInfo.type)) {
     return true;
   }
 
@@ -185,18 +187,18 @@ export const shouldAutoSelect = (taskInfo) => {
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
-export const filterTasks = (taskData = []) => {
+export const filterTasks = (taskData = [], opts = { orgOnly: true, closedOnly: true }) => {
   const uniqueTasksByType = {};
 
   for (const task of taskData) {
     // we only want organization tasks
-    if (!task.assignedTo?.isOrganization) {
+    if (opts.orgOnly && !task.assignedTo?.isOrganization) {
       // eslint-disable-next-line no-continue
       continue;
     }
 
     // we only want completed and cancelled tasks
-    if (!task.closedAt) {
+    if (opts.closedOnly && !task.closedAt) {
       // eslint-disable-next-line no-continue
       continue;
     }
@@ -240,9 +242,32 @@ export const filterOpenTasks = (tasks) => tasks.filter((task) => {
   return ['assigned', 'on_hold'].includes(task.status);
 });
 
+export const shouldHideOpen = (taskInfo, claimantPoa, allTasks) => {
+  // Some tasks should always be hidden, regardless of additional context
+  if (openTasksToHide.includes(taskInfo.type)) {
+    return true;
+  }
+
+  // eslint-disable-next-line max-len
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, claimantPoa)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
+};
+
+// For open tasks, we want to prevent (de)selection of child tasks if parent tasks have been selected to be cancelled
+export const adjustOpenTasksBasedOnSelection = ({ tasks, selectedTaskIds }) => {
+  const deselectedTaskIds = tasks.
+    filter((task) => !selectedTaskIds.includes(task.taskId)).
+    map((task) => task.taskId);
+
+  return tasks.map((task) => ({
+    ...task,
+    disabled: task.disabled || deselectedTaskIds.includes(task.parentId),
+    selected: (selectedTaskIds.includes(task.taskId) && !deselectedTaskIds.includes(task.parentId)) || task.selected
+  }));
+};
+
 export const prepOpenTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
   const activeTasks = filterOpenTasks(taskData);
-  const uniqTasks = filterTasks(activeTasks);
+  const uniqTasks = filterTasks(activeTasks, { orgOnly: false, closedOnly: false });
 
   const sortedTasks = sortTasks(uniqTasks, 'createdAt');
 
@@ -252,8 +277,8 @@ export const prepOpenTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSam
 
   return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHide(taskInfo, claimantPoa, taskData),
-    disabled: false, // TODO - what should be disabled?
+    hidden: shouldHideOpen(taskInfo, claimantPoa, taskData), // TODO: should any actually be hidden?
+    disabled: false, // TODO: what should be disabled?
     selected: true,
   }));
 };

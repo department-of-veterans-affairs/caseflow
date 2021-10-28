@@ -231,26 +231,31 @@ export const sampleTasksForPendingEvidenceSubmissionDocket = () => {
   const taskTypes = [
     {
       ...RootTask,
+      id: 1,
       closedAt: null,
       status: 'on_hold'
     },
     {
       ...DistributionTask,
+      id: 2,
       parentId: 1,
     },
     {
+      id: 3,
       type: 'EvidenceSubmissionWindowTask',
       label: 'Evidence Submission Window Task',
       parentId: 2,
       timerEndsAt: '2021-05-30T10:33:08.151-04:00',
     },
     {
+      id: 4,
       type: 'JudgeAssignTask',
       label: 'Assign',
       parentId: 1,
       closedAt: '2021-04-28T10:33:08.151-04:00',
     },
     {
+      id: 5,
       type: 'JudgeDecisionReviewTask',
       label: 'Review',
       parentId: 1,
@@ -258,9 +263,10 @@ export const sampleTasksForPendingEvidenceSubmissionDocket = () => {
       status: 'on_hold'
     },
     {
+      id: 6,
       type: 'AttorneyTask',
       label: 'Draft decision',
-      parentId: 4,
+      parentId: 5,
       closedAt: null,
       status: 'assigned'
     },

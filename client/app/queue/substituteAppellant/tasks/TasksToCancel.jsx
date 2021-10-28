@@ -20,25 +20,25 @@ export const TasksToCancel = ({ tasks }) => {
     }));
   }, [tasks]);
 
+  // We use this to set `defaultChecked` for the task checkboxes
+  const selectedTaskIds = watch(fieldName);
+
   // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
   const handleCheck = (changedId) => {
     const { [fieldName]: ids } = getValues();
+    const selectedTasks = tasks.filter((task) => ids.includes(task.taskId));
     const wasJustChecked = !ids?.includes(changedId);
-    const nonDistributionTasks = tasks.filter((task) => task.type !== 'DistributionTask');
-    // eslint-disable-next-line max-len
-    const toDisable = disabledTasksBasedOnSelections({ tasks: nonDistributionTasks, selectedTaskIds: [...ids, changedId] });
-    const toBeDisabledIds = wasJustChecked ? toDisable.filter((task) => task.disabled).
-      map((task) => parseInt(task.taskId, 10)) : [];
 
     // if changedId is already in array of selected Ids, filter it out;
-    // otherwise, return array with it included
+    // otherwise, return array with it included, but exclude any whose parents are deselected
     return wasJustChecked ?
-      [...(ids.filter((id) => !toBeDisabledIds.includes(id)) ?? []), changedId] :
-        ids?.filter((id) => id !== changedId);
+      [...ids, changedId] :
+      selectedTasks
+          ?.filter(
+            (task) => task.taskId !== changedId && task.parentId !== changedId
+          )
+          .map((task) => task.taskId);
   };
-
-  // We use this to set `defaultChecked` for the task checkboxes
-  const selectedTaskIds = watch(fieldName);
 
   return (
     <TaskSelectionTable

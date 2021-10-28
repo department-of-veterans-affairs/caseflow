@@ -18,7 +18,7 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
-import { taskTypesSelected, disabledTasksBasedOnSelections } from './utils';
+import { taskTypesSelected, disabledTasksBasedOnSelections, adjustOpenTasksBasedOnSelection } from './utils';
 import { TasksToCopy } from './TasksToCopy';
 import { TasksToCancel } from './TasksToCancel';
 
@@ -66,6 +66,16 @@ export const SubstituteAppellantTasksForm = ({
     [cancelledTasks, selectedClosedTaskIds]
   );
 
+  const selectedOpenTaskIds = watch('openTaskIds');
+  const adjustedOpenTasks = useMemo(
+    () =>
+      adjustOpenTasksBasedOnSelection({
+        tasks: activeTasks,
+        selectedTaskIds: selectedOpenTaskIds,
+      }),
+    [activeTasks, selectedOpenTaskIds]
+  );
+
   const shouldShowScheduleHearingTaskAlert = useMemo(() => {
     return taskTypesSelected({
       tasks: cancelledTasks,
@@ -97,7 +107,7 @@ export const SubstituteAppellantTasksForm = ({
                 <div><strong>{SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE}</strong></div>
                 <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION} /></div>
                 {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-                <TasksToCancel tasks={activeTasks} />
+                <TasksToCancel tasks={adjustedOpenTasks} />
               </div>
             )}
 
