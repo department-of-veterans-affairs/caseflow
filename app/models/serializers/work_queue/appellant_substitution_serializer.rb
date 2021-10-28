@@ -28,9 +28,9 @@ class WorkQueue::AppellantSubstitutionSerializer
 
   # Uncomment the following as needed and write corresponding tests
 
-  # attribute :source_appeal_uuid do |object|
-  #   object.source_appeal&.uuid
-  # end
+  attribute :source_appeal_uuid do |object|
+    object.source_appeal&.uuid
+  end
 
   # attribute :source_decision_issues do |object|
   #   object.source_appeal&.decision_issues
