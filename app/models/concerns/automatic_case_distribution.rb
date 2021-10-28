@@ -23,12 +23,9 @@ module AutomaticCaseDistribution
 
     if limit.nil?
       # Distribute priority appeals that are tied to judges (not genpop) with no limit.
-      @appeals += dockets[:legacy].distribute_appeals(
-        self, priority: true, genpop: "not_genpop", style: "push", limit: limit
-      )
-      @appeals += dockets[:hearing].distribute_appeals(
-        self, priority: true, genpop: "not_genpop", style: "push", limit: limit
-      )
+      args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
+      @appeals += dockets[:legacy].distribute_appeals(self, args)
+      @appeals += dockets[:hearing].distribute_appeals(self, args)
     else
       # Distribute <limit> number of cases, regardless of docket type, oldest first.
       distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
@@ -72,21 +69,22 @@ module AutomaticCaseDistribution
 
   def distribute_tied_nonpriority_appeals
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
+    base_args = { genpop: "not_genpop", priority: false, style: "request" }
     collect_appeals do
-      dockets[:legacy].distribute_nonpriority_appeals(self, limit: @rem, genpop: "not_genpop",
-                                                            range: legacy_docket_range, style: "request")
+      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem, range: legacy_docket_range))
     end
     collect_appeals do
-      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: false, genpop: "not_genpop", style: "request")
+      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
     end
   end
 
   def distribute_tied_priority_appeals
+    base_args = { priority: true, style: "request", genpop: "not_genpop" }
     collect_appeals do
-      dockets[:legacy].distribute_appeals(self, priority: true, limit: @rem, style: "request", genpop: "not_genpop")
+      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem))
     end
     collect_appeals do
-      dockets[:hearing].distribute_appeals(self, limit: @rem, priority: true, genpop: "not_genpop", style: "request")
+      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
     end
   end
 
