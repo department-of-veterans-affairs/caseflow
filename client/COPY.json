@@ -1157,5 +1157,8 @@
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue"
 }

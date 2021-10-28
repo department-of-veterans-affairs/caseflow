@@ -502,6 +502,18 @@ class TaskActionRepository
       }
     end
 
+    def vha_program_office_return_to_camo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
+        message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
