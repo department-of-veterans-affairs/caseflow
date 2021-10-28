@@ -217,7 +217,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
   end
 
-  fcontext "when request type is 'Video'" do
+  context "when request type is 'Video'" do
     let!(:hearing_day) do
       create(:hearing_day, request_type: "V", room: "2", judge_id: judge.id, regional_office: "RO17")
     end
