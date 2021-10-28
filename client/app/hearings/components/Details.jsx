@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isUndefined, get, omitBy, isEmpty } from 'lodash';
+import { isUndefined, get, omitBy, isEmpty, isNil } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -157,7 +157,7 @@ const HearingDetails = (props) => {
             timezone: hearingChanges?.appellantTz,
             email_address: hearingChanges?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
-          }, isEmpty
+          }, isUndefined
         ),
         omitBy(
           {
@@ -165,9 +165,9 @@ const HearingDetails = (props) => {
             timezone: hearingChanges?.representativeTz,
             email_address: hearingChanges?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
-          }, isEmpty
+          }, isUndefined
         )
-      ].filter((recipient) => Boolean(recipient.email_address));
+      ];
 
       // Put the UI into a loading state
       setLoading(true);
@@ -214,6 +214,8 @@ const HearingDetails = (props) => {
           throw respError;
         } else {
           const errors = parseVirtualHearingErrors(msg);
+
+          console.log(errors);
 
           document.getElementById('email-section').scrollIntoView();
 
