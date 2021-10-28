@@ -33,6 +33,25 @@ case "$OS" in
 		;;
 esac
 
+function detectArch(){
+	# https://stackoverflow.com/questions/65259300/detect-apple-silicon-from-command-line
+	unameOut="$(uname -m)"
+	case "${unameOut}" in
+		arm*)       machine=arm;;
+		*)          machine="${unameOut}"
+	esac
+	echo ${machine}
+}
+
+ARCH=$(detectArch)
+echo "==> Detected $ARCH architeccture"
+
+case "$ARCH" in
+	"arm")
+		echo "!!! Unsupported architecture. See notes here: https://github.com/department-of-veterans-affairs/caseflow/wiki/Apple%27s-M1-Mac-Notes"
+		exit 10
+		;;
+esac
 
 # === The rest assumes Mac OS, so there are no case statements.
 
