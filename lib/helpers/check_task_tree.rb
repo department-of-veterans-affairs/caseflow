@@ -200,6 +200,7 @@ class CheckTaskTree
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html
+  # rubocop:disable Metrics/AbcSize
   def expected_child_task_hash
     @expected_child_task_hash ||= {
       # org-task that expect an associated user-task
@@ -227,6 +228,7 @@ class CheckTaskTree
       BvaDispatchTask.assigned_to_any_user => JudgeDispatchReturnTask.assigned_to_any_user
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   def unexpected_child_tasks
     expected_child_task_hash.map do |parent_task_query, child_task_query|
@@ -240,6 +242,7 @@ class CheckTaskTree
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-childparent.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-childparent.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html
+  # rubocop:disable Metrics/AbcSize
   def expected_parent_task_hash
     @expected_parent_task_hash ||= {
       # task types expected under RootTask
@@ -295,6 +298,7 @@ class CheckTaskTree
       StatusInquiryMailTask.assigned_to_any_user => StatusInquiryMailTask.assigned_to_any_org
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   def tasks_with_unexpected_parent_task
     expected_parent_task_hash.map do |child_task_query, parent_task_query|
