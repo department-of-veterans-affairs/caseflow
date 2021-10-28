@@ -771,12 +771,25 @@ Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;use
     
     <item>
       <title></title>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-childparent.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-childparent.html</guid>
+      <description>| Frequent Child-Parent Relationships for DR, ES, H |
+Frequent Child-Parent Relationships for &amp;lsquo;direct_review&amp;rsquo; #  This page provide stats for: given a child task type, how frequent does the parent task type occur?
+For this page, frequent is defined as (1) the child task type occurred at least 100 times and (2) either
+ the child-parent relationship occurred at least 500 times (Count column) or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (Percent column)  Here is a diagram of the frequent child-parent relationships:</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html</guid>
       <description>| Frequent Parent-Child Relationships for DR, ES, H |
-Frequent Parent-Child Relationships for &amp;lsquo;direct_review&amp;rsquo; #  For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
+Frequent Parent-Child Relationships for &amp;lsquo;direct_review&amp;rsquo; #  This page provide stats for: given a parent task type, how frequent does the child task type occur?
+For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
  the parent-child relationship occurred at least 500 times (Count column) or among all parent-child relationships with the same parent task type, at least 40% had the specific child task type (Percent column)  Here is a diagram of the frequent parent-child relationships:</description>
     </item>
     
@@ -2422,12 +2435,25 @@ Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;use
     
     <item>
       <title></title>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-childparent.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-childparent.html</guid>
+      <description>| Frequent Child-Parent Relationships for DR, ES, H |
+Frequent Child-Parent Relationships for &amp;lsquo;evidence_submission&amp;rsquo; #  This page provide stats for: given a child task type, how frequent does the parent task type occur?
+For this page, frequent is defined as (1) the child task type occurred at least 100 times and (2) either
+ the child-parent relationship occurred at least 500 times (Count column) or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (Percent column)  Here is a diagram of the frequent child-parent relationships:</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html</guid>
       <description>| Frequent Parent-Child Relationships for DR, ES, H |
-Frequent Parent-Child Relationships for &amp;lsquo;evidence_submission&amp;rsquo; #  For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
+Frequent Parent-Child Relationships for &amp;lsquo;evidence_submission&amp;rsquo; #  This page provide stats for: given a parent task type, how frequent does the child task type occur?
+For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
  the parent-child relationship occurred at least 500 times (Count column) or among all parent-child relationships with the same parent task type, at least 40% had the specific child task type (Percent column)  Here is a diagram of the frequent parent-child relationships:</description>
     </item>
     
@@ -4155,12 +4181,25 @@ Parent and Child Tasks #    mermaid.initialize({ &#34;flowchart&#34;: { &#34;use
     
     <item>
       <title></title>
+      <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html</guid>
+      <description>| Frequent Child-Parent Relationships for DR, ES, H |
+Frequent Child-Parent Relationships for &amp;lsquo;hearing&amp;rsquo; #  This page provide stats for: given a child task type, how frequent does the parent task type occur?
+For this page, frequent is defined as (1) the child task type occurred at least 100 times and (2) either
+ the child-parent relationship occurred at least 500 times (Count column) or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (Percent column)  Here is a diagram of the frequent child-parent relationships:</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html</guid>
       <description>| Frequent Parent-Child Relationships for DR, ES, H |
-Frequent Parent-Child Relationships for &amp;lsquo;hearing&amp;rsquo; #  For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
+Frequent Parent-Child Relationships for &amp;lsquo;hearing&amp;rsquo; #  This page provide stats for: given a parent task type, how frequent does the child task type occur?
+For this page, frequent is defined as (1) the parent task type occurred at least 100 times and (2) either
  the parent-child relationship occurred at least 500 times (Count column) or among all parent-child relationships with the same parent task type, at least 40% had the specific child task type (Percent column)  Here is a diagram of the frequent parent-child relationships:</description>
     </item>
     

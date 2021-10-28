@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="| Frequent Child-Parent Relationships for DR, ES, H |
+Frequent Child-Parent Relationships for &lsquo;hearing&rsquo; #  This page provide stats for: given a child task type, how frequent does the parent task type occur?
+For this page, frequent is defined as (1) the child task type occurred at least 100 times and (2) either
+ the child-parent relationship occurred at least 500 times (Count column) or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (Percent column)  Here is a diagram of the frequent child-parent relationships:">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="| Frequent Child-Parent Relationships for DR, ES, H |
+Frequent Child-Parent Relationships for &lsquo;hearing&rsquo; #  This page provide stats for: given a child task type, how frequent does the parent task type occur?
+For this page, frequent is defined as (1) the child task type occurred at least 100 times and (2) either
+ the child-parent relationship occurred at least 500 times (Count column) or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (Percent column)  Here is a diagram of the frequent child-parent relationships:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html" /><meta property="article:section" content="trees" />
+
+
+
+<title>Freq Childparent | Task Trees &amp; DBs</title>
+<link rel="manifest" href="/caseflow/task_trees/manifest.json">
+<link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
+  <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.8c09fb69b6eb30240e18a0cee06e0b76fe2720994588f4c40c74f714ad126231.js" integrity="sha256-jAn7abbrMCQOGKDO4G4Ldv4nIJlFiPTEDHT3FK0SYjE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/caseflow/task_trees/"><span>Task Trees &amp; DBs</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<aside>
+  <ul>
+<li><a href="/caseflow/">(Back to Caseflow)</a></li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/roles/role-overview.html">Roles Overview</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/tasks-overview.html">Tasks Overview</a></li>
+</ul>
+
+
+  <ul>
+    
+    
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-schema'>
+      
+     
+    
+      <input type="checkbox" id="input-schema" class="toggle"  />
+    
+    <label for="input-schema" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema.html" class=" ">
+        DB Schemas
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-a32031daf6826a3a658364c8ef641ca2'>
+      
+     
+    
+    <label for="input-a32031daf6826a3a658364c8ef641ca2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/schema_diagrams.html" class=" ">
+        Schema Diagrams
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-4e3261ee60f20cb3c2f4ef840300d7ee'>
+      
+     
+    
+    <label for="input-4e3261ee60f20cb3c2f4ef840300d7ee" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/caseflow_schema_csv.html" class=" ">
+        Caseflow Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-etl'>
+      
+     
+    
+    <label for="input-etl" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl.html" class=" ">
+        ETL/ODS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-80b3a20f34bcfa1497e53f6df98f9a1a'>
+      
+     
+    
+    <label for="input-80b3a20f34bcfa1497e53f6df98f9a1a" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/etl_schema_csv.html" class=" ">
+        ETL Schema CSV
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-510fcecf0cba28b1d0c46768d27ecd96'>
+      
+     
+    
+    <label for="input-510fcecf0cba28b1d0c46768d27ecd96" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/vacols.html" class=" ">
+        VACOLS
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-86d4ee7ca78396e350fefbdb82eae3d4'>
+      
+     
+    
+    <label for="input-86d4ee7ca78396e350fefbdb82eae3d4" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/schema/vacols_schema.html" class=" ">
+        VACOLS Schema
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-data-model'>
+      
+     
+    
+      <input type="checkbox" id="input-data-model" class="toggle"  />
+    
+    <label for="input-data-model" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model.html" class=" ">
+        Data Models
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-d9a62a0a0731eac713a305003af79490'>
+      
+     
+    
+    <label for="input-d9a62a0a0731eac713a305003af79490" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/certification.html" class=" ">
+        Caseflow Certification
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-b7f27412867a0a8e1e4953a63bf95106'>
+      
+     
+    
+    <label for="input-b7f27412867a0a8e1e4953a63bf95106" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/intake.html" class=" ">
+        Caseflow Intake
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-fa3d69149400827fe11bd6ce3d9aa84b'>
+      
+     
+    
+    <label for="input-fa3d69149400827fe11bd6ce3d9aa84b" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/hearings.html" class=" ">
+        Caseflow Hearings
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-527774a69e219f3c432838b1f74869ac'>
+      
+     
+    
+    <label for="input-527774a69e219f3c432838b1f74869ac" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/reader.html" class=" ">
+        Caseflow Reader
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-eca58f638455b63e62ef87da8262aaea'>
+      
+     
+    
+    <label for="input-eca58f638455b63e62ef87da8262aaea" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/efolder_express.html" class=" ">
+        eFolder Express
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-04e9d47bd2d7efdf6336448f0af7e675'>
+      
+     
+    
+    <label for="input-04e9d47bd2d7efdf6336448f0af7e675" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/queue.html" class=" ">
+        Caseflow Queue
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-595643a3078a34fba5f27a8dbcfce9f2'>
+      
+     
+    
+    <label for="input-595643a3078a34fba5f27a8dbcfce9f2" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/data-model/dispatch.html" class=" ">
+        Caseflow Dispatch
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+      
+  
+  
+  
+  
+  
+  <li id='menuitem-workflows'>
+      
+     
+    
+      <input type="checkbox" id="input-workflows" class="toggle"  />
+    
+    <label for="input-workflows" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows.html" class=" ">
+        Workflows
+      </a>
+    </label>
+
+    
+      <ul class="sub-menu">
+        
+        
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-edf4bada38d8b7d9cb267d0fad6cb482'>
+      
+     
+    
+    <label for="input-edf4bada38d8b7d9cb267d0fad6cb482" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/appeal-workflow.html" class=" ">
+        Appeal Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-634712e82d20fc609167455d5ba6a3b0'>
+      
+     
+    
+    <label for="input-634712e82d20fc609167455d5ba6a3b0" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/intake-workflow.html" class=" ">
+        Intake Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+          
+  
+  
+  
+  
+  
+  <li id='menuitem-71a11ce05606820e012aa432ca8c93db'>
+      
+     
+    
+    <label for="input-71a11ce05606820e012aa432ca8c93db" class="flex justify-between  ">
+      <a href="/caseflow/task_trees/workflows/hearing-workflow.html" class=" ">
+        Hearing Workflow
+      </a>
+    </label>
+
+    
+  </li>
+
+        
+      </ul>
+    
+  </li>
+
+    
+  </ul>
+
+  <ul>
+<li>
+
+<a href="/caseflow/task_trees/intro/task_trees.html">Task trees</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/alltasks.html">All tasks</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/tasklist.html">DR tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-parentchild.html">DR:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-childparent.html">DR:child-parent</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-taskcreation.html">DR:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/tasklist.html">ES tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-parentchild.html">ES:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-childparent.html">ES:child-parent</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-taskcreation.html">ES:task-creation</a></li>
+</ul>
+</li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/tasklist.html">H tasklist</a>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-parentchild.html">H:parent-child</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-childparent.html"class=active>H:child-parent</a></li>
+<li>
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-taskcreation.html">H:task-creation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+
+<a href="/caseflow/task_trees/tags.html">Tags</a></li>
+<li>
+
+<a href="/caseflow/task_trees/categories.html">Categories</a></li>
+</ul>
+
+</aside>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/caseflow/task_trees/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Freq Childparent</strong>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><!-- DO NOT EDIT THIS FILE.  This file is autogenerated. -->
+<p>| Frequent Child-Parent Relationships for 
+
+<a href="/caseflow/task_trees/trees/docket-DR/freq-childparent.html">DR</a>, 
+
+<a href="/caseflow/task_trees/trees/docket-ES/freq-childparent.html">ES</a>, 
+
+<a href="/caseflow/task_trees/trees/docket-H/freq-childparent.html">H</a> |</p>
+<h1 id="frequent-child-parent-relationships-for-hearing">
+  Frequent Child-Parent Relationships for &lsquo;hearing&rsquo;
+  <small><a class="anchor-heading" href="#frequent-child-parent-relationships-for-hearing" aria-labelledby="frequent-child-parent-relationships-for-hearing">#</a></small>
+</h1>
+<p>This page provide stats for: given a child task type, how frequent does the parent task type occur?</p>
+<p>For this page, <em>frequent</em> is defined as (1) the child task type occurred at least 100 times and (2) either</p>
+<ul>
+<li>the child-parent relationship occurred at least 500 times (<strong>Count</strong> column)</li>
+<li>or among all child-parent relationships with the same child task type, at least 40% had the specific parent task type (<strong>Percent</strong> column)</li>
+</ul>
+<p>Here is a diagram of the frequent child-parent relationships:</p>
+<p><a href="freq-childparent.dot.png"><img src="freq-childparent.dot.png" alt="freq-childparent.dot.png" /></a></p>
+<table class="parentChildTable">
+<thead>
+<tr>
+<th>Child Task Type</th>
+<th>Parent Task Type</th>
+<th>Count</th>
+<th>Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>62792</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>62094</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a></td>
+<td>59980</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TrackVeteranTask_Organization.html">TrackVeteranTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>58512</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a></td>
+<td>8881</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_Organization.html">TranscriptionTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a></td>
+<td>6515</td>
+<td>88%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeAssignTask_User.html">JudgeAssignTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>6196</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a></td>
+<td>5875</td>
+<td>71%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>5741</td>
+<td>94%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a></td>
+<td>5708</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>5707</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/BvaDispatchTask_Organization.html">BvaDispatchTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>5249</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/BvaDispatchTask_User.html">BvaDispatchTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/BvaDispatchTask_Organization.html">BvaDispatchTask_Organization</a></td>
+<td>5248</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_User.html">EvidenceOrArgumentMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceOrArgumentMailTask_Organization.html">EvidenceOrArgumentMailTask_Organization</a></td>
+<td>2100</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a></td>
+<td>2000</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>1886</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a></td>
+<td>1414</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>1408</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_User.html">StatusInquiryMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/StatusInquiryMailTask_Organization.html">StatusInquiryMailTask_Organization</a></td>
+<td>1319</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a></td>
+<td>1134</td>
+<td>14%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_User.html">EvidenceSubmissionWindowTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a></td>
+<td>1022</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/EvidenceSubmissionWindowTask_Organization.html">EvidenceSubmissionWindowTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>854</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/SpecialCaseMovementTask_User.html">SpecialCaseMovementTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>814</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_Organization.html">ChangeHearingDispositionTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingTask_Organization.html">HearingTask_Organization</a></td>
+<td>747</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a></td>
+<td>742</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_User.html">AodMotionMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a></td>
+<td>721</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AodMotionMailTask_Organization.html">AodMotionMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>717</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_Organization.html">TranscriptionTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingDispositionTask_Organization.html">ChangeHearingDispositionTask_Organization</a></td>
+<td>703</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ChangeHearingRequestTypeTask_User.html">ChangeHearingRequestTypeTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a></td>
+<td>640</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyRewriteTask_User.html">AttorneyRewriteTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/JudgeDecisionReviewTask_User.html">JudgeDecisionReviewTask_User</a></td>
+<td>540</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a></td>
+<td>486</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/CongressionalInterestMailTask_Organization.html">CongressionalInterestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>444</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/QualityReviewTask_User.html">QualityReviewTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/QualityReviewTask_Organization.html">QualityReviewTask_Organization</a></td>
+<td>416</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/QualityReviewTask_Organization.html">QualityReviewTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>414</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a></td>
+<td>413</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionVerifyAddressTask_Organization.html">HearingAdminActionVerifyAddressTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a></td>
+<td>389</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_User.html">TranscriptionTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranscriptionTask_Organization.html">TranscriptionTask_Organization</a></td>
+<td>382</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranslationTask_Organization.html">TranslationTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>364</td>
+<td>98%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/VeteranRecordRequest_Organization.html">VeteranRecordRequest_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>350</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>333</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranslationTask_User.html">TranslationTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TranslationTask_Organization.html">TranslationTask_Organization</a></td>
+<td>329</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a></td>
+<td>318</td>
+<td>52%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherColocatedTask_User.html">OtherColocatedTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a></td>
+<td>318</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_User.html">AppealWithdrawalMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AppealWithdrawalMailTask_Organization.html">AppealWithdrawalMailTask_Organization</a></td>
+<td>300</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/PowerOfAttorneyRelatedMailTask_Organization.html">PowerOfAttorneyRelatedMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>289</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/NoShowHearingTask_Organization.html">NoShowHearingTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AssignHearingDispositionTask_Organization.html">AssignHearingDispositionTask_Organization</a></td>
+<td>241</td>
+<td>91%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/TimedHoldTask_Organization.html">TimedHoldTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/NoShowHearingTask_Organization.html">NoShowHearingTask_Organization</a></td>
+<td>226</td>
+<td>63%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingAdminActionForeignVeteranCaseTask_Organization.html">HearingAdminActionForeignVeteranCaseTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingTask_Organization.html">ScheduleHearingTask_Organization</a></td>
+<td>225</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherColocatedTask_Organization.html">OtherColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>200</td>
+<td>72%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a></td>
+<td>189</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaTask_Organization.html">FoiaTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaColocatedTask_Organization.html">FoiaColocatedTask_Organization</a></td>
+<td>181</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a></td>
+<td>171</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_User.html">ExtensionRequestMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a></td>
+<td>171</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>169</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_User.html">FoiaRequestMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaRequestMailTask_Organization.html">FoiaRequestMailTask_Organization</a></td>
+<td>163</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_User.html">HearingRelatedMailTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/HearingRelatedMailTask_Organization.html">HearingRelatedMailTask_Organization</a></td>
+<td>155</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionRequestMailTask_Organization.html">ExtensionRequestMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DistributionTask_Organization.html">DistributionTask_Organization</a></td>
+<td>155</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaTask_User.html">FoiaTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaTask_Organization.html">FoiaTask_Organization</a></td>
+<td>151</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/FoiaColocatedTask_Organization.html">FoiaColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>148</td>
+<td>86%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/IhpColocatedTask_User.html">IhpColocatedTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/IhpColocatedTask_Organization.html">IhpColocatedTask_Organization</a></td>
+<td>112</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/MissingHearingTranscriptsColocatedTask_Organization.html">MissingHearingTranscriptsColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>109</td>
+<td>81%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionColocatedTask_User.html">ExtensionColocatedTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionColocatedTask_Organization.html">ExtensionColocatedTask_Organization</a></td>
+<td>105</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ExtensionColocatedTask_Organization.html">ExtensionColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>82</td>
+<td>88%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/DocketSwitchGrantedTask_User.html">DocketSwitchGrantedTask_User</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>79</td>
+<td>61%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/IhpColocatedTask_Organization.html">IhpColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>73</td>
+<td>77%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a></td>
+<td>57</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/OtherMotionMailTask_Organization.html">OtherMotionMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>56</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ReturnedUndeliverableCorrespondenceMailTask_Organization.html">ReturnedUndeliverableCorrespondenceMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>51</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ReturnedUndeliverableCorrespondenceMailTask_Organization.html">ReturnedUndeliverableCorrespondenceMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ReturnedUndeliverableCorrespondenceMailTask_Organization.html">ReturnedUndeliverableCorrespondenceMailTask_Organization</a></td>
+<td>51</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a></td>
+<td>50</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AddressChangeMailTask_Organization.html">AddressChangeMailTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/RootTask_Organization.html">RootTask_Organization</a></td>
+<td>49</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/ScheduleHearingColocatedTask_Organization.html">ScheduleHearingColocatedTask_Organization</a></td>
+<td>
+
+<a href="/caseflow/task_trees/trees/docket-H/AttorneyTask_User.html">AttorneyTask_User</a></td>
+<td>29</td>
+<td>69%</td>
+</tr>
+</tbody>
+</table>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees/docket-H/freq-childparent.md" target="_blank" rel="noopener">
+      <img src="/caseflow/task_trees/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
