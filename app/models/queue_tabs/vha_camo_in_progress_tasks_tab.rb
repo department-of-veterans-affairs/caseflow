@@ -24,8 +24,4 @@ class VhaCamoInProgressTasksTab < QueueTab
   def column_names
     VhaCamo::COLUMN_NAMES
   end
-
-  def allow_bulk_assign?
-    true
-  end
 end
