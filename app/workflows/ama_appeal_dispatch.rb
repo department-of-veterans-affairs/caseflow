@@ -39,12 +39,10 @@ class AmaAppealDispatch
   end
 
   def throw_error_if_file_number_not_match_bgs
-    veteran = @appeal.veteran
-    bgs_file_number = BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
-    unless bgs_file_number == veteran.file_number
+    if FileNumberUpdateDetector.new(@appeal.veteran).new_file_number.present?
       fail(
         Caseflow::Error::BgsFileNumberMismatch,
-        appeal_id: appeal.id, user_id: user.id
+        appeal_id: appeal.id, user_id: user.id, veteran_id: @appeal.veteran.id
       )
     end
   end
