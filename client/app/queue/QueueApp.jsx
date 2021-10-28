@@ -153,7 +153,7 @@ class QueueApp extends React.PureComponent {
     </QueueLoadingScreen>
   );
 
-  routedJudgeQueueList = (label) => ({ match }) => (
+  routedTeamQueueList = (label) => ({ match }) => (
     <QueueLoadingScreen
       {...this.propsForQueueLoadingScreen()}
       match={match}
@@ -598,12 +598,12 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/:userId/review"
               title="Review Cases | Caseflow"
-              render={this.routedJudgeQueueList('review')}
+              render={this.routedTeamQueueList('review')}
             />
             <PageRoute
               path="/queue/:userId/assign"
               title="Unassigned Cases | Caseflow"
-              render={this.routedJudgeQueueList('assign')}
+              render={this.routedTeamQueueList('assign')}
             />
 
             <PageRoute
