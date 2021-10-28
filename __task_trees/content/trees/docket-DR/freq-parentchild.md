@@ -5,6 +5,8 @@
 
 # Frequent Parent-Child Relationships for 'direct_review'
 
+This page provide stats for: given a parent task type, how frequent does the child task type occur?
+
 For this page, *frequent* is defined as (1) the parent task type occurred at least 100 times and (2) either
 * the parent-child relationship occurred at least 500 times (**Count** column)
 * or among all parent-child relationships with the same parent task type, at least 40% had the specific child task type (**Percent** column)
