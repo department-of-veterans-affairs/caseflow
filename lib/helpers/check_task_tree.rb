@@ -96,8 +96,8 @@ class CheckTaskTree
       @errors << "Open RootTask should have an active task assigned to the Board"
     end
 
-    unless unexpected_child_task.blank?
-      @errors << "Unexpected child task: #{unexpected_child_task.pluck(:type, :id)}"
+    unless unexpected_child_tasks.blank?
+      @errors << "Unexpected child task: #{unexpected_child_tasks.pluck(:type, :id)}"
     end
     unless tasks_with_unexpected_parent_task.blank?
       @errors << "Unexpected parent task for: #{tasks_with_unexpected_parent_task.pluck(:type, :id)}"
@@ -228,7 +228,7 @@ class CheckTaskTree
     }
   end
 
-  def unexpected_child_task
+  def unexpected_child_tasks
     expected_child_task_hash.map do |parent_task_query, child_task_query|
       parent_task_query.where(appeal: @appeal).map do |parent|
         parent.children - child_task_query.where(appeal: @appeal) - TimedHoldTask.where(appeal: @appeal)

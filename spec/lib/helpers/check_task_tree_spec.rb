@@ -220,13 +220,18 @@ describe "CheckTaskTree" do
   context "check_task_counts" do
     describe "#extra_open_hearing_tasks" do
       subject { CheckTaskTree.new(appeal).extra_open_hearing_tasks }
-      let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+      let(:appeal) { create(:appeal, :ready_for_distribution, :with_schedule_hearing_tasks) }
+      let(:hearing_task) { appeal.tasks.find_by_type(:HearingTask) }
+      before do
+        hearing_task.update(parent: distribution_task)
+        distribution_task.on_hold!
+      end
       it_behaves_like "when tasks are correct"
 
       context "when tasks are invalid" do
-        before { HearingTask.create!(appeal: appeal, parent: appeal.root_task) }
+        before { HearingTask.create!(appeal: appeal, parent: distribution_task) }
         it { is_expected.not_to be_blank }
-        include_examples "has error message", /There should be no more than 1 open HearingTask/
+        include_examples "has error message", "There should be no more than 1 open HearingTask"
       end
     end
     describe "#extra_open_tasks" do
