@@ -99,6 +99,9 @@ class CheckTaskTree
     unless unexpected_child_task.blank?
       @errors << "Unexpected child task: #{unexpected_child_task.pluck(:type, :id)}"
     end
+    unless tasks_with_unexpected_parent_task.blank?
+      @errors << "Unexpected parent task for: #{tasks_with_unexpected_parent_task.pluck(:type, :id)}"
+    end
   end
 
   def check_task_counts
@@ -193,6 +196,10 @@ class CheckTaskTree
     child_tasks.active.where.not(type: IGNORED_ACTIVE_TASKS) if @appeal.root_task&.open?
   end
 
+  # Based on high-count, 100% frequency stats from:
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html
   def expected_child_task_hash
     @expected_child_task_hash ||= {
       # org-task that expect an associated user-task
@@ -204,14 +211,14 @@ class CheckTaskTree
       BvaDispatchTask.assigned_to_any_org => BvaDispatchTask.assigned_to_any_user,
       FoiaTask.assigned_to_any_org => FoiaTask.assigned_to_any_user,
 
-      # Colocated org-task that expect an associated Colocated user-task
+      # Colocated org-task that expect an associated Colocated user-task child
       IhpColocatedTask.assigned_to_any_org => IhpColocatedTask.assigned_to_any_user,
       ExtensionColocatedTask.assigned_to_any_org => ExtensionColocatedTask.assigned_to_any_user,
       MissingRecordsColocatedTask.assigned_to_any_org => MissingRecordsColocatedTask.assigned_to_any_user,
       PoaClarificationColocatedTask.assigned_to_any_org => PoaClarificationColocatedTask.assigned_to_any_user,
       OtherColocatedTask.assigned_to_any_org => OtherColocatedTask.assigned_to_any_user,
 
-      # Mail org-task that expect an associated Mail user-task
+      # Mail org-task that expect an associated Mail user-task child
       DocketSwitchMailTask.assigned_to_any_org => DocketSwitchMailTask.assigned_to_any_user,
 
       # different task types
@@ -221,15 +228,79 @@ class CheckTaskTree
     }
   end
 
-  # Based on high-count, 100% frequency stats from:
-  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-parentchild.html
-  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-parentchild.html
-  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-parentchild.html
   def unexpected_child_task
     expected_child_task_hash.map do |parent_task_query, child_task_query|
       parent_task_query.where(appeal: @appeal).map do |parent|
         parent.children - child_task_query.where(appeal: @appeal) - TimedHoldTask.where(appeal: @appeal)
       end.select(&:any?)
+    end.select(&:any?).flatten
+  end
+
+  # Based on high-count, 100% frequency stats from:
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-childparent.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-childparent.html
+  # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html
+  def expected_parent_task_hash
+    @expected_parent_task_hash ||= {
+      # task types expected under RootTask
+      DistributionTask.assigned_to_any_org => RootTask.assigned_to_any_org,
+      TrackVeteranTask.assigned_to_any_org => RootTask.assigned_to_any_org,
+      JudgeAssignTask.assigned_to_any_user => RootTask.assigned_to_any_org,
+      JudgeDecisionReviewTask.assigned_to_any_user => RootTask.assigned_to_any_org,
+      QualityReviewTask.assigned_to_any_org => RootTask.assigned_to_any_org,
+      BvaDispatchTask.assigned_to_any_org => RootTask.assigned_to_any_org,
+      VeteranRecordRequest.assigned_to_any_org => RootTask.assigned_to_any_org,
+
+      # task types expected under DistributionTask
+      EvidenceSubmissionWindowTask.assigned_to_any_org => DistributionTask.assigned_to_any_org,
+      HearingTask.assigned_to_any_org => DistributionTask.assigned_to_any_org,
+      SpecialCaseMovementTask.assigned_to_any_user => DistributionTask.assigned_to_any_org,
+      CavcTask.assigned_to_any_org => DistributionTask.assigned_to_any_org,
+
+      ScheduleHearingTask.assigned_to_any_org => HearingTask.assigned_to_any_org,
+      AssignHearingDispositionTask.assigned_to_any_org => HearingTask.assigned_to_any_org,
+      # Interesting that ChangeHearingDispositionTask user-task is never a child of its org-task:
+      ChangeHearingDispositionTask.assigned_to_any_org => HearingTask.assigned_to_any_org,
+      ChangeHearingDispositionTask.assigned_to_any_user => ScheduleHearingTask.assigned_to_any_org,
+      HearingAdminActionVerifyAddressTask.assigned_to_any_org => ScheduleHearingTask.assigned_to_any_org,
+
+      SendCavcRemandProcessedLetterTask.assigned_to_any_org => CavcTask.assigned_to_any_org,
+      CavcRemandProcessedLetterResponseWindowTask.assigned_to_any_org => CavcTask.assigned_to_any_org,
+
+      # different task types
+      AttorneyTask.assigned_to_any_user => JudgeDecisionReviewTask.assigned_to_any_user,
+      AttorneyRewriteTask.assigned_to_any_user => JudgeDecisionReviewTask.assigned_to_any_user,
+      JudgeQualityReviewTask.assigned_to_any_user => QualityReviewTask.assigned_to_any_user,
+      JudgeDispatchReturnTask.assigned_to_any_user => BvaDispatchTask.assigned_to_any_user,
+      FoiaTask.assigned_to_any_org => FoiaColocatedTask.assigned_to_any_org,
+
+      # user-task types that expect an associated org-task parent
+      InformalHearingPresentationTask.assigned_to_any_user => InformalHearingPresentationTask.assigned_to_any_org,
+      EvidenceSubmissionWindowTask.assigned_to_any_user => EvidenceSubmissionWindowTask.assigned_to_any_org,
+      TranslationTask.assigned_to_any_user => TranslationTask.assigned_to_any_org,
+      TranscriptionTask.assigned_to_any_user => TranscriptionTask.assigned_to_any_org,
+      QualityReviewTask.assigned_to_any_user => QualityReviewTask.assigned_to_any_org,
+      BvaDispatchTask.assigned_to_any_user => BvaDispatchTask.assigned_to_any_org,
+      FoiaTask.assigned_to_any_user => FoiaTask.assigned_to_any_org,
+      CavcRemandProcessedLetterResponseWindowTask.assigned_to_any_user =>
+        CavcRemandProcessedLetterResponseWindowTask.assigned_to_any_org,
+
+      # Colocated user-task that expect an associated Colocated org-task parent
+      IhpColocatedTask.assigned_to_any_user => IhpColocatedTask.assigned_to_any_org,
+      OtherColocatedTask.assigned_to_any_user => OtherColocatedTask.assigned_to_any_org,
+
+      # Mail user-task that expect an associated Mail org-task parent
+      AodMotionMailTask.assigned_to_any_user => AodMotionMailTask.assigned_to_any_org,
+      EvidenceOrArgumentMailTask.assigned_to_any_user => EvidenceOrArgumentMailTask.assigned_to_any_org,
+      StatusInquiryMailTask.assigned_to_any_user => StatusInquiryMailTask.assigned_to_any_org
+    }
+  end
+
+  def tasks_with_unexpected_parent_task
+    expected_parent_task_hash.map do |child_task_query, parent_task_query|
+      child_task_query.where(appeal: @appeal).reject do |child|
+        parent_task_query.where(appeal: @appeal).include?(child.parent)
+      end
     end.select(&:any?).flatten
   end
 
