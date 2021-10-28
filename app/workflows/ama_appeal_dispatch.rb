@@ -39,7 +39,7 @@ class AmaAppealDispatch
   end
 
   def throw_error_if_file_number_not_match_bgs
-    if FileNumberUpdateDetector.new(@appeal.veteran).new_file_number.present?
+    if FileNumberUpdateDetector.new(veteran: @appeal.veteran).new_file_number.present?
       fail(
         Caseflow::Error::BgsFileNumberMismatch,
         appeal_id: appeal.id, user_id: user.id, veteran_id: @appeal.veteran.id
