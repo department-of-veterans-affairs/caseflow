@@ -121,7 +121,7 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:overtime?)
   end
 
-  attribute :contested_claim? do |object|
+  attribute :contested_claim do |object|
     object.appeal.try(:contested_claim?)
   end
 

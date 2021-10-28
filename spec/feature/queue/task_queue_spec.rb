@@ -109,7 +109,7 @@ feature "Task queue", :all_dbs do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
-    fcontext "contested claims" do
+    context "contested claims" do
       before { FeatureToggle.enable!(:indicator_for_contested_claims) }
       after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
