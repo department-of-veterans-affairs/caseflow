@@ -165,8 +165,8 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
     it "can edit hearing start time to half day" do
       # If the docket is not already video or travel, first convert it
-      if hearing_day.request_type != HearingDay::REQUEST_TYPES[:video] || 
-        hearing_day.request_type != HearingDay::REQUEST_TYPES[:travel]
+      if hearing_day.request_type != HearingDay::REQUEST_TYPES[:video] ||
+         hearing_day.request_type != HearingDay::REQUEST_TYPES[:travel]
         click_dropdown(name: "requestType", text: "Video")
       end
 

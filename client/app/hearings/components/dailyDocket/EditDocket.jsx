@@ -34,15 +34,6 @@ import { getRegionalOffice, readableDocketType, formatRoomOption } from 'app/hea
 import COPY from '../../../../COPY';
 import { DocketStartTimes } from '../DocketStartTimes';
 
-const roTimezoneToEastern = (stringInEastern, timezone, withAmPm = false) =>{
-  return(
-    moment.tz(stringInEastern, 'HH:mm', timezone).tz('America/New_York')?.
-      format(withAmPm ? 'h:mm A' : 'HH:mm')
-  )
-}
-
-
-
 export const EditDocket = (props) => {
   // Initialize the state
   const { dropdowns } = useSelector((state) => state.components);
@@ -60,18 +51,16 @@ export const EditDocket = (props) => {
 
   // These fields need their own state since the DocketStartTimes component updates two fields
   // simultaneously, the second update overrides the first, setting one of the fields to null
-  console.log(fields?.regionalOffice?.timezone)
   const [firstSlotTime, setFirstSlotTime] = useState(
-    props?.docket?.beginsAt ? roTimezoneToEastern(props?.docket?.beginsAt, fields.regionalOffice.timezone) : null
-  )
-  const [numberOfSlots, setNumberOfSlots] = useState(props?.docket?.totalSlots)
+    props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('HH:mm') : null
+  );
+  const [numberOfSlots, setNumberOfSlots] = useState(props?.docket?.totalSlots);
 
-  const [virtual, travel, central] = ['virtual', 'travel', 'central'].map((requestType) => 
+  const [virtual, travel, central] = ['virtual', 'travel', 'central'].map((requestType) =>
     fields.requestType?.value === HEARING_REQUEST_TYPES[requestType]
-  )
+  );
 
   const isScheduled = !isEmpty(props?.hearings);
-  console.log(firstSlotTime)
 
   // -04:00 (when DST) or -05:00 for America/New_York
   const zoneOffset = moment(props?.docket?.scheduledFor).format('Z');
@@ -95,8 +84,8 @@ export const EditDocket = (props) => {
       room: fields.room.value,
       regionalOffice: fields.regionalOffice.key === 'C' ? null : fields.regionalOffice.key,
       requestType: fields.requestType.value,
-      firstSlotTime: firstSlotTime,
-      numberOfSlots: numberOfSlots
+      firstSlotTime,
+      numberOfSlots
     });
 
     ApiUtil.put(`/hearings/hearing_day/${props.docket.id}`, { data }).then(
