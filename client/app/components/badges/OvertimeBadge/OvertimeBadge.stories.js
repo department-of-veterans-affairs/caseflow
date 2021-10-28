@@ -1,9 +1,10 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../../../app/queue/reducers';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+
 import OvertimeBadge from './OvertimeBadge';
+import rootReducer from 'app/queue/reducers';
 import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
 export default {
@@ -19,7 +20,7 @@ export default {
     canViewOvertimeStatus: true,
     featureToggles: {
       overtime_revamp: true
-    }, 
+    },
   }
 };
 

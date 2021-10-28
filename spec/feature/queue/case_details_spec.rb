@@ -1447,6 +1447,45 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  describe "contested claim" do
+    before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+    after { FeatureToggle.disable!(:indicator_for_contested_claims) }
+
+    let(:request_issues) do
+      [
+        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
+      ]
+    end
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let!(:tracking_task) do
+      create(
+        :track_veteran_task,
+        :completed,
+        appeal: appeal,
+        parent: appeal.root_task
+      )
+    end
+
+    context "case title" do
+      it "should show the contested claim badge" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+
+        expect(page).to have_selector(".cf-contested-badge")
+      end
+    end
+
+    context "case list table" do
+      it "should show the contested claim badge" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+        page.all("a", text: "View all cases").first.click
+
+        case_table = find(".cf-case-list-table")
+
+        expect(case_table).to have_selector(".cf-contested-badge")
+      end
+    end
+  end
+
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
       let(:appeal) { create(:appeal) }
