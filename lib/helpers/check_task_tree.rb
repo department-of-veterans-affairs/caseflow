@@ -69,7 +69,6 @@ class CheckTaskTree
 
     [@errors, @warnings]
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def check_task_attributes
     @errors << "Open task should have nil `closed_at`" unless open_tasks_with_closed_at_defined.blank?
@@ -79,7 +78,14 @@ class CheckTaskTree
     @errors << "Cancelled task should have non-nil `cancelled_by_id`" unless cancelled_tasks_without_cancelled_by.blank?
 
     @errors << "Open task should not be assigned to inactive assignee" unless open_tasks_with_inactive_assignee.blank?
+    unless inconsistent_assignees.blank?
+      @errors << "Task assignee is inconsistent with other tasks of the same type: #{inconsistent_assignees}"
+    end
+    unless track_veteran_task_assigned_to_non_representative.blank?
+      @errors << "TrackVeteranTask assignee should be a Representative (i.e., VSO or PrivateBar)"
+    end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def check_parent_child_tasks
     @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
@@ -125,6 +131,45 @@ class CheckTaskTree
   def open_tasks_with_inactive_assignee
     @appeal.tasks.open.where(assigned_to: User.inactive) +
       @appeal.tasks.open.where(assigned_to: Organization.unscoped.inactive)
+  end
+
+  def inconsistent_assignees
+    tasks_with_unexpected_assignee.pluck(:type, :assigned_to_type, :assigned_to_id)
+  end
+
+  # Don't use a constant for this hash as that could initialize the assignees before the DB is ready
+  # To check in prod: `DistributionTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
+  def expected_assignee_hash
+    @expected_assignee_hash ||= {
+      # These are always assigned to the BVA org
+      RootTask => Bva.singleton,
+      DistributionTask => Bva.singleton,
+      HearingTask => Bva.singleton,
+      CavcTask => Bva.singleton,
+
+      # Only for AMA. `ScheduleHearingTask.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
+      ScheduleHearingTask.ama => Bva.singleton,
+
+      # Only for tasks assigned to an Organization.
+      # e.g., `TranscriptionTask.assigned_to_any_org.group(:appeal_type, :assigned_to_type, :assigned_to_id).count`
+      TranscriptionTask.assigned_to_any_org => TranscriptionTeam.singleton,
+      BvaDispatchTask.assigned_to_any_org => BvaDispatch.singleton,
+      QualityReviewTask.assigned_to_any_org => QualityReview.singleton,
+      FoiaTask.assigned_to_any_org => PrivacyTeam.singleton
+    }
+  end
+
+  def tasks_with_unexpected_assignee
+    expected_assignee_hash.map do |task_query, assignee|
+      task_query.where(appeal: @appeal).reject { |task| task.assigned_to == assignee }
+    end.select(&:any?).flatten
+  end
+
+  # `Organization.unscoped{TrackVeteranTask.includes(:assigned_to).reject{|task| task.assigned_to.is_a?(Representative)}}`
+  def track_veteran_task_assigned_to_non_representative
+    Organization.unscoped do
+      TrackVeteranTask.where(appeal: @appeal).reject { |task| task.assigned_to.is_a?(Representative) }
+    end
   end
 
   def open_tasks_with_parent_not_on_hold
