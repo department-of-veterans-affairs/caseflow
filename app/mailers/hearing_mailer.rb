@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+##
+# HearingMailer will:
+# - Generate emails from the templates in app/views/hearing_mailer
+#   - The method name like "cancellation" determines which template is used.
+#   - The 'cancellation' method uses app/views/hearing_mailer/cancellation.html.erb
+#   - cancellation.html.erb prepends the recipient type and uses another template.
+# - Generate email subjects based on the type of email.
+# - Create the calendar invites that get attached to the emails.
+##
 class HearingMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "hearing_mailer"
