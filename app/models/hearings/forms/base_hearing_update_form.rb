@@ -168,7 +168,9 @@ class BaseHearingUpdateForm
       v.fetch("email_address", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes[:appellant_email]
+    email = email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes&.[](:appellant_email)
+
+    email&.strip
   end
 
   def representative_email
@@ -176,7 +178,9 @@ class BaseHearingUpdateForm
       v.fetch("email_address", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes[:representative_email]
+    email = email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes&.[](:representative_email)
+
+    email&.strip
   end
 
   def appellant_timezone
@@ -184,7 +188,9 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes[:appellant_timezone]
+    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:appellant_timezone)
+
+    email&.strip
   end
 
   def representative_timezone
@@ -192,7 +198,9 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes[:representative_timezone]
+    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:representative_timezone)
+
+    email&.strip
   end
 
   def judge_email
