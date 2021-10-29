@@ -158,11 +158,6 @@ export const CaseDetailsView = (props) => {
         regionalOffice,
       });
     }
-
-    return () => {
-      props.resetSuccessMessages();
-      props.resetErrorMessages();
-    };
   }, []);
 
   const doPulacCerulloReminder = useMemo(
