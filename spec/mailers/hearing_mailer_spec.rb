@@ -556,6 +556,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -578,6 +580,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -612,6 +616,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -634,6 +640,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -691,6 +699,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -713,6 +723,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -725,6 +737,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct subject line" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.subject).to eq(
               "Reminder: Your Board hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
@@ -756,6 +770,8 @@ describe HearingMailer do
 
         context "appellant_tz is not present" do
           it "has the correct subject line" do
+            hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.subject).to eq(
               "Reminder: Your Board hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
@@ -842,6 +858,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -864,6 +882,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -876,6 +896,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -898,6 +920,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -943,6 +967,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -965,6 +991,8 @@ describe HearingMailer do
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -977,6 +1005,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct subject line" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.subject).to eq(
               "Reminder: Your Board hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
@@ -1008,6 +1038,8 @@ describe HearingMailer do
 
         context "appellant_tz is not present" do
           it "has the correct subject line" do
+            virtual_hearing.hearing.appellant_recipient.update(timezone: nil)
+
             expect(subject.subject).to eq(
               "Reminder: Your Board hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
@@ -1110,6 +1142,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1132,6 +1166,8 @@ describe HearingMailer do
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1166,6 +1202,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1188,6 +1226,8 @@ describe HearingMailer do
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1222,6 +1262,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1244,6 +1286,8 @@ describe HearingMailer do
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1259,6 +1303,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct subject line" do
+            hearing.appellant_recipient.update!(timezone: nil)
+
             expect(subject.subject).to eq(
               "#{first_clause} #{expected_ama_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
@@ -1287,6 +1333,8 @@ describe HearingMailer do
 
         context "appellant_tz is not present" do
           it "has the correct subject line" do
+            hearing.appellant_recipient.update!(timezone: nil)
+
             expect(subject.subject).to eq(
               "#{first_clause} #{expected_ama_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
@@ -1366,6 +1414,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1388,6 +1438,8 @@ describe HearingMailer do
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
@@ -1400,6 +1452,8 @@ describe HearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
+            hearing.representative_recipient.update!(timezone: nil)
+
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
