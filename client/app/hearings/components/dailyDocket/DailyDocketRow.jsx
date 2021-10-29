@@ -435,8 +435,7 @@ class DailyDocketRow extends React.Component {
           {this.getLeftColumn()}
           {this.getRightColumn(index)}
         </div>
-        {user.userCanScheduleVirtualHearings &&
-          this.state.virtualHearingModalActive &&
+        {this.state.virtualHearingModalActive &&
           hearing?.isVirtual &&
           this.renderVirtualHearingModal(user, hearing)}
         {this.state.aodModalActive && (
@@ -487,7 +486,6 @@ DailyDocketRow.propTypes = {
     userCanVsoHearingSchedule: PropTypes.bool,
     userHasHearingPrepRole: PropTypes.bool,
     userInHearingOrTranscriptionOrganization: PropTypes.bool,
-    userCanScheduleVirtualHearings: PropTypes.bool,
     userId: PropTypes.number,
     userCssId: PropTypes.string
   }),
