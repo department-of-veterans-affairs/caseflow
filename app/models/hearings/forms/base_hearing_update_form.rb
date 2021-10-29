@@ -35,9 +35,9 @@ class BaseHearingUpdateForm
 
     email_sent_updates!
 
-    add_virtual_hearing_alert if start_async_job?
+    add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
 
-    start_async_job
+    start_async_job if start_async_job?
   end
 
   def hearing_alerts
@@ -115,22 +115,16 @@ class BaseHearingUpdateForm
 
   def only_time_updated_or_timezone_updated?
     # Always false if the virtual hearing was just created or if any emails were changed
-    virtual_hearing_created? ||
-      appellant_email.present? ||
-        representative_email.present?
+    if virtual_hearing_created? || appellant_email.present? || representative_email.present?
+      return false
+    end
 
-    # True if hearing time was updated
-    scheduled_time_string.present? ||
-      # True if the representative timezone or appellant timezone is changed
-      representative_timezone.present? || appellant_timezone.present?
+    # True if hearing time was updated or if the representative timezone or appellant timezone is changed
+    scheduled_time_string.present? || representative_timezone.present? || appellant_timezone.present?
   end
 
   def start_async_job?
-    if hearing.virtual?
-      !hearing.virtual_hearing.all_emails_sent?
-    else
-      virtual_hearing_cancelled?
-    end
+    !hearing.virtual_hearing.all_emails_sent?
   end
 
   def start_async_job
@@ -232,7 +226,13 @@ class BaseHearingUpdateForm
   def define_virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
-    updates = (virtual_hearing_attributes || {})
+    emails_sent_updates = {
+      appellant_email_sent: appellant_email_sent_flag,
+      judge_email_sent: judge_email_sent_flag,
+      representative_email_sent: representative_email_sent_flag
+    }.reject { |_k, email_sent| email_sent == true }
+
+    updates = (virtual_hearing_attributes || {}).merge(emails_sent_updates)
 
     if judge_id.present?
       updates[:judge_email] = judge_email

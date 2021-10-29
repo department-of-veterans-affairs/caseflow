@@ -215,8 +215,6 @@ const HearingDetails = (props) => {
         } else {
           const errors = parseVirtualHearingErrors(msg);
 
-          console.log(errors);
-
           document.getElementById('email-section').scrollIntoView();
 
           setVirtualHearingErrors(errors);
