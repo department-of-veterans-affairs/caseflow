@@ -268,6 +268,34 @@ class BaseHearingUpdateForm
     @virtual_hearing_created ||= false
   end
 
+  def update_appellant_recipient
+    update_params = {
+      email_address: appellant_email.presence,
+      timezone: virtual_hearing_updates[:appellant_tz].presence,
+      email_sent: virtual_hearing_updates&.key?(:appellant_email_sent) ? false : true
+    }.compact
+
+    hearing.appellant_recipient.update!(**update_params) if update_params.any?
+  end
+
+  def update_representative_recipient
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email
+      )
+    end
+
+    if hearing.representative_recipient.present?
+      update_params = {
+        timezone: virtual_hearing_updates[:representative_tz].presence,
+        email_sent: virtual_hearing_updates&.key?(:representative_email_sent) ? false : true
+      }.compact
+
+      hearing.representative_recipient.update!(**update_params) if update_params.any?
+    end
+  end
+
   def update_judge_recipient
     if judge_email.present?
       hearing.create_or_update_recipients(
@@ -285,10 +313,42 @@ class BaseHearingUpdateForm
     end
   end
 
+  def update_email_recipients
+    update_appellant_recipient
+    update_representative_recipient
+    update_judge_recipient
+  end
+
+  def create_or_update_email_recipients
+    hearing.create_or_update_recipients(
+      type: AppellantHearingEmailRecipient,
+      email_address: appellant_email,
+      timezone: virtual_hearing_updates[:appellant_tz]
+    )
+
+    hearing.representative_recipient&.unset_email_address!
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email,
+        timezone: virtual_hearing_updates[:representative_tz]
+      )
+    end
+
+    hearing.judge_recipient&.unset_email_address!
+    if judge_email.present?
+      hearing.create_or_update_recipients(
+        type: JudgeHearingEmailRecipient,
+        email_address: judge_email,
+        timezone: nil
+      )
+    end
+  end
+
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do
-      update_judge_recipient
+      create_or_update_email_recipients
 
       @virtual_hearing_created = true
     end
@@ -299,9 +359,11 @@ class BaseHearingUpdateForm
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       virtual_hearing.update!(request_cancelled: true)
+      update_email_recipients
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
       virtual_hearing.establishment.restart!
+      update_email_recipients
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
