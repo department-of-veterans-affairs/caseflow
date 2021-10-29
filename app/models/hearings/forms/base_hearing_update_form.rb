@@ -241,20 +241,23 @@ class BaseHearingUpdateForm
     updates
   end
 
+  # We only send emails for virtual hearings for now we have to make that distinction
+  # Once we start sending emails for other type of hearings the flags should be enough
+  # to determine whether to send and email or not.
   def email_sent_updates!
     if hearing.appellant_recipient.present?
       hearing.appellant_recipient.update(
-        email_sent: appellant_email_sent_flag
+        email_sent: hearing.virtual? ? appellant_email_sent_flag : true
       )
     end
     if hearing.representative_recipient.present?
       hearing.representative_recipient.update(
-        email_sent: representative_email_sent_flag
+        email_sent: hearing.virtual? ? representative_email_sent_flag : true
       )
     end
     if hearing.judge_recipient.present?
       hearing.judge_recipient.update(
-        email_sent: judge_email_sent_flag
+        email_sent: hearing.virtual? ? judge_email_sent_flag : true
       )
     end
   end
