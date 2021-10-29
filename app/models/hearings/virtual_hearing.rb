@@ -62,7 +62,6 @@ class VirtualHearing < CaseflowRecord
 
   before_create :assign_created_by_user
   validate :hearing_is_not_virtual, on: :create
-  validate :appellant_email_address_if_active
 
   scope :eligible_for_deletion,
         lambda {
@@ -287,12 +286,6 @@ class VirtualHearing < CaseflowRecord
   def hearing_is_not_virtual
     if hearing.virtual?
       errors.add(:hearing, "hearing is already a virtual hearing")
-    end
-  end
-
-  def appellant_email_address_if_active
-    if hearing.email_recipients.find_by(type: "AppellantHearingEmailRecipient").blank?
-      errors.add :email_recipients, "appellant email address required."
     end
   end
 
