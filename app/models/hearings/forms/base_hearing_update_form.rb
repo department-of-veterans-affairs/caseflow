@@ -124,7 +124,7 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job?
-    !hearing.virtual_hearing.all_emails_sent?
+    hearing.virtual_hearing.present? && !hearing.virtual_hearing.all_emails_sent?
   end
 
   def start_async_job
