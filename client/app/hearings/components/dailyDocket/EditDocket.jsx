@@ -32,6 +32,7 @@ import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
 import { getRegionalOffice, readableDocketType, formatRoomOption } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
+import { DocketStartTimes } from '../DocketStartTimes';
 
 export const EditDocket = (props) => {
   // Initialize the state
@@ -40,9 +41,7 @@ export const EditDocket = (props) => {
   const [error, setError] = useState(null);
   const [fields, setFields] = useState({
     room: formatRoomOption(props.docket.room),
-    firstSlotTime: props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('hh:mm') : null,
     slotLengthMinutes: props?.docket?.slotLengthMinutes,
-    numberOfSlots: props?.docket?.totalSlots,
     requestType: readableDocketType(props?.docket?.requestType),
     regionalOffice: getRegionalOffice(props.docket.regionalOfficeKey, dropdowns?.regionalOffices?.options),
     judgeId: props?.docket?.judgeId?.toString(),
@@ -50,8 +49,17 @@ export const EditDocket = (props) => {
     notes: props?.docket?.notes,
   });
 
-  // Flag whether this is a virtual docket
-  const virtual = fields.requestType?.value === HEARING_REQUEST_TYPES.virtual;
+  // These fields need their own state since the DocketStartTimes component updates two fields
+  // simultaneously, the second update overrides the first, setting one of the fields to null
+  const [firstSlotTime, setFirstSlotTime] = useState(
+    props?.docket?.beginsAt ? moment(props?.docket?.beginsAt).format('HH:mm') : null
+  );
+  const [numberOfSlots, setNumberOfSlots] = useState(props?.docket?.totalSlots);
+
+  const [virtual, travel, central] = ['virtual', 'travel', 'central'].map((requestType) =>
+    fields.requestType?.value === HEARING_REQUEST_TYPES[requestType]
+  );
+
   const isScheduled = !isEmpty(props?.hearings);
 
   // -04:00 (when DST) or -05:00 for America/New_York
@@ -76,6 +84,8 @@ export const EditDocket = (props) => {
       room: fields.room.value,
       regionalOffice: fields.regionalOffice.key === 'C' ? null : fields.regionalOffice.key,
       requestType: fields.requestType.value,
+      firstSlotTime,
+      numberOfSlots
     });
 
     ApiUtil.put(`/hearings/hearing_day/${props.docket.id}`, { data }).then(
@@ -149,7 +159,7 @@ export const EditDocket = (props) => {
           />
           {isScheduled && (<HelperText label={COPY.DOCKET_HAS_HEARINGS_SCHEDULED} />)}
           <RegionalOfficeDropdown
-            readOnly={fields.requestType?.value === HEARING_REQUEST_TYPES.central}
+            readOnly={fields.requestType?.value === HEARING_REQUEST_TYPES.central || isScheduled}
             label="Regional Office (RO)"
             excludeVirtualHearingsOption={!virtual}
             onChange={handleChange('regionalOffice')}
@@ -157,6 +167,16 @@ export const EditDocket = (props) => {
             options={dropdowns?.regionalOffices?.options}
             errorMessage={invalidDocketRo && COPY.DOCKET_INVALID_RO_TYPE}
           />
+          {!virtual && !central &&
+            <DocketStartTimes
+              setSlotCount={setNumberOfSlots}
+              setHearingStartTime={setFirstSlotTime}
+              hearingStartTime={firstSlotTime}
+              amStartTime={travel ? '9:00' : '8:30'}
+              pmStartTime={travel ? '13:00' : '12:30'}
+              roTimezone={fields?.regionalOffice?.timezone}
+            />
+          }
           {!virtual && (
             <HearingRoomDropdown
               name="room"
@@ -187,7 +207,7 @@ export const EditDocket = (props) => {
           {virtual && (
             <React.Fragment>
               <div className="cf-help-divider usa-width-one-whole" />
-              <TimeSlotCount onChange={handleChange('numberOfSlots')} value={fields.numberOfSlots} />
+              <TimeSlotCount onChange={setNumberOfSlots} value={numberOfSlots} />
               <TimeSlotLength onChange={handleChange('slotLengthMinutes')} value={fields.slotLengthMinutes} />
               <HearingTime
                 disableRadioOptions
@@ -196,17 +216,17 @@ export const EditDocket = (props) => {
                 label="Start Time of Slots"
                 enableZone
                 localZone="America/New_York"
-                onChange={handleChange('firstSlotTime')}
-                value={fields?.firstSlotTime}
+                onChange={setFirstSlotTime}
+                value={firstSlotTime}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={`${props?.docket?.scheduledFor}T${fields?.firstSlotTime}:00-${zoneOffset}`}
+                  slotStartTime={`${props?.docket?.scheduledFor}T${firstSlotTime}:00-${zoneOffset}`}
                   slotLength={fields?.slotLengthMinutes}
-                  slotCount={fields?.numberOfSlots}
+                  slotCount={numberOfSlots}
                   hearingDate={props?.docket?.scheduledFor}
                   label="Preview Time Slots"
                   ro={fields.regionalOffice?.key}
