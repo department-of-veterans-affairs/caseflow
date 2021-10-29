@@ -4,11 +4,11 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import { css } from 'glamor';
 
-import DocketTypeBadge from '../../components/DocketTypeBadge';
-import BadgeArea from './BadgeArea';
+import DocketTypeBadge from 'app/components/DocketTypeBadge';
+import BadgeArea from 'app/components/badges/BadgeArea';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
-import ContinuousProgressBar from '../../components/ContinuousProgressBar';
+import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 
