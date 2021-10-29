@@ -211,6 +211,9 @@ RSpec.feature "Hearing Details", :all_dbs do
           )
         end
 
+        let(:virtual_hearing_alert) do
+          COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+        end
         let!(:expected_alert) do
           COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
         end
@@ -223,6 +226,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           # Confirm the Modal change to cancel the virtual hearing
           click_button("Convert to #{hearing.readable_request_type} Hearing")
 
+          expect(page).to have_content(virtual_hearing_alert)
           expect(page).to have_content(expected_alert)
 
           # Reload to get the updated page contents

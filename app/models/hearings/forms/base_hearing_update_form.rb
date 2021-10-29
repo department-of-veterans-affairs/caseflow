@@ -245,17 +245,17 @@ class BaseHearingUpdateForm
   def email_sent_updates!
     if hearing.appellant_recipient.present?
       hearing.appellant_recipient.update(
-        email_sent: hearing.virtual? ? appellant_email_sent_flag : true
+        email_sent: appellant_email_sent_flag
       )
     end
     if hearing.representative_recipient.present?
       hearing.representative_recipient.update(
-        email_sent: hearing.virtual? ? representative_email_sent_flag : true
+        email_sent: representative_email_sent_flag
       )
     end
     if hearing.judge_recipient.present?
       hearing.judge_recipient.update(
-        email_sent: hearing.virtual? ? judge_email_sent_flag : true
+        email_sent: judge_email_sent_flag
       )
     end
   end
