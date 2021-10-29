@@ -341,10 +341,7 @@ class CheckTaskTree
                              JudgeQualityReviewTask AttorneyQualityReviewTask
                              JudgeDispatchReturnTask AttorneyDispatchReturnTask
                              VeteranRecordRequest].freeze
-  SINGULAR_OPEN_ORG_TASKS ||= %w[
-                                QualityReviewTask
-                                BvaDispatchTask
-                              ].freeze
+  SINGULAR_OPEN_ORG_TASKS ||= %w[QualityReviewTask BvaDispatchTask].freeze
   def extra_open_tasks
     @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
   end
