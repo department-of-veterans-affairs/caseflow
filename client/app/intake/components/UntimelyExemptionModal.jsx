@@ -96,6 +96,16 @@ export const UntimelyExemptionModal = ({
     return errorMsg;
   };
 
+  const extensionLabel = () => {
+    let radioLabelParts = [COPY.UNTIMELY_EXEMPTION_COPY, COPY.UNTIMELY_EXEMPTION_COPY_VHA, '?'];
+
+    if (issue.benefitType !== 'vha') {
+      radioLabelParts.splice(1, 1);
+    }
+
+    return radioLabelParts.join('');
+  };
+
   return (
     <div className="intake-add-issues">
       <Modal buttons={buttons} visible closeHandler={onCancel} title={`Issue ${issueNumber} is an Untimely Issue`}>
@@ -107,7 +117,7 @@ export const UntimelyExemptionModal = ({
         </p>
         <RadioField
           name="untimely-exemption"
-          label="Did the applicant request an extension to the date requirements?"
+          label={extensionLabel()}
           strongLabel
           vertical
           options={BOOLEAN_RADIO_OPTIONS}

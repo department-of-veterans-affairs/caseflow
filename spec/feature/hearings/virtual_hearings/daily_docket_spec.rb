@@ -3,10 +3,6 @@
 require "rails_helper"
 
 RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
-  before do
-    FeatureToggle.enable!(:schedule_virtual_hearings)
-  end
-
   let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
   let(:regional_office_key) { "RO59" } # Honolulu, HI
   let(:regional_office_timezone) { RegionalOffice.new(regional_office_key).timezone }

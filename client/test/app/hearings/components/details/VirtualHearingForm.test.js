@@ -10,7 +10,7 @@ import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 
 // Test helpers and data
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
-import { userWithVirtualHearingsFeatureEnabled, amaHearing, defaultHearing, virtualHearing } from 'test/data';
+import { anyUser, amaHearing, defaultHearing, virtualHearing } from 'test/data';
 
 // Setup the spies
 const updateSpy = jest.fn();
@@ -25,7 +25,7 @@ describe('VirtualHearingForm', () => {
       />,
 
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, defaultHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, defaultHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -45,7 +45,7 @@ describe('VirtualHearingForm', () => {
       />,
 
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -68,7 +68,7 @@ describe('VirtualHearingForm', () => {
       />,
 
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
