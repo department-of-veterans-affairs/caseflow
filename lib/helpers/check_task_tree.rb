@@ -335,16 +335,16 @@ class CheckTaskTree
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html
   # Example: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/217#issuecomment-906779760
   SINGULAR_OPEN_TASKS ||= %w[RootTask DistributionTask
-                           HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
-                           JudgeAssignTask JudgeDecisionReviewTask
-                           AttorneyTask AttorneyRewriteTask
-                           JudgeQualityReviewTask AttorneyQualityReviewTask
-                           JudgeDispatchReturnTask AttorneyDispatchReturnTask
-                           VeteranRecordRequest].freeze
+                             HearingTask ScheduleHearingTask AssignHearingDispositionTask ChangeHearingDispositionTask
+                             JudgeAssignTask JudgeDecisionReviewTask
+                             AttorneyTask AttorneyRewriteTask
+                             JudgeQualityReviewTask AttorneyQualityReviewTask
+                             JudgeDispatchReturnTask AttorneyDispatchReturnTask
+                             VeteranRecordRequest].freeze
   SINGULAR_OPEN_ORG_TASKS ||= %w[
-    QualityReviewTask
-    BvaDispatchTask
-  ].freeze
+                                QualityReviewTask
+                                BvaDispatchTask
+                              ].freeze
   def extra_open_tasks
     @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
   end
