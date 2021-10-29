@@ -159,7 +159,7 @@ export const EditDocket = (props) => {
           />
           {isScheduled && (<HelperText label={COPY.DOCKET_HAS_HEARINGS_SCHEDULED} />)}
           <RegionalOfficeDropdown
-            readOnly={fields.requestType?.value === HEARING_REQUEST_TYPES.central}
+            readOnly={fields.requestType?.value === HEARING_REQUEST_TYPES.central || isScheduled}
             label="Regional Office (RO)"
             excludeVirtualHearingsOption={!virtual}
             onChange={handleChange('regionalOffice')}

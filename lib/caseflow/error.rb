@@ -210,11 +210,12 @@ module Caseflow::Error
 
   class BgsFileNumberMismatch < SerializableError
     # Add attr_accessors for testing
-    attr_accessor :user_id, :appeal_id
+    attr_accessor :user_id, :appeal_id, :veteran_id
 
     def initialize(args)
       @user_id = args[:user_id]
       @appeal_id = args[:appeal_id]
+      @veteran_id = args[:veteran_id]
       @code = args[:code] || 500
       @title = args[:title] || "VBMS::FilenumberDoesNotExist"
       @message = args[:message] || "The veteran file number does not match the file number in VBMS"
