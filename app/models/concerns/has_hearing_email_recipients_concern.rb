@@ -125,7 +125,11 @@ module HasHearingEmailRecipientsConcern
     recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
 
     if recipient.blank?
-      virtual_hearing.present? && virtual_hearing[:representative_tz].presence || appeal&.representative_tz
+      begin
+        virtual_hearing.present? && virtual_hearing[:representative_tz].presence || appeal&.representative_tz
+      rescue Module::DelegationError
+        nil
+      end
     else
       recipient&.timezone
     end
