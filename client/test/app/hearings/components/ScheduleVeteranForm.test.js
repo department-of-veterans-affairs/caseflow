@@ -217,14 +217,14 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Displays ReadOnlyHearingTimeWithZone when video is selected and beginsAt exists', () => {
+  test('Displays ReadOnlyHearingTimeWithZone when video is selected and halfDay is true', () => {
     const hearing = {
       ...defaultHearing,
       regionalOffice: defaultHearing.regionalOfficeKey,
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
-        beginsAt: '2021-07-29T11:30:00-04:00',
+        halfDay: true,
         timezone: 'America/Los_Angeles'
       }
     };
@@ -251,14 +251,14 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Displays HearingTime when video is selected and beginsAt does not exist', () => {
+  test('Displays HearingTime when video is selected and halfDay is false', () => {
     const hearing = {
       ...defaultHearing,
       regionalOffice: defaultHearing.regionalOfficeKey,
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
-        beginsAt: null,
+        halfDay: false,
         timezone: 'America/Los_Angeles'
       }
     };
