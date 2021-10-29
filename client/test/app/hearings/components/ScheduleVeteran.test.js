@@ -303,7 +303,7 @@ describe('ScheduleVeteran', () => {
       find('button').
       simulate('click');
     expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({
-      appellantEmail: ' Veteran email malformed',
+      appellantEmailAddress: ' Veteran email malformed',
     });
     expect(scheduleVeteran).toMatchSnapshot();
   });
