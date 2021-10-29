@@ -5,7 +5,6 @@ import { capitalize } from 'lodash';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 import { TaskSelectionTable } from './TaskSelectionTable';
-import { disabledTasksBasedOnSelections } from './utils';
 
 export const TasksToCancel = ({ tasks }) => {
   const { control, getValues, watch } = useFormContext();
