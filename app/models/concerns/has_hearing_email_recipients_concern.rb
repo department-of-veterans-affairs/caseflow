@@ -92,34 +92,42 @@ module HasHearingEmailRecipientsConcern
   end
 
   def appellant_email_address
-    if appellant_recipient.blank?
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
       virtual_hearing[:appellant_email].presence || appeal&.appellant_email_address
     else
-      appellant_recipient&.email_address
+      recipient&.email_address
     end
   end
 
   def appellant_tz
-    if appellant_recipient.blank?
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
       virtual_hearing[:appellant_tz].presence || appeal&.appellant_tz
     else
-      appellant_recipient&.timezone
+      recipient&.timezone
     end
   end
 
   def representative_email_address
-    if representative_recipient.blank?
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
       virtual_hearing[:representative_email].presence || appeal&.representative_email_address
     else
-      representative_recipient&.email_address
+      recipient&.email_address
     end
   end
 
   def representative_tz
-    if representative_recipient.blank?
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
       virtual_hearing[:representative_tz].presence || appeal&.representative_tz
     else
-      representative_recipient&.timezone
+      recipient&.timezone
     end
   end
 

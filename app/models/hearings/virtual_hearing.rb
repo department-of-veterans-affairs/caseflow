@@ -62,7 +62,6 @@ class VirtualHearing < CaseflowRecord
 
   before_create :assign_created_by_user
   validate :hearing_is_not_virtual, on: :create
-  validate :appellant_email_address_if_active
 
   scope :eligible_for_deletion,
         lambda {
@@ -128,14 +127,10 @@ class VirtualHearing < CaseflowRecord
   end
 
   # Whether or not all non-reminder emails were sent.
-  def all_emails_sent?
-    hearing.all_emails_sent?
-  end
+  delegate :all_emails_sent?, to: :hearing
 
   # checks if emails were sent to appellant and reps
-  def cancellation_emails_sent?
-    hearing.cancellation_emails_sent?
-  end
+  delegate :cancellation_emails_sent?, to: :hearing
   ## END Email related accessors
 
   # After a certain point after this change gets merged, alias_with_host will never be nil
@@ -291,12 +286,6 @@ class VirtualHearing < CaseflowRecord
   def hearing_is_not_virtual
     if hearing.virtual?
       errors.add(:hearing, "hearing is already a virtual hearing")
-    end
-  end
-
-  def appellant_email_address_if_active
-    if hearing.email_recipients.find_by(type: "AppellantHearingEmailRecipient").blank?
-      errors.add :email_recipients, "appellant email address required."
     end
   end
 
