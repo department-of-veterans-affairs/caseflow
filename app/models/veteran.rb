@@ -276,16 +276,23 @@ class Veteran < CaseflowRecord
 
   def date_of_death
     cached_date_of_death = super
-    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
+    return cached_date_of_death if RequestStore.store[:current_user]&.vso_employee?
 
-    dod = bgs_record[:date_of_death] if bgs_record_found?
-    if dod.present?
-      dod = Date.strptime(dod, "%m/%d/%Y")
-      update(date_of_death: dod)
-    end
+    return nil unless bgs_record_found?
+
+    dod = format_bgs_date_of_death(bgs_record[:date_of_death])
+    # TODO: Add some logging so we can catch the situations where we are removing a previously set date of death.
+    # TODO: How does this affect page load times?
+    update!(date_of_death: dod) unless dod == cached_date_of_death
+
     dod
   rescue ArgumentError
     nil
+  end
+
+  # Return a Date object or nil from the input raw string date.
+  def format_bgs_date_of_death(raw_date_of_death)
+    raw_date_of_death.present? ? Date.strptime(raw_date_of_death, "%m/%d/%Y") : nil
   end
 
   def set_date_of_death_reported_at!
@@ -325,6 +332,8 @@ class Veteran < CaseflowRecord
     is_stale
   end
 
+  # TODO: I think this will always return true for Veterans with a non-nil date_of_death because the formatting
+  # of the date of death field in BGS does not match the formatting for this object's date of death field.
   def stale_bgs_attributes?
     CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
   end
@@ -332,9 +341,9 @@ class Veteran < CaseflowRecord
   def update_cached_attributes!
     CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
       fetched_attr = bgs_record[bgs_attr]
-      if bgs_attr == :date_of_death && fetched_attr.present?
+      if bgs_attr == :date_of_death
         fetched_attr = begin
-                         Date.strptime(fetched_attr, "%m/%d/%Y")
+                         format_bgs_date_of_death(fetched_attr)
                        rescue ArgumentError
                          nil
                        end
