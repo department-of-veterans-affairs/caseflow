@@ -161,6 +161,7 @@ export const CaseDetailsView = (props) => {
 
     return () => {
       props.resetSuccessMessages();
+      props.resetErrorMessages();
     };
   }, []);
 
