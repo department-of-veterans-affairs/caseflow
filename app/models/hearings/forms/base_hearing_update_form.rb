@@ -124,7 +124,11 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job?
-    !hearing.virtual_hearing.all_emails_sent?
+    if hearing.virtual?
+      !hearing.virtual_hearing.all_emails_sent?
+    else
+      virtual_hearing_cancelled?
+    end
   end
 
   def start_async_job
@@ -226,13 +230,7 @@ class BaseHearingUpdateForm
   def define_virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
-    emails_sent_updates = {
-      appellant_email_sent: appellant_email_sent_flag,
-      judge_email_sent: judge_email_sent_flag,
-      representative_email_sent: representative_email_sent_flag
-    }.reject { |_k, email_sent| email_sent == true }
-
-    updates = (virtual_hearing_attributes || {}).merge(emails_sent_updates)
+    updates = (virtual_hearing_attributes || {})
 
     if judge_id.present?
       updates[:judge_email] = judge_email
