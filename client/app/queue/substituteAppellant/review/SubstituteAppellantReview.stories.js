@@ -3,10 +3,10 @@ import { MemoryRouter } from 'react-router';
 
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
-import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForDismissedEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
+const allEvidenceSubmissionWindowTasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
 const filteredEvidenceSubmissionTasks = prepTaskDataForUi({ taskData:
   allEvidenceSubmissionWindowTasks }
