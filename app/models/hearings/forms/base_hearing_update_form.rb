@@ -168,7 +168,7 @@ class BaseHearingUpdateForm
       v.fetch("email_address", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("email_address", nil)
+    email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes[:appellant_email]
   end
 
   def representative_email
@@ -176,7 +176,7 @@ class BaseHearingUpdateForm
       v.fetch("email_address", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("email_address", nil)
+    email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes[:representative_email]
   end
 
   def appellant_timezone
@@ -184,7 +184,7 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("timezone", nil)
+    email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes[:appellant_timezone]
   end
 
   def representative_timezone
@@ -192,7 +192,7 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email_recipient_attributes&.fetch("timezone", nil)
+    email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes[:representative_timezone]
   end
 
   def judge_email
@@ -244,17 +244,17 @@ class BaseHearingUpdateForm
   def email_sent_updates!
     if hearing.appellant_recipient.present?
       hearing.appellant_recipient.update(
-        email_sent: appellant_email_sent_flag
+        email_sent: hearing.virtual? ? appellant_email_sent_flag : true
       )
     end
     if hearing.representative_recipient.present?
       hearing.representative_recipient.update(
-        email_sent: representative_email_sent_flag
+        email_sent: hearing.virtual? ? representative_email_sent_flag : true
       )
     end
     if hearing.judge_recipient.present?
       hearing.judge_recipient.update(
-        email_sent: judge_email_sent_flag
+        email_sent: hearing.virtual? ? judge_email_sent_flag : true
       )
     end
   end
