@@ -4,13 +4,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { COLORS } from '../../constants/AppConstants';
-import { tooltipListStyling } from './style';
+import { COLORS } from 'app/constants/AppConstants';
+import { tooltipListStyling } from 'app/components/badges/style';
 
-import Badge from 'app/components/badges/Badge';
-import ApiUtil from '../../util/ApiUtil';
-import { DateString } from '../../util/DateUtil';
-import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
+import Badge from '../Badge';
+import ApiUtil from 'app/util/ApiUtil';
+import { DateString } from 'app/util/DateUtil';
+import { setMostRecentlyHeldHearingForAppeal } from 'app/queue/QueueActions';
 
 /**
  * Component to display hearing information associated with a hearing. If a task is provided to the badge, a request is

@@ -102,6 +102,49 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Open task should not be assigned to inactive assignee"
       end
     end
+
+    describe "#inconsistent_assignees" do
+      subject { CheckTaskTree.new(appeal).inconsistent_assignees }
+      let(:appeal) { create(:appeal, :ready_for_distribution) }
+      it_behaves_like "when tasks are correct"
+
+      context "when DistributionTask is invalid" do
+        before do
+          distribution_task.update(assigned_to: QualityReview.singleton)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                         /Task assignee is inconsistent with other tasks of the same type: .*DistributionTask/
+      end
+      context "when ScheduleHearingTask for AMA appeal is invalid" do
+        let(:appeal) { create(:appeal, :ready_for_distribution, :with_schedule_hearing_tasks) }
+        let(:hearing_task) { appeal.tasks.find_by_type(:HearingTask) }
+        let(:schedule_hearing_task) { appeal.tasks.find_by_type(:ScheduleHearingTask) }
+        before do
+          hearing_task.update(parent: distribution_task)
+          distribution_task.update(status: :on_hold)
+          schedule_hearing_task.update(assigned_to: QualityReview.singleton)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                         /Task assignee is inconsistent with other tasks of the same type: .*ScheduleHearingTask/
+      end
+    end
+  end
+
+  describe "#track_veteran_task_assigned_to_non_representative" do
+    subject { CheckTaskTree.new(appeal).track_veteran_task_assigned_to_non_representative }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let!(:tv_task) { create(:track_veteran_task, parent: appeal.root_task, assigned_to: create(:vso)) }
+    it_behaves_like "when tasks are correct"
+
+    context "when TrackVeteranTask is invalid" do
+      before do
+        tv_task.update(assigned_to: Bva.singleton)
+      end
+      it { is_expected.not_to be_blank }
+      include_examples "has error message", /TrackVeteranTask assignee should be a Representative/
+    end
   end
 
   context "check_parent_child_tasks" do
