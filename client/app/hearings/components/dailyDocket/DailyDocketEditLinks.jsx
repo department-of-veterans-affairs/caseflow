@@ -6,31 +6,29 @@ import _ from 'lodash';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../../components/Button';
-import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../../components/RenderFunctions';
+import { CrossIcon, PencilIcon, LockIcon } from '../../../components/RenderFunctions';
 
-const EditHearingDayLink = ({ docketId, history }) => (
-  <Button
-    {...css({ marginLeft: '30px' })}
-    linkStyling
-    onClick={() => history.push(`/schedule/docket/${docketId}/edit`)}
-  >
-    <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-    <span {...css({ marginRight: '5px', marginLeft: '20px' })} >
-      Edit Hearing Day
+const EditHearingDayLink = ({ openModal }) => (
+  <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
+    <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+    <span {...css({
+      marginRight: '5px',
+      marginLeft: '20px'
+    })}>
+        Edit Hearing Day
     </span>
   </Button>
 );
 
 EditHearingDayLink.propTypes = {
-  history: PropTypes.object,
-  docketId: PropTypes.string.isRequired
+  openModal: PropTypes.func.isRequired
 };
 
 const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
   <Button linkStyling onClick={onDisplayLockModal}>
     <span {...css({ position: 'absolute',
       '& > svg > g > g': { fill: '#0071bc' } })}>
-      {lockIcon()}
+      <LockIcon />
     </span>
     <span {...css({ marginRight: '5px',
       marginLeft: '16px' })}>
@@ -50,7 +48,7 @@ const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
   <Button
     linkStyling
     onClick={onClickRemoveHearingDay} >
-    {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
+    <CrossIcon /><span {...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
   </Button>
 );
 
@@ -61,7 +59,7 @@ RemoveHearingDayLink.propTypes = {
 export default class DailyDocketEditLinks extends React.Component {
 
   render() {
-    const { dailyDocket, onDisplayLockModal, hearings, onClickRemoveHearingDay, user } = this.props;
+    const { dailyDocket, openModal, onDisplayLockModal, hearings, onClickRemoveHearingDay, user } = this.props;
 
     return <React.Fragment>
       <h1>Daily Docket ({moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1>
@@ -73,7 +71,7 @@ export default class DailyDocketEditLinks extends React.Component {
         <Link linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
         {user.userCanAssignHearingSchedule &&
           <span>
-            <EditHearingDayLink {...this.props} docketId={dailyDocket?.id} />
+            <EditHearingDayLink openModal={openModal} />
             &nbsp;&nbsp;
             <LockHearingLink dailyDocket={dailyDocket} onDisplayLockModal={onDisplayLockModal} />
             &nbsp;&nbsp;
