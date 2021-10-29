@@ -13,7 +13,8 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
-  fetchAmaTasksOfUser
+  fetchAmaTasksOfUser,
+  fetchAmaTasksOfOrg
 } from './QueueActions';
 import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
@@ -28,6 +29,13 @@ class QueueLoadingScreen extends React.PureComponent {
     } = this.props;
 
     this.props.setUserId(userId);
+
+    console.log(`THE USER ID: ${userId}`);
+    console.log(`THE USER ROLE: ${userRole}`);
+
+    if (userId === 4151) {
+      return this.props.fetchAmaTasksOfOrg(chosenUserId, userRole, type);
+    }
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
   }
@@ -142,6 +150,7 @@ QueueLoadingScreen.propTypes = {
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
+  fetchAmaTasksOfOrg: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -180,6 +189,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
+  fetchAmaTasksOfOrg,
   setUserId,
   setTargetUser
 }, dispatch);

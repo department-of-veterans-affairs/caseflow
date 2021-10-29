@@ -19,6 +19,7 @@ import {
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
+  setUserIsCamoEmployee,
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
@@ -113,6 +114,7 @@ class QueueApp extends React.PureComponent {
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
+    this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -1190,6 +1192,8 @@ QueueApp.propTypes = {
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
+  setUserIsCamoEmployee: PropTypes.func,
+  userIsCamoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1222,6 +1226,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,
+      setUserIsCamoEmployee,
       setFeedbackUrl,
       setOrganizations,
     },

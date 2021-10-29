@@ -243,6 +243,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     roles.include?("VSO")
   end
 
+  def camo_employee?
+    member_of_organization?(VhaCamo.singleton)
+  end
+
   def organization_queue_user?
     organizations.any?
   end
@@ -332,7 +336,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     camo_team_users.each do |user|
       orgs << {
-        name: "Assign #{user.css_id}",
+        name: "Assign VHA CAMO",
         url: "/queue/#{user.css_id}/assign?role=camo"
       }
     end

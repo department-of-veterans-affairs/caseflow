@@ -688,6 +688,24 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     });
 };
 
+export const fetchAmaTasksOfOrg = (userId, userRole, type = null) => (dispatch) => {
+  let url = '/organizations/vha-camo/tasks';
+
+  return ApiUtil.get(url).
+    then((resp) => {
+      console.log('RESPONSE~~~~~~');
+      console.log(resp);
+
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    }).
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
+    });
+};
+
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
   payload: {
