@@ -60,8 +60,6 @@ class CheckTaskTree
     @errors << "Task should be closed since there are no active issues" unless open_tasks_with_no_active_issues.blank?
     @errors << "Closed task should not have processable TaskTimer" unless open_task_timers_for_closed_tasks.blank?
 
-    @errors << "Appeal is stuck" if @appeal.try(:stuck?)
-
     if verbose
       puts("--- ERRORS:", @errors) if @errors.any?
       puts("--- WARNINGS:", @warnings) if @warnings.any?
@@ -85,7 +83,6 @@ class CheckTaskTree
       @errors << "TrackVeteranTask assignee should be a Representative (i.e., VSO or PrivateBar)"
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def check_parent_child_tasks
     @errors << "Open task should have an on_hold parent task" unless open_tasks_with_parent_not_on_hold.blank?
@@ -105,12 +102,24 @@ class CheckTaskTree
   end
 
   def check_task_counts
+    # See AppealsWithNoTasksOrAllTasksOnHoldQuery
+    @errors << "There should be at least 1 task" if @appeal.tasks.count == 0
+    @errors << "Active appeal should have at least 1 non-RootTask task" if @appeal.active? && @appeal.tasks.count == 1
+
+    distribution_task = @appeal.tasks.find_by_type(:DistributionTask)
+    @errors << "Established appeal should have a DistributionTask" if @appeal.established_at? && distribution_task.nil?
+
+    if open_root_task_for_dispatched_appeal?
+      @errors << "Dispatched appeal (with decision document) should not have open RootTask"
+    end
+
     @errors << "There should be no more than 1 open HearingTask" unless extra_open_hearing_tasks.blank?
     @errors << "There should be no more than 1 open task of type #{extra_open_tasks}" unless extra_open_tasks.blank?
     unless extra_open_org_tasks.blank?
       @errors << "There should be no more than 1 open org task of type #{extra_open_org_tasks}"
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def check_task_prerequisites
     unless missing_dispatch_task_prerequisite.blank?
@@ -306,6 +315,12 @@ class CheckTaskTree
         parent_task_query.where(appeal: @appeal).include?(child.parent)
       end
     end.select(&:any?).flatten
+  end
+
+  # See AppealsWithNoTasksOrAllTasksOnHoldQuery#dispatched_appeals_on_hold
+  def open_root_task_for_dispatched_appeal?
+    dispatched = @appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask)&.completed?
+    @appeal.root_task&.open? && @appeal.decision_document && dispatched
   end
 
   # See AppealsWithMoreThanOneOpenHearingTaskChecker
