@@ -115,7 +115,11 @@ module HasHearingEmailRecipientsConcern
     recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
 
     if recipient.blank?
-      virtual_hearing.present? ? virtual_hearing[:representative_email].presence : appeal&.representative_email_address
+      if virtual_hearing.present?
+        virtual_hearing[:representative_email].presence
+      else
+        representative_tz.present? ? appeal&.representative_email_address : nil
+      end
     else
       recipient&.email_address
     end

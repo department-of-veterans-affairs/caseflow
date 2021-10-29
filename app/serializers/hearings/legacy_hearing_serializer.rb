@@ -14,7 +14,7 @@ class LegacyHearingSerializer
   attribute :appellant_address_line_2
   attribute :appellant_city
   attribute :appellant_country
-  attribute :appellant_email_address, if: for_full
+  attribute :appellant_email_address
   attribute :appellant_tz, if: for_full
   attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
