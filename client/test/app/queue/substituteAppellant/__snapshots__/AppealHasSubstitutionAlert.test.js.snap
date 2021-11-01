@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppealHasSubstitutionAlert renders correctly 1`] = `
+exports[`AppealHasSubstitutionAlert renders correctly for default appeal substitution 1`] = `
 <div>
   <div
     class="usa-alert usa-alert-info usa-alert-slim"
@@ -24,6 +24,26 @@ exports[`AppealHasSubstitutionAlert renders correctly 1`] = `
           </a>
           .
         </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AppealHasSubstitutionAlert renders correctly for same appeal substitution 1`] = `
+<div>
+  <div
+    class="usa-alert usa-alert-info usa-alert-slim"
+    role="alert"
+  >
+    <div
+      class="usa-alert-body"
+    >
+      <div
+        class="usa-alert-text"
+      >
+        This appeal has been reactivated for a substitute appellant.
+         
       </div>
     </div>
   </div>

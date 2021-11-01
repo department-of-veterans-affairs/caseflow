@@ -163,6 +163,7 @@ detectors:
       - Docket#distribute_appeals      
       - LegacyDocket#distribute_priority_appeals
       - LegacyDocket#distribute_nonpriority_appeals
+      - ExternalApi::MPIService#search_people_info
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReviews::IntakeError#potential_error_code
