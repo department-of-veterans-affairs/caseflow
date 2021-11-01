@@ -63,5 +63,16 @@ describe "FinderConsoleMethods" do
       let(:identifier) { user.vacols_staff.slogid }
       it { is_expected.to eq user }
     end
+    context "identifier is part of a full name" do
+      let(:identifier) { user.full_name[] }
+      it { is_expected.to eq user }
+
+      context "identifier is part of a full name for multiple users" do
+        it { is_expected.to eq [user, user2] }
+      end
+      context "identifier is a full name of a non-existing user" do
+        it { is_expected.to eq nil }
+      end
+    end
   end
 end

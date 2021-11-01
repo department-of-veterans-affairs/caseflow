@@ -181,6 +181,7 @@ FactoryBot.define do
     trait :tied_to_judge do
       transient do
         tied_judge { nil }
+        sequence(:docket_number, 1_500_000)
       end
 
       after(:create) do |vacols_case, evaluator|
