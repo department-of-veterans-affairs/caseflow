@@ -9,7 +9,7 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
 
     transient do
-      docket_number { "150000" + bfkey }
+      docket_number { "150000#{bfkey}" }
     end
     # folder.tinum is the docket_number
     folder { association :folder, ticknum: bfkey, tinum: docket_number }
