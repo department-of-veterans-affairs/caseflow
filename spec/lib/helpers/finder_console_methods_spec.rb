@@ -90,13 +90,14 @@ describe "FinderConsoleMethods" do
       it { is_expected.to eq user.vacols_staff }
     end
     context "identifier is part of a full name" do
-      let(:identifier) { "LastName" }
-      before { user.vacols_staff.update(snamel: "My#{identifier}") }
+      let(:identifier) { partial_last_name }
+      let(:partial_last_name) { "LastName" }
+      before { user.vacols_staff.update(snamel: "My#{partial_last_name}") }
       it { is_expected.to eq user.vacols_staff }
 
       context "identifier is part of a full name for multiple users" do
-        let!(:staff2) { create(:staff, snamel: "My#{identifier}Too") }
-        it { is_expected.to match_array [staff1, staff2] }
+        let!(:staff2) { create(:staff, snamel: "My#{partial_last_name}Too") }
+        it { is_expected.to match_array [staff, staff2] }
       end
       context "identifier is a full name of a non-existing user" do
         let(:identifier) { "NON_EXISTENT_NAME" }
