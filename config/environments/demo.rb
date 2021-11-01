@@ -86,9 +86,8 @@ Rails.application.configure do
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
-  # set to true to create queues and override the sqs endpiont
+  # set to true to create queues
   config.sqs_create_queues = true
-  config.sqs_endpoint = 'http://localstack:4576'
 
   config.google_analytics_account = "UA-74789258-5"
 end
