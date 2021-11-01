@@ -1,10 +1,11 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../../../app/queue/reducers';
-import thunk from 'redux-thunk';
-import FnodBadge from 'app/queue/components/FnodBadge';
 import { mount } from 'enzyme';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+
+import rootReducer from 'app/queue/reducers';
+import FnodBadge from './FnodBadge';
 
 describe('FnodBadge', () => {
   const defaultAppeal = {
@@ -20,7 +21,7 @@ describe('FnodBadge', () => {
         <FnodBadge
           appeal={defaultAppeal}
         />
-      </Provider> 
+      </Provider>
     );
   };
 

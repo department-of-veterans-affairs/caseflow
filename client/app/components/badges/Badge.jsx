@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import Tooltip from '../../components/Tooltip';
-import { COLORS } from '../../constants/AppConstants';
+import Tooltip from 'app/components/Tooltip';
+import { COLORS } from 'app/constants/AppConstants';
 
 const defaultBadgeStyling = {
   display: 'inline-block',

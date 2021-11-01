@@ -816,6 +816,8 @@ class Task < CaseflowRecord
   end
 
   def cascade_closure_from_child_task?(child_task)
+    return if is_a?(AssessDocumentationTask)
+
     type == child_task&.type
   end
 
