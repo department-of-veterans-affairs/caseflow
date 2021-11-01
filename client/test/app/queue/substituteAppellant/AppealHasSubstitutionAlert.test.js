@@ -8,6 +8,7 @@ import { AppealHasSubstitutionAlert } from 'app/queue/substituteAppellant/caseDe
 describe('AppealHasSubstitutionAlert', () => {
   const defaults = {
     targetAppealId: 'abc123',
+    hasSameAppealSubstitution: false,
   };
 
   const setup = (props) =>
@@ -17,8 +18,18 @@ describe('AppealHasSubstitutionAlert', () => {
       </MemoryRouter>
     );
 
-  it('renders correctly', () => {
+  it('renders correctly for default appeal substitution', () => {
+
     const { container } = setup();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for same appeal substitution', () => {
+
+    const { container } = setup({
+      hasSameAppealSubstitution: true,
+    });
 
     expect(container).toMatchSnapshot();
   });
