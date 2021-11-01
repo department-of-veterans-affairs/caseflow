@@ -35,9 +35,9 @@ class BaseHearingUpdateForm
 
     email_sent_updates!
 
-    add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
-
     start_async_job if start_async_job?
+
+    add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
   end
 
   def hearing_alerts
