@@ -9,11 +9,14 @@ RSpec.feature "Hearing Details", :all_dbs do
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
+  let!(:virtual_hearing_success_alert) do
+    COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+  end
 
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "new@email.com" }
-  let(:fill_in_veteran_tz) { "America/New_York" }
+  let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (9:30 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
   let(:fill_in_rep_tz) { "America/Chicago" }
   let(:pexip_url) { "fake.va.gov" }
@@ -126,7 +129,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
-  shared_examples "non-virtual hearing type conversion" do
+  shared_examples "non-virtual hearing types" do
     scenario "user can convert hearing type to virtual" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
@@ -139,6 +142,44 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
+
+      # Test the links are not present
+      within "#vlj-hearings-link" do
+        expect(page).to have_content("Scheduling in progress")
+      end
+      within "#guest-hearings-link" do
+        expect(page).to have_content("Scheduling in progress")
+      end
+
+      expect(page).to have_content(virtual_hearing_success_alert)
+      check_virtual_hearings_links(hearing.reload.virtual_hearing)
+
+      # Check the Email Notification History
+      check_email_event_table(hearing, 2)
+
+      # Check the emails were sent to the correct address
+      hearing.email_events.each do |event|
+        expect(page).to have_content(event.email_address)
+      end
+    end
+
+    scenario "user can optionally change emails and timezone" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      # Update the POA and Appellant emails
+      fill_in "Veteran Email", with: fill_in_veteran_email
+      fill_in "POA/Representative Email", with: fill_in_rep_email
+
+      # Update the POA and Appellant timezones
+      click_dropdown(name: "representativeTz", text: fill_in_veteran_tz)
+      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
+      click_button("Save")
+
+      expect(page).to have_content(expected_alert)
+      expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+      expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      expect(page).to have_content(fill_in_veteran_tz)
     end
   end
 
@@ -149,7 +190,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       include_examples "always updatable fields"
-      include_examples "non-virtual hearing type conversion"
+      include_examples "non-virtual hearing types"
     end
 
     context "when type is Central" do
@@ -158,7 +199,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       include_examples "always updatable fields"
-      include_examples "non-virtual hearing type conversion"
+      include_examples "non-virtual hearing types"
     end
 
     context "when type is Virtual" do
