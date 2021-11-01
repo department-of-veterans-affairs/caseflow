@@ -107,7 +107,7 @@ module HasHearingEmailRecipientsConcern
     if recipient.blank?
       virtual_hearing.present? ? virtual_hearing[:appellant_tz] : appeal&.appellant_tz
     else
-      recipient&.timezone
+      recipient&.timezone || appeal&.appellant_tz
     end
   end
 

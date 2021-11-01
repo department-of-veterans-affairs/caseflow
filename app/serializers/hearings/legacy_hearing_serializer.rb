@@ -68,7 +68,9 @@ class LegacyHearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
-  attribute :representative_tz, if: for_full
+  attribute :representative_tz, if: for_full do |hearing|
+    hearing.representative_tz || hearing.appeal.appellant_tz
+  end
   attribute :representative_email_id, if: for_full do |hearing|
     hearing.representative_recipient&.id.to_s
   end

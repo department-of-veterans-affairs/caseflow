@@ -74,7 +74,8 @@ export const ReadOnlyEmails = ({
   showAllEmails = false,
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
-  const representativeEmailAddress = hearing?.representativeEmailAddress || hearing?.representativeEmail;
+  const representativeEmailAddress =
+    hearing?.representativeEmailAddress || hearing?.virtualHearing?.representativeEmail;
   const appellantEmailAddress = hearing?.appellantEmailAddress || hearing?.appellantEmail;
 
   // Check for appellant edits
