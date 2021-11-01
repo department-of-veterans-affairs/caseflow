@@ -821,7 +821,7 @@
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
-  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.",
+  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
   "SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
@@ -1157,5 +1157,8 @@
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue"
 }
