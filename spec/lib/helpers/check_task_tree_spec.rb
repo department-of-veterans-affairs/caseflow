@@ -14,7 +14,7 @@ describe "CheckTaskTree" do
     it "calls CheckTaskTree.check" do
       expect_any_instance_of(CheckTaskTree).to receive(:check).and_call_original
       errors, warnings = subject
-      expect(errors).to include "Appeal is stuck"
+      expect(errors).to include "There should be at least 1 task"
       expect(warnings).to eq []
     end
   end
@@ -130,20 +130,19 @@ describe "CheckTaskTree" do
                          /Task assignee is inconsistent with other tasks of the same type: .*ScheduleHearingTask/
       end
     end
-  end
 
-  describe "#track_veteran_task_assigned_to_non_representative" do
-    subject { CheckTaskTree.new(appeal).track_veteran_task_assigned_to_non_representative }
-    let(:appeal) { create(:appeal, :ready_for_distribution) }
-    let!(:tv_task) { create(:track_veteran_task, parent: appeal.root_task, assigned_to: create(:vso)) }
-    it_behaves_like "when tasks are correct"
+    describe "#track_veteran_task_assigned_to_non_representative" do
+      subject { CheckTaskTree.new(appeal).track_veteran_task_assigned_to_non_representative }
+      let!(:tv_task) { create(:track_veteran_task, parent: appeal.root_task, assigned_to: create(:vso)) }
+      it_behaves_like "when tasks are correct"
 
-    context "when TrackVeteranTask is invalid" do
-      before do
-        tv_task.update(assigned_to: Bva.singleton)
+      context "when TrackVeteranTask is invalid" do
+        before do
+          tv_task.update(assigned_to: Bva.singleton)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", /TrackVeteranTask assignee should be a Representative/
       end
-      it { is_expected.not_to be_blank }
-      include_examples "has error message", /TrackVeteranTask assignee should be a Representative/
     end
   end
 
@@ -185,16 +184,67 @@ describe "CheckTaskTree" do
         include_examples "has error message", "Open RootTask should have an active task assigned to the Board"
       end
     end
+    describe "#unexpected_child_tasks" do
+      subject { CheckTaskTree.new(appeal).unexpected_child_tasks }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
+      let(:dispatch_org_task) { appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask) }
+      it_behaves_like "when tasks are correct"
+      context "when tasks are invalid" do
+        before do
+          JudgeDispatchReturnTask.create!(appeal: appeal, parent: dispatch_org_task, assigned_to: judge)
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", /Unexpected child task: .*JudgeDispatchReturnTask/
+      end
+    end
+    describe "#tasks_with_unexpected_parent_task" do
+      subject { CheckTaskTree.new(appeal).tasks_with_unexpected_parent_task }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      let(:judge) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask).assigned_to }
+      let(:dispatch_org_task) { appeal.tasks.assigned_to_any_org.find_by_type(:BvaDispatchTask) }
+      let(:dispatch_user_task) { appeal.tasks.assigned_to_any_user.find_by_type(:BvaDispatchTask) }
+      it_behaves_like "when tasks are correct"
+      context "when tasks are invalid" do
+        before do
+          dispatch_user_task.update(parent: appeal.root_task)
+          dispatch_org_task.assigned!
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", /Unexpected parent task for: .*BvaDispatchTask/
+      end
+    end
   end
 
   context "check_task_counts" do
+    context "when appeal has 0 tasks" do
+      include_examples "has error message", "There should be at least 1 task"
+    end
+    context "when an appeal only has a RootTask" do
+      let(:appeal) { create(:appeal, :active) }
+      include_examples "has error message", "Active appeal should have at least 1 non-RootTask task"
+    end
+    context "established appeal without DistributionTask" do
+      include_examples "has error message", "Established appeal should have a DistributionTask"
+    end
+    context "dispatched appeal has open RootTask" do
+      let(:appeal) { create(:appeal, :dispatched) }
+      before { appeal.root_task.on_hold! }
+      include_examples "has error message", "Dispatched appeal (with decision document) should not have open RootTask"
+    end
+
     describe "#extra_open_hearing_tasks" do
       subject { CheckTaskTree.new(appeal).extra_open_hearing_tasks }
-      let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+      let(:appeal) { create(:appeal, :ready_for_distribution, :with_schedule_hearing_tasks) }
+      let(:hearing_task) { appeal.tasks.find_by_type(:HearingTask) }
+      before do
+        hearing_task.update(parent: distribution_task)
+        distribution_task.on_hold!
+      end
       it_behaves_like "when tasks are correct"
 
       context "when tasks are invalid" do
-        before { HearingTask.create!(appeal: appeal, parent: appeal.root_task) }
+        before { HearingTask.create!(appeal: appeal, parent: distribution_task) }
         it { is_expected.not_to be_blank }
         include_examples "has error message", "There should be no more than 1 open HearingTask"
       end
@@ -278,18 +328,20 @@ describe "CheckTaskTree" do
     end
   end
 
-  describe "#missing_dispatch_task_prerequisite" do
-    subject { CheckTaskTree.new(appeal).missing_dispatch_task_prerequisite }
-    let(:appeal) { create(:appeal, :at_bva_dispatch) }
-    let(:jdr_task) { appeal.tasks.find_by_type(:JudgeDecisionReviewTask) }
-    it_behaves_like "when tasks are correct"
+  context "check_task_prerequisites" do
+    describe "#missing_dispatch_task_prerequisite" do
+      subject { CheckTaskTree.new(appeal).missing_dispatch_task_prerequisite }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      let(:jdr_task) { appeal.tasks.find_by_type(:JudgeDecisionReviewTask) }
+      it_behaves_like "when tasks are correct"
 
-    context "when tasks are invalid" do
-      before do
-        jdr_task.destroy
+      context "when tasks are invalid" do
+        before do
+          jdr_task.destroy
+        end
+        it { is_expected.not_to be_blank }
+        include_examples "has error message", "BvaDispatchTask requires [\"completed JudgeDecisionReviewTask\"]"
       end
-      it { is_expected.not_to be_blank }
-      include_examples "has error message", "BvaDispatchTask requires [\"completed JudgeDecisionReviewTask\"]"
     end
   end
 end

@@ -89,10 +89,13 @@ describe Distribution, :all_dbs do
       let(:limit) { nil }
 
       it "distributes priority appeals on the legacy and hearing dockets" do
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:legacy, limit, priority: true, genpop: "not_genpop", style: "push")
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:hearing, limit, priority: true, genpop: "not_genpop", style: "push")
+        expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: nil, priority: true, genpop: "not_genpop", style: "push")
+          .and_return([])
+
+        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: nil, priority: true, genpop: "not_genpop", style: "push")
+          .and_return([])
 
         new_distribution.distribute!(limit)
       end
@@ -104,9 +107,9 @@ describe Distribution, :all_dbs do
       let(:stubbed_appeals) do
         {
           legacy: 5,
-          direct_review: 4,
-          evidence_submission: 3,
-          hearing: 2
+          direct_review: 3,
+          evidence_submission: 1,
+          hearing: 1
         }
       end
 
@@ -115,17 +118,23 @@ describe Distribution, :all_dbs do
           .with(limit)
           .and_return stubbed_appeals
 
-        # Wait, where _is_ this limit enforced?
+        expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: 5, priority: true, style: "push")
+          .and_return(create_list(:appeal, 5))
 
-        expect(new_distribution).to receive(:distribute_appeals).with(:legacy, 5, priority: true, style: "push")
-        expect(new_distribution).to receive(:distribute_appeals).with(:direct_review, 4, priority: true, style: "push")
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:evidence_submission, 3, priority: true, style: "push")
-        expect(new_distribution).to receive(:distribute_appeals).with(:hearing, 2, priority: true, style: "push")
+        expect_any_instance_of(DirectReviewDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: 3, priority: true, style: "push")
+          .and_return(create_list(:appeal, 3))
+
+        expect_any_instance_of(EvidenceSubmissionDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: 1, priority: true, style: "push")
+          .and_return(create_list(:appeal, 1))
+
+        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: 1, priority: true, style: "push")
+          .and_return(create_list(:appeal, 1))
 
         new_distribution.distribute!(limit)
-
-        # What have I done? This doesn't test what it says it tests.
       end
     end
   end
@@ -138,23 +147,29 @@ describe Distribution, :all_dbs do
       before { FeatureToggle.enable!(:priority_acd) }
 
       it "calls distribute_appeals with bust_backlog set along with the other calls" do
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:legacy, batch_size, priority: false, genpop: "not_genpop", bust_backlog: true, style: "request")
+        expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
+          .with(new_distribution, limit: batch_size, genpop: "not_genpop", bust_backlog: true, style: "request")
+          .and_return([])
 
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:legacy, batch_size, priority: true, genpop: "not_genpop", style: "request")
+        expect_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals)
+          .with(new_distribution, limit: batch_size, genpop: "not_genpop", style: "request")
+          .and_return([])
 
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:hearing, batch_size, priority: true, genpop: "not_genpop", style: "request")
+        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: batch_size, priority: true, genpop: "not_genpop", style: "request")
+          .and_return([])
 
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:legacy, batch_size, priority: false, genpop: "not_genpop", range: 0, style: "request")
+        expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
+          .with(new_distribution, limit: batch_size, genpop: "not_genpop", range: 0, style: "request")
+          .and_return([])
 
-        expect(new_distribution).to receive(:distribute_appeals)
-          .with(:hearing, batch_size, priority: false, genpop: "not_genpop", style: "request")
+        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
+          .with(new_distribution, limit: batch_size, priority: false, genpop: "not_genpop", style: "request")
+          .and_return([])
 
         expect(new_distribution).to receive(:distribute_limited_priority_appeals_from_all_dockets)
           .with(15, style: "request")
+          .and_return([])
 
         expect(new_distribution).to receive(:deduct_distributed_actuals_from_remaining_docket_proportions)
           .with(:legacy, :hearing)
