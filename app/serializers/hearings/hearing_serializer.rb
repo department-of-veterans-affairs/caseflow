@@ -21,13 +21,9 @@ class HearingSerializer
   attribute :appeal_id
   attribute :appellant_address_line_1
   attribute :appellant_city
-  attribute :appellant_email_address do |hearing|
-    hearing.appellant_recipient&.email_address
-  end
-  attribute :appellant_tz do |hearing|
-    hearing.appellant_recipient&.timezone
-  end
-  attribute :appellant_email_id do |hearing|
+  attribute :appellant_email_address
+  attribute :appellant_tz
+  attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
   end
   attribute :appellant_first_name
@@ -70,13 +66,9 @@ class HearingSerializer
   attribute :representative_type, if: for_full
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
-  attribute :representative_email_address do |hearing|
-    hearing.representative_recipient&.email_address
-  end
-  attribute :representative_tz do |hearing|
-    hearing.representative_recipient&.timezone
-  end
-  attribute :representative_email_id do |hearing|
+  attribute :representative_email_address, if: for_full
+  attribute :representative_tz, if: for_full
+  attribute :representative_email_id, if: for_full do |hearing|
     hearing.representative_recipient&.id.to_s
   end
   attribute :room

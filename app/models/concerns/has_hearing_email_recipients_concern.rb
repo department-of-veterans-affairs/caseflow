@@ -11,7 +11,7 @@ module HasHearingEmailRecipientsConcern
         type: AppellantHearingEmailRecipient,
         email_address: appellant_email_address,
         timezone: appellant_tz,
-        email_sent: true
+        email_sent: virtual_hearing.present? ? virtual_hearing[:appellant_email_sent] : true
       )
 
       update_email_events(recipient, recipient.roles)
@@ -28,7 +28,7 @@ module HasHearingEmailRecipientsConcern
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email_address,
         timezone: representative_tz,
-        email_sent: true
+        email_sent: virtual_hearing.present? ? virtual_hearing[:representative_email_sent] : true
       )
 
       update_email_events(recipient, recipient.roles)
@@ -92,19 +92,51 @@ module HasHearingEmailRecipientsConcern
   end
 
   def appellant_email_address
-    appeal&.appellant_email_address
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
+      virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address
+    else
+      recipient&.email_address
+    end
   end
 
   def appellant_tz
-    appeal&.appellant_tz
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
+      virtual_hearing.present? ? virtual_hearing[:appellant_tz] : appeal&.appellant_tz
+    else
+      recipient&.timezone
+    end
   end
 
   def representative_email_address
-    appeal&.representative_email_address
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
+      if virtual_hearing.present?
+        virtual_hearing[:representative_email].presence
+      else
+        representative_tz.present? ? appeal&.representative_email_address : nil
+      end
+    else
+      recipient&.email_address
+    end
   end
 
   def representative_tz
-    appeal&.representative_tz
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
+      begin
+        virtual_hearing.present? ? virtual_hearing[:representative_tz].presence : appeal&.representative_tz
+      rescue Module::DelegationError
+        nil
+      end
+    else
+      recipient&.timezone
+    end
   end
 
   private

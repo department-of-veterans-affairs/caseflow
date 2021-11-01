@@ -273,7 +273,6 @@ export const ScheduleVeteran = ({
   const submit = async () => {
     try {
       // Check for form errors
-      debugger
       const formErrors = {
         hearingDay: (hearing.hearingDay && hearing.hearingDay.hearingId) ?
           null :

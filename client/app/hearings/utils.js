@@ -478,7 +478,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
     ...list,
-    [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+    [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
        message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };

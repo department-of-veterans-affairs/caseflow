@@ -30,7 +30,7 @@ const emailColumns = [
 ];
 
 export const EmailNotificationHistory = ({ rows }) => (
-  <div {...genericRow}>
+  <div id="hearingEmailEvents" {...genericRow}>
     <div className="cf-help-divider" />
 
     <Table

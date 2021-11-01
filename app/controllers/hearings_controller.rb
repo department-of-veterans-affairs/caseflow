@@ -107,7 +107,7 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :judge_email, :request_cancelled
+    :appellant_email, :judge_email, :representative_email, :request_cancelled, :appellant_tz, :representative_tz
   ].freeze
 
   EMAIL_RECIPIENTS_ATTRIBUTES = [

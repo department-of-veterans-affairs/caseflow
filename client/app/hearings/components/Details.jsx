@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isUndefined, get, omitBy, isEmpty } from 'lodash';
+import { isUndefined, get, omitBy } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -130,7 +130,7 @@ const HearingDetails = (props) => {
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
 
-      if (errors) {
+      if (errors && hearing.isVirtual) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
@@ -157,7 +157,7 @@ const HearingDetails = (props) => {
             timezone: hearingChanges?.appellantTz,
             email_address: hearingChanges?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
-          }, isEmpty
+          }, isUndefined
         ),
         omitBy(
           {
@@ -165,7 +165,7 @@ const HearingDetails = (props) => {
             timezone: hearingChanges?.representativeTz,
             email_address: hearingChanges?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
-          }, isEmpty
+          }, isUndefined
         )
       ];
 
@@ -176,14 +176,10 @@ const HearingDetails = (props) => {
       const response = await saveHearing({
         hearing: {
           ...(hearingChanges || {}),
-          transcription_attributes: {
-            // Always send full transcription details because a new record is created each update
-            ...(transcription ? hearing.transcription : {}),
-          },
-          virtual_hearing_attributes: {
-            ...(virtualHearing || {}),
-          },
-          email_recipients_attributes: emailRecipientAttributes
+          // Always send full transcription details because a new record is created each update
+          transcription_attributes: transcription ? hearing.transcription : {},
+          virtual_hearing_attributes: virtualHearing || {},
+          email_recipients_attributes: emailRecipientAttributes.length ? emailRecipientAttributes : {},
         },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
