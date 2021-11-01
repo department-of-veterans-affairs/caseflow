@@ -9,7 +9,7 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
 
     transient do
-      sequence(:docket_number, 1_500_000)
+      docket_number { bfkey + 1_500_000 }
     end
     # folder.tinum is the docket_number
     folder { association :folder, ticknum: bfkey, tinum: docket_number }
@@ -181,11 +181,10 @@ FactoryBot.define do
     trait :tied_to_judge do
       transient do
         tied_judge { nil }
-        sequence(:docket_number, 1_500_000)
       end
 
       after(:create) do |vacols_case, evaluator|
-        VACOLS::Folder.find_by(tinum: docket_number).update!(titrnum: "123456789S")
+        VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
         create(
           :case_hearing,
           :disposition_held,
