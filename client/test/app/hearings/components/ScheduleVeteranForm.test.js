@@ -224,6 +224,7 @@ describe('ScheduleVeteranForm', () => {
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
+        beginsAt: '2021-07-29T11:30:00-04:00',
         halfDay: true,
         timezone: 'America/Los_Angeles'
       }
@@ -258,6 +259,7 @@ describe('ScheduleVeteranForm', () => {
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
+        beginsAt: '2021-07-29T11:30:00-04:00',
         halfDay: false,
         timezone: 'America/Los_Angeles'
       }
