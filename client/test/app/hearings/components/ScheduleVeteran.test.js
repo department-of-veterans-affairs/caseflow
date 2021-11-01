@@ -83,6 +83,22 @@ describe('ScheduleVeteran', () => {
     jest.restoreAllMocks();
   });
 
+  beforeAll(() => {
+    // Lock to use a set date for this component
+    // This is necessary because the list of timezones changes
+    // List of timezones comes from this component hierarchy:
+    // ScheduleVeteran -> ScheduleVeteranForm -> AppellantSection -> Timezone
+    jest.
+      useFakeTimers('modern').
+      setSystemTime(new Date('2021-11-01').getTime());
+  });
+
+  afterAll(() => {
+    // Tell jest to switch back to using real timers, otherwise all tests might (?)
+    // be locked to the fake date
+    jest.useRealTimers();
+  });
+
   test('Matches snapshot with default props', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
