@@ -167,7 +167,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
-      ];
+      ].filter((email) => Object.keys(email).includes('email_address', 'timezone'));
 
       // Put the UI into a loading state
       setLoading(true);
