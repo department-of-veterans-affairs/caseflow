@@ -84,9 +84,8 @@ describe('ScheduleVeteran', () => {
   });
 
   beforeAll(() => {
-    // Lock to use a set date for this component
-    // This is necessary because the list of timezones changes
-    // List of timezones comes from this component hierarchy:
+    // Necessary because the list of timezones changes depending on the date
+    // Timezones are included because of this component hierarchy:
     // ScheduleVeteran -> ScheduleVeteranForm -> AppellantSection -> Timezone
     jest.
       useFakeTimers('modern').
@@ -94,8 +93,7 @@ describe('ScheduleVeteran', () => {
   });
 
   afterAll(() => {
-    // Tell jest to switch back to using real timers, otherwise all tests might (?)
-    // be locked to the fake date
+    // Clear the system time make
     jest.useRealTimers();
   });
 
