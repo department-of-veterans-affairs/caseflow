@@ -15,10 +15,6 @@ describe "FinderConsoleMethods" do
     context "identifier is a UUID" do
       let(:identifier) { appeal.uuid }
       it { is_expected.to eq appeal }
-      # before { binding.pry }
-      # it "finds appeal" do
-      #   expect(subject).to eq appeal
-      # end
     end
     context "identifier is a vacols_id" do
       let(:identifier) { legacy_appeal.vacols_id }
@@ -56,7 +52,7 @@ describe "FinderConsoleMethods" do
       it { is_expected.to eq user }
     end
     context "identifier is a CSS_ID" do
-      let(:identifier) { user.css_id }
+      let(:identifier) { user.css_id.downcase }
       it { is_expected.to eq user }
     end
     context "identifier is a VACOLS::Staff slogid" do
@@ -68,11 +64,43 @@ describe "FinderConsoleMethods" do
       it { is_expected.to eq user }
 
       context "identifier is part of a full name for multiple users" do
-        # before { binding.pry }
-        # it { is_expected.to eq [user, user2] }
+        let!(:user2) { create(:user, full_name: "Jon #{identifier}smith") }
+        it { is_expected.to match_array [user, user2] }
       end
       context "identifier is a full name of a non-existing user" do
-        # it { is_expected.to eq nil }
+        let(:identifier) { "NON_EXISTENT_NAME" }
+        it { is_expected.to eq [] }
+      end
+    end
+  end
+  describe "FinderConsoleMethods._staff" do
+    subject { console_shell._staff(identifier) }
+    let(:appeal) { create(:appeal, :at_bva_dispatch) }
+    let(:user) { appeal.tasks.find_by_type(:JudgeAssignTask).assigned_to }
+    context "identifier is a User record" do
+      let(:identifier) { user }
+      it { is_expected.to eq user.vacols_staff }
+    end
+    context "identifier is a CSS_ID" do
+      let(:identifier) { user.css_id }
+      it { is_expected.to eq user.vacols_staff }
+    end
+    context "identifier is a VACOLS::Staff slogid" do
+      let(:identifier) { user.vacols_staff.slogid }
+      it { is_expected.to eq user.vacols_staff }
+    end
+    context "identifier is part of a full name" do
+      let(:identifier) { "LastName" }
+      before { user.vacols_staff.update(snamel: "My#{identifier}") }
+      it { is_expected.to eq user.vacols_staff }
+
+      context "identifier is part of a full name for multiple users" do
+        let!(:staff2) { create(:staff, snamel: "My#{identifier}Too") }
+        it { is_expected.to match_array [staff1, staff2] }
+      end
+      context "identifier is a full name of a non-existing user" do
+        let(:identifier) { "NON_EXISTENT_NAME" }
+        it { is_expected.to eq [] }
       end
     end
   end
