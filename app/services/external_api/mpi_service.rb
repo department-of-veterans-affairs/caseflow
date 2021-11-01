@@ -36,7 +36,7 @@ class ExternalApi::MPIService
         address: address
       )
     end
-    return {} unless mpi_info
+    {} unless mpi_info
   end
   # rubocop:enable Metrics/ParameterLists
 
@@ -49,7 +49,7 @@ class ExternalApi::MPIService
       client.people.fetch_person_info(icn)
     end
 
-    return {} unless mpi_info
+   {} unless mpi_info
 
     # Dependent on parsing format in MPI Gem. Will need to be updated
     # @person_info[icn] ||= {}
