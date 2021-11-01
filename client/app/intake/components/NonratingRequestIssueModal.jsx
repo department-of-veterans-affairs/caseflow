@@ -255,7 +255,7 @@ class NonratingRequestIssueModal extends React.Component {
         this.getAdditionalDetails() :
         null;
 
-    const showPreDocketBanner = benefitType === 'vha' && vhaPreDocketAppeals;
+    const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal' && vhaPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
