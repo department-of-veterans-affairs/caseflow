@@ -199,7 +199,7 @@ class HearingDay < CaseflowRecord
   end
 
   def half_day?
-    total_slots <= 5
+    total_slots ? total_slots <= 5 : false
   end
 
   private
