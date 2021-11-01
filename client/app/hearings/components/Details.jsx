@@ -140,7 +140,7 @@ const HearingDetails = (props) => {
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
-      } else if ((emailUpdated || timezoneUpdated) && !converting) {
+      } else if ((emailUpdated || timezoneUpdated) && !converting && hearing.isVirtual) {
         return openVirtualHearingModal({ type: 'change_email_or_timezone' });
       }
 
@@ -167,7 +167,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
-      ].filter((email) => Object.keys(email).includes('email_address', 'timezone'));
+      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
 
       // Put the UI into a loading state
       setLoading(true);
