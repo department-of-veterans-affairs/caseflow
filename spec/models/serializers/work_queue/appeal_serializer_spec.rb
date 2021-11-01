@@ -37,6 +37,30 @@ describe WorkQueue::AppealSerializer, :all_dbs do
           end
         end
       end
+
+      context "when an appeal has an attorney claimant" do
+        let(:participant_id) { "" }
+        let!(:bgs_attorney) do
+          BgsAttorney.create!(participant_id: participant_id,
+                              name: "William Jennings Bryan", record_type: "POA Attorney")
+        end
+        let(:claimant) { create(:claimant, :attorney, participant_id: participant_id) }
+        let(:appeal) { create(:appeal, claimants: [claimant]) }
+        subject { described_class.new(appeal, params: { user: user }) }
+        it "returns nil for appellant_first_name" do
+          # problem - no method of this in bgsattorney
+          expect(subject.serializable_hash[:data][:attributes][:appellant_first_name]).to be_nil
+        end
+        it "returns nil for appellant_middle_name" do
+          expect(subject.serializable_hash[:data][:attributes][:appellant_middle_name]).to be_nil
+        end
+        it "returns nil for appellant_last_name" do
+          expect(subject.serializable_hash[:data][:attributes][:appellant_last_name]).to be_nil
+        end
+        it "returns nil for appellant_suffix" do
+          expect(subject.serializable_hash[:data][:attributes][:appellant_suffix]).to be_nil
+        end
+      end
     end
   end
 end

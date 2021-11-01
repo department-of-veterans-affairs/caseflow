@@ -89,7 +89,7 @@ class BaseHearingUpdateForm
       appellant_email_sent_flag,
       representative_email_sent_flag,
       judge_email_sent_flag
-    ].any?(false)
+    ].any?(false) && (hearing.virtual? || virtual_hearing_cancelled?)
   end
 
   def should_create_or_update_virtual_hearing?
@@ -240,20 +240,23 @@ class BaseHearingUpdateForm
     updates
   end
 
+  # We only send emails for virtual hearings for now we have to make that distinction
+  # Once we start sending emails for other type of hearings the flags should be enough
+  # to determine whether to send and email or not.
   def email_sent_updates!
     if hearing.appellant_recipient.present?
       hearing.appellant_recipient.update(
-        email_sent: appellant_email_sent_flag
+        email_sent: hearing.virtual? ? appellant_email_sent_flag : true
       )
     end
     if hearing.representative_recipient.present?
       hearing.representative_recipient.update(
-        email_sent: representative_email_sent_flag
+        email_sent: hearing.virtual? ? representative_email_sent_flag : true
       )
     end
     if hearing.judge_recipient.present?
       hearing.judge_recipient.update(
-        email_sent: judge_email_sent_flag
+        email_sent: hearing.virtual? ? judge_email_sent_flag : true
       )
     end
   end
@@ -308,8 +311,8 @@ class BaseHearingUpdateForm
   end
 
   def only_emails_updated?
-    email_changed = appellant_email_address.present? ||
-                    representative_email_address.present? ||
+    email_changed = appellant_email.present? ||
+                    representative_email.present? ||
                     judge_id.present?
 
     email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
