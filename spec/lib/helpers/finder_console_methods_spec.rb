@@ -15,6 +15,7 @@ describe "FinderConsoleMethods" do
     context "identifier is a UUID" do
       let(:identifier) { appeal.uuid }
       it { is_expected.to eq appeal }
+      # before { binding.pry }
       # it "finds appeal" do
       #   expect(subject).to eq appeal
       # end
@@ -32,6 +33,35 @@ describe "FinderConsoleMethods" do
         let(:identifier) { legacy_appeal.docket_number }
         it { is_expected.to eq [[appeal], [legacy_appeal]] }
       end
+    end
+  end
+  describe "FinderConsoleMethods._veteran" do
+    subject { console_shell._veteran(identifier) }
+    let(:veteran) { appeal.veteran }
+    context "identifier is a file_number" do
+      let(:identifier) { veteran.file_number }
+      it { is_expected.to eq [veteran, [appeal], [], []] }
+    end
+    context "identifier is a SSN" do
+      let(:identifier) { veteran.ssn }
+      it { is_expected.to eq [veteran, [appeal], [], []] }
+    end
+  end
+  describe "FinderConsoleMethods._user" do
+    subject { console_shell._user(identifier) }
+    let(:appeal) { create(:appeal, :at_bva_dispatch) }
+    let(:user) { appeal.tasks.find_by_type(:JudgeAssignTask).assigned_to }
+    context "identifier is a User record id" do
+      let(:identifier) { user.id }
+      it { is_expected.to eq user }
+    end
+    context "identifier is a CSS_ID" do
+      let(:identifier) { user.css_id }
+      it { is_expected.to eq user }
+    end
+    context "identifier is a VACOLS::Staff slogid" do
+      let(:identifier) { user.vacols_staff.slogid }
+      it { is_expected.to eq user }
     end
   end
 end
