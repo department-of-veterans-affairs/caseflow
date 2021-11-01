@@ -97,7 +97,7 @@ describe "FinderConsoleMethods" do
 
       context "identifier is part of a full name for multiple users" do
         let!(:staff2) { create(:staff, snamel: "My#{partial_last_name}Too") }
-        it { is_expected.to match_array [staff, staff2] }
+        it { is_expected.to match_array [user.vacols_staff, staff2] }
       end
       context "identifier is a full name of a non-existing user" do
         let(:identifier) { "NON_EXISTENT_NAME" }
