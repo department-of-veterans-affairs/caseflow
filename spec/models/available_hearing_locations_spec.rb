@@ -80,6 +80,7 @@ describe AvailableHearingLocations, :all_dbs do
       )
     end
   end
+
   describe "#veteran" do
     let(:veteran) { appeal.veteran }
     it "associates to veteran" do
