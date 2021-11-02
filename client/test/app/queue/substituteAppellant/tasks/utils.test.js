@@ -299,22 +299,38 @@ describe('utility functions for task manipulation', () => {
 
 describe('prepTaskDataForUi', () => {
   describe('with basic evidence submission tasks', () => {
-    const tasks = sampleTasksForEvidenceSubmissionDocket();
+    const taskData = sampleTasksForEvidenceSubmissionDocket();
 
-    it('returns correct result', () => {
-      const res = prepTaskDataForUi(tasks);
+    describe('separate appeal substitution', () => {
+      it('returns DistributionTask with correct info', () => {
+        const isSubstitutionSameAppeal = false;
+        const res = prepTaskDataForUi({ taskData, isSubstitutionSameAppeal });
 
-      const distributionTask = res.find(
-        (item) => item.type === 'DistributionTask'
-      );
+        const distributionTask = res.find(
+          (item) => item.type === 'DistributionTask'
+        );
 
-      expect(distributionTask).toEqual(
-        expect.objectContaining({
-          hidden: false,
-          selected: true,
-          disabled: true,
-        })
-      );
+        expect(distributionTask).toEqual(
+          expect.objectContaining({
+            hidden: false,
+            selected: true,
+            disabled: true,
+          })
+        );
+      });
+    });
+
+    describe('same appeal substitution', () => {
+      it('does not return a DistributionTask', () => {
+        const isSubstitutionSameAppeal = true;
+        const res = prepTaskDataForUi({ taskData, isSubstitutionSameAppeal });
+
+        const distributionTask = res.find(
+          (item) => item.type === 'DistributionTask'
+        );
+
+        expect(distributionTask).toBeUndefined();
+      });
     });
 
     describe('with an org task that should be shown', () => {
@@ -334,7 +350,7 @@ describe('prepTaskDataForUi', () => {
       };
       const ihpTasks = [ihpOrgTask, ihpUserTask];
 
-      const res = prepTaskDataForUi(ihpTasks);
+      const res = prepTaskDataForUi({ taskData: ihpTasks });
 
       const ihpTask = res.find(
         (item) => item.type === 'InformalHearingPresentationTask'

@@ -48,6 +48,7 @@ import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 import {
   appealHasSubstitution,
+  isAppealDispatched,
   supportsSubstitutionPostDispatch,
   supportsSubstitutionPreDispatch,
 } from './substituteAppellant/caseDetails/utils';
@@ -164,7 +165,7 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
+  const appealIsDispatched = isAppealDispatched(appeal);
 
   const editAppellantInformation =
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
@@ -362,6 +363,7 @@ CaseDetailsView.propTypes = {
   error: PropTypes.object,
   featureToggles: PropTypes.object,
   resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
   userCanAccessReader: PropTypes.bool,

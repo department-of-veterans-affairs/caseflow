@@ -1,12 +1,13 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../reducers';
-import thunk from 'redux-thunk';
-import OvertimeBadge from 'app/queue/components/OvertimeBadge';
-import { Provider } from 'react-redux';
-import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 import { axe } from 'jest-axe';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
 import { render, screen, waitFor } from '@testing-library/react';
+
+import OvertimeBadge from './OvertimeBadge';
+import rootReducer from 'app/queue/reducers';
+import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
 describe('OvertimeBadge', () => {
 
