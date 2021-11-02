@@ -1,8 +1,9 @@
 /* eslint-disable max-lines */
+/* eslint-disable camelcase */
 import React from 'react';
 import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
-import { compareDesc, isValid } from 'date-fns';
+import { compareDesc } from 'date-fns';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
@@ -447,6 +448,10 @@ export const prepareAppealForStore = (appeals) => {
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
+      hasSameAppealSubstitution: (
+      // eslint-disable-next-line max-len
+        appeal.attributes.substitutions?.[0]?.target_appeal_uuid === appeal.attributes.substitutions?.[0]?.source_appeal_uuid
+      ),
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };
