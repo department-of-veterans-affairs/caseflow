@@ -54,7 +54,9 @@ CommentIcon.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   }),
-  rotation: PropTypes.number
+  rotation: PropTypes.number,
+  selectedAnnotationId: PropTypes.number,
+  onDrag: PropTypes.any
 };
 
 const mapStateToProps = (state) => ({
