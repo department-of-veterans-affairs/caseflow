@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
 const addressIndentStyling = css({
   display: 'inline-block',
@@ -34,3 +35,15 @@ export default class Address extends React.PureComponent {
 
   };
 }
+
+Address.propTypes = {
+  address: PropTypes.shape({
+    address_line_1: PropTypes.string,
+    address_line_2: PropTypes.string,
+    address_line_3: PropTypes.string,
+    city: PropTypes.string,
+    state: PropTypes.string,
+    zip: PropTypes.number,
+    country: PropTypes.string,
+  })
+};
