@@ -207,12 +207,16 @@ module Seeds
     def create_legacy_appeal(hearing_day)
       @bfkey += 1
       @bfcorkey += 1
+      # This avoids a flake where stafkey collides with the random stafkey
+      # that seeds/priority_distributions.rb uses to create cases. This solution
+      # is from seeds/tasks.rb
+      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
       vacols_case = create(
         :case,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
         bfac: %w[1 3].sample, # original or Post remand,
-        correspondent: create(:correspondent, stafkey: @bfcorkey.to_s)
+        correspondent: correspondent
       )
 
       file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
@@ -318,12 +322,16 @@ module Seeds
     def create_travel_board_vacols_case
       @bfkey += 1
       @bfcorkey += 1
+      # This avoids a flake where stafkey collides with the random stafkey
+      # that seeds/priority_distributions.rb uses to create cases. This solution
+      # is from seeds/tasks.rb
+      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
       create(
         :case,
         :travel_board_hearing,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
-        correspondent: create(:correspondent, stafkey: @bfcorkey.to_s)
+        correspondent: correspondent
       )
     end
 
