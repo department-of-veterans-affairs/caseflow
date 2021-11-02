@@ -50,7 +50,7 @@ describe('HearingDaysNav', () => {
 
     // Assert the analytics event was called
     wait(() => {
-      expect(analyticsSpy).toHaveBeenCalledWith('Hearings', 'Available Hearing Days – Scroll');
+      expect(analyticsSpy).toHaveBeenCalledWith('Hearings', 'Available Hearing Days – Scroll ');
     }, 250);
 
     // Test the debounce was called with an anonymous function

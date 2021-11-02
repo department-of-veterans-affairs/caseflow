@@ -22,8 +22,4 @@ LoadingLabel.propTypes = {
   text: PropTypes.string,
 };
 
-LoadingLabel.defaultProps = {
-  text: ''
-};
-
 export default LoadingLabel;
