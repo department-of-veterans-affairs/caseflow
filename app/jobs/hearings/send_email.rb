@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+##
+# SendEmail will:
+# - Determine which emails should be sent
+# - Determine which EmailRecipients should receive what
+# - Call the GovDelivery API for each EmailRecipient and email combination.
+#
+# It is used to send the emails that HearingMailer generates from templates in
+# app/views/hearing_mailer
+##
 class Hearings::SendEmail
   class RecipientIsDeceasedVeteran < StandardError; end
 

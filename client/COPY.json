@@ -235,6 +235,9 @@
   "EDIT_POA_SUCCESS_ALERT_TITLE": "You have successfully updated the Appellant's POA Information",
   "EDIT_POA_SUCCESS_ALERT_MESSAGE": "To make further changes, please submit a yourIT ticket.",
 
+  "DOCKET_HAS_HEARINGS_SCHEDULED": "The docket type can't be changed because there are hearings scheduled.",
+  "DOCKET_INVALID_RO_TYPE": "The Central Office cannot be used for dockets types other than Central",
+
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
   "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
@@ -818,7 +821,7 @@
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
-  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.",
+  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
   "SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
@@ -878,6 +881,10 @@
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
+  "UNTIMELY_EXEMPTION_COPY": "Did the applicant request an extension to the date requirements",
+  "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
+  "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",
+  "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -1132,7 +1139,9 @@
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
   "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by VHA are available in VBMS before docketing this appeal.",
-  "DOCKET_APPEAL_CONFIRMATION": "%s's appeal has successfully been docketed (Docket number: %s)",
+  "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
+  "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
+  "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
   "DOCKET_APPEAL_INSTRUCTIONS_NOTE": "This appeal has been docketed, and this task is no longer necessary.",
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
@@ -1140,7 +1149,16 @@
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
+  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
+  "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
+  "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
+  "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details, such as file structure or file path:",
+  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
+  "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue"
 }

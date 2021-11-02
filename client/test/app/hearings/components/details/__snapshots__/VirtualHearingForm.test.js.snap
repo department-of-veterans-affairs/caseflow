@@ -368,7 +368,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "addressState": "DC",
               "addressZip": "20001",
               "name": "John Smith",
-              "userCanScheduleVirtualHearings": true,
             }
           }
           virtualHearing={
@@ -521,7 +520,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "addressState": "DC",
                   "addressZip": "20001",
                   "name": "John Smith",
-                  "userCanScheduleVirtualHearings": true,
                 }
               }
               virtualHearing={
@@ -679,7 +677,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "addressState": "DC",
                       "addressZip": "20001",
                       "name": "John Smith",
-                      "userCanScheduleVirtualHearings": true,
                     }
                   }
                   virtualHearing={
@@ -828,7 +825,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "addressState": "DC",
                         "addressZip": "20001",
                         "name": "John Smith",
-                        "userCanScheduleVirtualHearings": true,
                       }
                     }
                     virtualHearing={
@@ -33748,7 +33744,6 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
               "addressState": "DC",
               "addressZip": "20001",
               "name": "John Smith",
-              "userCanScheduleVirtualHearings": true,
             }
           }
           wasVirtual={false}
@@ -33883,7 +33878,6 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "addressState": "DC",
                   "addressZip": "20001",
                   "name": "John Smith",
-                  "userCanScheduleVirtualHearings": true,
                 }
               }
               wasVirtual={false}
