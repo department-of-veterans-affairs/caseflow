@@ -279,7 +279,10 @@ export const RightTriangle = () => {
 };
 
 // used in CommentIcon.jsx
-export const CommentSymbol = (selected, id) => {
+export const CommentSymbol = (props) => {
+
+  const { selected, id } = props;
+
   const filter = selected ? `url(#${id}-filter-1)` : '';
 
   return <svg width="40px" height="40px" viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg">
@@ -303,6 +306,11 @@ export const CommentSymbol = (selected, id) => {
       </g>
     </g>
   </svg>;
+};
+
+CommentSymbol.propTypes = {
+  selected: PropTypes.bool,
+  id: PropTypes.number
 };
 
 export const CloseIconSmall = () => {
