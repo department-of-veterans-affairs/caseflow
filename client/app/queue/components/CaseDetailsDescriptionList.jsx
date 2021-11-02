@@ -1,5 +1,6 @@
 import { after, css, merge } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { COLORS } from '../../constants/AppConstants';
 
@@ -18,5 +19,9 @@ const definitionListStyling = css({
 });
 
 const CaseDetailsDescriptionList = (props) => <dl {...definitionListStyling}>{props.children}</dl>;
+
+CaseDetailsDescriptionList.propTypes = {
+  children: PropTypes.node
+};
 
 export default CaseDetailsDescriptionList;
