@@ -114,7 +114,7 @@ export const ReadOnlyEmails = ({
           <ReadOnly
             spacing={15}
             label="POA/Representative Hearing Time"
-            text={zoneName(hearing.scheduledTimeString, hearing.representativeTz)}
+            text={zoneName(hearing.scheduledTimeString, hearing.representativeTz || hearing.virtualHearing?.representativeTz)}
           />
           <ReadOnly
             spacing={15}
@@ -129,6 +129,7 @@ export const ReadOnlyEmails = ({
 
 ReadOnlyEmails.propTypes = {
   hearing: PropTypes.shape({
+    virtualHearing: PropTypes.object,
     appellantIsNotVeteran: PropTypes.bool,
     readableRequestType: PropTypes.string,
     scheduledTimeString: PropTypes.string,
