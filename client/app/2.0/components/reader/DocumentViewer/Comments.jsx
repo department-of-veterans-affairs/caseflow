@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { CommentSymbol } from 'app/components/RenderFunctions';
+import { commentIcon } from 'app/components/RenderFunctions';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
 
 /**
@@ -69,10 +69,7 @@ export const Comments = ({
           }}
           draggable
         >
-          <CommentSymbol
-            selected={selectedComment?.id === comment?.id}
-            id={comment?.id}
-          />
+          {commentIcon(selectedComment?.id === comment?.id, comment?.id)}
         </div>
       ))}
       <div
