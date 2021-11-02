@@ -166,7 +166,7 @@ class Appeal < DecisionReview
 
     category_substrings = ["Contested Claims", "Apportionment"]
 
-    active_request_issues.any? do |request_issue|
+    request_issues.any? do |request_issue|
       category_substrings.any? { |substring| request_issue.nonrating_issue_category.include?(substring) }
     end
   end
