@@ -32,7 +32,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     return appealTasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10)));
   };
-  const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);
+  const selectedTasks = findSelectedTasks(allTasks, existingValues.closedTaskIds);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
