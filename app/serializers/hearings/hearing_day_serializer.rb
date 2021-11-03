@@ -77,10 +77,7 @@ class HearingDaySerializer
 
   def self.serialize_collection(hearing_days, current_user)
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
-    filled_slots_count_for_days =
-      if FeatureToggle.enabled?(:view_and_download_hearing_scheduled_column, user: current_user)
-        HearingDayFilledSlotsQuery.new(hearing_days).call
-      end
+    filled_slots_count_for_days = HearingDayFilledSlotsQuery.new(hearing_days).call
     judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
 
     ::HearingDaySerializer.new(
