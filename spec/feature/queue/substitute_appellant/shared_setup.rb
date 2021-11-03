@@ -115,13 +115,13 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
       Capybara.ignore_hidden_elements = false
       expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_TITLE)
-      expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION.gsub("\n", ""))
+      expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION.delete("\n"))
       Capybara.ignore_hidden_elements = true
 
       if same_appeal_substitution_allowed?(appeal)
         Capybara.ignore_hidden_elements = false
         expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE)
-        expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION.gsub("\n", ""))
+        expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION.delete("\n"))
         Capybara.ignore_hidden_elements = true
       end
 
