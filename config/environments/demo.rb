@@ -88,7 +88,7 @@ Rails.application.configure do
 
   # set to true to create queues
   config.sqs_create_queues = true
-  config.sqs_endpoint = 'http://localstack:4576'
+  config.sqs_endpoint = "http://#{ENV["LOCALSTACK_PORT_4576_TCP_ADDR"]}:4576"
 
   config.google_analytics_account = "UA-74789258-5"
 end
