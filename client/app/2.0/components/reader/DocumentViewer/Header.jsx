@@ -12,7 +12,7 @@ import {
   FitToScreen,
   Rotate,
   SearchIcon,
-  downloadIcon
+  DownloadIcon
 } from 'app/components/RenderFunctions';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
 
@@ -89,7 +89,7 @@ export const DocumentHeader = ({
         onClick={download}
         ariaLabel="download pdf"
       >
-        {downloadIcon()}
+        <DownloadIcon />
       </Button>
       <Button
         name="search"

@@ -1,7 +1,8 @@
 import React from 'react';
-import { loadingSymbolHtml } from './RenderFunctions';
+import { LoadingSymbol } from './RenderFunctions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
 const centerTextStyling = css({
   textAlign: 'center',
@@ -9,12 +10,21 @@ const centerTextStyling = css({
   marginTop: '75px'
 });
 
-const LoadingScreen = ({ spinnerColor, message }) =>
+const LoadingScreen = (props) =>
   <AppSegment filledBackground>
     <div {...centerTextStyling}>
-      {loadingSymbolHtml('', '150px', spinnerColor)}
-      <p>{message}</p>
+      <LoadingSymbol
+        text=""
+        size="150px"
+        color={props.spinnerColor}
+      />
+      <p>{props.message}</p>
     </div>
   </AppSegment>;
+
+LoadingScreen.propTypes = {
+  spinnerColor: PropTypes.string,
+  message: PropTypes.string
+};
 
 export default LoadingScreen;
