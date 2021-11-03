@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants/index';
 import ApiUtil from '../util/ApiUtil';
-import { lockIcon } from '../components/RenderFunctions';
+import { LockIcon } from '../components/RenderFunctions';
 
 const UserQuotaControls = ({
   userQuota,
@@ -25,7 +25,7 @@ const UserQuotaControls = ({
         onClick={handleUnlockTaskCount}
         ariaLabel="Unlock"
       >
-        { lockIcon() }
+        <LockIcon />
       </Button>
     }
 

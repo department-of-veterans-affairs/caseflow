@@ -80,4 +80,15 @@ describe AvailableHearingLocations, :all_dbs do
       )
     end
   end
+
+  describe "#veteran" do
+    let(:veteran) { appeal.veteran }
+    it "associates to veteran" do
+      location1.update(veteran: veteran)
+      expect(location1.veteran_file_number).to eq veteran.file_number
+      expect(location1.veteran).to eq veteran
+
+      expect(veteran.available_hearing_locations).to eq [location1]
+    end
+  end
 end
