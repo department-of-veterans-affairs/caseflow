@@ -41,6 +41,10 @@ class AssessDocumentationTask < Task
       task_actions.concat(RO_ACTIONS)
     end
 
+    if appeal.tasks.in_progress.none? { |t| t.is_a?(AssessDocumentationTask) }
+      task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
+    end
+
     task_actions
   end
 
