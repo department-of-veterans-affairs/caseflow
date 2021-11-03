@@ -38,10 +38,10 @@ describe OpenTasksWithClosedAtChecker, :postgres do
           root_task.update!(closed_at: Time.zone.now, status: :completed)
           task
         end
-  
+
         it "doesn't report ignored task" do
           subject.call
-  
+
           # Report still includes the remaining types
           expect(subject.report?).to eq(true)
           expect(subject.report).to match(/1 open Task with a closed_at value/)
@@ -57,10 +57,10 @@ describe OpenTasksWithClosedAtChecker, :postgres do
           root_task.update!(closed_at: Time.zone.now, status: :completed)
           task
         end
-  
+
         it "doesn't report ignored task" do
           subject.call
-  
+
           # Report still includes the remaining types
           expect(subject.report?).to eq(true)
           expect(subject.report).to match(/1 open Task with a closed_at value/)
