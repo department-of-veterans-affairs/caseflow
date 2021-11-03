@@ -75,7 +75,7 @@ class HearingDaySerializer
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
   end
 
-  def self.serialize_collection(hearing_days, current_user)
+  def self.serialize_collection(hearing_days)
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
     filled_slots_count_for_days = HearingDayFilledSlotsQuery.new(hearing_days).call
     judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
