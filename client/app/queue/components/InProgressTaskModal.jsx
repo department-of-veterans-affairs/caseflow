@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-// import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-// import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-// import TextareaField from '../../components/TextareaField';
-import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
@@ -24,7 +20,6 @@ const InProgressTaskModal = (props) => {
       data: {
         task: {
           status: TASK_STATUSES.in_progress,
-          // instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
