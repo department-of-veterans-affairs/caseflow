@@ -71,7 +71,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the Coordinator on the docket" do
-      click_dropdown(name: "coordinator", index: 1)
+      click_dropdown(name: "coordinator", text: "#{coordinator.snamef} #{coordinator.snamel}")
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
