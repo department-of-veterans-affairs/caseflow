@@ -10,7 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
 import Alert from '../../components/Alert';
-import { downloadIcon } from '../../components/RenderFunctions';
+import { DownloadIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { SPREADSHEET_TYPES } from '../constants';
 
@@ -85,7 +85,7 @@ export default class BuildSchedule extends React.Component {
           this.openDownloadLink(`${pastUpload.id}`);
         }
         }>
-         Download {downloadIcon(COLORS.PRIMARY)}
+         Download <DownloadIcon color={COLORS.PRIMARY} />
       </Button>
     }));
 
