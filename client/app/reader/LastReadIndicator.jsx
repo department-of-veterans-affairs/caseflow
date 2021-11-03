@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { rightTriangle } from '../components/RenderFunctions';
+import { RightTriangle } from '../components/RenderFunctions';
+import PropTypes from 'prop-types';
 
 class LastReadIndicator extends React.PureComponent {
   render() {
@@ -12,7 +13,7 @@ class LastReadIndicator extends React.PureComponent {
       id="read-indicator"
       ref={this.props.getRef}
       aria-label="Most recently read document indicator">
-      {rightTriangle()}
+      <RightTriangle />
     </span>;
   }
 }
@@ -21,4 +22,10 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
   shouldShow: state.documentList.pdfList.lastReadDocId === ownProps.docId
 });
 
+LastReadIndicator.propTypes = {
+  shouldShow: PropTypes.bool,
+  getRef: PropTypes.func
+};
+
 export default connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+
