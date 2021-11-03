@@ -346,6 +346,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
+        # todo: inspect if below feature toggle applies. log into prod
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
                      LegacyAppeal::LOCATION_CODES[:caseflow]
                    else
