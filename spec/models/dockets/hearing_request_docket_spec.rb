@@ -48,8 +48,11 @@ describe HearingRequestDocket, :all_dbs do
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
 
         tasks = subject
+
+        distributed_appeals = distribution_judge.reload.tasks.map(&:appeal)
 
         expect(tasks.length).to eq(1)
         expect(tasks.first.class).to eq(DistributedCase)
@@ -57,6 +60,9 @@ describe HearingRequestDocket, :all_dbs do
         expect(tasks.first.genpop_query).to eq "not_genpop"
         expect(distribution.distributed_cases.length).to eq(1)
         expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
+
+        # If hearing date exceeds specified days for affinity, appeal no longer tied to judge
+        expect(distributed_appeals).not_to include(outside_affinity)
       end
     end
 
@@ -409,6 +415,21 @@ describe HearingRequestDocket, :all_dbs do
                     docket_type: Constants.AMA_DOCKETS.hearing)
 
     most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+    hearing.update(judge: distribution_judge)
+
+    appeal
+  end
+
+  def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
+    days_ago = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    scheduled_for = Time.zone.now.days_ago(days_ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+
+    most_recent = create(:hearing_day, scheduled_for: scheduled_for)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
     hearing.update(judge: distribution_judge)
 
