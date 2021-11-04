@@ -4,7 +4,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
-  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "9:30AM") }
+  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
@@ -16,7 +16,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "new@email.com" }
-  let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (9:30 AM)" }
+  let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
   let(:fill_in_rep_tz) { "America/Chicago" }
   let(:pexip_url) { "fake.va.gov" }
@@ -317,7 +317,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           end
 
           scenario "displays expired when the date is after the hearing date" do
-            hearing.update(hearing_day: hearing_day)
+            hearing.update(hearing_day_id: hearing_day.id)
             visit "hearings/" + hearing.external_id.to_s + "/details"
             hearing.reload
             check_virtual_hearings_links_expired(virtual_hearing)
@@ -769,7 +769,27 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
 
     context "when hearing is Legacy" do
+      let!(:hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
+
       include_examples "all hearing types"
+
+      context "when type is Travel" do
+        # let(:hearing_day) do
+        #   build(
+        #     :hearing_day,
+        #     request_type: HearingDay::REQUEST_TYPES[:travel],
+        #     scheduled_for: Time.zone.tomorrow,
+        #     regional_office: "RO13"
+        #   )
+        # end
+        # let!(:hearing) { create(:legacy_hearing, :with_tasks, hearing_day: hearing_day) }
+        before do
+          hearing.hearing_day.update!(regional_office: "RO06", request_type: "T")
+        end
+
+        include_examples "always updatable fields"
+        include_examples "non-virtual hearing types"
+      end
 
       scenario "user cannot update transcription fields" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
