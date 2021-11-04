@@ -120,10 +120,6 @@ describe Hearings::HearingDayController, :all_dbs do
         ]
       end
 
-      before do
-        FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
-      end
-
       it "returns 200 and the has expected filled slot count", :aggregate_failures do
         expect(subject.status).to eq 200
         hearing_days = JSON.parse(subject.body)
