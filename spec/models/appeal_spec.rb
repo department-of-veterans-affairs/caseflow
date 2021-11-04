@@ -1163,10 +1163,10 @@ describe Appeal, :all_dbs do
     end
     let(:appeal) { create(:appeal, request_issues: request_issues) }
 
-    context "when issue category falls under contested claims and request issue is rating" do
+    context "when issue category falls under contested claims" do
       context "contains string 'Contested Claim'" do
         let(:benefit_type) { "compensation" }
-        let(:nonrating_issue_category) { "Contested Claims - Insurance" }
+        let(:issue_category) { "Contested Claims - Insurance" }
 
         it "returns true" do
           expect(subject).to be_truthy
@@ -1175,7 +1175,7 @@ describe Appeal, :all_dbs do
 
       context "contains string 'Apportionment'" do
         let(:benefit_type) { "compensation" }
-        let(:nonrating_issue_category) { "Contested Claims - Apportionment" }
+        let(:issue_category) { "Contested Claims - Apportionment" }
 
         it "returns true" do
           expect(subject).to be_truthy
@@ -1183,9 +1183,21 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when issue category doesn't fall under contested claims request issue is nonrating issue" do
+    context "when issue category doesn't fall under contested claims" do
       let(:benefit_type) { "fiduciary" }
       let(:issue_category) { "Appointment of a Fiduciary (38 CFR 13.100)" }
+
+      it "returns false" do
+        expect(subject).to be_falsey
+      end
+    end
+
+    context "when the request issue is a rating issue" do
+      let(:request_issues) do
+        [
+          create(:request_issue, :rating)
+        ]
+      end
 
       it "returns false" do
         expect(subject).to be_falsey
