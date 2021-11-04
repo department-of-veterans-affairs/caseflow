@@ -21,6 +21,7 @@ const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
 const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId;
+const getActiveOrgId = (state) => state.ui.activeOrganization.id;
 const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
@@ -112,10 +113,12 @@ const tasksByAssigneeCssIdSelector = createSelector(
 );
 
 const tasksByAssigneeOrgSelector = createSelector(
-  [tasksWithAppealSelector, getUserCssId],
-  (tasks, cssId) => filter(tasks, (task) => {
+  [tasksWithAppealSelector, getActiveOrgId],
+  (tasks, orgId) => filter(tasks, (task) => {
     console.log('TASK~~~~~~~');
     console.log(task);
+    console.log('ORGID~~~~~~');
+    console.log(orgId);
     return task // TODO: filter by org
   })
 );

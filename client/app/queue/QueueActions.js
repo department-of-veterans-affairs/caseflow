@@ -6,7 +6,10 @@ import { associateTasksWithAppeals,
   prepareTasksForStore,
   prepareAppealForStore } from './utils';
 import { ACTIONS } from './constants';
-import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
+import { hideErrorMessage,
+  showErrorMessage,
+  showSuccessMessage,
+  setActiveOrganization } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import _ from 'lodash';
@@ -688,16 +691,12 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     });
 };
 
-export const fetchCamoTasks = (userId, userRole, type = null) => (dispatch) => {
+export const fetchCamoTasks = (userId) => (dispatch) => {
   let url = '/organizations/vha-camo/tasks';
 
   return ApiUtil.get(url).
     then((resp) => {
-      console.log('QUEUE CONFIG~~~');
-      console.log(resp.body.queue_config);
-
-      console.log('CAMO TASKS~~~');
-      console.log(resp.body.queue_config.tabs[0].tasks);
+      dispatch(setActiveOrganization(resp.body.id, resp.body.organization_name, resp.body.is_vso, resp.body.user_can_bulk_assign));
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
