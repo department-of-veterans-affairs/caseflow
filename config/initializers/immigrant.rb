@@ -30,6 +30,7 @@ Immigrant.ignore_keys = [
   { from_table: "special_issue_lists", column: "appeal_id" },
   { from_table: "tasks", column: "appeal_id" },
   { from_table: "vbms_uploaded_documents", column: "appeal_id" },
+  { from_table: "available_hearing_locations", column: "appeal_id" },
   # claimants.participant_id to persons table  # Not polymorphic but will be checked by job
 
   # Refers to the tasks table for AMA appeals, but something like `4107503-2021-05-31` for legacy appeals
