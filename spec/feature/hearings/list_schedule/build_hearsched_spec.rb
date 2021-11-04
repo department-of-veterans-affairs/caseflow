@@ -44,10 +44,6 @@ RSpec.feature "List Schedule for Build HearSched", :all_dbs do
       ]
     end
 
-    before do
-      FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
-    end
-
     scenario "Column displays with correct values" do
       visit "hearings/schedule"
 
