@@ -1453,7 +1453,8 @@ RSpec.feature "Case details", :all_dbs do
 
     let(:request_issues) do
       [
-        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
+        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance"),
+        create(:request_issue2, benefit_type: "fiduciaru", nonrating_issue_category),
       ]
     end
     let(:appeal) { create(:appeal, request_issues: request_issues) }
