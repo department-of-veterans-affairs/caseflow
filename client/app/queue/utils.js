@@ -1,8 +1,9 @@
 /* eslint-disable max-lines */
+/* eslint-disable camelcase */
 import React from 'react';
 import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
-import { compareDesc, isValid } from 'date-fns';
+import { compareDesc } from 'date-fns';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
@@ -173,6 +174,7 @@ const appealAttributesFromRawTask = (task) => ({
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
+  contestedClaim: task.attributes.contested_claim,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
@@ -363,6 +365,7 @@ export const prepareAppealForStore = (appeals) => {
       withdrawn: appeal.attributes.withdrawn,
       removed: appeal.attributes.removed,
       overtime: appeal.attributes.overtime,
+      contestedClaim: appeal.attributes.contested_claim,
       veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
@@ -445,6 +448,10 @@ export const prepareAppealForStore = (appeals) => {
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
+      hasSameAppealSubstitution: (
+      // eslint-disable-next-line max-len
+        appeal.attributes.substitutions?.[0]?.target_appeal_uuid === appeal.attributes.substitutions?.[0]?.source_appeal_uuid
+      ),
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };
@@ -841,10 +848,8 @@ export const statusLabel = (appeal) => {
     return (
       <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
     );
-    break;
   case 'docket_switched':
     return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
-    break;
   default:
     return appeal.status ?
       StringUtil.snakeCaseToCapitalized(appeal.status) :

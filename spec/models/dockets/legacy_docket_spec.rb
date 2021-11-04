@@ -200,7 +200,7 @@ describe LegacyDocket do
 
       it "calls distribute_nonpriority_appeals" do
         expect(docket).to receive(:distribute_nonpriority_appeals)
-          .with(distribution, style: style, genpop: genpop, limit: limit)
+          .with(distribution, style: style, genpop: genpop, limit: limit, range: nil)
 
         subject
       end
