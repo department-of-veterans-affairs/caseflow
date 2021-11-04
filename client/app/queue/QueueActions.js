@@ -688,14 +688,16 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     });
 };
 
-export const fetchAmaTasksOfOrg = (userId, userRole, type = null) => (dispatch) => {
+export const fetchCamoTasks = (userId, userRole, type = null) => (dispatch) => {
   let url = '/organizations/vha-camo/tasks';
 
   return ApiUtil.get(url).
     then((resp) => {
-      console.log('RESPONSE~~~~~~');
-      console.log(resp);
+      console.log('QUEUE CONFIG~~~');
+      console.log(resp.body.queue_config);
 
+      console.log('CAMO TASKS~~~');
+      console.log(resp.body.queue_config.tabs[0].tasks);
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).

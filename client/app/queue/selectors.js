@@ -111,6 +111,15 @@ const tasksByAssigneeCssIdSelector = createSelector(
   (tasks, cssId) => filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+const tasksByAssigneeOrgSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks, cssId) => filter(tasks, (task) => {
+    console.log('TASK~~~~~~~');
+    console.log(task);
+    return task // TODO: filter by org
+  })
+);
+
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
@@ -118,6 +127,11 @@ export const legacyJudgeTasksAssignedToUser = createSelector(
 
 const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks) => workTasksSelector(tasks)
+);
+
+const workTasksByAssigneeOrgSelector = createSelector(
+  [tasksByAssigneeOrgSelector],
   (tasks) => workTasksSelector(tasks)
 );
 
@@ -199,6 +213,17 @@ export const judgeAssignTasksSelector = createSelector(
       }
 
       return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL;
+    })
+);
+
+export const camoAssignTasksSelector = createSelector(
+  [workTasksByAssigneeOrgSelector],
+  (tasks) =>
+    filter(tasks, (task) => {
+      return (
+        task.label === COPY.VHA_ASSESS_DOCUMENTATION_TASK_LABEL &&
+        (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
+      );
     })
 );
 

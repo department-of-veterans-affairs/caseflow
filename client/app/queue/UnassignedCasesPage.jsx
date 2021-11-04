@@ -14,7 +14,11 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { judgeAssignTasksSelector, selectedTasksSelector } from './selectors';
+import {
+  judgeAssignTasksSelector,
+  selectedTasksSelector,
+  camoAssignTasksSelector
+} from './selectors';
 import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -96,8 +100,11 @@ const mapStateToProps = (state, ownProps) => {
     }
   } = state;
 
+  console.log('OWNPROPS~~~');
+  console.log(ownProps);
+
   return {
-    tasks: judgeAssignTasksSelector(state),
+    tasks: camoAssignTasksSelector(state), // TODO: make dynamic
     isTaskAssignedToUserSelected,
     pendingDistribution,
     distributionLoading: pendingDistribution !== null,

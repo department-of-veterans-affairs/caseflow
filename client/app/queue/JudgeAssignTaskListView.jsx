@@ -78,7 +78,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             exact
             path={match.url}
             title="Cases to Assign | Caseflow"
-            render={() => <UnassignedCasesPage userId={chosenUserId} userRole={userRole} />}
+            render={() => <UnassignedCasesPage userId={chosenUserId} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}

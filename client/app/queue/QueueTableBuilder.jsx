@@ -10,7 +10,6 @@ import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import Button from '../components/Button';
 import {
   assignedToColumn,
   badgesColumn,
@@ -190,37 +189,13 @@ class QueueTableBuilder extends React.PureComponent {
       this.taskTableTabFactory(tabConfig, config)
     );
 
-  downloadCsv = () => {
-    // location.href = ``; // Set to Download URL
-  }
-
-  newIntake = () => {
-    location.href = '/intake';
-  }
-
   render = () => {
     const config = this.queueConfig();
-    let header = <QueueOrganizationDropdown organizations={this.props.organizations} />;
-
-    if (window.location.pathname.includes('vha-camo')) {
-      const intakeButton = <Button {...style}
-        classNames={['intake-button']}
-        onClick={this.newIntake}>
-        + New Intake Form
-      </Button>;
-      const downloadButton = <Button {...style}
-        classNames={['donwload-button', 'usa-button-secondary']}
-        onClick={this.downloadCsv}>
-        Download Completed Tasks
-      </Button>;
-
-      header = <div {...style}>{intakeButton} {downloadButton}</div>;
-    }
 
     return (
       <div className={rootStyles}>
         <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-        {header}
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-tabwindow"
           tabs={this.tabsFromConfig(config)}

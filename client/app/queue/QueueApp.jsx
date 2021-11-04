@@ -162,6 +162,7 @@ class QueueApp extends React.PureComponent {
       userRole={this.props.userRole}
       loadAttorneys={label === 'assign'}
       type={label}
+      userIsCamoEmployee
     >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />

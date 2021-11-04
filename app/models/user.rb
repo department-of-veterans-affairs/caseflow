@@ -325,7 +325,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
-    camo_team_users = member_of_organization?(VhaCamo.singleton) ? [self] : []
+    camo_team_users = camo_employee? ? [self] : []
 
     judge_team_judges.each do |judge|
       orgs << {

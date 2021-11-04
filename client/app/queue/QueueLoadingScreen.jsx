@@ -14,7 +14,7 @@ import {
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  fetchAmaTasksOfOrg
+  fetchCamoTasks
 } from './QueueActions';
 import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
@@ -25,16 +25,14 @@ class QueueLoadingScreen extends React.PureComponent {
     const {
       userId,
       userRole,
-      type
+      type,
+      userIsCamoEmployee
     } = this.props;
 
     this.props.setUserId(userId);
 
-    console.log(`THE USER ID: ${userId}`);
-    console.log(`THE USER ROLE: ${userRole}`);
-
-    if (userId === 4151) {
-      return this.props.fetchAmaTasksOfOrg(chosenUserId, userRole, type);
+    if (userIsCamoEmployee && type === 'assign') {
+      return this.props.fetchCamoTasks(chosenUserId, userRole, type);
     }
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
@@ -150,7 +148,7 @@ QueueLoadingScreen.propTypes = {
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
-  fetchAmaTasksOfOrg: PropTypes.func,
+  fetchCamoTasks: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -168,7 +166,8 @@ QueueLoadingScreen.propTypes = {
   // `userId` refers to logged-in user and provided by app/views/queue/index.html.erb via QueueApp.jsx
   userId: PropTypes.number,
   userCssId: PropTypes.string,
-  userRole: PropTypes.string
+  userRole: PropTypes.string,
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
@@ -189,7 +188,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  fetchAmaTasksOfOrg,
+  fetchCamoTasks,
   setUserId,
   setTargetUser
 }, dispatch);
