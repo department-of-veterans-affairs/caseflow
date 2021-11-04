@@ -196,6 +196,10 @@ RSpec.feature "Hearing Details", :all_dbs do
     context "when type is Central" do
       before do
         hearing.hearing_day.update!(regional_office: nil, request_type: "C")
+
+        if hearing.is_a?(LegacyHearing)
+          hearing.update(original_vacols_request_type: "C")
+        end
       end
 
       include_examples "always updatable fields"
@@ -774,17 +778,9 @@ RSpec.feature "Hearing Details", :all_dbs do
       include_examples "all hearing types"
 
       context "when type is Travel" do
-        # let(:hearing_day) do
-        #   build(
-        #     :hearing_day,
-        #     request_type: HearingDay::REQUEST_TYPES[:travel],
-        #     scheduled_for: Time.zone.tomorrow,
-        #     regional_office: "RO13"
-        #   )
-        # end
-        # let!(:hearing) { create(:legacy_hearing, :with_tasks, hearing_day: hearing_day) }
         before do
           hearing.hearing_day.update!(regional_office: "RO06", request_type: "T")
+          hearing.update(original_vacols_request_type: "T")
         end
 
         include_examples "always updatable fields"
