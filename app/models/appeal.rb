@@ -166,8 +166,12 @@ class Appeal < DecisionReview
 
     category_substrings = ["Contested Claims", "Apportionment"]
 
-    request_issues.any? do |request_issue|
-      category_substrings.any? { |substring| request_issue.nonrating_issue_category.include?(substring) }
+    matching_issue_categories = Constants::ISSUE_CATEGORIES.values.flatten.select do |category|
+      category.match? Regexp.union(category_substrings)
+    end
+
+    active_request_issues.any? do |request_issue|
+      matching_issue_categories.include?(request_issue.nonrating_issue_category)
     end
   end
 
