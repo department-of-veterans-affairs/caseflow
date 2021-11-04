@@ -44,10 +44,10 @@ const InProgressTaskModal = (props) => {
       submit={submit}
     >
       {taskData?.modal_body &&
-        <React.Fragment>
+        <>
           <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
           <br />
-        </React.Fragment>
+        </>
       }
     </QueueFlowModal>
   );
