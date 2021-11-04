@@ -27,6 +27,7 @@ export default class BenefitType extends React.PureComponent {
 
     return benefitTypes;
   };
+
   benefitTypes = this.props.formName === FORM_TYPES.SUPPLEMENTAL_CLAIM.formName ?
     this.supplementalClaimBenefitTypes(this.props) :
     this.nonSupplementalClaimBenefitTypes();
@@ -92,4 +93,5 @@ BenefitType.propTypes = {
   asDropdown: PropTypes.bool,
   formName: PropTypes.string.isRequired,
   benefitTypes: PropTypes.object.isRequired,
+  featureToggles: PropTypes.object.isRequired,
 };
