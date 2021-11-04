@@ -49,6 +49,8 @@ describe('.certificationUpdateSuccess', () => {
 });
 
 describe('.certificationUpdateStart', () => {
+  const dispatch = jest.fn();
+
   it('should create an action to mark an update start', () => {
     const params = {
       certifyingOfficialName: 'Official Name',
@@ -60,7 +62,7 @@ describe('.certificationUpdateStart', () => {
       payload: {}
     };
 
-    expect(Actions.certificationUpdateStart(params)).toEqual(expectedAction);
+    expect(Actions.certificationUpdateStart(params, dispatch)).toEqual(expectedAction);
 
   });
 });

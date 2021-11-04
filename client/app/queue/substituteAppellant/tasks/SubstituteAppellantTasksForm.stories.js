@@ -4,19 +4,27 @@ import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
-import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
-import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
+import {
+  sampleTasksForDismissedEvidenceSubmissionDocket,
+  sampleTasksForPendingEvidenceSubmissionDocket,
+} from 'test/data/queue/substituteAppellant/tasks';
+import { prepTaskDataForUi, prepOpenTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
-const claimantPoa = 'Attorney';
+const poaType = 'Attorney';
 
-const filteredTasksSameAppealSubstitution = prepTaskDataForUi(
-  { taskData: allEvidenceSubmissionWindowTasks, claimantPoa, isSubstitutionSameAppeal: true }
+const allDismissedEvidenceSubmissionWindowTasks = sampleTasksForDismissedEvidenceSubmissionDocket();
+const filteredDismissedEvidenceSubmissionTasks = prepTaskDataForUi(
+  { taskData: allDismissedEvidenceSubmissionWindowTasks, poaType }
 );
 
-const filteredTasksSeparateAppealSubstitution = prepTaskDataForUi(
-  { taskData: allEvidenceSubmissionWindowTasks, claimantPoa, isSubstitutionSameAppeal: false }
+const allPendingEvidenceSubmissionWindowTasks = sampleTasksForPendingEvidenceSubmissionDocket();
+const filteredPendingEvidenceSubmissionTasks = prepTaskDataForUi(
+  { taskData: allPendingEvidenceSubmissionWindowTasks, poaType }
 );
+
+const activeTasks = prepOpenTaskDataForUi({
+  taskData: allPendingEvidenceSubmissionWindowTasks
+});
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',
@@ -34,7 +42,8 @@ export default {
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),
-    tasks: filteredTasksSeparateAppealSubstitution,
+    cancelledTasks: filteredDismissedEvidenceSubmissionTasks,
+    activeTasks,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
@@ -61,7 +70,9 @@ ExistingValues.args = {
   },
 };
 
-export const SameAppealSubstitution = Template.bind({});
-SameAppealSubstitution.args = {
-  tasks: filteredTasksSameAppealSubstitution
+export const PendingAppeal = Template.bind({});
+PendingAppeal.args = {
+  cancelledTasks: filteredPendingEvidenceSubmissionTasks,
+  activeTasks,
+  pendingAppeal: true
 };
