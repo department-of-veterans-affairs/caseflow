@@ -32,7 +32,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     return appealTasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10)));
   };
-  const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);
+  const selectedTasks = findSelectedTasks(allTasks, existingValues.closedTaskIds);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -78,13 +78,15 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
+    // To-Do: update this once the backend schema/endpoint has been updated
+    // To-Do: use delta between openTaskIds and the open tasks to determine task IDs to cancel
     const payload = {
       source_appeal_id: appealId,
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: poa ? poa.poa_participant_id : null,
-      selected_task_ids: existingValues.taskIds,
+      selected_task_ids: existingValues.closedTaskIds,
       task_params: buildTaskCreationParameters()
     };
 

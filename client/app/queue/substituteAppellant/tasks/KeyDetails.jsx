@@ -62,7 +62,7 @@ export const KeyDetails = (props) => {
       </ul>
       <div className={styles.caseDetails}>
         <Link to={`/queue/appeals/${props.appealId}`} target="_blank">
-          View original case details <i className="fa fa-external-link"></i>
+          View existing case details <i className="fa fa-external-link"></i>
         </Link>
       </div>
     </section>
