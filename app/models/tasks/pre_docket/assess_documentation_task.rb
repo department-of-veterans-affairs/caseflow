@@ -6,6 +6,8 @@
 # will also need to move up the chain as well i.e. Regional -> Program etc.
 
 class AssessDocumentationTask < Task
+  has_one :task_vamc, as: :task
+
   DEFAULT_ACTIONS = [
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze

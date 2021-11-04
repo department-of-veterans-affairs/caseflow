@@ -1427,11 +1427,12 @@ ActiveRecord::Schema.define(version: 2021_10_26_165124) do
     t.index ["updated_at"], name: "index_task_timers_on_updated_at"
   end
 
-  create_table "task_vamcs", force: :cascade do |t|
+  create_table "task_vamcs", comment: "Table to store VAMCs associated by VHA Program Offices to Assess Documentation tasks when assigning to a VISN", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "task_id", null: false, comment: "References tasks table"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "vamc", null: false, comment: "VA Medical Center Code associated to an Assess Documentation task assigned to a VISN."
+    t.string "vamc_label", null: false, comment: "Label of VA Medical Center Code associated to an Assess Documentation task assigned to a VISN."
+    t.index ["vamc_label"], name: "index_task_vamcs_on_vamc_label"
   end
 
   create_table "tasks", force: :cascade do |t|
