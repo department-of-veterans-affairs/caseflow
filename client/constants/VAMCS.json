@@ -1,0 +1,1007 @@
+[
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "Manchester VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "Providence VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Boston Healthcare System"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Boston Healthcare System - Brockton VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Boston Healthcare System - Jamaica Plain VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Boston Healthcare System - West Roxbury VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Central Western Massachusetts Healthcare System"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Connecticut Healthcare System"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Connecticut Healthcare System - Newington VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Connecticut Healthcare System - West Haven VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "White River Junction VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA Maine Healthcare System"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "VA New England Healthcare System"
+ },
+ {
+   "visn_id": "VISN 1",
+   "visn_label": "VA New England Healthcare System",
+   "vamc_label": "Togus Bedford Healthcare Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Battle Creek VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Chillicothe VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Cincinnati VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Dayton VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Ann Arbor Healthcare System"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Aleda E. Lutz VA Medical Center (Saginaw)"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Chalmers P. Wylie VA Ambulatory Care Center (Columbus)"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "John D. Dingell VA Medical Center (Detroit)"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Veteran Health Indiana"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "Veteran Health Indiana - Richard L. Roudebush VA Medical Center (Indianapolis)"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Central Ohio Health Care System"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Northeast Ohio Healthcare System"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Northeast Ohio Healthcare System - Louis Stokes Cleveland VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Northern Indiana Health Care System - Fort Wayne Campus"
+ },
+ {
+   "visn_id": "VISN 10",
+   "visn_label": "VA Healthcare System Serving Ohio, Indiana and Michigan",
+   "vamc_label": "VA Northern Indiana Health Care System - Marion Campus"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Tomah VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Edward Hines Jr. VA Hospital"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Jesse Brown VA Medical Center (Chicago)"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "VA Illiana Health Care System"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Capt. James A. Lovell Federal Health Care Center"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Clement J. Zablocki VA Medical Center (Milwaukee)"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "William S. Middleton Memorial Veterans Hospital (Madison)"
+ },
+ {
+   "visn_id": "VISN 12",
+   "visn_label": "VA Great Lakes Health Care System",
+   "vamc_label": "Oscar G. Johnson VA Medical Center (Iron Mountain)"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Kansas City VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Marion VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Harry S. Truman Memorial Veterans Hospital (Columbia)"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Robert J. Dole VA Medical Center (Wichita)"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "St. Louis VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "St. Louis VA Health Care System - Jefferson Barracks Division"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "St. Louis VA Health Care System - John Cochran Division"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Eastern Kansas Health Care System"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Eastern Kansas Health Care System - Colmery-O'Neil VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "Eastern Kansas Health Care System - Dwight D. Eisenhower VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 15",
+   "visn_label": "VA Heartland Network",
+   "vamc_label": "John J. Pershing VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Alexandria VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Central Arkansas Veterans Healthcare System"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Central Arkansas Veterans Healthcare System - Eugene J. Towbin Healthcare Center"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Central Arkansas Veterans Healthcare System - John L. McClellan Memorial Veterans Hospital"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Southeast Louisiana Veterans Health Care System"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Veterans Health Care System of the Ozarks"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "G.V. (Sonny) Montgomery VA Medical Center (Jackson, MS)"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Michael E. DeBakey VA Medical Center (Houston, TX)"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Overton Brooks VA Medical Center (Shreveport, LA)"
+ },
+ {
+   "visn_id": "VISN 16",
+   "visn_label": "South Central VA Health Care Network",
+   "vamc_label": "Gulf Coast Veterans Health Care System (Biloxi)"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "Amarillo VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "El Paso VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "Central Texas Veteran Health Care System"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "Central Texas Veteran Health Care System - Doris Miller VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "Central Texas Veteran Health Care System - Olin E. Teague Veterans Medical Center"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "South Texas Veterans Health Care System (San Antonio)"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "South Texas Veterans Health Care System - Audie L. Murphy VA Hospital"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "South Texas Veterans Health Care System - Kerrville VA Hospital"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "VA North Texas Health Care System (Dallas/Bonham)"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "VA North Texas Health Care System - Dallas VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "VA North Texas Health Care System - Garland VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "VA North Texas Health Care System - Sam Rayburn Memorial Veterans Center"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "VA Texas Valley Coastal Bend Healthcare System (Harlingen)"
+ },
+ {
+   "visn_id": "VISN 17",
+   "visn_label": "VA Heart of Texas Health Care Network",
+   "vamc_label": "West Texas VA Health Care System (Big Spring)"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "Oklaholma City VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "VA Easter Colorado Health Care System (ECHCS)"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "VA Salt Lake City Health Care System"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "Sheridan VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "Cheyenne VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "VA Western Colorado Health Care System"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "Eastern Oklahoma VA Health Care System (Jack C. Montgomery VAMC)"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "Albany Stratton VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "Syracuse VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Hudson Valley Health Care System"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Hudson Valley Health Care System - Castle Point Campus"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Hudson Valley Health Care System - Franklin Delando Roosevelt Campus (Montrose)"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New Jersey Health Care System"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New Jersey Health Care System - East Orange VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New Jersey Health Care System - Lyons VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "James J. Peters (Bronx) VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "Northport VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New York Harbor Healthcare System"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New York Harbor Healthcare System - Manhattan VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New York Harbor Healthcare System - Brooklyn VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA New York Harbor Healthcare System - St. Albans VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Western NY Healthcare System"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Western NY Healthcare System - Batavia VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Western NY Healthcare System - Buffalo VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Finger Lakes Healthcare System"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Finger Lakes Healthcare System - Bath VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 2",
+   "visn_label": "New York/New Jersey VA Health Care Network",
+   "vamc_label": "VA Finger Lakes Healthcare System - Canandaigua VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "Alaska VA Healthcare System"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "Boise VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "Jonathan M. Wainwright Memorial VA Medical Center (Walla Walla)"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Portland Health Care System"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Portland Health Care System - Portland VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Portland Health Care System - Vancouver Campus"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "Roseburg VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Souther Oregon Rehabilitation Center (White City)"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "Mann-Grandstaff VA Medical Center (Spokane)"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Puget Sound Health Care System"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Puget Sound Health Care System - American Lake Division"
+ },
+ {
+   "visn_id": "VISN 20",
+   "visn_label": "Northwest Network",
+   "vamc_label": "VA Puget Sound Health Care System - Seattle Division"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "San Francisco VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "VA Southern Nevada Healthcare System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Central California Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Pacific Islands Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Palo Alto Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Palo Alto Health Care System - Livermore Division"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Palo Alto Health Care System - Menlo Park Division"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Palo Alto Health Care System - Palo Alto Division"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Sierra Nevada Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Northern California Health Care System"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Northern California Health Care System - East Bay Division - Martinez Outpatient Clinic"
+ },
+ {
+   "visn_id": "VISN 21",
+   "visn_label": "Sierra Pacific Network",
+   "vamc_label": "Northern California Health Care System - Valley Division - Sacramento VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "New Mexico VA Health Care System (Albuquerque, NM)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "Northern Arizona VA Health Care System (Prescott, AZ)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "Phoenix VA Health Care System (Phoenix, AZ)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "Southern Arizona VA Health Care System (Tucson, AZ)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Greater Los Angeles Healthcare System (GLA) (Los Angeles, CA)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Greater Los Angeles Healthcare System (GLA) - Los Angeles Ambulatory Care Center"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Greater Los Angeles Healthcare System (GLA) - Sepulveda Ambulatory Care Center"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Greater Los Angeles Healthcare System (GLA) - West Los Angeles Medical Center"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Loma Linda Healthcare System (Loma Linda, CA)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Loma Linda Healthcare System - VA Loma Linda Ambulatory Care Center"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Loma Linda Healthcare System - VA Loma Linda Healthcare System"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA Long Beach Healthcare System (Long Beach, CA)"
+ },
+ {
+   "visn_id": "VISN 22",
+   "visn_label": "Desert Pacific Healthcare Network",
+   "vamc_label": "VA San Diego Healthcare System (San Diego, CA)"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "Fargo VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "Iowa City VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "Minneapolis VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Nebraska-Western Iowa Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Nebraska-Western Iowa Health Care System - Grand Island VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Nebraska-Western Iowa Health Care System - Omaha VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "St. Cloud VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Black Hills Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Black Hills Health Care System - Fort Meade Campus"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Black Hills Health Care System - Hot Springs Campus"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "VA Central Iowa Health Care System"
+ },
+ {
+   "visn_id": "VISN 23",
+   "visn_label": "VA Midwest Health Care Network",
+   "vamc_label": "Sioux Falls VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Butler VA Healthcare System"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Coatesville VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Erie VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Lebanon VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "VA Pittsburgh Healthcare System"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Wilkes-Barre VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Wilmington VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "James E. Van Zandt VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 4",
+   "visn_label": "VA Healthcare",
+   "vamc_label": "Corporal Michael J. Crescenz VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "Martinsburg VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "Washington DC VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "Louis A. Johnson VA Medical Center (Clarksburg)"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "Beckley VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "Hershel Woody Williams VA Medical Center (Huntington)"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "VA Maryland Health Care System"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "VA Maryland Health Care System - Baltimore VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "VA Maryland Health Care System - Perry Point VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 5",
+   "visn_label": "VA Capitol Health Care Network",
+   "vamc_label": "VA Maryland Health Care System - Loch Raven VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Durham VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Fayetteville VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Hampton VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Salem VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Salisbury - W.G. (Bill) Hefner VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Asheville VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 6",
+   "visn_label": "VA Mid-Atlantic Health Care Network",
+   "vamc_label": "Hunter Holmes McGuire VA Medical Center (Richmond)"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Birmingham VAMC"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Carl Vinson VA Medical Center (Dublin)"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Central Alabama Health Care System - East"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Central Alabama Health Care System - West"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Charlie Norwood VA Medical Center (Augusta)"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Ralph H. Johnson VA Medical Center (Charleston)"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Tuscaloosa VAMC"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Columbia (Wm. Jennings Bryan Dorn) VAMC"
+ },
+ {
+   "visn_id": "VISN 7",
+   "visn_label": "VA Southeast Network",
+   "vamc_label": "Atlanta VAMC"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "Bay Pines VA Healthcare System"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "Miami VA Healthcare System"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "North Florida/South Georgia Veterans Health System"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "North Florida/South Georgia Veterans Health System - Lake City VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "North Florida/South Georgia Veterans Health System - Malcom Randall VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "VA Caribbean Healthcare System"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "James A. Haley Veterans Hospital (Tampa)"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "Orlanda VA Medical Center - Lake Nona"
+ },
+ {
+   "visn_id": "VISN 8",
+   "visn_label": "VA Sunshine Healthcare Network",
+   "vamc_label": "West Palm Beach VA Healtchcare System"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Lexington VA Health Care System"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Lexington VA Health Care System - Franklin R. Sousley Campus"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Lexington VA Health Care System - Troy Bowling Campus"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Memphis VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "James H. Quillen VAMC (Mountain Home)"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Tennessee Valley Healthcare System"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Tennessee Valley Healthcare System - Alvin C. York Campus"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Tennessee Valley Healthcare System - Nashville Campus"
+ },
+ {
+   "visn_id": "VISN 9",
+   "visn_label": "VA MidSouth Healthcare Network",
+   "vamc_label": "Robley Rex (Louisville) VA Medical Center"
+ },
+ {
+   "visn_id": "VISN 19",
+   "visn_label": "Rocky Mountain Network",
+   "vamc_label": "Montana VA Health Care System"
+ }
+]
