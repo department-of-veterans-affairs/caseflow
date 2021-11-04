@@ -72,9 +72,11 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
       where(hearings: { disposition: "held", judge_id: judge.id })
-      .where("hearing_days.scheduled_for > ?", affinity_days.days.ago)
+        .where("hearing_days.scheduled_for > ?", affinity_days.days.ago)
     end
 
+    # This used to be a way to prevent cases from sitting in statis due to being tied to an inactive judge user
+    # However, since the inactivity threshold exceeds the length of tie due to affinity, this should be moot
     def not_tied_to_any_active_judge
       judge_css_ids = JudgeTeam.pluck(:name)
       inactive_judges = User.where(css_id: judge_css_ids).where("last_login_at < ?", 60.days.ago).pluck(:id)
