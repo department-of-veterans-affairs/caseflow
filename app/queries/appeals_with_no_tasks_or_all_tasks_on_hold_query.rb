@@ -30,7 +30,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     Constants.TASK_STATUSES.completed
   end
 
-  # Dispatched appeals (with a decision document) should have any open tasks.
+  # Dispatched appeals (with a decision document) should not have open RootTask.
   # Cause: Appeal may be undispatched -- https://github.com/department-of-veterans-affairs/caseflow/issues/14884
   def dispatched_appeals_on_hold
     suspect_appeals = Appeal.where(id: tasks_for(Appeal.name)

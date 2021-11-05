@@ -125,7 +125,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return task.assignedOn ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
         <dd>{moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
       </div>
@@ -134,7 +134,7 @@ class TaskRows extends React.PureComponent {
 
   closedAtListItem = (task) => {
     return task.closedAt ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
         <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd>
       </div>
@@ -143,7 +143,7 @@ class TaskRows extends React.PureComponent {
 
   cancelledAtListItem = (task) => {
     return (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
         <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd>
       </div>
@@ -156,7 +156,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return taskIsOnHold(task) ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
         <dd>
           <OnHoldLabel task={task} />
@@ -171,7 +171,7 @@ class TaskRows extends React.PureComponent {
     const assignee = task.assigneeName;
 
     return assignee ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
         <dd>{assignee}</dd>
       </div>
@@ -187,7 +187,7 @@ class TaskRows extends React.PureComponent {
       null;
 
     return assignor ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
         <dd>{assignor}</dd>
       </div>
@@ -198,7 +198,7 @@ class TaskRows extends React.PureComponent {
     const canceler = task.cancelledBy?.cssId;
 
     return canceler ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
         <dd>{canceler}</dd>
       </div>
@@ -209,7 +209,7 @@ class TaskRows extends React.PureComponent {
     const reason = task.cancelReason;
     const reasonLabel = COPY.TASK_SNAPSHOT_CANCEL_REASONS[reason];
 
-    return reasonLabel ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
+    return reasonLabel ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
       <dd>{reasonLabel}</dd></div> : null;
   }
 
@@ -217,7 +217,7 @@ class TaskRows extends React.PureComponent {
     const convertedBy = task.convertedBy?.cssId;
 
     return convertedBy ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
         <dd>{convertedBy}</dd>
       </div>
@@ -230,7 +230,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return task.label ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
         <dd>{task.label}</dd>
       </div>
@@ -284,7 +284,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return (
-      <div>
+      <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
             <dt style={{ width: '100%' }}>
@@ -325,7 +325,7 @@ class TaskRows extends React.PureComponent {
 
   hearingRequestTypeConvertedAtListItem = (task) => {
     return task.convertedOn ? (
-      <div>
+      <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
         <dd>{moment(task.convertedOn).format('MM/DD/YYYY')}</dd>
       </div>

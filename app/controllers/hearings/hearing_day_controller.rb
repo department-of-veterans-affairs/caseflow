@@ -18,7 +18,7 @@ class Hearings::HearingDayController < HearingsApplicationController
       format.json do
         if hearing_day_range.valid?
           serialized_hearing_days =
-            ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user, current_user)
+            ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
 
           render json: {
             hearings: serialized_hearing_days,
@@ -147,6 +147,9 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :room,
                   :bva_poc,
                   :notes,
+                  :first_slot_time,
+                  :slot_length_minutes,
+                  :number_of_slots,
                   :lock)
       .merge(updated_by: current_user)
   end

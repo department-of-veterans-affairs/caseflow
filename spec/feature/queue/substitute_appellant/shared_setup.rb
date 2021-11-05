@@ -113,20 +113,36 @@ RSpec.shared_examples("fill substitution form") do
       end
 
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
-      expect(page).to have_text("Listed below are all the tasks from the original appeal")
-      expect(page).to have_css(".usa-table-borderless.css-nil")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Status")
-      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
+      Capybara.ignore_hidden_elements = false
+      expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_TITLE)
+      expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION.delete("\n"))
+      Capybara.ignore_hidden_elements = true
 
-      # there should always be a distrubution task
-      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
+      if same_appeal_substitution_allowed?(appeal)
+        Capybara.ignore_hidden_elements = false
+        expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE)
+        expect(page).to have_text(COPY::SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION.delete("\n"))
+        Capybara.ignore_hidden_elements = true
+      end
+
+      # If it is a same appeal substitution and not the evidence submission docket, no tasks will display
+      unless same_appeal_substitution_allowed?(appeal) || docket_type.eql?("evidence_submission")
+        expect(page).to have_css(".usa-table-borderless.css-nil")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Status")
+        expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
+      end
+
+      # If it is a same appeal substitution, the distribution task won't display
+      unless same_appeal_substitution_allowed?(appeal)
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
+      end
 
       # example appeal has an evidence submission task
       if docket_type.eql?("evidence_submission")
         expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window")
-        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").find("label").click
+        find("div", class: "checkbox-wrapper-closedTaskIds[#{evidence_task_id}]").find("label").click
       end
 
       if docket_type.eql?("hearing")
@@ -134,10 +150,10 @@ RSpec.shared_examples("fill substitution form") do
         schedule_hearing_task_id = schedule_hearing_task.id
         expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Schedule hearing")
 
-        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        find("div", class: "checkbox-wrapper-closedTaskIds[#{schedule_hearing_task_id}]").find("label").click
         expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
 
-        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        find("div", class: "checkbox-wrapper-closedTaskIds[#{schedule_hearing_task_id}]").find("label").click
         expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
       end
       page.find("button", text: "Continue").click
@@ -207,4 +223,9 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
     end
   end
+end
+
+def same_appeal_substitution_allowed?(source_appeal)
+  (ClerkOfTheBoard.singleton.user_is_admin?(current_user) || !!source_appeal.veteran.date_of_death) &&
+    source_appeal.request_issues.none?(&:death_dismissed?)
 end

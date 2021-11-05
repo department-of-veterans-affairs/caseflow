@@ -16,6 +16,7 @@ module.exports = {
   reporters: process.env.TEST_REPORTER ? [process.env.TEST_REPORTER] : ['default', 'jest-junit'],
   coverageDirectory: process.env.JEST_DIR,
   collectCoverageFrom: ['app/**/*.{js,jsx}', '!**/*.stories.*'],
+  testMatch: ['<rootDir>/test/**/*-test.js?(x)', '**/?(*.)(spec|test).js?(x)'],
   testTimeout: 10000,
   snapshotSerializers: ['enzyme-to-json/serializer']
 };
