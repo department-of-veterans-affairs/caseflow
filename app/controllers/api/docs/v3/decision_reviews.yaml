@@ -1079,6 +1079,7 @@ components:
         - insurance
         - education
         - voc_rehab
+        - veterans_readiness
         - loan_guaranty
         - vha
         - nca
