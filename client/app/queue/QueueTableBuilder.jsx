@@ -39,11 +39,6 @@ const rootStyles = css({
   }
 });
 
-const style = css({
-  float: 'right',
-  margin: '10px'
-});
-
 /**
  * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
  * The props are:
