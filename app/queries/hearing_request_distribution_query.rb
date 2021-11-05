@@ -37,7 +37,15 @@ class HearingRequestDistributionQuery
   # due to incompatibilities between the two queries.
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
-    [most_recent_held_hearings_not_tied_to_any_active_judge, no_hearings_or_no_held_hearings].flatten
+    [
+      most_recent_held_hearings_not_tied_to_any_active_judge,
+      most_recent_held_hearings_exeeding_affinity_threshold,
+      no_hearings_or_no_held_hearings
+    ].flatten
+  end
+
+  def most_recent_held_hearings_exeeding_affinity_threshold
+    base_relation.most_recent_hearings.not_tied_exceeding_affinity_threshold
   end
 
   def most_recent_held_hearings_not_tied_to_any_active_judge
@@ -72,7 +80,13 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
       where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("hearing_days.scheduled_for > ?", affinity_days.days.ago)
+        .where("latest_date_by_appeal.latest_scheduled_for > ?", affinity_days.days.ago)
+    end
+
+    def not_tied_exceeding_affinity_threshold
+      affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
+      where(hearings: { disposition: "held" })
+        .where("latest_date_by_appeal.latest_scheduled_for <= ?", affinity_days.days.ago)
     end
 
     # This used to be a way to prevent cases from sitting in statis due to being tied to an inactive judge user
