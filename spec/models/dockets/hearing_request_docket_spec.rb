@@ -49,7 +49,7 @@ describe HearingRequestDocket, :all_dbs do
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        
+
         # This appeal should not be returned
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
 
@@ -117,7 +117,7 @@ describe HearingRequestDocket, :all_dbs do
         tied = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
         expected_result = [tied, not_tied, outside_affinity]
-        
+
         # won't be included
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
@@ -168,7 +168,7 @@ describe HearingRequestDocket, :all_dbs do
         # won't be included
         create_priority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        
+
         # will be included
         tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
@@ -234,25 +234,28 @@ describe HearingRequestDocket, :all_dbs do
       end
 
       it "only distributes nonpriority, distributable, hearing docket, genpop cases" do
+        # won't be included
         create_priority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        
+
+        # will be included
         appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         no_held_hearings = non_priority_with_no_held_hearings
         no_hearings = non_priority_with_no_hearings
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-        expected_count = 4 # count of above cases
-        
+
+        expected_result = [appeal, no_held_hearings, no_hearings, outside_affinity]
+
         tasks = subject
 
-        expect(tasks.length).to eq(expected_count)
+        expect(tasks.length).to eq(expected_result.length)
         expect(tasks.first.class).to eq(DistributedCase)
         expect(tasks.map(&:genpop).uniq).to eq [true]
         expect(tasks.map(&:genpop_query).uniq).to eq ["only_genpop"]
-        expect(distribution.distributed_cases.length).to eq(expected_count)
+        expect(distribution.distributed_cases.length).to eq(expected_result.length)
         expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array([appeal, no_held_hearings, no_hearings, outside_affinity])
+          .to match_array(expected_result)
       end
     end
 
@@ -419,12 +422,12 @@ describe HearingRequestDocket, :all_dbs do
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
                     docket_type: Constants.AMA_DOCKETS.hearing)
-    hearing = create(:hearing, 
-                      judge: nil, 
-                      disposition: "held", 
-                      appeal: appeal, 
-                      transcript_sent_date: 1.day.ago, 
-                      hearing_day: most_recent)
+    hearing = create(:hearing,
+                     judge: nil,
+                     disposition: "held",
+                     appeal: appeal,
+                     transcript_sent_date: 1.day.ago,
+                     hearing_day: most_recent)
     hearing.update(judge: active_judge)
     appeal
   end
