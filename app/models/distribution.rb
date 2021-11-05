@@ -17,7 +17,6 @@ class Distribution < CaseflowRecord
 
   before_create :mark_as_pending
 
-  CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
   scope :priority_pushed, -> { where(priority_push: true) }
@@ -121,6 +120,6 @@ class Distribution < CaseflowRecord
 
     return ALTERNATIVE_BATCH_SIZE if team_batch_size.nil? || team_batch_size == 0
 
-    team_batch_size * CASES_PER_ATTORNEY
+    team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
   end
 end

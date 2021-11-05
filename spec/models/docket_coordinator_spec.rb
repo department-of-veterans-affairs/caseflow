@@ -79,8 +79,8 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { DirectReviewDocket::DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION }
-    let(:days_to_decision_goal) { DirectReviewDocket::DAYS_TO_DECISION_GOAL }
+    let(:days_before_goal_due) { Constants.DISTRIBUTION.days_before_goal_due_for_distribution }
+    let(:days_to_decision_goal) { Constants.DISTRIBUTION.direct_docket_time_goal }
 
     let!(:other_direct_review_cases) do
       (0...10).map do

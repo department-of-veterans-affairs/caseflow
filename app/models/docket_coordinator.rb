@@ -110,7 +110,8 @@ class DocketCoordinator
   end
 
   def total_batch_size
-    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size *
+      Constants.DISTRIBUTION.batch_size_per_attorney
   end
 
   def due_direct_review_proportion

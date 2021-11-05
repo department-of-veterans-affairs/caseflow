@@ -649,19 +649,4 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
     end
   end
-
-  context "legacy_das_deprecation FeatureToggle enabled" do
-    before do
-      FeatureToggle.enable!(:legacy_das_deprecation)
-    end
-
-    after do
-      FeatureToggle.disable!(:legacy_das_deprecation)
-    end
-
-    it "sets the case location to 'CASEFLOW'" do
-      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
-      expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
-  end
 end

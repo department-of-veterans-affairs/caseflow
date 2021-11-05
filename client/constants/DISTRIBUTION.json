@@ -1,0 +1,6 @@
+{
+  "batch_size_per_attorney": 3,
+  "direct_docket_time_goal": 365,
+  "hearing_case_affinity_days": 30,
+  "days_before_goal_due_for_distribution": 65
+}
