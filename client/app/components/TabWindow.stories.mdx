@@ -1,7 +1,7 @@
 import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
 import { action } from "@storybook/addon-actions";
 import TabWindow from "./TabWindow";
-import { crossSymbolHtml, checkSymbolHtml } from "./RenderFunctions";
+import { CrossIcon, CheckIcon } from "./RenderFunctions";
 
 export const defaultProps = {
   tabs: [
@@ -80,13 +80,13 @@ U.S. Design standards. Here is an example of tabs with icons:
         <TabWindow
           tabs={[
             {
-              icon: checkSymbolHtml(),
+              icon: <CheckIcon />,
               disable: false,
               label: "Check Tab",
               page: "Content with icon",
             },
             {
-              icon: crossSymbolHtml(),
+              icon: <CrossIcon />,
               disable: false,
               label: "Cross Tab",
               page: "More content with icon",
