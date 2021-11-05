@@ -6,9 +6,6 @@ Immigrant.ignore_keys = [
   # Add FK to column file_number in veterans table
   { from_table: "available_hearing_locations", column: "veteran_file_number" },
 
-  # Add FK to legacy_appeals
-  { from_table: "worksheet_issues", column: "appeal_id" },
-
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
 
