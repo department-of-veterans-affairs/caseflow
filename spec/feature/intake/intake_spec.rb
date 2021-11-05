@@ -298,9 +298,20 @@ feature "Intake", :all_dbs do
       end
 
       context "when implementing existing form" do
-        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for non-claim review forms" do
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for SC" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content(Constants.BENEFIT_TYPES.voc_rehab)
+          expect(page).to_not have_content(Constants.BENEFIT_TYPES.veterans_readiness)
+        end
+
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option fro HLR" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
           safe_click ".cf-submit.usa-button"
 
           fill_in search_bar_title, with: "123419876"
