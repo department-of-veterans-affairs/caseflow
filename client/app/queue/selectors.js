@@ -114,13 +114,7 @@ const tasksByAssigneeCssIdSelector = createSelector(
 
 const tasksByAssigneeOrgSelector = createSelector(
   [tasksWithAppealSelector, getActiveOrgId],
-  (tasks, orgId) => filter(tasks, (task) => {
-    console.log('TASK~~~~~~~');
-    console.log(task);
-    console.log('ORGID~~~~~~');
-    console.log(orgId);
-    return task // TODO: filter by org
-  })
+  (tasks, orgId) => filter(tasks, (task) => task.assignedTo.id === orgId)
 );
 
 export const legacyJudgeTasksAssignedToUser = createSelector(

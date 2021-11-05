@@ -93,6 +93,7 @@ const mapStateToProps = (state, ownProps) => {
       pendingDistribution
     },
     ui: {
+      userIsCamoEmployee,
       messages: {
         success,
         error
@@ -100,11 +101,14 @@ const mapStateToProps = (state, ownProps) => {
     }
   } = state;
 
-  console.log('OWNPROPS~~~');
-  console.log(ownProps);
+  let taskSelector = judgeAssignTasksSelector(state);
+
+  if (userIsCamoEmployee) {
+    taskSelector = camoAssignTasksSelector(state);
+  }
 
   return {
-    tasks: camoAssignTasksSelector(state), // TODO: make dynamic
+    tasks: taskSelector,
     isTaskAssignedToUserSelected,
     pendingDistribution,
     distributionLoading: pendingDistribution !== null,

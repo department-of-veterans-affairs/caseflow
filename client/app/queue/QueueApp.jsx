@@ -162,7 +162,6 @@ class QueueApp extends React.PureComponent {
       userRole={this.props.userRole}
       loadAttorneys={label === 'assign'}
       type={label}
-      userIsCamoEmployee
     >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
@@ -553,12 +552,13 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
+      userIsCamoEmployee
     };
   };
 

@@ -40,7 +40,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   render = () => {
     const { userId,
-      userRole,
       userCssId,
       targetUserId,
       targetUserCssId,

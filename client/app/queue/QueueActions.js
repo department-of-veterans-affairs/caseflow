@@ -692,7 +692,7 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
 };
 
 export const fetchCamoTasks = (userId) => (dispatch) => {
-  let url = '/organizations/vha-camo/tasks';
+  const url = '/organizations/vha-camo/tasks';
 
   return ApiUtil.get(url).
     then((resp) => {
