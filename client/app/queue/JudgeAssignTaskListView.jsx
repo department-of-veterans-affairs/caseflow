@@ -14,7 +14,7 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 
-import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
+import { judgeAssignTasksSelector, camoAssignTasksSelector, getTasksByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -109,11 +109,20 @@ const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge
+    },
+    ui: {
+      userIsCamoEmployee
     }
   } = state;
 
+  let taskSelector = judgeAssignTasksSelector(state);
+
+  if (userIsCamoEmployee) {
+    taskSelector = camoAssignTasksSelector(state);
+  }
+
   return {
-    unassignedTasksCount: judgeAssignTasksSelector(state).length,
+    unassignedTasksCount: taskSelector.length,
     userCssId: state.ui.userCssId,
     targetUserId: state.ui.targetUser?.id,
     targetUserCssId: state.ui.targetUser?.cssId,
