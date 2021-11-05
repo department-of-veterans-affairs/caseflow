@@ -35,7 +35,7 @@ import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
-import JudgeAssignTaskListView from './JudgeAssignTaskListView';
+import TeamAssignTaskListView from './TeamAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
@@ -164,7 +164,7 @@ class QueueApp extends React.PureComponent {
       type={label}
     >
       {label === 'assign' ? (
-        <JudgeAssignTaskListView {...this.props} match={match} />
+        <TeamAssignTaskListView {...this.props} match={match} />
       ) : (
         <JudgeDecisionReviewTaskListView {...this.props} />
       )}

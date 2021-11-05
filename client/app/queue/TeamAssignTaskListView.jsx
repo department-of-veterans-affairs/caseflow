@@ -25,10 +25,11 @@ const containerStyles = css({
 
 /**
  * Case assignment page used by judges to request new cases and assign cases to their attorneys.
+ * Also used by VHA CAMO to bulk assign to VHA Program Offices.
  * Cases to be assigned are rendered by component UnassignedCasesPage.
  * Cases that have been assigned are rendered by component AssignedCasesPage.
  */
-class JudgeAssignTaskListView extends React.PureComponent {
+class TeamAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -90,7 +91,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 }
 
-JudgeAssignTaskListView.propTypes = {
+TeamAssignTaskListView.propTypes = {
   attorneysOfJudge: PropTypes.array.isRequired,
   resetSuccessMessages: PropTypes.func,
   resetSaveState: PropTypes.func,
@@ -139,4 +140,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeAssignTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(TeamAssignTaskListView);
