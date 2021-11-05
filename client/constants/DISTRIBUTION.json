@@ -1,6 +1,8 @@
 {
   "batch_size_per_attorney": 3,
+  "days_before_goal_due_for_distribution": 65,
   "direct_docket_time_goal": 365,
   "hearing_case_affinity_days": 30,
-  "days_before_goal_due_for_distribution": 65
+  "maximum_direct_review_proportion": 0.07,
+  "minimum_legacy_proportion": 0.9
 }
