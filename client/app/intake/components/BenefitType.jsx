@@ -7,30 +7,14 @@ import { formatRadioOptions, formatSearchableDropdownOptions } from '../util';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 export default class BenefitType extends React.PureComponent {
+  // eslint-disable-next-line no-unused-vars
+  omitBenefitType = (keyToRemove, { [keyToRemove]: omittedValue, ...rest }) => rest;
 
-   nonSupplementalClaimBenefitTypes = () => {
-     const benefitTypes = { ...BENEFIT_TYPES };
+  updatedForms = [FORM_TYPES.SUPPLEMENTAL_CLAIM.formName, FORM_TYPES.HIGHER_LEVEL_REVIEW.formName];
 
-     delete benefitTypes.veterans_readiness;
-
-     return benefitTypes;
-   };
-
-  supplementalClaimBenefitTypes = (props) => {
-    if (!props.featureToggles.veteransReadiness) {
-      return this.nonSupplementalClaimBenefitTypes();
-    }
-
-    const benefitTypes = { ...BENEFIT_TYPES };
-
-    delete benefitTypes.voc_rehab;
-
-    return benefitTypes;
-  };
-
-  benefitTypes = this.props.formName === FORM_TYPES.SUPPLEMENTAL_CLAIM.formName ?
-    this.supplementalClaimBenefitTypes(this.props) :
-    this.nonSupplementalClaimBenefitTypes();
+  benefitTypes = this.updatedForms.includes(this.props.formName) && this.props.featureToggles.veteransReadiness ?
+    this.omitBenefitType('voc_rehab', BENEFIT_TYPES) :
+    this.omitBenefitType('veterans_readiness', BENEFIT_TYPES);
 
   asRadioField = () => {
     const {
