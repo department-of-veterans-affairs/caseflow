@@ -82,10 +82,8 @@ namespace :emails do
     # Example arg passing syntax, note the double-quotes
     # bundle exec rake "emails:hearings:reminder[travel]"
     desc "creates reminder emails for hearings mailer"
-    task :reminder, [:request_type, :reminder_type] => :environment do |_task, args|
+    task :reminder, [:request_type] => :environment do |_task, args|
       include FactoryBot::Syntax::Methods
-      args.with_defaults(request_type: :virtual)
-      args.with_defaults(reminder_type: Hearings::ReminderService::TWO_DAY_REMINDER)
 
       if args.request_type.to_sym == :video
         hearing_day = build(
@@ -162,16 +160,25 @@ namespace :emails do
         )
       ]
 
-      recipient_infos.each do |recipient_info|
-        email = HearingMailer.send(
-          :reminder,
-          day_type: args.reminder_type.to_sym,
-          hearing: (args.request_type != :virtual) ? hearing : nil,
-          email_recipient_info: recipient_info,
-          virtual_hearing: virtual_hearing
-        )
-        file_name = "reminder_#{recipient_info.title}.html"
-        write_output_to_file(file_name, email)
+      reminder_types = [
+        Hearings::ReminderService::TWO_DAY_REMINDER,
+        Hearings::ReminderService::THREE_DAY_REMINDER,
+        Hearings::ReminderService::SEVEN_DAY_REMINDER,
+        Hearings::ReminderService::SIXTY_DAY_REMINDER
+      ]
+
+      reminder_types.each do |reminder_type|
+        recipient_infos.each do |recipient_info|
+          email = HearingMailer.send(
+            :reminder,
+            day_type: reminder_type.to_sym,
+            hearing: (args.request_type != :virtual) ? hearing : nil,
+            email_recipient_info: recipient_info,
+            virtual_hearing: virtual_hearing
+          )
+          file_name = "#{reminder_type}_reminder_#{recipient_info.title}.html"
+          write_output_to_file(file_name, email)
+        end
       end
     end
 
