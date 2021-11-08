@@ -7,7 +7,7 @@ import Tooltip from './Tooltip';
 import { DoubleArrow } from './icons/DoubleArrow';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
-import FilterIcon from './FilterIcon';
+import FilterIconOutline from './FilterIconOutline';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
 import ListItemPickerCheckbox from './ListItemPickerCheckbox';
@@ -72,7 +72,7 @@ const HeaderRow = (props) => {
 
         if (column.getFilterValues) {
           columnContent = <span><span>{column.header || ''}</span>
-            <span><FilterIcon
+            <span><FilterIconOutline
               label={column.label}
               idPrefix={column.valueName}
               getRef={column.getFilterIconRef}

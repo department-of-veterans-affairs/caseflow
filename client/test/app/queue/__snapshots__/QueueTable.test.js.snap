@@ -984,7 +984,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                   <span
                     data-css-ilmt4b=""
                   >
-                    <FilterIcon
+                    <FilterIconOutline
                       handleActivate={[Function]}
                       selected={false}
                     >
@@ -1032,7 +1032,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                           </g>
                         </svg>
                       </UnselectedFilterIcon>
-                    </FilterIcon>
+                    </FilterIconOutline>
                   </span>
                 </TableFilter>
               </span>
