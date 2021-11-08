@@ -7,7 +7,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 export const FilterIcon = (props) => {
   const { color, size, cname } = props;
 
-  return <svg width={size.width} height={size.height} viewBox="0 0 12 14" className={cname}>
+  return <svg height={size} viewBox="0 0 12 14" className={cname}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="filter-filled-tool-symbol" transform="translate(6.000000, 7.000000) scale(-1, 1) translate(-6.000000, -7.000000) translate(0.000000, 1.000000)">
@@ -25,9 +25,9 @@ FilterIcon.propTypes = {
   color: PropTypes.string,
 
   /**
-   * Sets the size of the component. Default width is '12px' and height is '14px'.
+   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
    */
-  size: PropTypes.object,
+  size: PropTypes.number,
 
   /**
    * Sets the className of the component. Default className is 'filter-icon'.
@@ -36,6 +36,6 @@ FilterIcon.propTypes = {
 };
 FilterIcon.defaultProps = {
   color: COLORS.WHITE,
-  size: { width: '12px', height: '14px' },
+  size: 14,
   cname: 'filter-icon'
 };
