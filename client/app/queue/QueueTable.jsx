@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
 import Tooltip from '../components/Tooltip';
-import { DoubleArrow } from '../components/RenderFunctions';
+import { DoubleArrow } from '../components/icons/DoubleArrow';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import Pagination from '../components/Pagination/Pagination';

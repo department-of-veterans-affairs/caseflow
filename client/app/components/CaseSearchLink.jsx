@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { MagnifyingGlass } from './RenderFunctions';
+import { MagnifyingGlass } from './icons/MagnifyingGlass';
 import { COLORS } from '../constants/AppConstants';
 
 const containerStyling = css({

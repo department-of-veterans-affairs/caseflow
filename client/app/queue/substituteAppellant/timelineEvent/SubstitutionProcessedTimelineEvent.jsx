@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import format from 'date-fns/format';
 import { css } from 'glamor';
 
-import { GreenCheckmark } from 'app/components/RenderFunctions';
+import { GreenCheckmark } from 'app/components/icons/GreenCheckmark';
 import { grayLineTimelineStyling } from 'app/queue/components/TaskRows';
 
 import { COLORS } from 'app/constants/AppConstants';

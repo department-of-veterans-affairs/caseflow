@@ -21,7 +21,7 @@ import {
   baseColumns
 } from 'test/data';
 import Tooltip from 'app/components/Tooltip';
-import { DoubleArrow } from 'app/components/RenderFunctions';
+import { DoubleArrow } from 'app/components/icons/DoubleArrow';
 import TableFilter from 'app/components/TableFilter';
 import { COLORS, LOGO_COLORS } from 'app/constants/AppConstants';
 import * as glamor from 'glamor';

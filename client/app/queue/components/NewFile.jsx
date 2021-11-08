@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { NewFileIcon } from '../../components/RenderFunctions';
+import { NewFileIcon } from '../../components/icons/NewFileIcon';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
 import { getNewDocumentsForAppeal, getNewDocumentsForTask } from '../QueueActions';

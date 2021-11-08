@@ -15,8 +15,15 @@ import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpT
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
+import { DownloadIcon } from '../components/icons/DownloadIcon';
+import { FilterIcon } from '../components/icons/FilterIcon';
+import { PageArrowLeft } from '../components/icons/PageArrowLeft';
+import { PageArrowRight } from '../components/icons/PageArrowRight';
+import { LeftChevron } from '../components/icons/LeftChevron';
+import { ExternalLink } from '../components/icons/ExternalLink';
+import { FitToScreen } from '../components/icons/FitToScreen';
+import { Rotate } from '../components/icons/Rotate';
+import { SearchIcon } from '../components/icons/SearchIcon';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';

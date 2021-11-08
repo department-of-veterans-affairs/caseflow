@@ -6,11 +6,9 @@ import PropTypes from 'prop-types';
 import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
-import {
-  FilterIcon,
-  PageArrowLeft,
-  PageArrowRight,
-} from 'app/components/RenderFunctions';
+import { FilterIcon } from 'app/components/icons/FilterIcon';
+import { PageArrowLeft } from 'app/components/icons/PageArrowLeft';
+import { PageArrowRight } from 'app/components/icons/PageArrowRight';
 
 /**
  * Document Footer displays the PDF footer controls

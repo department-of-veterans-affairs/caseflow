@@ -5,7 +5,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
-import { LeftChevron, RightChevron } from '../components/RenderFunctions';
+import { LeftChevron } from '../components/icons/LeftChevron';
+import { RightChevron } from '../components/icons/RightChevron';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex, setSearchIsLoading

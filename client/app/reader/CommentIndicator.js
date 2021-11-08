@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
+import { ChevronDown } from '../components/icons/ChevronDown';
+import { ChevronUp } from '../components/icons/ChevronUp';
 import Button from '../components/Button';
 import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
 
