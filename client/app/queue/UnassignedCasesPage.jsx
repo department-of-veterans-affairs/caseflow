@@ -41,7 +41,7 @@ class UnassignedCasesPage extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, userRole, selectedTasks, success, error } = this.props;
+    const { userId, selectedTasks, success, error, userIsCamoEmployee } = this.props;
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
@@ -56,7 +56,7 @@ class UnassignedCasesPage extends React.PureComponent {
               onTaskAssignment={this.props.initialAssignTasksToUser}
               selectedTasks={selectedTasks}
               showRequestCasesButton />
-            {userRole === 'Judge' && <RequestDistributionButton userId={userId} />}
+            {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
@@ -115,7 +115,8 @@ const mapStateToProps = (state, ownProps) => {
     distributionCompleteCasesLoading: pendingDistribution && pendingDistribution.status === 'completed',
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
-    error
+    error,
+    userIsCamoEmployee
   };
 };
 
@@ -135,7 +136,8 @@ UnassignedCasesPage.propTypes = {
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
-  })
+  }),
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) =>

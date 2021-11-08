@@ -101,7 +101,6 @@ TeamAssignTaskListView.propTypes = {
   targetUserCssId: PropTypes.string,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
-  userRole: PropTypes.string,
   unassignedTasksCount: PropTypes.number,
   organizations: PropTypes.array
 };
