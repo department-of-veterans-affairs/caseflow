@@ -22,7 +22,7 @@ class QuarterlyMetricsReportJob < RecurringMetricsReportJob
     [
       "#{hearings_show_rate.name}: #{(hearings_show_rate.call * 100).round(2)}%",
       "#{ep_creation_rate.name}: #{(ep_creation_rate.call * 100).round(2)}%",
-      "Mean time to recovery: See the 'Quarterly OIT Report' tab of the 'Caseflow Incident Stats' Google Sheet (https://docs.google.com/spreadsheets/d/1OAx_eRhwTaEM9aMx7eGg4KMR3Jgx5wYvsVBypHsZq5Q/edit#gid=593310513)",
+      "Mean time to recovery: See the 'Quarterly OIT Report' tab of the 'Caseflow Incident Stats' Google Sheet (https://docs.google.com/spreadsheets/d/1OAx_eRhwTaEM9aMx7eGg4KMR3Jgx5wYvsVBypHsZq5Q/edit#gid=593310513)"
     ]
   end
   # rubocop:enable Metrics/LineLength

@@ -9,38 +9,38 @@ describe Metrics::ReaderAdoptionRate do
   subject { Metrics::ReaderAdoptionRate.new(date_range).call }
 
   context "when some decisions were made outside the date range" do
-    shared_examples "decisions made using Reader" do |description, ama_reader_count, ama_non_reader_count, legacy_reader_count, legacy_non_reader_count, rate|
+    shared_examples "decisions made using Reader" do |descr, ama_reader_cnt, ama_non_reader_cnt, legacy_reader_cnt, legacy_non_reader_cnt, rate|
       context "when the environment is set up properly" do
-          before do
+        before do
           # Create some number of AMA appeals decisions with Reader views outside of the date range.
           create_list(:decision_document, rand(1..7), decision_date: start_date - 8.days).each do |doc|
             AppealView.create(appeal: doc.appeal, user: user)
           end
 
-          create_list(:decision_document, ama_reader_count, decision_date: start_date + 1.days).each do |doc|
+          create_list(:decision_document, ama_reader_cnt, decision_date: start_date + 1.day).each do |doc|
             AppealView.create(appeal: doc.appeal, user: user)
           end
-          create_list(:decision_document, ama_non_reader_count, decision_date: start_date + 1.days)
+          create_list(:decision_document, ama_non_reader_cnt, decision_date: start_date + 1.day)
 
           # FactoryBot.create_list() does not work here because it re-uses the same VACOLS::Case. Use a loop instead.
-          legacy_reader_count.times do
+          legacy_reader_cnt.times do
             doc = create(
               :decision_document,
               appeal: create(:legacy_appeal, vacols_case: create(:case)),
-              decision_date: start_date + 1.days
+              decision_date: start_date + 1.day
             )
             AppealView.create(appeal: doc.appeal, user: user)
           end
-          legacy_non_reader_count.times do
+          legacy_non_reader_cnt.times do
             create(
               :decision_document,
               appeal: create(:legacy_appeal, vacols_case: create(:case)),
-              decision_date: start_date + 1.days
+              decision_date: start_date + 1.day
             )
           end
         end
 
-        it "calculates the expected rate when #{description}" do
+        it "calculates the expected rate when #{descr}" do
           expect(subject).to eq(rate)
         end
       end

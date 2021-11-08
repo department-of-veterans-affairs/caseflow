@@ -14,7 +14,7 @@ class Metrics::ReaderAdoptionRate < Metrics::Base
     legacy_appeals_with_views_ids = appeal_ids_with_reader_views("LegacyAppeal", legacy_appeal_ids)
 
     (legacy_appeals_with_views_ids.count + ama_appeals_with_views_ids.count) /
-    (legacy_appeal_ids.count + ama_appeal_ids.count).to_f
+      (legacy_appeal_ids.count + ama_appeal_ids.count).to_f
   end
 
   def name
