@@ -21,44 +21,6 @@ describe DirectReviewDocket, :postgres do
     end
   end
 
-  context "#time_until_due_of_oldest_appeal" do
-    subject { DirectReviewDocket.new.time_until_due_of_oldest_appeal }
-
-    context "there are ready direct reviews" do
-      before do
-        Timecop.freeze(Date.new(2020, 2, 19))
-
-        (102..105).each do |i|
-          appeal = create(:appeal,
-                          :with_post_intake_tasks,
-                          docket_type: Constants.AMA_DOCKETS.direct_review,
-                          receipt_date: i.days.ago)
-          appeal.set_target_decision_date!
-        end
-      end
-
-      it "returns the time until due" do
-        expect(subject).to eq(195)
-      end
-    end
-
-    context "there are no ready direct reviews" do
-      it "returns the default time until due" do
-        expect(subject).to eq(
-          Constants.DISTRIBUTION.direct_docket_time_goal - Constants.DISTRIBUTION.days_before_goal_due_for_distribution
-        )
-      end
-    end
-  end
-
-  context "#time_until_due_of_new_appeal" do
-    subject { DirectReviewDocket.new.time_until_due_of_oldest_appeal }
-
-    it "returns the correct value" do
-      expect(subject).to eq(300)
-    end
-  end
-
   context "#nonpriority_receipts_per_year" do
     subject { DirectReviewDocket.new.nonpriority_receipts_per_year }
 
