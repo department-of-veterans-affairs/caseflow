@@ -279,7 +279,7 @@ class BaseHearingUpdateForm
   def update_appellant_recipient
     update_params = {
       email_address: appellant_email.presence,
-      timezone: virtual_hearing_updates[:appellant_tz].presence,
+      timezone: appellant_timezone.presence,
       email_sent: virtual_hearing_updates&.key?(:appellant_email_sent) ? false : true
     }.compact
 
@@ -296,7 +296,7 @@ class BaseHearingUpdateForm
 
     if hearing.representative_recipient.present?
       update_params = {
-        timezone: virtual_hearing_updates[:representative_tz].presence,
+        timezone: representative_timezone.presence,
         email_sent: virtual_hearing_updates&.key?(:representative_email_sent) ? false : true
       }.compact
 
@@ -335,7 +335,7 @@ class BaseHearingUpdateForm
     )
 
     hearing.representative_recipient&.unset_email_address!
-    if representative_email.present?
+    if representative_email.present? || representative_timezone.present?
       hearing.create_or_update_recipients(
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email,
