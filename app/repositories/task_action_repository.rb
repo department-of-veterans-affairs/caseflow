@@ -514,6 +514,19 @@ class TaskActionRepository
       }
     end
 
+    def vha_mark_task_in_progress(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
