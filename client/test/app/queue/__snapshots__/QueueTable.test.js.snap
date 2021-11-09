@@ -486,6 +486,8 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
         >
           <DoubleArrow
             bottomColor="#d6d7d9"
+            cname="table-icon"
+            size={16}
             topColor="#d6d7d9"
           />
         </span>
@@ -554,6 +556,8 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
         >
           <DoubleArrow
             bottomColor="#d6d7d9"
+            cname="table-icon"
+            size={16}
             topColor="#d6d7d9"
           />
         </span>
@@ -984,7 +988,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                   <span
                     data-css-ilmt4b=""
                   >
-                    <FilterIconOutline
+                    <FilterIcon
                       handleActivate={[Function]}
                       selected={false}
                     >
@@ -996,7 +1000,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                         tabIndex="0"
                       >
                         <svg
-                          className="table-icon unselected-filter-icon"
+                          className="undefined unselected-filter-icon"
                           height="21px"
                           onClick={[Function]}
                           onKeyDown={[Function]}
@@ -1032,7 +1036,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                           </g>
                         </svg>
                       </UnselectedFilterIcon>
-                    </FilterIconOutline>
+                    </FilterIcon>
                   </span>
                 </TableFilter>
               </span>
@@ -1605,14 +1609,15 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 >
                   <DoubleArrow
                     bottomColor="#d6d7d9"
+                    cname="table-icon"
+                    size={16}
                     topColor="#d6d7d9"
                   >
                     <svg
                       className="table-icon"
-                      height="16px"
+                      height={16}
                       version="1.1"
                       viewBox="0 0 13 16"
-                      width="13px"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g
@@ -5390,6 +5395,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
             data-css-1ogvp9u=""
           >
             <LoadingSymbol
+              cname="cf-loading-button-symbol cf-small-loader-symbol"
               color="#844e9f"
               size="150px"
               text=""
