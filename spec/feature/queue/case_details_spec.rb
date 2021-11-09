@@ -2236,44 +2236,6 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "when the current vso user should have access and does not" do
-      let(:appeal) { create(:appeal) }
-      let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
-      let!(:vso_user) { create(:user, :vso_role) }
-      let!(:vso_task) { create(:track_veteran_task, :in_progress, assigned_to: vso, appeal: appeal) }
-      let!(:poa) do
-        create(
-          :bgs_power_of_attorney,
-          :with_name_cached,
-          appeal: appeal
-        )
-      end
-
-      before do
-        vso.add_user(vso_user)
-        allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
-        User.authenticate!(user: vso_user)
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
-        allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
-        allow(bgs).to receive(:fetch_veteran_info).and_call_original
-        # allow(bgs).to receive(:can_access?).and_call_original
-      end
-
-      let(:bgs) { Fakes::BGSService.new }
-
-      context "a user, appeal, can access are defined" do
-        it "has a user, appeal, etc" do
-          # binding.pry
-          visit("/queue/appeals/#{appeal.uuid}")
-          allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new("(Power of Attorney of Folder is none. Access to this record is denied.)"))
-          # allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied, message: "Power of Attorney of Folder is none. Access to this record is denied.")
-          # visit(case_details_page_path)
-          # visit("/queue/appeals/#{appeal.uuid}")
-          binding.pry
-        end
-      end
-    end
-
     context "when the current user does not have sensitivity level for Veteran file" do
       before do
         User.authenticate!(user: user)
@@ -2468,4 +2430,48 @@ RSpec.feature "Case details", :all_dbs do
       include_examples "edit unscheduled notes"
     end
   end
+
+  describe "VSO not having access due to BGS returning false when they should have access" do
+    context "when the current vso user should have access and does not" do
+      let(:veteran) { create(:veteran) }
+      let(:user) { create(:default_user, roles: ["VSO"]) }
+      let(:vso) { create(:vso) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:role) { nil }
+      let!(:vso_task) do
+        create(:track_veteran_task, :in_progress, parent: root_task, assigned_to: vso, appeal: root_task.appeal)
+      end
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before do
+        User.authenticate!(user: user)
+        vso.add_user(user)
+        allow_any_instance_of(Appeal).to receive(:representatives).and_return([vso])
+        allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
+        allow(bgs).to receive(:fetch_veteran_info).and_call_original
+        # allow(bgs).to receive(:can_access?).and_call_original
+      end
+
+      let(:bgs) { Fakes::BGSService.new }
+
+      context "a user, appeal, can access are defined" do
+        it "has a user, appeal, etc" do
+          # binding.pry
+          visit("/queue/appeals/#{appeal.uuid}")
+          allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new("(Power of Attorney of Folder is none. Access to this record is denied.)"))
+          # allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied, message: "Power of Attorney of Folder is none. Access to this record is denied.")
+          binding.pry
+        end
+      end
+    end
+  end 
 end
