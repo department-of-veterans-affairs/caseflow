@@ -137,7 +137,12 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
       fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_veteran_email
+      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+
+      # Update the POA and Appellant timezones
+      click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
       click_button("button-Save")
 
       expect(page).to have_no_content(expected_alert)
@@ -161,6 +166,13 @@ RSpec.feature "Hearing Details", :all_dbs do
       hearing.email_events.each do |event|
         expect(page).to have_content(event.email_address)
       end
+      expect(page).to have_content(expected_alert)
+
+      # Ensure the emails and timezone were updated
+      expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+      expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      expect(page).to have_content(fill_in_veteran_tz)
+      expect(page).to have_content(fill_in_rep_tz)
     end
 
     scenario "user can optionally change emails and timezone" do
