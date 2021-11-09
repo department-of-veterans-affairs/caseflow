@@ -247,7 +247,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def slots_select_hearing_time(time)
-      find(".time-slot-button", text: "#{time} EDT").click
+      find(".time-slot-button", text: "#{time} EST").click
     end
 
     def slots_select_custom_hearing_time(time)
