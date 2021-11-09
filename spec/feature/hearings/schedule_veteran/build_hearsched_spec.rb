@@ -807,7 +807,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     shared_examples "scheduling a virtual hearing" do |ro_key, time, slots = false|
-      fscenario "can successfully schedule virtual hearing" do
+      scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
