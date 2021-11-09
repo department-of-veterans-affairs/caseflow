@@ -10,7 +10,7 @@ import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
 import FilterIcon from 'app/components/FilterIcon';
-import { DoubleArrow } from 'app/components/RenderFunctions';
+import { DoubleArrow } from 'app/components/icons/DoubleArrow';
 
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 import { CommentIndicator } from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';

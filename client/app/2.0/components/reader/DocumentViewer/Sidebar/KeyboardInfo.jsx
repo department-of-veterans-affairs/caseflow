@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { Keyboard } from 'app/components/RenderFunctions';
+import { Keyboard } from 'app/components/icons/Keyboard';
 import Button from 'app/components/Button';
 
 /**

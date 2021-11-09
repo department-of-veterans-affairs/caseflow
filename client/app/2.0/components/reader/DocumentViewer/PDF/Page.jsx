@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
 import { markStyles, pdfPageStyles } from 'styles/reader/Document/PDF';
-import { CommentSymbol } from 'app/components/RenderFunctions';
+import { CommentSymbol } from 'app/components/icons/CommentSymbol';
 import { showPage } from 'store/reader/documentViewer';
 
 /**

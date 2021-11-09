@@ -6,7 +6,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import { changeReasons } from './EditNodDateModal';
 
 import COPY from 'app/../COPY';
-import { GreenCheckmark } from '../../components/RenderFunctions';
+import { GreenCheckmark } from '../../components/icons/GreenCheckmark';
 import { COLORS } from '../../constants/AppConstants';
 import { grayLineTimelineStyling } from './TaskRows';
 import { useSelector } from 'react-redux';

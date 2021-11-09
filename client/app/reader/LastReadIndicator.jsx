@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RightTriangle } from '../components/RenderFunctions';
+import { RightTriangle } from '../components/icons/RightTriangle';
 import PropTypes from 'prop-types';
 
 class LastReadIndicator extends React.PureComponent {

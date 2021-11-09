@@ -40,7 +40,8 @@ FilterIcon.propTypes = {
   iconName: PropTypes.string,
   handleActivate: PropTypes.func,
   getRef: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  selected: PropTypes.bool
 };
 
 export default FilterIcon;

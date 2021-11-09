@@ -24,11 +24,10 @@ import {
   toggleDropdownFilterVisibility,
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
-import {
-  SortArrowUp,
-  SortArrowDown,
-  DoubleArrow,
-} from '../components/RenderFunctions';
+import { SortArrowDown } from '../components/icons/SortArrowDown';
+import { SortArrowUp } from '../components/icons/SortArrowUp';
+import { DoubleArrow } from '../components/icons/DoubleArrow';
+
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/FilterIcon';

@@ -3,7 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'app/components/RenderFunctions';
+import { ArrowDown } from 'app/components/icons/ArrowDown';
+import { ArrowUp } from 'app/components/icons/ArrowUp';
+import { ArrowLeft } from 'app/components/icons/ArrowLeft';
+import { ArrowRight } from 'app/components/icons/ArrowRight';
 import Modal from 'app/components/Modal';
 import Table from 'app/components/Table';
 

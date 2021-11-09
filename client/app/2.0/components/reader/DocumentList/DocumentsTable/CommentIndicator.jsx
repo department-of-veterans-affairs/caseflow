@@ -3,7 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { ChevronDown, ChevronUp } from 'app/components/RenderFunctions';
+import { ChevronDown } from 'app/components/icons/ChevronDown';
+import { ChevronUp } from 'app/components/icons/ChevronUp';
 import Button from 'app/components/Button';
 
 /**

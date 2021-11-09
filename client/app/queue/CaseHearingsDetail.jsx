@@ -12,7 +12,7 @@ import {
 } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
-import { PencilIcon } from '../components/RenderFunctions';
+import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
 
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Alert from './Alert';
 import Button from './Button';
-import { LoadingSymbol } from '../components/RenderFunctions';
+import { LoadingSymbol } from './icons/LoadingSymbol';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import _ from 'lodash';
 

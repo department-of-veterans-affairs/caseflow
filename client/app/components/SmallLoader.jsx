@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingSymbol } from './RenderFunctions';
+import { LoadingSymbol } from './icons/LoadingSymbol';
 import PropTypes from 'prop-types';
 
 export default class SmallLoader extends React.Component {
