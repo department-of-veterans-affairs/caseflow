@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../../components/Button';
-import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../../components/RenderFunctions';
+import { CrossIcon, PencilIcon, LockIcon } from '../../../components/RenderFunctions';
 
 const EditHearingDayLink = ({ docketId, history }) => (
   <Button
@@ -14,7 +14,7 @@ const EditHearingDayLink = ({ docketId, history }) => (
     linkStyling
     onClick={() => history.push(`/schedule/docket/${docketId}/edit`)}
   >
-    <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+    <span {...css({ position: 'absolute' })}><PencilIcon /></span>
     <span {...css({ marginRight: '5px', marginLeft: '20px' })} >
       Edit Hearing Day
     </span>
@@ -30,7 +30,7 @@ const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
   <Button linkStyling onClick={onDisplayLockModal}>
     <span {...css({ position: 'absolute',
       '& > svg > g > g': { fill: '#0071bc' } })}>
-      {lockIcon()}
+      <LockIcon />
     </span>
     <span {...css({ marginRight: '5px',
       marginLeft: '16px' })}>
@@ -50,7 +50,7 @@ const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
   <Button
     linkStyling
     onClick={onClickRemoveHearingDay} >
-    {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
+    <CrossIcon /><span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
   </Button>
 );
 

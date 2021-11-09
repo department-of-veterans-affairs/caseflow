@@ -10,10 +10,19 @@ import {
   shouldDisable,
   shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType, disabledTasksBasedOnSelections,
-  hearingAdminActions, mailTasks } from 'app/queue/substituteAppellant/tasks/utils';
+  shouldShowBasedOnOtherTasks,
+  shouldDisableBasedOnTaskType,
+  disabledTasksBasedOnSelections,
+  hearingAdminActions,
+  mailTasks,
+  filterOpenTasks,
+  prepOpenTaskDataForUi,
+} from 'app/queue/substituteAppellant/tasks/utils';
 
-import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import {
+  sampleTasksForDismissedEvidenceSubmissionDocket,
+  sampleTasksForPendingEvidenceSubmissionDocket,
+} from 'test/data/queue/substituteAppellant/tasks';
 import { isSameDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
@@ -145,9 +154,12 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('shouldHide', () => {
-
     const otherOrgTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: true }, type: 'other task type' };
-    const otherUserTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false }, type: 'other task type' };
+    const otherUserTask = {
+      hideFromCaseTimeline: false,
+      assignedTo: { isOrganization: false },
+      type: 'other task type',
+    };
 
     describe('with hideFromCaseTimeline', () => {
       const userTaskInfo = { hideFromCaseTimeline: true, assignedTo: { isOrganization: false } };
@@ -216,7 +228,7 @@ describe('utility functions for task manipulation', () => {
 
     describe('tasks where hideFromCaseTimeline is false and the type is not in the automatedTasks array', () => {
       describe('the task type is only assigned to a user', () => {
-        const userTaskInfo = { hideFromCaseTimeline: false, type: 'RootTask', assignedTo: { isOrganization: false } };
+        const userTaskInfo = { hideFromCaseTimeline: false, type: 'FakeUserTask', assignedTo: { isOrganization: false } };
 
         const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
@@ -266,7 +278,7 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('filterTasks', () => {
-    const tasks = sampleTasksForEvidenceSubmissionDocket();
+    const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
     it('filters tasks', () => {
       const filtered = filterTasks(tasks);
@@ -295,11 +307,44 @@ describe('utility functions for task manipulation', () => {
       expect(filtered).toMatchSnapshot();
     });
   });
+
+  describe('filterOpenTasks', () => {
+    const allTasks = [
+      { type: 'RootTask', status: 'on_hold' },
+      { type: 'DistributionTask', status: 'completed' },
+      { type: 'JudgeAssignTask', status: 'completed' },
+      { type: 'JudgeDecisionReviewTask', status: 'on_hold' },
+      { type: 'AttorneyTask', status: 'assigned' },
+    ];
+
+    it('properly filters to just open tasks', () => {
+      const res = filterOpenTasks(allTasks);
+
+      expect(res.length).toBe(3);
+      expect(res).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ type: 'RootTask' }),
+          expect.objectContaining({ type: 'JudgeDecisionReviewTask' }),
+          expect.objectContaining({ type: 'AttorneyTask' }),
+        ])
+      );
+    });
+  });
+
+  describe('prepOpenTaskDataForUi', () => {
+    describe('with basic evidence submission tasks', () => {
+      const taskData = sampleTasksForPendingEvidenceSubmissionDocket();
+
+      it('returns expected results', () => {
+        expect(prepOpenTaskDataForUi({ taskData })).toMatchSnapshot();
+      });
+    });
+  });
 });
 
 describe('prepTaskDataForUi', () => {
   describe('with basic evidence submission tasks', () => {
-    const taskData = sampleTasksForEvidenceSubmissionDocket();
+    const taskData = sampleTasksForDismissedEvidenceSubmissionDocket();
 
     describe('separate appeal substitution', () => {
       it('returns DistributionTask with correct info', () => {
@@ -372,7 +417,7 @@ describe('prepTaskDataForUi', () => {
 });
 
 describe('calculateEvidenceSubmissionEndDate', () => {
-  const tasks = sampleTasksForEvidenceSubmissionDocket();
+  const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
   it('outputs the expected result', () => {
     const args = {
