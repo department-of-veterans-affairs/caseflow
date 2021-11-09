@@ -10,11 +10,24 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         data
       end
 
+      # distances = [
+      #   "vba_317": 1, # RO17, St. Petersburg
+      #   "vba_xxx": 20, # Which RO depends on the ids passed in, they can be different
+      #   "vba_xxx": 21,
+      #   "vba_xxx": 22,
+      #   ...
+      # ]
       distances = query[:ids].split(",").map.with_index do |id, index|
-        {
+        if id == "vba_317" # St. Petersburg
+          {
+            id: id,
+            distance: 1
+          }
+        else {
           id: id,
-          distance: index
+          distance: index + 20 # Because we want St. Petersburg to be the closest
         }
+        end
       end
 
       fake_facilities = fake_facilities_data
