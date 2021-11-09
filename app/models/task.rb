@@ -607,6 +607,7 @@ class Task < CaseflowRecord
     return false if type.include?("DocketSwitch")
     return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
     return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(JudgeDecisionReviewTask).present?
     return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
 
     true
