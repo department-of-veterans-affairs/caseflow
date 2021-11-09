@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module AppealConcern
   extend ActiveSupport::Concern
 
@@ -79,6 +80,23 @@ module AppealConcern
 
   def representative_tz
     timezone_identifier_for_address(representative_address)
+  end
+
+  def accessible?
+    # this is used for calling BGSService.can_access? to fix VSO access that is being blocked
+    # by BGS returning false for veteran.accessible? when they should indeed have access to the appeal.
+    # does this VSO have access to this appeal? check if current user is one of the reps on the appeal.
+    # if so return true, if not then do the BgsService.can_access? path.
+    assigned_to_vso?(RequestStore[:current_user]) || bgs.can_access?(veteran.file_number)
+  end
+
+  def assigned_to_vso?(user)
+    tasks.any? do |task|
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.open?
+    end
   end
 
   #
@@ -163,3 +181,4 @@ module AppealConcern
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

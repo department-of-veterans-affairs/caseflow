@@ -53,7 +53,7 @@ class Hearing < CaseflowRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :appellant_first_name, :appellant_last_name, :representative_address,
+  delegate :appellant_first_name, :appellant_last_name, :representative_address, :assigned_to_vso?,
            :representative_type, :appellant_city, :appellant_state, :appellant_relationship,
            :appellant_zip, :appellant_address_line_1, :veteran_age, :veteran_gender, :veteran_first_name,
            :veteran_last_name, :veteran_file_number, :docket_number, :docket_name, :request_issues,
@@ -130,15 +130,6 @@ class Hearing < CaseflowRecord
   end
 
   alias original_request_type request_type
-
-  def assigned_to_vso?(user)
-    appeal.tasks.any? do |task|
-      task.type == TrackVeteranTask.name &&
-        task.assigned_to.is_a?(Representative) &&
-        task.assigned_to.user_has_access?(user) &&
-        task.open?
-    end
-  end
 
   def assigned_to_judge?(user)
     return hearing_day&.judge == user if judge.nil?
