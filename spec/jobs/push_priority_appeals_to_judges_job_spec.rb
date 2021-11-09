@@ -287,10 +287,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
       let(:judges) { [ama_only_judge] }
       it "only distributes ama cases to ama-only judge" do
-        distribution = subject.detect { |dist| dist.judge_id == ama_only_judge.id }
-        distributed_cases = DistributedCase.where(distribution: distribution)
-        intersection = distributed_cases.to_set.intersect? legacy_priority_cases.to_set
-        expect(intersection).to eq false
+        distributed_cases = DistributedCase.where(distribution: subject)
+        distributed_cases.each do |distributed_case|
+          expect(distributed_case.docket).not_to eq("legacy")
+        end
       end
     end
   end
