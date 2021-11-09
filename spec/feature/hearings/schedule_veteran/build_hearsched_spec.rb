@@ -247,7 +247,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def slots_select_hearing_time(time)
-      find(".time-slot-button", text: "#{time} EST").click
+      find(".time-slot-button", text: "#{time} #{Time.zone.now.zone}").click
     end
 
     def slots_select_custom_hearing_time(time)
@@ -807,7 +807,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     shared_examples "scheduling a virtual hearing" do |ro_key, time, slots = false|
-      scenario "can successfully schedule virtual hearing" do
+      fscenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
