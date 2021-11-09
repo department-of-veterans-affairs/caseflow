@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import COPY from '../../../COPY';
 import { GrayDot } from '../../components/icons/GrayDot';
@@ -75,6 +76,12 @@ class DecisionDateTimeLine extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+DecisionDateTimeLine.propTypes = {
+  appeal: PropTypes.object,
+  taskList: PropTypes.array,
+  timeline: PropTypes.any
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {
