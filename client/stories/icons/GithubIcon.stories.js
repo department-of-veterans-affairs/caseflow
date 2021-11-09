@@ -2,7 +2,7 @@ import React from 'react';
 import { GithubIcon } from '../../app/components/icons/fontAwesome/GithubIcon';
 
 export default {
-  title: 'Commons/Components/Icons/FontAwesome/GithubIcon',
+  title: 'Commons/Components/Icons/GithubIcon',
   component: GithubIcon,
 };
 

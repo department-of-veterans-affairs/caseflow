@@ -39,3 +39,6 @@ export { SortArrowDown } from './SortArrowDown';
 export { SortArrowUp } from './SortArrowUp';
 export { SuccessIcon } from './SuccessIcon';
 export { Trashcan } from './Trashcan';
+export { GithubIcon } from './fontAwesome/GithubIcon';
+export { CheckIcon } from './fontAwesome/CheckIcon';
+export { CrossIcon } from './fontAwesome/CrossIcon';
