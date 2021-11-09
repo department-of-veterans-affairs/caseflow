@@ -16,6 +16,7 @@ RSpec.describe DocketSwitch, type: :model do
       )
     )
   end
+  let(:root_task) { create(:root_task, appeal: appeal) }
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
   let(:docket_switch_task) do
     task_class_type = (disposition == "denied") ? "denied" : "granted"
@@ -23,6 +24,7 @@ RSpec.describe DocketSwitch, type: :model do
   end
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
+  let(:docket_type) { Constants.AMA_DOCKETS.hearing }
   let(:granted_request_issue_ids) { appeal.request_issues.map(&:id) }
   let(:docket_switch) do
     create(
@@ -30,6 +32,7 @@ RSpec.describe DocketSwitch, type: :model do
       old_docket_stream: appeal,
       task: docket_switch_task,
       disposition: disposition,
+      docket_type: docket_type,
       granted_request_issue_ids: granted_request_issue_ids
     )
   end
@@ -56,6 +59,30 @@ RSpec.describe DocketSwitch, type: :model do
     end
 
     context "disposition is granted or partially granted" do
+      context "when granted and old docket stream has active attorney tasks" do
+        # add AttorneyTask w/ status of assigned or in_progress
+        let!(:attorney_task) do
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            appeal: appeal,
+            assigned_to: attorney,
+            placed_on_hold_at: 2.days.ago
+          )
+        end
+        let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+        let(:disposition) { "granted" }
+
+        it "doesn't move attorney tasks to new stream" do
+          docket_switch.selected_task_ids = [attorney_task.id.to_s]
+          attorney_task.parent.update!(parent: root_task)
+          docket_switch.process!
+
+          expect(docket_switch_task).to be_completed
+          expect(docket_switch.new_docket_stream.tasks.find_by(type: "JudgeDecisionReviewTask")).to be_nil
+        end
+      end
+
       context "when disposition is granted (full grant)" do
         let(:disposition) { "granted" }
         let(:granted_request_issue_ids) { nil }
