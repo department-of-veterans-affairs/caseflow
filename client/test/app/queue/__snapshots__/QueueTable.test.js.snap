@@ -1000,7 +1000,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                         tabIndex="0"
                       >
                         <svg
-                          className="undefined unselected-filter-icon"
+                          className="table-icon unselected-filter-icon"
                           height="21px"
                           onClick={[Function]}
                           onKeyDown={[Function]}
