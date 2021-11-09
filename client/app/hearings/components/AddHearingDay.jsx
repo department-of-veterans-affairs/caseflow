@@ -66,6 +66,8 @@ export const AddHearingDay = ({
 
   const selectedVirtual = selectedRequestType === HEARING_REQUEST_TYPES.virtual;
   const selectedVideo = selectedRequestType === HEARING_REQUEST_TYPES.video;
+  const selectedTravel = selectedRequestType === HEARING_REQUEST_TYPES.travel;
+  const selectedVideoOrTravel = selectedVideo || selectedTravel;
 
   const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
 
@@ -155,12 +157,13 @@ export const AddHearingDay = ({
 
     const errorMsgs = {
       ...(selectedHearingDay === '' && { noDate: 'Please make sure you have entered a Hearing Date' }),
-      ...(selectedVideo && videoHearingDateNotValid(selectedHearingDay) &&
+      ...(selectedVideoOrTravel && videoHearingDateNotValid(selectedHearingDay) &&
       {
         invalidDate: 'Video hearing days cannot be scheduled for prior than April 1st through Caseflow.'
       }),
       ...(requestType === '' && { requestType: 'Please make sure you have entered a Hearing Type' }),
-      ...(selectedVideo && !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
+      ...(selectedVideoOrTravel &&
+        !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
     };
 
     if (!isEmpty(errorMsgs)) {
@@ -193,6 +196,7 @@ export const AddHearingDay = ({
 
     switch ((value || {}).value) {
     case HEARING_REQUEST_TYPES.video:
+    case HEARING_REQUEST_TYPES.travel:
     case HEARING_REQUEST_TYPES.central:
     case HEARING_REQUEST_TYPES.virtual:
       setSelectedRequestType(value.value);
@@ -266,7 +270,7 @@ export const AddHearingDay = ({
             onChange={(value) => props.onAssignHearingRoom(value)}
             {...roomRequiredStyling}
           />
-          {(selectedVideo || selectedVirtual) && (
+          {(selectedVideoOrTravel || selectedVirtual) && (
             <RegionalOfficeDropdown
               label="Regional Office (RO)"
               excludeVirtualHearingsOption={!selectedVirtual}
@@ -275,11 +279,13 @@ export const AddHearingDay = ({
               value={selectedRegionalOffice?.key}
             />
           )}
-          {selectedVideo &&
+          {selectedVideoOrTravel &&
             <DocketStartTimes
               setSlotCount={setSlotCount}
               setHearingStartTime={setHearingStartTime}
               hearingStartTime={hearingStartTime}
+              amStartTime={selectedTravel ? '9:00' : '8:30'}
+              pmStartTime={selectedTravel ? '13:00' : '12:30'}
               roTimezone={selectedRegionalOffice?.timezone}
             />
           }

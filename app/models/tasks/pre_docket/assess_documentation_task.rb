@@ -20,7 +20,8 @@ class AssessDocumentationTask < Task
   ].freeze
 
   PO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h
+    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
+    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
   ].freeze
 
   RO_ACTIONS = [].freeze
@@ -41,5 +42,11 @@ class AssessDocumentationTask < Task
     end
 
     task_actions
+  end
+
+  def when_child_task_completed(child_task)
+    append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
+
+    super
   end
 end

@@ -253,7 +253,7 @@ describe Task, :all_dbs do
     end
   end
 
-  describe "#duplicate_org_task" do
+  describe "#hide_from_case_timeline" do
     let(:root_task) { create(:root_task) }
     let(:mail_user) { create(:user) }
     let!(:mail_grandparent_organization_task) do
@@ -267,16 +267,57 @@ describe Task, :all_dbs do
     end
 
     context "when there are duplicate organization tasks" do
-      it "returns true when there is a duplicate descendent task assigned to a user" do
-        expect(mail_grandparent_organization_task.duplicate_org_task).to eq(true)
+      it "returns array of user tasks when there is a duplicate descendent task assigned to a user" do
+        expect(mail_grandparent_organization_task.hide_from_case_timeline).to eq(true)
       end
 
-      it "returns true when there is a duplicate child task assigned to a user" do
-        expect(mail_parent_organization_task.duplicate_org_task).to eq(true)
+      it "returns array of user tasks when there is a duplicate child task assigned to a user" do
+        expect(mail_parent_organization_task.hide_from_case_timeline).to eq(true)
       end
 
-      it "returns false otherwise" do
-        expect(mail_task.duplicate_org_task).to eq(false)
+      it "returns empty array otherwise" do
+        expect(mail_task.hide_from_case_timeline).to eq(false)
+      end
+    end
+  end
+
+  describe "#hide_from_task_snapshot" do
+    let(:root_task) { create(:root_task) }
+    let(:user) { create(:user) }
+    let(:org_task) { create(:colocated_task, assigned_to: Colocated.singleton, parent: root_task) }
+    let!(:user_task) { create(:colocated_task, assigned_to: user, parent: org_task) }
+
+    context "for user task" do
+      it "should return false" do
+        expect(user_task.hide_from_task_snapshot).to eq(false)
+      end
+    end
+
+    context "for org task" do
+      context "when user task is assigned" do
+        it "should return true" do
+          expect(org_task.hide_from_task_snapshot).to eq(true)
+        end
+      end
+
+      context "when user task is cancelled but org task is assigned" do
+        before do
+          org_task.assigned!
+          user_task.cancelled!
+        end
+        it "should return false" do
+          expect(org_task.hide_from_task_snapshot).to eq(false)
+        end
+      end
+
+      context "when both user and org tasks are cancelled" do
+        before do
+          org_task.cancelled!
+          user_task.cancelled!
+        end
+        it "should return false" do
+          expect(org_task.hide_from_task_snapshot).to eq(false)
+        end
       end
     end
   end
@@ -1884,6 +1925,27 @@ describe Task, :all_dbs do
         tasks.each do |task|
           expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be false
         end
+      end
+    end
+  end
+
+  describe "#task_is_assigned_to_organization?" do
+    let(:task) { create(:ama_task, assigned_to: assignee) }
+    let(:organization) { create(:organization) }
+
+    subject { task.task_is_assigned_to_organization?(organization) }
+
+    context "when assigned to an individual" do
+      let(:assignee) { create(:user) }
+      it "returns false" do
+        expect(subject).to be_falsey
+      end
+    end
+
+    context "when assigned to an organization" do
+      let(:assignee) { organization }
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
   end

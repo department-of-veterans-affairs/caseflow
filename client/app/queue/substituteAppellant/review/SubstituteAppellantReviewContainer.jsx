@@ -8,6 +8,7 @@ import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
 
 import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
+import { fetchAppealDetails } from 'app/queue/QueueActions';
 
 import COPY from 'app/../COPY';
 
@@ -31,7 +32,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     return appealTasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10)));
   };
-  const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);
+  const selectedTasks = findSelectedTasks(allTasks, existingValues.closedTaskIds);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -77,18 +78,21 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
+    // To-Do: update this once the backend schema/endpoint has been updated
+    // To-Do: use delta between openTaskIds and the open tasks to determine task IDs to cancel
     const payload = {
       source_appeal_id: appealId,
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: poa ? poa.poa_participant_id : null,
-      selected_task_ids: existingValues.taskIds,
+      selected_task_ids: existingValues.closedTaskIds,
       task_params: buildTaskCreationParameters()
     };
 
     try {
       const res = await dispatch(completeSubstituteAppellant(payload));
+      const { targetAppeal } = res.payload;
 
       // Redirect to Case Details page... but maybe for new appeal...?
       dispatch(
@@ -97,6 +101,8 @@ export const SubstituteAppellantReviewContainer = () => {
           detail: COPY.SUBSTITUTE_APPELLANT_SUCCESS_DETAIL,
         })
       );
+
+      await dispatch(fetchAppealDetails(targetAppeal.uuid));
 
       // Route to new appeal stream
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);

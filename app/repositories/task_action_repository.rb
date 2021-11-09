@@ -304,7 +304,9 @@ class TaskActionRepository
     }.freeze
 
     def complete_data(task, _user = nil)
-      params = { modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym] }
+      params = {
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+      }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
       if defined? task.completion_contact
@@ -318,8 +320,7 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        options: organizations_to_options(VhaRegionalOffice.all),
-        modal_title: COPY::VHA_COMPLETE_TAKS_MODAL_TITLE,
+        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -457,6 +458,25 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
+    def docket_appeal_data(*)
+      {
+        modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
+        modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
+        instructions_label: COPY::VHA_MODAL_BODY,
+        redirect_after: "/organizations/#{BvaIntake.singleton.url}"
+      }
+    end
+
+    def vha_send_to_board_intake(*)
+      {
+        modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
+    end
+
     def vha_assign_to_program_office_data(*)
       {
         options: organizations_to_options(VhaProgramOffice.all),
@@ -477,6 +497,18 @@ class TaskActionRepository
         modal_body: COPY::VHA_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
         instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_program_office_return_to_camo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
+        message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }

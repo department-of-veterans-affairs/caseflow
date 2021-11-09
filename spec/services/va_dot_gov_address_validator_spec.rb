@@ -12,9 +12,9 @@ describe VaDotGovAddressValidator do
       ]
     end
     let(:mock_address_validator) { VaDotGovAddressValidator.new(appeal: appeal) }
+    let(:closest_ro_response) { ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response) }
 
     before do
-      closest_ro_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
       allow(closest_ro_response).to receive(:data).and_return(closest_ro_facilities)
       allow(closest_ro_response).to receive(:error).and_return(nil)
 
@@ -36,6 +36,72 @@ describe VaDotGovAddressValidator do
 
       it "returns RO62 (Houston)" do
         expect(subject).to eq("RO62")
+      end
+    end
+
+    context "when va dot gov service returns a Caseflow::Error::VaDotGovMissingFacilityError" do
+      let(:ro_facility_id) { "vba_301" } # Boston RO
+      let(:missing_facility_id) { "vba_9999" }
+      let(:facility_ids) { [ro_facility_id, missing_facility_id] }
+      let(:facility_ids_response) { ExternalApi::VADotGovService::FacilitiesIdsResponse.new(mock_response, []) }
+
+      before do
+        allow(mock_address_validator).to receive(:closest_ro_response).and_call_original
+        allow(facility_ids_response).to receive(:missing_facility_ids).and_return([missing_facility_id])
+        allow(facility_ids_response).to receive(:all_ids_present?).and_return(false)
+        allow(mock_address_validator)
+          .to receive(:ro_facility_ids_to_geomatch)
+          .and_return(facility_ids)
+        allow(ExternalApi::VADotGovService)
+          .to receive(:check_facility_ids)
+          .and_return(facility_ids_response)
+      end
+
+      it "raises error once then tries again after removing the missing facility id" do
+        times_called = 0
+        expect(VADotGovService)
+          .to receive(:get_distance).twice do |args|
+            times_called += 1
+            if times_called == 1
+              expect(args[:ids]).to eq(facility_ids)
+              # Fail on the first call
+              fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+            else
+              # Succeed on the second call
+              expect(args[:ids]).to eq([ro_facility_id])
+            end
+
+            closest_ro_response
+          end
+        expect(Raven).to receive(:capture_exception).once.with(
+          an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError),
+          hash_including(extra: { missing_facility_ids: [missing_facility_id] })
+        )
+        expect(subject).to eq("RO01")
+      end
+
+      it "only retries once" do
+        expect(VADotGovService)
+          .to receive(:get_distance).twice do
+            fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+          end
+        expect { subject }.to raise_error(an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError))
+      end
+
+      it "expresses the error if fails more than once" do
+        times_called = 0
+        expect(VADotGovService)
+          .to receive(:get_distance).twice do |args|
+            times_called += 1
+            if times_called == 1
+              expect(args[:ids]).to eq(facility_ids)
+            else
+              expect(args[:ids]).to eq([ro_facility_id])
+            end
+            # Fail on every call
+            fail Caseflow::Error::VaDotGovMissingFacilityError.new(message: "test", code: 500)
+          end
+        expect { subject }.to raise_error(an_instance_of(Caseflow::Error::VaDotGovMissingFacilityError))
       end
     end
   end
@@ -246,6 +312,14 @@ describe VaDotGovAddressValidator do
 
       it "adds San Antonio Satellite Office" do
         expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
+      end
+    end
+
+    context "when veteran with legacy appeal requests travel board" do
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "2")) }
+
+      it "returns all facilities" do
+        expect(subject).to match_array RegionalOffice.ro_facility_ids - ["vba_372"]
       end
     end
   end

@@ -141,6 +141,7 @@ module Seeds
       create_bva_dispatch_user_with_tasks
       create_qr_tasks
       create_different_hearings_tasks
+      create_legacy_hearing_tasks
       create_change_hearing_disposition_task
       create_ama_tasks
       create_board_grant_tasks
@@ -381,10 +382,37 @@ module Seeds
       end
     end
 
+    def create_legacy_hearing_tasks
+      (%w[RO17 RO45] + [nil]).each do |regional_office|
+        appeal = create_legacy_case_with_open_schedule_hearing_task(
+          regional_office
+        )
+
+        create(:available_hearing_locations, regional_office, appeal: appeal)
+
+        root_task = create(:root_task, appeal: appeal)
+        distribution_task = create(
+          :distribution_task,
+          appeal: appeal,
+          parent: root_task
+        )
+        parent_hearing_task = create(
+          :hearing_task,
+          parent: distribution_task,
+          appeal: appeal
+        )
+
+        create(
+          :schedule_hearing_task,
+          :in_progress,
+          parent: parent_hearing_task,
+          appeal: appeal
+        )
+      end
+    end
+
     def create_different_hearings_tasks
       (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-        create_legacy_case_with_open_schedule_hearing_task(regional_office)
-
         30.times do
           appeal = create(
             :appeal,

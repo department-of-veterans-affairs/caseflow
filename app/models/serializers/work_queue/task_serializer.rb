@@ -35,13 +35,14 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
-    assignee = object.assigned_to
+    assignee = object.try(:unscoped_assigned_to)
 
     {
       css_id: assignee.try(:css_id),
       full_name: assignee.try(:full_name),
       is_organization: assignee.is_a?(Organization),
       name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+      status: assignee.try(:status),
       type: assignee.class.name,
       id: assignee.id
     }
@@ -68,7 +69,8 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assignee_name do |object|
-    object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
+    assignee = object.try(:unscoped_assigned_to)
+    assignee.is_a?(Organization) ? assignee.name : assignee.css_id
   end
 
   attribute :placed_on_hold_at, &:calculated_placed_on_hold_at
@@ -117,6 +119,10 @@ class WorkQueue::TaskSerializer
 
   attribute :overtime do |object|
     object.appeal.try(:overtime?)
+  end
+
+  attribute :contested_claim do |object|
+    object.appeal.try(:contested_claim?)
   end
 
   attribute :veteran_appellant_deceased do |object|

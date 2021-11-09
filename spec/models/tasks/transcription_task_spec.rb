@@ -160,6 +160,41 @@ describe TranscriptionTask, :postgres do
 
         expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
+
+      context "completing child TranscriptionTask with parent TranscriptionTask" do
+        let!(:child_task) { create(:transcription_task, parent: transcription_task, assigned_to: transcription_user) }
+        let!(:tr_team_admin) do
+          admin = create(:user)
+          TranscriptionTeam.singleton.add_user(admin)
+          OrganizationsUser.make_user_admin(admin, TranscriptionTeam.singleton)
+          admin
+        end
+
+        it "shows actions on assigned child task" do
+          expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+          expect(child_task.available_actions_unwrapper(transcription_user).size).to be > 0
+          expect(child_task.available_actions_unwrapper(tr_team_admin).size).to be > 0
+        end
+
+        it "shows no actions on on_hold parent task" do
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+          expect(transcription_task.available_actions_unwrapper(transcription_user).size).to eq 0
+          expect(transcription_task.available_actions_unwrapper(tr_team_admin).size).to eq 0
+        end
+
+        it "completes both child and parent task" do
+          child_task.update_from_params(update_params, transcription_user)
+          expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+
+        let(:update_params_cancel) { { status: Constants.TASK_STATUSES.cancelled } }
+        it "cancels both child and parent task" do
+          child_task.update_from_params(update_params_cancel, transcription_user)
+          expect(child_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
     end
   end
 end

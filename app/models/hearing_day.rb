@@ -43,7 +43,8 @@ class HearingDay < CaseflowRecord
   SLOTS_BY_REQUEST_TYPE = {
     REQUEST_TYPES[:virtual] => { default: 8, maximum: 12 },
     REQUEST_TYPES[:central] => { default: 10, maximum: 10 },
-    REQUEST_TYPES[:video] => { default: 10, maximum: 10 }
+    REQUEST_TYPES[:video] => { default: 10, maximum: 10 },
+    REQUEST_TYPES[:travel] => { default: 10, maximum: 10 }
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
@@ -195,6 +196,10 @@ class HearingDay < CaseflowRecord
 
   def judge_css_id
     judge&.css_id
+  end
+
+  def half_day?
+    total_slots ? total_slots <= 5 : false
   end
 
   private

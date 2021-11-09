@@ -48,21 +48,25 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
+  # This is not doing any distribution. It's only determining whether we _should_.
+  # I propose we rename this to should_distribute? or something
   def really_distribute(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
       !JudgeTeam.for_judge(distribution.judge).ama_only_request
   end
 
-  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
+  # rubocop:disable Metrics/ParameterLists
+  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1, range: nil)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)
 
     if priority
       distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     else
-      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit)
+      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit, range: range)
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless really_distribute(distribution, style: style, genpop: genpop)

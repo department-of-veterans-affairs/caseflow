@@ -2,14 +2,38 @@
 import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
-import _ from 'lodash';
+import {
+  findKey,
+  flatMap,
+  keyBy,
+  isEmpty,
+  omit,
+  omitBy,
+  orderBy,
+  pickBy,
+  reduce,
+  isObject,
+  isEqual,
+  concat,
+  uniq,
+  times,
+  compact,
+  sortBy,
+  get,
+  map
+} from 'lodash';
 
+import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import {
+  VIDEO_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL,
+  REQUEST_TYPE_OPTIONS
+} from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -27,17 +51,14 @@ export const now = () => {
 };
 
 export const getWorksheetAppealsAndIssues = (worksheet) => {
-  const worksheetAppeals = _.keyBy(worksheet.appeals_ready_for_hearing, 'id');
-  let worksheetIssues = _(worksheetAppeals).
-    flatMap('worksheet_issues').
-    keyBy('id').
-    value();
+  const worksheetAppeals = keyBy(worksheet.appeals_ready_for_hearing, 'id');
+  let worksheetIssues = keyBy(flatMap(worksheetAppeals, 'worksheet_issues'), 'id');
 
-  if (_.isEmpty(worksheetIssues)) {
-    worksheetIssues = _.keyBy(worksheet.worksheet_issues, 'id');
+  if (isEmpty(worksheetIssues)) {
+    worksheetIssues = keyBy(worksheet.worksheet_issues, 'id');
   }
 
-  const worksheetWithoutAppeals = _.omit(worksheet, [
+  const worksheetWithoutAppeals = omit(worksheet, [
     'appeals_ready_for_hearing'
   ]);
 
@@ -49,7 +70,7 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
 };
 
 export const sortHearings = (hearings) =>
-  _.orderBy(
+  orderBy(
     Object.values(hearings || {}),
     // Convert to EST before sorting, this timezeon doesn't effect what's displayed
     //   we just need to pick one so the sorting works correctly if hearings were
@@ -59,25 +80,22 @@ export const sortHearings = (hearings) =>
   );
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
-  _(issues).
-    omitBy('_destroy').
-    pickBy({ appeal_id: appealId }).
-    value();
+  pickBy(omitBy(issues, '_destroy'), { appeal_id: appealId });
 
 // assumes objects have identical properties
 export const deepDiff = (firstObj, secondObj) => {
-  const changedObject = _.reduce(
+  const changedObject = reduce(
     firstObj,
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isObject(firstVal) && _.isObject(secondVal)) {
+      if (isObject(firstVal) && isObject(secondVal)) {
         const nestedDiff = deepDiff(firstVal, secondVal);
 
-        if (nestedDiff && !_.isEmpty(nestedDiff)) {
+        if (nestedDiff && !isEmpty(nestedDiff)) {
           result[key] = nestedDiff;
         }
-      } else if (!_.isEqual(firstVal, secondVal)) {
+      } else if (!isEqual(firstVal, secondVal)) {
         result[key] = secondVal;
       }
 
@@ -90,7 +108,7 @@ export const deepDiff = (firstObj, secondObj) => {
 };
 
 export const filterCurrentIssues = (issues) =>
-  _.omitBy(
+  omitBy(
     issues,
     (issue) =>
       // Omit if destroyed, or HAS NON-REMAND DISPOSITION FROM VACOLS
@@ -103,7 +121,7 @@ export const filterCurrentIssues = (issues) =>
   );
 
 export const filterPriorIssues = (issues) =>
-  _.pickBy(
+  pickBy(
     issues,
     (issue) =>
       /* eslint-disable no-underscore-dangle */
@@ -150,7 +168,7 @@ export const isEdited = (init, current) => {
     return current != falsy;
     // Default to compare the initial with the current value
   default:
-    return !_.isEqual(current, init);
+    return !isEqual(current, init);
   }
 };
 
@@ -258,7 +276,7 @@ export const getChanges = (first, second) => {
  * @param {function} transformer -- Transforms the values of the object into options
  */
 export const getOptionsFromObject = (object, noneOption, transformer) =>
-  _.concat(_.map(_.values(object), transformer), [noneOption]);
+  concat(map(Object.values(object), transformer), [noneOption]);
 
 /**
  * Method to normalize the Regional Office Timezone names
@@ -337,7 +355,7 @@ export const hearingTimeOptsWithZone = (options, local) =>
  * @returns {Array} -- List of Regional Office Timezones
  */
 export const roTimezones = () =>
-  _.uniq(
+  uniq(
     Object.keys(REGIONAL_OFFICE_INFORMATION).map(
       (ro) => getFriendlyZoneName(REGIONAL_OFFICE_INFORMATION[ro].timezone)
     )
@@ -392,7 +410,7 @@ export const timezones = (time, roTimezone) => {
   });
 
   // Return the values and the count of commons
-  const orderedOptions = _.orderBy(unorderedOptions, ['index']);
+  const orderedOptions = orderBy(unorderedOptions, ['index']);
 
   // Add null option first to array of timezone options to allow deselecting timezone
   const options = [{ value: null, label: '' }, ...orderedOptions];
@@ -410,7 +428,7 @@ export const processAlerts = (alerts, props, poll) => alerts.map((alert) => {
   // Call the receive alerts function if there are hearing alerts
   if (alert?.hearing) {
     return props.onReceiveAlerts(alert.hearing);
-  } else if (alert?.virtual_hearing && !_.isEmpty(alert.virtual_hearing)) {
+  } else if (alert?.virtual_hearing && !isEmpty(alert.virtual_hearing)) {
     // Call the transition alerts function if there are virtual hearing alerts
     props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
 
@@ -539,7 +557,7 @@ const calculateAvailableTimeslots = ({
   });
 
   // Loop numberOfSlots number of times
-  const availableSlots = _.times(numberOfSlots).map((index) => {
+  const availableSlots = times(numberOfSlots).map((index) => {
     // Create the possible time by adding our offset * slotLengthMinutes to beginsAt
     const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
 
@@ -576,7 +594,7 @@ const calculateAvailableTimeslots = ({
     };
   });
 
-  return _.compact(availableSlots);
+  return compact(availableSlots);
 };
 
 /**
@@ -614,7 +632,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
   const slotsAndHearings = slots.concat(formattedHearings);
 
   // Sort by unix time
-  return _.sortBy(slotsAndHearings, [(item) => item.time.format('x')]);
+  return sortBy(slotsAndHearings, [(item) => item.time.format('x')]);
 
 };
 
@@ -749,9 +767,9 @@ export const vljFullnameOrEmptyString = (hearingDay) => {
 // - 2 is the number of hearings scheduled for that day
 // - 12 is the 'totalSlots' which comes from HearingDay and depends on ro
 export const formatSlotRatio = (hearingDay) => {
-  const scheduledHearings = _.get(hearingDay, 'hearings', {});
+  const scheduledHearings = get(hearingDay, 'hearings', {});
   const scheduledHearingCount = Object.keys(scheduledHearings).length;
-  const totalSlotCount = _.get(hearingDay, 'totalSlots', 0);
+  const totalSlotCount = get(hearingDay, 'totalSlots', 0);
   const formattedSlotRatio = `${scheduledHearingCount} of ${totalSlotCount}`;
 
   return formattedSlotRatio;
@@ -931,6 +949,73 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+export const docketTypes = (originalType) => {
+  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
+
+  return [
+    option,
+    {
+      value: HEARING_REQUEST_TYPES.virtual,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+};
+
+export const readableDocketType = (docketType) =>
+  REQUEST_TYPE_OPTIONS.find((type) => docketType === type.value || docketType?.value === type.value);
+
+export const getRegionalOffice = (roKey) => {
+  if (!roKey) {
+    return {
+      timezone: COMMON_TIMEZONES[0],
+      key: 'C',
+    };
+  }
+
+  return ({
+    ...REGIONAL_OFFICE_INFORMATION[roKey],
+    key: roKey
+  });
+};
+
+const virtualHearingOption = {
+  value: true,
+  label: VIRTUAL_HEARING_LABEL
+};
+
+export const allScheduleVeteranDropdownOptions = (readableHearingRequestType, readableOriginalHearingRequestType) => {
+  if (readableHearingRequestType === 'Virtual') {
+    return [{ value: false, label: readableOriginalHearingRequestType }, virtualHearingOption];
+  }
+
+  return [{ value: false, label: readableHearingRequestType }, virtualHearingOption];
+};
+
+export const allDetailsDropdownOptions = (hearing) => {
+  return [{ value: false, label: hearing?.readableRequestType }, virtualHearingOption];
+};
+
+export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
+  if (!virtualHearing || !virtualHearing?.status || virtualHearing?.status === 'cancelled') {
+    return options[0];
+  }
+
+  return options[1];
+};
+
+export const hearingRequestTypeOptions = (allOptions, currentOption) => {
+  return allOptions.filter((opt) => opt.label !== currentOption.label);
+};
+
+export const formatRoomOption = (room) => {
+  const option = findKey(HEARING_ROOMS_LIST, { label: room });
+
+  return ({
+    label: option ? HEARING_ROOMS_LIST[option.toString()].label : 'None',
+    value: option ? option.toString() : null
+  });
 };
 
 /* eslint-enable camelcase */

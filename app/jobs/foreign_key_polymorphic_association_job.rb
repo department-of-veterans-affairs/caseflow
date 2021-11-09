@@ -13,10 +13,12 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   # comes from polymorphic associations listed in immigrant.rb
   CLASSES_WITH_POLYMORPH_ASSOC = {
     Claimant => [
-      { # To-do: Add a foreign-key to `people` table and remove this
+      { # participant_id could refer to the `people` or `bgs_attorneys` tables
         id_column: :participant_id,
         type_column: nil,
-        includes_method: :person
+        includes_method: :person,
+        # Exclude OtherClaimant (unrecognized appellants) and AttorneyClaimant
+        scope: -> { where(type: "VeteranClaimant") }
       },
       { id_column: :decision_review_id,
         type_column: :decision_review_type,
@@ -29,8 +31,13 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
-    Task => [APPEAL_ASSOCIATION_DETAILS],
-    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS]
+    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS],
+
+    Task => [
+      { id_column: :appeal_id,
+        type_column: :appeal_type,
+        includes_method: :task_appeal }
+    ]
   }.freeze
 
   def perform
@@ -43,7 +50,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
 
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
-    orphaned_ids = orphan_records(klass, config).pluck(*select_fields)
+    orphaned_ids = scoped_orphan_records(klass, config).pluck(*select_fields)
     send_alert("Found #{orphaned_ids.size} orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
     if config[:type_column]
@@ -68,7 +75,17 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
   # Maps the includes_method to a hash containing all the possible types. Each hash entry is:
   #   name used for `includes` => the associated ActiveRecord class
   POLYMORPHIC_TYPES = {
-    appeal: { ama_appeal: Appeal, legacy_appeal: LegacyAppeal },
+    appeal: {
+      ama_appeal: Appeal,
+      legacy_appeal: LegacyAppeal
+    },
+    task_appeal: {
+      ama_appeal: Appeal,
+      legacy_appeal: LegacyAppeal,
+      # SC and HLR records can have Tasks
+      supplemental_claim: SupplementalClaim,
+      higher_level_review: HigherLevelReview
+    },
     hearing: { ama_hearing: Hearing, legacy_hearing: LegacyHearing },
     decision_review: {
       ama_appeal: Appeal,
@@ -92,12 +109,18 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
         klass.unscoped.includes(includes_name).where(poly_class.arel_table[:id].eq(nil))
       end.reduce(:merge)
       # only check for records where the _id column is not nil
-      merged_query.where.not(config[:id_column] => nil)
+      merged_query.where.not(config[:id_column] => nil).order(config[:id_column], :id)
     else
       klass.unscoped.includes(includes_method)
         .where(includes_method.to_s.classify.constantize.table_name => { id: nil })
-        .where.not(config[:id_column] => nil)
+        .where.not(config[:id_column] => nil).order(config[:id_column], :id)
     end
+  end
+
+  def scoped_orphan_records(klass, config)
+    return orphan_records(klass, config).merge(config[:scope]) if config[:scope]
+
+    orphan_records(klass, config)
   end
 
   def unusual_records(klass, config)

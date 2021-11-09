@@ -194,6 +194,21 @@ describe VirtualHearing do
       it_behaves_like "hearing with existing virtual hearing"
     end
 
+    context "for a travel day with an ama hearing" do
+      let(:hearing) do
+        create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            request_type: HearingDay::REQUEST_TYPES[:travel],
+            regional_office: "RO01"
+          )
+        )
+      end
+
+      it_behaves_like "hearing with existing virtual hearing"
+    end
+
     context "for video legacy hearing" do
       let(:hearing) do
         create(

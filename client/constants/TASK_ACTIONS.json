@@ -360,6 +360,11 @@
     "label": "Remove hearing to correct a scheduling error",
     "value": "modal/hearing_scheduled_in_error"
   },
+  "DOCKET_APPEAL": {
+    "label": "Docket appeal",
+    "value": "modal/docket_appeal",
+    "func": "docket_appeal_data"
+  },
   "READY_TO_DOCKET": {
     "label": "Ready to Docket",
     "value": "modal/ready_to_docket"
@@ -373,5 +378,15 @@
     "label": "Assign to VISN",
     "value": "modal/assign_to_regional_office",
     "func": "vha_assign_to_regional_office_data"
+  },
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
+    "label": "Return to CAMO team",
+    "value": "modal/return_to_camo",
+    "func": "vha_program_office_return_to_camo"
+  },
+  "VHA_SEND_TO_BOARD_INTAKE": {
+    "label": "Send to Board Intake",
+    "value": "modal/vha_send_to_board_intake",
+    "func": "vha_send_to_board_intake"
   }
 }

@@ -4,6 +4,7 @@ class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
+  belongs_to :veteran
   belongs_to :detail, polymorphic: true
 
   COMPLETION_TIMEOUT = 5.minutes
