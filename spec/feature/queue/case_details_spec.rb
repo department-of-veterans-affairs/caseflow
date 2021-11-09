@@ -2458,20 +2458,26 @@ RSpec.feature "Case details", :all_dbs do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
         allow(bgs).to receive(:fetch_veteran_info).and_call_original
-        # allow(bgs).to receive(:can_access?).and_call_original
       end
 
       let(:bgs) { Fakes::BGSService.new }
+      msg = "(Power of Attorney of Folder is none. Access to this record is denied.)"
 
-      context "a user, appeal, can access are defined" do
-        it "has a user, appeal, etc" do
-          # binding.pry
+      context "user gets an access denied message from bgs initially" do
+        it "case details displays error message" do
           visit("/queue/appeals/#{appeal.uuid}")
-          allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new("(Power of Attorney of Folder is none. Access to this record is denied.)"))
-          # allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied, message: "Power of Attorney of Folder is none. Access to this record is denied.")
+          allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
+          visit("/queue/appeals/#{appeal.uuid}")
+          # binding.pry
+        end
+      end
+      context "check via caseflow to see if vso shoudl have access" do
+        it "should display case details" do
           binding.pry
+          expect(appeal.accessible?).to be_truthy
+          visit("/queue/appeals/#{appeal.uuid}")
         end
       end
     end
-  end 
+  end
 end
