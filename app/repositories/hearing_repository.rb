@@ -180,7 +180,8 @@ class HearingRepository
       [
         HearingDay::REQUEST_TYPES[:virtual],
         HearingDay::REQUEST_TYPES[:video],
-        HearingDay::REQUEST_TYPES[:central]
+        HearingDay::REQUEST_TYPES[:central],
+        HearingDay::REQUEST_TYPES[:travel]
       ]
     end
 
