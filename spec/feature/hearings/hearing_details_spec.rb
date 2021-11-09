@@ -18,7 +18,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   let(:fill_in_veteran_email) { "new@email.com" }
   let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
-  let(:fill_in_rep_tz) { "America/Chicago" }
+  let(:fill_in_rep_tz) { "Mountain Time (US & Canada) (10:00 PM)" }
   let(:pexip_url) { "fake.va.gov" }
 
   def check_row_content(event, index)
@@ -261,6 +261,33 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
         let!(:expected_alert) do
           COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+        end
+
+        scenario "user can optionally change emails and timezone" do
+          visit "hearings/" + hearing.external_id.to_s + "/details"
+
+          # Change the hearing type
+          click_dropdown(name: "hearingType", index: 0)
+
+          # Update the POA and Appellant emails
+          fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+          fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+
+          # Update the POA and Appellant timezones
+          click_dropdown(name: "representativeTz", text: fill_in_veteran_tz)
+          click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
+          # Confirm the Modal change to cancel the virtual hearing
+          click_button("Convert to #{hearing.readable_request_type} Hearing")
+
+          # Confirm the alerts
+          expect(page).to have_content(virtual_hearing_alert)
+          expect(page).to have_content(expected_alert)
+
+          # Ensure the emails and timezone were updated
+          expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+          expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+          expect(page).to have_content(fill_in_veteran_tz)
         end
 
         scenario "email notifications and links display correctly" do
