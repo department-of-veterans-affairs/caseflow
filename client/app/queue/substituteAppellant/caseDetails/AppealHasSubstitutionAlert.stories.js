@@ -15,7 +15,8 @@ export default {
   ],
   parameters: {},
   args: {
-    targetAppealId: 'abc123'
+    targetAppealId: 'abc123',
+    hasSameAppealSubstitution: false,
   },
   argTypes: {},
 };
