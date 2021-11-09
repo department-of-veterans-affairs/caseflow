@@ -192,7 +192,6 @@ class CompleteTaskModal extends React.Component {
   submit = () => {
     const { task, appeal } = this.props;
     const detail = 'Detail:';
-    // const boldText = detail.replace(new RegExp(`(^|\\s)(${ detail })(\\s|$)`, 'ig'), '$1<b>$2</b>$3');
     const modifiedInstructions =
       `Documents for this appeal are stored in ${this.state.radio === 'other' ? this.state.otherInstructions :
         this.state.radio}\n\n**${detail}** ${this.state.instructions}`;

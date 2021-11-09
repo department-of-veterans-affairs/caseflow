@@ -17,7 +17,8 @@ import {
 import {
   marginTop,
   CUSTOM_HOLD_DURATION_TEXT,
-  COLOCATED_HOLD_DURATIONS
+  COLOCATED_HOLD_DURATIONS,
+  VHA_HOLD_DURATIONS
 } from '../constants';
 import { withRouter } from 'react-router-dom';
 import {
@@ -44,7 +45,13 @@ class StartHoldModal extends React.Component {
 
   holdLength = () => this.state.hold === CUSTOM_HOLD_DURATION_TEXT ? this.state.customHold : this.state.hold;
 
-  validateForm = () => Boolean(this.state.instructions) && Boolean(Number(this.holdLength()));
+  validateForm = () => {
+    const hasInstructions = Boolean(this.state.instructions);
+    const hasHoldLength = Boolean(Number(this.holdLength()));
+    const customHoldIsValid = Boolean(this.state.customHold < 31);
+
+    return hasInstructions && hasHoldLength && customHoldIsValid;
+  };
 
   submit = () => {
     const {
@@ -75,31 +82,54 @@ class StartHoldModal extends React.Component {
   render = () => {
     const { highlightFormItems } = this.props;
 
+    const invalidDate = this.state.customHold > 30;
+
+    const handleError = () => {
+      if (this.props.task.type === 'AssessDocumentationTask' && invalidDate) {
+
+        return highlightFormItems ? COPY.VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE : null;
+      }
+
+      return highlightFormItems && !this.state.customHold ?
+        COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null;
+
+    };
+
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       validateForm={this.validateForm}
       submit={this.submit}
     >
-      <SearchableDropdown
-        name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-        searchable={false}
-        errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
-        placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-        value={this.state.hold}
-        onChange={(option) => option && this.setState({ hold: option.value })}
-        options={COLOCATED_HOLD_DURATIONS.map((value) => ({
-          label: Number(value) ? `${value} days` : value,
-          value
-        }))} />
+      {this.props.task.type === 'AssessDocumentationTask' ?
+        <SearchableDropdown
+          name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+          searchable={false}
+          errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
+          placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+          value={this.state.hold}
+          onChange={(option) => option && this.setState({ hold: option.value })}
+          options={VHA_HOLD_DURATIONS.map((value) => ({
+            label: Number(value) ? `${value} days` : value,
+            value
+          }))} /> :
+        <SearchableDropdown
+          name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+          searchable={false}
+          errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
+          placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+          value={this.state.hold}
+          onChange={(option) => option && this.setState({ hold: option.value })}
+          options={COLOCATED_HOLD_DURATIONS.map((value) => ({
+            label: Number(value) ? `${value} days` : value,
+            value
+          }))} />}
       { this.state.hold === CUSTOM_HOLD_DURATION_TEXT && <TextField
         name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
         type="number"
         value={this.state.customHold}
         onChange={(customHold) => this.setState({ customHold })}
-        errorMessage={highlightFormItems && !this.state.customHold ?
-          COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
-        }
+        errorMessage={handleError()}
       /> }
       <TextareaField
         value={this.state.instructions}
@@ -123,7 +153,8 @@ StartHoldModal.propTypes = {
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   })
 };
 
