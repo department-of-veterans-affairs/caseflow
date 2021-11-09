@@ -113,7 +113,7 @@ describe LegacyDocket do
             JudgeTeam.for_judge(judge).update!(ama_only_push: true, ama_only_request: false)
           end
 
-          it "should return false since this is a legacy (non-AMA) docket", skip: "This exposes a bug to fix!" do
+          it "should return false since this is a legacy (non-AMA) docket" do
             # These are only for debugging
             expect(JudgeTeam.for_judge(distribution.judge).ama_only_push).to be_truthy
             expect(JudgeTeam.for_judge(distribution.judge).ama_only_request).to be_falsey

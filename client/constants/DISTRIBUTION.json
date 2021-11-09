@@ -4,5 +4,6 @@
   "direct_docket_time_goal": 365,
   "hearing_case_affinity_days": 30,
   "maximum_direct_review_proportion": 0.07,
-  "minimum_legacy_proportion": 0.9
+  "minimum_legacy_proportion": 0.9,
+  "nod_adjustment": 0.4
 }

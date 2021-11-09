@@ -3,9 +3,9 @@
 class LegacyDocket
   include ActiveModel::Model
 
+  # Note about nod_adjustment:
   # When counting the total number of appeals on the legacy docket for purposes of docket balancing, we
   # include NOD-stage appeals at a discount reflecting the likelihood that they will advance to a Form 9.
-  NOD_ADJUSTMENT = 0.4
 
   def docket_type
     "legacy"
@@ -27,7 +27,7 @@ class LegacyDocket
   end
 
   def weight
-    count(priority: false) + nod_count * NOD_ADJUSTMENT
+    count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
   end
 
   def ready_priority_appeal_ids
@@ -51,7 +51,7 @@ class LegacyDocket
   def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
-      !JudgeTeam.for_judge(distribution.judge).ama_only_request
+      (style == "request" && !JudgeTeam.for_judge(distribution.judge).ama_only_request)
   end
 
   # rubocop:disable Metrics/ParameterLists

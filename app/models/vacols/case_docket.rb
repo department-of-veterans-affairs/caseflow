@@ -346,7 +346,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        # todo: inspect if below feature toggle applies. log into prod
         location = judge.vacols_uniq_id
         VACOLS::Case.batch_update_vacols_location(location, vacols_ids)
         appeals
