@@ -9,7 +9,15 @@ import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
+<<<<<<< HEAD
 import FilterIconOutline from 'app/components/FilterIconOutline';
+=======
+<<<<<<< HEAD
+import FilterIconOutline from 'app/components/FilterIconOutline';
+=======
+import FilterIcon from 'app/components/FilterIcon';
+>>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
+>>>>>>> 870ec5de027253473c4873180244e197b1cf661c
 import { DoubleArrow } from 'app/components/icons/DoubleArrow';
 
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';

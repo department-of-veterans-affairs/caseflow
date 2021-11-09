@@ -262,7 +262,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by task"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"
@@ -368,7 +368,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by type"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"
@@ -474,7 +474,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by docket name"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"
@@ -1404,7 +1404,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by task"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"
@@ -1510,7 +1510,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by type"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"
@@ -1616,7 +1616,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by docket name"
-                          class="table-icon unselected-filter-icon"
+                          class="undefined unselected-filter-icon"
                           height="21px"
                           role="button"
                           tabindex="0"

@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+<<<<<<< HEAD
 import PropTypes from 'prop-types';
+=======
+<<<<<<< HEAD
+import PropTypes from 'prop-types';
+=======
+>>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
+>>>>>>> 870ec5de027253473c4873180244e197b1cf661c
 import { NewFileIcon } from '../../components/icons/NewFileIcon';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
