@@ -523,6 +523,8 @@ class TaskActionRepository
         message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
+      }
+    end
 
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
