@@ -12,6 +12,9 @@ if Rails.application.config.sqs_endpoint
   Shoryuken.configure_client do |config|
     config.sqs_client = Aws::SQS::Client.new(endpoint: Rails.application.config.sqs_endpoint)
   end
+  Shoryuken.configure_server do |config|
+    config.sqs_client = Aws::SQS::Client.new(endpoint: Rails.application.config.sqs_endpoint)
+  end
 end
 
 if Rails.application.config.sqs_create_queues
