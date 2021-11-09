@@ -2,7 +2,7 @@ import React from 'react';
 import { CrossIcon } from '../../app/components/icons/fontAwesome/CrossIcon';
 
 export default {
-  title: 'Commons/Components/Icons/FontAwesome/CrossIcon',
+  title: 'Commons/Components/Icons/CrossIcon',
   component: CrossIcon,
 };
 
