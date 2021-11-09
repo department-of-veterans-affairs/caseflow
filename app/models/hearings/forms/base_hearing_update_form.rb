@@ -331,7 +331,7 @@ class BaseHearingUpdateForm
     hearing.create_or_update_recipients(
       type: AppellantHearingEmailRecipient,
       email_address: appellant_email,
-      timezone: virtual_hearing_updates[:appellant_tz]
+      timezone: appellant_timezone
     )
 
     hearing.representative_recipient&.unset_email_address!
@@ -339,7 +339,7 @@ class BaseHearingUpdateForm
       hearing.create_or_update_recipients(
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email,
-        timezone: virtual_hearing_updates[:representative_tz]
+        timezone: representative_timezone
       )
     end
 
