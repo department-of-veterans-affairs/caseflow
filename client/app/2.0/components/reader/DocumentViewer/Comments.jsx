@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { CommentSymbol } from 'app/components/RenderFunctions';
+import { CommentSymbol } from 'app/components/icons/CommentSymbol';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
 
 /**

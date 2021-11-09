@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import Tooltip from './Tooltip';
-import { DoubleArrow } from './RenderFunctions';
+import { DoubleArrow } from './icons/DoubleArrow';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';

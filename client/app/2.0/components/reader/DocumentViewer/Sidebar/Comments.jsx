@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // Local Dependencies
 import { EditComment } from 'components/reader/DocumentViewer/Sidebar/EditComment';
 import { CannotSaveAlert } from 'components/shared/CannotSaveAlert';
-import { PlusIcon } from 'app/components/RenderFunctions';
+import { PlusIcon } from 'app/components/icons/PlusIcon';
 import Button from 'app/components/Button';
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 

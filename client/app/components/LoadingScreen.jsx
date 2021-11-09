@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingSymbol } from './RenderFunctions';
+import { LoadingSymbol } from './icons/LoadingSymbol';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';

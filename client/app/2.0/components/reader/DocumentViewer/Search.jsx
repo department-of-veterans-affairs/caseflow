@@ -7,7 +7,8 @@ import classNames from 'classnames';
 import { formatSearchText } from 'utils/reader';
 import Button from 'app/components/Button';
 import SearchBar from 'app/components/SearchBar';
-import { RightChevron, LeftChevron } from 'app/components/RenderFunctions';
+import { RightChevron } from 'app/components/icons/RightChevron';
+import { LeftChevron } from 'app/components/icons/LeftChevron';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 /**

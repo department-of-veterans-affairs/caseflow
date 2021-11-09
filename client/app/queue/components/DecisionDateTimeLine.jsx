@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import COPY from '../../../COPY.json';
-import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
+import COPY from '../../../COPY';
+import { GrayDot } from '../../components/icons/GrayDot';
+import { GreenCheckmark } from '../../components/icons/GreenCheckmark';
+import { CancelIcon } from '../../components/icons/CancelIcon';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import { caseTimelineTasksForAppeal } from '../../queue/selectors';
 import moment from 'moment';

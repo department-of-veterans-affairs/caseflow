@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { RightTriangle } from 'app/components/RenderFunctions';
+import { RightTriangle } from 'app/components/icons/RightTriangle';
 
 /**
  * Last Read Document Indicator component

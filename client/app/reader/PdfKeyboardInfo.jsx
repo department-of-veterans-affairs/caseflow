@@ -1,5 +1,8 @@
 import React from 'react';
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
+import { ArrowDown } from 'app/components/icons/ArrowDown';
+import { ArrowUp } from 'app/components/icons/ArrowUp';
+import { ArrowLeft } from 'app/components/icons/ArrowLeft';
+import { ArrowRight } from 'app/components/icons/ArrowRight';
 
 export const scrollColumns = [{ header: 'Scroll',
   valueName: 'scrollInstruction',

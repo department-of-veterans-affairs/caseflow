@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { COLORS } from '../../constants/AppConstants';
-import { ExternalLink } from '../../components/RenderFunctions';
+import { ExternalLink } from '../../components/icons/ExternalLink';
 
 const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
@@ -24,7 +24,7 @@ const VirtualHearingLink = ({
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
-        <ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
+        <ExternalLink color={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>
   );

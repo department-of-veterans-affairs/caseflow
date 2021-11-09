@@ -6,7 +6,9 @@ import _ from 'lodash';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../../components/Button';
-import { CrossIcon, PencilIcon, LockIcon } from '../../../components/RenderFunctions';
+import { CrossIcon } from '../../../components/icons/fontAwesome/CrossIcon';
+import { PencilIcon } from '../../../components/icons/PencilIcon';
+import { LockIcon } from '../../../components/icons/LockIcon';
 
 const EditHearingDayLink = ({ docketId, history }) => (
   <Button

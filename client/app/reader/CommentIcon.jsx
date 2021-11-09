@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { CommentSymbol } from '../components/RenderFunctions';
+import { CommentSymbol } from '../components/icons/CommentSymbol';
 
 export class CommentIcon extends React.Component {
   onClick = () => {
