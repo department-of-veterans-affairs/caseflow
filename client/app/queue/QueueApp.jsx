@@ -892,7 +892,7 @@ class QueueApp extends React.PureComponent {
                 }`}
               render={this.routedReturnToProgramOffice}
             />
-             <Route
+            <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.value
                 }`}
