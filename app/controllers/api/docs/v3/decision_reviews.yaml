@@ -1200,6 +1200,24 @@ components:
         - Successful Closure of Case
         - Discontinue Services
         - Interruption of Services
+        # for benefit type:  veterans_readiness
+        - Basic Eligibility
+        - Entitlement to Services
+        - Plan/Goal Selection
+        - Equipment/Supply Purchases
+        - Additional Training
+        - Change of Program
+        - Feasibility to Pursue a Vocational Goal
+        - Training Facility Selection
+        - Subsistence Allowance
+        - Employment Adjustment Allowance
+        - Entitlement Extension
+        - Advance from the Revolving Fund Loan
+        - Retroactive Induction
+        - Retroactive Reimbursement
+        - Successful Closure of Case
+        - Discontinue Services
+        - Interruption of Services
         # for benefit type:  education
         - Accrued
         - Eligibility | 38 U.S.C. ch. 30
