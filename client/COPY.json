@@ -1164,5 +1164,9 @@
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
-  "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days"
+  "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days",
+  "VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
+  "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue"
 }
