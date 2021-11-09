@@ -142,7 +142,7 @@ describe Distribution, :all_dbs do
   context "requested distributions" do
     context "when priority_acd is enabled" do
       let(:limit) { 10 }
-      let(:batch_size) { Distribution::ALTERNATIVE_BATCH_SIZE }
+      let(:batch_size) { Constants.Distribution.alternative_batch_size }
 
       before { FeatureToggle.enable!(:priority_acd) }
 

@@ -114,14 +114,6 @@ describe LegacyDocket do
           end
 
           it "should return false since this is a legacy (non-AMA) docket" do
-            # These are only for debugging
-            expect(JudgeTeam.for_judge(distribution.judge).ama_only_push).to be_truthy
-            expect(JudgeTeam.for_judge(distribution.judge).ama_only_request).to be_falsey
-            expect(style).to eq "push"
-
-            # Bug? When ama_only_request is false (the default), should_distribute? will always return true.
-            # We essentially just invert the value of ama_only_request on the last line.
-            # I think we want to check if it's a request?
             expect(subject).to be_falsey
           end
         end

@@ -1,4 +1,5 @@
 {
+  "alternative_batch_size": 15,
   "batch_size_per_attorney": 3,
   "days_before_goal_due_for_distribution": 65,
   "direct_docket_time_goal": 365,

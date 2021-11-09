@@ -39,7 +39,7 @@ detectors:
       - Veteran
       - VirtualHearing#email_recipient_name
       - JudgeDecisionReviewTask#additional_available_actions
-      - LegacyDocket#really_distribute
+      - LegacyDocket#should_distribute?
   UncommunicativeVariableName:
     exclude:
       - Address
