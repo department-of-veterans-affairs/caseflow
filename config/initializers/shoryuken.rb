@@ -7,8 +7,11 @@ ActiveJob::QueueAdapters::ShoryukenAdapter::JobWrapper
   .shoryuken_options(retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours])
 
 if Rails.application.config.sqs_endpoint
-  # override the sqs_endpoint
-  Shoryuken::Client.sqs.config[:endpoint] = URI(Rails.application.config.sqs_endpoint)
+  # override the sqs_endpoint using the instructions from:
+  # https://github.com/ruby-shoryuken/shoryuken/wiki/Using-a-local-mock-SQS-server
+  Shoryuken.configure_client do |config|
+    config.sqs_client = Aws::SQS::Client.new(endpoint: Rails.application.config.sqs_endpoint)
+  end
 end
 
 if Rails.application.config.sqs_create_queues
