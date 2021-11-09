@@ -43,6 +43,7 @@ UnselectedFilterIcon.propTypes = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const RightTriangle = () => {
   return <svg width="11px" height="18px" viewBox="0 0 21 35">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -504,5 +505,7 @@ export const ClockIcon = () => {
 };
 /* eslint-enable max-len */
 /* eslint-enable max-lines */
+=======
+>>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
 =======
 >>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)

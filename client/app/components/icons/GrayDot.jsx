@@ -6,8 +6,12 @@ export const GrayDot = (props) => {
 
   return <svg height={size} viewBox="0 0 25 25" version="1.1">
     <g className={cname} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+<<<<<<< HEAD
       <g id="750-copy-12" transform="translate(-128.000000, -670.000000)"
         fill={color} stroke={strokeColor} strokeWidth="4">
+=======
+      <g id="750-copy-12" transform="translate(-128.000000, -670.000000)" fill={color} stroke={strokeColor} strokeWidth="4">
+>>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
         <rect id="Background" x="130" y="672" width="21" height="21" rx="10.5"></rect>
       </g>
     </g>

@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+<<<<<<< HEAD
 import { LoadingSymbol } from './icons/LoadingSymbol';
 import { CloseIcon } from './icons/CloseIcon';
+=======
+import { CloseIcon, LoadingSymbol } from './icons/LoadingSymbol';
+>>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
 import classnames from 'classnames';
