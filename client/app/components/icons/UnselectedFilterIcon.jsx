@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const UnselectedFilterIcon = (props) => {
-  const { getRef, cname, ...restProps } = props;
+  const { getRef, className, ...restProps } = props;
 
   return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps}
-    ref={getRef} className={`${cname} unselected-filter-icon`}>
+    ref={getRef} className={`${className} unselected-filter-icon`}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
         <rect className="unselected-filter-icon-border" stroke="#5B616B"
@@ -21,5 +21,5 @@ export const UnselectedFilterIcon = (props) => {
 };
 UnselectedFilterIcon.propTypes = {
   getRef: PropTypes.func,
-  cname: PropTypes.string
+  className: PropTypes.string
 };
