@@ -12,21 +12,17 @@ const reviewHigherLevelReviewSchema = (yup.object().shape({
   ...receiptDateInputValidation(true),
   'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'informal-conference': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations()
 }));
 
-const reviewHigherLevelReviewSchemaWithFiledByVaGov = (yup.object().shape({
-  ...receiptDateInputValidation(true),
-  'filed-by-va-gov': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'informal-conference': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  ...selectClaimantValidations()
+const reviewHigherLevelReviewFiledByVaGov = (yup.object().shape({
+  'filed-by-va-gov': yup.string().required(GENERIC_FORM_ERRORS.blank)
 }));
 
-export { reviewHigherLevelReviewSchema, reviewHigherLevelReviewSchemaWithFiledByVaGov, higherLevelReviewFormHeader };
+const reviewHigherLevelReviewSameOffice = (yup.object().shape({
+  'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank)
+}));
+
+export { reviewHigherLevelReviewSchema, reviewHigherLevelReviewFiledByVaGov, reviewHigherLevelReviewSameOffice, higherLevelReviewFormHeader };

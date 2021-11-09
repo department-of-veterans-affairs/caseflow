@@ -109,7 +109,8 @@ class IntakesController < ApplicationController
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
         vhaPreDocketAppeals: FeatureToggle.enabled?(:vha_predocket_appeals, user: current_user),
-        veteransReadiness: FeatureToggle.enabled?(:veterans_readiness, user: current_user)
+        veteransReadiness: FeatureToggle.enabled?(:veterans_readiness, user: current_user),
+        removeSameOffice: FeatureToggle.enabled?(:remove_same_office, user: current_user)
       }
     }
   rescue StandardError => error

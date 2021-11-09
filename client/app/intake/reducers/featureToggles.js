@@ -20,6 +20,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     veteransReadiness: {
       $set: Boolean(featureToggles.veteransReadiness)
     },
+    removeSameOffice: {
+      $set: Boolean(featureToggles.removeSameOffice)
+    },
   });
 };
 
@@ -31,6 +34,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       correctClaimReviews: false,
       filedByVaGovHlr: false,
       veteransReadiness: false,
+      removeSameOffice: false
     },
     data.featureToggles
   );

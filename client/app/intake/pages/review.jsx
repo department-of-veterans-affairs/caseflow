@@ -15,7 +15,9 @@ import { rampRefilingHeader, reviewRampRefilingSchema } from './rampRefiling/rev
 import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
 import { higherLevelReviewFormHeader,
   reviewHigherLevelReviewSchema,
-  reviewHigherLevelReviewSchemaWithFiledByVaGov } from './higherLevelReview/review';
+  reviewHigherLevelReviewFiledByVaGov,
+  reviewHigherLevelReviewSameOffice,
+} from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
 import Button from '../../components/Button';
@@ -33,10 +35,24 @@ const textAlignRightStyling = css({
   textAlign: 'right',
 });
 
+const generateHigherLevelReviewSchema = (featureToggles) => {
+  const formFieldFeatureToggles = {
+    filedByVaGovHlr: reviewHigherLevelReviewFiledByVaGov,
+    removeSameOffice: reviewHigherLevelReviewSameOffice
+  };
+
+  return Object.keys(formFieldFeatureToggles).reduce((schema, toggle) => {
+    if ((toggle === 'removeSameOffice' && !featureToggles.toggle) || featureToggles.toggle) {
+      schema.concat(formFieldFeatureToggles[toggle]);
+    }
+
+    return schema;
+  }, reviewHigherLevelReviewSchema);
+};
+
 const schemaMappings = (featureToggles) => ({
   appeal: reviewAppealSchema,
-  higher_level_review: featureToggles.filedByVaGovHlr ?
-    reviewHigherLevelReviewSchemaWithFiledByVaGov : reviewHigherLevelReviewSchema,
+  higher_level_review: generateHigherLevelReviewSchema(featureToggles),
   supplemental_claim: reviewSupplementalClaimSchema,
   ramp_election: reviewRampElectionSchema,
   ramp_refiling: reviewRampRefilingSchema
