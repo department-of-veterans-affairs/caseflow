@@ -13,17 +13,8 @@ export const NewFileIcon = (props) => {
           <polygon id="Path-Copy" fill={color} points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
           <polygon id="Path-Copy-2" fill={color} points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
         </g>
-<<<<<<< HEAD
         <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro"
           fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill={color}>
-=======
-<<<<<<< HEAD
-        <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro"
-          fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill={color}>
-=======
-        <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill={color}>
->>>>>>> da6bfd9a1 (create stories for and reorganize all icons.)
->>>>>>> 870ec5de027253473c4873180244e197b1cf661c
           <tspan x="10" y="13">N</tspan>
           <tspan x="17.661" y="13">E</tspan>
           <tspan x="24.512" y="13">W</tspan>
