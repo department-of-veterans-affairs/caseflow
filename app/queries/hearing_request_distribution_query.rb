@@ -89,15 +89,8 @@ class HearingRequestDistributionQuery
         .where("latest_date_by_appeal.latest_scheduled_for <= ?", affinity_days.days.ago)
     end
 
-    # Deprecated: This prevented cases from sitting in limbo due to being tied to an inactive judge user
-    # However, since the inactivity threshold exceeds the length of tie due to affinity, this should be moot
-    def not_tied_to_any_active_judge
-      judge_css_ids = JudgeTeam.pluck(:name)
-      inactive_judges = User.where(css_id: judge_css_ids).where("last_login_at < ?", 60.days.ago).pluck(:id)
-      where(hearings: { disposition: "held", judge_id: inactive_judges.append(nil) })
-    end
-
-    # this selects cases that are not currently tied to a judge
+    # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
+    # when that distinction became irrelevant because cases become untied after 30 days anyway.
     def not_tied_to_any_judge
       where(hearings: { disposition: "held", judge_id: nil })
     end

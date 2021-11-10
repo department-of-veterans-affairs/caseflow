@@ -12,16 +12,12 @@ describe HearingRequestDocket, :all_dbs do
         OR
         appeals that have no hearings at all
         appeals that have no hearings with disposition held" do
-      # This is no longer applicable: we now just go with not tied to any judge at all
-      #another_inactive_judge = create(:user, last_login_at: 70.days.ago)
-      #JudgeTeam.create_for_judge(another_inactive_judge)
       create_appeals_that_should_not_be_returned_by_query
 
       # base conditions = priority, distributable, hearing docket
-      first_appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
       second_appeal = matching_all_base_conditions_with_no_hearings
       third_appeal = matching_all_base_conditions_with_no_held_hearings
-      fourth_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_active_judge_but_not_held
+      fourth_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
 
       # This one below should never happen, but is included for completeness
       fifth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
@@ -87,10 +83,10 @@ describe HearingRequestDocket, :all_dbs do
         # appeals that should not be returned
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        matching_all_base_conditions_with_most_recent_hearing_tied_to_other_active_judge_but_not_held
+        matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
         matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
         matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_active_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
 
         # appeals that should be returned
         appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
@@ -127,7 +123,7 @@ describe HearingRequestDocket, :all_dbs do
         # won't be included
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
 
         tasks = subject
 
@@ -207,13 +203,11 @@ describe HearingRequestDocket, :all_dbs do
 
       it "only distributes priority, distributable, hearing docket, genpop cases" do
         # will be included
-        # TODO: remove this next one when removing judge inactivity threshold
-        inactive_judge_appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
         outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
         no_held_hearings = matching_all_base_conditions_with_no_held_hearings
         no_hearings = matching_all_base_conditions_with_no_hearings
 
-        expected_result = [inactive_judge_appeal, outside_affinity, no_held_hearings, no_hearings]
+        expected_result = [outside_affinity, no_held_hearings, no_hearings]
 
         # won't be included
         create_appeals_that_should_not_be_returned_by_query
@@ -329,12 +323,12 @@ describe HearingRequestDocket, :all_dbs do
   private
 
   def create_appeals_that_should_not_be_returned_by_query
-    matching_all_conditions_except_not_tied_to_active_judge
+    matching_all_conditions_except_not_tied_to_judge
     matching_all_conditions_except_priority
     matching_all_conditions_except_ready_for_distribution
     matching_all_conditions_except_priority_and_ready_for_distribution
     matching_only_priority_and_ready_for_distribution
-    matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
+    matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
   end
 
   def matching_all_base_conditions_with_no_hearings
@@ -369,7 +363,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  def matching_all_conditions_except_not_tied_to_active_judge
+  def matching_all_conditions_except_not_tied_to_judge
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
@@ -378,7 +372,7 @@ describe HearingRequestDocket, :all_dbs do
                      judge: nil,
                      disposition: "held",
                      appeal: appeal)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
   end
 
   def matching_all_conditions_except_priority
@@ -434,20 +428,7 @@ describe HearingRequestDocket, :all_dbs do
                      appeal: appeal,
                      transcript_sent_date: 1.day.ago,
                      hearing_day: most_recent)
-    hearing.update(judge: active_judge)
-    appeal
-  end
-
-  # mattw: This is now an obsolete condition.
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
-    inactive_judge = create(:user, last_login_at: 70.days.ago)
-    JudgeTeam.create_for_judge(inactive_judge)
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, transcript_sent_date: 1.day.ago)
-    hearing.update(judge: inactive_judge)
+    hearing.update(judge: judge_with_team)
     appeal
   end
 
@@ -498,7 +479,7 @@ describe HearingRequestDocket, :all_dbs do
 
     most_recent = create(:hearing_day, scheduled_for: scheduled_for)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
 
     appeal
   end
@@ -512,14 +493,14 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
+  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
 
     not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: not_tied)
@@ -550,12 +531,12 @@ describe HearingRequestDocket, :all_dbs do
 
     tied_hearing_day = create(:hearing_day, scheduled_for: 4.days.ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: tied_hearing_day)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
 
     appeal
   end
 
-  def matching_all_base_conditions_with_most_recent_hearing_tied_to_other_active_judge_but_not_held
+  def matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
@@ -563,7 +544,7 @@ describe HearingRequestDocket, :all_dbs do
 
     most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
     hearing = create(:hearing, judge: nil, disposition: "cancelled", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
 
     older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
@@ -587,7 +568,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_active_judge
+  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
@@ -595,7 +576,7 @@ describe HearingRequestDocket, :all_dbs do
 
     most_recent_hearing_day = create(:hearing_day, scheduled_for: 1.day.ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent_hearing_day)
-    hearing.update(judge: active_judge)
+    hearing.update(judge: judge_with_team)
 
     older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
@@ -604,7 +585,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  def active_judge
+  def judge_with_team
     active_judge = create(:user, last_login_at: Time.zone.now)
     JudgeTeam.create_for_judge(active_judge)
     active_judge
