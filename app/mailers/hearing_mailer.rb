@@ -155,7 +155,8 @@ class HearingMailer < ActionMailer::Base
                    end
 
     # Raise an error if the link contains the old virtual hearing link 2021-11-10
-    fail BadVirtualLinkError if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
+    fail BadVirtualLinkError,
+      virtual_hearing_id: virtual_hearing&.id if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
 
     hearing_link
   end
