@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OrganizationsController < ApplicationController
-  before_action :verify_organization_access, only: [:show]
-  before_action :verify_role_access, only: [:show]
+  before_action :verify_organization_access, except: [:index]
+  before_action :verify_role_access, except: [:index]
   before_action :verify_business_line, only: [:show]
   # Needs to be run after verify_organization_access to ensure the user has access to the VSO in BGS
   before_action :add_user_to_vso, only: [:show]
