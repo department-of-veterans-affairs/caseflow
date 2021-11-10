@@ -42,8 +42,9 @@ const generateHigherLevelReviewSchema = (featureToggles) => {
   };
 
   return Object.keys(formFieldFeatureToggles).reduce((schema, toggle) => {
-    if ((toggle === 'removeSameOffice' && !featureToggles.toggle) || featureToggles.toggle) {
-      schema.concat(formFieldFeatureToggles[toggle]);
+    if ((featureToggles[toggle] && toggle !== 'removeSameOffice') ||
+    (!featureToggles[toggle] && toggle === 'removeSameOffice')) {
+      return schema.concat(formFieldFeatureToggles[toggle]);
     }
 
     return schema;

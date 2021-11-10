@@ -25,4 +25,9 @@ const reviewHigherLevelReviewSameOffice = (yup.object().shape({
   'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank)
 }));
 
-export { reviewHigherLevelReviewSchema, reviewHigherLevelReviewFiledByVaGov, reviewHigherLevelReviewSameOffice, higherLevelReviewFormHeader };
+export {
+  reviewHigherLevelReviewSchema,
+  reviewHigherLevelReviewFiledByVaGov,
+  reviewHigherLevelReviewSameOffice,
+  higherLevelReviewFormHeader
+};

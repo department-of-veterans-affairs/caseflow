@@ -2,7 +2,7 @@
 
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
+    validates :informal_conference, inclusion: { in: [true, false], message: "blank" }
   end
 
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
