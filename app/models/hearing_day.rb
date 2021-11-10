@@ -198,6 +198,10 @@ class HearingDay < CaseflowRecord
     judge&.css_id
   end
 
+  def half_day?
+    total_slots ? total_slots <= 5 : false
+  end
+
   private
 
   def assign_created_by_user

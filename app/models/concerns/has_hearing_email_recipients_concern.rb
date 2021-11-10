@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
@@ -147,3 +148,4 @@ module HasHearingEmailRecipientsConcern
     events.each { |event| event.update!(email_recipient: recipient) }
   end
 end
+# rubocop:enable Metrics/ModuleLength

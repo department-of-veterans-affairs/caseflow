@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // Local Dependencies
 import { EditComment } from 'components/reader/DocumentViewer/Sidebar/EditComment';
 import { CannotSaveAlert } from 'components/shared/CannotSaveAlert';
-import { plusIcon } from 'app/components/RenderFunctions';
+import { PlusIcon } from 'app/components/RenderFunctions';
 import Button from 'app/components/Button';
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 
@@ -30,7 +30,7 @@ export const SidebarComments = ({
   <div>
     <span className="cf-right-side cf-add-comment-button">
       <Button name="AddComment" onClick={addComment} >
-        <span>{plusIcon()}&nbsp; Add a comment</span>
+        <span><PlusIcon />&nbsp; Add a comment</span>
       </Button>
     </span>
     <div style={{ clear: 'both' }}></div>
