@@ -149,13 +149,13 @@ class HearingMailer < ActionMailer::Base
 
   def link
     hearing_link = if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
-      virtual_hearing.host_link
-    else
-      virtual_hearing.guest_link
-    end
+                     virtual_hearing.host_link
+                   else
+                     virtual_hearing.guest_link
+                   end
 
     # Raise an error if the link contains the old virtual hearing link 2021-11-10
-    raise BadVirtualLinkError if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
+    fail BadVirtualLinkError if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
 
     hearing_link
   end
