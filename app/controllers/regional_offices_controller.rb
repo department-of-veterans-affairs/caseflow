@@ -39,7 +39,8 @@ class RegionalOfficesController < ApplicationController
         filled_slots: hearings.size,
         total_slots: day.total_slots,
         begins_at: day.begins_at,
-        slot_length_minutes: day.slot_length_minutes
+        slot_length_minutes: day.slot_length_minutes,
+        half_day: day.half_day?
       }
     end
   end
