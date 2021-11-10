@@ -3,10 +3,12 @@ $form-spacing: 15px;
 $form-width: 575px;
 
 
-.cf-fnod-badge, .cf-contested-badge {
-  display: inline-block; 
+.cf-fnod-badge,
+.cf-contested-badge {
+  display: inline-block;
   margin: 1rem 0 0 -1rem;
 }
+
 .cf-fnod-badge {
   margin-right: 1rem;
 }
