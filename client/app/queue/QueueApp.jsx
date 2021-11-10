@@ -43,6 +43,7 @@ import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
+import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
 import HearingScheduledInErrorModal from './components/HearingScheduledInErrorModal';
@@ -344,8 +345,16 @@ class QueueApp extends React.PureComponent {
     <CancelTaskModal {...props.match.params} />
   );
 
+  routedReturnToProgramOffice = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedCancelTaskModal = (props) => (
     <CancelTaskModal {...props.match.params} />
+  );
+
+  routedMarkTaskInProgressModal = (props) => (
+    <InProgressTaskModal {...props.match.params} />
   );
 
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
@@ -876,6 +885,18 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
                 }`}
               render={this.routedReturnToCamo}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedReturnToProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.value
+                }`}
+              render={this.routedMarkTaskInProgressModal}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
