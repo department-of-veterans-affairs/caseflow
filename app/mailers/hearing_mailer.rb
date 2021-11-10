@@ -19,6 +19,9 @@ class HearingMailer < ActionMailer::Base
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
 
+  class BadVirtualLinkError < StandardError; end
+  BAD_VIRTUAL_LINK_TEXT = "care.va.gov"
+
   def cancellation(email_recipient_info:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
     return if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
@@ -43,6 +46,8 @@ class HearingMailer < ActionMailer::Base
     @test_link = virtual_hearing&.test_link(email_recipient_info.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
+    # Raise an error if the link contains the old virtual hearing link 2021-11-10
+    raise BadVirtualLinkError if @link.include?(BAD_VIRTUAL_LINK_TEXT)
 
     mail(to: recipient_info.email, subject: confirmation_subject)
   end

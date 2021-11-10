@@ -417,6 +417,15 @@ describe HearingMailer do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_pacific_recipient_eastern])
           end
         end
+
+        context "incorrect hearing link" do
+          it "raises an exception if the link contains care.va.gov" do
+            virtual_hearing.update(host_hearing_link: HearingMailer::BAD_VIRTUAL_LINK_TEXT)
+            expect { subject.deliver_now! }.to raise_error do |error|
+              expect(error).to be_a(HearingMailer::BadVirtualLinkError)
+            end
+          end
+        end
       end
 
       describe "#updated_time_confirmation" do
