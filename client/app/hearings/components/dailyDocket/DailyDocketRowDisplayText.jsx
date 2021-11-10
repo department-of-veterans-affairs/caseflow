@@ -71,7 +71,7 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
         </div>
       }
     />}
-    <ContestedClaimBadge appeal={{contestedClaim: hearing.contestedClaim}} />
+    <ContestedClaimBadge appeal={{ contestedClaim: hearing.contestedClaim }} />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?
