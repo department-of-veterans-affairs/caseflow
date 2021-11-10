@@ -9,6 +9,7 @@ import DocketTypeBadge from 'app/components/DocketTypeBadge';
 import { PowerOfAttorneyName } from 'app/queue/PowerOfAttorneyDetail';
 
 import FnodBadge from 'app/components/badges/FnodBadge/FnodBadge';
+import ContestedClaimBadge from 'app/components/badges/ContestedBadge/ContestedClaimBadge';
 import { tooltipListStyling } from 'app/components/badges/style';
 import { DateString } from 'app/util/DateUtil';
 
@@ -70,6 +71,7 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
         </div>
       }
     />}
+    <ContestedClaimBadge appeal={{contestedClaim: hearing.contestedClaim}} />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?
