@@ -277,6 +277,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -312,6 +313,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = <<-SQL
@@ -346,7 +348,11 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        location = judge.vacols_uniq_id
+        location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+                     LegacyAppeal::LOCATION_CODES[:caseflow]
+                   else
+                     judge.vacols_uniq_id
+                   end
         VACOLS::Case.batch_update_vacols_location(location, vacols_ids)
         appeals
       end

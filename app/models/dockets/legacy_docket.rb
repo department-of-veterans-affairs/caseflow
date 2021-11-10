@@ -104,7 +104,11 @@ class LegacyDocket
   private
 
   def save_dist_case(dist_case)
-    dist_case.save!
+    if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+      DasDeprecation::CaseDistribution.create_judge_assign_task(record, judge) { dist_case.save! }
+    else
+      dist_case.save!
+    end
   end
 
   def existing_distribution_case_may_be_redistributed?(case_id, distribution)

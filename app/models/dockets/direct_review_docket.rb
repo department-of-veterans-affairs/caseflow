@@ -25,10 +25,6 @@ class DirectReviewDocket < Docket
     all_nonpriority.where("receipt_date > ?", 1.year.ago).ids.size
   end
 
-  def today
-    @today ||= Time.zone.today
-  end
-
   def all_nonpriority
     docket_appeals.nonpriority
   end
