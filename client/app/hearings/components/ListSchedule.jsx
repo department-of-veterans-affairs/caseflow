@@ -75,7 +75,9 @@ const exportHeaders = [
   { label: 'CSS ID',
     key: 'judgeCssId' },
   { label: 'VLJ',
-    key: 'vlj' }
+    key: 'vlj' },
+  { label: 'Hearings Scheduled',
+    key: 'hearingsScheduled' }
 ];
 
 const SwitchViewDropdown = ({ onSwitchView }) => {
@@ -177,8 +179,7 @@ class ListSchedule extends React.Component {
         room: hearingDay.room,
         judgeCssId: hearingDay.judgeCssId,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
-        ...this.props.user.userCanViewAndDownloadHearingScheduledColumn &&
-          { hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots) }
+        hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots)
       }));
   };
 
@@ -243,21 +244,16 @@ class ListSchedule extends React.Component {
         label: 'Filter by VLJ',
         columnName: 'vlj',
         valueName: 'vlj'
+      },
+      {
+        header: 'Hearings Scheduled',
+        name: 'Hearings Scheduled',
+        align: 'left',
+        tableData: hearingScheduleRows,
+        columnName: 'hearingsScheduled',
+        valueName: 'hearingsScheduled'
       }
     ];
-
-    if (this.props.user.userCanViewAndDownloadHearingScheduledColumn) {
-      columns.push(
-        {
-          header: 'Hearings Scheduled',
-          name: 'Hearings Scheduled',
-          align: 'left',
-          tableData: hearingScheduleRows,
-          columnName: 'hearingsScheduled',
-          valueName: 'hearingsScheduled'
-        }
-      );
-    }
 
     return columns;
   }
@@ -283,19 +279,6 @@ class ListSchedule extends React.Component {
       hearingScheduleColumns={hearingScheduleColumns} />;
   }
 
-  getExportHeaders = () => {
-    if (this.props.user.userCanViewAndDownloadHearingScheduledColumn) {
-      return exportHeaders.concat(
-        [{
-          label: 'Hearings Scheduled',
-          key: 'hearingsScheduled'
-        }]
-      );
-    }
-
-    return exportHeaders;
-  }
-
   render() {
     const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
@@ -315,7 +298,7 @@ class ListSchedule extends React.Component {
             {this.props.user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
               data={hearingScheduleRows}
-              headers={this.getExportHeaders()}
+              headers={exportHeaders}
               target="_blank"
               filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
               <Button classNames={['usa-button-secondary']}>
@@ -353,8 +336,7 @@ ListSchedule.propTypes = {
   startDate: PropTypes.string,
   switchListView: PropTypes.func,
   user: PropTypes.object,
-  view: PropTypes.string,
-  userCanViewAndDownloadHearingScheduledColumn: PropTypes.bool
+  view: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
