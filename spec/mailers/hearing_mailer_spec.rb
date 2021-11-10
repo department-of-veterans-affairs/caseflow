@@ -345,6 +345,26 @@ describe HearingMailer do
     end
   end
 
+  shared_examples "appellant shared 30-day reminder details sections" do
+    it "displays shared additional reminder details sections" do
+      expect(subject.body).to include("What if I miss my hearing?")
+      expect(subject.body).to include("What if I need to reschedule my hearing?")
+      expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
+
+      if virtual_hearing.nil?
+        expect(subject.body).to include("What is a virtual tele-hearing?")
+      end
+    end
+  end
+
+  shared_context "30 day reminder" do
+    context "30 day reminder body" do
+      let(:reminder_type) { Hearings::ReminderService::THIRTY_DAY_REMINDER }
+
+      include_examples "appellant shared 30-day reminder details sections"
+    end
+  end
+
   before do
     # Freeze the time to when this fix is made to workaround a potential DST bug.
     Timecop.freeze(Time.utc(2020, 1, 20, 16, 50, 0))
@@ -778,6 +798,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -799,6 +820,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -820,6 +842,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -1043,6 +1066,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -1064,6 +1088,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
