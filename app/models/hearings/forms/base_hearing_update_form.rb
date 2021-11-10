@@ -164,8 +164,8 @@ class BaseHearingUpdateForm
   end
 
   def appellant_email
-    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, v|
-      v.fetch("email_address", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
+    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
+      att.fetch("email_address", nil).present? && att.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
     email = email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes&.[](:appellant_email)
@@ -174,8 +174,8 @@ class BaseHearingUpdateForm
   end
 
   def representative_email
-    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, v|
-      v.fetch("email_address", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
+    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
+      att.fetch("email_address", nil).present? && att.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
     email = email_recipient_attributes&.fetch("email_address", nil) ||
@@ -185,8 +185,8 @@ class BaseHearingUpdateForm
   end
 
   def appellant_timezone
-    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, v|
-      v.fetch("timezone", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
+    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
+      att.fetch("timezone", nil).present? && att.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
     email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:appellant_tz)
@@ -195,8 +195,8 @@ class BaseHearingUpdateForm
   end
 
   def representative_timezone
-    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, v|
-      v.fetch("timezone", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
+    email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
+      att.fetch("timezone", nil).present? && att.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
     email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:representative_tz)

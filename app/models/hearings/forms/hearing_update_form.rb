@@ -27,6 +27,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
     )
   end
 
+  # rubocop:disable Metrics/MethodLength
   def hearing_updates
     {
       bva_poc: bva_poc,
@@ -50,4 +51,5 @@ class HearingUpdateForm < BaseHearingUpdateForm
       email_recipients_attributes: email_recipients_attributes
     }.compact
   end
+  # rubocop:enable Metrics/MethodLength
 end
