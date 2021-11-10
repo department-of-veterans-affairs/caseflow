@@ -178,7 +178,8 @@ class BaseHearingUpdateForm
       v.fetch("email_address", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email = email_recipient_attributes&.fetch("email_address", nil) || virtual_hearing_attributes&.[](:representative_email)
+    email = email_recipient_attributes&.fetch("email_address", nil) ||
+            virtual_hearing_attributes&.[](:representative_email)
 
     email&.strip
   end
@@ -188,7 +189,7 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "AppellantHearingEmailRecipient"
     end&.last
 
-    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:appellant_timezone)
+    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:appellant_tz)
 
     email&.strip
   end
@@ -198,7 +199,7 @@ class BaseHearingUpdateForm
       v.fetch("timezone", nil).present? && v.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
     end&.last
 
-    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:representative_timezone)
+    email = email_recipient_attributes&.fetch("timezone", nil) || virtual_hearing_attributes&.[](:representative_tz)
 
     email&.strip
   end
@@ -335,7 +336,7 @@ class BaseHearingUpdateForm
     )
 
     hearing.representative_recipient&.unset_email_address!
-    if representative_email.present? || representative_timezone.present?
+    if representative_email.present?
       hearing.create_or_update_recipients(
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email,
