@@ -667,10 +667,29 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
+const receiveVhaProgramOffices = (vhaProgramOffices) => ({
+  type: ACTIONS.RECEIVE_VHA_PROGRAM_OFFICES,
+  payload: {
+    vhaProgramOffices
+  }
+});
+
+const errorVhaProgramOffices = (error) => ({
+  type: ACTIONS.ERROR_LOADING_VHA_PROGRAM_OFFICES,
+  payload: {
+    error
+  }
+});
+
 export const fetchAllAttorneys = () => (dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
+
+export const fetchVhaProgramOffices = () => (dispatch) =>
+  ApiUtil.get('/organizations?type=VhaProgramOffice').
+    then((resp) => dispatch(receiveVhaProgramOffices(resp.body.organizations.data))).
+    catch((error) => dispatch(errorVhaProgramOffices(error)));
 
 export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch) => {
   let url = `/tasks?user_id=${userId}&role=${userRole}`;

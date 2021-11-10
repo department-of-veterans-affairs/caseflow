@@ -13,6 +13,7 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
+  fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
   fetchCamoTasks
 } from './QueueActions';
@@ -73,6 +74,14 @@ class QueueLoadingScreen extends React.PureComponent {
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
+  maybeLoadCamoData = (userIsCamoEmployee) => {
+    if (!userIsCamoEmployee) {
+      return Promise.resolve();
+    }
+
+    this.props.fetchVhaProgramOffices();
+  }
+
   maybeLoadTargetUserInfo = () => {
     const userUrlParam = this.props.match?.params.userId;
 
@@ -108,11 +117,13 @@ class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     return this.maybeLoadTargetUserInfo().then(() => {
       const chosenUserId = this.props.targetUserId || this.props.userId;
+      const userIsCamoEmployee = this.props.userIsCamoEmployee;
 
       return Promise.all([
         this.loadAmaQueue(chosenUserId),
         this.loadLegacyQueue(chosenUserId),
-        this.maybeLoadJudgeData(chosenUserId)
+        this.maybeLoadJudgeData(chosenUserId),
+        this.maybeLoadCamoData(userIsCamoEmployee)
       ]);
     });
   }
@@ -147,6 +158,7 @@ QueueLoadingScreen.propTypes = {
   appeals: PropTypes.object,
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
+  fetchVhaProgramOffices: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   fetchCamoTasks: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
@@ -187,6 +199,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
+  fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
   fetchCamoTasks,
   setUserId,

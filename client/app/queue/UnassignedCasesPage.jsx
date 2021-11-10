@@ -8,6 +8,7 @@ import {
   initialAssignTasksToUser
 } from './QueueActions';
 import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
+import AssignToVhaProgramOfficeWidget from './components/AssignToVhaProgramOfficeWidget';
 import RequestDistributionButton from './components/RequestDistributionButton';
 import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
@@ -42,6 +43,23 @@ class UnassignedCasesPage extends React.PureComponent {
 
   render = () => {
     const { userId, selectedTasks, success, error, userIsCamoEmployee } = this.props;
+    let assignWidget;
+
+    if (userIsCamoEmployee) {
+      assignWidget = <AssignToVhaProgramOfficeWidget
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialAssignTasksToUser}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
+    } else {
+      assignWidget = <AssignToAttorneyWidget
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialAssignTasksToUser}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
+    }
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
@@ -50,12 +68,7 @@ class UnassignedCasesPage extends React.PureComponent {
       <div {...assignSectionStyling}>
         <React.Fragment>
           <div {...assignAndRequestStyling}>
-            <AssignToAttorneyWidget
-              userId={userId}
-              previousAssigneeId={userId}
-              onTaskAssignment={this.props.initialAssignTasksToUser}
-              selectedTasks={selectedTasks}
-              showRequestCasesButton />
+            {assignWidget}
             {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
