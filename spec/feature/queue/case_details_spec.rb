@@ -2438,7 +2438,6 @@ RSpec.feature "Case details", :all_dbs do
       let(:vso) { create(:vso) }
       let(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
-      let(:role) { nil }
       let!(:vso_task) do
         create(:track_veteran_task, :in_progress, parent: root_task, assigned_to: vso, appeal: root_task.appeal)
       end
@@ -2446,7 +2445,8 @@ RSpec.feature "Case details", :all_dbs do
         create(
           :bgs_power_of_attorney,
           :with_name_cached,
-          appeal: appeal
+          appeal: appeal,
+          poa_participant_id: vso.participant_id
         )
       end
 
@@ -2467,11 +2467,10 @@ RSpec.feature "Case details", :all_dbs do
         it "case details displays error message" do
           visit("/queue/appeals/#{appeal.uuid}")
           allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
-          visit("/queue/appeals/#{appeal.uuid}")
-          # binding.pry
+          binding.pry
         end
       end
-      context "check via caseflow to see if vso shoudl have access" do
+      context "check via caseflow to see if vso should have access" do
         it "should display case details" do
           binding.pry
           expect(appeal.accessible?).to be_truthy
