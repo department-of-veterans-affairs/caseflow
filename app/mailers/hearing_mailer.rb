@@ -46,8 +46,6 @@ class HearingMailer < ActionMailer::Base
     @test_link = virtual_hearing&.test_link(email_recipient_info.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
-    # Raise an error if the link contains the old virtual hearing link 2021-11-10
-    raise BadVirtualLinkError if @link.include?(BAD_VIRTUAL_LINK_TEXT)
 
     mail(to: recipient_info.email, subject: confirmation_subject)
   end
@@ -150,8 +148,15 @@ class HearingMailer < ActionMailer::Base
   end
 
   def link
-    return virtual_hearing.host_link if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    hearing_link = if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+      virtual_hearing.host_link
+    else
+      virtual_hearing.guest_link
+    end
 
-    virtual_hearing.guest_link
+    # Raise an error if the link contains the old virtual hearing link 2021-11-10
+    raise BadVirtualLinkError if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
+
+    hearing_link
   end
 end
