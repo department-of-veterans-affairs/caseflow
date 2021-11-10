@@ -27,9 +27,9 @@ describe AssessDocumentationTask, :postgres do
       let(:regional_office) { VhaRegionalOffice.create!(name: "Regional Office", url: "Regional Office") }
       let(:regional_office_task) { create(:assess_documentation_task, assigned_to: regional_office) }
 
-      subject { regional_office_task.available_actions(user) }
-
       before { regional_office.add_user(user) }
+
+      subject { regional_office_task.available_actions(user) }
 
       available_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
