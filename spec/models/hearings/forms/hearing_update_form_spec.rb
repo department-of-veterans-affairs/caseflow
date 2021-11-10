@@ -17,6 +17,7 @@ describe HearingUpdateForm, :all_dbs do
       }
     end
     let(:create_conference_job) { double(VirtualHearings::CreateConferenceJob) }
+    let(:delete_conferences_job) { double(VirtualHearings::DeleteConferencesJob) }
 
     before do
       RequestStore[:current_user] = user
@@ -24,6 +25,9 @@ describe HearingUpdateForm, :all_dbs do
       # mock CreateConferenceJob so its datadog calls don't interfere with our tests
       allow(VirtualHearings::CreateConferenceJob).to receive(:new).and_return(create_conference_job)
       allow(create_conference_job).to receive(:perform_now) # and do nothing
+      # mock DeleteConferencesJob so we can test that it's called
+      allow(VirtualHearings::DeleteConferencesJob).to receive(:new).and_return(delete_conferences_job)
+      allow(delete_conferences_job).to receive(:perform_now) # and do nothing
     end
 
     subject { HearingUpdateForm.new(params) }
@@ -81,6 +85,29 @@ describe HearingUpdateForm, :all_dbs do
             attrs: { hearing_id: hearing.id }
           )
         )
+        subject.update
+      end
+
+      it "calls CreateConferenceJob once" do
+        expect(create_conference_job).to receive(:perform_now).once
+        subject.update
+      end
+    end
+
+    context "cancelling a virtual hearing" do
+      let(:params) do
+        {
+          hearing: hearing.reload,
+          virtual_hearing_attributes: {
+            appellant_email: "veteran@example.com",
+            representative_email: "representative@example.com",
+            request_cancelled: true
+          }
+        }
+      end
+
+      it "calls DeleteConferences job once" do
+        expect(delete_conferences_job).to receive(:perform_now).once
         subject.update
       end
     end
