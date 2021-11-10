@@ -222,4 +222,31 @@ describe EvidenceSubmissionWindowTask, :postgres do
       end
     end
   end
+
+  # Found 15 appeals without active tasks https://dsva.slack.com/archives/CQTDX9BF0/p1635777026028700
+  # They had a cancelled child EvidenceSubmissionWindowTask with an on_hold parent EvidenceSubmissionWindowTask.
+  # This test ensures that parent is cancelled when the child is cancelled.
+  context "with parent EvidenceSubmissionWindowTask" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let(:distribution_task) { appeal.tasks.find_by_type(:DistributionTask) }
+    let(:parent) do
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: MailTeam.singleton, parent: distribution_task)
+    end
+    let!(:child) { create(:evidence_submission_window_task, parent: parent, assigned_to: create(:user)) }
+    before { expect(parent.status).to eq "on_hold" }
+    context "cancelling child EvidenceSubmissionWindowTask" do
+      subject { child.cancelled! }
+      it "cancels parent task" do
+        subject
+        expect(parent.status).to eq "cancelled"
+      end
+    end
+    context "completing child EvidenceSubmissionWindowTask" do
+      subject { child.completed! }
+      it "completes parent task" do
+        subject
+        expect(parent.status).to eq "completed"
+      end
+    end
+  end
 end
