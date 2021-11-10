@@ -19,6 +19,8 @@ class HearingMailer < ActionMailer::Base
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
 
+  class BadVirtualLinkError < StandardError; end
+
   def cancellation(email_recipient_info:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
     return if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
@@ -44,6 +46,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
+    raise_error_and_log("confirmation", virtual_hearing, email_recipient_info.title) if bad_link(link)
     mail(to: recipient_info.email, subject: confirmation_subject)
   end
 
@@ -55,6 +58,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
+    raise_error_and_log("updated_time_confirmation", virtual_hearing, email_recipient_info.title) if bad_link(link)
     mail(
       to: recipient_info.email,
       subject: "Your Board hearing time has changed – Do Not Reply"
@@ -74,6 +78,7 @@ class HearingMailer < ActionMailer::Base
       virtual_hearing.nil? && email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
     @reminder_type = day_type
 
+    raise_error_and_log("reminder, #{day_type}", virtual_hearing, email_recipient_info.title) if bad_link(link)
     mail(
       to: recipient_info.email,
       subject: reminder_subject
@@ -83,6 +88,20 @@ class HearingMailer < ActionMailer::Base
   private
 
   attr_reader :recipient_info, :virtual_hearing
+
+  def bad_link(link)
+    link.include?("care.va.gov")
+  end
+
+  def raise_error_and_log(type, virtual_hearing, recipient_title)
+    Rails.logger.info(
+      "Email with bad link caught "\
+      "type: #{type}"\
+      "recipient_type: #{recipient_title}"\
+      "virtual_hearing_id: #{virtual_hearing.id}"
+    )
+    raise BadVirtualLinkError
+  end
 
   def cancellation_subject
     # :reek:RepeatedConditionals
