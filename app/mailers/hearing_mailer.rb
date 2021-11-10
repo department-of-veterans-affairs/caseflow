@@ -3,6 +3,8 @@
 ##
 # HearingMailer will:
 # - Generate emails from the templates in app/views/hearing_mailer
+#   - All types will use layouts/hearing_mailer.html.erb to determine the order of the sections
+#     - Example section: :test_your_connection, :rescheduling_or_canceling_your_hearing
 #   - The method name like "cancellation" determines which template is used.
 #   - The 'cancellation' method uses app/views/hearing_mailer/cancellation.html.erb
 #   - cancellation.html.erb prepends the recipient type and uses another template.

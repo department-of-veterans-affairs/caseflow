@@ -247,7 +247,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def slots_select_hearing_time(time)
-      find(".time-slot-button", text: "#{time} EDT").click
+      find(".time-slot-button", text: "#{time} #{Time.zone.now.zone}").click
     end
 
     def slots_select_custom_hearing_time(time)
@@ -456,12 +456,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             name: "hearingDate"
           )
           expect(page).to have_content("Hearing Time")
-          if first_slot_time.nil?
+          if !hearing_day.half_day?
             expect(find(".cf-form-radio-option", text: "8:30")).not_to eq(nil)
-            select_hearing_time("12:30")
           else
             expect(page).not_to have_selector(".cf-form-radio-option")
             expect(page).to have_content(readonly_time_text)
+          end
+          if first_slot_time.nil? || first_slot_time == "14:30"
+            select_hearing_time("12:30")
+          else
+            select_hearing_time("10:30")
           end
 
           click_button("Schedule", exact: true)
