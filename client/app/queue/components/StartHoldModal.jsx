@@ -27,6 +27,12 @@ import {
   resetSuccessMessages,
 } from '../uiReducer/uiActions';
 
+import { css } from 'glamor';
+
+const labelTextStyling = css({
+  marginTop: '3rem'
+});
+
 class StartHoldModal extends React.Component {
   constructor(props) {
     super(props);
@@ -134,6 +140,7 @@ class StartHoldModal extends React.Component {
         value={this.state.customHold}
         onChange={(customHold) => this.setState({ customHold })}
         errorMessage={handleError()}
+        inputProps={labelTextStyling}
       /> }
       <TextareaField
         value={this.state.instructions}
