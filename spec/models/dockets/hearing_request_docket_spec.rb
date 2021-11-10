@@ -12,21 +12,27 @@ describe HearingRequestDocket, :all_dbs do
         OR
         appeals that have no hearings at all
         appeals that have no hearings with disposition held" do
-      another_inactive_judge = create(:user, last_login_at: 70.days.ago)
-      JudgeTeam.create_for_judge(another_inactive_judge)
+      # This is no longer applicable: we now just go with not tied to any judge at all
+      #another_inactive_judge = create(:user, last_login_at: 70.days.ago)
+      #JudgeTeam.create_for_judge(another_inactive_judge)
       create_appeals_that_should_not_be_returned_by_query
+
       # base conditions = priority, distributable, hearing docket
       first_appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
       second_appeal = matching_all_base_conditions_with_no_hearings
       third_appeal = matching_all_base_conditions_with_no_held_hearings
       fourth_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_active_judge_but_not_held
+
       # This one below should never happen, but is included for completeness
       fifth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
 
-      result = [first_appeal, second_appeal, third_appeal, fourth_appeal, fifth_appeal]
+      result = [second_appeal, third_appeal, fourth_appeal, fifth_appeal]
         .map(&:ready_for_distribution_at).map(&:to_s)
 
+      # First appeal is no longer returned
+
       # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
+      # maw: This is kind of a not-great assertion. Especially because they're basically all the same timestamp.
       expect(subject.map(&:to_s)).to match_array(result)
     end
   end
@@ -125,7 +131,7 @@ describe HearingRequestDocket, :all_dbs do
 
         tasks = subject
 
-        expect(tasks.length).to eq(expected_result.length)
+        expect(tasks.map(&:case_id)).to match_array(expected_result.map(&:uuid))
         expect(tasks.first.class).to eq(DistributedCase)
         expect(tasks.first.genpop).to eq false
         expect(tasks.first.genpop_query).to eq "any"
@@ -432,6 +438,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  # mattw: This is now an obsolete condition.
   def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
     inactive_judge = create(:user, last_login_at: 70.days.ago)
     JudgeTeam.create_for_judge(inactive_judge)
