@@ -10,10 +10,13 @@ if Rails.application.config.sqs_endpoint
   # override the sqs_endpoint using the instructions from:
   # https://github.com/ruby-shoryuken/shoryuken/wiki/Using-a-local-mock-SQS-server
   Shoryuken.configure_client do |config|
-    config.sqs_client = Aws::SQS::Client.new(endpoint: Rails.application.config.sqs_endpoint)
-  end
-  Shoryuken.configure_server do |config|
-    config.sqs_client = Aws::SQS::Client.new(endpoint: Rails.application.config.sqs_endpoint)
+    config.sqs_client = Aws::SQS::Client.new(
+      endpoint: Rails.application.config.sqs_endpoint,
+      region: ENV["AWS_REGION"],
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"],
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
+      verify_checksums: false
+    )
   end
 end
 
@@ -36,5 +39,15 @@ Shoryuken.configure_server do |config|
     chain.add JobMonitoringMiddleware
     chain.add JobRequestStoreMiddleware
     chain.add JobSentryScopeMiddleware
+  end
+
+  if Rails.application.config.sqs_endpoint
+    config.sqs_client = Aws::SQS::Client.new(
+      endpoint: Rails.application.config.sqs_endpoint,
+      region: ENV["AWS_REGION"],
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"],
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
+      verify_checksums: false
+    )
   end
 end
