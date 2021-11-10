@@ -11,6 +11,10 @@ describe DirectReviewDocket, :postgres do
   context "#time_until_due_of_new_appeal" do
     subject { DirectReviewDocket.new.time_until_due_of_new_appeal }
 
+    it "returns a positive value" do
+      expect(subject).to be > 0
+    end
+
     it "returns the correct value" do
       expect(subject).to eq(300)
     end
