@@ -1018,4 +1018,24 @@ export const formatRoomOption = (room) => {
   });
 };
 
+export const getHearingScheduleColumnsForUser = (user, columns) => {
+  if (user.userVsoEmployee) {
+    const omitColumnsNames = ['VLJ'];
+
+    return columns.filter((column) => !omitColumnsNames.includes(column.name));
+  }
+
+  return columns;
+};
+
+export const getexportHeadersforUser = (user, headers) => {
+  if (user.userVsoEmployee) {
+    const omitHeadersLabels = ['VLJ', 'CSS ID'];
+
+    return headers.filter((header) => !omitHeadersLabels.includes(header.label));
+  }
+
+  return headers;
+};
+
 /* eslint-enable camelcase */

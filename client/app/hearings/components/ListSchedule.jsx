@@ -8,7 +8,11 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
-import { formatHearingType } from '../utils';
+import {
+  formatHearingType,
+  getHearingScheduleColumnsForUser,
+  getexportHeadersforUser
+} from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -60,25 +64,6 @@ const clearfix = css({
     display: 'block'
   }
 });
-
-const exportHeaders = [
-  { label: 'ID',
-    key: 'id' },
-  { label: 'Scheduled For',
-    key: 'scheduledFor' },
-  { label: 'Type',
-    key: 'readableRequestType' },
-  { label: 'Regional Office',
-    key: 'regionalOffice' },
-  { label: 'Room',
-    key: 'room' },
-  { label: 'CSS ID',
-    key: 'judgeCssId' },
-  { label: 'VLJ',
-    key: 'vlj' },
-  { label: 'Hearings Scheduled',
-    key: 'hearingsScheduled' }
-];
 
 const SwitchViewDropdown = ({ onSwitchView }) => {
   return (
@@ -184,6 +169,8 @@ class ListSchedule extends React.Component {
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
+    const { user } = this.props;
+
     const columns = [
       {
         header: 'Date',
@@ -255,7 +242,32 @@ class ListSchedule extends React.Component {
       }
     ];
 
-    return columns;
+    return getHearingScheduleColumnsForUser(user, columns);
+  }
+
+  getexportHeaders = () => {
+    const { user } = this.props;
+
+    const exportHeaders = [
+      { label: 'ID',
+        key: 'id' },
+      { label: 'Scheduled For',
+        key: 'scheduledFor' },
+      { label: 'Type',
+        key: 'readableRequestType' },
+      { label: 'Regional Office',
+        key: 'regionalOffice' },
+      { label: 'Room',
+        key: 'room' },
+      { label: 'CSS ID',
+        key: 'judgeCssId' },
+      { label: 'VLJ',
+        key: 'vlj' },
+      { label: 'Hearings Scheduled',
+        key: 'hearingsScheduled' }
+    ];
+
+    return getexportHeadersforUser(user, exportHeaders);
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -282,6 +294,7 @@ class ListSchedule extends React.Component {
   render() {
     const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
+    const exportHeaders = this.getexportHeaders();
 
     return (
       <React.Fragment>
