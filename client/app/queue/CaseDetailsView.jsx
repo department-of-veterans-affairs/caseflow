@@ -127,7 +127,6 @@ export const CaseDetailsView = (props) => {
   const resetState = () => {
     props.resetErrorMessages();
     props.clearAlerts();
-    props.resetSuccessMessages();
   };
 
   const pollHearing = () =>
@@ -160,7 +159,10 @@ export const CaseDetailsView = (props) => {
       });
     }
 
-    return setTimeout(resetState(), 100);
+    return () => {
+      resetErrorMessages();
+      resetSuccessMessages();
+    };
   }, []);
 
   const doPulacCerulloReminder = useMemo(
