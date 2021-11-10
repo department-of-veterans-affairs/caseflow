@@ -50,7 +50,11 @@ class StartHoldModal extends React.Component {
     const hasHoldLength = Boolean(Number(this.holdLength()));
     const customHoldIsValid = Boolean(this.state.customHold < 31);
 
-    return hasInstructions && hasHoldLength && customHoldIsValid;
+    if (this.props.task.type === 'AssessDocumentationTask') {
+      return hasInstructions && hasHoldLength && customHoldIsValid;
+    }
+
+    return hasInstructions && hasHoldLength;
   };
 
   submit = () => {

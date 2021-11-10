@@ -11,7 +11,7 @@ import {
 import { amaAppeal } from '../../../test/data/appeals';
 
 export default {
-  title: 'Commons/Components/Modal/StartHoldModal',
+  title: 'Queue/CaseTimeline/StartHoldModal',
   component: StartHoldModal,
   parameters: {
     controls: { expanded: true },
@@ -57,4 +57,3 @@ const Template = ({ ...componentArgs }) => {
 };
 
 export const Basic = Template.bind({});
-
