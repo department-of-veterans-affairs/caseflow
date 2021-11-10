@@ -110,10 +110,6 @@ class HearingsController < HearingsApplicationController
     :appellant_email, :judge_email, :representative_email, :request_cancelled, :appellant_tz, :representative_tz
   ].freeze
 
-  EMAIL_RECIPIENTS_ATTRIBUTES = [
-    :id, :timezone, :email_address, :type
-  ].freeze
-
   def update_params_legacy
     params
       .require(:hearing)
@@ -123,7 +119,7 @@ class HearingsController < HearingsApplicationController
         :scheduled_for,
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
-        email_recipients_attributes: EMAIL_RECIPIENTS_ATTRIBUTES
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(hearing: hearing)
   end
@@ -139,7 +135,7 @@ class HearingsController < HearingsApplicationController
         transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
         hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
         virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
-        email_recipients_attributes: EMAIL_RECIPIENTS_ATTRIBUTES
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
