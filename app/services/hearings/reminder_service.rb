@@ -8,6 +8,7 @@ class Hearings::ReminderService
   TWO_DAY_REMINDER = :two_day_reminder
   THREE_DAY_REMINDER = :three_day_reminder
   SEVEN_DAY_REMINDER = :seven_day_reminder
+  THIRTY_DAY_REMINDER = :thirty_day_reminder
   SIXTY_DAY_REMINDER = :sixty_day_reminder
 
   def initialize(hearing:, last_sent_reminder:, hearing_created_at:)
@@ -67,6 +68,9 @@ class Hearings::ReminderService
     elsif should_send_7_day_reminder?
       log_reminder_type("7 day")
       SEVEN_DAY_REMINDER
+    elsif should_send_30_day_reminder?
+      log_reminder_type("30 day")
+      THIRTY_DAY_REMINDER
     elsif should_send_60_day_reminder?
       log_reminder_type("60 day")
       SIXTY_DAY_REMINDER
@@ -89,6 +93,11 @@ class Hearings::ReminderService
   def should_send_7_day_reminder?
     days_between_hearing_and_created_at > 7 &&
       days_until_hearing <= 7 && days_from_hearing_day_to_last_sent_reminder > 7
+  end
+
+  def should_send_30_day_reminder?
+    days_between_hearing_and_created_at > 30 &&
+      days_until_hearing <= 30 && days_from_hearing_day_to_last_sent_reminder > 30
   end
 
   def should_send_60_day_reminder?
