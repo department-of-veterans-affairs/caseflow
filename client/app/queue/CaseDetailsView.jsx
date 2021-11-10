@@ -160,7 +160,7 @@ export const CaseDetailsView = (props) => {
       });
     }
 
-    return resetState();
+    return setTimeout(resetState(), 100);
   }, []);
 
   const doPulacCerulloReminder = useMemo(
