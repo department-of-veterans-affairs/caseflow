@@ -168,20 +168,14 @@ class VirtualHearing < CaseflowRecord
   # refactor our handling of pre- and post-1/2021 links with CASEFLOW-1336.
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
-    return VirtualHearings::LinkService.new(conference_id).guest_link
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{guest_pin}&role=guest"
+    VirtualHearings::LinkService.new.guest_link
   end
 
   def host_link
     return host_hearing_link if host_hearing_link.present?
-    return VirtualHearings::LinkService.new(conference_id).host_link
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{host_pin}&role=host"
+    VirtualHearings::LinkService.new.host_link
   end
 
   def test_link(title)
