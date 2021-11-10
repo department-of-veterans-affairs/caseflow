@@ -8,15 +8,16 @@ describe AssessDocumentationTask, :postgres do
       let(:program_office) { VhaProgramOffice.create!(name: "Program Office", url: "Program Office") }
       let(:program_office_task) { create(:assess_documentation_task, assigned_to: program_office) }
 
-      subject { program_office_task.available_actions(user) }
-
       before { program_office.add_user(user) }
+
+      subject { program_office_task.available_actions(user) }
 
       available_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
-        Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
+        Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h,
+        Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h
       ]
 
       it { is_expected.to eq available_actions }
@@ -33,7 +34,8 @@ describe AssessDocumentationTask, :postgres do
       available_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
-        Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h
+        Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h,
+        Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h
       ]
 
       it { is_expected.to eq available_actions }
