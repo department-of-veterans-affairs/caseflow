@@ -15,20 +15,17 @@ describe HearingRequestDocket, :all_dbs do
       create_appeals_that_should_not_be_returned_by_query
 
       # base conditions = priority, distributable, hearing docket
-      second_appeal = matching_all_base_conditions_with_no_hearings
-      third_appeal = matching_all_base_conditions_with_no_held_hearings
-      fourth_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
+      first_appeal = matching_all_base_conditions_with_no_hearings
+      second_appeal = matching_all_base_conditions_with_no_held_hearings
+      third_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
 
       # This one below should never happen, but is included for completeness
-      fifth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
+      fourth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
 
-      result = [second_appeal, third_appeal, fourth_appeal, fifth_appeal]
+      result = [first_appeal, second_appeal, third_appeal, fourth_appeal]
         .map(&:ready_for_distribution_at).map(&:to_s)
 
-      # First appeal is no longer returned
-
       # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
-      # maw: This is kind of a not-great assertion. Especially because they're basically all the same timestamp.
       expect(subject.map(&:to_s)).to match_array(result)
     end
   end
