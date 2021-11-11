@@ -122,7 +122,6 @@ describe HigherLevelReview, :postgres do
           it "adds errors to informal_conference and same_office" do
             is_expected.to be false
             expect(higher_level_review.errors[:informal_conference]).to include("blank")
-            expect(higher_level_review.errors[:same_office]).to include("blank")
             expect(higher_level_review.errors[:legacy_opt_in_approved]).to include("blank")
             expect(higher_level_review.errors[:veteran_is_not_claimant]).to include("blank")
           end
