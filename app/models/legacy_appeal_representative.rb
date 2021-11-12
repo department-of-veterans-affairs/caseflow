@@ -7,7 +7,7 @@ class LegacyAppealRepresentative
   end
 
   # This references VACOLS::Representative table
-  delegate :vacols_representatives, to: :case_record
+  delegate :vacols_representatives, to: :case_record, allow_nil: true
 
   # This references Caseflow organizations table
   def representatives
