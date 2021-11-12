@@ -719,15 +719,6 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
-  context "with unauthorized user role (non-hearings management)" do
-    let!(:current_user) { User.authenticate!(user: user) }
-
-    scenario "Fields are not editable" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
-      expect(page).to have_field("Notes", disabled: true)
-    end
-  end
-
   context "with authorized user role" do
     let!(:current_user) do
       HearingsManagement.singleton.add_user(user)
