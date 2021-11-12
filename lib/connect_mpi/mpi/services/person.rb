@@ -105,7 +105,7 @@ module MPI
 
     def parametrize_telephone(value)
       value = value[1..] if value[0] == "1" && value.length == 11
-      value = "+1-#{value[0..2]}-#{value[3..5]}-#{value[6-9]}" if value.length == 10
+      value = "+1-#{value[0..2]}-#{value[3..5]}-#{value[6..9]}" if value.length == 10
       element = Nokogiri::XML::DocumentFragment.parse <<-EOXML
         <patientTelecom>
           <value value="tel:+1-555-638-7259"/>
