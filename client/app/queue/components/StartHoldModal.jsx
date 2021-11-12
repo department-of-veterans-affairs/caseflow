@@ -30,7 +30,8 @@ import {
 import { css } from 'glamor';
 
 const labelTextStyling = css({
-  marginTop: '3rem'
+  marginTop: '3rem',
+  marginBottom: 0
 });
 
 class StartHoldModal extends React.Component {
@@ -141,7 +142,7 @@ class StartHoldModal extends React.Component {
         onChange={(customHold) => this.setState({ customHold })}
         errorMessage={handleError()}
         inputProps={labelTextStyling}
-      /> }
+        inputStyling={marginTop(0)} /> }
       <TextareaField
         value={this.state.instructions}
         name="instructions"
