@@ -22,17 +22,14 @@ import TextareaField from 'app/components/TextareaField';
 import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import COPY from 'app/../COPY';
-import { fullWidth } from '../constants';
 import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
 
 /**
- * Widget used to assign an AttorneyTask to a user. This can be used as an addition to a page or as a modal by passing
- * `isModal` to the component. The component displays attorneys on the judge's team first with an option to select any
- * attorney in caseflow by selecting "Other". The full list of attorneys is preloaded into state for judges in
- * QueueLoadingScreen.
+ * Widget used to assign an AssessDocumentationTask to an org. This can be used as an addition to a page or as a modal by passing
+ * `isModal` to the component. The component displays VhaProgramOffices preloaded into state in QueueLoadingScreen.
  */
 export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
   constructor(props) {
@@ -102,13 +99,11 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
   }
 
   getAssignee = (userId) => {
-    const { vhaProgramOffices, currentUser, selectedTasks } = this.props;
+    const { vhaProgramOffices, selectedTasks } = this.props;
 
-    // Assignee could be the current user
-    const camoOpt = { id: currentUser.id, full_name: currentUser.fullName };
-    const assigneeOpts = [camoOpt, ...(vhaProgramOffices?.data || [])];
+    const assigneeOpts = [...(vhaProgramOffices?.data || [])];
 
-    let assignee = assigneeOpts.find((user) => user?.id?.toString() === userId.toString());
+    let assignee = assigneeOpts.find((org) => org?.id?.toString() === userId.toString());
 
     if (!assignee) {
       // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
@@ -182,7 +177,6 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
   render = () => {
     const {
       vhaProgramOffices,
-      currentUser,
       selectedAssignee,
       selectedTasks,
       savePending,
@@ -195,8 +189,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
       label: programOffice.attributes.name,
       value: programOffice.attributes.id
     });
-    const camoOpt = currentUser ? { label: currentUser.fullName, value: currentUser.id } : null;
-    const options = [...vhaProgramOffices.data.map(optionFromProgramOffice), ...(camoOpt ? [camoOpt] : [])];
+    const options = [...vhaProgramOffices.data.map(optionFromProgramOffice)];
     const selectedOption = options.find((option) => option.value === selectedAssignee);
 
     const Widget = <React.Fragment>
