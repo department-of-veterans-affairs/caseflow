@@ -48,6 +48,7 @@ class Hearing < CaseflowRecord
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
+  accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 
   alias_attribute :location, :hearing_location
 
