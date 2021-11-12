@@ -45,7 +45,6 @@ export const HearingConversion = ({
     representativeTimezone: hearing?.representativeTz,
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
-    readOnly: !virtual,
     showTimezoneField: true,
     schedulingToVirtual: virtual
   };
