@@ -49,7 +49,8 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
     </strong><br />
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
     {hearing.docketNumber} <br />
-    {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
+    {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}<br /></span>}
+    <br />
     {userCanViewFnodBadgeInHearings && <FnodBadge
       veteranAppellantDeceased={hearing.veteranDateOfDeathInfo?.veteranAppellantDeceased}
       uniqueId={hearing.id}
@@ -71,7 +72,15 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
         </div>
       }
     />}
-    <ContestedClaimBadge appeal={{ contestedClaim: hearing.contestedClaim }} />
+    <ContestedClaimBadge 
+      appeal={{ contestedClaim: hearing.contestedClaim }} 
+      docketTooltipText={
+        <div>
+          This is a Contested Claim. Please ensure<br />
+          proper notice is sent to all parties.
+        </div>
+      }
+    />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?

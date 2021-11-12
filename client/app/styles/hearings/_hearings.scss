@@ -2,17 +2,6 @@ $cf-hearing-day-label-color: #323a45;
 $form-spacing: 15px;
 $form-width: 575px;
 
-
-.cf-fnod-badge,
-.cf-contested-badge {
-  display: inline-block;
-  margin: 1rem 0 0 -1rem;
-}
-
-.cf-fnod-badge {
-  margin-right: 1rem;
-}
-
 .worksheet-header {
   .cf-push-right {
     padding-top: 25px;
@@ -696,4 +685,18 @@ $form-width: 575px;
 
 .usa-input-error .cf-select {
   max-width: $form-width;
+}
+
+
+// Docket Styles
+.judge-view {
+  .cf-fnod-badge,
+  .cf-contested-badge {
+    display: inline-block;
+    margin-left: -1rem;
+  }
+
+  .cf-fnod-badge {
+    margin-right: 1rem;
+  }
 }
