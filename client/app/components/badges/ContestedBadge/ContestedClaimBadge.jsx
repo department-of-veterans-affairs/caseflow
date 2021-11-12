@@ -27,7 +27,7 @@ const ContestedClaimBadge = (props) => {
 ContestedClaimBadge.propTypes = {
   appeal: PropTypes.object,
   longTooltip: PropTypes.bool,
-  docketTooltipText: PropTypes.string
+  docketTooltipText: PropTypes.object
 };
 
 export default ContestedClaimBadge;

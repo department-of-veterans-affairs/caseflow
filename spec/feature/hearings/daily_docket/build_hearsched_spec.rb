@@ -304,8 +304,8 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
     let(:vacols_case) { create(:case) }
     let(:vacols_rep) { VACOLS::Representative.create_rep!(vacols_case.bfkey, {}) }
-    let(:random_contested_reptype) do 
-      key = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+    let(:random_contested_reptype) do
+      key = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample
       VACOLS::Representative::CONTESTED_REPTYPES[key][:code]
     end
     let(:appeal) do
@@ -329,7 +329,13 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
       context "when there is a contested claim" do
-        before { VACOLS::Representative.update_rep!(vacols_rep.repkey, vacols_rep.repaddtime, { reptype: random_contested_reptype }) }
+        before do
+          VACOLS::Representative.update_rep!(
+            vacols_rep.repkey,
+            vacols_rep.repaddtime,
+            reptype: random_contested_reptype
+          )
+        end
 
         scenario "badge does appear" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
@@ -347,7 +353,13 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
     context "without feature toggle enabled" do
       context "when there is a contested claim" do
-        before { VACOLS::Representative.update_rep!(vacols_rep.repkey, vacols_rep.repaddtime, { reptype: random_contested_reptype }) }
+        before do
+          VACOLS::Representative.update_rep!(
+            vacols_rep.repkey,
+            vacols_rep.repaddtime,
+            reptype: random_contested_reptype
+          )
+        end
 
         scenario "badge does not appear" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
