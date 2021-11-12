@@ -14,7 +14,11 @@ class LegacyHearingSerializer
   attribute :appellant_address_line_2
   attribute :appellant_city
   attribute :appellant_country
-  attribute :appellant_email_address, if: for_full
+  attribute :appellant_email_address
+  attribute :appellant_tz
+  attribute :appellant_email_id, if: for_full do |hearing|
+    hearing.appellant_recipient&.id.to_s
+  end
   attribute :appellant_first_name
   attribute :appellant_is_not_veteran do |hearing|
     hearing.appeal.appellant_is_not_veteran
@@ -33,7 +37,7 @@ class LegacyHearingSerializer
   attribute :disposition_editable
   attribute :docket_name
   attribute :docket_number
-  attribute :email_recipients do |object|
+  attribute :email_recipients, if: for_full do |object|
     {
       representativeTz: object.representative_recipient&.timezone,
       representativeEmail: object.representative_recipient&.email_address,
@@ -64,6 +68,12 @@ class LegacyHearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
+  attribute :representative_tz, if: for_full do |hearing|
+    hearing.representative_tz || hearing.appeal.appellant_tz
+  end
+  attribute :representative_email_id, if: for_full do |hearing|
+    hearing.representative_recipient&.id.to_s
+  end
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_for_is_past, &:scheduled_for_past?
@@ -86,8 +96,6 @@ class LegacyHearingSerializer
     end
   end
   attribute :is_virtual, &:virtual?
-  attribute :appellant_tz, if: for_full
-  attribute :representative_tz, if: for_full
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
