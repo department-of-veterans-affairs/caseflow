@@ -39,25 +39,23 @@ export const HearingConversion = ({
     errors,
     update,
     appellantTitle,
+    appellantEmailAddress: hearing?.appellantEmailAddress,
+    appellantTimezone: hearing?.appellantTz,
+    representativeEmailAddress: hearing?.representativeEmailAddress,
+    representativeTimezone: hearing?.representativeTz,
+    appellantEmailType: 'appellantEmailAddress',
+    representativeEmailType: 'representativeEmailAddress',
     readOnly: !virtual,
     showTimezoneField: true,
     schedulingToVirtual: virtual
   };
 
   const prefillFields = () => {
-    // Determine which email to use
-    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
-
     // Try to use the existing timezones if present
-    const { appellantTz, representativeTz } = (virtualHearing || {});
-
     update(
-      'virtualHearing', {
-        [!representativeTz && 'representativeTz']:
-          representativeTz || hearing?.representativeTz || hearing?.appellantTz,
-        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      'hearing', {
+        ...hearing,
+        representativeTz: hearing?.representativeTz || hearing?.appellantTz
       });
   };
 
