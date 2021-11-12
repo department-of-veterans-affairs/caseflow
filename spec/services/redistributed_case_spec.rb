@@ -19,6 +19,21 @@ describe RedistributedCase, :all_dbs do
         expect(error_msg).to eq("Case not found")
       end
     end
+    context "when legacy case does exist" do
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:distributed_case) do
+        DistributedCase.create!(
+          distribution: distribution,
+          ready_at: Time.zone.now,
+          docket: "foo",
+          priority: false,
+          case_id: legacy_appeal.vacols_id
+        )
+      end
+      it "returns a truthy value" do
+        expect(subject.allow!).to be_truthy
+      end
+    end
   end
 
   context ".ok_to_redistribute?" do
