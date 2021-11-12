@@ -34,7 +34,7 @@ module MPI
       # value must be \d{9}
       element = Nokogiri::XML::DocumentFragment.parse <<-EOXML
         <livingSubjectId>
-          <value root="2.16.840.1.113883.4.1" extension="627014683"/>
+          <value root="2.16.840.1.113883.4.1" extension=""/>
           <semanticsText>SSN</semanticsText>
         </livingSubjectId>
       EOXML
@@ -72,7 +72,7 @@ module MPI
       element = Nokogiri::XML::DocumentFragment.parse <<-EOXML
         <livingSubjectName>
           <value use="C">
-            <family>Farnsworth</family>
+            <family/>
           </value>
           <semanticsText>Mother's Maiden Name</semanticsText>
         </livingSubjectName>
@@ -110,7 +110,7 @@ module MPI
       value = "+1-#{value[0..2]}-#{value[3..5]}-#{value[6..9]}" if value.length == 10
       element = Nokogiri::XML::DocumentFragment.parse <<-EOXML
         <patientTelecom>
-          <value value="tel:+1-555-638-7259"/>
+          <value/>
           <semanticsText>Home Phone</semanticsText>
         </patientTelecom>
       EOXML
