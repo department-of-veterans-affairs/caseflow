@@ -79,8 +79,8 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { DirectReviewDocket::DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION }
-    let(:days_to_decision_goal) { DirectReviewDocket::DAYS_TO_DECISION_GOAL }
+    let(:days_before_goal_due) { Constants.DISTRIBUTION.days_before_goal_due_for_distribution }
+    let(:days_to_decision_goal) { Constants.DISTRIBUTION.direct_docket_time_goal }
 
     let!(:other_direct_review_cases) do
       (0...10).map do
@@ -118,8 +118,8 @@ describe DocketCoordinator do
 
     context "lever settings for minimum legacy and maximum direct review proportions" do
       it "do not sum to more than 1" do
-        expect(DocketCoordinator::MINIMUM_LEGACY_PROPORTION +
-          DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION).to be <= 1
+        expect(Constants.DISTRIBUTION.minimum_legacy_proportion +
+          Constants.DISTRIBUTION.maximum_direct_review_proportion).to be <= 1
       end
     end
 
@@ -162,7 +162,7 @@ describe DocketCoordinator do
 
         it "caps the percentage at the maximum" do
           expect(docket_coordinator.docket_proportions).to include(
-            direct_review: DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION
+            direct_review: Constants.DISTRIBUTION.maximum_direct_review_proportion
           )
         end
 
@@ -179,7 +179,7 @@ describe DocketCoordinator do
 
         it "ensures a minimum" do
           expect(docket_coordinator.docket_proportions).to include(
-            legacy: DocketCoordinator::MINIMUM_LEGACY_PROPORTION
+            legacy: Constants.DISTRIBUTION.minimum_legacy_proportion
           )
         end
 
