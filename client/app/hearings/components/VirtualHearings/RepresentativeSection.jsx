@@ -20,8 +20,6 @@ export const RepresentativeSection = ({
   update,
   appellantTitle,
   showTimezoneField,
-  schedulingToVirtual,
-  userCanCollectVideoCentralEmails,
   showDivider,
   formFieldsOnly,
   representativeEmailAddress,
@@ -47,7 +45,7 @@ export const RepresentativeSection = ({
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
+    {showTimezoneField && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
