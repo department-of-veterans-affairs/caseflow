@@ -28,6 +28,9 @@ class LegacyHearingSerializer
   attribute :cached_number_of_documents, if: for_worksheet
   attribute :central_office_time_string
   attribute :closest_regional_office
+  attribute :contested_claim do |hearing|
+    hearing.appeal.contested_claim
+  end
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable

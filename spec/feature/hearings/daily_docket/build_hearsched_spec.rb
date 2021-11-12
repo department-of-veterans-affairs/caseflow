@@ -240,7 +240,26 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
   end
 
-  shared_context "contested_claim_badge display" do
+  context "AMA hearing contested_claim badge display" do
+    let!(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Time.zone.today + 1.week
+      )
+    end
+    let(:issue_category) { "Contested Claims - Insurance" }
+    let(:request_issues) { [create(:request_issue, benefit_type: "compensation")] }
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let!(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        hearing_day: hearing_day
+      )
+    end
+
     context "with feature toggle enabled" do
       before { FeatureToggle.enable!(:indicator_for_contested_claims) }
       after { FeatureToggle.disable!(:indicator_for_contested_claims) }
@@ -274,7 +293,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
   end
 
-  context "contested_claim_badge" do
+  context "Legacy hearing contested_claim badge display" do
     let!(:hearing_day) do
       create(
         :hearing_day,
@@ -283,25 +302,58 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
         scheduled_for: Time.zone.today + 1.week
       )
     end
+    let(:vacols_case) { create(:case) }
+    let(:vacols_rep) { VACOLS::Representative.create_rep!(vacols_case.bfkey, {}) }
+    let(:random_contested_reptype) do 
+      key = VACOLS::Representative::CONTESTED_REPTYPES.keys.sample 
+      VACOLS::Representative::CONTESTED_REPTYPES[key][:code]
+    end
+    let(:appeal) do
+      create(
+        :legacy_appeal,
+        vacols_case: vacols_case
+      )
+    end
+    let(:case_hearing) { create(:case_hearing, folder_nr: appeal.vacols_id) }
+    let!(:hearing) do
+      create(
+        :legacy_hearing,
+        appeal: appeal,
+        hearing_day: hearing_day,
+        case_hearing: case_hearing
+      )
+    end
 
-    let(:issue_category) { "Contested Claims - Insurance" }
+    context "with feature toggle enabled" do
+      before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+      after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
-    context "AMA hearing" do
-      let(:request_issues) do
-        [
-          create(:request_issue, benefit_type: "compensation", nonrating_issue_category: issue_category)
-        ]
+      context "when there is a contested claim" do
+        before { VACOLS::Representative.update_rep!(vacols_rep.repkey, vacols_rep.repaddtime, { reptype: random_contested_reptype }) }
+
+        scenario "badge does appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).to have_content("CC")
+        end
       end
-      let(:appeal) { create(:appeal, request_issues: request_issues) }
-      let!(:hearing) do
-        create(
-          :hearing,
-          appeal: appeal,
-          hearing_day: hearing_day
-        )
-      end
 
-      include_context "contested_claim_badge display"
+      context "when there is no contested claim" do
+        scenario "badge does not appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page.has_no_content?("CC")).to eq true
+        end
+      end
+    end
+
+    context "without feature toggle enabled" do
+      context "when there is a contested claim" do
+        before { VACOLS::Representative.update_rep!(vacols_rep.repkey, vacols_rep.repaddtime, { reptype: random_contested_reptype }) }
+
+        scenario "badge does not appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page.has_no_content?("CC")).to eq true
+        end
+      end
     end
   end
 end
