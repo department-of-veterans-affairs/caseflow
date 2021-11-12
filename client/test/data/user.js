@@ -17,7 +17,7 @@ export const vsoUser = {
   ...anyUser,
   userCanVsoHearingSchedule: true,
   userCanAssignHearingSchedule: false
-}
+};
 
 const attyTemplate = ({ id }) => {
   const name = faker.name.findName();
