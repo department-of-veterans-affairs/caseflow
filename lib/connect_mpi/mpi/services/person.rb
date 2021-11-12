@@ -32,12 +32,14 @@ module MPI
 
     def parametrize_ssn(value)
       # value must be \d{9}
-      Nokogiri::XML::DocumentFragment.parse <<-EOXML
+      element = Nokogiri::XML::DocumentFragment.parse <<-EOXML
         <livingSubjectId>
           <value root="2.16.840.1.113883.4.1" extension="627014683"/>
           <semanticsText>SSN</semanticsText>
         </livingSubjectId>
       EOXML
+      element.at_xpath(".//*[name()='value']")["extension"] = value
+      element
     end
 
     def parametrize_name(last_name:, first_name: nil, middle_name: nil)
@@ -117,7 +119,7 @@ module MPI
     end
 
     def search_people_info(last_name:, first_name: nil, middle_name: nil,
-                           date_of_birth: nil, gender: nil, address: nil, telephone: nil)
+                           ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
       query = Nokogiri::XML::DocumentFragment.parse <<-EOXML
   <queryByParameter>
       <!-- Unique identifier for the query  -->
@@ -139,6 +141,7 @@ module MPI
 EOXML
       params = query.at_xpath(".//*[name()='parameterList']")
       params.add_child(parametrize_name(last_name: last_name, first_name: first_name, middle_name: middle_name))
+      params.add_child(parametrize_ssn(ssn)) if ssn.present?
       params.add_child(parametrize_date_of_birth(date_of_birth)) if date_of_birth.present?
       params.add_child(parametrize_gender(gender)) if gender.present?
       params.add_child(parametrize_address(address)) if address.present?
