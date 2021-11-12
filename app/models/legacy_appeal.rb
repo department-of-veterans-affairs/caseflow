@@ -387,7 +387,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def contested_claim
-    vacols_representatives.any? do |r|
+    vacols_representatives&.any? do |r|
       VACOLS::Representative::CONTESTED_REPTYPES.values.pluck(:code).include?(r.reptype)
     end
   end
@@ -418,12 +418,12 @@ class LegacyAppeal < CaseflowRecord
 
   # reptype C is a contested claimant
   def contested_claimants
-    vacols_representatives.where(reptype: "C").map(&:as_claimant)
+    vacols_representatives&.where(reptype: "C").map(&:as_claimant)
   end
 
   # reptype D is contested claimant attorney, reptype E is contested claimant agent
   def contested_claimant_agents
-    vacols_representatives.where(reptype: %w[D E]).map(&:as_claimant)
+    vacols_representatives&.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
