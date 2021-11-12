@@ -1,6 +1,25 @@
 # frozen_string_literal: true
 
 describe DirectReviewDocket, :postgres do
+  context "#docket_type" do
+    subject { DirectReviewDocket.new.docket_type }
+    it "returns the correct docket type" do
+      expect(subject).to eq(Constants.AMA_DOCKETS.direct_review)
+    end
+  end
+
+  context "#time_until_due_of_new_appeal" do
+    subject { DirectReviewDocket.new.time_until_due_of_new_appeal }
+
+    it "returns a positive value" do
+      expect(subject).to be > 0
+    end
+
+    it "returns the correct value" do
+      expect(subject).to eq(300)
+    end
+  end
+
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }
 
@@ -18,36 +37,6 @@ describe DirectReviewDocket, :postgres do
 
     it "returns the expected count" do
       expect(subject).to eq(5)
-    end
-  end
-
-  context "#time_until_due_of_oldest_appeal" do
-    subject { DirectReviewDocket.new.time_until_due_of_oldest_appeal }
-
-    context "there are ready direct reviews" do
-      before do
-        Timecop.freeze(Date.new(2020, 2, 19))
-
-        (102..105).each do |i|
-          appeal = create(:appeal,
-                          :with_post_intake_tasks,
-                          docket_type: Constants.AMA_DOCKETS.direct_review,
-                          receipt_date: i.days.ago)
-          appeal.set_target_decision_date!
-        end
-      end
-
-      it "returns the time until due" do
-        expect(subject).to eq(195)
-      end
-    end
-
-    context "there are no ready direct reviews" do
-      it "returns the default time until due" do
-        expect(subject).to eq(
-          DirectReviewDocket::DAYS_TO_DECISION_GOAL - DirectReviewDocket::DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION
-        )
-      end
     end
   end
 

@@ -8,6 +8,7 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include AppealConcern
+  include BeaamAppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -25,7 +26,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
   has_many :nod_date_updates
-  has_one :special_issue_list
+  has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
@@ -158,6 +159,16 @@ class Appeal < DecisionReview
     return nil unless vacate?
 
     post_decision_motion&.vacate_type
+  end
+
+  def contested_claim?
+    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
+
+    category_substrings = ["Contested Claims", "Apportionment"]
+
+    request_issues.any? do |request_issue|
+      category_substrings.any? { |substring| request_issue.nonrating_issue_category&.include?(substring) }
+    end
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -453,7 +464,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
     end
   end
 
@@ -527,11 +538,6 @@ class Appeal < DecisionReview
 
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
-  end
-
-  def eligible_for_death_dismissal?(_user)
-    # Death dismissal processing is only for VACOLs/Legacy appeals
-    false
   end
 
   # We are ready for BVA dispatch if

@@ -1,7 +1,21 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import {
+  compact,
+  defaults,
+  every,
+  flatten,
+  fromPairs,
+  isNull,
+  last,
+  zip,
+  map,
+  filter,
+  each,
+  find,
+  values
+} from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
@@ -46,16 +60,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = _.flatten(_.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
-    const pairs = _.zip(
-      _.map(options, 'id'),
-      _.map(options, () => ({
+    const options = flatten(values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
+    const pairs = zip(
+      map(options, 'id'),
+      map(options, () => ({
         checked: false,
         post_aoj: null
       }))
     );
 
-    this.state = _.fromPairs(pairs);
+    this.state = fromPairs(pairs);
   }
 
   updateIssue = (remandReasons) => {
@@ -63,17 +77,17 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
-      ..._.find(issues, (issue) => issue.id === issueId),
+      ...find(issues, (issue) => issue.id === issueId),
       remand_reasons: remandReasons
     };
   };
 
-  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
+  getChosenOptions = () => filter(this.state, (val) => val.checked);
 
   validate = () => {
     const chosenOptions = this.getChosenOptions();
 
-    return chosenOptions.length >= 1 && _.every(chosenOptions, (opt) => !_.isNull(opt.post_aoj));
+    return chosenOptions.length >= 1 && every(chosenOptions, (opt) => !isNull(opt.post_aoj));
   };
 
   // todo: make scrollTo util function that also sets focus
@@ -81,7 +95,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   scrollTo = (dest = this, opts) =>
     scrollToComponent(
       dest,
-      _.defaults(opts, {
+      defaults(opts, {
         align: 'top',
         duration: 1500,
         ease: 'outCube',
@@ -95,7 +109,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issues
     } = this.props;
 
-    _.each(remandReasons, (reason) =>
+    each(remandReasons, (reason) =>
       this.setState({
         [reason.code]: {
           checked: true,
@@ -104,7 +118,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       })
     );
 
-    if (_.map(issues, 'id').indexOf(issueId) > 0) {
+    if (map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -115,19 +129,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     //   {"code": "AB", "post_aoj": true},
     //   {"code": "AC", "post_aoj": false}
     // ]
-    const remandReasons = _(this.state).
-      map((val, key) => {
-        if (!val.checked) {
-          return false;
-        }
+    const remandReasons = compact(map(this.state, (val, key) => {
+      if (!val.checked) {
+        return false;
+      }
 
-        return {
-          code: key,
-          post_aoj: val.post_aoj === 'true'
-        };
-      }).
-      compact().
-      value();
+      return {
+        code: key,
+        post_aoj: val.post_aoj === 'true'
+      };
+    }));
 
     return this.updateIssue(remandReasons);
   };
@@ -153,38 +164,50 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
-  getCheckbox = (option, onChange, values) => {
+  getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
     const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return (
       <React.Fragment key={option.id}>
-        <Checkbox name={rowOptId} onChange={onChange} value={values[option.id].checked} label={option.label} unpadded />
-        {values[option.id].checked && (
+        <Checkbox
+          name={rowOptId}
+          onChange={onChange}
+          value={checkboxValues[option.id].checked}
+          label={option.label}
+          unpadded
+        />
+        {checkboxValues[option.id].checked && (
           <RadioField
-            errorMessage={this.props.highlight && _.isNull(this.state[option.id].post_aoj) && 'Choose one'}
+            errorMessage={
+              this.props.highlight &&
+              isNull(this.state[option.id].post_aoj) &&
+              'Choose one'
+            }
             styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
             name={rowOptId}
             vertical
             hideLabel
             options={[
               {
-                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-                value: 'false'
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
+                value: 'false',
               },
               {
-                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-                value: 'true'
-              }
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
+                value: 'true',
+              },
             ]}
             value={this.state[option.id].post_aoj}
             onChange={(postAoj) =>
               this.setState({
                 [option.id]: {
                   checked: true,
-                  post_aoj: postAoj
-                }
+                  post_aoj: postAoj,
+                },
               })
             }
           />
@@ -288,7 +311,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         {appeal.isLegacyAppeal && (
           <React.Fragment>
             <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}</div>
+            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}</div>
             <div {...smallBottomMargin} ref={(node) => (this.elTopOfWarning = node)}>
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
@@ -312,10 +335,10 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) =>
+    issues: filter(issues, (issue) =>
       [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED].includes(issue.disposition)
     ),
-    issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
+    issue: find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };

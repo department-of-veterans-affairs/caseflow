@@ -117,4 +117,33 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
       end
     end
   end
+
+  describe "error handling" do
+    let!(:attorney) { create(:user) }
+    let!(:judge) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: judge, parent: create(:root_task)) }
+    let!(:assignee) { attorney }
+    let!(:params) do
+      { external_id: assign_task.appeal.external_id, parent_id: assign_task.id,
+        assigned_to_id: assignee.id }
+    end
+    subject { post :create, params: { tasks: params } }
+
+    before do
+      User.authenticate!(user: judge)
+      allow_any_instance_of(AttorneyTaskCreator).to(
+        receive(:call).and_raise(Caseflow::Error::MultipleOpenTasksOfSameTypeError.new(message: "testing"))
+      )
+    end
+
+    context "when an appeal has more than one open active task of the same type" do
+      it "reports the error as non-actionable to Sentry" do
+        expect(Raven).to receive(:capture_exception).with(anything, extra: { application: "queue", error_uuid: anything,
+                                                                             actionable: false })
+        subject
+      end
+    end
+  end
 end

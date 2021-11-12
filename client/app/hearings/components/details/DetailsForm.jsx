@@ -1,20 +1,19 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
-import { EmailNotificationHistory } from './EmailNotificationHistory';
-import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown,
 } from '../../../components/DataDropdowns/index';
 import { TranscriptionFormSection } from './TranscriptionFormSection';
-import { VirtualHearingForm } from './VirtualHearingForm';
+import { VirtualHearingFields } from './VirtualHearingFields';
 import { columnThird, maxWidthFormInput, rowThirds } from './style';
 import Checkbox from '../../../components/Checkbox';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextareaField from '../../../components/TextareaField';
+import { EmailNotificationFields } from './EmailNotificationFields';
 
 const DetailsForm = (props) => {
   const {
@@ -22,25 +21,12 @@ const DetailsForm = (props) => {
     initialHearing,
     update,
     isLegacy,
-    openVirtualHearingModal,
     readOnly,
-    requestType,
     errors,
-    convertHearing,
+    hearingRequestTypeDropdownOptions,
+    hearingRequestTypeDropdownCurrentOption,
+    hearingRequestTypeDropdownOnchange
   } = props;
-
-  // Get the user permissions
-  const {
-    userCanScheduleVirtualHearings,
-    userCanConvertCentralHearings,
-    userUseFullPageVideoToVirtual
-  } = useContext(HearingsUserContext);
-
-  // Set whether to enable virtual hearings
-  const enableVirtualHearings =
-    requestType === 'Central' ?
-      userCanConvertCentralHearings :
-      userCanScheduleVirtualHearings;
 
   return (
     <React.Fragment>
@@ -66,22 +52,18 @@ const DetailsForm = (props) => {
           />
         </div>
         <div {...rowThirds}>
-          {enableVirtualHearings && (
-            <HearingTypeDropdown
-              enableFullPageConversion={userUseFullPageVideoToVirtual}
-              convertHearing={convertHearing}
-              virtualHearing={hearing?.virtualHearing}
-              originalRequestType={requestType}
-              update={update}
-              openModal={openVirtualHearingModal}
-              readOnly={
+          <HearingTypeDropdown
+            styling={columnThird}
+            dropdownOptions={hearingRequestTypeDropdownOptions}
+            currentOption={hearingRequestTypeDropdownCurrentOption}
+            readOnly={
                 hearing?.scheduledForIsPast ||
                 ((hearing?.isVirtual || hearing?.wasVirtual) &&
                   !hearing?.virtualHearing?.jobCompleted)
-              }
-              styling={columnThird}
-            />
-          )}
+            }
+            onChange={hearingRequestTypeDropdownOnchange}
+          />
+
           <div>
             {!isLegacy && (
               <React.Fragment>
@@ -113,7 +95,7 @@ const DetailsForm = (props) => {
         </div>
       </ContentSection>
 
-      <VirtualHearingForm
+      <VirtualHearingFields
         errors={errors}
         hearing={hearing}
         initialHearing={initialHearing}
@@ -122,9 +104,18 @@ const DetailsForm = (props) => {
         update={update}
       />
 
-      {hearing?.emailEvents?.length > 0 && (
-        <EmailNotificationHistory rows={hearing?.emailEvents} />
-      )}
+      <EmailNotificationFields
+        header="Email Notifications"
+        errors={errors}
+        hearing={hearing}
+        initialHearing={initialHearing}
+        readOnly={readOnly}
+        update={update}
+        time={hearing.scheduledTimeString}
+        roTimezone={hearing?.regionalOfficeTimezone}
+        requestType={hearing.readableRequestType}
+        initialRepresentativeTz={initialHearing?.representativeTz}
+      />
 
       {!isLegacy && (
         <TranscriptionFormSection
@@ -148,16 +139,18 @@ DetailsForm.propTypes = {
     transcription: PropTypes.object,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
+    scheduledTimeString: PropTypes.string,
+    readableRequestType: PropTypes.string
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object
   }),
   isLegacy: PropTypes.bool,
-  openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
-  requestType: PropTypes.string,
   update: PropTypes.func,
-  convertHearing: PropTypes.func,
+  hearingRequestTypeDropdownOptions: PropTypes.array,
+  hearingRequestTypeDropdownCurrentOption: PropTypes.object,
+  hearingRequestTypeDropdownOnchange: PropTypes.func,
 };
 
 export default DetailsForm;

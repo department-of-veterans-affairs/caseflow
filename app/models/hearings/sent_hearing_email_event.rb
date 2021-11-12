@@ -5,9 +5,6 @@
 # recipients (judge, representative, appellant).
 
 class SentHearingEmailEvent < CaseflowRecord
-  include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing(:hearing)
-
   belongs_to :sent_by, class_name: "User"
   belongs_to :email_recipient, class_name: "HearingEmailRecipient"
 
@@ -23,6 +20,9 @@ class SentHearingEmailEvent < CaseflowRecord
   #   https://github.com/department-of-veterans-affairs/caseflow/issues/14147
   class << self; undef_method :sent_to_appellant; end
   scope :sent_to_appellant, -> { where(recipient_role: [:veteran, :appellant]) }
+
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing :hearing
 
   # Email types are specified in `SendEmail#email_for_recipient`
   enum email_type: (
@@ -72,9 +72,6 @@ class SentHearingEmailEvent < CaseflowRecord
   def handle_reported_status(reported_status)
     # Exit if the email has been marked as 'sent'
     return if send_successful
-
-    # Exit if the hearing is not virtual
-    return if !hearing.virtual?
 
     # Update the date/time of the last attempt to verify the status
     update!(send_successful_checked_at: Time.zone.now)

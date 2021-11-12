@@ -7,12 +7,7 @@
 
 class AssessDocumentationTask < Task
   validates :parent, presence: true,
-                     parentTask: { task_type: VhaDocumentSearchTask },
                      on: :create
-
-  def self.label
-    COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
-  end
 
   # Actions that can be taken on both organization and user tasks
   DEFAULT_ACTIONS = [
@@ -21,10 +16,13 @@ class AssessDocumentationTask < Task
   ].freeze
 
   PO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h
+    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
+    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
   ].freeze
 
-  RO_ACTIONS = [].freeze
+  RO_ACTIONS = [
+    Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h
+  ].freeze
 
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
@@ -41,6 +39,20 @@ class AssessDocumentationTask < Task
       task_actions.concat(RO_ACTIONS)
     end
 
+    if appeal.tasks.in_progress.none? { |task| task.is_a?(AssessDocumentationTask) }
+      task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
+    end
+
     task_actions
+  end
+
+  def when_child_task_completed(child_task)
+    append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
+
+    super
+  end
+
+  def self.label
+    COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
   end
 end

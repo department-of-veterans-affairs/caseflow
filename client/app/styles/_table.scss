@@ -106,3 +106,13 @@
 .bulk-assign-button {
   margin-bottom: 1em;
 }
+
+// ===========================*
+// Alignment for TaskRows
+// ============================*
+
+.cf-row-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
