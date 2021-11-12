@@ -22,7 +22,7 @@ const FnodBadge = (props) => {
 FnodBadge.propTypes = {
   veteranAppellantDeceased: PropTypes.bool,
   uniqueId: PropTypes.string,
-  tooltipText: PropTypes.string
+  tooltipText: PropTypes.object
 };
 
 export default FnodBadge;
