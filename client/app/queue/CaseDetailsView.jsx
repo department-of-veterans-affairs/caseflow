@@ -139,12 +139,6 @@ export const CaseDetailsView = (props) => {
       }
     );
 
-  const clearMessages = () => {
-    window.console.log('clearing messages...');
-    props.resetErrorMessages();
-    props.resetSuccessMessages();
-  };
-
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
@@ -164,12 +158,6 @@ export const CaseDetailsView = (props) => {
         regionalOffice,
       });
     }
-
-    return () => {
-      setTimeout(() => {
-        clearMessages();
-      }, 100);
-    };
   }, []);
 
   const doPulacCerulloReminder = useMemo(
