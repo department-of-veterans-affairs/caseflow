@@ -223,6 +223,7 @@ export const defaultHearing = {
   appellantLastName: 'Brady',
   appellantState: 'CA',
   appellantZip: '94103',
+  appellantTz: 'America/Los_Angeles',
   availableHearingLocations: {},
   bvaPoc: null,
   centralOfficeTimeString: '04:00',
@@ -267,6 +268,7 @@ export const defaultHearing = {
   representative: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeName: null,
   representativeEmailAddress: 'tom.brady@caseflow.gov',
+  representativeTz: 'America/Los_Angeles',
   representativeAddress: {
     addressLine1: '9999 MISSION ST',
     city: 'SAN FRANCISCO',

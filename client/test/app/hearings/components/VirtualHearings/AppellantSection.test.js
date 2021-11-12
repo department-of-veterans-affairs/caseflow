@@ -7,7 +7,7 @@ import { virtualHearing, defaultHearing } from 'test/data/hearings';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 
 import { AddressLine } from 'app/hearings/components/details/Address';
-import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import TextField from 'app/components/TextField';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
@@ -29,7 +29,7 @@ describe('Appellant', () => {
 
     // Assertions
     expect(appellantSection.find(AddressLine)).toHaveLength(1);
-    expect(appellantSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(appellantSection.find(HearingEmail)).toHaveLength(1);
     expect(appellantSection.find(TextField)).toHaveLength(1);
     expect(appellantSection).toMatchSnapshot();
   });
@@ -49,7 +49,7 @@ describe('Appellant', () => {
 
     // Ensure the emails are read-only
     expect(appellantSection.find(TextField)).toHaveLength(0);
-    appellantSection.find(VirtualHearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
+    appellantSection.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
     expect(appellantSection).toMatchSnapshot();
   });
 
@@ -77,7 +77,7 @@ describe('Appellant', () => {
       <AppellantSection
         appellantTitle="Veteran"
         virtualHearing={{ appellantEmail: null }}
-        hearing={defaultHearing}
+        hearing={{ ...defaultHearing, appellantEmailAddress: null }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
         readOnly
@@ -95,8 +95,8 @@ describe('Appellant', () => {
     const appellantSection = mount(
       <AppellantSection
         appellantTitle="Veteran"
-        virtualHearing={{}}
-        hearing={defaultHearing}
+        // eslint-disable-next-line
+        hearing={{ ...defaultHearing, appellantEmailAddress: undefined }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
         readOnly
@@ -150,7 +150,7 @@ describe('Appellant', () => {
 
     expect(appellantSection.find(ReadOnly)).toHaveLength(0);
     expect(appellantSection.find(AddressLine)).toHaveLength(0);
-    expect(appellantSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(appellantSection.find(HearingEmail)).toHaveLength(1);
     expect(appellantSection).toMatchSnapshot();
   });
 });

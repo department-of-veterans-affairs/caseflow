@@ -97,7 +97,9 @@ module CaseflowCertification
     # https://stackoverflow.com/questions/13506690/how-to-determine-if-rails-is-running-from-cli-console-or-as-server
     if defined?(Rails::Console)
       require_relative "../lib/helpers/production_console_methods"
-      TOPLEVEL_BINDING.eval('self').extend ProductionConsoleMethods
+      require_relative "../lib/helpers/finder_console_methods.rb"
+      TOPLEVEL_BINDING.eval("self").extend ProductionConsoleMethods
+      TOPLEVEL_BINDING.eval("self").extend FinderConsoleMethods
     end
     # :nocov:
   end
