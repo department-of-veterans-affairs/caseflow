@@ -50,7 +50,7 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('Displays read-only when hearing type is switched from virtual', () => {
+  test('Displays email fields when hearing type is switched from virtual', () => {
     const conversion = mount(
       <HearingConversion
         scheduledFor={amaHearing.scheduledFor.toString()}
@@ -77,13 +77,11 @@ describe('HearingConversion', () => {
         findWhere((node) => node.prop('label') === 'Veterans Law Judge (VLJ)').
         prop('hide')
     ).toEqual(true);
+
+    // Ensure the emails are displayed but not the judge
+    expect(conversion.find(Timezone)).toHaveLength(2);
+    expect(conversion.find(HearingEmail)).toHaveLength(2);
     expect(conversion.find(JudgeDropdown)).toHaveLength(0);
-
-    // Ensure the timezones are not displayed
-    expect(conversion.find(Timezone)).toHaveLength(0);
-
-    // Ensure the emails are read-only
-    conversion.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
 
     expect(conversion).toMatchSnapshot();
   });
