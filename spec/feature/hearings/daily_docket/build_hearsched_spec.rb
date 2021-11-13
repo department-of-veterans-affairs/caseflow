@@ -330,13 +330,9 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
       context "when there is a contested claim" do
         before do
-          VACOLS::Representative.update_rep!(
-            vacols_rep.repkey,
-            vacols_rep.repaddtime,
-            reptype: random_contested_reptype
-          )
+          vacols_rep.reptype = random_contested_reptype
+          vacols_rep.save
         end
-
         scenario "badge does appear" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           expect(page).to have_content("CC")
@@ -354,11 +350,8 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     context "without feature toggle enabled" do
       context "when there is a contested claim" do
         before do
-          VACOLS::Representative.update_rep!(
-            vacols_rep.repkey,
-            vacols_rep.repaddtime,
-            reptype: random_contested_reptype
-          )
+          vacols_rep.reptype = random_contested_reptype
+          vacols_rep.save
         end
 
         scenario "badge does not appear" do
