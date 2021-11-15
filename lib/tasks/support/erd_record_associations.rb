@@ -64,9 +64,9 @@ module ErdRecordAssociations
 
   def add_subclass_edges_for(graph, klass)
     (klass.subclasses & record_classes).each do |subclass|
-      parent_node = graph.add_nodes(klass.name, shape: "record", style: "dashed",
-                                                color: SUBCLASS_COLOR,
-                                                fontcolor: SUBCLASS_COLOR)
+      parent_node = graph.add_node(klass.name, shape: "record", style: "dashed",
+                                               color: SUBCLASS_COLOR,
+                                               fontcolor: SUBCLASS_COLOR)
 
       # skip if edge already exists
       next if parent_node.neighbors.find { |target_node| target_node.id == subclass.name }
@@ -80,14 +80,28 @@ module ErdRecordAssociations
     klass.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to }
   end
 
+  EXCLUDED_ASSOCIATIONS ||= [
+    # These are common Rails fields that clutter the visualization
+    :created_by, :updated_by,
+
+    # These associations are created dynamically by BelongsToPolymorphicAppealConcern
+    # and is already indicated in the visualization
+    :ama_appeal, :legacy_appeal, :supplemental_claim, :higher_level_review,
+
+    # These associations are created dynamically by BelongsToPolymorphicHearingConcern
+    # and is already indicated in the visualization
+    :ama_hearing, :legacy_hearing
+  ].freeze
   def exclude_verbose_associations(associations)
-    associations.reject { |assoc| [:created_by, :updated_by].include?(assoc.name) }
+    associations.reject { |assoc| EXCLUDED_ASSOCIATIONS.include?(assoc.name) }
   end
 
   def target_node_for_association(graph, klass, assoc)
-    if assoc.class_name == "User"
-      user_string = (assoc.name == :user) ? "User" : "#{assoc.name} User"
-      graph.add_node(klass.name, label: "#{klass.name}\n  (assoc with #{user_string})")
+    label_suffix = label_suffix(graph, klass, assoc)
+    if label_suffix
+      # set label for source node
+      graph.add_node(klass.name, label: "#{klass.name}#{label_suffix}")
+      # return nil so that an edge is not created
       return nil
     end
 
@@ -97,15 +111,47 @@ module ErdRecordAssociations
         nil
       else
         # return polymorphic node
-        graph.add_nodes(assoc.foreign_type, label: "#{assoc.class_name}\n(#{assoc.foreign_type})",
-                                            shape: "box", style: "dashed")
+        graph.add_node(assoc.foreign_type, label: "#{assoc.class_name}\n(#{assoc.foreign_type})",
+                                           shape: "box", style: "dashed")
       end
     else
-      # return specific node
-      # subclasses = assoc.class_name.constantize.descendants.map(&:name)
-      # add_polymorphic_node(graph, assoc.class_name, subclasses)
-      graph.add_nodes(assoc.class_name)
+      # return class-specific (non-polymorphic) node
+      graph.add_node(assoc.class_name)
     end
+  end
+
+  def label_suffix(graph, klass, assoc)
+    assoc_label = case assoc.class_name
+                  when "User"
+                    (assoc.name == :user) ? assoc.class_name : "#{assoc.name} User"
+                  when "Veteran", "Task"
+                    assoc.class_name
+                  end
+
+    return nil unless assoc_label
+
+    suffixes = add_label_suffix(graph, klass, assoc_label)
+    return "\n(associated with: #{suffixes.first})" if suffixes.length == 1
+
+    "\n(associated with:\n#{suffixes.join(',\n')})"
+  end
+
+  def add_label_suffix(graph, klass, assoc_label)
+    node_label_suffixes = node_label_suffixes_for(graph)
+
+    suffixes = node_label_suffixes.fetch(klass.name, [])
+    if suffixes.exclude?(assoc_label)
+      suffixes << assoc_label
+      node_label_suffixes[klass.name] ||= suffixes
+    end
+    suffixes
+  end
+
+  def node_label_suffixes_for(graph)
+    @graph_node_label_suffixes ||= {}
+    node_label_suffixes = @graph_node_label_suffixes.fetch(graph, {})
+    @graph_node_label_suffixes[graph] ||= node_label_suffixes
+    node_label_suffixes
   end
 
   DECISION_REVIEW_TYPES ||= %w[Appeal SupplementalClaim HigherLevelReview].freeze

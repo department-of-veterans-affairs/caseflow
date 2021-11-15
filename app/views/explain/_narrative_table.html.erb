@@ -1,0 +1,107 @@
+<style>
+  /* 'events_table' is defined in NarrativeTable.jsx */
+  #events_table {
+    margin: 5px;
+  }
+
+  /* Table columns */
+
+  #events_table .timestamp {
+    column-width: 120px;
+  }
+
+  #events_table .timestamp,
+  #events_table .category,
+  #events_table .event_type {
+    padding-right: 2px;
+    padding-left: 1px;
+  }
+
+  #events_table td.category {
+    text-align: right;
+  }
+
+  #events_table .rel_data,
+  #events_table .narrative {
+    max-width: 300px;
+    word-wrap: break-word;
+  }
+
+  #events_table td.rel_data {
+    margin: 0px;
+    font-size: 0.8em;
+    white-space: pre-line;
+  }
+
+  #detailPaneLink {
+    font-size: 0.9em;
+  }
+  #events_table details.jsonDetails summary {
+    margin-top: 5px;
+    font-size: 0.8em;
+  }
+  #events_table details.jsonDetails pre {
+    margin: 0px;
+    font-size: 0.7em;
+    white-space: pre-line;
+  }
+
+  /* Table rows */
+
+  #events_table td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
+  #events_table tr.clock {
+    color: #ADADAD;
+    font-size: 0.7em;
+    border-style: none;
+  }
+
+  #events_table tr.milestone {
+    border-style: outset;
+  }
+
+  #events_table tr.issue {
+    border-style: dotted;
+  }
+
+  #events_table tr.document {
+    border-style: dotted;
+  }
+
+  #events_table tr.hearing {
+    border-style: dashed;
+  }
+
+  /* Table cells */
+
+  #events_table [role="cell"] span.milestone {
+    color: blue;
+  }
+
+  #events_table [role="cell"] span.task_assigned {
+    color: #888800
+  }
+
+  #events_table [role="cell"] span.task_cancelled  {
+    color: #AA0000
+  }
+
+  #events_table [role="cell"] span.task_completed {
+    color: #005500
+  }
+
+</style>
+
+<h3>Appeal Narrative (<span class="show_pii_true">showing PII</span>)</h3>
+
+<details open>
+  <summary id="narrative_table" style="color: purple">Narrative table</summary>
+  <div style="margin-left: 1em;">
+    <%= react_component("Explain", props: {
+      eventData: event_table_data
+    }) %>
+  </div>
+</details>

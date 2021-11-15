@@ -97,17 +97,11 @@ class SelectDispositionsView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
-      appeal,
       taskId,
       checkoutFlow
     } = this.props;
 
-    // Once the featureToggle is made permanent, simply return `.../special_issues` for both appeal types
-    if (appeal.isLegacyAppeal || this.props.featureToggles.special_issues_revamp) {
-      return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
-    }
-
-    return `/queue/appeals/${appealId}`;
+    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   validateForm = () => {
@@ -445,9 +439,6 @@ SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
   editStagedAppeal: PropTypes.func,
-  featureToggles: PropTypes.shape({
-    special_issues_revamp: PropTypes.bool
-  }),
   hideSuccessMessage: PropTypes.func,
   highlight: PropTypes.bool,
   setDecisionOptions: PropTypes.func,
@@ -458,7 +449,6 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
   highlight: state.ui.highlightFormItems,
-  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

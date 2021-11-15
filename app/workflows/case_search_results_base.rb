@@ -42,6 +42,17 @@ class CaseSearchResultsBase
     []
   end
 
+  # Users may also view appeals with appellants whom they represent.
+  # We use this to add these appeals back into results when the user is not on the veteran's poa.
+  def additional_appeals_user_can_access
+    appeals.filter do |appeal|
+      appeal.veteran_is_not_claimant &&
+        user.organizations.any? do |uo|
+          appeal.representatives.include?(uo)
+        end
+    end
+  end
+
   def veterans_user_can_access
     @veterans_user_can_access ||= veterans.select { |veteran| access?(veteran.file_number) }
   end
@@ -97,7 +108,10 @@ class CaseSearchResultsBase
   def vso_employee_has_access
     return unless current_user_is_vso_employee?
 
-    errors.add(:workflow, prohibited_error) if veterans_user_can_access.empty? && veterans.any?
+    errors.add(:workflow, prohibited_error) if
+      veterans_user_can_access.empty? &&
+      veterans.any? &&
+      additional_appeals_user_can_access.empty?
     @status = :forbidden
   end
 

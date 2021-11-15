@@ -24,7 +24,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     record_success_in_datadog
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -34,9 +33,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       .where(id: open_appeals_from_tasks(Appeal.name))
       .order(updated_at: :desc)
 
-    cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
-
-    increment_appeal_count(cached_appeals.length, Appeal.name)
+    appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_ama_appeals|
+      cached_appeals = cached_appeal_service.cache_ama_appeals(batch_ama_appeals)
+      increment_appeal_count(cached_appeals.length, Appeal.name)
+    end
   end
 
   def open_appeals_from_tasks(appeal_type)

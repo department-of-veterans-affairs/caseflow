@@ -257,6 +257,16 @@ describe BoardGrantEffectuation, :postgres do
             )
           end
         end
+
+        context "the claimant is an attorney" do
+          let(:claimant) { create(:claimant, :attorney, participant_id: claimant_participant_id) }
+
+          it "is created with the veteran's participant id" do
+            expect(subject.end_product_establishment).to have_attributes(
+              claimant_participant_id: veteran.participant_id
+            )
+          end
+        end
       end
     end
 

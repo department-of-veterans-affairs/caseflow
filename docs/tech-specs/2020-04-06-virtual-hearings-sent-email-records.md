@@ -32,7 +32,7 @@ We'll create a new model `SentHearingEmailEvents` and its corresponding table: `
   end
 ```
 
-New records will probably be created in the `VirtualHearings::SendEmail` job when we successfully initiate the sending of an email. We may need to provide additional context to the job to accomplish this.
+New records will probably be created in the `Hearings::SendEmail` job when we successfully initiate the sending of an email. We may need to provide additional context to the job to accomplish this.
 
 ### Columns for message display
 

@@ -11,6 +11,8 @@ module Seeds
       create_inbox_messages
       create_bgs_attorneys
       create_deceased_veteran
+      create_veteran_with_no_dependents
+      create_deceased_veteran_with_no_dependents
     end
 
     private
@@ -32,6 +34,27 @@ module Seeds
              file_number: veteran_file_number,
              first_name: "Ed",
              last_name: "Deceased",
+             date_of_death: Time.zone.yesterday)
+    end
+
+    def create_veteran_with_no_dependents
+      veteran_file_number = "44444444"
+      participant_id = "444444444"
+      create(:veteran,
+             file_number: veteran_file_number,
+             participant_id: participant_id,
+             first_name: "Robert",
+             last_name: "Lonely")
+    end
+
+    def create_deceased_veteran_with_no_dependents
+      veteran_file_number = "55555555"
+      participant_id = "555555555"
+      create(:veteran,
+             file_number: veteran_file_number,
+             participant_id: participant_id,
+             first_name: "Karen",
+             last_name: "Lonely",
              date_of_death: Time.zone.yesterday)
     end
 

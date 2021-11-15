@@ -10,5 +10,10 @@ FactoryBot.define do
     document_type { "draft_decision" }
     association :reviewing_judge, factory: :user
     association :attorney, factory: :user
+    appeal { nil }
+
+    after(:create) do |case_review, _evaluator|
+      case_review.appeal # creates association to appeal if it doesn't exist
+    end
   end
 end

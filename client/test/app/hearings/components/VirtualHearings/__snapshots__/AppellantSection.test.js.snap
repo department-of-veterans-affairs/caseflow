@@ -17,6 +17,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -72,6 +73,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -115,6 +117,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Appellant"
     showDivider={true}
@@ -190,10 +193,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          email="Bob.Smith@test.com"
-          emailType="appellantEmail"
-          label="Appellant Email"
+        <HearingEmail
+          label="Appellant Email (for these notifications only)"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -204,29 +206,28 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Appellant Email"
+            name="Appellant Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="Bob.Smith@test.com"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Appellant Email"
+                htmlFor="Appellant Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Appellant Email"
+                    name="Appellant Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Appellant Email
+                      Appellant Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -242,24 +243,23 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Appellant Email"
-                name="Appellant Email"
+                id="Appellant Email (for these notifications only)"
+                name="Appellant Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="Bob.Smith@test.com"
               />
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -277,12 +277,13 @@ exports[`Appellant Displays email alert when email is null 1`] = `
       "appealId": 613,
       "appellantAddressLine1": "9999 MISSION ST",
       "appellantCity": "SAN FRANCISCO",
-      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantEmailAddress": null,
       "appellantFirstName": "Tom",
       "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -338,6 +339,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -371,6 +373,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -431,31 +434,30 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          email={null}
-          emailType="appellantEmail"
-          label="Veteran Email"
+        <HearingEmail
+          label="Veteran Email (for these notifications only)"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
+            label="Veteran Email (for these notifications only)"
             text="None"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
                 None
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
         <div>
           <Alert
             fixed={false}
@@ -496,12 +498,13 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
       "appealId": 613,
       "appellantAddressLine1": "9999 MISSION ST",
       "appellantCity": "SAN FRANCISCO",
-      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantEmailAddress": undefined,
       "appellantFirstName": "Tom",
       "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -557,6 +560,7 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -583,9 +587,9 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
   showMissingEmailAlert={true}
   type="change_to_virtual"
   update={[MockFunction]}
-  virtualHearing={Object {}}
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -646,30 +650,30 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          emailType="appellantEmail"
-          label="Veteran Email"
+        <HearingEmail
+          label="Veteran Email (for these notifications only)"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
+            label="Veteran Email (for these notifications only)"
             text="None"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
                 None
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
         <div>
           <Alert
             fixed={false}
@@ -716,6 +720,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -771,6 +776,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -815,6 +821,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -878,11 +885,12 @@ SAN FRANCISCO, CA 94103
           label="Veteran Timezone"
           name="appellantTz"
           onChange={[Function]}
+          optional={false}
           readOnly={false}
           required={true}
           roTimezone="America/New_York"
           time="06:00"
-          value="America/Denver"
+          value={null}
         >
           <SearchableDropdown
             clearOnSelect={false}
@@ -890,6 +898,7 @@ SAN FRANCISCO, CA 94103
             loading={false}
             name="appellantTz"
             onChange={[Function]}
+            optional={false}
             options={
               Array [
                 Object {
@@ -1674,7 +1683,7 @@ SAN FRANCISCO, CA 94103
                 },
               }
             }
-            value="America/Denver"
+            value={null}
           >
             <div
               className=""
@@ -1692,6 +1701,7 @@ SAN FRANCISCO, CA 94103
                     <FormLabel
                       label="Veteran Timezone"
                       name="Veteran Timezone"
+                      optional={false}
                       required={true}
                     >
                       <span>
@@ -2506,13 +2516,7 @@ SAN FRANCISCO, CA 94103
                         "input": [Function],
                       }
                     }
-                    value={
-                      Object {
-                        "index": -1,
-                        "label": "Mountain Time (US & Canada) (4:00 AM)",
-                        "value": "America/Denver",
-                      }
-                    }
+                    value={null}
                   >
                     <Select
                       backspaceRemovesValue={true}
@@ -3339,20 +3343,14 @@ SAN FRANCISCO, CA 94103
                       }
                       tabIndex="0"
                       tabSelectsValue={true}
-                      value={
-                        Object {
-                          "index": -1,
-                          "label": "Mountain Time (US & Canada) (4:00 AM)",
-                          "value": "America/Denver",
-                        }
-                      }
+                      value={null}
                     >
                       <SelectContainer
                         clearValue={[Function]}
                         cx={[Function]}
                         getStyles={[Function]}
                         getValue={[Function]}
-                        hasValue={true}
+                        hasValue={false}
                         innerProps={
                           Object {
                             "id": undefined,
@@ -4956,11 +4954,7 @@ SAN FRANCISCO, CA 94103
                             },
                             "tabIndex": "0",
                             "tabSelectsValue": true,
-                            "value": Object {
-                              "index": -1,
-                              "label": "Mountain Time (US & Canada) (4:00 AM)",
-                              "value": "America/Denver",
-                            },
+                            "value": null,
                           }
                         }
                         setValue={[Function]}
@@ -5018,7 +5012,7 @@ SAN FRANCISCO, CA 94103
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={true}
+                              hasValue={false}
                               innerProps={
                                 Object {
                                   "onMouseDown": [Function],
@@ -6624,11 +6618,7 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": Object {
-                                    "index": -1,
-                                    "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                    "value": "America/Denver",
-                                  },
+                                  "value": null,
                                 }
                               }
                               setValue={[Function]}
@@ -6703,7 +6693,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     isDisabled={false}
                                     isMulti={false}
                                     isRtl={false}
@@ -8300,11 +8290,7 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -1,
-                                          "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                          "value": "America/Denver",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -8341,7 +8327,7 @@ SAN FRANCISCO, CA 94103
                                     <EmotionCssPropInternal
                                       __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                       __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                      className="cf-select__value-container cf-select__value-container--has-value"
+                                      className="cf-select__value-container"
                                       css={
                                         Object {
                                           "WebkitOverflowScrolling": "touch",
@@ -8357,24 +8343,19 @@ SAN FRANCISCO, CA 94103
                                       }
                                     >
                                       <div
-                                        className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                                        className="cf-select__value-container css-g1d714-ValueContainer"
                                       >
-                                        <SingleValue
+                                        <Placeholder
                                           clearValue={[Function]}
                                           cx={[Function]}
-                                          data={
-                                            Object {
-                                              "index": -1,
-                                              "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                              "value": "America/Denver",
-                                            }
-                                          }
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
+                                          isFocused={false}
                                           isMulti={false}
                                           isRtl={false}
+                                          key="placeholder"
                                           options={
                                             Array [
                                               Object {
@@ -9968,11 +9949,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -10007,33 +9984,29 @@ SAN FRANCISCO, CA 94103
                                           }
                                         >
                                           <EmotionCssPropInternal
-                                            __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
+                                            __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__single-value"
+                                            className="cf-select__placeholder"
                                             css={
                                               Object {
                                                 "boxSizing": "border-box",
-                                                "color": "hsl(0, 0%, 20%)",
-                                                "label": "singleValue",
+                                                "color": "hsl(0, 0%, 50%)",
+                                                "label": "placeholder",
                                                 "marginLeft": 2,
                                                 "marginRight": 2,
-                                                "maxWidth": "calc(100% - 8px)",
-                                                "overflow": "hidden",
                                                 "position": "absolute",
-                                                "textOverflow": "ellipsis",
                                                 "top": "50%",
                                                 "transform": "translateY(-50%)",
-                                                "whiteSpace": "nowrap",
                                               }
                                             }
                                           >
                                             <div
-                                              className="cf-select__single-value css-1uccc91-singleValue"
+                                              className="cf-select__placeholder css-1wa3eu0-placeholder"
                                             >
-                                              Mountain Time (US & Canada) (4:00 AM)
+                                              Select a timezone
                                             </div>
                                           </EmotionCssPropInternal>
-                                        </SingleValue>
+                                        </Placeholder>
                                         <CustomInput
                                           aria-autocomplete="list"
                                           autoCapitalize="none"
@@ -10872,11 +10845,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           spellCheck="false"
@@ -11756,11 +11725,7 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 "tabIndex": "0",
                                                 "tabSelectsValue": true,
-                                                "value": Object {
-                                                  "index": -1,
-                                                  "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                                  "value": "America/Denver",
-                                                },
+                                                "value": null,
                                               }
                                             }
                                             spellCheck="false"
@@ -11914,7 +11879,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     isDisabled={false}
                                     isMulti={false}
                                     isRtl={false}
@@ -13511,11 +13476,7 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -1,
-                                          "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                          "value": "America/Denver",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -13571,7 +13532,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isFocused={false}
                                           isMulti={false}
@@ -15169,11 +15130,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -15233,7 +15190,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           innerProps={
                                             Object {
                                               "aria-hidden": "true",
@@ -16838,11 +16795,7 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (4:00 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -16951,7 +16904,7 @@ SAN FRANCISCO, CA 94103
                             <input
                               name="appellantTz"
                               type="hidden"
-                              value="America/Denver"
+                              value=""
                             />
                           </div>
                         </EmotionCssPropInternal>
@@ -16981,10 +16934,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          email="Bob.Smith@test.com"
-          emailType="appellantEmail"
-          label="Veteran Email"
+        <HearingEmail
+          label="Veteran Email (for these notifications only)"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -16995,29 +16947,28 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Veteran Email"
+            name="Veteran Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="Bob.Smith@test.com"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Email"
+                htmlFor="Veteran Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Email"
+                    name="Veteran Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -17033,24 +16984,23 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Veteran Email"
-                name="Veteran Email"
+                id="Veteran Email (for these notifications only)"
+                name="Veteran Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="Bob.Smith@test.com"
               />
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
@@ -17074,6 +17024,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -17129,6 +17080,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -17173,6 +17125,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -17233,40 +17186,40 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          email="Bob.Smith@test.com"
-          emailType="appellantEmail"
-          label="Veteran Email"
+        <HearingEmail
+          label="Veteran Email (for these notifications only)"
+          optional={false}
           readOnly={true}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
-            label="Veteran Email"
-            text="Bob.Smith@test.com"
+            label="Veteran Email (for these notifications only)"
+            text="None"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Email
+                Veteran Email (for these notifications only)
               </strong>
               <pre>
-                Bob.Smith@test.com
+                None
               </pre>
             </div>
           </ReadOnly>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>
 </AppellantSection>
 `;
 
-exports[`Appellant Matches snapshot with default props 1`] = `
+exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
 <AppellantSection
-  appellantTitle="Veteran"
+  appellantTitle="Appellant"
+  formFieldsOnly={true}
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -17281,6 +17234,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -17336,6 +17290,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -17379,6 +17334,216 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   }
 >
   <VirtualHearingSection
+    formFieldsOnly={true}
+    hide={false}
+    label="Appellant"
+    showDivider={true}
+  >
+    <div
+      className="cf-help-divider"
+    />
+    <strong>
+       
+      Appellant
+    </strong>
+    <div
+      className="usa-grid css-1jfbwxw"
+      id="email-section"
+    >
+      <div
+        className="usa-width-one-half"
+      >
+        <HearingEmail
+          label="Appellant Email (for these notifications only)"
+          optional={false}
+          required={true}
+          type="change_to_virtual"
+          update={[MockFunction]}
+        >
+          <TextField
+            className={
+              Array [
+                "cf-form-textinput cf-inline-field",
+              ]
+            }
+            name="Appellant Email (for these notifications only)"
+            onChange={[Function]}
+            optional={false}
+            required={true}
+            strongLabel={true}
+            type="text"
+            useAriaLabel={false}
+          >
+            <div
+              className="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                htmlFor="Appellant Email (for these notifications only)"
+              >
+                <strong>
+                  <FormLabel
+                    name="Appellant Email (for these notifications only)"
+                    optional={false}
+                    required={true}
+                  >
+                    <span>
+                      Appellant Email (for these notifications only)
+                      <span
+                        className="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </FormLabel>
+                </strong>
+              </label>
+              <input
+                className={
+                  Array [
+                    "cf-form-textinput cf-inline-field",
+                  ]
+                }
+                id="Appellant Email (for these notifications only)"
+                name="Appellant Email (for these notifications only)"
+                onChange={[Function]}
+                type="text"
+              />
+            </div>
+          </TextField>
+          <HelperText
+            label="This email address will be used to send notifications for this hearing only."
+          >
+            <div
+              className="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </HelperText>
+        </HearingEmail>
+      </div>
+    </div>
+  </VirtualHearingSection>
+</AppellantSection>
+`;
+
+exports[`Appellant Matches snapshot with default props 1`] = `
+<AppellantSection
+  appellantTitle="Veteran"
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "caseType": "Original",
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "poaName": "AMERICAN LEGION",
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  schedulingToVirtual={true}
+  type="change_to_virtual"
+  update={[MockFunction]}
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <VirtualHearingSection
+    formFieldsOnly={false}
     hide={false}
     label="Veteran"
     showDivider={true}
@@ -17439,10 +17604,9 @@ SAN FRANCISCO, CA 94103
       <div
         className="usa-width-one-half"
       >
-        <VirtualHearingEmail
-          email="Bob.Smith@test.com"
-          emailType="appellantEmail"
-          label="Veteran Email"
+        <HearingEmail
+          label="Veteran Email (for these notifications only)"
+          optional={false}
           required={true}
           type="change_to_virtual"
           update={[MockFunction]}
@@ -17453,29 +17617,28 @@ SAN FRANCISCO, CA 94103
                 "cf-form-textinput cf-inline-field",
               ]
             }
-            name="Veteran Email"
+            name="Veteran Email (for these notifications only)"
             onChange={[Function]}
             optional={false}
             required={true}
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="Bob.Smith@test.com"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Email"
+                htmlFor="Veteran Email (for these notifications only)"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Email"
+                    name="Veteran Email (for these notifications only)"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Email
+                      Veteran Email (for these notifications only)
                       <span
                         className="cf-required"
                       >
@@ -17491,24 +17654,23 @@ SAN FRANCISCO, CA 94103
                     "cf-form-textinput cf-inline-field",
                   ]
                 }
-                id="Veteran Email"
-                name="Veteran Email"
+                id="Veteran Email (for these notifications only)"
+                name="Veteran Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="Bob.Smith@test.com"
               />
             </div>
           </TextField>
           <HelperText
-            label="Changes to the email are used to send notifications for this hearing only"
+            label="This email address will be used to send notifications for this hearing only."
           >
             <div
               className="helper-text"
             >
-              Changes to the email are used to send notifications for this hearing only
+              This email address will be used to send notifications for this hearing only.
             </div>
           </HelperText>
-        </VirtualHearingEmail>
+        </HearingEmail>
       </div>
     </div>
   </VirtualHearingSection>

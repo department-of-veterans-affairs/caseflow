@@ -9,11 +9,6 @@ require "helpers/intake_renderer.rb"
 require "helpers/hearing_renderer.rb"
 
 feature "duplicate JudgeAssignTask investigation" do
-  before do
-    User.authenticate!(css_id: "PETERSBVAM")
-    Functions.grant!("System Admin", users: ["PETERSBVAM"]) # enable access to `export` endpoint
-  end
-
   # Ticket: https://github.com/department-of-veterans-affairs/dsva-vacols/issues/174
   # Target state: should only have 1 open JudgeAssignTask
   describe "Judge cancels AttorneyTask in 2 browser windows" do
@@ -22,17 +17,27 @@ feature "duplicate JudgeAssignTask investigation" do
       sji.import
       appeal = sji.imported_records[Appeal.table_name].first
 
-      judge = User.find_by_css_id("PETERSBVAM")
       create(:staff, :judge_role, user: judge)
 
       appeal.reload
     end
 
+    let(:judge) { User.find_by_css_id("PETERSBVAM") }
+
+    before do
+      User.authenticate!(user: judge)
+      Functions.grant!("System Admin", users: [judge.css_id]) # enable access to `export` endpoint
+    end
+
     scenario "Caseflow creates 2 open JudgeAssignTasks" do
       within_window open_new_window do
         # Get a narrative of what happened; search for ":50:38" and ":50:44"
-        visit "/explain/appeals/#{appeal.uuid}"
-        expect(page).to have_content("Narrative table")
+        visit "/explain/appeals/#{appeal.uuid}?sections=all"
+        expect(page).to have_content("Appeal Narrative")
+        expect(page).to have_content("50:38")
+        expect(page).to have_content("JudgeAssignTask_2001775444")
+        expect(page).to have_content("50:44")
+        expect(page).to have_content("JudgeAssignTask_2001775445")
       end
 
       # Delete tasks created on or after 2021-06-13 so we can recreate the problem

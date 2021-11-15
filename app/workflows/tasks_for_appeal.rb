@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Returns all tasks relevant to an appeal based on the user's role
-# We only query vacols for legacy tasks if the user is a judge, attroney, or a users that can act on behalf of judges
+# We only query vacols for legacy tasks if the user is a judge, attorney, or a user that can act on behalf of judges
 # We also only return tasks assigned to a VSO or a vso employee is the user is a vso employee
 # Because this is currently only called from the case details view of an appeal, we mark any tasks assigned to the
 # requesting user as "in progress", indicating they have looked at the case and have presumably started their task
@@ -21,7 +21,7 @@ class TasksForAppeal
 
     # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
     # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
-    return tasks_assigned_to_user_or_any_other_vso_employee if user.vso_employee?
+    return tasks_visible_to_vso_employee if user.vso_employee?
 
     # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
     # This change filters them out from the Queue page
@@ -40,12 +40,17 @@ class TasksForAppeal
 
   attr_reader :appeal, :user, :user_role
 
-  def tasks_assigned_to_user_or_any_other_vso_employee
+  # VSOs should be able to see the following:
+  # NOD received, Distribution Date, Hearing Held, Dispatched, Substitution Granted, Substitution added,
+  # and any tasks assigned to the user
+  def tasks_visible_to_vso_employee
     appeal.tasks
       .includes(*task_includes)
       .select do |task|
-        task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to
-      end
+      task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
+        (task.is_a?(HearingTask) && task&.hearing&.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
+        task.is_a?(DistributionTask)
+    end
   end
 
   def all_tasks_except_for_decision_review_tasks

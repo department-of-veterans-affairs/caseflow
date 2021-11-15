@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :intake do
     veteran_file_number { create(:veteran).file_number }
     detail { create(:higher_level_review) }
-    type { detail.class.name << "Intake" }
+    type { detail.class.name + "Intake" }
     started_at { Time.zone.now }
     association :user
 

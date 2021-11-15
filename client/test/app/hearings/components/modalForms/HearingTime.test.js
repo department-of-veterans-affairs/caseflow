@@ -1,10 +1,13 @@
 import React from 'react';
 
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
+import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { mount } from 'enzyme';
+import moment from 'moment-timezone/moment-timezone';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import TIMEZONES from 'constants/TIMEZONES';
+import { shortZoneName } from 'app/hearings/utils';
 
 const [timezoneLabel] = Object.keys(TIMEZONES).filter((zone) => TIMEZONES[zone] === COMMON_TIMEZONES[3]);
 

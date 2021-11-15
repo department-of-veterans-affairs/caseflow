@@ -1,8 +1,9 @@
 /* eslint-disable max-lines */
+/* eslint-disable camelcase */
 import React from 'react';
 import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
-import { compareDesc, isValid } from 'date-fns';
+import { compareDesc } from 'date-fns';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
@@ -173,6 +174,7 @@ const appealAttributesFromRawTask = (task) => ({
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
+  contestedClaim: task.attributes.contested_claim,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
@@ -363,6 +365,7 @@ export const prepareAppealForStore = (appeals) => {
       withdrawn: appeal.attributes.withdrawn,
       removed: appeal.attributes.removed,
       overtime: appeal.attributes.overtime,
+      contestedClaim: appeal.attributes.contested_claim,
       veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
@@ -375,6 +378,7 @@ export const prepareAppealForStore = (appeals) => {
       docketNumber: appeal.attributes.docket_number,
       assignedAttorney: appeal.attributes.assigned_attorney,
       assignedJudge: appeal.attributes.assigned_judge,
+      distributedToJudge: appeal.attributes.distributed_to_a_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
@@ -397,14 +401,24 @@ export const prepareAppealForStore = (appeals) => {
       decisionIssues: appeal.attributes.decision_issues,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
       canEditCavcRemands: appeal.attributes.can_edit_cavc_remands,
+      unrecognizedAppellantId: appeal.attributes.unrecognized_appellant_id,
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
+      appellantFirstName: appeal.attributes.appellant_first_name,
+      appellantMiddleName: appeal.attributes.appellant_middle_name,
+      appellantLastName: appeal.attributes.appellant_last_name,
+      appellantSuffix: appeal.attributes.appellant_suffix,
+      appellantDateOfBirth: appeal.attributes.appellant_date_of_birth,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantEmailAddress: appeal.attributes.appellant_email_address,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
       appellantType: appeal.attributes.appellant_type,
+      appellantPartyType: appeal.attributes.appellant_party_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
+      contestedClaim: appeal.attributes.contested_claim,
+      hasPOA: appeal.attributes.has_poa,
       assignedToLocation: appeal.attributes.assigned_to_location,
-      veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
       veteranDateOfDeath: appeal.attributes.veteran_death_date,
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
@@ -434,6 +448,10 @@ export const prepareAppealForStore = (appeals) => {
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
+      hasSameAppealSubstitution: (
+      // eslint-disable-next-line max-len
+        appeal.attributes.substitutions?.[0]?.target_appeal_uuid === appeal.attributes.substitutions?.[0]?.source_appeal_uuid
+      ),
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };
@@ -830,10 +848,8 @@ export const statusLabel = (appeal) => {
     return (
       <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
     );
-    break;
   case 'docket_switched':
     return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
-    break;
   default:
     return appeal.status ?
       StringUtil.snakeCaseToCapitalized(appeal.status) :

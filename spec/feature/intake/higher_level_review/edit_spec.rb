@@ -399,7 +399,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
+        # rubocop:disable LineLength
+        expect(page).to have_content("#{eligible_request_issue.contention_text}\nBenefit type: Compensation\nDecision date: #{Time.zone.today.mdY}")
+        # rubocop:enable LineLength
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
@@ -1615,7 +1617,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
             :unidentified,
             benefit_type: "compensation",
             decision_review: higher_level_review,
-            contested_issue_description: "This is unidentified"
+            contested_issue_description: "This is unidentified",
+            decision_date: Time.zone.today
           )
         end
 

@@ -4,6 +4,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
+    let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
       { appeal_id: appeal.external_id,
@@ -22,6 +23,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         Idt::Token.activate_proposed_token(key, user.css_id)
         request.headers["TOKEN"] = t
         create(:staff, :attorney_role, sdomainid: user.css_id)
+        allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { file_number }
       end
 
       context "when document_type param is missing" do
@@ -74,6 +76,20 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
+      context "when veteran file number doesn't match in BGS" do
+        let(:file_number) { appeal.veteran.file_number + "123" }
+
+        it "returns a HTTP 500 error" do
+          post :create, params: params
+          expect(response).to have_attributes(status: 500)
+          errors = JSON.parse(response.body)["errors"]
+          expect(errors[0]).to include(
+            "title" => "VBMS::FilenumberDoesNotExist",
+            "detail" => "The veteran file number does not match the file number in VBMS"
+          )
+        end
+      end
+
       context "UploadDocumentToVbmsJob raises an error" do
         it "throws an error" do
           allow(UploadDocumentToVbmsJob).to receive(:perform_later).and_raise("job error")
@@ -108,7 +124,10 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
           it "queues the document for upload to VBMS" do
             expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
-            expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(document_id: uploaded_document.id)
+            expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(
+              document_id: uploaded_document.id,
+              initiator_css_id: user.css_id
+            )
             expect(uploaded_document).to receive(:cache_file)
 
             post :create, params: params
@@ -119,6 +138,11 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
         context "the appeal is a LegacyAppeal" do
           let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+          let(:veteran) { create(:veteran) }
+
+          before do
+            allow(appeal).to receive(:veteran) { veteran }
+          end
 
           it_behaves_like "success_with_valid_parameters"
         end

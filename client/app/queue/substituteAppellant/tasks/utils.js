@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns';
+import { formatISO, startOfDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
 export const automatedTasks = [
@@ -14,6 +14,51 @@ export const automatedTasks = [
   'AttorneyDispatchReturnTask',
   'HearingTask'
 ];
+
+export const mailTasks = [
+  'AddressChangeMailTask',
+  'AodMotionMailTask',
+  'AppealWithdrawalMailTask',
+  'CavcCorrespondenceMailTask',
+  'ClearAndUnmistakeableErrorMailTask',
+  'CongressionalInterestMailTask',
+  'ControlledCorrespondenceMailTask',
+  'DeathCertificateMailTask',
+  'DocketSwitchMailTask',
+  'EvidenceOrArgumentMailTask',
+  'ExtensionRequestMailTask',
+  'FoiaRequestMailTask',
+  'HearingRelatedMailTask',
+  'OtherMotionMailTask',
+  'PowerOfAttorneyRelatedMailTask',
+  'PrivacyActRequestMailTask',
+  'PrivacyComplaintMailTask',
+  'ReconsiderationMotionMailTask',
+  'ReturnedUndeliverableCorrespondenceMailTask',
+  'StatusInquiryMailTask',
+  'VacateMotionMailTask',
+];
+
+export const hearingAdminActions = [
+  'HearingAdminActionContestedClaimantTask',
+  'HearingAdminActionFoiaPrivacyRequestTask',
+  'HearingAdminActionForeignVeteranCaseTask',
+  'HearingAdminActionIncarceratedVeteranTask',
+  'HearingAdminActionMissingFormsTask',
+  'HearingAdminActionOtherTask',
+  'HearingAdminActionVerifyAddressTask',
+  'HearingAdminActionVerifyPoaTask',
+];
+
+export const nonAutomatedTasksToHide = [
+  'RootTask',
+  'AssignHearingDispositionTask',
+  'ChangeHearingDispositionTask',
+];
+
+export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
+// This may be refined after user testing...
+export const openTasksToHide = [...nonAutomatedTasksToHide];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
@@ -68,13 +113,49 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
   return isDescendant(tasksById, distributionTask, task, { id: 'taskId' });
 };
 
+export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
+  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
+};
+
+export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
+  const disablingTaskMap = {
+    ScheduleHearingTask: [
+      'EvidenceSubmissionWindowTask',
+      'TranscriptionTask',
+    ],
+    EvidenceSubmissionWindowTask: [
+      'ScheduleHearingTask',
+    ],
+    TranscriptionTask: [
+      'ScheduleHearingTask',
+    ],
+  };
+
+  return Object.entries(disablingTaskMap).some(([selectionType, toDisable]) => {
+    return selectedTaskTypes.includes(selectionType) && toDisable.includes(taskType);
+  });
+};
+
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
+
 export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
 };
 
+export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
+  const selectedTaskTypes = taskTypesSelected({ tasks, selectedTaskIds });
+
+  return tasks.map((task) => {
+    return ({
+      ...task,
+      disabled: shouldDisable(task) || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
+    });
+  });
+};
+
 export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
+  // eslint-disable-next-line camelcase
   return taskInfo.type === 'InformalHearingPresentationTask' && !claimantPoa?.ihp_allowed;
 };
 
@@ -84,6 +165,7 @@ export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
 export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
   const taskType = taskInfo.type;
 
+  // eslint-disable-next-line max-len
   const visibleUserTask = allTasks.find((item) => item.type === taskType && item.taskId !== taskInfo.taskId && !item.assignedTo?.isOrganization && !item.hideFromCaseTimeline);
 
   return Boolean(visibleUserTask);
@@ -91,10 +173,12 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
-  if (automatedTasks.includes(taskInfo.type)) {
+  // Some tasks should always be hidden, regardless of additional context
+  if (closedTasksToHide.includes(taskInfo.type)) {
     return true;
   }
 
+  // eslint-disable-next-line max-len
   return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, claimantPoa)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
@@ -103,18 +187,18 @@ export const shouldAutoSelect = (taskInfo) => {
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
-export const filterTasks = (taskData = []) => {
+export const filterTasks = (taskData = [], opts = { orgOnly: true, closedOnly: true }) => {
   const uniqueTasksByType = {};
 
   for (const task of taskData) {
     // we only want organization tasks
-    if (!task.assignedTo?.isOrganization) {
+    if (opts.orgOnly && !task.assignedTo?.isOrganization) {
       // eslint-disable-next-line no-continue
       continue;
     }
 
     // we only want completed and cancelled tasks
-    if (!task.closedAt) {
+    if (opts.closedOnly && !task.closedAt) {
       // eslint-disable-next-line no-continue
       continue;
     }
@@ -130,23 +214,76 @@ export const filterTasks = (taskData = []) => {
   return Object.values(uniqueTasksByType);
 };
 
-export const sortTasks = (taskData) => {
+export const sortTasks = (taskData, sortField = 'closedAt') => {
   return taskData.sort((task1, task2) =>
-    task1.closedAt > task2.closedAt ? -1 : 1
+    task1[sortField] > task2[sortField] ? -1 : 1
   );
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const prepTaskDataForUi = (taskData, claimantPoa) => {
+export const prepTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);
 
-  return sortedTasks.map((taskInfo) => ({
+  const filteredBySubstitutionType = isSubstitutionSameAppeal ?
+    sortedTasks.filter((task) => task.type !== 'DistributionTask') :
+    sortedTasks;
+
+  return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
-    disabled: shouldDisable(taskInfo, taskData),
+    disabled: shouldDisable(taskInfo),
     selected: shouldAutoSelect(taskInfo),
+  }));
+};
+
+export const filterOpenTasks = (tasks) => tasks.filter((task) => {
+  return ['assigned', 'on_hold'].includes(task.status);
+});
+
+export const shouldHideOpen = (taskInfo, claimantPoa, allTasks) => {
+  // Some tasks should always be hidden, regardless of additional context
+  if (openTasksToHide.includes(taskInfo.type)) {
+    return true;
+  }
+
+  // eslint-disable-next-line max-len
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, claimantPoa)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
+};
+
+// For open tasks, we want to prevent (de)selection of child tasks if parent tasks have been selected to be cancelled
+export const adjustOpenTasksBasedOnSelection = ({ tasks, selectedTaskIds }) => {
+  const deselectedTaskIds = tasks.
+    filter((task) => !selectedTaskIds.includes(Number(task.taskId))).
+    map((task) => Number(task.taskId));
+
+  return tasks.map((task) => ({
+    ...task,
+    disabled:
+      task.disabled || deselectedTaskIds.includes(Number(task.parentId)),
+    selected:
+      (selectedTaskIds.includes(Number(task.taskId)) &&
+        !deselectedTaskIds.includes(Number(task.parentId))) ||
+      task.selected,
+  }));
+};
+
+export const prepOpenTaskDataForUi = ({ taskData, claimantPoa, isSubstitutionSameAppeal }) => {
+  const activeTasks = filterOpenTasks(taskData);
+  const uniqTasks = filterTasks(activeTasks, { orgOnly: false, closedOnly: false });
+
+  const sortedTasks = sortTasks(uniqTasks, 'createdAt');
+
+  const filteredBySubstitutionType = isSubstitutionSameAppeal ?
+    sortedTasks.filter((task) => task.type !== 'DistributionTask') :
+    sortedTasks;
+
+  return filteredBySubstitutionType.map((taskInfo) => ({
+    ...taskInfo,
+    hidden: shouldHideOpen(taskInfo, claimantPoa, taskData),
+    disabled: false,
+    selected: true,
   }));
 };
 
@@ -178,5 +315,6 @@ export const calculateEvidenceSubmissionEndDate = ({
 
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
-  return formatISO(newEndTime, { representation: 'date' });
+  // We want to specify midnight in user's time zone (likely Eastern)
+  return formatISO(startOfDay(new Date(newEndTime)));
 };

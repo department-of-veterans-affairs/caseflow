@@ -7,10 +7,6 @@ class FetchEfolderDocumentCountJob < CaseflowJob
   def perform(file_number:, user:)
     RequestStore.store[:current_user] = user
 
-    doc_count = ExternalApi::EfolderService.fetch_document_count(file_number, user)
-
-    datadog_report_runtime(metric_group_name: "efolder_fetch_document_count")
-
-    doc_count
+    ExternalApi::EfolderService.fetch_document_count(file_number, user)
   end
 end

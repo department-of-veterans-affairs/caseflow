@@ -7,6 +7,10 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
+  }
+
   validates :created_by, :source_appeal, :substitution_date,
             :claimant_type, # Claimant record type for the substitute
             :substitute_participant_id,
@@ -15,8 +19,9 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  before_create :establish_appeal_stream
-  after_create :initialize_tasks
+  before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
+  before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
+  after_commit :initialize_tasks
 
   def substitute_claimant
     target_appeal.claimant
@@ -30,13 +35,36 @@ class AppellantSubstitution < CaseflowRecord
     poa_participant_id ? BgsPowerOfAttorney.find_by(poa_participant_id: poa_participant_id) : nil
   end
 
+  def same_appeal_substitution_allowed?
+    (ClerkOfTheBoard.singleton.user_is_admin?(created_by) || !!source_appeal.veteran.date_of_death) &&
+      source_appeal.request_issues.none?(&:death_dismissed?)
+  end
+
   private
 
-  def establish_appeal_stream
+  def establish_substitution_on_same_appeal
+    # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant.
+    # This ensures that substitute claimant is the correct type.
+    source_appeal.update!(veteran_is_not_claimant: true)
+    Claimant.create!(
+      participant_id: substitute_participant_id,
+      payee_code: nil,
+      type: claimant_type,
+      decision_review_id: source_appeal.id,
+      decision_review_type: "Appeal"
+    )
+    self.target_appeal = source_appeal.reload
+  end
+
+  def establish_separate_appeal_stream
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
-      type: claimant_type
+      type: claimant_type,
+      # Setting the values here to 0 and '' because of the non-null constraint in the schema for claimant records.
+      # This will be corrected when `create_stream` is called.
+      decision_review_id: 0,
+      decision_review_type: ""
     )
 
     # To-do: Implement this and the DB schema once we understand the requirements for selecting a
@@ -72,9 +100,12 @@ class AppellantSubstitution < CaseflowRecord
       # This block of code may be a source of bugs as new columns are added to request_issues.
       # It may be better to copy specific attributes, than duplicate everything.
       request_issue.dup.tap do |request_issue_copy|
+        # Death-dismissed issues should be reopened
+        if request_issue.death_dismissed?
+          request_issue_copy.closed_status = nil
+          request_issue_copy.closed_at = nil
+        end
         request_issue_copy.decision_review = target_appeal
-        # Do not copy decisions for new appeal
-        request_issue_copy.decision_date = nil
         request_issue_copy.save!
       end
     end

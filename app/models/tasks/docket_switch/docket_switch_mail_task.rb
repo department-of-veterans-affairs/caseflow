@@ -24,6 +24,18 @@ class DocketSwitchMailTask < MailTask
       COPY::DOCKET_SWITCH_MAIL_TASK_LABEL
     end
 
+    def blocking?
+      true
+    end
+
+    def parent_if_blocking_task(parent_task)
+      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+        return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
+      end
+
+      parent_task
+    end
+
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
 

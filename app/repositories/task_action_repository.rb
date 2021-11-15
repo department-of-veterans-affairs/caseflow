@@ -304,7 +304,9 @@ class TaskActionRepository
     }.freeze
 
     def complete_data(task, _user = nil)
-      params = { modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym] }
+      params = {
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+      }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
       if defined? task.completion_contact
@@ -312,6 +314,17 @@ class TaskActionRepository
       end
 
       params
+    end
+
+    def vha_complete_data(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
     end
 
     def schedule_veteran_data(_task, _user = nil)
@@ -440,21 +453,98 @@ class TaskActionRepository
 
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-      action = select_ama_review_decision_action(task, user) if task.ama?
+      action = select_ama_review_decision_action(task) if task.ama?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
+    def docket_appeal_data(*)
+      {
+        modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
+        modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
+        instructions_label: COPY::VHA_MODAL_BODY,
+        redirect_after: "/organizations/#{BvaIntake.singleton.url}"
+      }
+    end
+
+    def vha_send_to_board_intake(*)
+      {
+        modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
+    end
+
+    def vha_assign_to_program_office_data(*)
+      {
+        options: organizations_to_options(VhaProgramOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
+    end
+
+    def vha_assign_to_regional_office_data(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        options: organizations_to_options(VhaRegionalOffice.all),
+        modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions: [],
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_program_office_return_to_camo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
+        message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_regional_office_return_to_program_office(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE,
+        message_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_mark_task_in_progress(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     private
 
-    def select_ama_review_decision_action(task, user)
+    def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
 
-      if FeatureToggle.enabled?(:special_issues_revamp, user: user)
-        return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
-      end
-
-      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
 
     def select_withdraw_hearing_copy(appeal)
@@ -475,6 +565,15 @@ class TaskActionRepository
 
     def task_assigner_name(task)
       task.assigned_by&.full_name || "the assigner"
+    end
+
+    def organizations_to_options(organizations)
+      organizations&.map do |org|
+        {
+          label: org.name,
+          value: org.id
+        }
+      end
     end
 
     def users_to_options(users)

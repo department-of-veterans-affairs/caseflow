@@ -13,6 +13,7 @@ class TasksController < ApplicationController
   # If a task type is not sent to the frontend via TaskActionRepository's `type` or `options` parameters,
   # then it doesn't need to be included here.
   TASK_CLASSES_LOOKUP = {
+    AssessDocumentationTask: AssessDocumentationTask,
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
@@ -41,7 +42,8 @@ class TasksController < ApplicationController
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task, # Consider for removal, after cleaning up occurrences in prod
     TranscriptionTask: TranscriptionTask,
-    TranslationTask: TranslationTask
+    TranslationTask: TranslationTask,
+    VhaDocumentSearchTask: VhaDocumentSearchTask
   }.freeze
 
   def set_application
@@ -109,26 +111,27 @@ class TasksController < ApplicationController
 
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
-    alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
+    # Start with any alerts on the current task, then find alerts on the tasks
+    # that resulted from the update
+    alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+
     tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
-    render json: {
-      tasks: tasks_hash
-    }
+    render json: { tasks: tasks_hash }
+  rescue Caseflow::Error::InvalidEmailError => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render_update_errors(["message": error.message, "code": error.code])
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render json: {
-      "errors": ["title": "Missing Associated Hearing", "detail": error]
-    }, status: :bad_request
+    render_update_errors(["title": "Missing Associated Hearing", "detail": error])
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
-    render json: {
-      "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]
-    }, status: :bad_request
+    render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
 
   def for_appeal
@@ -173,6 +176,10 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def render_update_errors(errors)
+    render json: { "errors": errors }, status: :bad_request
+  end
 
   def queue_config
     params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash

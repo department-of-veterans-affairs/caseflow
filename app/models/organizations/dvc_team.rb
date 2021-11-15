@@ -35,6 +35,6 @@ class DvcTeam < Organization
   end
 
   def serialize
-    super.merge(name: dvc.full_name.titleize)
+    super.merge(name: dvc&.full_name&.titleize)
   end
 end

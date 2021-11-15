@@ -1,20 +1,16 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  TRAVEL_BOARD_HEARING_LABEL,
-  VIDEO_HEARING_LABEL,
-  HEARING_CONVERSION_TYPES,
-} from '../constants';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown,
 } from '../../components/DataDropdowns';
-import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
+import { ReadOnlyHearingTimeWithZone } from './modalForms/ReadOnlyHearingTimeWithZone';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
@@ -24,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
 import { UnscheduledNotes } from './UnscheduledNotes';
+import { formatNotificationLabel } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -32,10 +29,13 @@ export const ScheduleVeteranForm = ({
   hearing,
   errors,
   initialRegionalOffice,
-  initialHearingDate,
-  convertToVirtual,
+  initialHearingDay,
   userCanViewTimeSlots,
   hearingTask,
+  userCanCollectVideoCentralEmails,
+  hearingRequestTypeDropdownOptions,
+  hearingRequestTypeDropdownCurrentOption,
+  hearingRequestTypeDropdownOnchange,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -53,29 +53,26 @@ export const ScheduleVeteranForm = ({
   const unscheduledNotes = hearing?.notes;
   const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
-  const getOriginalRequestType = () => {
-    if (
-      appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL
-    ) {
-      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-      // the HearingTypeDropdown
-      return VIDEO_HEARING_LABEL;
-    }
-
-    // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
-  };
+  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
 
   // Set the section props
   const sectionProps = {
     errors,
     hearing,
     appellantTitle,
+    userCanCollectVideoCentralEmails,
+    formFieldsOnly: true,
+    showDivider: false,
     schedulingToVirtual: virtual,
     virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
     showTimezoneField: true,
+    appellantEmailAddress: hearing?.virtualHearing?.appellantEmailAddress,
+    appellantTimezone: hearing?.virtualHearing?.appellantTz,
+    representativeEmailAddress: hearing?.virtualHearing?.representativeEmailAddress,
+    representativeTimezone: hearing?.virtualHearing?.representativeTz,
+    appellantEmailType: 'appellantEmail',
+    representativeEmailType: 'representativeEmail',
     update: (_, virtualHearing) =>
       props.onChange('virtualHearing', {
         ...hearing?.virtualHearing,
@@ -83,10 +80,38 @@ export const ScheduleVeteranForm = ({
       })
   };
 
+  const getHearingTime = () => {
+    const onTimeChange =
+      (scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString);
+
+    if (hearingDayIsVideo && hearing.hearingDay?.halfDay) {
+      return (
+        <ReadOnlyHearingTimeWithZone
+          hearingStartTime={hearing.hearingDay?.beginsAt}
+          timezone={hearing?.hearingDay?.timezone}
+          onRender={onTimeChange}
+        />
+      );
+    }
+
+    return <HearingTime
+      regionalOffice={ro}
+      requestType={hearing?.hearingDay?.readableRequestType}
+      errorMessage={errors?.scheduledTimeString}
+      vertical
+      label="Hearing Time"
+      enableZone
+      localZone={hearing?.hearingDay?.timezone}
+      onChange={onTimeChange}
+      value={hearing.scheduledTimeString}
+    />;
+
+  };
+
   return (
     <div className="usa-width-one-whole schedule-veteran-details">
       <div className="usa-width-one-fourth schedule-veteran-appeal-info-container">
-        <AppealInformation appeal={appeal} />
+        <AppealInformation appeal={appeal} appellantTitle={appellantTitle} hearing={hearing} />
       </div>
       <div className="usa-width-one-half">
         <UnscheduledNotes
@@ -99,31 +124,14 @@ export const ScheduleVeteranForm = ({
         <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
-            enableFullPageConversion
-            update={convertToVirtual}
-            originalRequestType={getOriginalRequestType()}
-            virtualHearing={hearing?.virtualHearing}
+            dropdownOptions={hearingRequestTypeDropdownOptions}
+            currentOption={hearingRequestTypeDropdownCurrentOption}
+            onChange={hearingRequestTypeDropdownOnchange}
           />
         </div>
-        <div className="cf-help-divider usa-width-one-whole" />
-        <div className="usa-width-one-whole">
-          {virtual ? (
+        <div className="usa-width-one-whole" {...marginTop(30)}>
+          {virtual && (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
-          ) : (
-            <ReadOnly
-              spacing={0}
-              label={`${appellantTitle} Address`}
-              text={
-                <AddressLine
-                  spacing={5}
-                  name={appeal?.appellantFullName}
-                  addressLine1={appeal?.appellantAddress?.address_line_1}
-                  addressState={appeal?.appellantAddress?.state}
-                  addressCity={appeal?.appellantAddress?.city}
-                  addressZip={appeal?.appellantAddress?.zip}
-                />
-              }
-            />
           )}
           <div {...marginTop(30)}>
             <RegionalOfficeDropdown
@@ -159,7 +167,7 @@ export const ScheduleVeteranForm = ({
                   errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
                   regionalOffice={ro}
-                  value={hearing.hearingDay || initialHearingDate}
+                  value={hearing.hearingDay || initialHearingDay}
                   onChange={(hearingDay) => {
                     // Call fetch scheduled hearings only if passed
                     fetchScheduledHearings(hearingDay)(dispatch);
@@ -179,30 +187,23 @@ export const ScheduleVeteranForm = ({
                       roTimezone={hearing?.hearingDay?.timezone}
                     />
                   ) : (
-                    <HearingTime
-                      regionalOffice={ro}
-                      errorMessage={errors?.scheduledTimeString}
-                      vertical
-                      label="Hearing Time"
-                      enableZone
-                      localZone={hearing?.hearingDay?.timezone}
-                      onChange={(scheduledTimeString) =>
-                        props.onChange('scheduledTimeString', scheduledTimeString)
-                      }
-                      value={hearing.scheduledTimeString}
-                    />
+                    getHearingTime()
                   )}
                 </div>
               )}
-
             </React.Fragment>
           )}
         </div>
-        {virtual && (
-          <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection {...sectionProps} fullWidth />
-            <RepresentativeSection {...sectionProps} fullWidth />
-          </div>
+        {(userCanCollectVideoCentralEmails || virtual) && (
+          <React.Fragment>
+            <div className="cf-help-divider usa-width-one-whole" />
+            <div className="usa-width-one-whole" >
+              <h2>Email Notifications {!virtual && '(Optional)'}</h2>
+              <p>{formatNotificationLabel(hearing, virtual, appellantTitle)}</p>
+              <AppellantSection {...sectionProps} fullWidth />
+              <RepresentativeSection {...sectionProps} fullWidth />
+            </div>
+          </React.Fragment>
         )}
       </div>
     </div>
@@ -217,12 +218,15 @@ ScheduleVeteranForm.propTypes = {
   errors: PropTypes.object,
   hearing: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  initialHearingDate: PropTypes.string,
+  initialHearingDay: PropTypes.object,
   appellantTitle: PropTypes.string,
-  convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
-  hearingTask: PropTypes.object
+  userCanCollectVideoCentralEmails: PropTypes.bool,
+  hearingTask: PropTypes.object,
+  hearingRequestTypeDropdownOptions: PropTypes.array,
+  hearingRequestTypeDropdownCurrentOption: PropTypes.object,
+  hearingRequestTypeDropdownOnchange: PropTypes.func
 };
 
 /* eslint-enable camelcase */

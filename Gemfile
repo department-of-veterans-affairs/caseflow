@@ -12,6 +12,7 @@ gem "acts_as_tree"
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
+gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "049b3c5068fa6c6d1cae0b58654529316b84be57"
@@ -85,8 +86,6 @@ group :test, :development, :demo do
   gem "brakeman"
   gem "bullet"
   gem "bundler-audit"
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: :ruby
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
@@ -98,8 +97,10 @@ group :test, :development, :demo do
   gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
-  gem "pry"
-  gem "pry-byebug"
+  gem "pluck_to_hash"
+  gem "pry", "~> 0.13.0"
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem "pry-byebug", "~> 3.9"
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"

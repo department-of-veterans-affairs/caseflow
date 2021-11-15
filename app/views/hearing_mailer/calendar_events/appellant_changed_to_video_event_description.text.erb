@@ -1,0 +1,8 @@
+You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= virtual_hearing.hearing.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
+
+Date and Time
+<%= Hearings::CalendarTemplateHelper.formatted_date_time_for_zone(time_zone, start_time_utc) %>
+
+Location
+<%= virtual_hearing.hearing.hearing_location_or_regional_office&.name %>
+<%= virtual_hearing.hearing.hearing_location_or_regional_office&.full_address %>

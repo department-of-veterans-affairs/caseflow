@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { commentIcon } from '../components/RenderFunctions';
+import { CommentSymbol } from '../components/RenderFunctions';
 
 export class CommentIcon extends React.Component {
   onClick = () => {
@@ -39,7 +39,10 @@ export class CommentIcon extends React.Component {
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>
-      {commentIcon(selected, this.props.comment.uuid)}
+      <CommentSymbol
+        selected={selected}
+        id={this.props.comment.uuid}
+      />
     </div>;
   }
 }
@@ -51,7 +54,9 @@ CommentIcon.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   }),
-  rotation: PropTypes.number
+  rotation: PropTypes.number,
+  selectedAnnotationId: PropTypes.number,
+  onDrag: PropTypes.any
 };
 
 const mapStateToProps = (state) => ({

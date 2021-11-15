@@ -20,7 +20,10 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
-  belongs_to :appeal, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
+
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
@@ -94,6 +97,8 @@ class Task < CaseflowRecord
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
+
+  attr_accessor :skip_check_for_only_open_task_of_type
 
   ############################################################################################
   ## class methods
@@ -418,6 +423,12 @@ class Task < CaseflowRecord
     end
   end
 
+  def unscoped_assigned_to
+    return Organization.unscoped.find(assigned_to_id) if assigned_to_type == "Organization"
+
+    assigned_to
+  end
+
   def assigned_to_same_org?(task_to_check)
     assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
   end
@@ -464,22 +475,22 @@ class Task < CaseflowRecord
     [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
+  def append_instruction(instruction)
+    update!(instructions: flattened_instructions(instructions: instruction))
+  end
+
   def hide_from_queue_table_view
     self.class.hide_from_queue_table_view
   end
 
-  def duplicate_org_task
-    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
-      User.name == child_task.assigned_to_type && type == child_task.type
-    end
-  end
-
   def hide_from_case_timeline
-    duplicate_org_task
+    !child_user_tasks_of_same_type.empty?
   end
 
   def hide_from_task_snapshot
-    duplicate_org_task
+    # We want to hide org tasks if there is an open user task of same type
+    # However, if user task has been cancelled, show the org task so that an org admin can assign to another user
+    child_user_tasks_of_same_type.any? { |child_task| !child_task.cancelled? }
   end
 
   def legacy?
@@ -530,6 +541,12 @@ class Task < CaseflowRecord
     end
   end
 
+  # N.B. that this does not check permissions, only assignee
+  # Use task_is_assigned_to_users_organization? if that is needed.
+  def task_is_assigned_to_organization?(org)
+    assigned_to.is_a?(Organization) && assigned_to == org
+  end
+
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
@@ -558,7 +575,7 @@ class Task < CaseflowRecord
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
-    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
+    @skip_check_for_only_open_task_of_type = true
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
@@ -569,10 +586,8 @@ class Task < CaseflowRecord
 
           task.save!
         end
-      # The ensure block guarantees that the thread-local variable check_for_open_task_type
-      # does not leak outside of this method
       ensure
-        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
+        @skip_check_for_only_open_task_of_type = nil
       end
     end
 
@@ -600,14 +615,17 @@ class Task < CaseflowRecord
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
 
   # This method is for copying a task and its ancestors to a new appeal stream
-  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [])
+  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [], new_attributes: {})
     return unless parent
 
-    new_task_attributes = attributes.except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+    new_task_attributes = attributes
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+      .merge(new_attributes)
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
-    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    # We reload the new_appeal_stream to ensure we are always working off an updated snapshot of task tree
+    existing_new_parent = new_appeal_stream.reload.tasks.find { |task| task.type == parent.type }
     new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
 
     # Do not copy orphaned branches
@@ -664,6 +682,18 @@ class Task < CaseflowRecord
         closed_at: Time.zone.now
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def version_summary
+    versions.map do |version|
+      {
+        who: [User.find_by_id(version.whodunnit)].compact
+          .map { |user| "#{user.css_id} (#{user.id}, #{user.full_name})" }.first,
+        when: version.created_at,
+        changeset: version.changeset
+      }
     end
   end
 
@@ -755,6 +785,14 @@ class Task < CaseflowRecord
     task_just_closed? && parent
   end
 
+  def child_user_tasks_of_same_type
+    return [] unless assigned_to_type == "Organization"
+
+    descendants.select do |child_task|
+      child_task.assigned_to_type == "User" && type == child_task.type
+    end
+  end
+
   def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
@@ -778,6 +816,8 @@ class Task < CaseflowRecord
   end
 
   def cascade_closure_from_child_task?(child_task)
+    return if is_a?(AssessDocumentationTask)
+
     type == child_task&.type
   end
 
@@ -828,10 +868,6 @@ class Task < CaseflowRecord
     end
 
     true
-  end
-
-  def skip_check_for_only_open_task_of_type?
-    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
   end
 
   def only_open_task_of_type

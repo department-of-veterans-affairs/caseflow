@@ -3,7 +3,7 @@
 # This job will create a conference for a hearing
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
-  include VirtualHearings::EnsureCurrentUserIsSet
+  include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :high_priority
   application_attr :hearing_schedule
@@ -162,7 +162,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def send_emails(email_type)
     begin
-      VirtualHearings::SendEmail.new(
+      Hearings::SendEmail.new(
         virtual_hearing: virtual_hearing,
         type: email_type
       ).call

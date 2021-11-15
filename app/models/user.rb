@@ -15,6 +15,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
+  has_one :vacols_staff, class_name: "VACOLS::Staff", foreign_key: :sdomainid, primary_key: :css_id
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
@@ -387,6 +388,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def completed_tasks_tab
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def can_edit_unrecognized_poa?
+    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners, BvaIntake].map(&:singleton)
+    colocated_in_vacols? || allowed_orgs.any? { |org| org.user_has_access?(self) }
   end
 
   def can_act_on_behalf_of_judges?

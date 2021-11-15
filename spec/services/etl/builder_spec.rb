@@ -59,7 +59,7 @@ describe ETL::Builder, :etl, :all_dbs do
           expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
           expect(build.built).to eq(1)
           expect(builder.built).to eq(build.built)
-          expect(build.tables).to eq(["appeals"])
+          expect(build.tables).to include("appeals")
           expect(build.build_for("appeals").rows_inserted).to eq(0)
           expect(build.build_for("appeals").rows_updated).to eq(1)
         end

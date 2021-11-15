@@ -83,6 +83,10 @@ feature "Appeal Intake", :all_dbs do
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
@@ -112,6 +116,7 @@ feature "Appeal Intake", :all_dbs do
     expect(appeal.receipt_date.to_date).to eq(receipt_date.to_date)
     expect(appeal.docket_type).to eq(Constants.AMA_DOCKETS.evidence_submission)
     expect(appeal.legacy_opt_in_approved).to eq(false)
+    expect(appeal.filed_by_va_gov).to eq(true)
     expect(appeal.claimant_participant_id).to eq(
       intake.veteran.participant_id
     )
@@ -178,6 +183,10 @@ feature "Appeal Intake", :all_dbs do
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
@@ -203,7 +212,8 @@ feature "Appeal Intake", :all_dbs do
       receipt_date: receipt_date,
       docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      filed_by_va_gov: false
     )
 
     intake = AppealIntake.create!(

@@ -411,14 +411,19 @@
 }
 
 .cf-pdf-pdfjs-textLayer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  height: 100%;
+  position: relative;
   overflow: hidden;
-  opacity: 0.2;
   line-height: 1;
+
+  // Needed to correctly render the Text Layer
+  span {
+    position: absolute;
+    color: transparent;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+  }
 }
 
 .cf-pdf-annotationLayer {
@@ -523,7 +528,7 @@ input[type="search"].cf-search-input-with-close {
 }
 
 .canvasWrapper {
-  background: $color-black;
+  background: transparent;
 }
 
 .cf-modal-scroll {

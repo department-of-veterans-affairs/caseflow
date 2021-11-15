@@ -8,6 +8,7 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include AppealConcern
+  include BeaamAppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -25,7 +26,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
   has_many :nod_date_updates
-  has_one :special_issue_list
+  has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
@@ -92,7 +93,6 @@ class Appeal < DecisionReview
   scope :established, -> { where.not(established_at: nil) }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
-  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
 
@@ -161,6 +161,16 @@ class Appeal < DecisionReview
     post_decision_motion&.vacate_type
   end
 
+  def contested_claim?
+    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
+
+    category_substrings = ["Contested Claims", "Apportionment"]
+
+    request_issues.any? do |request_issue|
+      category_substrings.any? { |substring| request_issue.nonrating_issue_category&.include?(substring) }
+    end
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -198,10 +208,6 @@ class Appeal < DecisionReview
     super
   end
 
-  def attorney_case_reviews
-    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
-  end
-
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
@@ -214,8 +220,12 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
+  def latest_judge_case_review
+    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
+  end
+
   def reviewing_judge_name
-    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -264,7 +274,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution_at
-    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+    tasks.select { |task| task.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
   def regional_office_key
@@ -327,6 +337,10 @@ class Appeal < DecisionReview
     court_remand?
   end
 
+  def vha_has_issues?
+    request_issues.active.any? { |ri| ri.benefit_type == "vha" }
+  end
+
   alias cavc? cavc
 
   def cavc_remand
@@ -342,6 +356,11 @@ class Appeal < DecisionReview
 
   def appellant_substitution?
     !!appellant_substitution
+  end
+
+  # Determine if we are on a separate substitution appeal (used in serializer)
+  def substitution_appeal?
+    appellant_substitution && id != appellant_substitution.source_appeal.id
   end
 
   # This method allows the source appeal stream to access the appellant_substitution objects
@@ -361,6 +380,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
+  # :reek:FeatureEnvy
   def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
@@ -419,9 +439,12 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+      PreDocketTasksFactory.new(self).call
+    else
+      InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    end
     create_business_line_tasks!
-    maybe_create_translation_task
   end
 
   # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
@@ -441,7 +464,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
     end
   end
 
@@ -517,11 +540,6 @@ class Appeal < DecisionReview
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
-  def eligible_for_death_dismissal?(_user)
-    # Death dismissal processing is only for VACOLs/Legacy appeals
-    false
-  end
-
   # We are ready for BVA dispatch if
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
@@ -549,6 +567,16 @@ class Appeal < DecisionReview
     appellant&.relationship
   end
 
+  # :reek:FeatureEnvy
+  def can_redistribute_appeal?
+    relevant_tasks = tasks.reject do |task|
+      task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+    end
+    return false if relevant_tasks.any?(&:open?)
+    return true if relevant_tasks.all?(&:closed?)
+  end
+
   private
 
   def business_lines_needing_assignment
@@ -561,17 +589,6 @@ class Appeal < DecisionReview
     self.stream_docket_number ||= docket_number if receipt_date
     self.stream_type ||= type.parameterize.underscore.to_sym
     save! if has_changes_to_save? # prevent infinite recursion
-  end
-
-  def maybe_create_translation_task
-    veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran.validate_address
-    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
-  rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran_state_code
-  ensure
-    distribution_task = tasks.open.find_by(type: DistributionTask.name)
-    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
   def default_docket_number_from_receipt_date

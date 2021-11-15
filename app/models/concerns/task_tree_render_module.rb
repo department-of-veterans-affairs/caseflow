@@ -7,22 +7,18 @@ require "console_tree_renderer"
 module TaskTreeRenderModule
   PRESET_VALUE_FUNCS = {
     CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-    CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
     UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-    UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
     CLO_DATE: ->(task) { task.closed_at&.strftime("%Y-%m-%d") },
-    CLO_TIME: ->(task) { task.closed_at&.strftime("%H-%M-%S") },
     ASGN_DATE: ->(task) { task.assigned_at&.strftime("%Y-%m-%d") },
-    ASGN_TIME: ->(task) { task.assigned_at&.strftime("%H-%M-%S") },
     ASGN_BY: lambda { |task|
       ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
         ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
         ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
     },
     ASGN_TO: lambda { |task|
-      ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+      ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:unscoped_assigned_to, :css_id])&.to_s
     }
   }.freeze
 
@@ -31,7 +27,7 @@ module TaskTreeRenderModule
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.heading_label_template = lambda { |appeal|
-        docket = appeal.docket_name.first.titleize
+        docket = appeal.docket_name&.first&.titleize || "?"
         docket_number = if appeal.is_a?(LegacyAppeal)
                           appeal.cached_vacols_case&.docket_number || appeal.docket_number
                         else

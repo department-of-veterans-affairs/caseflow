@@ -7,7 +7,9 @@
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
-  belongs_to :decision_review, polymorphic: true
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :decision_review
+
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
@@ -17,16 +19,17 @@ class Claimant < CaseflowRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  delegate :date_of_birth,
-           :advanced_on_docket?,
+  delegate :advanced_on_docket?,
            :advanced_on_docket_based_on_age?,
            :advanced_on_docket_motion_granted?,
            :name,
-           :first_name,
-           :last_name,
-           :middle_name,
-           :email_address,
            to: :person
+  delegate :first_name,
+           :middle_name,
+           :last_name,
+           :date_of_birth,
+           :email_address,
+           to: :person, allow_nil: true
   delegate :address,
            :address_line_1,
            :address_line_2,
@@ -46,13 +49,18 @@ class Claimant < CaseflowRecord
 
   delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
 
+  def suffix
+    person&.name_suffix
+  end
+
   def self.create_without_intake!(participant_id:, payee_code:, type:)
-    create!(
+    claimant = create!(
       participant_id: participant_id,
       payee_code: payee_code,
       type: type
     )
     Person.find_or_create_by_participant_id(participant_id)
+    claimant
   end
 
   def power_of_attorney

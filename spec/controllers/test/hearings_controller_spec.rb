@@ -62,7 +62,7 @@ describe Test::HearingsController, :postgres, type: :controller do
       context "the send_email parameter is passed" do
         context "the send_email parameter is 'true'" do
           it "attempts to send an email" do
-            expect(Test::HearingsProfileJob).to receive(:perform_later).once.with(current_user, {})
+            expect(Test::HearingsProfileJob).to receive(:perform_later).once.with(current_user)
             get :index, params: { send_email: "true" }
             json_body = JSON.parse response.body
             expect(json_body["email"]["email_sent"]).to eq true

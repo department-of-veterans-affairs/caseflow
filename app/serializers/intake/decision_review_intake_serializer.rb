@@ -8,6 +8,10 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
     object.detail&.receipt_date
   end
 
+  attribute :filed_by_va_gov do |object|
+    object.detail&.filed_by_va_gov
+  end
+
   attribute :claimant do |object|
     object.detail&.claimant_participant_id
   end

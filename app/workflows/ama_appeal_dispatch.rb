@@ -16,6 +16,7 @@ class AmaAppealDispatch
 
   def call
     throw_error_if_no_tasks_or_if_task_is_completed
+    throw_error_if_file_number_not_match_bgs
 
     @success = valid?
 
@@ -35,6 +36,15 @@ class AmaAppealDispatch
 
   def dispatch_task
     @dispatch_task ||= dispatch_tasks[0]
+  end
+
+  def throw_error_if_file_number_not_match_bgs
+    if FileNumberUpdateDetector.new(veteran: @appeal.veteran).new_file_number.present?
+      fail(
+        Caseflow::Error::BgsFileNumberMismatch,
+        appeal_id: appeal.id, user_id: user.id, veteran_id: @appeal.veteran.id
+      )
+    end
   end
 
   def throw_error_if_no_tasks_or_if_task_is_completed

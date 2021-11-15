@@ -21,7 +21,6 @@ export const TimeSlotDetail = ({
   appealExternalId,
   readableRequestType,
   itemSpacing,
-  isFormerTravel,
   constrainWidth,
   hearingDay,
   regionalOffice,
@@ -51,7 +50,7 @@ export const TimeSlotDetail = ({
               <Dot spacing={itemSpacing} />{' '}
             </React.Fragment>
           )}
-          <HearingRequestType hearingRequestType={readableRequestType} isFormerTravel={isFormerTravel} />{' '}
+          <HearingRequestType hearingRequestType={readableRequestType} />{' '}
           <Dot spacing={itemSpacing} />{' '}
           <LinkToAppeal
             appealExternalId={appealExternalId}
@@ -83,7 +82,6 @@ TimeSlotDetail.propTypes = {
   showDetails: PropTypes.bool,
   showType: PropTypes.bool,
   aod: PropTypes.bool,
-  isFormerTravel: PropTypes.bool,
   itemSpacing: PropTypes.number,
   poaName: PropTypes.string,
 };

@@ -30,6 +30,7 @@ class Hearing < CaseflowRecord
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
   include HearingConcern
+  include HasHearingEmailRecipientsConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -40,12 +41,14 @@ class Hearing < CaseflowRecord
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
+  has_many :email_recipients, class_name: "HearingEmailRecipient"
 
   class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
+  accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 
   alias_attribute :location, :hearing_location
 
@@ -53,16 +56,19 @@ class Hearing < CaseflowRecord
 
   delegate :appellant_first_name, :appellant_last_name, :representative_address,
            :representative_type, :appellant_city, :appellant_state, :appellant_relationship,
-           :appellant_zip, :appellant_address_line_1, :appellant_email_address, :appellant_tz,
-           :representative_tz, :veteran_age, :veteran_gender, :veteran_first_name,
-           :veteran_last_name, :veteran_file_number, :veteran_email_address, :docket_number,
-           :docket_name, :request_issues, :decision_issues, :available_hearing_locations,
-           :closest_regional_office, :advanced_on_docket?,
+           :appellant_zip, :appellant_address_line_1, :veteran_age, :veteran_gender, :veteran_first_name,
+           :veteran_last_name, :veteran_file_number, :docket_number, :docket_name, :request_issues,
+           :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :hearing_day_full?, :request_type, to: :hearing_day
-  delegate :regional_office, to: :hearing_day, prefix: true
   delegate :timezone, :name, to: :regional_office, prefix: true
+
+  # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
+  # allows us to soft-delete hearing_days by setting the deleted_at value.
+  # As a result, we need to set allow_nil to true for these attributes/functions.
+
+  delegate :hearing_day_full?, :request_type, to: :hearing_day, allow_nil: true
+  delegate :regional_office, to: :hearing_day, prefix: true, allow_nil: true
 
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
@@ -110,7 +116,7 @@ class Hearing < CaseflowRecord
   end
 
   def readable_request_type
-    HEARING_TYPES[request_type.to_sym]
+    HEARING_TYPES[request_type&.to_sym]
   end
 
   alias original_request_type request_type
@@ -134,10 +140,6 @@ class Hearing < CaseflowRecord
     appeal.representative_name
   end
 
-  def representative_email_address
-    appeal&.representative_email_address
-  end
-
   def claimant_id
     return nil if appeal.appellant.nil?
 
@@ -157,6 +159,8 @@ class Hearing < CaseflowRecord
   end
 
   def scheduled_for
+    return nil unless hearing_day
+
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
     #

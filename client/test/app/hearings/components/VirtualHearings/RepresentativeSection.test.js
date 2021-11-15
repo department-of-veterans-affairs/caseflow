@@ -7,7 +7,7 @@ import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/R
 import { amaHearing } from 'test/data';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import { AddressLine } from 'app/hearings/components/details/Address';
-import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { getAppellantTitle } from 'app/hearings/utils';
@@ -30,7 +30,7 @@ describe('RepresentativeSection', () => {
 
     // Assertions
     expect(representativeSection.find(AddressLine)).toHaveLength(1);
-    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
     expect(representativeSection.find(TextField)).toHaveLength(1);
     expect(representativeSection).toMatchSnapshot();
   });
@@ -50,7 +50,7 @@ describe('RepresentativeSection', () => {
 
     // Ensure the emails are read-only
     expect(representativeSection.find(TextField)).toHaveLength(0);
-    representativeSection.find(VirtualHearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
+    representativeSection.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
     expect(representativeSection).toMatchSnapshot();
   });
 
@@ -88,7 +88,7 @@ describe('RepresentativeSection', () => {
 
     // Assertions
     expect(representativeSection.find(AddressLine)).toHaveLength(0);
-    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
     expect(representativeSection.find(VirtualHearingSection).first().
       find(ReadOnly).
       prop('text')).toEqual(
@@ -113,9 +113,27 @@ describe('RepresentativeSection', () => {
 
     // Assertions
     expect(representativeSection.find(AddressLine)).toHaveLength(1);
-    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
     expect(representativeSection.find(AddressLine).first().
       text()).toMatch(amaHearing.representativeName);
+    expect(representativeSection).toMatchSnapshot();
+  });
+
+  test('Does not display address when formFieldsOnly = true', () => {
+    const representativeSection = mount(
+      <RepresentativeSection
+        formFieldsOnly
+        appellantTitle="Appellant"
+        virtualHearing={virtualHearing.virtualHearing}
+        hearing={defaultHearing}
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+      />
+    );
+
+    expect(representativeSection.find(ReadOnly)).toHaveLength(1);
+    expect(representativeSection.find(AddressLine)).toHaveLength(0);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
     expect(representativeSection).toMatchSnapshot();
   });
 });

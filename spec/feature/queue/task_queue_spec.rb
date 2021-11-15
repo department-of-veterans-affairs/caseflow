@@ -17,16 +17,6 @@ feature "Task queue", :all_dbs do
       )
     end
 
-    let!(:attorney_task_new_docs) do
-      create(
-        :ama_attorney_task,
-        :on_hold,
-        assigned_to: attorney_user,
-        placed_on_hold_at: 4.days.ago,
-        appeal: attorney_task.appeal
-      )
-    end
-
     let!(:colocated_task) do
       create(
         :ama_colocated_task,
@@ -97,6 +87,35 @@ feature "Task queue", :all_dbs do
     it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
+
+    context "contested claims" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            benefit_type: "compensation",
+            nonrating_issue_category: "Contested Claims - Apportionment"
+          )
+        ]
+      end
+      let!(:contested_claim_appeal) { create(:appeal, request_issues: request_issues) }
+      let!(:attorney_task_2) do
+        create(
+          :ama_attorney_task,
+          :assigned,
+          assigned_to: attorney_user,
+          appeal: contested_claim_appeal
+        )
+      end
+
+      before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+      after { FeatureToggle.disable!(:indicator_for_contested_claims) }
+
+      it "should show indicator in user queue" do
+        visit "/queue"
+        expect(page).to have_selector(".cf-contested-badge")
+      end
     end
 
     context "hearings" do
@@ -685,16 +704,19 @@ feature "Task queue", :all_dbs do
 
     context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
       before do
-        ColocatedTask.create_many_from_params([{
-                                                assigned_by: attorney,
-                                                type: AojColocatedTask.name,
-                                                appeal: appeal
-                                              }], attorney)
+        parent = ColocatedTask.create_many_from_params([{
+                                                         assigned_by: attorney,
+                                                         type: AojColocatedTask.name,
+                                                         appeal: appeal
+                                                       }],
+                                                       attorney).first
+        AojColocatedTask.create!(
+          assigned_by: attorney, appeal: appeal, parent: parent, assigned_to: vlj_support_staffer
+        )
       end
 
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
-
         find(".cf-select__control", text: "Select an action…").click
         find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")

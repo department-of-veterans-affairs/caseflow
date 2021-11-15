@@ -8,6 +8,13 @@ commands:
           name: Ruby version
           command: ruby -v
 
+      - run:
+          name: Configure Bundler
+          command: |
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
+
       - restore_cache:
           keys:
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
@@ -62,6 +69,8 @@ commands:
           environment:
             DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.2
 jobs:
   # build workspace
   build_workspace:
@@ -77,7 +86,6 @@ jobs:
     resource_class: large
     steps:
       - checkout
-
       - install_node_dependencies
 
       - run:
@@ -95,7 +103,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/cimg-ruby:2.7.3-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -162,7 +170,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/cimg-ruby:2.7.3-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -194,6 +202,7 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
+      - browser-tools/install-browser-tools
       - install_ruby_dependencies
 
       - install_dockerize
@@ -276,7 +285,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/cimg-ruby:2.7.3-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
     steps:
@@ -316,19 +325,23 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: circleci/ruby:2.5.3-node-browsers # NodeJS Version defined in ./nvmrc
+      - image: cimg/ruby:2.7.3-browsers # NodeJS Version defined in ./nvmrc
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
           - JEST_DIR: /home/circleci/test-results/jest
           - TEST_REPORTER: jest-junit
           - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
+      - browser-tools/install-browser-tools
       - checkout
+      - run:
+          name: Install python-2 as a node-gyp@3.8.0 dependency
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python2
 
       - install_node_dependencies
 
@@ -338,13 +351,6 @@ jobs:
             mkdir -p ~/test-results/jest
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
-
-      - run:
-          name: Karma
-          command: |
-            mkdir -p ~/test-results/karma
-            pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit,dots"
 
       - store_test_results:
           name: Store test results as summary
@@ -368,10 +374,40 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_workspace
-      - demo
+      - build_workspace:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+                - gh-actions/make_docs-update_docs
+      - demo:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+                - gh-actions/make_docs-update_docs
       - rspec:
           requires:
             - build_workspace
-      - js_tests
-      - lint
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+                - gh-actions/make_docs-update_docs
+      - js_tests:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+                - gh-actions/make_docs-update_docs
+      - lint:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - main-gh-pages
+                - gh-actions/make_docs-update_docs

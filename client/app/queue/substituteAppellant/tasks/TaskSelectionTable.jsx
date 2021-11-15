@@ -1,49 +1,27 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import { Controller, useFormContext } from 'react-hook-form';
-import { capitalize } from 'lodash';
+import { Controller } from 'react-hook-form';
 
+import StringUtil from 'app/util/StringUtil';
 import Checkbox from 'app/components/Checkbox';
-import format from 'date-fns/format';
-import { parseISO } from 'date-fns';
 
 const tableStyles = css({});
 const centerCheckboxPadding = css({ paddingTop: 'inherit' });
 
-export const TaskSelectionTable = ({ tasks }) => {
-  const { control, getValues, watch } = useFormContext();
-
-  const formattedTasks = useMemo(() => {
-    return tasks.map((task) => ({
-      ...task,
-      taskId: parseInt(task.taskId, 10),
-      status: capitalize(task.status),
-      closedAt: format(parseISO(task.closedAt), 'MM/dd/yyyy'),
-    }));
-  }, [tasks]);
-
-  // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
-  const handleCheck = (changedId) => {
-    const { taskIds: ids } = getValues();
-
-    // if changedId is already in array of selected Ids, filter it out;
-    // otherwise, return array with it included
-    const newIds = ids?.includes(changedId) ?
-      ids?.filter((id) => id !== changedId) :
-      [...(ids ?? []), changedId];
-
-    // this will get set as new value for taskIds by react hook form
-    return newIds;
-  };
-
-  // We use this to set `defaultChecked` for the task checkboxes
-  const selectedTaskIds = watch('taskIds');
-
+export const TaskSelectionTable = ({
+  control,
+  onCheckChange,
+  selectionField,
+  selectedTaskIds,
+  tasks,
+}) => {
   // Error handling that should never be needed with real production data
-  if (!formattedTasks.length) {
+  if (!tasks.length) {
     return <p>There is no task available to reopen</p>;
   }
+
+  const formatStatus = (status) => StringUtil.snakeCaseToCapitalized(status);
 
   return (
     <table className={`usa-table-borderless ${tableStyles}`}>
@@ -58,23 +36,30 @@ export const TaskSelectionTable = ({ tasks }) => {
       <tbody>
         <Controller
           control={control}
-          name="taskIds"
+          name={selectionField}
           render={({ onChange }) =>
-            formattedTasks.map((task) =>
+            tasks.map((task) =>
               task.hidden ? null : (
                 <tr key={task.taskId}>
                   <td {...centerCheckboxPadding}>
                     <Checkbox
-                      onChange={() => onChange(handleCheck(task.taskId))}
-                      defaultValue={selectedTaskIds?.includes(task.taskId)}
-                      name={`taskIds[${task.taskId}]`}
+                      onChange={() => onChange(onCheckChange(task.taskId))}
+                      value={selectedTaskIds?.includes(task.taskId)}
+                      name={`${selectionField}[${task.taskId}]`}
                       disabled={task.disabled}
-                      hideLabel
+                      label={
+                        <>
+                          &nbsp;
+                          <span className="usa-sr-only">
+                            Select {task.label}
+                          </span>
+                        </>
+                      }
                     />
                   </td>
                   <td>{task.label.replace('Task', '')}</td>
-                  <td>{task.status}</td>
-                  <td>{task.closedAt}</td>
+                  <td>{formatStatus(task.status)}</td>
+                  <td>{task.closedAt || task.createdAt}</td>
                 </tr>
               )
             )
@@ -86,5 +71,9 @@ export const TaskSelectionTable = ({ tasks }) => {
 };
 
 TaskSelectionTable.propTypes = {
+  control: PropTypes.object,
+  onCheckChange: PropTypes.func,
   tasks: PropTypes.array,
+  selectedTaskIds: PropTypes.array,
+  selectionField: PropTypes.string,
 };

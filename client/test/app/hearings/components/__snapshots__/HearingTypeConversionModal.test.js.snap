@@ -16,6 +16,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -101,6 +102,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
         "appellantFullName": "Abellona Valtas",
         "appellantIsNotVeteran": false,
         "appellantRelationship": "Spouse",
+        "appellantTz": "America/New_York",
         "assignedAttorney": null,
         "assignedJudge": null,
         "assignedToLocation": "Hearing Admin",
@@ -349,20 +351,22 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
               >
                 Close
               </span>
-              <svg
-                className="cf-icon-close"
-                height="55"
-                viewBox="0 0 55 55"
-                width="55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <path
-                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                />
-              </svg>
+              <CloseIcon>
+                <svg
+                  className="cf-icon-close"
+                  height="55"
+                  viewBox="0 0 55 55"
+                  width="55"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>
+                    close
+                  </title>
+                  <path
+                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                  />
+                </svg>
+              </CloseIcon>
             </button>
             <div
               style={
@@ -482,6 +486,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
       "appellantFullName": "Abellona Valtas",
       "appellantIsNotVeteran": false,
       "appellantRelationship": "Spouse",
+      "appellantTz": "America/New_York",
       "assignedAttorney": null,
       "assignedJudge": null,
       "assignedToLocation": "Hearing Admin",
@@ -567,6 +572,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
         "appellantFullName": "Abellona Valtas",
         "appellantIsNotVeteran": false,
         "appellantRelationship": "Spouse",
+        "appellantTz": "America/New_York",
         "assignedAttorney": null,
         "assignedJudge": null,
         "assignedToLocation": "Hearing Admin",
@@ -815,20 +821,22 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
               >
                 Close
               </span>
-              <svg
-                className="cf-icon-close"
-                height="55"
-                viewBox="0 0 55 55"
-                width="55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <path
-                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                />
-              </svg>
+              <CloseIcon>
+                <svg
+                  className="cf-icon-close"
+                  height="55"
+                  viewBox="0 0 55 55"
+                  width="55"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>
+                    close
+                  </title>
+                  <path
+                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                  />
+                </svg>
+              </CloseIcon>
             </button>
             <div
               style={

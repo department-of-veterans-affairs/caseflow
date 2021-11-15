@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 describe HearingRepository, :all_dbs do
-  before do
-    Timecop.freeze(Time.utc(2017, 10, 4))
-    Time.zone = "America/Chicago"
-  end
-
   context ".fetch_hearings_for_parent" do
     let(:hearing_date) { Time.utc(2019, 5, 2) }
     let(:case_hearing) { create(:case_hearing, hearing_date: hearing_date) }
@@ -152,6 +147,277 @@ describe HearingRepository, :all_dbs do
     it "should create hearing records" do
       expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
+    end
+  end
+
+  context ".maybe_ready_for_reminder_email" do
+    subject { described_class.maybe_ready_for_reminder_email }
+
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:video_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+    end
+    let(:central_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: nil,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:central]
+      )
+    end
+
+    context "for both active ama and active legacy hearings" do
+      let(:ama_disposition) { nil }
+      let(:legacy_disposition) { nil }
+      let!(:ama_virtual_hearing) do
+        create(:hearing, regional_office: regional_office, hearing_day: video_hearing_day, disposition: ama_disposition)
+      end
+      let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: ama_virtual_hearing) }
+
+      let!(:ama_video_hearing) do
+        create(:hearing, regional_office: regional_office, hearing_day: video_hearing_day, disposition: ama_disposition)
+      end
+      let!(:ama_central_hearing) do
+        create(
+          :hearing,
+          regional_office: regional_office,
+          hearing_day: central_hearing_day,
+          disposition: ama_disposition
+        )
+      end
+      let!(:legacy_video_hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: video_hearing_day,
+          disposition: legacy_disposition
+        )
+      end
+
+      context "is in 60 days" do
+        let(:hearing_date) { Time.zone.now + 60.days }
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq(
+            [ama_virtual_hearing, ama_video_hearing, ama_central_hearing, legacy_video_hearing].sort_by(&:id)
+          )
+        end
+      end
+
+      context "is in 7 days" do
+        let(:hearing_date) { Time.zone.now + 7.days }
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq(
+            [ama_virtual_hearing, ama_video_hearing, ama_central_hearing, legacy_video_hearing].sort_by(&:id)
+          )
+        end
+      end
+
+      context "is in 70 days" do
+        let(:hearing_date) { Time.zone.now + 70.days }
+
+        it "returns nothing" do
+          expect(subject).to be_empty
+        end
+      end
+    end
+
+    context "for an AMA hearing" do
+      %w[postponed cancelled scheduled_in_error].each do |disposition|
+        context "#{disposition} virtual hearing" do
+          let(:ama_disposition) { disposition }
+          let(:hearing_date) { Time.zone.now + 7.days }
+          let(:hearing) do
+            create(:hearing, disposition: ama_disposition, hearing_day: video_hearing_day)
+          end
+
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
+        end
+      end
+    end
+
+    context "for a Legacy hearing" do
+      %w[P C E].each do |disposition_code|
+        context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
+          let(:legacy_disposition) { disposition_code }
+          let!(:hearing) do
+            create(
+              :legacy_hearing,
+              regional_office: regional_office,
+              hearing_day: central_hearing_day,
+              case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
+            )
+          end
+          let(:hearing_date) { Time.zone.now + 7.days }
+
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
+        end
+      end
+    end
+  end
+
+  context ".maybe_needs_email_sent_status_checked" do
+    subject { described_class.maybe_needs_email_sent_status_checked }
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:video_hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+    end
+
+    context "for both active ama and active legacy hearings" do
+      let(:ama_disposition) { nil }
+      let(:legacy_disposition) { nil }
+
+      let(:ama_video_hearing) do
+        create(
+          :hearing,
+          regional_office: regional_office,
+          hearing_day: video_hearing_day,
+          disposition: ama_disposition
+        )
+      end
+
+      let(:legacy_video_hearing) do
+        create(
+          :legacy_hearing,
+          regional_office: regional_office,
+          hearing_day_id: video_hearing_day.id,
+          case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
+        )
+      end
+
+      let!(:ama_sent_event_appellant) do
+        create(
+          :sent_hearing_email_event,
+          recipient_role: "appellant",
+          hearing: ama_video_hearing
+        )
+      end
+      let!(:ama_sent_event_representative) do
+        create(
+          :sent_hearing_email_event,
+          recipient_role: "representative",
+          hearing: ama_video_hearing
+        )
+      end
+
+      let!(:legacy_sent_event_appellant) do
+        create(
+          :sent_hearing_email_event,
+          recipient_role: "appellant",
+          hearing: legacy_video_hearing
+        )
+      end
+
+      let!(:legacy_sent_event_representative) do
+        create(
+          :sent_hearing_email_event,
+          recipient_role: "representative",
+          hearing: legacy_video_hearing
+        )
+      end
+
+      context "hearings are in the past" do
+        let(:hearing_date) { Time.zone.now - 10.days }
+
+        it "returns nothing" do
+          expect(subject).to be_empty
+        end
+      end
+
+      context "hearings are in the future" do
+        let(:hearing_date) { Time.zone.now + 7.days }
+
+        context "when send_successful is not nil" do
+          let(:send_successful) { true }
+          let!(:sent_event_with_sent_status) do
+            create(:sent_hearing_email_event, send_successful: send_successful, hearing: ama_video_hearing)
+          end
+
+          it "does not return event" do
+            expect(subject.length).to eq(4)
+            expect(subject.pluck(:id)).not_to include(sent_event_with_sent_status.id)
+          end
+        end
+
+        context "when recipient is not appellant or representative" do
+          let(:recipient_role) { "judge" }
+          let!(:sent_event_judge) do
+            create(:sent_hearing_email_event, recipient_role: recipient_role, hearing: ama_video_hearing)
+          end
+
+          it "does not return event" do
+            expect(subject.length).to eq(4)
+            expect(subject.pluck(:id)).not_to include(sent_event_judge.id)
+          end
+        end
+
+        it "returns the hearings" do
+          expect(subject.sort_by(&:id)).to eq(
+            [
+              ama_sent_event_appellant,
+              ama_sent_event_representative,
+              legacy_sent_event_appellant,
+              legacy_sent_event_representative
+            ].sort_by(&:id)
+          )
+        end
+      end
+    end
+
+    context "for an AMA hearing with closed disposition" do
+      %w[postponed cancelled scheduled_in_error].each do |disposition|
+        context "#{disposition} hearing" do
+          let(:ama_disposition) { disposition }
+          let(:hearing) do
+            create(:hearing, disposition: ama_disposition, hearing_day: video_hearing_day)
+          end
+          let!(:sent_event) do
+            create(:sent_hearing_email_event, hearing: hearing)
+          end
+
+          it "returns nothing" do
+            expect(subject).to be_empty
+          end
+        end
+      end
+    end
+
+    context "for a Legacy hearing with closed disposition" do
+      %w[P C E].each do |disposition_code|
+        context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
+          let(:legacy_disposition) { disposition_code }
+          let(:hearing) do
+            create(
+              :legacy_hearing,
+              hearing_day: video_hearing_day,
+              case_hearing: create(:case_hearing, hearing_disp: legacy_disposition)
+            )
+          end
+          let!(:sent_event) do
+            create(:sent_hearing_email_event, hearing: hearing)
+          end
+
+          it "returns nothing" do
+            expect(subject).to be_empty
+          end
+        end
+      end
     end
   end
 end

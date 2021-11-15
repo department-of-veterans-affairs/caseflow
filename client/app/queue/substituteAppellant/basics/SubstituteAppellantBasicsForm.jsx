@@ -25,7 +25,10 @@ const schema = yup.object().shape({
     nullable().
     max(new Date(), 'Date cannot be in the future').
     when(['$nodDate', '$dateOfDeath'], (date1, date2, currentSchema) => {
-      const dates = [date1, date2].map((d) => (isDate(d) ? d : parseISO(d))); // eslint-disable-line id-length
+      // We want to ensure that selected date is after the NOD and date of death
+      // Date of death may not actually be set, so we first filter out undefined from these values
+      // eslint-disable-next-line id-length
+      const dates = [date1, date2].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
 
       return currentSchema.min(max(dates), subDateMinErrorMsg);
     }).

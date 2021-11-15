@@ -47,7 +47,10 @@ module.exports = function(api) {
     plugins,
     env: {
       development: {
-        plugins: ['react-docgen']
+        plugins: ['react-docgen', 'babel-plugin-lodash']
+      },
+      production: {
+        plugins: ['babel-plugin-lodash']
       },
       test: {
         presets: [

@@ -11,6 +11,8 @@
 
 module ProportionHash
   def normalize!(to: 1.0)
+    return self if all_zero?
+
     total = values.sum
     transform_values! { |proportion| proportion * (to / total) }
   end

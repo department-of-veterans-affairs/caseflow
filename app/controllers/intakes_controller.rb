@@ -105,7 +105,10 @@ class IntakesController < ApplicationController
       featureToggles: {
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
-        covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
+        dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
+        covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+        filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
+        vhaPreDocketAppeals: FeatureToggle.enabled?(:vha_predocket_appeals, user: current_user)
       }
     }
   rescue StandardError => error
@@ -153,7 +156,7 @@ class IntakesController < ApplicationController
   def new_intake
     @new_intake ||= Intake.build(
       user: current_user,
-      veteran_file_number: veteran_file_number,
+      search_term: params[:file_number],
       form_type: params[:form_type]
     )
   end
@@ -164,12 +167,6 @@ class IntakesController < ApplicationController
 
   def detail
     @detail ||= intake&.detail
-  end
-
-  def veteran_file_number
-    # param could be file number or SSN. Make sure we return file number.
-    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
-    veteran ? veteran.file_number : params[:file_number]
   end
 
   def success_message

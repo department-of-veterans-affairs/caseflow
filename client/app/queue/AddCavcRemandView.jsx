@@ -87,13 +87,13 @@ const AddCavcRemandView = (props) => {
   const [isMandateProvided, setMandateProvided] = useState('true');
   const [isMandateSame, setMandateSame] = useState(true);
   const supportedDecisionTypes = {
-    [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
+    [CAVC_DECISION_TYPES.remand]: true,
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
     [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand
   };
   const supportedRemandTypes = {
-    [CAVC_REMAND_SUBTYPES.jmr]: featureToggles.cavc_remand,
-    [CAVC_REMAND_SUBTYPES.jmpr]: featureToggles.cavc_remand,
+    [CAVC_REMAND_SUBTYPES.jmr]: true,
+    [CAVC_REMAND_SUBTYPES.jmpr]: true,
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
   };
   const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
@@ -417,7 +417,6 @@ AddCavcRemandView.propTypes = {
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
   featureToggles: PropTypes.shape({
-    cavc_remand: PropTypes.bool,
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
     dismissal_cavc_remand: PropTypes.bool

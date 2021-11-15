@@ -11,6 +11,16 @@ FactoryBot.define do
       number_of_claimants { nil }
     end
 
+    trait :with_end_product_establishment do
+      after(:create) do |supplemental_claim|
+        create(
+          :end_product_establishment,
+          veteran_file_number: supplemental_claim.veteran_file_number,
+          source: supplemental_claim
+        )
+      end
+    end
+
     trait :processed do
       establishment_processed_at { Time.zone.now }
     end

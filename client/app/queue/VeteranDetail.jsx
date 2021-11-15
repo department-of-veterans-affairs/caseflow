@@ -17,7 +17,7 @@ import COPY from '../../COPY';
  * A component to display various details about the veteran including name, gender, date of birth, date of death,
  * address and email.
  */
-export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
+export const VeteranDetail = ({ veteran, substitutionAppealId, hasSameAppealSubstitution, stateOnly }) => {
   const {
     address,
     full_name: fullName,
@@ -36,8 +36,14 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
     value: fullName
   }];
 
-  const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
-    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
+  /* eslint-disable id-length */
+  const genderValueFor = {
+    F: COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE,
+    M: COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE,
+  };
+  /* eslint-enable id-length */
+
+  const genderValue = genderValueFor[gender];
 
   if (genderValue) {
     details.push({
@@ -79,7 +85,12 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
       <div {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
-        {substitutionAppealId && <AppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />}
+        {substitutionAppealId && (
+          <AppealHasSubstitutionAlert
+            targetAppealId={substitutionAppealId}
+            hasSameAppealSubstitution={hasSameAppealSubstitution}
+          />
+        )}
       </div>
     </>
   );
@@ -91,6 +102,7 @@ VeteranDetail.propTypes = {
    * Determines whether to display alert regarding presence of substitution appeal
    */
   substitutionAppealId: PropTypes.string,
+  hasSameAppealSubstitution: PropTypes.bool,
 
   /**
    * Veteran object returned from the back end
@@ -124,6 +136,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     veteranInfo: appeal?.veteranInfo,
     substitutions: appeal?.substitutions,
+    hasSameAppealSubstitution: appeal?.hasSameAppealSubstitution,
     loading: !appeal,
     error: loadingVeteranInfo?.error
   };
@@ -148,6 +161,7 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
       loading: PropTypes.bool,
       veteranInfo: PropTypes.object,
       substitutions: PropTypes.arrayOf(PropTypes.object),
+      hasSameAppealSubstitution: PropTypes.bool,
       stateOnly: PropTypes.bool
     }
 
@@ -174,6 +188,7 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
         <WrappedComponent
           stateOnly={this.props.stateOnly}
           substitutionAppealId={this.props.substitutions?.[0]?.target_appeal_uuid} // eslint-disable-line camelcase
+          hasSameAppealSubstitution={this.props.hasSameAppealSubstitution}
           {...this.props.veteranInfo}
         />
       );

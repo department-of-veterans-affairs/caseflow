@@ -1,6 +1,5 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
-import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
   getReceiptDateError,
@@ -34,6 +33,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     untimelyExemptionModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
+    filedByVaGov: false,
+    filedByVaGovError: null,
     docketType: null,
     docketTypeError: null,
     veteranIsNotClaimant: null,
@@ -95,6 +96,18 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       docketType: {
         $set: action.payload.docketType
+      }
+    });
+  case ACTIONS.SET_FILED_BY_VA_GOV:
+    return update(state, {
+      filedByVaGov: {
+        $set: action.payload.filedByVaGov
+      }
+    });
+  case ACTIONS.SET_FILED_BY_VA_GOV_ERROR:
+    return update(state, {
+      filedByVaGovError: {
+        $set: action.payload.filedByVaGovError
       }
     });
   case ACTIONS.SET_RECEIPT_DATE:

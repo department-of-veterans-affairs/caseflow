@@ -4,15 +4,14 @@ import Mark from 'mark.js';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { get, noop, sum, filter, map } from 'lodash';
 import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN
-} from './constants';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -38,25 +37,27 @@ export class PdfPage extends React.PureComponent {
     this.measureTimeStartMs = null;
   }
 
-  getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
+  getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
 
-  getCanvasRef = (canvas) => this.canvas = canvas
+  getCanvasRef = (canvas) => (this.canvas = canvas);
 
-  getTextLayerRef = (textLayer) => this.textLayer = textLayer
+  getTextLayerRef = (textLayer) => (this.textLayer = textLayer);
 
-  unmarkText = (callback = _.noop) => this.markInstance.unmark({ done: callback });
+  unmarkText = (callback = noop) => this.markInstance.unmark({ done: callback });
   markText = (scrollToMark = false, txt = this.props.searchText) => {
-    this.unmarkText(() => this.markInstance.mark(txt, {
-      separateWordSearch: false,
-      done: () => {
-        if (!this.props.matchesPerPage.length || !this.textLayer) {
-          return;
-        }
+    this.unmarkText(() =>
+      this.markInstance.mark(txt, {
+        separateWordSearch: false,
+        done: () => {
+          if (!this.props.matchesPerPage.length || !this.textLayer) {
+            return;
+          }
 
-        this.marks = this.textLayer.getElementsByTagName('mark');
-        this.highlightMarkAtIndex(scrollToMark);
-      }
-    }));
+          this.marks = this.textLayer.getElementsByTagName('mark');
+          this.highlightMarkAtIndex(scrollToMark);
+        }
+      })
+    );
   };
 
   highlightMarkAtIndex = (scrollToMark) => {
@@ -76,24 +77,23 @@ export class PdfPage extends React.PureComponent {
         );
       }
     } else {
-      console.error('selectedMark not found in DOM: ' +
-        `${this.props.relativeIndex} on pg ${this.props.pageIndex} (${this.props.currentMatchIndex})`);
+      console.error(
+        'selectedMark not found in DOM: ' +
+          `${this.props.relativeIndex} on pg ${this.props.pageIndex} (${this.props.currentMatchIndex})`
+      );
     }
-  }
+  };
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
     // get sum of matches from pages below pageIndex
-    return _(this.props.matchesPerPage).
-      filter((page) => page.pageIndex < pageIndex).
-      map((page) => page.matches).
-      sum();
-  }
+    return sum(map(filter(this.props.matchesPerPage, (page) => page.pageIndex < pageIndex), (page) => page.matches));
+  };
 
   onClick = () => {
     if (this.marks.length) {
       this.props.setSearchIndexToHighlight(this.getMatchIndexOffsetFromPage());
     }
-  }
+  };
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
@@ -106,7 +106,7 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = true;
 
     const currentScale = this.props.scale;
-    const viewport = page.getViewport(this.props.scale);
+    const viewport = page.getViewport({ scale: this.props.scale });
 
     // We need to set the width and heights of everything based on
     // the width and height of the viewport.
@@ -121,7 +121,7 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.then(() => {
+    return this.renderTask.promise.then(() => {
       this.isDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -133,11 +133,11 @@ export class PdfPage extends React.PureComponent {
         // We might need to do something else here.
         this.isDrawing = false;
       });
-  }
+  };
 
   componentDidMount = () => {
     this.setUpPage();
-  }
+  };
 
   componentWillUnmount = () => {
     this.isDrawing = false;
@@ -152,7 +152,7 @@ export class PdfPage extends React.PureComponent {
         this.markInstance.unmark();
       }
     }
-  }
+  };
 
   componentDidUpdate = (prevProps) => {
     if (this.props.isPageVisible && !prevProps.isPageVisible) {
@@ -168,24 +168,24 @@ export class PdfPage extends React.PureComponent {
         this.unmarkText();
       } else {
         const searchTextChanged = this.props.searchText !== prevProps.searchText;
-        const currentMatchIdxChanged = !_.isNaN(this.props.relativeIndex) &&
-          this.props.relativeIndex !== prevProps.relativeIndex;
-        const pageIndexChanged = !_.isNaN(this.props.pageIndexWithMatch) &&
-          this.props.pageIndexWithMatch !== prevProps.pageIndexWithMatch;
+        const currentMatchIdxChanged =
+          !isNaN(this.props.relativeIndex) && this.props.relativeIndex !== prevProps.relativeIndex;
+        const pageIndexChanged =
+          !isNaN(this.props.pageIndexWithMatch) && this.props.pageIndexWithMatch !== prevProps.pageIndexWithMatch;
 
         if (this.props.matchesPerPage.length || searchTextChanged) {
           this.markText(currentMatchIdxChanged || searchTextChanged || pageIndexChanged);
         }
       }
     }
-  }
+  };
 
   drawText = (page, text) => {
     if (!this.textLayer) {
       return;
     }
 
-    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+    const viewport = page.getViewport({ scale: PAGE_DIMENSION_SCALE });
 
     this.textLayer.innerHTML = '';
 
@@ -201,45 +201,48 @@ export class PdfPage extends React.PureComponent {
         this.markText();
       }
     });
-  }
+  };
 
-  getText = (page) => page.getTextContent()
+  getText = (page) => page.getTextContent();
 
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
-      this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-        this.page = page;
+    // eslint-disable-next-line no-underscore-dangle
+    if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
+      this.props.pdfDocument.
+        getPage(pageNumberOfPageIndex(this.props.pageIndex)).
+        then((page) => {
+          this.page = page;
 
-        this.getText(page).then((text) => {
-          this.drawText(page, text);
-        });
-
-        this.drawPage(page).then(() => {
-          collectHistogram({
-            group: 'front_end',
-            name: 'pdf_page_render_time_in_ms',
-            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-            appName: 'Reader',
-            attrs: {
-              overscan: this.props.windowingOverscan,
-              documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.pdfInfo.numPages
-            }
+          this.getText(page).then((text) => {
+            this.drawText(page, text);
           });
-        });
-      }).
+
+          this.drawPage(page).then(() => {
+            collectHistogram({
+              group: 'front_end',
+              name: 'pdf_page_render_time_in_ms',
+              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+              appName: 'Reader',
+              attrs: {
+                overscan: this.props.windowingOverscan,
+                documentType: this.props.documentType,
+                pageCount: this.props.pdfDocument.pdfInfo?.numPages
+              }
+            });
+          });
+        }).
         catch(() => {
           // We might need to do something else here.
         });
     }
-  }
+  };
 
   getDivDimensions = () => {
     const innerDivDimensions = {
-      innerDivWidth: _.get(this.props.pageDimensions, ['width'], PDF_PAGE_WIDTH),
-      innerDivHeight: _.get(this.props.pageDimensions, ['height'], PDF_PAGE_HEIGHT)
+      innerDivWidth: get(this.props.pageDimensions, ['width'], PDF_PAGE_WIDTH),
+      innerDivHeight: get(this.props.pageDimensions, ['height'], PDF_PAGE_HEIGHT)
     };
 
     // If we have rotated the page, we need to switch the width and height.
@@ -256,7 +259,7 @@ export class PdfPage extends React.PureComponent {
       outerDivHeight: this.props.scale * innerDivDimensions.innerDivHeight,
       ...innerDivDimensions
     };
-  }
+  };
 
   render() {
     const pageClassNames = classNames({
@@ -268,7 +271,7 @@ export class PdfPage extends React.PureComponent {
 
     // When you rotate a page 90 or 270 degrees there is a translation at the top equal to the difference
     // between the current width and current height. We need to undo that translation to get things to align.
-    const translateX = Math.sin((this.props.rotation / 180) * Math.PI) * (outerDivHeight - outerDivWidth) / 2;
+    const translateX = (Math.sin((this.props.rotation / 180) * Math.PI) * (outerDivHeight - outerDivWidth)) / 2;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN * this.props.scale}px`,
       width: `${outerDivWidth}px`,
@@ -287,69 +290,101 @@ export class PdfPage extends React.PureComponent {
       transform: `rotate(${this.props.rotation}deg) translateX(${translateX}px)`
     };
 
-    return <div
-      id={this.props.isFileVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
-      className={pageClassNames}
-      style={divPageStyle}
-      onClick={this.onClick}
-      ref={this.getPageContainerRef}
-      {...markStyle}>
+    return (
       <div
-        id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
-        className={pageContentsVisibleClass}
-        style={innerDivStyle}>
-        <canvas
-          ref={this.getCanvasRef}
-          className="canvasWrapper" />
-        <div className="cf-pdf-annotationLayer">
-          <CommentLayer
-            documentId={this.props.documentId}
-            pageIndex={this.props.pageIndex}
-            scale={this.props.scale}
-            getTextLayerRef={this.getTextLayerRef}
-            file={this.props.file}
-            dimensions={{
-              width: innerDivWidth,
-              height: innerDivHeight
-            }}
-            isVisible={this.props.isFileVisible}
-          />
+        id={this.props.isFileVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+        className={pageClassNames}
+        style={divPageStyle}
+        onClick={this.onClick}
+        ref={this.getPageContainerRef}
+        {...markStyle}
+      >
+        <div
+          id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+          className={pageContentsVisibleClass}
+          style={innerDivStyle}
+        >
+          <canvas ref={this.getCanvasRef} className="canvasWrapper" />
+          <div className="cf-pdf-annotationLayer">
+            <CommentLayer
+              documentId={this.props.documentId}
+              pageIndex={this.props.pageIndex}
+              scale={this.props.scale}
+              getTextLayerRef={this.getTextLayerRef}
+              file={this.props.file}
+              dimensions={{
+                width: innerDivWidth,
+                height: innerDivHeight
+              }}
+              isVisible={this.props.isFileVisible}
+            />
+          </div>
         </div>
       </div>
-    </div>;
+    );
   }
 }
 
 PdfPage.propTypes = {
+  currentMatchIndex: PropTypes.any,
   documentId: PropTypes.number,
+  documentType: PropTypes.any,
   file: PropTypes.string,
-  pageIndex: PropTypes.number,
+  getTextLayerRef: PropTypes.func,
+  handleSelectCommentIcon: PropTypes.func,
+  isDrawing: PropTypes.any,
   isFileVisible: PropTypes.bool,
-  scale: PropTypes.number,
+  isPageVisible: PropTypes.any,
+  isPlacingAnnotation: PropTypes.any,
+  isVisible: PropTypes.bool,
+  matchesPerPage: PropTypes.shape({
+    length: PropTypes.any
+  }),
+  page: PropTypes.shape({
+    cleanup: PropTypes.func
+  }),
+  pageDimensions: PropTypes.any,
+  pageIndex: PropTypes.number,
+  pageIndexWithMatch: PropTypes.any,
+  pdfDocument: PropTypes.object,
+  placingAnnotationIconPageCoords: PropTypes.object,
+  relativeIndex: PropTypes.any,
   rotate: PropTypes.number,
-  pdfDocument: PropTypes.object
+  rotation: PropTypes.number,
+  scale: PropTypes.number,
+  searchBarHidden: PropTypes.bool,
+  searchText: PropTypes.string,
+  setDocScrollPosition: PropTypes.func,
+  setSearchIndexToHighlight: PropTypes.func,
+  windowingOverscan: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setDocScrollPosition,
-    setSearchIndexToHighlight
-  }, dispatch)
+  ...bindActionCreators(
+    {
+      setDocScrollPosition,
+      setSearchIndexToHighlight
+    },
+    dispatch
+  )
 });
 
 const mapStateToProps = (state, props) => {
   return {
-    pageDimensions: _.get(state.pdf.pageDimensions, [props.file, props.pageIndex]),
+    pageDimensions: get(state.pdf.pageDimensions, [props.file, props.pageIndex]),
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
-    rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
+    rotation: get(state.documents, [props.documentId, 'rotation'], 0),
     searchText: getSearchTerm(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
     windowingOverscan: state.pdfViewer.windowingOverscan,
-    documentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
+    documentType: get(state.documents, [props.documentId, 'type'], 'unknown'),
     ...state.searchActionReducer
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PdfPage);

@@ -5,7 +5,7 @@ describe TaskTreeRenderModule do
   let(:root_task) { appeal.root_task }
   let!(:ama_judge_assign_task) { create(:ama_judge_assign_task, parent: root_task, created_at: 1.day.ago.round) }
   let!(:ama_attorney_task) { create(:ama_attorney_task, parent: root_task) }
-  let!(:ama_attorney_task_no_parent) { create(:ama_attorney_task, appeal: appeal) }
+  let!(:task_no_parent) { create(:track_veteran_task, appeal: appeal) }
 
   context "#tree is called on an appeal" do
     it "returns all tasks for the appeal" do
@@ -29,6 +29,18 @@ describe TaskTreeRenderModule do
         else
           expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq ""
         end
+      end
+    end
+
+    context "inactive organization assignee" do
+      let(:inactive_org) { create(:private_bar, status: :inactive) }
+      let!(:ama_task) { create(:ama_task, parent: root_task, assigned_to: inactive_org).reload }
+      it "shows inactive assignee information" do
+        expect(ama_task.assigned_to).to eq nil
+        expect(ama_task.unscoped_assigned_to).to eq inactive_org
+
+        _rows_hash, metadata = appeal.tree_hash(:id, :ASGN_TO)
+        expect(metadata.rows[ama_task]["ASGN_TO"]).to eq "PrivateBar"
       end
     end
 
@@ -131,7 +143,7 @@ describe TaskTreeRenderModule do
       initial_count = appeal.tasks.count + 3
       expect(appeal.tree.lines.count).to eq initial_count
 
-      ama_attorney_task_no_parent.delete
+      task_no_parent.delete
       appeal.reload
       expect(appeal.tree.lines.count).to eq initial_count - 1
     end

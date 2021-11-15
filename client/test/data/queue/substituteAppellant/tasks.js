@@ -176,7 +176,7 @@ export const getAmaTasks = (taskArray) => {
   return tasks;
 };
 
-export const sampleTasksForEvidenceSubmissionDocket = () => {
+export const sampleTasksForDismissedEvidenceSubmissionDocket = () => {
   const taskTypes = [
     RootTask,
     {
@@ -222,6 +222,74 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
         isOrganization: false,
       },
     },
+  ];
+
+  return getAmaTasks(taskTypes);
+};
+
+export const sampleTasksForPendingEvidenceSubmissionDocket = () => {
+  const taskTypes = [
+    {
+      ...RootTask,
+      id: 1,
+      closedAt: null,
+      status: 'on_hold'
+    },
+    {
+      ...DistributionTask,
+      id: 2,
+      parentId: 1,
+    },
+    {
+      id: 3,
+      type: 'EvidenceSubmissionWindowTask',
+      label: 'Evidence Submission Window Task',
+      parentId: 2,
+      timerEndsAt: '2021-05-30T10:33:08.151-04:00',
+    },
+    {
+      id: 4,
+      type: 'JudgeAssignTask',
+      label: 'Assign',
+      parentId: 1,
+      closedAt: '2021-04-28T10:33:08.151-04:00',
+    },
+    {
+      id: 5,
+      type: 'JudgeDecisionReviewTask',
+      label: 'Review',
+      parentId: 1,
+      closedAt: null,
+      status: 'on_hold'
+    },
+    {
+      id: 6,
+      type: 'AttorneyTask',
+      label: 'Draft decision',
+      parentId: 5,
+      closedAt: null,
+      status: 'assigned'
+    },
+  ];
+
+  return getAmaTasks(taskTypes);
+};
+
+// This is an improbable combination of tasks, used to demonstrate functionality
+// in SubstituteAppellantTasksFormWithEverything.
+export const myriadTasksForTaskForm = () => {
+  const taskTypes = [
+    RootTask,
+    { ...DistributionTask, parentId: 1 },
+    { type: 'EvidenceSubmissionWindowTask', label: 'Evidence Submission Window Task' },
+    { type: 'JudgeAssignTask', label: 'Assign' },
+    { type: 'JudgeDecisionReviewTask', label: 'Review' },
+    { type: 'AttorneyTask', label: 'Draft decision' },
+    { type: 'BvaDispatchTask', label: 'Board Dispatch' },
+    { type: 'ScheduleHearingTask', label: 'Schedule hearing' },
+    { type: 'AssignHearingDispositionTask', label: 'Assign hearing disposition' },
+    { type: 'ChangeHearingDispositionTask', label: 'Change hearing disposition' },
+    { type: 'TranscriptionTask', label: 'Transcription task' },
   ];
 
   return getAmaTasks(taskTypes);
