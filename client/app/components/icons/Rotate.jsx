@@ -27,17 +27,17 @@ export const Rotate = (props) => {
 Rotate.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '19px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '19px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is 'COLORS.WHITE'.
-   */
+  Sets color of the component. Default value is 'COLORS.WHITE'.
+  */
   color: PropTypes.string,
 
   /**
-  * Adds class to the component. Default value is ''.
+  Adds class to the component. Default value is ''.
   */
   cname: PropTypes.string
 };

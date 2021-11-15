@@ -36,18 +36,18 @@ export const LockIcon = (props) => {
 LockIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is 'COLORS.GREY_DARK'.
-   */
+  Sets color of the component. Default value is 'COLORS.GREY_DARK'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is 'cf-lock-icon'.
-   */
+  Adds class to the component. Default value is 'cf-lock-icon'.
+  */
   cname: PropTypes.string,
 };
 LockIcon.defaultProps = {

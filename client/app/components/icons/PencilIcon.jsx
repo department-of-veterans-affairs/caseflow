@@ -22,18 +22,18 @@ export const PencilIcon = (props) => {
 PencilIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#0071BC'.
-   */
+  Sets color of the component. Default value is '#0071BC'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 PencilIcon.defaultProps = {

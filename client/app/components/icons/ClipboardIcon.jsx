@@ -17,18 +17,18 @@ export const ClipboardIcon = (props) => {
 ClipboardIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#5B616B'.
-   */
+  Sets color of the component. Default value is '#5B616B'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 ClipboardIcon.defaultProps = {

@@ -23,23 +23,23 @@ export const CancelIcon = (props) => {
 CancelIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#E31C3D'.
-   */
+  Sets color of the component. Default value is '#E31C3D'.
+  */
   color: PropTypes.string,
 
   /**
-   * sets the background color of the component. Default value is '#ffffff'.
-   */
+  Sets the background color of the component. Default value is '#ffffff'.
+  */
   bgColor: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 CancelIcon.defaultProps = {

@@ -27,23 +27,23 @@ export const GreenCheckmark = (props) => {
 GreenCheckmark.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#2E8540'.
-   */
+  Sets color of the component. Default value is '#2E8540'.
+  */
   color: PropTypes.string,
 
   /**
-   * sets stroke color of the component. Default value is '#ffffff'.
-   */
+  Sets stroke color of the component. Default value is '#ffffff'.
+  */
   strokeColor: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is 'green-checkmark'.
-   */
+  Adds class to the component. Default value is 'green-checkmark'.
+  */
   cname: PropTypes.string
 };
 GreenCheckmark.defaultProps = {

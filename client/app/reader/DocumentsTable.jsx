@@ -30,7 +30,7 @@ import { DoubleArrow } from '../components/icons/DoubleArrow';
 
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterIconOutline from '../components/FilterIconOutline';
+import FilterIconOutline from '../components/icons/FilterIconOutline';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 

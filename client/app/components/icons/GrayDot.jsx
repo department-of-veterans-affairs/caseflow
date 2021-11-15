@@ -17,23 +17,23 @@ export const GrayDot = (props) => {
 GrayDot.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#D6D7D9'.
-   */
+  Sets color of the component. Default value is '#D6D7D9'.
+  */
   color: PropTypes.string,
 
   /**
-   * sets stroke color of the component. Default value is '#ffffff'.
-   */
+  Sets stroke color of the component. Default value is '#ffffff'.
+  */
   strokeColor: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is 'gray-dot'.
-   */
+  Adds class to the component. Default value is 'gray-dot'.
+  */
   cname: PropTypes.string
 };
 GrayDot.defaultProps = {

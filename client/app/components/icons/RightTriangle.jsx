@@ -23,18 +23,18 @@ export const RightTriangle = (props) => {
 RightTriangle.propTypes = {
 
   /**
-   * Sets the color of the component. Default color is '#000000.
-   */
+  Sets the color of the component. Default color is '#000000.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
+  */
   size: PropTypes.number,
 
   /**
-   * Sets the className of the component. Default className is ''.
-   */
+  Sets the className of the component. Default className is ''.
+  */
   cname: PropTypes.string
 };
 RightTriangle.defaultProps = {

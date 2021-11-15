@@ -1,24 +1,26 @@
 import React from 'react';
-import { PencilIcon } from '../../app/components/icons/PencilIcon';
+import { LinkSymbol } from '../../app/components/icons/LinkSymbol';
 
 export default {
-  title: 'Commons/Components/Icons/PencilIcon',
-  component: PencilIcon,
+  title: 'Commons/Components/Icons/LinkSymbol',
+  component: LinkSymbol,
   parameters: {
     controls: { expanded: true },
   },
   argTypes: {
     size: { control: { type: 'number' } },
-    color: { control: { type: 'color' } },
+    leftColor: { control: { type: 'color' } },
+    rightColor: { control: { type: 'color' } },
     cname: { control: { type: 'text' } },
   },
   args: {
-    size: 25,
-    color: '#0071BC',
+    size: 9,
+    leftColor: '#0F0F10',
+    rightColor: '#050606',
     cname: ''
   }
 };
 
-const Template = (args) => <PencilIcon {...args} />;
+const Template = (args) => <LinkSymbol {...args} />;
 
 export const Default = Template.bind({});

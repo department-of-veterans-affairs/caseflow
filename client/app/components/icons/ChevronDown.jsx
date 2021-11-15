@@ -22,18 +22,18 @@ export const ChevronDown = (props) => {
 ChevronDown.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '10px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '10px'.
+  */
   size: PropTypes.number,
 
   /**
-     * sets color of the component. Default value is '#0872B9'.
-     */
+  Sets color of the component. Default value is '#0872B9'.
+  */
   color: PropTypes.string,
 
   /**
-    * Adds class to the component. Default value is 'table-icon'.
-    */
+  Adds class to the component. Default value is 'table-icon'.
+  */
   cname: PropTypes.string
 };
 ChevronDown.defaultProps = {

@@ -34,18 +34,18 @@ export const PlusIcon = (props) => {
 PlusIcon.propTypes = {
 
   /**
-   * Sets the color of the component. Default color is white.
-   */
+  Sets the color of the component. Default color is white.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
+  */
   size: PropTypes.string,
 
   /**
-   * Sets the class of the component. Default class is ''.
-   */
+  Sets the class of the component. Default class is ''.
+  */
   cname: PropTypes.string,
 };
 PlusIcon.defaultProps = {

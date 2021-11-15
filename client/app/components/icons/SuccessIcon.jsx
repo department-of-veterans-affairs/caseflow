@@ -22,18 +22,18 @@ export const SuccessIcon = (props) => {
 SuccessIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '55px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '55px'.
+  */
   size: PropTypes.string,
 
   /**
-   * Sets the color of the component. Default color is green.
-   */
+  Sets the color of the component. Default color is green.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets the className of the component. Default class is empty.
-   */
+  Sets the className of the component. Default class is empty.
+  */
   cname: PropTypes.string,
 };
 SuccessIcon.defaultProps = {

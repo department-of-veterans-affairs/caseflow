@@ -44,23 +44,23 @@ export const DoubleArrow = (props) => {
 DoubleArrow.propTypes = {
 
   /**
-   * Sets the top arrow color. Defauly color is 'COLORS.GREY_DARK'.
-   */
+  Sets the top arrow color. Defauly color is 'COLORS.GREY_DARK'.
+  */
   topColor: PropTypes.string,
 
   /**
-   * Sets the bottom arrow color. Defauly color is 'COLORS.GREY_DARK'.
-   */
+  Sets the bottom arrow color. Defauly color is 'COLORS.GREY_DARK'.
+  */
   bottomColor: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  */
   size: PropTypes.number,
 
   /**
-    * Adds class to the component. Default value is 'table-icon'.
-    */
+  Adds class to the component. Default value is 'table-icon'.
+  */
   cname: PropTypes.string
 };
 DoubleArrow.defaultProps = {

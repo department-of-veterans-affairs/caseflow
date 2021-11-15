@@ -14,22 +14,22 @@ export const ClockIcon = (props) => {
 ClockIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is 'currentColor'.
-   */
+  Sets color of the component. Default value is '#000000'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is 'svg-inline--fa fa-clock fa-w-16'.
-   */
+  Adds class to the component. Default value is 'svg-inline--fa fa-clock fa-w-16'.
+  */
   cname: PropTypes.string
 };
 ClockIcon.defaultProps = {
   size: 16,
-  color: 'currentColor',
+  color: '#000000',
   cname: 'svg-inline--fa fa-clock fa-w-16'
 };

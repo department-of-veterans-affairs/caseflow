@@ -22,18 +22,18 @@ export const CategoryIcon = (props) => {
 CategoryIcon.propTypes = {
 
   /**
-   * Sets the color of the component. Default color is white.
-   */
+  Sets the color of the component. Default color is white.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '20px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '20px'.
+  */
   size: PropTypes.number,
 
   /**
-   * Sets the className of the component. Default className is ''.
-   */
+  Sets the className of the component. Default className is ''.
+  */
   cname: PropTypes.string
 };
 CategoryIcon.defaultProps = {

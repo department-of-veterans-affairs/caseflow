@@ -21,18 +21,18 @@ export const MagnifyingGlass = (props) => {
 MagnifyingGlass.propTypes = {
 
   /**
-   * Sets size of the component. Default value is '24px'.
-   */
+  Sets size of the component. Default value is '24px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is 'COLORS.GREY_MEDIUM'.
-   */
+  Sets color of the component. Default value is 'COLORS.GREY_MEDIUM'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 MagnifyingGlass.defaultProps = {

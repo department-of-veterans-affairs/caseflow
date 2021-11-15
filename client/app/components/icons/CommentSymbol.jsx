@@ -75,23 +75,23 @@ export const CommentSymbol = (props) => {
 CommentSymbol.propTypes = {
 
   /**
-   * Sets the selected prop of the component. Default value is 'false'.
-   */
+  Sets the selected prop of the component. Default value is 'false'.
+  */
   selected: PropTypes.bool,
 
   /**
-   * Sets the id of the component. Default value is '1'.
-   */
+  Sets the id of the component. Default value is '1'.
+  */
   id: PropTypes.number,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
+  */
   size: PropTypes.number,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string,
 };
 CommentSymbol.defaultProps = {

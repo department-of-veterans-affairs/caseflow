@@ -53,23 +53,23 @@ export const LinkSymbol = (props) => {
 LinkSymbol.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '9px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '9px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#050606'.
-   */
+  Sets color of the component. Default value is '#050606'.
+  */
   rightColor: PropTypes.string,
 
   /**
-   * sets the background color of the component. Default value is '#0F0F10'.
-   */
+  Sets the background color of the component. Default value is '#0F0F10'.
+  */
   leftColor: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 LinkSymbol.defaultProps = {

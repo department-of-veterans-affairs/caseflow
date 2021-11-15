@@ -82,23 +82,23 @@ export const LoadingSymbol = (props) => {
 LoadingSymbol.propTypes = {
 
   /**
-   * Sets the text to associate with the component. Default state is ''.
-   */
+  Sets the text to associate with the component. Default state is ''.
+  */
   text: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  */
   size: PropTypes.string,
 
   /**
-   * Sets the color of the component. Default state is 'LOGO_COLORS.DISPATCH.ACCENT'.
-   */
+  Sets the color of the component. Default state is 'LOGO_COLORS.DISPATCH.ACCENT'.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets the class(es) of the component. Default class(es) is 'cf-loading-button-symbol cf-small-loader-symbol'.
-   */
+  Sets the class(es) of the component. Default class(es) is 'cf-loading-button-symbol cf-small-loader-symbol'.
+  */
   cname: PropTypes.string
 };
 LoadingSymbol.defaultProps = {

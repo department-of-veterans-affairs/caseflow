@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SelectedFilterIcon } from './icons/SelectedFilterIcon';
-import { UnselectedFilterIcon } from './icons/UnselectedFilterIcon';
+import { SelectedFilterIcon } from './SelectedFilterIcon';
+import { UnselectedFilterIcon } from './UnselectedFilterIcon';
 
 class FilterIcon extends React.PureComponent {
   render() {

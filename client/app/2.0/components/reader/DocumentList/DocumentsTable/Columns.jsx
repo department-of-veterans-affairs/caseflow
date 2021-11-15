@@ -9,7 +9,7 @@ import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
-import FilterIconOutline from 'app/components/FilterIconOutline';
+import FilterIconOutline from 'app/components/icons/FilterIconOutline';
 import { DoubleArrow } from 'app/components/icons/DoubleArrow';
 
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';

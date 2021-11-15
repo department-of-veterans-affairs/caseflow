@@ -28,18 +28,18 @@ export const FilterIcon = (props) => {
 FilterIcon.propTypes = {
 
   /**
-   * Sets the color of the component. Default color is white.
-   */
+  Sets the color of the component. Default color is white.
+  */
   color: PropTypes.string,
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
+  */
   size: PropTypes.number,
 
   /**
-   * Sets the className of the component. Default className is 'filter-icon'.
-   */
+  Sets the className of the component. Default className is 'filter-icon'.
+  */
   cname: PropTypes.string
 };
 FilterIcon.defaultProps = {

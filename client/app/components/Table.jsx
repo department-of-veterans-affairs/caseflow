@@ -7,7 +7,7 @@ import Tooltip from './Tooltip';
 import { DoubleArrow } from './icons/DoubleArrow';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
-import FilterIconOutline from './FilterIconOutline';
+import FilterIconOutline from './icons/FilterIconOutline';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
 import ListItemPickerCheckbox from './ListItemPickerCheckbox';

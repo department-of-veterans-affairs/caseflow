@@ -26,18 +26,18 @@ export const NewFileIcon = (props) => {
 NewFileIcon.propTypes = {
 
   /**
-   * Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
-   */
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
+  */
   size: PropTypes.number,
 
   /**
-   * sets color of the component. Default value is '#844E9F'.
-   */
+  Sets color of the component. Default value is '#844E9F'.
+  */
   color: PropTypes.string,
 
   /**
-   * Adds class to the component. Default value is ''.
-   */
+  Adds class to the component. Default value is ''.
+  */
   cname: PropTypes.string
 };
 NewFileIcon.defaultProps = {
