@@ -39,5 +39,6 @@ Immigrant.ignore_keys = [
 
   # Don't need FKs on a cache table
   { from_table: "cached_appeal_attributes", column: "appeal_id" },
-  { from_table: "cached_appeal_attributes", column: "vacols_id" }
+  { from_table: "cached_appeal_attributes", column: "vacols_id" },
+  { from_table: "cached_user_attributes", column: "sdomainid" }
 ]
