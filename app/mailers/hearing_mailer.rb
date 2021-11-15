@@ -3,6 +3,8 @@
 ##
 # HearingMailer will:
 # - Generate emails from the templates in app/views/hearing_mailer
+#   - All types will use layouts/hearing_mailer.html.erb to determine the order of the sections
+#     - Example section: :test_your_connection, :rescheduling_or_canceling_your_hearing
 #   - The method name like "cancellation" determines which template is used.
 #   - The 'cancellation' method uses app/views/hearing_mailer/cancellation.html.erb
 #   - cancellation.html.erb prepends the recipient type and uses another template.
@@ -16,6 +18,9 @@ class HearingMailer < ActionMailer::Base
   helper Hearings::AppellantLocationHelper
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
+
+  class BadVirtualLinkError < StandardError; end
+  BAD_VIRTUAL_LINK_TEXT = "care.va.gov"
 
   def cancellation(email_recipient_info:, virtual_hearing: nil)
     # Guard to prevent cancellation emails from sending to the judge
@@ -143,8 +148,17 @@ class HearingMailer < ActionMailer::Base
   end
 
   def link
-    return virtual_hearing.host_link if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+    hearing_link = if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+                     virtual_hearing.host_link
+                   else
+                     virtual_hearing.guest_link
+                   end
 
-    virtual_hearing.guest_link
+    # Raise an error if the link contains the old virtual hearing link 2021-11-10
+    if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
+      fail BadVirtualLinkError, virtual_hearing_id: virtual_hearing&.id
+    end
+
+    hearing_link
   end
 end

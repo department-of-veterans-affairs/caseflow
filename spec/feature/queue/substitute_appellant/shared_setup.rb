@@ -193,7 +193,6 @@ RSpec.shared_examples("fill substitution form") do
           evidence_submission_window_end_time - 1.day,
           evidence_submission_window_end_time + 1.day
         )
-        expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
       end
 
       if docket_type.eql?("hearing")
