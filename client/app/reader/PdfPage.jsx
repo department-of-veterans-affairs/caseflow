@@ -228,7 +228,7 @@ export class PdfPage extends React.PureComponent {
               attrs: {
                 overscan: this.props.windowingOverscan,
                 documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo.numPages
+                pageCount: this.props.pdfDocument.pdfInfo?.numPages
               }
             });
           });
