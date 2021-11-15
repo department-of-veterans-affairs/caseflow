@@ -12,6 +12,10 @@ class HearingEmailRecipient < CaseflowRecord
     judge: "judge"
   }.freeze
 
+  ATTRIBUTES = [
+    :id, :timezone, :email_address, :type
+  ].freeze
+
   RECIPIENT_TITLES = RECIPIENT_ROLES.map { |key, role| [key, role.capitalize] }.to_h.freeze
 
   validates :email_address, presence: true, on: :create
