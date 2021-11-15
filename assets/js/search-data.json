@@ -203,41 +203,41 @@
     "url": "/caseflow/schema/db_schema.html",
     "relUrl": "/schema/db_schema.html"
   },"34": {
-    "doc": "Workflows",
-    "title": "Workflows",
-    "content": "See Workflows in the Task Trees subsite. ",
-    "url": "/caseflow/workflows/",
-    "relUrl": "/workflows/"
-  },"35": {
     "doc": "Caseflow Queue",
     "title": "About Queue",
     "content": "Caseflow Queue is a workflow management tool that will allow BVA employees process legacy and AMA appeals at the Board. It’s also the entry point for Caseflow Reader; users navigate to Reader from Queue. ",
     "url": "/caseflow/caseflow-queues/#about-queue",
     "relUrl": "/caseflow-queues/#about-queue"
-  },"36": {
+  },"35": {
     "doc": "Caseflow Queue",
     "title": "Definitions and term-usage",
     "content": " ",
     "url": "/caseflow/caseflow-queues/#definitions-and-term-usage",
     "relUrl": "/caseflow-queues/#definitions-and-term-usage"
-  },"37": {
+  },"36": {
     "doc": "Caseflow Queue",
     "title": "User groups",
     "content": "All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings. | Team | Primary Caseflow functionality | . | Case Review | Caseflow IntakeCaseflow QueueCaseflow ReaderIssues | . | Mail | Caseflow Queue | . | Translation | Caseflow QueueCaseflow Reader | . | Hearing Branch | Caseflow QueueCaseflow Hearings | . | Privacy Team | Caseflow QueueeFolder Express | . | Decision-drafting attorneys | Caseflow QueueCaseflow ReaderIssues | . | Judges &amp; acting judges | Caseflow QueueCaseflow ReaderCaseflow HearingsIssuesAutomatic Case Distribution | . | [VLJ Support Staff](https://github.com/department-of-veterans-affairs/caseflow/wiki/VLJ-Support) | Caseflow QueueCaseflow Reader | . | [BVA Dispatch](https://github.com/department-of-veterans-affairs/caseflow/wiki/BVA-Dispatch) | Caseflow QueueCaseflow ReaderInteractive Decision Template | . | [Quality Review](https://github.com/department-of-veterans-affairs/caseflow/wiki/Quality-Review) | Caseflow QueueCaseflow Reader | . | Litigation Support | Caseflow QueueCaseflow Reader | . | Advanced on the Docket (AOD) | Caseflow QueueCaseflow Reader | . | [VSOs](https://github.com/department-of-veterans-affairs/caseflow/wiki/VSOs) | Caseflow QueueCaseflow ReaderCaseflow Hearings | . | Private attorneys and claims agents | Caseflow QueueCaseflow ReaderCaseflow Hearings | . Other VA . | VA call center | . ",
     "url": "/caseflow/caseflow-queues/#user-groups",
     "relUrl": "/caseflow-queues/#user-groups"
-  },"38": {
+  },"37": {
     "doc": "Caseflow Queue",
     "title": "Features",
     "content": "Please see the TOC below for a list of high level features . ",
     "url": "/caseflow/caseflow-queues/#features",
     "relUrl": "/caseflow-queues/#features"
-  },"39": {
+  },"38": {
     "doc": "Caseflow Queue",
     "title": "Caseflow Queue",
     "content": " ",
     "url": "/caseflow/caseflow-queues/",
     "relUrl": "/caseflow-queues/"
+  },"39": {
+    "doc": "Workflows",
+    "title": "Workflows",
+    "content": "See Workflows in the Task Trees subsite. ",
+    "url": "/caseflow/workflows/",
+    "relUrl": "/workflows/"
   },"40": {
     "doc": "Tasks",
     "title": "What are tasks?",
