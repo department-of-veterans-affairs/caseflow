@@ -1038,13 +1038,13 @@
   "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON": "Update Hearing Time",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
   "VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE": "Update Timezone",
-  "VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE": "Update Virtual Hearing",
+  "VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE": "Update Hearing",
   "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the %(appellantTitle)s, POA / Representative, and VLJ.",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the %(appellantTitle)s and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
   "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the %(appellantTitle)s, POA / Representative, and VLJ.",
-  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the hearing will be sent to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the %(appellantTitle)s and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
   "EMAIL_NOTIFICATION_HISTORY_TITLE": "Email Notification History",
   "EMAIL_NOTIFICATION_HISTORY_INTRO": "Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them",
@@ -1089,7 +1089,7 @@
 
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
-      "TITLE": "You have successfully scheduled %s's virtual hearing.",
+      "TITLE": "You have successfully scheduled %s's hearing.",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     },
     "CHANGED_FROM_VIRTUAL": {
@@ -1097,11 +1097,11 @@
       "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     },
     "CHANGED_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "TITLE": "You have successfully emailed the invite to %s's hearing.",
       "MESSAGE": ""
     },
     "CHANGED_HEARING_TIME": {
-      "TITLE": "You have successfully updated the time of %s's virtual hearing",
+      "TITLE": "You have successfully updated the time of %s's hearing",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },
@@ -1164,6 +1164,10 @@
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
+  "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Return to Program Office",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE": "You have successfully returned this appeal to the Program Office",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the Program Office's Queue",
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",

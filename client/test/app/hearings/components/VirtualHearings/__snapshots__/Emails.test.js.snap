@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VirtualHearingEmails Does not allow editing when ReadOnly 1`] = `
+exports[`HearingEmails Does not allow editing when ReadOnly 1`] = `
 <ReadOnly
   label="Appellant Email"
   text="123@gmail.com"
 />
 `;
 
-exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
-<VirtualHearingEmail
+exports[`HearingEmails Does not show required when ReadOnly 1`] = `
+<HearingEmail
   disabled={true}
   email="123@gmail.com"
   emailType="appellantTz"
@@ -73,10 +73,10 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
       This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
-</VirtualHearingEmail>
+</HearingEmail>
 `;
 
-exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
+exports[`HearingEmails Matches snapshot with default props 1`] = `
 <Fragment>
   <TextField
     className={
@@ -99,8 +99,8 @@ exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
 </Fragment>
 `;
 
-exports[`VirtualHearingEmails Respects required prop 1`] = `
-<VirtualHearingEmail
+exports[`HearingEmails Respects required prop 1`] = `
+<HearingEmail
   email="123@gmail.com"
   emailType="appellantTz"
   label="Appellant Email"
@@ -167,5 +167,5 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
       This email address will be used to send notifications for this hearing only.
     </div>
   </HelperText>
-</VirtualHearingEmail>
+</HearingEmail>
 `;

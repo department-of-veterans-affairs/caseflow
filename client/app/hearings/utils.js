@@ -69,8 +69,8 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   };
 };
 
-export const sortHearings = (hearings) =>
-  orderBy(
+export const sortHearings = (hearings) => {
+  return orderBy(
     Object.values(hearings || {}),
     // Convert to EST before sorting, this timezeon doesn't effect what's displayed
     //   we just need to pick one so the sorting works correctly if hearings were
@@ -78,6 +78,7 @@ export const sortHearings = (hearings) =>
     (hearing) => moment.tz(hearing.scheduledFor, 'America/New_York'),
     'asc'
   );
+};
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
   pickBy(omitBy(issues, '_destroy'), { appeal_id: appealId });
@@ -477,7 +478,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
     ...list,
-    [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+    [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
        message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
@@ -1023,7 +1024,7 @@ export const getHearingScheduleColumnsForUser = (user, columns) => {
     const omitColumnsNames = ['VLJ'];
 
     return columns.filter((column) => !omitColumnsNames.includes(column.name));
-  }
+  };
 
   return columns;
 };
@@ -1033,9 +1034,16 @@ export const getexportHeadersforUser = (user, headers) => {
     const omitHeadersLabels = ['VLJ', 'CSS ID'];
 
     return headers.filter((header) => !omitHeadersLabels.includes(header.label));
-  }
+  };
 
   return headers;
+};
+
+const isVirtualHearingJobCompleted = (hearing) =>
+  (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted);
+
+export const readOnlyEmails = (hearing) => {
+  return isVirtualHearingJobCompleted(hearing) || hearing?.scheduledForIsPast;
 };
 
 /* eslint-enable camelcase */
