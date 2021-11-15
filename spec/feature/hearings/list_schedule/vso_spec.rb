@@ -21,7 +21,7 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:judge_two) { create(:user, :with_vacols_judge_record, full_name: "Judge Two") }
     let!(:judge_three) { create(:user, :with_vacols_judge_record, full_name: "Judge Three") }
     let!(:hearing_day_one) { create(:hearing_day, judge: judge_one) }
-    let!(:hearing_day_two) { create(:hearing_day, judge: judge_two) }
+    let!(:hearing_day_two) { create(:hearing_day, judge: judge_two, reques_type: "V") }
     let!(:hearing_day_three) { create(:hearing_day, judge: judge_three) }
     let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
     let!(:hearing_two) { create(:hearing, :with_tasks, hearing_day: hearing_day_two) }
@@ -46,7 +46,7 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     scenario "Only hearing days with VSO assigned hearings are displayed" do
       visit "hearings/schedule"
       expect(page).to have_content("One, Judge")
-      expect(page).to_not have_content("Two, Judge")
+      expect(page).to_not have_content("Video")
       expect(page).to have_content("Three, Judge")
     end
   end
