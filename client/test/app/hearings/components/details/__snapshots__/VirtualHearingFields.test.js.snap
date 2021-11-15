@@ -865,13 +865,15 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         >
                            
                           <ExternalLink
-                            fill="#0071bc"
+                            cname=""
+                            color="#0071bc"
+                            size={16}
                           >
                             <svg
-                              height="16px"
+                              className=""
+                              height={16}
                               version="1.1"
                               viewBox="0 0 18 16"
-                              width="18px"
                               xmlns="http://www.w3.org/2000/svg"
                             >
                               <g
@@ -956,11 +958,15 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         >
                           Copy Guest Link
                            
-                          <ClipboardIcon>
+                          <ClipboardIcon
+                            cname=""
+                            color="#5B616B"
+                            size={16}
+                          >
                             <svg
-                              height="16"
+                              className=""
+                              height={16}
                               viewBox="0 0 21 21"
-                              width="16"
                               xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
