@@ -1164,6 +1164,7 @@
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
+  "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days",
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Return to Program Office",
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE": "You have successfully returned this appeal to the Program Office",
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the Program Office's Queue",
