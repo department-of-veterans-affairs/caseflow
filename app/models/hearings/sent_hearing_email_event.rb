@@ -73,9 +73,6 @@ class SentHearingEmailEvent < CaseflowRecord
     # Exit if the email has been marked as 'sent'
     return if send_successful
 
-    # Exit if the hearing is not virtual
-    return if !hearing.virtual?
-
     # Update the date/time of the last attempt to verify the status
     update!(send_successful_checked_at: Time.zone.now)
 
