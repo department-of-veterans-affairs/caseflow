@@ -87,14 +87,13 @@ describe LegacyDocket do
     end
   end
 
-  context "#really_distribute" do
-    # This is really a "should_distribute?" method. We should rename it.
+  context "#should_distribute?" do
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { Distribution.create!(judge: judge) }
     let(:style) { "request" }
     let(:genpop) { "any" }
 
-    subject { docket.really_distribute(distribution, style: style, genpop: genpop) }
+    subject { docket.should_distribute?(distribution, style: style, genpop: genpop) }
 
     context "with tied cases" do
       let(:genpop) { "not_genpop" }
@@ -114,15 +113,7 @@ describe LegacyDocket do
             JudgeTeam.for_judge(judge).update!(ama_only_push: true, ama_only_request: false)
           end
 
-          it "should return false since this is a legacy (non-AMA) docket", skip: "This exposes a bug to fix!" do
-            # These are only for debugging
-            expect(JudgeTeam.for_judge(distribution.judge).ama_only_push).to be_truthy
-            expect(JudgeTeam.for_judge(distribution.judge).ama_only_request).to be_falsey
-            expect(style).to eq "push"
-
-            # Bug? When ama_only_request is false (the default), really-distribute will always return true.
-            # We essentially just invert the value of ama_only_request on the last line.
-            # I think we want to check if it's a request?
+          it "should return false since this is a legacy (non-AMA) docket" do
             expect(subject).to be_falsey
           end
         end
@@ -174,9 +165,9 @@ describe LegacyDocket do
 
     subject { docket.distribute_appeals(distribution, style: style, priority: priority, genpop: genpop, limit: limit) }
 
-    context "when really_distribute returns false" do
+    context "when should_distribute? returns false" do
       it "returns an empty array" do
-        expect(docket).to receive(:really_distribute)
+        expect(docket).to receive(:should_distribute?)
           .with(distribution, style: style, genpop: genpop)
           .and_return(false)
 
@@ -215,9 +206,9 @@ describe LegacyDocket do
     let(:distribution) { Distribution.create!(judge: judge) }
     subject { docket.distribute_priority_appeals(distribution) }
 
-    context "when really_distribute returns false, blocking distribution" do
+    context "when should_distribute? returns false, blocking distribution" do
       it "returns an empty array" do
-        expect(docket).to receive(:really_distribute)
+        expect(docket).to receive(:should_distribute?)
           .with(distribution, genpop: genpop, style: style)
           .and_return(false)
         expect(subject).to eq []
@@ -225,13 +216,13 @@ describe LegacyDocket do
       end
     end
 
-    context "when really_distribute allows distribution" do
+    context "when should_distribute? allows distribution" do
       let!(:some_cases) { create_list(:case, 2) }
 
       # AppealRepository doesn't do much but call VACOLS::CaseDocket.distribute_appeals,
       # for which we have good coverage. Just unit-test our part here:
       it "uses AppealRepository's distribute_priority_appeals method and returns VACOLS cases" do
-        expect(docket).to receive(:really_distribute)
+        expect(docket).to receive(:should_distribute?)
           .with(distribution, genpop: genpop, style: style)
           .and_return(true)
         expect(AppealRepository).to receive(:distribute_priority_appeals)
@@ -253,9 +244,9 @@ describe LegacyDocket do
     let(:distribution) { Distribution.create!(judge: judge) }
     subject { docket.distribute_nonpriority_appeals(distribution, range: range) }
 
-    context "when really_distribute returns false, blocking distribution" do
+    context "when should_distribute? returns false, blocking distribution" do
       before do
-        expect(docket).to receive(:really_distribute).and_return(false)
+        expect(docket).to receive(:should_distribute?).and_return(false)
       end
 
       it "returns an empty array" do
@@ -271,7 +262,7 @@ describe LegacyDocket do
       end
     end
 
-    context "when really_distribute returns true and range is nil or >= 0" do
+    context "when should_distribute? returns true and range is nil or >= 0" do
       let(:two_cases_as_hashes) do
         cases = create_list(:case, 2)
         i = 0

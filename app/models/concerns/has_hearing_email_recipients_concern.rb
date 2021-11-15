@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
   def appellant_recipient
-    recipient = AppellantHearingEmailRecipient.find_by(hearing: self)
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
 
-    if recipient.blank? && virtual_hearing.present?
-      appellant_email = virtual_hearing[:appellant_email]
+    if recipient.blank? && appellant_email_address.present?
       recipient = create_or_update_recipients(
         type: AppellantHearingEmailRecipient,
-        email_address: appellant_email,
-        timezone: virtual_hearing[:appellant_tz],
-        email_sent: virtual_hearing[:appellant_email_sent]
+        email_address: appellant_email_address,
+        timezone: appellant_tz,
+        email_sent: virtual_hearing.present? ? virtual_hearing[:appellant_email_sent] : true
       )
 
       update_email_events(recipient, recipient.roles)
@@ -22,21 +22,17 @@ module HasHearingEmailRecipientsConcern
   end
 
   def representative_recipient
-    recipient = RepresentativeHearingEmailRecipient.find_by(hearing: self)
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
 
-    if recipient.blank? && virtual_hearing.present?
-      rep_email = virtual_hearing[:representative_email]
+    if recipient.blank? && representative_email_address.present?
+      recipient = create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email_address,
+        timezone: representative_tz,
+        email_sent: virtual_hearing.present? ? virtual_hearing[:representative_email_sent] : true
+      )
 
-      if rep_email.present?
-        recipient = create_or_update_recipients(
-          type: RepresentativeHearingEmailRecipient,
-          email_address: rep_email,
-          email_sent: virtual_hearing[:representative_email_sent],
-          timezone: virtual_hearing[:representative_tz]
-        )
-
-        update_email_events(recipient, recipient.roles)
-      end
+      update_email_events(recipient, recipient.roles)
     end
 
     recipient
@@ -97,19 +93,51 @@ module HasHearingEmailRecipientsConcern
   end
 
   def appellant_email_address
-    appellant_recipient&.email_address&.presence || appeal&.appellant_email_address
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
+      virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address
+    else
+      recipient&.email_address
+    end
   end
 
   def appellant_tz
-    appellant_recipient&.timezone&.presence || appeal&.appellant_tz
+    recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+
+    if recipient.blank?
+      virtual_hearing.present? ? virtual_hearing[:appellant_tz] : appeal&.appellant_tz
+    else
+      recipient&.timezone || appeal&.appellant_tz
+    end
   end
 
   def representative_email_address
-    representative_recipient&.email_address&.presence || appeal&.representative_email_address
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
+      if virtual_hearing.present?
+        virtual_hearing[:representative_email].presence
+      else
+        representative_tz.present? ? appeal&.representative_email_address : nil
+      end
+    else
+      recipient&.email_address
+    end
   end
 
   def representative_tz
-    representative_recipient&.timezone&.presence || appeal&.representative_tz
+    recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+
+    if recipient.blank?
+      begin
+        virtual_hearing.present? ? virtual_hearing[:representative_tz].presence : appeal&.representative_tz
+      rescue Module::DelegationError
+        nil
+      end
+    else
+      recipient&.timezone
+    end
   end
 
   private
@@ -120,3 +148,4 @@ module HasHearingEmailRecipientsConcern
     events.each { |event| event.update!(email_recipient: recipient) }
   end
 end
+# rubocop:enable Metrics/ModuleLength
