@@ -98,22 +98,22 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
     return this.assignTasks(selectedTasks, this.getAssignee(selectedAssignee));
   }
 
-  getAssignee = (userId) => {
+  getAssignee = (orgId) => {
     const { vhaProgramOffices, selectedTasks } = this.props;
 
     const assigneeOpts = [...(vhaProgramOffices?.data || [])];
 
-    let assignee = assigneeOpts.find((org) => org?.id?.toString() === userId.toString());
+    let assignee = assigneeOpts.find((org) => org?.id?.toString() === orgId.toString());
 
     if (!assignee) {
-      // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
+      // Sometimes assignee is pulled from task action data. If we can't find the selected assignee in state, check
       // the tasks.
       const option = taskActionData({
         ...this.props,
         task: selectedTasks[0],
-      })?.options.find((opt) => opt.value === userId);
+      })?.options.find((opt) => opt.value === orgId);
 
-      assignee = { id: option.value, full_name: option.label };
+      assignee = { id: option.value, name: option.label };
     }
 
     return assignee;
@@ -145,7 +145,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
             numCases: selectedTasks.length,
             casePlural: pluralize('tasks', selectedTasks.length),
             // eslint-disable-next-line camelcase
-            assignee: assignee.full_name
+            assignee: assignee.attributes.name
           })
         });
       }, (error) => {
@@ -244,7 +244,7 @@ AssignToVhaProgramOfficeWidget.propTypes = {
   showErrorMessage: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
-  selectedAssignee: PropTypes.string,
+  selectedAssignee: PropTypes.number,
   savePending: PropTypes.bool,
   vhaProgramOffices: PropTypes.shape({
     data: PropTypes.array,

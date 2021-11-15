@@ -442,6 +442,43 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   }
 };
 
+export const initialCamoAssignTasksToVhaProgramOffice = ({
+  tasks, assigneeId, instructions
+}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const url = '/tasks';
+  const params = {
+    data: {
+      tasks: {
+        type: 'AssessDocumentationTask',
+        assigned_to_id: assigneeId,
+        assigned_to_type: 'Organization',
+        external_id: oldTask.externalAppealId,
+        parent_id: oldTask.uniqueId,
+        instructions
+      }
+    }
+  };
+
+  return ApiUtil.post(url, params).
+    then((resp) => resp.body).
+    then(() => {
+      // taskIds.forEach((taskId) => {
+      //   dispatch(setSelectionOfTaskOfUser({
+      //     userId: previousAssigneeId,
+      //     selected: false,
+      //     taskId
+      //   }));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
+      // });
+    });
+  // }));
+})).then((data) => {
+  // dispatchOldTasks(dispatch, tasks, resp);
+  console.log(data);
+});
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {

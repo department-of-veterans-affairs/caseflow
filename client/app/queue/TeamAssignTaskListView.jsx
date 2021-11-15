@@ -14,7 +14,11 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 
-import { judgeAssignTasksSelector, camoAssignTasksSelector, getTasksByUserId } from './selectors';
+import {
+  judgeAssignTasksSelector,
+  camoAssignTasksSelector,
+  getTasksByUserId
+} from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -47,7 +51,9 @@ class TeamAssignTaskListView extends React.PureComponent {
       attorneysOfJudge,
       organizations,
       unassignedTasksCount,
-      match
+      match,
+      userIsCamoEmployee,
+      vhaProgramOffices
     } = this.props;
 
     const chosenUserId = targetUserId || userId;
@@ -65,6 +71,13 @@ class TeamAssignTaskListView extends React.PureComponent {
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
+            {userIsCamoEmployee && vhaProgramOffices.data.
+              map((org) => <li key={org.id}>
+                <NavLink to={`/queue/${targetUserCssId}/assign/${org.id}`} activeClassName="usa-current" exact>
+                  {org.attributes.name} ({org.active_task_count})
+                </NavLink>
+              </li>)
+            }
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
                 <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
@@ -102,13 +115,19 @@ TeamAssignTaskListView.propTypes = {
   userCssId: PropTypes.string,
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
-  organizations: PropTypes.array
+  organizations: PropTypes.array,
+  userIsCamoEmployee: PropTypes.bool,
+  vhaProgramOffices: PropTypes.shape({
+    data: PropTypes.array,
+    error: PropTypes.object
+  })
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
-      attorneysOfJudge
+      attorneysOfJudge,
+      vhaProgramOffices
     },
     ui: {
       userIsCamoEmployee
@@ -127,7 +146,8 @@ const mapStateToProps = (state) => {
     targetUserId: state.ui.targetUser?.id,
     targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge
+    attorneysOfJudge,
+    vhaProgramOffices
   };
 };
 

@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 import TaskTable from './components/TaskTable';
 import {
-  initialAssignTasksToUser
+  initialAssignTasksToUser,
+  initialCamoAssignTasksToVhaProgramOffice
 } from './QueueActions';
 import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
 import AssignToVhaProgramOfficeWidget from './components/AssignToVhaProgramOfficeWidget';
@@ -49,7 +50,7 @@ class UnassignedCasesPage extends React.PureComponent {
       assignWidget = <AssignToVhaProgramOfficeWidget
         userId={userId}
         previousAssigneeId={userId}
-        onTaskAssignment={this.props.initialAssignTasksToUser}
+        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
         selectedTasks={selectedTasks}
         showRequestCasesButton />;
     } else {
@@ -140,6 +141,7 @@ UnassignedCasesPage.propTypes = {
   selectedTasks: PropTypes.array,
   distributionCompleteCasesLoading: PropTypes.bool,
   initialAssignTasksToUser: PropTypes.func,
+  initialCamoAssignTasksToVhaProgramOffice: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   error: PropTypes.shape({
@@ -156,6 +158,7 @@ UnassignedCasesPage.propTypes = {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser,
+    initialCamoAssignTasksToVhaProgramOffice,
     resetErrorMessages,
     resetSuccessMessages
   }, dispatch);
