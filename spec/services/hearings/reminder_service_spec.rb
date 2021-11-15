@@ -23,6 +23,27 @@ describe Hearings::ReminderService do
       end
     end
 
+    context "hearing is 30 days out" do
+      let(:hearing_date) { Time.zone.now + 29.days } # Nov 5, 2020 12:00 UTC + 29.days => 30 days or less
+      let(:created_at) { hearing_date - 31.days }
+
+      context "last_sent_reminder is nil" do
+        let(:last_sent_reminder) { nil }
+
+        it "returns #{Hearings::ReminderService::THIRTY_DAY_REMINDER}" do
+          expect(subject).to eq(Hearings::ReminderService::THIRTY_DAY_REMINDER)
+        end
+      end
+
+      context "last_sent_reminder is 20 days out" do
+        let(:last_sent_reminder) { hearing_date - 20.days }
+
+        it "returns nil" do
+          expect(subject).to eq(nil)
+        end
+      end
+    end
+
     context "hearing date is 7 days out" do
       let(:hearing_date) { Time.zone.now + 6.days } # Nov 5, 2020 12:00 UTC + 6.days => 7 days or less
       let(:created_at) { hearing_date - 8.days }
@@ -190,6 +211,34 @@ describe Hearings::ReminderService do
 
   context "with a central hearing" do
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
+    let(:hearing) do
+      create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
+    end
+
+    before do
+      Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+      hearing
+      hearing.reload
+    end
+
+    after { Timecop.return }
+
+    context ".reminder_type" do
+      subject do
+        described_class.new(
+          hearing: hearing,
+          last_sent_reminder: last_sent_reminder,
+          hearing_created_at: created_at
+        ).reminder_type
+      end
+
+      include_examples "determines which reminders should send"
+    end
+  end
+
+  # This test is identical to "with a central hearing" except for the :travel trait on :hearing_day
+  context "with a travel hearing" do
+    let(:hearing_day) { create(:hearing_day, :travel, scheduled_for: hearing_date) }
     let(:hearing) do
       create(:hearing, hearing_day: hearing_day, created_at: created_at) # scheduled_time is always 8:30 AM ET
     end

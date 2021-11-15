@@ -127,14 +127,10 @@ class VirtualHearing < CaseflowRecord
   end
 
   # Whether or not all non-reminder emails were sent.
-  def all_emails_sent?
-    hearing.all_emails_sent?
-  end
+  delegate :all_emails_sent?, to: :hearing
 
   # checks if emails were sent to appellant and reps
-  def cancellation_emails_sent?
-    hearing.cancellation_emails_sent?
-  end
+  delegate :cancellation_emails_sent?, to: :hearing
   ## END Email related accessors
 
   # After a certain point after this change gets merged, alias_with_host will never be nil
