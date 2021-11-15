@@ -30,9 +30,9 @@ class HearingsController < HearingsApplicationController
 
   def update
     form = if hearing.is_a?(LegacyHearing)
-             LegacyHearingUpdateForm.new(update_params_legacy)
+             LegacyHearingUpdateForm.new(hearing_params)
            else
-             HearingUpdateForm.new(update_params)
+             HearingUpdateForm.new(hearing_params)
            end
     form.update
 
@@ -118,7 +118,8 @@ class HearingsController < HearingsApplicationController
         :aod,
         :scheduled_for,
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(hearing: hearing)
   end
@@ -133,11 +134,20 @@ class HearingsController < HearingsApplicationController
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
         hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
+  end
+
+  def hearing_params
+    if hearing.is_a?(LegacyHearing)
+      update_params_legacy
+    else
+      update_params
+    end
   end
 
   def advance_on_docket_motion_params
