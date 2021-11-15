@@ -196,6 +196,7 @@ class RegionalOffice
         .select(&:facility_id?)
         .map(&:facility_id)
         .uniq
+        .sort
     end
 
     # Get all RO facility IDs for a given state (excludes satellite offices).

@@ -63,21 +63,6 @@ describe SentHearingEmailEvent do
       expect(sent_hearing_email_event.send_successful).to be(true)
     end
 
-    it "does nothing if the hearing is not virtual." do
-      sent_hearing_email_event = create(
-        :sent_hearing_email_event,
-        :with_hearing,
-        send_successful_checked_at: DateTime.now
-      )
-
-      status_checked_at_was = sent_hearing_email_event.send_successful_checked_at
-
-      sent_hearing_email_event.handle_reported_status("failed")
-
-      expect(sent_hearing_email_event.send_successful_checked_at).to eq(status_checked_at_was)
-      expect(sent_hearing_email_event.send_successful).to be(nil)
-    end
-
     it "updates send_successful_checked_at if the status given is 'new'." do
       status_checked_at_was = sent_hearing_email_event.send_successful_checked_at
 

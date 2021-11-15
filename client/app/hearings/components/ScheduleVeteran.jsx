@@ -291,7 +291,7 @@ export const ScheduleVeteran = ({
         document.getElementById('email-section').scrollIntoView();
 
         return setErrors({
-          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
