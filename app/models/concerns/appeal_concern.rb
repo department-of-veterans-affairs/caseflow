@@ -87,7 +87,7 @@ module AppealConcern
     # by BGS returning false for veteran.accessible? when they should indeed have access to the appeal.
     # does this VSO have access to this appeal? check if current user is one of the reps on the appeal.
     # if so return true, if not then do the BgsService.can_access? path.
-    assigned_to_vso?(RequestStore[:current_user]) || bgs.can_access?(veteran.file_number)
+    assigned_to_vso?(RequestStore[:current_user]) || bgs.can_access?(veteran_file_number)
   end
 
   def assigned_to_vso?(user)
