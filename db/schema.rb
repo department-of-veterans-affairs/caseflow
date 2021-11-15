@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_05_125151) do
+ActiveRecord::Schema.define(version: 2021_11_15_214040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1702,6 +1702,7 @@ ActiveRecord::Schema.define(version: 2021_11_05_125151) do
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
+  add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
