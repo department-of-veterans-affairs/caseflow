@@ -245,7 +245,6 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
-
     const payload = {
       data: {
         task: {

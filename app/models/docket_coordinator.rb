@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class DocketCoordinator
-  # MINIMUM_LEGACY_PROPORTION + MAXIMUM_DIRECT_REVIEW_PROPORTION cannot exceed 1.
-  MINIMUM_LEGACY_PROPORTION = 0.9
-  MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.07
-
   def dockets
     @dockets ||= {
       legacy: LegacyDocket.new,
@@ -31,15 +27,15 @@ class DocketCoordinator
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
     direct_review_proportion = [
       due_direct_review_proportion,
-      MAXIMUM_DIRECT_REVIEW_PROPORTION
+      Constants.DISTRIBUTION.maximum_direct_review_proportion
     ].min
 
     @docket_proportions.add_fixed_proportions!(direct_review: direct_review_proportion)
 
     # The legacy docket proportion is subject to a minimum, provided we have at least that many legacy appeals.
-    if @docket_proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
+    if @docket_proportions[:legacy] < Constants.DISTRIBUTION.minimum_legacy_proportion
       legacy_proportion = [
-        MINIMUM_LEGACY_PROPORTION,
+        Constants.DISTRIBUTION.minimum_legacy_proportion,
         dockets[:legacy].count(priority: false, ready: true).to_f / docket_margin_net_of_priority
       ].min
 
@@ -48,7 +44,6 @@ class DocketCoordinator
         direct_review: direct_review_proportion
       )
     end
-
     @docket_proportions
   end
 
@@ -110,7 +105,8 @@ class DocketCoordinator
   end
 
   def total_batch_size
-    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size *
+      Constants.DISTRIBUTION.batch_size_per_attorney
   end
 
   def due_direct_review_proportion

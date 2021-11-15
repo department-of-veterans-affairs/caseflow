@@ -2,12 +2,17 @@
 
 FactoryBot.define do
   factory :case, class: VACOLS::Case do
-    sequence(:bfkey)
+    sequence(:bfkey) # a.k.a. VACOLS_ID
     sequence(:bfcorkey)
     sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
 
     association :correspondent, factory: :correspondent
-    folder { association :folder, ticknum: bfkey, tinum: bfkey }
+
+    transient do
+      docket_number { "150000#{bfkey}" }
+    end
+    # folder.tinum is the docket_number
+    folder { association :folder, ticknum: bfkey, tinum: docket_number }
 
     bfregoff { "RO18" }
     bfdloout { Time.zone.now }
@@ -179,7 +184,7 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
-        VACOLS::Folder.find_by(tinum: vacols_case.bfkey).update!(titrnum: "123456789S")
+        VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
         create(
           :case_hearing,
           :disposition_held,

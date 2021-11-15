@@ -48,6 +48,7 @@ class Hearing < CaseflowRecord
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
+  accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 
   alias_attribute :location, :hearing_location
 
@@ -66,7 +67,7 @@ class Hearing < CaseflowRecord
   # allows us to soft-delete hearing_days by setting the deleted_at value.
   # As a result, we need to set allow_nil to true for these attributes/functions.
 
-  delegate :hearing_day_full?, to: :hearing_day, allow_nil: true
+  delegate :hearing_day_full?, :request_type, to: :hearing_day, allow_nil: true
   delegate :regional_office, to: :hearing_day, prefix: true, allow_nil: true
 
   after_create :update_fields_from_hearing_day
@@ -90,17 +91,6 @@ class Hearing < CaseflowRecord
     T: "Travel",
     C: "Central"
   }.freeze
-
-  # This is part of CASEFLOW-1820 and is a -very- temporary dodge
-  # It allows us to have a hearing_day with request_type == 'T', but
-  # the hearings on that hearing_day give request type == 'V'. This is part
-  # of the ACs. This code should NOT be here past October 2021.
-  def request_type
-    return nil if !hearing_day
-    return "V" if hearing_day.request_type == "T"
-
-    hearing_day.request_type
-  end
 
   def check_available_slots
     fail HearingDayFull if hearing_day_full?
