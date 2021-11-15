@@ -3,10 +3,6 @@
 class LegacyDocket
   include ActiveModel::Model
 
-  # Note about nod_adjustment:
-  # When counting the total number of appeals on the legacy docket for purposes of docket balancing, we
-  # include NOD-stage appeals at a discount reflecting the likelihood that they will advance to a Form 9.
-
   def docket_type
     "legacy"
   end
