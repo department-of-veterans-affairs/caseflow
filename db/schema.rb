@@ -1784,5 +1784,5 @@ ActiveRecord::Schema.define(version: 2021_11_05_125151) do
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
-  add_foreign_key "worksheet_issues", "appeals"
+  add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 end
