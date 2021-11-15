@@ -2467,12 +2467,10 @@ RSpec.feature "Case details", :all_dbs do
         it "case details displays error message" do
           visit("/queue/appeals/#{appeal.uuid}")
           allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
-          binding.pry
         end
       end
       context "check via caseflow to see if vso should have access" do
         it "should display case details" do
-          binding.pry
           expect(appeal.accessible?).to be_truthy
           visit("/queue/appeals/#{appeal.uuid}")
         end
