@@ -12,7 +12,9 @@ class AvailableHearingLocations < CaseflowRecord
   belongs_to :veteran, primary_key: :file_number,
                        foreign_key: :veteran_file_number,
                        inverse_of: :available_hearing_locations
-  belongs_to :appeal, polymorphic: true
+
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
 
   def to_hash
     {
