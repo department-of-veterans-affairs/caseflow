@@ -22,6 +22,12 @@ feature "Search results for AMA appeal" do
       sji.imported_records[Appeal.table_name].first
     end
 
+    before do
+      allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
+        .with(appeal.veteran.ssn.to_s)
+        .and_return(appeal.veteran.file_number)
+    end
+
     it "creates tasks and other records associated with a dispatched appeal" do
       expect(BVAAppealStatus.new(appeal: appeal).status).to eq :unknown # We will fix this
       expect(appeal.root_task.status).to eq "on_hold"
