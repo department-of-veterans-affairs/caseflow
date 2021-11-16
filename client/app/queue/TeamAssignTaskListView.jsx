@@ -67,14 +67,14 @@ class TeamAssignTaskListView extends React.PureComponent {
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`/queue/${targetUserCssId}/assign`} activeClassName="usa-current" exact>
+              <NavLink to={`/queue/${targetUserCssId}/assign${userIsCamoEmployee && '?role=camo'}`} activeClassName="usa-current" exact>
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {userIsCamoEmployee && vhaProgramOffices.data.
               map((org) => <li key={org.id}>
                 <NavLink to={`/queue/${targetUserCssId}/assign/${org.id}`} activeClassName="usa-current" exact>
-                  {org.attributes.name} ({org.active_task_count})
+                  {org.attributes.name} {/* ({org.active_task_count}) */}
                 </NavLink>
               </li>)
             }

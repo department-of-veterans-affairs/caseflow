@@ -199,7 +199,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
         searchable
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
-        placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
+        placeholder={COPY.VHA_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
