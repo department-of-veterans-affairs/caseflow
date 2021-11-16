@@ -13,6 +13,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     @errors = []
     @spreadsheet_template = spreadsheet.judge_assignment_template
     @spreadsheet_data = spreadsheet.judge_assignments
+    @all_css_ids = CachedUser.all.pluck(:sdomainid) # css_id
   end
 
   def validate_judge_assignment_template
@@ -44,13 +45,36 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     CachedUser.find_by(sdomainid: css_id)
   end
 
+  def close_css_id(css_id)
+    results = FuzzyMatch.new(@all_css_ids).find_all_with_score(css_id).filter do |result|
+      levenshtein_distance = result[2]
+      return levenshtein_distance > 0.85 # Experimentally determinted, this seems right
+    end
+
+    "Try CSS_ID: '#{results}'"
+  end
+
+  def name_for_css_id(user)
+    first, last = user.full_name.split(" ")
+    formatted_name = "#{last}, #{first}"
+    "Name: '#{formatted_name}' matches CSS_ID: '#{user.sdomainid}'"
+  end
+
+  def add_close_match_info(not_in_db)
+    not_in_db.pluck(:judge_css_id, :name).compact.map do |css_id, name|
+      user = find_judge_by_css_id(css_id)
+
+      return user.blank? ? [css_id, name, close_css_id(css_id)] : [css_id, name, name_for_css_id(user)]
+    end
+  end
+
   def filter_judges_not_in_db
     not_in_db = @spreadsheet_data.reject do |row|
       judge_css_id_and_name_match_record?(row[:name], row[:judge_css_id])
     end
 
     # Do something here to add the reason and return it
-    not_in_db.pluck(:judge_css_id, :name).compact
+    add_close_match_info(not_in_db)
   end
 
   def validate_judge_assignments
