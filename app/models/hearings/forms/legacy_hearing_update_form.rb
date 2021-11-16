@@ -39,7 +39,8 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       scheduled_time_string: scheduled_time_string,
       summary: summary,
       transcript_requested: transcript_requested,
-      witness: witness
+      witness: witness,
+      email_recipients_attributes: email_recipients_attributes
     }.compact
 
     HearingTimeService.build_legacy_params_with_time(hearing, updates)

@@ -15,6 +15,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
+  has_one :vacols_staff, class_name: "VACOLS::Staff", foreign_key: :sdomainid, primary_key: :css_id
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
