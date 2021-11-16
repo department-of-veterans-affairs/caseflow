@@ -28,6 +28,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     HearingEmailRecipient => [HEARING_ASSOCIATION_DETAILS],
     SentHearingEmailEvent => [HEARING_ASSOCIATION_DETAILS],
 
+    AvailableHearingLocations => [APPEAL_ASSOCIATION_DETAILS],
     AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
