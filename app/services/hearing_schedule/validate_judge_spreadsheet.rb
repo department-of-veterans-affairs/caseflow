@@ -24,12 +24,14 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   def judge_css_id_and_name_match_record?(name, css_id)
     # If no user is returned, the css_id is incorrect
     user = find_judge_by_css_id(css_id)
-    name_matches = judge_name_matches?(user, name)
-    user.present? && name_matches
+    return false if user.blank?
+
+    # If the css_id matches, also check the name
+    judge_name_matches?(user, name)
   end
 
   def judge_name_matches?(user, name)
-    return if name.nil? || user.nil?
+    return if name.nil?
 
     # Name should be in "Last, First" format
     split_name = name.split(", ")
