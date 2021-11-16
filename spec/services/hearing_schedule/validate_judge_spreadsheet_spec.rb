@@ -23,6 +23,16 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
     it "returns JudgeNotInDatabase" do
       expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase
     end
+
+    it "returns JudgeNotInDatabase and a hint for an incorrect name" do
+      incorrect_name_text = "[\"BVALAMPHERE\", \"Huels, Stuart\", \"Name: 'Lamphere, Doris' matches CSS_ID: 'BVALAMPHERE'\"]"
+      expect(subject.to_s).to include incorrect_name_text
+    end
+
+    it "returns JudgeNotInDatabase and a hint for an incorrect css_id" do
+      incorrect_css_id_text = "[\"BVANULLIGAM\", nil, \"Try CSS_ID: 'BVAMULLIGA'\"]"
+      expect(subject.to_s).to include incorrect_css_id_text
+    end
   end
 
   context "when spreadsheet data is valid" do

@@ -48,10 +48,12 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   def close_css_id(css_id)
     results = FuzzyMatch.new(@all_css_ids).find_all_with_score(css_id).filter do |result|
       levenshtein_distance = result[2]
-      return levenshtein_distance > 0.85 # Experimentally determinted, this seems right
+      levenshtein_distance > 0.80 # Experimentally determinted, this seems right
     end
 
-    "Try CSS_ID: '#{results}'"
+    css_ids = results.map { |result| result[0] }.join(", ")
+
+    "Try CSS_ID: '#{css_ids}'"
   end
 
   def name_for_css_id(user)
@@ -63,8 +65,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   def add_close_match_info(not_in_db)
     not_in_db.pluck(:judge_css_id, :name).compact.map do |css_id, name|
       user = find_judge_by_css_id(css_id)
-
-      return user.blank? ? [css_id, name, close_css_id(css_id)] : [css_id, name, name_for_css_id(user)]
+      user.blank? ? [css_id, name, close_css_id(css_id)] : [css_id, name, name_for_css_id(user)]
     end
   end
 
