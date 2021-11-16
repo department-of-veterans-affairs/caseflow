@@ -3,6 +3,9 @@
 describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
   let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
   let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
+  let!(:judge_aliana) { create(:user, :with_vacols_judge_record, full_name: "Aliana Greneven", css_id: "BVAGRENEV") }
+  let!(:judge_first_james) { create(:user, :with_vacols_judge_record, full_name: "James Mulligan", css_id: "BVAMULLIGA") }
+  let!(:judge_other_james) { create(:user, :with_vacols_judge_record, full_name: "James Morrigan", css_id: "BVAMORRIGA")}
 
   before do
     CachedUser.sync_from_vacols
