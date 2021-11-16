@@ -269,11 +269,10 @@ feature "Intake", :all_dbs do
 
     context "Updated Supplemental Claim Form 20-0995 and Higher Level Reveiw Form 20-0996" do
       let(:veteran) { create(:veteran, file_number: "123419876") }
+      before { FeatureToggle.enable!(:updated_intake_forms) }
+      after { FeatureToggle.disable!(:updated_intake_forms) }
 
       context "when replacing Vocational Rehab and Employment benefit type" do
-        before { FeatureToggle.enable!(:veterans_readiness) }
-        after { FeatureToggle.disable!(:veterans_readiness) }
-
         it "shows 'Veterans Readiness and Employment' as benefit type option for SC form" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -281,7 +280,7 @@ feature "Intake", :all_dbs do
 
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
-          expect(page).to have_content(Constants.BENEFIT_TYPES.veterans_readiness)
+          expect(page).to have_content("Veterans Readiness and Employment")
           expect(page).to_not have_content(Constants.BENEFIT_TYPES.voc_rehab)
         end
 
@@ -292,15 +291,12 @@ feature "Intake", :all_dbs do
 
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
-          expect(page).to have_content(Constants.BENEFIT_TYPES.veterans_readiness)
-          expect(page).to_not have_content(Constants.BENEFIT_TYPES.voc_rehab)
+          expect(page).to have_content("Veterans Readiness and Employment")
+          expect(page).to_not have_content("Vocational Rehabilitation and Employment")
         end
 
         context "when removing same office question" do
-          before { FeatureToggle.enable!(:remove_same_office) }
-          after { FeatureToggle.disable!(:remove_same_office) }
-
-          it "does not show quesiton for HLR form" do
+          it "does not show question for HLR form" do
             visit "/intake"
             select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
             safe_click ".cf-submit.usa-button"
@@ -313,6 +309,7 @@ feature "Intake", :all_dbs do
       end
 
       context "when implementing existing form" do
+        before { FeatureToggle.disable!(:updated_intake_forms) }
         it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for SC" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -320,8 +317,8 @@ feature "Intake", :all_dbs do
 
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
-          expect(page).to have_content(Constants.BENEFIT_TYPES.voc_rehab)
-          expect(page).to_not have_content(Constants.BENEFIT_TYPES.veterans_readiness)
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
         end
 
         it "shows 'Vocational Rehabilitation and Employment' as a benefit type option fro HLR" do
@@ -331,8 +328,8 @@ feature "Intake", :all_dbs do
 
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
-          expect(page).to have_content(Constants.BENEFIT_TYPES.voc_rehab)
-          expect(page).to_not have_content(Constants.BENEFIT_TYPES.veterans_readiness)
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
         end
       end
     end

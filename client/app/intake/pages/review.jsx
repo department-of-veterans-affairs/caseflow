@@ -38,12 +38,12 @@ const textAlignRightStyling = css({
 const generateHigherLevelReviewSchema = (featureToggles) => {
   const formFieldFeatureToggles = {
     filedByVaGovHlr: reviewHigherLevelReviewFiledByVaGov,
-    removeSameOffice: reviewHigherLevelReviewSameOffice
+    updatedIntakeForms: reviewHigherLevelReviewSameOffice
   };
 
   return Object.keys(formFieldFeatureToggles).reduce((schema, toggle) => {
-    if ((featureToggles[toggle] && toggle !== 'removeSameOffice') ||
-    (!featureToggles[toggle] && toggle === 'removeSameOffice')) {
+    if ((featureToggles[toggle] && toggle !== 'updatedIntakeForms') ||
+    (!featureToggles[toggle] && toggle === 'updatedIntakeForms')) {
       return schema.concat(formFieldFeatureToggles[toggle]);
     }
 

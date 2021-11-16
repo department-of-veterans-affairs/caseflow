@@ -51,11 +51,11 @@ feature "Higher-Level Review", :all_dbs do
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
   before do
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
-    FeatureToggle.enable!(:remove_same_office)
+    FeatureToggle.enable!(:updated_intake_forms)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
-    FeatureToggle.disable!(:remove_same_office)
+    FeatureToggle.disable!(:updated_intake_forms)
   end
 
   it "Creates an end product and contentions for it" do
@@ -183,7 +183,7 @@ feature "Higher-Level Review", :all_dbs do
       expect(find_field("Yes", visible: false)).to be_checked
     end
 
-    expect(page).not_to have_content("Was an interview by the same office requested?")
+    expect(page).to_not have_content("Was an interview by the same office requested?")
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
@@ -401,9 +401,9 @@ feature "Higher-Level Review", :all_dbs do
 
   let(:special_issue_reference_id) { "IAMANEPID" }
 
-  context("when remove same office feature toggle disabled") do
-    before { FeatureToggle.disable!(:remove_same_office) }
-    after { FeatureToggle.enable!(:remove_same_office) }
+  context("when remove same office input toggle disabled") do
+    before { FeatureToggle.disable!(:updated_intake_forms) }
+    after { FeatureToggle.enable!(:updated_intake_forms) }
 
     it "Creates contentions with same office special issue" do
       Fakes::VBMSService.end_product_claim_id = special_issue_reference_id

@@ -122,8 +122,20 @@ describe HigherLevelReview, :postgres do
           it "adds errors to informal_conference and same_office" do
             is_expected.to be false
             expect(higher_level_review.errors[:informal_conference]).to include("blank")
+            expect(higher_level_review.errors[:same_office]).to include("blank")
             expect(higher_level_review.errors[:legacy_opt_in_approved]).to include("blank")
             expect(higher_level_review.errors[:veteran_is_not_claimant]).to include("blank")
+          end
+        end
+
+        context "when same office is removed" do
+          before { FeatureToggle.enable!(:updated_intake_forms) }
+          after { FeatureToggle.disable!(:updated_intake_forms) }
+          let(:informal_conference) { true }
+          let(:legacy_opt_in_approved) { false }
+
+          it "does not add errors to same_office" do
+            expect(higher_level_review.errors[:same_office]).to be_empty
           end
         end
       end
