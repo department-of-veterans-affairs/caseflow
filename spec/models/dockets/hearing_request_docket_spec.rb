@@ -179,7 +179,7 @@ describe HearingRequestDocket, :all_dbs do
         expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
 
         tasks = subject
-        binding.pry
+        # binding.pry
 
         expect(tasks.length).to eq(expected_result.length)
         expect(tasks.first.class).to eq(DistributedCase)
@@ -440,6 +440,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  # TODO: this still needs refining to ensure proper setup of blocking task
   def create_nonpriority_blocked_hearing_appeal
     appeal = create(:appeal,
       :with_post_intake_tasks,
@@ -473,6 +474,9 @@ describe HearingRequestDocket, :all_dbs do
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
     DistributionTask.find_by(appeal: appeal).update!(assigned_at: 5.days.ago)
 
+    # Ensure hearing tied to judge
+    Hearing.find_by(appeal: appeal).update!(judge: judge_with_team)
+
     appeal
   end
 
@@ -505,16 +509,19 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-    days_ago = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-    scheduled_for = Time.zone.now.days_ago(days_ago)
+    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    days_ago = Time.zone.now.days_ago(num_days)
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing)
 
-    most_recent = create(:hearing_day, scheduled_for: scheduled_for)
+    most_recent = create(:hearing_day, scheduled_for: days_ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
     hearing.update(judge: judge_with_team)
+
+    # Artificially set the `assigned_at` of DistributionTask to exceed affinity threshold
+    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
 
     appeal
   end
