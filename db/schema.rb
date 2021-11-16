@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_10_163649) do
+ActiveRecord::Schema.define(version: 2021_11_05_125151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1784,4 +1784,5 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
+  add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 end

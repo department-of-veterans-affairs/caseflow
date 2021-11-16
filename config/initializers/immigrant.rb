@@ -7,9 +7,6 @@ Immigrant.ignore_keys = [
   # See https://dsva.slack.com/archives/C3EAF3Q15/p1636061857138600?thread_ts=1636060646.138000&cid=C3EAF3Q15
   { from_table: "available_hearing_locations", column: "veteran_file_number" },
 
-  # Add FK to legacy_appeals
-  { from_table: "worksheet_issues", column: "appeal_id" },
-
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
 
