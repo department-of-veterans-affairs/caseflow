@@ -506,17 +506,14 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
-    @latest_attorney_case_review ||= AttorneyCaseReview
-      .where(task_id: Task.where(appeal: appeal)
-      .pluck(:id))
-      .order(:created_at).last
+    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
   end
 
   def latest_attorney_case_review2
     @latest_attorney_case_review ||= appeal.latest_attorney_case_review if appeal.is_a?(Appeal)
     puts "#{appeal.class} #{@latest_attorney_case_review&.document_id}"
     # binding.pry if latest_attorney_case_review_for_legacy_appeal
-    @latest_attorney_case_review ||= latest_attorney_case_review_for_legacy_appeal
+    @latest_attorney_case_review ||= latest_attorney_case_review_for_legacy_appeal if appeal.is_a?(LegacyAppeal)
   end
 
   def latest_attorney_case_review_for_legacy_appeal
