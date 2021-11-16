@@ -18,6 +18,7 @@ class Hearings::SendEmail
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
     @reminder_info = reminder_info
+    @hearing.reload
   end
 
   def call
