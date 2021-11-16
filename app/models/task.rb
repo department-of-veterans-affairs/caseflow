@@ -506,19 +506,8 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
+    # Should be the same as calling: appeal.latest_attorney_case_review
     @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
-  end
-
-  def latest_attorney_case_review2
-    @latest_attorney_case_review ||= appeal.latest_attorney_case_review if appeal.is_a?(Appeal)
-    puts "#{appeal.class} #{@latest_attorney_case_review&.document_id}"
-    # binding.pry if latest_attorney_case_review_for_legacy_appeal
-    @latest_attorney_case_review ||= latest_attorney_case_review_for_legacy_appeal if appeal.is_a?(LegacyAppeal)
-  end
-
-  def latest_attorney_case_review_for_legacy_appeal
-    # Retrieve AttorneyCaseReview via appeal_id because LegacyAppeal#attorney_case_reviews queries VACOLS
-    AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
   end
 
   def prepared_by_display_name
