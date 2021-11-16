@@ -3,6 +3,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import {
+  findKey,
   flatMap,
   keyBy,
   isEmpty,
@@ -22,14 +23,14 @@ import {
   map
 } from 'lodash';
 
+import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { 
+import {
   VIDEO_HEARING_LABEL,
-  TRAVEL_BOARD_HEARING_LABEL,
   VIRTUAL_HEARING_LABEL,
   REQUEST_TYPE_OPTIONS
 } from './constants';
@@ -68,8 +69,8 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   };
 };
 
-export const sortHearings = (hearings) =>
-  orderBy(
+export const sortHearings = (hearings) => {
+  return orderBy(
     Object.values(hearings || {}),
     // Convert to EST before sorting, this timezeon doesn't effect what's displayed
     //   we just need to pick one so the sorting works correctly if hearings were
@@ -77,6 +78,7 @@ export const sortHearings = (hearings) =>
     (hearing) => moment.tz(hearing.scheduledFor, 'America/New_York'),
     'asc'
   );
+};
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
   pickBy(omitBy(issues, '_destroy'), { appeal_id: appealId });
@@ -476,7 +478,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
     ...list,
-    [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+    [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
        message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
@@ -984,20 +986,12 @@ const virtualHearingOption = {
   label: VIRTUAL_HEARING_LABEL
 };
 
-export const allScheduleVeteranDropdownOptions = (appeal) => {
-  const videoHearingOption = { value: false, label: VIDEO_HEARING_LABEL };
-
-  if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
-    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-    // the HearingTypeDropdown
-    return [videoHearingOption, virtualHearingOption];
+export const allScheduleVeteranDropdownOptions = (readableHearingRequestType, readableOriginalHearingRequestType) => {
+  if (readableHearingRequestType === 'Virtual') {
+    return [{ value: false, label: readableOriginalHearingRequestType }, virtualHearingOption];
   }
 
-  // The default is video hearing if the appeal isn't associated with an RO.
-  if (appeal?.readableHearingRequestType ?? VIDEO_HEARING_LABEL) {
-    return [videoHearingOption, virtualHearingOption];
-  }
+  return [{ value: false, label: readableHearingRequestType }, virtualHearingOption];
 };
 
 export const allDetailsDropdownOptions = (hearing) => {
@@ -1014,6 +1008,22 @@ export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
 
 export const hearingRequestTypeOptions = (allOptions, currentOption) => {
   return allOptions.filter((opt) => opt.label !== currentOption.label);
+};
+
+export const formatRoomOption = (room) => {
+  const option = findKey(HEARING_ROOMS_LIST, { label: room });
+
+  return ({
+    label: option ? HEARING_ROOMS_LIST[option.toString()].label : 'None',
+    value: option ? option.toString() : null
+  });
+};
+
+const isVirtualHearingJobCompleted = (hearing) =>
+  (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted);
+
+export const readOnlyEmails = (hearing) => {
+  return isVirtualHearingJobCompleted(hearing) || hearing?.scheduledForIsPast;
 };
 
 /* eslint-enable camelcase */

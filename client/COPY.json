@@ -816,12 +816,15 @@
   "SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE": "Create tasks",
   "SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE": "Procedural details",
   "SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE": "Tasks selection for new appeal",
-  "SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION": "Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.\n\nDetermine and select tasks that need to be reactivated. Unselecting a task will undo this.",
+  "SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_TITLE": "Active tasks",
+  "SUBSTITUTE_APPELLANT_ACTIVE_TASK_SELECTION_DESCRIPTION": "Listed below are all the active tasks from the original appeal. If an active task is no longer needed, you can unselect any of them below.",
+  "SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_TITLE": "Cancelled and completed tasks",
+  "SUBSTITUTE_APPELLANT_CANCELLED_TASK_SELECTION_DESCRIPTION": "Listed below are all relevant cancelled and completed tasks from the original appeal.\n\nDetermine and select tasks that need to be reactivated. Unselecting a task will undo this. Any other necessary tasks to ensure the successful processing of the appeal will automatically be created.",
   "SUBSTITUTE_APPELLANT_REVIEW_TITLE": "Review and confirm",
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
-  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.",
+  "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
   "SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
@@ -881,6 +884,10 @@
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
+  "UNTIMELY_EXEMPTION_COPY": "Did the applicant request an extension to the date requirements",
+  "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
+  "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",
+  "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -1031,13 +1038,13 @@
   "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON": "Update Hearing Time",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
   "VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE": "Update Timezone",
-  "VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE": "Update Virtual Hearing",
+  "VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE": "Update Hearing",
   "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the %(appellantTitle)s, POA / Representative, and VLJ.",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the %(appellantTitle)s and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
   "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the %(appellantTitle)s, POA / Representative, and VLJ.",
-  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the hearing will be sent to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the %(appellantTitle)s and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
   "EMAIL_NOTIFICATION_HISTORY_TITLE": "Email Notification History",
   "EMAIL_NOTIFICATION_HISTORY_INTRO": "Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them",
@@ -1082,7 +1089,7 @@
 
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
-      "TITLE": "You have successfully scheduled %s's virtual hearing.",
+      "TITLE": "You have successfully scheduled %s's hearing.",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     },
     "CHANGED_FROM_VIRTUAL": {
@@ -1090,11 +1097,11 @@
       "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     },
     "CHANGED_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "TITLE": "You have successfully emailed the invite to %s's hearing.",
       "MESSAGE": ""
     },
     "CHANGED_HEARING_TIME": {
-      "TITLE": "You have successfully updated the time of %s's virtual hearing",
+      "TITLE": "You have successfully updated the time of %s's hearing",
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },
@@ -1135,7 +1142,9 @@
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
   "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by VHA are available in VBMS before docketing this appeal.",
-  "DOCKET_APPEAL_CONFIRMATION": "%s's appeal has successfully been docketed (Docket number: %s)",
+  "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
+  "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
+  "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
   "DOCKET_APPEAL_INSTRUCTIONS_NOTE": "This appeal has been docketed, and this task is no longer necessary.",
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
@@ -1143,7 +1152,24 @@
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
+  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
+  "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
+  "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
+  "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details, such as file structure or file path:",
+  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
+  "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Please review the information from Program Offices and VISNs. If documents were not found, or the appeal is invalid, please indicate that here. If you recommend docketing, please include information on document locations.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review."
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
+  "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Return to Program Office",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE": "You have successfully returned this appeal to the Program Office",
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the Program Office's Queue",
+  "VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
+  "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue"
 }

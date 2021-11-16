@@ -8,14 +8,13 @@ import Alert from '../../../components/Alert';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
-import { VirtualHearingEmail } from './Emails';
+import { HearingEmail } from '../details/HearingEmail';
 import { Timezone } from './Timezone';
 import { marginTop } from '../details/style';
 import { ReadOnly } from '../details/ReadOnly';
 
 export const AppellantSection = ({
   hearing,
-  virtualHearing,
   errors,
   type,
   readOnly,
@@ -27,8 +26,10 @@ export const AppellantSection = ({
   showMissingEmailAlert,
   showTimezoneField,
   schedulingToVirtual,
-  userCanCollectVideoCentralEmails,
-  formFieldsOnly
+  formFieldsOnly,
+  appellantTimezone,
+  appellantEmailAddress,
+  appellantEmailType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -37,7 +38,7 @@ export const AppellantSection = ({
     (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
 
   // determine whether to show a missing email underneath readonly email
-  const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
+  const showMissingAlert = readOnly && showMissingEmailAlert && !hearing?.appellantEmailAddress;
 
   // Set the grid column width to respect fullWidth prop
   const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
@@ -82,14 +83,14 @@ export const AppellantSection = ({
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && (schedulingToVirtual || userCanCollectVideoCentralEmails) && (
+      {showTimezoneField && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames(columnWidthClass)} >
             <Timezone
               required={schedulingToVirtual}
               optional={!schedulingToVirtual}
-              value={virtualHearing?.appellantTz}
-              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
+              value={appellantTimezone}
+              onChange={(appellantTz) => update('hearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}
               label={`${appellantTitle} Timezone`}
@@ -105,14 +106,14 @@ export const AppellantSection = ({
         */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames(columnWidthClass)} >
-          <VirtualHearingEmail
+          <HearingEmail
             required={schedulingToVirtual}
             optional={!schedulingToVirtual}
             readOnly={readOnly}
             label={`${appellantTitle} Email (for these notifications only)`}
-            emailType="appellantEmail"
-            email={virtualHearing?.appellantEmail}
-            error={errors?.appellantEmail}
+            emailType={appellantEmailType}
+            email={appellantEmailAddress}
+            error={errors?.appellantEmailAddress}
             type={type}
             update={update}
           />
@@ -137,7 +138,6 @@ AppellantSection.defaultProps = {
 
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
-  virtualHearing: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,
@@ -151,5 +151,8 @@ AppellantSection.propTypes = {
   virtual: PropTypes.bool,
   userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool,
-  formFieldsOnly: PropTypes.bool
+  formFieldsOnly: PropTypes.bool,
+  appellantTimezone: PropTypes.string,
+  appellantEmailAddress: PropTypes.string,
+  appellantEmailType: PropTypes.string
 };

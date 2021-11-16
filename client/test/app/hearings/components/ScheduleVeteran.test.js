@@ -83,6 +83,20 @@ describe('ScheduleVeteran', () => {
     jest.restoreAllMocks();
   });
 
+  beforeAll(() => {
+    // Necessary because the list of timezones changes depending on the date
+    // Timezones are included because of this component hierarchy:
+    // ScheduleVeteran -> ScheduleVeteranForm -> AppellantSection -> Timezone
+    jest.
+      useFakeTimers('modern').
+      setSystemTime(new Date('2021-11-01').getTime());
+  });
+
+  afterAll(() => {
+    // Clear the system time make
+    jest.useRealTimers();
+  });
+
   test('Matches snapshot with default props', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
@@ -303,7 +317,7 @@ describe('ScheduleVeteran', () => {
       find('button').
       simulate('click');
     expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({
-      appellantEmail: ' Veteran email malformed',
+      appellantEmailAddress: ' Veteran email malformed',
     });
     expect(scheduleVeteran).toMatchSnapshot();
   });

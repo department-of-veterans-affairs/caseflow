@@ -15,7 +15,8 @@ import {
   stepBack,
   updateData,
 } from '../substituteAppellant.slice';
-import { prepTaskDataForUi } from './utils';
+import { prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
+import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
 export const SubstituteAppellantTasksView = () => {
   const { appealId } = useParams();
@@ -30,12 +31,22 @@ export const SubstituteAppellantTasksView = () => {
     (state) => state.substituteAppellant
   );
 
+  const sameAppealSubstitution = isSubstitutionSameAppeal(appeal);
+
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
 
+  const activeTasks = useMemo(() => {
+    return prepOpenTaskDataForUi({ taskData: allTasks,
+      claimantPoa: poa,
+      isSubstitutionSameAppeal: sameAppealSubstitution });
+  }, [allTasks, poa]);
+
   const filteredTasks = useMemo(() => {
-    return prepTaskDataForUi(allTasks, poa);
+    return prepTaskDataForUi({ taskData: allTasks,
+      claimantPoa: poa,
+      isSubstitutionSameAppeal: sameAppealSubstitution });
   }, [allTasks, poa]);
 
   // These values will be used in the "key details" section
@@ -78,8 +89,10 @@ export const SubstituteAppellantTasksView = () => {
       existingValues={existingValues}
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
+      pendingAppeal={sameAppealSubstitution}
       substitutionDate={substitutionDate}
-      tasks={filteredTasks}
+      cancelledTasks={filteredTasks}
+      activeTasks={activeTasks}
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
