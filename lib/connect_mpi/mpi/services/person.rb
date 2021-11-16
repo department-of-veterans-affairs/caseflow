@@ -152,6 +152,8 @@ EOXML
       cap = response[:prpa_in201306_uv02][:control_act_process]
       response_code = cap[:query_ack][:query_response_code][:@code]
       raise NotFoundError if response_code == "NF"
+      raise QueryResultError if response_code == "QE"
+      raise ApplicationError if response_code == "AE"
 
       [cap[:subject]].flatten
     end
