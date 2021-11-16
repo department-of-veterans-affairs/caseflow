@@ -10,7 +10,8 @@ class Idt::AuthenticationsController < ApplicationController
 
     Idt::Token.activate_proposed_token(key, current_user.css_id)
     render json: { message: "Success!" }
-  rescue Caseflow::Error::InvalidOneTimeKey
+  rescue_from Caseflow::Error::InvalidOneTimeKey do |e|
+    Raven.capture_exception(e)
     render json: { message: "Invalid key." }, status: :bad_request
   end
 end
