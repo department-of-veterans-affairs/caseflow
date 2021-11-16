@@ -181,10 +181,10 @@ describe "HearingRenderer" do
         h_task = ahd_task.parent
 
         output = renderer.hearing_task_children(h_task)
-        expect(output).to include /AssignHearingDispositionTask #{ahd_task.id} .cancelled/
+        expect(output).to include(/AssignHearingDispositionTask #{ahd_task.id} .cancelled/)
 
         output_hash = renderer.structure(h_task)
-        expect(output_hash.keys.first.to_s).to match /HearingTask #{h_task.id} .cancelled/
+        expect(output_hash.keys.first.to_s).to match(/HearingTask #{h_task.id} .cancelled/)
       end
     end
   end
