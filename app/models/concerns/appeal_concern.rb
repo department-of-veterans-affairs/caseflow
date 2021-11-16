@@ -15,7 +15,7 @@ module AppealConcern
   def latest_attorney_case_review
     # Do we need to memoize this, given that Rails will use the cache of the query?
     # @latest_attorney_case_review ||= attorney_case_reviews.last
-    reload_attorney_case_reviews.last
+    attorney_case_reviews.last
   end
 
   def latest_judge_case_review
