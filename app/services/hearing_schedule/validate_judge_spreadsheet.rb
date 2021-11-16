@@ -22,16 +22,24 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def judge_css_id_and_name_match_record?(name, css_id)
-    return if name.nil?
+    # If no user is returned, the css_id is incorrect
+    user = find_judge_by_css_id(css_id)
+    name_matches = judge_name_matches?(user, name)
+    user.present? && name_matches
+  end
 
-    user = CachedUser.find_by(sdomainid: css_id)
-    return if user.nil?
+  def judge_name_matches?(user, name)
+    return if name.nil? || user.nil?
 
-    # we get the name in the format "Last, First"
+    # Name should be in "Last, First" format
     split_name = name.split(", ")
     full_name = "#{split_name.last} #{split_name.first}"
 
     user.full_name.casecmp?(full_name)
+  end
+
+  def find_judge_by_css_id(css_id)
+    CachedUser.find_by(sdomainid: css_id)
   end
 
   def filter_judges_not_in_db
@@ -51,6 +59,5 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     validate_judge_assignment_template
     validate_judge_assignments
     @errors
-    binding.pry
   end
 end
