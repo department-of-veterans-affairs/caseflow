@@ -45,9 +45,12 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def filter_judges_not_in_db
-    @spreadsheet_data.reject do |row|
+    not_in_db = @spreadsheet_data.reject do |row|
       judge_css_id_and_name_match_record?(row[:name], row[:judge_css_id])
-    end.pluck(:judge_css_id, :name).compact
+    end
+
+    # Do something here to add the reason and return it
+    not_in_db.pluck(:judge_css_id, :name).compact
   end
 
   def validate_judge_assignments
