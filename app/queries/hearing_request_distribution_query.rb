@@ -30,6 +30,7 @@ class HearingRequestDistributionQuery
   attr_reader :base_relation, :genpop, :judge
 
   def not_genpop_appeals
+    binding.pry
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
   end
 
@@ -77,10 +78,24 @@ class HearingRequestDistributionQuery
       joins(query, hearings: :hearing_day)
     end
 
+    # def tied_to_distribution_judge(judge)
+    #   affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
+    #   where(hearings: { disposition: "held", judge_id: judge.id })
+    #     .where("latest_date_by_appeal.latest_scheduled_for > ?", affinity_days.days.ago)
+    # end
+
     def tied_to_distribution_judge(judge)
       affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
-      where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("latest_date_by_appeal.latest_scheduled_for > ?", affinity_days.days.ago)
+      # joins(
+      #   "INNER JOIN tasks AS distribution_task ON tasks.appeal_id = appeals.id AND tasks.type = ? AND tasks.status = ?",
+      #   DistributionTask.name,
+      #   Constants.TASK_STATUSES.assigned
+      # )
+      joins("INNER JOIN tasks AS distribution_task ON tasks.appeal_id = appeals.id AND tasks.type = 'DistributionTask' AND tasks.status = 'assigned'")
+        .where(hearings: { disposition: "held", judge_id: judge.id })
+        .where("distribution_task.assigned_at > ?", affinity_days.days.ago)
+        # .where("latest_date_by_appeal.latest_scheduled_for > ?", affinity_days.days.ago)
+        
     end
 
     def not_tied_exceeding_affinity_threshold
