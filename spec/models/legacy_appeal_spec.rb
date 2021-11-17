@@ -2717,8 +2717,8 @@ describe LegacyAppeal, :all_dbs do
       context "if the only active case is a RootTask" do
         let!(:root_task) { create(:root_task, appeal: appeal) }
 
-        it "returns Case storage" do
-          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        it "returns unassigned" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         end
       end
 
@@ -2732,7 +2732,7 @@ describe LegacyAppeal, :all_dbs do
 
         describe "when there are no other tasks" do
           it "returns Case storage because it does not include nonactionable tasks in its determinations" do
-            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
           end
         end
 
