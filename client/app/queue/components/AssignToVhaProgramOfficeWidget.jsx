@@ -49,7 +49,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
       if (!this.props.isModal) {
         this.props.showErrorMessage(
           { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-            detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+            detail: COPY.CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
       }
 
       return false;

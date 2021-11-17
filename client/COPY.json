@@ -391,6 +391,7 @@
   "ASSIGN_WIDGET_OTHER": "Other",
   "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
   "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
+  "CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select a program office to assign the tasks to.",
   "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
   "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s to %(assignee)s",

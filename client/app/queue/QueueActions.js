@@ -443,7 +443,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
 };
 
 export const initialCamoAssignTasksToVhaProgramOffice = ({
-  tasks, assigneeId, previousAssigneeId, instructions
+  tasks, assigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const url = '/tasks';
   const params = {
@@ -462,22 +462,9 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const taskIds = tasks.map((task) => task.uniqueId);
       const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
 
       dispatch(onReceiveTasks(_.pick(receievedTasks, ['tasks', 'amaTasks'])));
-
-      taskIds.forEach((taskId) => {
-        dispatch(setSelectionOfTaskOfUser({
-          userId: previousAssigneeId,
-          selected: false,
-          taskId
-        }));
-
-        dispatch(incrementTaskCountForAttorney({
-          id: assigneeId
-        }));
-      });
     });
 }));
 export const initialAssignTasksToUser = ({
@@ -753,7 +740,10 @@ export const fetchCamoTasks = (userId) => (dispatch) => {
 
   return ApiUtil.get(url).
     then((resp) => {
-      dispatch(setActiveOrganization(resp.body.id, resp.body.organization_name, resp.body.is_vso, resp.body.user_can_bulk_assign));
+      dispatch(setActiveOrganization(resp.body.id,
+        resp.body.organization_name,
+        resp.body.is_vso,
+        resp.body.user_can_bulk_assign));
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
