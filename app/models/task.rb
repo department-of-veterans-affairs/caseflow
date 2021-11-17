@@ -605,10 +605,10 @@ class Task < CaseflowRecord
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
     return false if type.include?("DocketSwitch")
-    return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
-    return false if ancestor_task_of_type(HearingTask).present?
-    return false if ancestor_task_of_type(JudgeDecisionReviewTask).present?
-    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+    return false if %w[RootTask DistributionTask JudgeAssignTask].include?(type)
+    return false if [HearingTask, EvidenceSubmissionWindowTask, JudgeDecisionReviewTask].any? do |task_type|
+      type == task_type.to_s || ancestor_task_of_type(task_type).present?
+    end
 
     true
   end
