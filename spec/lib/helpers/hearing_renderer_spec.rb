@@ -172,5 +172,20 @@ describe "HearingRenderer" do
       expect(output.second).to include "ScheduleHearingTask #{sh_task.id}"
       expect(output.second).to include "assigned"
     end
+
+    context "when associated HearingTask is cancelled" do
+      let!(:hearing) { create(:hearing, :with_tasks, appeal: appeal, hearing_day: hearing_day) }
+      it "shows cancelled HearingTask" do
+        ahd_task = appeal.tasks.find_by(type: AssignHearingDispositionTask.name)
+        ahd_task.cancelled!
+        h_task = ahd_task.parent
+
+        output = renderer.hearing_task_children(h_task)
+        expect(output).to include(/AssignHearingDispositionTask #{ahd_task.id} .cancelled/)
+
+        output_hash = renderer.structure(h_task)
+        expect(output_hash.keys.first.to_s).to match(/HearingTask #{h_task.id} .cancelled/)
+      end
+    end
   end
 end

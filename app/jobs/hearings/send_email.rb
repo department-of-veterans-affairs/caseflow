@@ -19,6 +19,7 @@ class Hearings::SendEmail
     @type = type.to_s
     @reminder_info = reminder_info
     @custom_subject = custom_subject
+    @hearing.reload
   end
 
   def call
