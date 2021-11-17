@@ -17,12 +17,12 @@ import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActio
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { FilterIcon } from '../components/icons/FilterIcon';
-import { PageArrowLeft } from '../components/icons/PageArrowLeft';
-import { PageArrowRight } from '../components/icons/PageArrowRight';
-import { LeftChevron } from '../components/icons/LeftChevron';
+import { PageArrowLeftIcon } from '../components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from '../components/icons/PageArrowRightIcon';
+import { LeftChevronIcon } from '../components/icons/LeftChevronIcon';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
-import { FitToScreen } from '../components/icons/FitToScreen';
-import { Rotate } from '../components/icons/Rotate';
+import { FitToScreenIcon } from '../components/icons/FitToScreenIcon';
+import { RotateIcon } from '../components/icons/RotateIcon';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -156,7 +156,7 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button']}
               onClick={this.showPreviousDocument}
               ariaLabel="previous PDF">
-              <PageArrowLeft /><span className="left-button-label">Previous</span>
+              <PageArrowLeftIcon /><span className="left-button-label">Previous</span>
             </Button>
         }
       </div>
@@ -173,7 +173,7 @@ export class PdfUI extends React.Component {
                 classNames={['cf-pdf-button cf-right-side']}
                 onClick={this.showNextDocument}
                 ariaLabel="next PDF">
-                <span className="right-button-label">Next</span><PageArrowRight />
+                <span className="right-button-label">Next</span><PageArrowRightIcon />
               </Button>
         }
       </div>
@@ -232,7 +232,7 @@ export class PdfUI extends React.Component {
             name="backToClaimsFolder"
             button="matte"
             onClick={this.onBackToClaimsFolder}>
-            <LeftChevron />
+            <LeftChevronIcon />
             &nbsp; Back
           </Link> }
         </span>
@@ -278,14 +278,14 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
-            <FitToScreen />
+            <FitToScreenIcon />
           </Button>
           <Button
             name="rotation"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.rotateDocument}
             ariaLabel="rotate document">
-            <Rotate />
+            <RotateIcon />
           </Button>
           <span className="cf-pdf-spaced-buttons">|</span>
           <Button

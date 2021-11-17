@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LoadingSymbol } from './icons/LoadingSymbol';
+import { LoadingIcon } from './icons/LoadingIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
@@ -70,7 +70,7 @@ export default class SearchBar extends React.Component {
     if (this.props.loading) {
       return (
         <div className="search-text-spinner">
-          <LoadingSymbol
+          <LoadingIcon
             text=""
             size="25px"
             color={spinnerColor}

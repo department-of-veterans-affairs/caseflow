@@ -1,10 +1,10 @@
 import React from 'react';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { RotateIcon } from '../../app/components/icons/RotateIcon';
+import { FitToScreenIcon } from '../../app/components/icons/FitToScreenIcon';
 
 export default {
-  title: 'Commons/Components/Icons/RotateIcon',
-  component: RotateIcon,
+  title: 'Commons/Components/Icons/FitToScreenIcon',
+  component: FitToScreenIcon,
   parameters: {
     controls: { expanded: true },
   },
@@ -20,7 +20,7 @@ export default {
   }
 };
 
-const Template = (args) => <RotateIcon {...args} />;
+const Template = (args) => <FitToScreenIcon {...args} />;
 
 export const Default = Template.bind({});
 Default.decorators = [(Story) => <div style={{ padding: '20px', background: '#333' }}><Story /></div>];

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Trashcan } from '../../app/components/icons/Trashcan';
+import { TrashcanIcon } from '../../app/components/icons/TrashcanIcon';
 
 export default {
-  title: 'Commons/Components/Icons/Trashcan',
-  component: Trashcan,
+  title: 'Commons/Components/Icons/TrashcanIcon',
+  component: TrashcanIcon,
   parameters: {
     controls: { expanded: true },
   },
@@ -19,6 +19,6 @@ export default {
   }
 };
 
-const Template = (args) => <Trashcan {...args} />;
+const Template = (args) => <TrashcanIcon {...args} />;
 
 export const Default = Template.bind({});

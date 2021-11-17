@@ -19,7 +19,7 @@ exports[`NodDateUpdateTimeline renders correctly 1`] = `
     <td
       className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
     >
-      <GreenCheckmark
+      <GreenCheckmarkIcon
         cname="green-checkmark"
         color="#2E8540"
         size={40}

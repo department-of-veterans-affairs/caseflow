@@ -24,8 +24,8 @@ import {
   toggleDropdownFilterVisibility,
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
-import { SortArrowDown } from '../components/icons/SortArrowDown';
-import { SortArrowUp } from '../components/icons/SortArrowUp';
+import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
+import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
@@ -97,9 +97,9 @@ class DocumentsTable extends React.Component {
   // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? (
-      <SortArrowUp />
+      <SortArrowUpIcon />
     ) : (
-      <SortArrowDown />
+      <SortArrowDownIcon />
     );
     const notSortedIcon = <DoubleArrowIcon />;
 

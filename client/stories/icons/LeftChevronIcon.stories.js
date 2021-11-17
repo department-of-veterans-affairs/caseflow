@@ -1,26 +1,26 @@
 import React from 'react';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { RotateIcon } from '../../app/components/icons/RotateIcon';
+import { LeftChevronIcon } from '../../app/components/icons/LeftChevronIcon';
 
 export default {
-  title: 'Commons/Components/Icons/RotateIcon',
-  component: RotateIcon,
+  title: 'Commons/Components/Icons/LeftChevronIcon',
+  component: LeftChevronIcon,
   parameters: {
     controls: { expanded: true },
   },
   argTypes: {
-    size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
+    size: { control: { type: 'number' } },
     cname: { control: { type: 'text' } }
   },
   args: {
-    size: 19,
     color: COLORS.WHITE,
-    cname: ''
+    size: 17,
+    cname: 'fa-chevron-left'
   }
 };
 
-const Template = (args) => <RotateIcon {...args} />;
+const Template = (args) => <LeftChevronIcon {...args} />;
 
 export const Default = Template.bind({});
 Default.decorators = [(Story) => <div style={{ padding: '20px', background: '#333' }}><Story /></div>];

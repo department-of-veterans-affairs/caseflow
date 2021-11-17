@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
-import { LoadingSymbol } from '../icons/LoadingSymbol';
+import { LoadingIcon } from '../icons/LoadingIcon';
 import PropTypes from 'prop-types';
 
 const LoadingLabel = ({ text = '' }) => (
@@ -10,7 +10,7 @@ const LoadingLabel = ({ text = '' }) => (
       marginRight: '10px'
     }
   })}>
-    <LoadingSymbol
+    <LoadingIcon
       text=""
       size="15px"
     />

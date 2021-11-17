@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
 import { toolbarStyles, pdfButtonStyle } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
-import { LeftChevron } from 'app/components/icons/LeftChevron';
+import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
-import { FitToScreen } from 'app/components/icons/FitToScreen';
-import { Rotate } from 'app/components/icons/Rotate';
+import { FitToScreenIcon } from 'app/components/icons/FitToScreenIcon';
+import { RotateIcon } from 'app/components/icons/RotateIcon';
 import { SearchIcon } from 'app/components/icons/SearchIcon';
 import { DownloadIcon } from 'app/components/icons/DownloadIcon';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
@@ -37,7 +37,7 @@ export const DocumentHeader = ({
     <span {...toolbarStyles.toolbar} {...toolbarStyles.toolbarLeft}>
       {docsCount && (
         <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte" onClick={backToClaimsFolder}>
-          <LeftChevron />
+          <LeftChevronIcon />
           &nbsp; Back
         </Link>
       )}
@@ -75,10 +75,10 @@ export const DocumentHeader = ({
         <i className="fa fa-plus" aria-hidden="true" />
       </Button>
       <Button name="fit" classNames={pdfButtonStyle} onClick={fitToScreen} ariaLabel="fit to screen" >
-        <FitToScreen />
+        <FitToScreenIcon />
       </Button>
       <Button name="rotation" classNames={pdfButtonStyle} onClick={rotateDocument} ariaLabel="rotate document" >
-        <Rotate />
+        <RotateIcon />
       </Button>
       <span className="cf-pdf-spaced-buttons">|</span>
       <Button

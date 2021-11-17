@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import COPY from '../../../COPY';
-import { GrayDot } from '../../components/icons/GrayDot';
-import { GreenCheckmark } from '../../components/icons/GreenCheckmark';
+import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
+import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
 import { CancelIcon } from '../../components/icons/CancelIcon';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import { caseTimelineTasksForAppeal } from '../../queue/selectors';
@@ -42,13 +42,13 @@ class DecisionDateTimeLine extends React.PureComponent {
 
     const showStylingIcon = () => {
       if (appeal.decisionDate) {
-        return <span className="timelineLeftPaddingStyle"><GreenCheckmark /></span>;
+        return <span className="timelineLeftPaddingStyle"><GreenCheckmarkIcon /></span>;
       }
       if (appeal.withdrawn) {
         return <span className="timelineLeftPaddingStyle"><CancelIcon /></span>;
       }
 
-      return <span className="greyDotTimelineStyling"><GrayDot /></span>;
+      return <span className="greyDotTimelineStyling"><GrayDotIcon /></span>;
     };
 
     const showTaskListStyling = () => {

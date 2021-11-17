@@ -7,8 +7,8 @@ import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
 import { FilterIcon } from 'app/components/icons/FilterIcon';
-import { PageArrowLeft } from 'app/components/icons/PageArrowLeft';
-import { PageArrowRight } from 'app/components/icons/PageArrowRight';
+import { PageArrowLeftIcon } from 'app/components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from 'app/components/icons/PageArrowRightIcon';
 
 /**
  * Document Footer displays the PDF footer controls
@@ -37,7 +37,7 @@ export const DocumentFooter = ({
           onClick={prevDoc}
           ariaLabel="previous PDF"
         >
-          <PageArrowLeft />
+          <PageArrowLeftIcon />
           <span className="left-button-label">Previous</span>
         </Button>
       )}
@@ -84,7 +84,7 @@ export const DocumentFooter = ({
           ariaLabel="next PDF"
         >
           <span className="right-button-label">Next</span>
-          <PageArrowRight />
+          <PageArrowRightIcon />
         </Button>
       )}
     </div>

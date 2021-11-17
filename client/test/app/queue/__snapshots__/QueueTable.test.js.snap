@@ -5394,7 +5394,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
           <div
             data-css-1ogvp9u=""
           >
-            <LoadingSymbol
+            <LoadingIcon
               cname="cf-loading-button-symbol cf-small-loader-symbol"
               color="#844e9f"
               size="150px"
@@ -5437,7 +5437,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
                   </svg>
                 </div>
               </div>
-            </LoadingSymbol>
+            </LoadingIcon>
             <p />
           </div>
         </section>

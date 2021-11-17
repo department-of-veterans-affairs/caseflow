@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { LoadingSymbol } from './icons/LoadingSymbol';
+import { LoadingIcon } from './icons/LoadingIcon';
 export default class LoadingContainer extends React.Component {
   render() {
     let {
@@ -12,7 +12,7 @@ export default class LoadingContainer extends React.Component {
       <div className="loadingContainer-positioning">
         <div className="loadingContainer-table">
           <div className="loadingContainer-table-cell">
-            <LoadingSymbol
+            <LoadingIcon
               text=""
               size="150px"
               color={color}
