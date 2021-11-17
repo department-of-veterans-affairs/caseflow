@@ -876,15 +876,21 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "if the only active case is a RootTask" do
+    context "if the only active task is a RootTask" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_with_cancelled_dispatch) do
+        sji = SanitizedJsonImporter.from_file("spec/records/appeal-53008.json", verbosity: 0)
+        sji.import
+        sji.imported_records[Appeal.table_name].first
+      end
 
       before do
         create(:root_task, :in_progress, appeal: appeal)
       end
 
-      it "returns Case storage" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      it "returns unassigned" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
+        expect(appeal_with_cancelled_dispatch.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
       end
     end
 
@@ -899,21 +905,23 @@ describe Appeal, :all_dbs do
       end
 
       describe "when there are no other tasks" do
-        it "returns Case storage because it does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        it "returns unassigned because it does not include nonactionable tasks in its determinations" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         end
       end
 
-      describe "when there is an actionable task with an assignee", skip: "flake" do
-        let(:assignee) { create(:user) }
-        let!(:task) do
-          create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
-        end
+      ensure_stable do
+        describe "when there is an actionable task with an assignee" do
+          let(:assignee) { create(:user) }
+          let!(:task) do
+            create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
+          end
 
-        it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to(
-            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
-          )
+          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to(
+              eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+            )
+          end
         end
       end
     end

@@ -95,7 +95,11 @@ class RootTask < Task
   end
 
   def assigned_to_label
-    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+    if status == Constants.TASK_STATUSES.completed
+      COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
+    else
+      COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL
+    end
   end
 
   # Use the existence of a root task, active or inactive, to prevent duplicates

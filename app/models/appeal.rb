@@ -174,8 +174,6 @@ class Appeal < DecisionReview
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
-    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
-
     recently_updated_task = Task.any_recently_updated(
       tasks.active.visible_in_queue_table_view,
       tasks.on_hold.visible_in_queue_table_view
