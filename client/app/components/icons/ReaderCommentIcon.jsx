@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 // used in CommentIcon.jsx
 
-export const CommentSymbol = (props) => {
+export const ReaderCommentIcon = (props) => {
 
   const { selected, id, size, cname } = props;
 
@@ -72,7 +72,7 @@ export const CommentSymbol = (props) => {
     </g>
   </svg>;
 };
-CommentSymbol.propTypes = {
+ReaderCommentIcon.propTypes = {
 
   /**
   Sets the selected prop of the component. Default value is 'false'.
@@ -94,7 +94,7 @@ CommentSymbol.propTypes = {
   */
   cname: PropTypes.string,
 };
-CommentSymbol.defaultProps = {
+ReaderCommentIcon.defaultProps = {
   selected: false,
   id: 1,
   size: 40,

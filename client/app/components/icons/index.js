@@ -9,7 +9,7 @@ export { ChevronUpIcon } from './ChevronUpIcon';
 export { ClipboardIcon } from './ClipboardIcon';
 export { ClockIcon } from './ClockIcon';
 export { CloseIcon } from './CloseIcon';
-export { CommentSymbol } from './CommentSymbol';
+export { ReaderCommentIcon } from './ReaderCommentIcon';
 export { DoubleArrowIcon } from './DoubleArrowIcon';
 export { DownloadIcon } from './DownloadIcon';
 export { ExternalLinkIcon } from './ExternalLinkIcon';

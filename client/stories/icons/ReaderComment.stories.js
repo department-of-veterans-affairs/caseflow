@@ -1,9 +1,9 @@
 import React from 'react';
-import { ReaderCommentIcon } from '../../app/components/icons/ReaderCommentIcon';
+import { CommentIcon } from '../../app/reader/CommentIcon';
 
 export default {
-  title: 'Commons/Components/Icons/ReaderCommentIcon',
-  component: ReaderCommentIcon,
+  title: 'Commons/Components/Icons/CommentIcon',
+  component: CommentIcon,
   parameters: {
     controls: { expanded: true },
   },
@@ -21,6 +21,6 @@ export default {
   }
 };
 
-const Template = (args) => <ReaderCommentIcon {...args} />;
+const Template = (args) => <CommentIcon {...args} />;
 
 export const Default = Template.bind({});
