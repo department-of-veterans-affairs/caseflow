@@ -240,13 +240,6 @@ describe RootTask, :postgres do
 
     subject { root_task.assigned_to_label }
 
-    context "when the root task is completed" do
-      before { root_task.completed! }
-      it "returns case storage" do
-        expect(subject).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
-      end
-    end
-
     context "when the root task is on hold" do
       before { root_task.on_hold! }
       it "returns unassigned" do

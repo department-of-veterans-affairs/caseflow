@@ -862,6 +862,7 @@ describe Appeal, :all_dbs do
 
       before do
         create(:root_task, :completed, appeal: appeal)
+        create(:schedule_hearing_task, :completed, appeal: appeal)
       end
 
       it "returns Post-decision" do
