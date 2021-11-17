@@ -6,14 +6,12 @@ import PropTypes from 'prop-types';
 import { toolbarStyles, pdfButtonStyle } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
-import {
-  LeftChevron,
-  ExternalLink,
-  FitToScreen,
-  Rotate,
-  SearchIcon,
-  DownloadIcon
-} from 'app/components/RenderFunctions';
+import { LeftChevron } from 'app/components/icons/LeftChevron';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
+import { FitToScreen } from 'app/components/icons/FitToScreen';
+import { Rotate } from 'app/components/icons/Rotate';
+import { SearchIcon } from 'app/components/icons/SearchIcon';
+import { DownloadIcon } from 'app/components/icons/DownloadIcon';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
 
 /**
@@ -61,7 +59,7 @@ export const DocumentHeader = ({
             <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
               <span title="Open in new tab">{doc.type}</span>
               <span className="cf-pdf-external-link-icon">
-                <ExternalLink />
+                <ExternalLinkIcon />
               </span>
             </h1>
           </Link>

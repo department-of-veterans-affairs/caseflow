@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { Accordion } from '../components/Accordion';
 import { CATEGORIES } from './analytics';
 import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
-import { Keyboard } from '../components/RenderFunctions';
+import { Keyboard } from '../components/icons/Keyboard';
 import { commentColumns, commentInstructions, documentsColumns,
   documentsInstructions, searchColumns, searchInstructions,
   categoryColumns, categoryInstructions } from './PdfKeyboardInfo';

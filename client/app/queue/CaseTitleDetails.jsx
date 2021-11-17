@@ -14,7 +14,8 @@ import {
   legacyJudgeTasksAssignedToUser,
   legacyAttorneyTasksAssignedByUser
 } from './selectors';
-import { PencilIcon, ClockIcon } from '../components/RenderFunctions';
+import { PencilIcon } from '../components/icons/PencilIcon';
+import { ClockIcon } from '../components/icons/ClockIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';

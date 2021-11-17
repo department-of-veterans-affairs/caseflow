@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import EditComment from './EditComment';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
-import { PlusIcon } from '../components/RenderFunctions';
+import { PlusIcon } from '../components/icons/PlusIcon';
 import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';

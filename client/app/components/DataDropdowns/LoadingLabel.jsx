@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
-import { LoadingSymbol } from '../RenderFunctions';
+import { LoadingSymbol } from '../icons/LoadingSymbol';
 import PropTypes from 'prop-types';
 
 const LoadingLabel = ({ text = '' }) => (

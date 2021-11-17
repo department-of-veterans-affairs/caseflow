@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 
 // Local Dependencies
 import Table from 'app/components/Table';
-import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
+import { SortArrowDown } from 'app/components/icons/SortArrowDown';
+import { SortArrowUp } from 'app/components/icons/SortArrowUp';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 import { documentRows } from 'utils/reader';
 import { selectCurrentPdfLocally } from 'app/reader/Documents/DocumentsActions';

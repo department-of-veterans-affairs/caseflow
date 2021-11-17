@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { toggleIssueDeleteModal, onDeleteIssue } from '../../actions/hearingWorksheetActions';
 import Modal from '../../../components/Modal';
-import { Trashcan } from '../../../components/RenderFunctions';
+import { Trashcan } from '../../../components/icons/Trashcan';
 
 class HearingWorksheetIssueDelete extends PureComponent {
 

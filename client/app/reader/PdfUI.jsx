@@ -15,8 +15,15 @@ import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpT
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
+import { DownloadIcon } from '../components/icons/DownloadIcon';
+import { FilterIcon } from '../components/icons/FilterIcon';
+import { PageArrowLeft } from '../components/icons/PageArrowLeft';
+import { PageArrowRight } from '../components/icons/PageArrowRight';
+import { LeftChevron } from '../components/icons/LeftChevron';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
+import { FitToScreen } from '../components/icons/FitToScreen';
+import { Rotate } from '../components/icons/Rotate';
+import { SearchIcon } from '../components/icons/SearchIcon';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
@@ -244,7 +251,7 @@ export class PdfUI extends React.Component {
                 href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
-                  <span className="cf-pdf-external-link-icon"><ExternalLink /></span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
                 </h1>
               </Link>
             </span>

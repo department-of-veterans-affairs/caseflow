@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CloseIconSmall, LoadingSymbol } from './RenderFunctions';
+import { LoadingSymbol } from './icons/LoadingSymbol';
+import { CloseIcon } from './icons/CloseIcon';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
 import classnames from 'classnames';
@@ -168,7 +169,11 @@ export default class SearchBar extends React.Component {
             classNames={['cf-pdf-button cf-search-close-icon']}
             onClick={onClearSearch}
           >
-            <CloseIconSmall />
+            <CloseIcon
+              size={12}
+              color="#000"
+              cname=""
+            />
           </Button>
         )}
         {!isSearchAhead && (

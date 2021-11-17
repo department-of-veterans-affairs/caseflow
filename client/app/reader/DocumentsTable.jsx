@@ -24,14 +24,13 @@ import {
   toggleDropdownFilterVisibility,
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
-import {
-  SortArrowUp,
-  SortArrowDown,
-  DoubleArrow,
-} from '../components/RenderFunctions';
+import { SortArrowDown } from '../components/icons/SortArrowDown';
+import { SortArrowUp } from '../components/icons/SortArrowUp';
+import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
+
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterIcon from '../components/FilterIcon';
+import FilterOutlineIcon from '../components/icons/FilterOutlineIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 
@@ -102,7 +101,7 @@ class DocumentsTable extends React.Component {
     ) : (
       <SortArrowDown />
     );
-    const notSortedIcon = <DoubleArrow />;
+    const notSortedIcon = <DoubleArrowIcon />;
 
     const anyFiltersSet = (filterType) =>
       Boolean(_.some(this.props.docFilterCriteria[filterType]));
@@ -184,7 +183,7 @@ class DocumentsTable extends React.Component {
               Categories{' '}
               {anyCategoryFiltersAreSet ? 'Filtering by Category' : ''}
             </span>
-            <FilterIcon
+            <FilterOutlineIcon
               label="Filter by category"
               idPrefix="category"
               getRef={this.getCategoryFilterIconRef}
@@ -272,7 +271,7 @@ class DocumentsTable extends React.Component {
               Issue Tags
               {anyTagFiltersAreSet ? 'Filtering by Issue Tags' : ''}
             </span>
-            <FilterIcon
+            <FilterOutlineIcon
               label="Filter by tag"
               idPrefix="tag"
               getRef={this.getTagFilterIconRef}

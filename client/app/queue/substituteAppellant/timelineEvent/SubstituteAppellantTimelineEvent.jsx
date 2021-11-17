@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GreenCheckmark } from 'app/components/RenderFunctions';
+import { GreenCheckmark } from 'app/components/icons/GreenCheckmark';
 import { grayLineTimelineStyling } from 'app/queue/components/TaskRows';
 import format from 'date-fns/format';
 
