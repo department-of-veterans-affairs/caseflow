@@ -1,7 +1,7 @@
-class IndexHearingsOnDisposition < ActiveRecord::Migration[5.2]
-  disable_ddl_transaction!
+# frozen_string_literal: true
 
+class IndexHearingsOnDisposition < Caseflow::Migration
   def change
-    add_index :hearings, :disposition, algorithm: :concurrently
+    add_safe_index :hearings, [:disposition]
   end
 end
