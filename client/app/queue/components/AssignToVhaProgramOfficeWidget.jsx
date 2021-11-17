@@ -18,39 +18,26 @@ import {
   fetchUserInfo
 } from '../uiReducer/uiActions';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import TextareaField from 'app/components/TextareaField';
 import Button from 'app/components/Button';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import COPY from 'app/../COPY';
 import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
-import QueueFlowModal from './QueueFlowModal';
-
 /**
- * Widget used to assign an AssessDocumentationTask to an org. This can be used as an addition to a page or as a modal by passing
- * `isModal` to the component. The component displays VhaProgramOffices preloaded into state in QueueLoadingScreen.
+ * Widget used to assign an AssessDocumentationTask to an org.
+ * The component displays VhaProgramOffices preloaded into state in QueueLoadingScreen.
  */
 export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || ''
-    };
-  }
-
   componentDidMount = () => this.props.resetSuccessMessages?.();
 
   validAssignee = () => {
     const { selectedAssignee } = this.props;
 
     if (!selectedAssignee) {
-      if (!this.props.isModal) {
-        this.props.showErrorMessage(
-          { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-            detail: COPY.CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
-      }
+      this.props.showErrorMessage({
+        title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+        detail: COPY.CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL
+      });
 
       return false;
     }
@@ -61,11 +48,10 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
 
   validTasks = () => {
     if (this.props.selectedTasks.length === 0) {
-      if (!this.props.isModal) {
-        this.props.showErrorMessage(
-          { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
-            detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
-      }
+      this.props.showErrorMessage({
+        title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
+        detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL
+      });
 
       return false;
     }
@@ -74,10 +60,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
   }
 
   validInstructions = () => {
-    if (this.props.isModal && this.state.instructions.length === 0) {
-      return false;
-    }
-
+    // can add instructions validation here in the future if adding a modal
     return true;
   }
 
@@ -89,9 +72,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
     this.props.resetSuccessMessages?.();
     this.props.resetErrorMessages?.();
 
-    if (this.props.isModal) {
-      // QueueFlowModal will call validateForm
-    } else if (!this.validateForm()) {
+    if (!this.validateForm()) {
       return;
     }
 
@@ -106,8 +87,8 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
     let assignee = assigneeOpts.find((org) => org?.id?.toString() === orgId.toString());
 
     if (!assignee) {
-      // Sometimes assignee is pulled from task action data. If we can't find the selected assignee in state, check
-      // the tasks.
+      // Sometimes assignee is pulled from task action data.
+      // If we can't find the selected assignee in state, check the tasks.
       const option = taskActionData({
         ...this.props,
         task: selectedTasks[0],
@@ -120,20 +101,14 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
   };
 
   assignTasks = (selectedTasks, assignee) => {
-    const {
-      previousAssigneeId,
-      userId
-    } = this.props;
-
-    const { instructions } = this.state;
+    const { previousAssigneeId } = this.props;
 
     this.props.setSavePending();
 
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId: assignee.id,
-        previousAssigneeId,
-        instructions }).
+        previousAssigneeId }).
       then(() => {
         const isReassign = selectedTasks[0].type === 'AssessDocumentationTask';
 
@@ -151,26 +126,12 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
       }, (error) => {
         this.props.saveFailure();
 
-        let errorDetail;
-
-        try {
-          errorDetail = error.response.body.errors[0].detail;
-        } catch (ex) {
-          errorDetail = this.props.isModal && userId ?
-            <React.Fragment>
-              <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK}</Link>
-              {COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}
-            </React.Fragment> : COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;
-        }
-
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: errorDetail });
+          detail: error.response.body.errors[0].detail });
       }).
       finally(() => {
-        if (!this.props.isModal) {
-          this.props.resetSaveState();
-        }
+        this.props.resetSaveState();
       });
   }
 
@@ -179,12 +140,8 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
       vhaProgramOffices,
       selectedAssignee,
       selectedTasks,
-      savePending,
-      highlightFormItems,
-      isModal,
-      onCancel
+      savePending
     } = this.props;
-    const { instructions } = this.state;
     const optionFromProgramOffice = (programOffice) => ({
       label: programOffice.attributes.name,
       value: programOffice.attributes.id
@@ -197,35 +154,23 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
         name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         hideLabel
         searchable
-        errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
+        errorMessage={null}
         options={options}
         placeholder={COPY.VHA_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
-      {isModal && <React.Fragment>
-        <br />
-        <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          id="taskInstructions"
-          onChange={(value) => this.setState({ instructions: value })}
-          value={this.state.instructions} />
-      </React.Fragment> }
-      {!isModal && <Button
+      <Button
         onClick={this.submit}
         name={sprintf(
           COPY.ASSIGN_WIDGET_BUTTON_TEXT,
           { numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length) })}
         loading={savePending}
-        loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
+        loadingText={COPY.ASSIGN_WIDGET_LOADING} />
     </React.Fragment>;
 
-    return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel}>
-      {Widget}
-    </QueueFlowModal> : Widget;
+    return Widget;
   }
 }
 
@@ -240,7 +185,6 @@ AssignToVhaProgramOfficeWidget.propTypes = {
   onTaskAssignment: PropTypes.func,
   resetSaveState: PropTypes.func,
   showSuccessMessage: PropTypes.func,
-  isModal: PropTypes.bool,
   showErrorMessage: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
@@ -296,21 +240,4 @@ const AssignToVhaProgramOfficeWidgetContainer = (props) => {
 };
 
 export default AssignToVhaProgramOfficeWidgetContainer;
-
-export const AssignToVhaProgramOfficeWidgetModal = (props) => {
-  const { goBack } = useHistory();
-  const dispatch = useDispatch();
-
-  const handleCancel = () => {
-    dispatch(resetAssignees());
-    goBack();
-  };
-
-  return (
-    <AssignToVhaProgramOfficeWidgetContainer
-      onCancel={handleCancel}
-      {...props}
-    />
-  );
-};
 

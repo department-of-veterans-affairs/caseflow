@@ -443,7 +443,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
 };
 
 export const initialCamoAssignTasksToVhaProgramOffice = ({
-  tasks, assigneeId, instructions
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const url = '/tasks';
   const params = {
@@ -463,8 +463,17 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
     then((resp) => resp.body).
     then((resp) => {
       const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
+      const taskIds = tasks.map((task) => task.uniqueId);
 
       dispatch(onReceiveTasks(_.pick(receievedTasks, ['tasks', 'amaTasks'])));
+
+      taskIds.forEach((taskId) => {
+        dispatch(setSelectionOfTaskOfUser({
+          userId: previousAssigneeId,
+          selected: false,
+          taskId
+        }));
+      });
     });
 }));
 export const initialAssignTasksToUser = ({
