@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class DocketCoordinator
-  # Constants.DISTRIBUTION.minimum_legacy_proportion + Constants.DISTRIBUTION.maximum_direct_review_proportion
-  # cannot exceed 1.
-
   def dockets
     @dockets ||= {
       legacy: LegacyDocket.new,
@@ -47,7 +44,6 @@ class DocketCoordinator
         direct_review: direct_review_proportion
       )
     end
-
     @docket_proportions
   end
 

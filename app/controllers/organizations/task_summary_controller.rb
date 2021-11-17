@@ -8,21 +8,14 @@ class Organizations::TaskSummaryController < OrganizationsController
     result = ActiveRecord::Base.connection.exec_query(%{
       select count(*) as count
       , tasks.type as type
-      , closest_regional_office as regional_office
+      , coalesce(la.closest_regional_office, a.closest_regional_office) as regional_office
       from tasks
-      left join (
-        select closest_regional_office
-        , id
-        , 'LegacyAppeal' as type
-        from legacy_appeals
-        union
-        select closest_regional_office
-        , id
-        , 'Appeal' as type
-        from appeals
-      ) all_appeals
-        on tasks.appeal_id = all_appeals.id
-        and tasks.appeal_type = all_appeals.type
+      left join legacy_appeals la
+        on tasks.appeal_id = la.id
+        and tasks.appeal_type = 'LegacyAppeal'
+      left join appeals a
+        on tasks.appeal_id = a.id
+        and tasks.appeal_type = 'Appeal'
       where assigned_to_id = #{organization.id}
         and assigned_to_type = 'Organization'
         and status in ('assigned', 'in_progress')
