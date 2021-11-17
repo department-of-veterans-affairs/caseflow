@@ -91,6 +91,7 @@ module AppealConcern
   end
 
   def assigned_to_vso?(user)
+    # copied from legacy_hearing model
     tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&

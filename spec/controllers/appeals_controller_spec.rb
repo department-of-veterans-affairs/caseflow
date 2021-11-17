@@ -522,16 +522,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           subject
           expect(response.response_code).to eq(403)
         end
-
-        context "when feature is enabled" do
-          before { FeatureToggle.enable!(:vso_claimant_representative) }
-          after { FeatureToggle.disable!(:vso_claimant_representative) }
-
-          it "returns a successful response" do
-            subject
-            assert_response(:success)
-          end
-        end
       end
     end
   end

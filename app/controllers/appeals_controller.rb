@@ -158,12 +158,6 @@ class AppealsController < ApplicationController
 
   private
 
-  # def user_represents_claimant_not_veteran
-  #   return false unless FeatureToggle.enabled?(:vso_claimant_representative)
-
-  #   appeal.appellant_is_not_veteran && appeal.representatives.any? { |rep| rep.user_has_access?(current_user) }
-  # end
-
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)

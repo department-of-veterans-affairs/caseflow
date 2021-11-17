@@ -79,4 +79,8 @@ describe AppealConcern do
       end
     end
   end
+
+  describe "accessibility for VSOs" do
+    # add some context stuff here
+  end
 end
