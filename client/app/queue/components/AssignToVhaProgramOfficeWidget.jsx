@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
