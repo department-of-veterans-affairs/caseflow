@@ -21,7 +21,10 @@ const FnodBadge = (props) => {
 
 FnodBadge.propTypes = {
   veteranAppellantDeceased: PropTypes.bool,
-  uniqueId: PropTypes.string,
+  uniqueId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   tooltipText: PropTypes.object
 };
 
