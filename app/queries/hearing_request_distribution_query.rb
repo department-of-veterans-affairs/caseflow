@@ -83,11 +83,13 @@ class HearingRequestDistributionQuery
 
     def tied_to_judge_join_sql
        # both `appeal_type` and `appeal_id` necessary due to composite index
-       "INNER JOIN tasks AS t1
-       ON t1.appeal_type = 'Appeal
+       <<~SQL
+       INNER JOIN tasks AS t1
+       ON t1.appeal_type = 'Appeal'
        AND t1.appeal_id = appeals.id
        AND t1.type = 'DistributionTask'
-       AND t1.status = 'assigned'"
+       AND t1.status = 'assigned'
+      SQL
     end
 
     def tied_to_distribution_judge(judge)
