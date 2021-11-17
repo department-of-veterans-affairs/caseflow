@@ -131,11 +131,12 @@ describe HearingMailer do
   end
 
   shared_context "confirmation_email_custom_subject" do
-    subject { HearingMailer.confirmation(
-      email_recipient_info: recipient_info, 
-      virtual_hearing: virtual_hearing, 
-      custom_subject: "custom"
-    ) }
+    subject do HearingMailer.confirmation(
+        email_recipient_info: recipient_info,
+        virtual_hearing: virtual_hearing,
+        custom_subject: "custom"
+      ) 
+    end
   end
 
   shared_context "updated_time_confirmation_email" do

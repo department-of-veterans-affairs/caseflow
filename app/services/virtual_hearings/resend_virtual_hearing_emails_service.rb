@@ -6,22 +6,22 @@ class VirtualHearings::ResendVirtualHearingEmailsService
   class << self
     def call(start_date:, end_date:, perform_resend: false)
       confirmation_email_events_in_date_range = confirmation_hearing_email_events(start_date, end_date)
-      email_events_eligible_for_resend = confirmation_email_events_in_date_range.select { |cee| should_resend_email?(cee) }
-      if (perform_resend)
-        email_events_eligible_for_resend.each { |ee| reset_sent_status_and_send(ee) }
+      email_events_to_resend = confirmation_email_events_in_date_range.select { |cee| should_resend_email?(cee) }
+      if perform_resend
+        email_events_to_resend.each { |ee| reset_sent_status_and_send(ee) }
       else
-        return email_events_eligible_for_resend
+        email_events_to_resend
       end
     end
-    
+
     def reset_sent_status_and_send(sent_email)
-        reset_email_sent_on_email_recipients(sent_email.hearing)
-        Hearings::SendEmail.new(
+      reset_email_sent_on_email_recipients(sent_email.hearing)
+      Hearings::SendEmail.new(
             custom_subject: custom_email_subject(sent_email.hearing),
             virtual_hearing: sent_email.hearing.virtual_hearing,
             type: :confirmation,
             hearing: sent_email.hearing
-        ).call
+          ).call
     end
 
     def confirmation_hearing_email_events(start_date, end_date)
@@ -51,7 +51,7 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     end
 
     def hearing_has_non_confirmation_emails?(hearing)
-      hearing.email_events.any? {|email_event| email_event.email_type != "confirmation" }
+      hearing.email_events.any? { |email_event| email_event.email_type != "confirmation" }
     end
 
     def reset_email_sent_on_email_recipients(hearing)

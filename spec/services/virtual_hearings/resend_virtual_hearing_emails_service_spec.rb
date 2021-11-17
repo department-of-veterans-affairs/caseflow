@@ -6,7 +6,11 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
   end
   let(:start_date) { "2021-01-01" }
   let(:end_date) { "2021-01-10" }
-  subject { VirtualHearings::ResendVirtualHearingEmailsService.call(start_date: start_date, end_date: end_date, perform_resend: true) }
+  subject do
+    VirtualHearings::ResendVirtualHearingEmailsService.call(
+      start_date: start_date, end_date: end_date, perform_resend: true
+    )
+  end
   before do
     allow(VirtualHearings::ResendVirtualHearingEmailsService)
       .to receive(:get_gov_delivery_message_body)
