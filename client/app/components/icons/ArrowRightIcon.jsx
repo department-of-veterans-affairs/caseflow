@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const ArrowRightIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="arrow-right-323A45" fillRule="nonzero" fill={color}>
         <path d="M14.6906247,7.60937528 C14.4994846,7.38477753 14.2512494,7.27252584 13.9456413,7.27252584
@@ -40,10 +40,10 @@ ArrowRightIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 ArrowRightIcon.defaultProps = {
   size: 17,
   color: COLORS.GREY_DARK,
-  cname: ''
+  className: ''
 };

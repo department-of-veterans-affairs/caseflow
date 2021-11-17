@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 // Not used anywhere
 
 export const SuccessIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
   return (
-    <svg height={size} className={cname}
+    <svg height={size} className={className}
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50">
       <title>success</title>
       <g fill={color}>
@@ -34,10 +34,10 @@ SuccessIcon.propTypes = {
   /**
   Sets the className of the component. Default class is empty.
   */
-  cname: PropTypes.string,
+  className: PropTypes.string,
 };
 SuccessIcon.defaultProps = {
   size: '55',
   color: 'green',
-  cname: 'cf-icon-found'
+  className: 'cf-icon-found'
 };

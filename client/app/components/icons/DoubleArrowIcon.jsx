@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const DoubleArrowIcon = (props) => {
-  const { topColor, bottomColor, size, cname } = props;
+  const { topColor, bottomColor, size, className } = props;
 
-  return <svg height={size} className={cname} viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero">
         <g fill={topColor} transform="translate(2.000000, 1.000000)">
@@ -61,11 +61,11 @@ DoubleArrowIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'table-icon'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 DoubleArrowIcon.defaultProps = {
   topColor: COLORS.GREY_DARK,
   bottomColor: COLORS.GREY_DARK,
   size: 16,
-  cname: 'table-icon'
+  className: 'table-icon'
 };

@@ -10,14 +10,14 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } },
+    className: { control: { type: 'text' } },
     strokeColor: { control: { type: 'color' } }
   },
   args: {
     size: 40,
     strokeColor: '#ffffff',
     color: '#2E8540',
-    cname: 'green-checkmark'
+    className: 'green-checkmark'
   }
 };
 

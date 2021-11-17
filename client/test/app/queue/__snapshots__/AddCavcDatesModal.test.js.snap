@@ -338,7 +338,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                         Close
                       </span>
                       <CloseIcon
-                        cname="cf-icon-close"
+                        className="cf-icon-close"
                         color="#222"
                         size={55}
                       >
@@ -968,7 +968,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                         Close
                       </span>
                       <CloseIcon
-                        cname="cf-icon-close"
+                        className="cf-icon-close"
                         color="#222"
                         size={55}
                       >

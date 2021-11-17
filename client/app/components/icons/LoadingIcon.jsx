@@ -5,7 +5,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../../../app/constants/AppConstants';
 
 export const LoadingIcon = (props) => {
-  const { text, size, color, cname } = props;
+  const { text, size, color, className } = props;
 
   let imgSize = size;
 
@@ -24,7 +24,7 @@ export const LoadingIcon = (props) => {
       {text && <div className="cf-loading-button-text">
         {text}
       </div>}
-      <div className={cname}>
+      <div className={className}>
         <svg
           width={imgSize}
           height={imgSize}
@@ -99,11 +99,11 @@ LoadingIcon.propTypes = {
   /**
   Sets the class(es) of the component. Default class(es) is 'cf-loading-button-symbol cf-small-loader-symbol'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 LoadingIcon.defaultProps = {
   text: '',
   size: '30px',
   color: LOGO_COLORS.DISPATCH.ACCENT,
-  cname: 'cf-loading-button-symbol cf-small-loader-symbol'
+  className: 'cf-loading-button-symbol cf-small-loader-symbol'
 };

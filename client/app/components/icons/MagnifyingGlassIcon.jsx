@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const MagnifyingGlassIcon = (props) => {
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
-  return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 216 146" className={cname}>
+  return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 216 146" className={className}>
     <path fill={color} d="M172.77 123.025L144.825 95.08c6.735-9.722 10.104-20.56 10.104-32.508
     0-7.767-1.51-15.195-4.527-22.283-3.014-7.09-7.088-13.2-12.22-18.336s-11.243-9.207-18.33-12.22c-7.09-3.016-14.52-4.523-22.286-4.523-7.768
     0-15.196 1.508-22.284 4.523-7.09 3.014-13.2 7.088-18.332 12.22-5.132 5.134-9.206 11.245-12.22 18.333-3.015 7.088-4.522 14.515-4.522 22.282
@@ -33,10 +33,10 @@ MagnifyingGlassIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 MagnifyingGlassIcon.defaultProps = {
   size: 24,
   color: COLORS.GREY_MEDIUM,
-  cname: ''
+  className: ''
 };

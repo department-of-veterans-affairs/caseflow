@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const RightChevronIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} className={cname} viewBox="0 0 11 17" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 11 17" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="chevron-left-white" fillRule="nonzero" fill={color}>
         <path d="M10.148056,7.63345458 L3.83667957,1.36581253 C3.60425101,1.12190379 3.31401199,1
@@ -36,10 +36,10 @@ RightChevronIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 RightChevronIcon.defaultProps = {
   size: 17,
   color: COLORS.WHITE,
-  cname: 'fa-chevron-left'
+  className: 'fa-chevron-left'
 };

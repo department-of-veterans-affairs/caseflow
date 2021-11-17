@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const FilterIcon = (props) => {
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
-  return <svg height={size} viewBox="0 0 12 14" className={cname}>
+  return <svg height={size} viewBox="0 0 12 14" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="filter-filled-tool-symbol" transform="translate(6.000000, 7.000000)
@@ -38,10 +38,10 @@ FilterIcon.propTypes = {
   /**
   Sets the className of the component. Default className is 'filter-icon'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 FilterIcon.defaultProps = {
   color: COLORS.WHITE,
   size: 14,
-  cname: 'filter-icon'
+  className: 'filter-icon'
 };

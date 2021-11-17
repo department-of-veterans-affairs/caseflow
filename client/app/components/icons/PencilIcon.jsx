@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const PencilIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 25 25" version="1.1" className={cname}>
+  return <svg height={size} viewBox="0 0 25 25" version="1.1" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-729.000000, -307.000000)" fill={color} fillRule="nonzero">
         <g transform="translate(6.000000, 253.000000)">
@@ -34,10 +34,10 @@ PencilIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 PencilIcon.defaultProps = {
   size: 25,
   color: '#0071BC',
-  cname: ''
+  className: ''
 };

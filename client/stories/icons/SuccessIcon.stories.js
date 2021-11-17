@@ -10,12 +10,12 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    cname: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     color: '',
     size: '55',
-    cname: 'cf-icon-found'
+    className: 'cf-icon-found'
   }
 };
 

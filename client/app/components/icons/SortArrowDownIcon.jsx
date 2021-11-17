@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const SortArrowDownIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} className={cname} viewBox="0 0 16 9" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 16 9" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(8.500000, 5.000000) scale(1, -1) translate(-8.500000, -5.000000)
@@ -37,10 +37,10 @@ SortArrowDownIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'cf-sort-arrowdown table-icon'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 SortArrowDownIcon.defaultProps = {
   size: 17,
   color: COLORS.GREY_DARK,
-  cname: 'cf-sort-arrowdown table-icon'
+  className: 'cf-sort-arrowdown table-icon'
 };

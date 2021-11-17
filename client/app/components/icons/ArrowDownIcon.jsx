@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const ArrowDownIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="arrow-down-323A45" fillRule="nonzero" fill={color}>
         <path d="M14.1993267,7.10067326 C14.0081866,6.8760755 13.7599514,6.76382382 13.4543434,6.76382382
@@ -39,10 +39,10 @@ ArrowDownIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 ArrowDownIcon.defaultProps = {
   size: 17,
   color: COLORS.GREY_DARK,
-  cname: ''
+  className: ''
 };

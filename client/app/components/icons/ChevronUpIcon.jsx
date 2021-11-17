@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const ChevronUpIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} className={cname} viewBox="0 0 17 11" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 17 11" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <path d="M12.8948156,4.886695 L6.58343916,-1.38094705 C6.35101059,-1.62485579 6.06077157,-1.74675958
@@ -37,10 +37,10 @@ ChevronUpIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'table-icon'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 ChevronUpIcon.defaultProps = {
   size: 10,
   color: '#0872B9',
-  cname: 'table-icon'
+  className: 'table-icon'
 };

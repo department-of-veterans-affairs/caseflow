@@ -10,13 +10,13 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } },
+    className: { control: { type: 'text' } },
     strokeColor: { control: { type: 'color' } }
   },
   args: {
     size: 25,
     color: '#D6D7D9',
-    cname: 'gray-dot',
+    className: 'gray-dot',
     strokeColor: '#ffffff'
   }
 };

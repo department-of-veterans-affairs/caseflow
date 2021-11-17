@@ -865,7 +865,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         >
                            
                           <ExternalLinkIcon
-                            cname=""
+                            className=""
                             color="#0071bc"
                             size={16}
                           >
@@ -959,7 +959,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                           Copy Guest Link
                            
                           <ClipboardIcon
-                            cname=""
+                            className=""
                             color="#5B616B"
                             size={16}
                           >

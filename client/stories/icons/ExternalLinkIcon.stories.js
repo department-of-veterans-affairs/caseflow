@@ -11,12 +11,12 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     size: 16,
     color: COLORS.WHITE,
-    cname: ''
+    className: ''
   }
 };
 

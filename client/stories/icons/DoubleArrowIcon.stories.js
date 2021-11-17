@@ -12,13 +12,13 @@ export default {
     topColor: { control: { type: 'color' } },
     bottomColor: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    cname: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     topColor: COLORS.GREY_DARK,
     bottomColor: COLORS.GREY_DARK,
     size: 16,
-    cname: 'table-icon'
+    className: 'table-icon'
   }
 };
 

@@ -11,12 +11,12 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     size: 18,
     color: COLORS.GREY_DARK,
-    cname: 'cf-lock-icon'
+    className: 'cf-lock-icon'
   }
 };
 

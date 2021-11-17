@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const GrayDotIcon = (props) => {
-  const { size, color, cname, strokeColor } = props;
+  const { size, color, className, strokeColor } = props;
 
   return <svg height={size} viewBox="0 0 25 25" version="1.1">
-    <g className={cname} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+    <g className={className} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="750-copy-12" transform="translate(-128.000000, -670.000000)"
         fill={color} stroke={strokeColor} strokeWidth="4">
         <rect id="Background" x="130" y="672" width="21" height="21" rx="10.5"></rect>
@@ -34,11 +34,11 @@ GrayDotIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'gray-dot'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 GrayDotIcon.defaultProps = {
   size: 25,
   color: '#D6D7D9',
-  cname: 'gray-dot',
+  className: 'gray-dot',
   strokeColor: '#ffffff'
 };

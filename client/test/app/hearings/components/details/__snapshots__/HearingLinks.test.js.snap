@@ -147,7 +147,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                    
                   <ExternalLinkIcon
-                    cname=""
+                    className=""
                     color="#0071bc"
                     size={16}
                   >
@@ -241,7 +241,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   Copy VLJ Link
                    
                   <ClipboardIcon
-                    cname=""
+                    className=""
                     color="#5B616B"
                     size={16}
                   >
@@ -486,7 +486,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                    
                   <ExternalLinkIcon
-                    cname=""
+                    className=""
                     color="#0071bc"
                     size={16}
                   >
@@ -580,7 +580,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   Copy Guest Link
                    
                   <ClipboardIcon
-                    cname=""
+                    className=""
                     color="#5B616B"
                     size={16}
                   >
@@ -1560,7 +1560,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 >
                    
                   <ExternalLinkIcon
-                    cname=""
+                    className=""
                     color="#0071bc"
                     size={16}
                   >
@@ -1654,7 +1654,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   Copy Guest Link
                    
                   <ClipboardIcon
-                    cname=""
+                    className=""
                     color="#5B616B"
                     size={16}
                   >

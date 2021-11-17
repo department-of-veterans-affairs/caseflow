@@ -4,9 +4,9 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 export const PlusIcon = (props) => {
 
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
-  return <svg height={size} viewBox="0 0 15 15" className={cname}>
+  return <svg height={size} viewBox="0 0 15 15" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g>
@@ -46,10 +46,10 @@ PlusIcon.propTypes = {
   /**
   Sets the class of the component. Default class is ''.
   */
-  cname: PropTypes.string,
+  className: PropTypes.string,
 };
 PlusIcon.defaultProps = {
   color: COLORS.WHITE,
   size: '12px',
-  cname: ''
+  className: ''
 };

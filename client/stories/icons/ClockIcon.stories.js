@@ -10,12 +10,12 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } },
+    className: { control: { type: 'text' } },
   },
   args: {
     size: 16,
     color: 'currentColor',
-    cname: 'svg-inline--fa fa-clock fa-w-16'
+    className: 'svg-inline--fa fa-clock fa-w-16'
   }
 };
 

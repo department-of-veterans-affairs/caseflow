@@ -11,14 +11,14 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    cname: { control: { type: 'text' } },
+    className: { control: { type: 'text' } },
     text: { control: { type: 'text' } }
   },
   args: {
     text: '',
     size: '30px',
     color: LOGO_COLORS.DISPATCH.ACCENT,
-    cname: 'cf-loading-button-symbol cf-small-loader-symbol'
+    className: 'cf-loading-button-symbol cf-small-loader-symbol'
   }
 };
 

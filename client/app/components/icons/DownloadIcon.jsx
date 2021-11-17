@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const DownloadIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill={color}>
         <path d="M14,15.6826233 C14,15.1556346 13.5724432,14.7280778 13.0454545,14.7280778
@@ -49,10 +49,10 @@ DownloadIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 DownloadIcon.defaultProps = {
   size: 19,
   color: COLORS.WHITE,
-  cname: ''
+  className: ''
 };

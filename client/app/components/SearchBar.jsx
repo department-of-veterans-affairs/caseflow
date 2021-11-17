@@ -172,7 +172,7 @@ export default class SearchBar extends React.Component {
             <CloseIcon
               size={12}
               color="#000"
-              cname=""
+              className=""
             />
           </Button>
         )}

@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const LinkIcon = (props) => {
-  const { size, leftColor, cname, rightColor } = props;
+  const { size, leftColor, className, rightColor } = props;
 
-  return <svg height={size} viewBox="0 0 22 9" version="1.1" className={cname}>
+  return <svg height={size} viewBox="0 0 22 9" version="1.1" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-358.000000, -1343.000000)" fillRule="nonzero">
         <g transform="translate(356.000000, 1334.000000)">
@@ -70,11 +70,11 @@ LinkIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 LinkIcon.defaultProps = {
   size: 9,
   leftColor: '#0F0F10',
   rightColor: '#050606',
-  cname: ''
+  className: ''
 };

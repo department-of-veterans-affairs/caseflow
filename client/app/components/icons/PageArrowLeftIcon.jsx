@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const PageArrowLeftIcon = (props) => {
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
-  return <svg height={size} viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-1.000000, -1.000000)" fillRule="nonzero" fill={color}>
         <g transform="translate(9.500000, 9.500000) scale(-1, 1) translate(-9.500000, -9.500000)
@@ -43,10 +43,10 @@ PageArrowLeftIcon.propTypes = {
   /**
   Sets the className of the component. Default className is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 PageArrowLeftIcon.defaultProps = {
   color: COLORS.WHITE,
   size: 17,
-  cname: ''
+  className: ''
 };

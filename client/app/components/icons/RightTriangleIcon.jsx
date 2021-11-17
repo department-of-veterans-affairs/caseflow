@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const RightTriangleIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 21 35" className={cname}>
+  return <svg height={size} viewBox="0 0 21 35" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(3.000000, 4.000000)">
@@ -35,10 +35,10 @@ RightTriangleIcon.propTypes = {
   /**
   Sets the className of the component. Default className is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 RightTriangleIcon.defaultProps = {
   color: '#000000',
   size: 18,
-  cname: ''
+  className: ''
 };

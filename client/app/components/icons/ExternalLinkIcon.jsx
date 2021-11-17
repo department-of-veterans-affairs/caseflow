@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const ExternalLinkIcon = (props) => {
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
-  return <svg height={size} viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(1.000000, 1.000000)">
@@ -65,10 +65,10 @@ ExternalLinkIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 ExternalLinkIcon.defaultProps = {
   size: 16,
   color: COLORS.WHITE,
-  cname: ''
+  className: ''
 };

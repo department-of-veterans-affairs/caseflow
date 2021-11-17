@@ -352,7 +352,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                 Close
               </span>
               <CloseIcon
-                cname="cf-icon-close"
+                className="cf-icon-close"
                 color="#222"
                 size={55}
               >
@@ -829,7 +829,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                 Close
               </span>
               <CloseIcon
-                cname="cf-icon-close"
+                className="cf-icon-close"
                 color="#222"
                 size={55}
               >

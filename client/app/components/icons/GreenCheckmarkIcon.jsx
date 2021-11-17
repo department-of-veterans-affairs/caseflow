@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const GreenCheckmarkIcon = (props) => {
-  const { size, color, cname, strokeColor } = props;
+  const { size, color, className, strokeColor } = props;
 
   return <svg height={size} viewBox="0 0 40 40" version="1.1">
-    <g className={cname} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+    <g className={className} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="750-copy-12" transform="translate(-120.000000, -725.000000)">
         <g id="Group-11" transform="translate(124.000000, 729.000000)">
           <rect id="Background" stroke={strokeColor} strokeWidth="4" fill={color} x="-2" y="-2"
@@ -44,11 +44,11 @@ GreenCheckmarkIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'green-checkmark'.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 GreenCheckmarkIcon.defaultProps = {
   size: 40,
   strokeColor: '#ffffff',
   color: '#2E8540',
-  cname: 'green-checkmark'
+  className: 'green-checkmark'
 };

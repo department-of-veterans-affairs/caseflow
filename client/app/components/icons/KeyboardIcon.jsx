@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const KeyboardIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 23 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 23 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="keyboard" fillRule="nonzero" fill={color}>
         <path d="M20.9986,1 L1.4014,1 C0.6272,1 0,1.6384 0,2.393 L0,13.607 C0,14.377 0.6216,15
@@ -43,10 +43,10 @@ KeyboardIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 KeyboardIcon.defaultProps = {
   size: 17,
   color: '#0872B9',
-  cname: ''
+  className: ''
 };

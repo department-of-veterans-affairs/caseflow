@@ -11,13 +11,13 @@ export default {
     size: { control: { type: 'number' } },
     leftColor: { control: { type: 'color' } },
     rightColor: { control: { type: 'color' } },
-    cname: { control: { type: 'text' } },
+    className: { control: { type: 'text' } },
   },
   args: {
     size: 9,
     leftColor: '#0F0F10',
     rightColor: '#050606',
-    cname: ''
+    className: ''
   }
 };
 

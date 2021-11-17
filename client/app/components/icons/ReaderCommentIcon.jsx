@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 
 export const ReaderCommentIcon = (props) => {
 
-  const { selected, id, size, cname } = props;
+  const { selected, id, size, className } = props;
 
   const filter = selected ? `url(#${id}-filter-1)` : '';
 
-  return <svg height={size} viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg" className={cname}>
+  return <svg height={size} viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg" className={className}>
     <defs>
       <filter x="-13.8%" y="-8.8%" width="127.5%" height="127.5%" filterUnits="objectBoundingBox" id={`${id}-filter-1`}>
         <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
@@ -92,11 +92,11 @@ ReaderCommentIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string,
+  className: PropTypes.string,
 };
 ReaderCommentIcon.defaultProps = {
   selected: false,
   id: 1,
   size: 40,
-  cname: ''
+  classNameName: ''
 };

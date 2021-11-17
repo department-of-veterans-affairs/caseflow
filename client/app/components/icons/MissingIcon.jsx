@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 // Not used anywhere
 
 export const MissingIcon = (props) => {
-  const { color, size, cname } = props;
+  const { color, size, className } = props;
 
   return (
-    <svg height={size} className={cname}
+    <svg height={size} className={className}
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
       <title>missing icon</title>
       <g fill={color}>
@@ -35,10 +35,10 @@ MissingIcon.propTypes = {
   /**
   Sets the className of the component. Default class is empty.
   */
-  cname: PropTypes.string,
+  className: PropTypes.string,
 };
 MissingIcon.defaultProps = {
   size: '55',
   color: '',
-  cname: 'cf-icon-missing'
+  className: 'cf-icon-missing'
 };

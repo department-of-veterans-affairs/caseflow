@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const NewFileIcon = (props) => {
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
-  return <svg height={size} viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1" className={cname}>
+  return <svg height={size} viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="Group" transform="translate(0.000000, -3.000000)">
         <g id="icon" transform="translate(0.000000, 3.000000)">
@@ -38,10 +38,10 @@ NewFileIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  cname: PropTypes.string
+  className: PropTypes.string
 };
 NewFileIcon.defaultProps = {
   size: 11,
   color: '#844E9F',
-  cname: ''
+  className: ''
 };

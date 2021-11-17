@@ -4,10 +4,10 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 export const LockIcon = (props) => {
 
-  const { size, color, cname } = props;
+  const { size, color, className } = props;
 
   return <svg height={size} viewBox="0 0 18 20" version="1.1"
-    xmlns="http://www.w3.org/2000/svg" className={cname}>
+    xmlns="http://www.w3.org/2000/svg" className={className}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="padlock" transform="translate(2.000000, 1.000000)">
@@ -48,10 +48,10 @@ LockIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'cf-lock-icon'.
   */
-  cname: PropTypes.string,
+  className: PropTypes.string,
 };
 LockIcon.defaultProps = {
   size: 18,
   color: COLORS.GREY_DARK,
-  cname: 'cf-lock-icon'
+  className: 'cf-lock-icon'
 };

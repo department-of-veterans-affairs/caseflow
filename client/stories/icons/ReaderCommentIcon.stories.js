@@ -1,9 +1,9 @@
 import React from 'react';
-import { CommentIcon } from '../../app/reader/CommentIcon';
+import { ReaderCommentIcon } from '../../app/components/icons/ReaderCommentIcon';
 
 export default {
-  title: 'Commons/Components/Icons/CommentIcon',
-  component: CommentIcon,
+  title: 'Commons/Components/Icons/ReaderCommentIcon',
+  component: ReaderCommentIcon,
   parameters: {
     controls: { expanded: true },
   },
@@ -11,16 +11,16 @@ export default {
     selected: { control: { type: 'boolean' } },
     id: { control: { type: 'range' }, options: [1, 3, 1] },
     size: { control: { type: 'number' } },
-    cname: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     selected: false,
     id: 1,
     size: 40,
-    cname: ''
+    className: ''
   }
 };
 
-const Template = (args) => <CommentIcon {...args} />;
+const Template = (args) => <ReaderCommentIcon {...args} />;
 
 export const Default = Template.bind({});

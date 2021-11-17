@@ -486,7 +486,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
         >
           <DoubleArrowIcon
             bottomColor="#d6d7d9"
-            cname="table-icon"
+            className="table-icon"
             size={16}
             topColor="#d6d7d9"
           />
@@ -556,7 +556,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
         >
           <DoubleArrowIcon
             bottomColor="#d6d7d9"
-            cname="table-icon"
+            className="table-icon"
             size={16}
             topColor="#d6d7d9"
           />
@@ -1609,7 +1609,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 >
                   <DoubleArrowIcon
                     bottomColor="#d6d7d9"
-                    cname="table-icon"
+                    className="table-icon"
                     size={16}
                     topColor="#d6d7d9"
                   >
@@ -5395,7 +5395,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
             data-css-1ogvp9u=""
           >
             <LoadingIcon
-              cname="cf-loading-button-symbol cf-small-loader-symbol"
+              className="cf-loading-button-symbol cf-small-loader-symbol"
               color="#844e9f"
               size="150px"
               text=""
