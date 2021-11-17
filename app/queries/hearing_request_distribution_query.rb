@@ -77,16 +77,27 @@ class HearingRequestDistributionQuery
       joins(query, hearings: :hearing_day)
     end
 
+    def affinity_days
+      Constants::DISTRIBUTION["hearing_case_affinity_days"]
+    end
+
+    def tied_to_judge_join_sql
+       # both `appeal_type` and `appeal_id` necessary due to composite index
+       "INNER JOIN tasks AS t1
+       ON t1.appeal_type = 'Appeal
+       AND t1.appeal_id = appeals.id
+       AND t1.type = 'DistributionTask'
+       AND t1.status = 'assigned'"
+    end
+
     def tied_to_distribution_judge(judge)
-      affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
-      joins("INNER JOIN tasks AS t1 ON t1.appeal_id = appeals.id AND t1.type = 'DistributionTask' AND t1.status = 'assigned'")
+      joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
         .where("t1.assigned_at > ?", affinity_days.days.ago)        
     end
 
     def not_tied_exceeding_affinity_threshold
-      affinity_days = Constants::DISTRIBUTION["hearing_case_affinity_days"]
-      joins("INNER JOIN tasks AS t1 ON t1.appeal_id = appeals.id AND t1.type = 'DistributionTask' AND t1.status = 'assigned'")
+     joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held" })
         .where("t1.assigned_at <= ?", affinity_days.days.ago)        
     end
