@@ -6,7 +6,7 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
   end
   let(:start_date) { "2021-01-01" }
   let(:end_date) { "2021-01-10" }
-  subject { VirtualHearings::ResendVirtualHearingEmailsService.call(start_date: start_date, end_date: end_date) }
+  subject { VirtualHearings::ResendVirtualHearingEmailsService.call(start_date: start_date, end_date: end_date, perform_resend: true) }
   before do
     allow(VirtualHearings::ResendVirtualHearingEmailsService)
       .to receive(:get_gov_delivery_message_body)
@@ -35,30 +35,25 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(true)
       expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients.count)
-      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(true)
     end
     it "doesnt resend emails if a reminder email has been sent" do
       @se.update(email_type: "reminder")
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
-      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
     end
     it "doesnt resend emails if hearing already occured" do
       @se.hearing.hearing_day.update(scheduled_for: Time.zone.now - 2.days)
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
-      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
     end
     it "doesnt resend emails outside of the expected date range" do
       @se.update(sent_at: "2022-01-01")
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
-      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
     end
     it "doesnt resend emails twice" do
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(true)
-      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(true)
       @hearing_email_recipient.update(email_sent: false)
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
