@@ -38,17 +38,17 @@ class HearingRequestDistributionQuery
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
     [
-      most_recent_held_hearings_not_tied_to_any_active_judge,
+      most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
       no_hearings_or_no_held_hearings
-    ].flatten
+    ].flatten.uniq
   end
 
   def most_recent_held_hearings_exceeding_affinity_threshold
     base_relation.most_recent_hearings.not_tied_exceeding_affinity_threshold
   end
 
-  def most_recent_held_hearings_not_tied_to_any_active_judge
+  def most_recent_held_hearings_not_tied_to_any_judge
     base_relation.most_recent_hearings.not_tied_to_any_judge
   end
 

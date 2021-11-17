@@ -47,9 +47,11 @@ describe HearingRequestDocket, :all_dbs do
           but doesn't exceed affinity threshold" do
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        
+        # This is the only one that is still considered tied (we want only non_genpop)
         appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
 
-        # This appeal should not be returned
+        # This appeal should not be returned because it is now considered genpop
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
 
         tasks = subject
@@ -139,17 +141,25 @@ describe HearingRequestDocket, :all_dbs do
 
         it "only distributes priority, distributable, hearing docket cases
           that are either genpop or not genpop" do
+          num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+          days_ago = Time.zone.now.days_ago(num_days)
+
+          # This one will be included
           not_tied = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-          not_tied.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.month.ago)
+          not_tied.tasks.find_by(type: DistributionTask.name).update(assigned_at: days_ago)
           not_tied.reload
+
+          # This would have been included, except for limit
           matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+
           tasks = subject
 
-          expect(tasks.length).to eq(1)
+          # We expect only as many as the limit
+          expect(tasks.length).to eq(limit)
           expect(tasks.first.class).to eq(DistributedCase)
           expect(tasks.first.genpop).to eq true
           expect(tasks.first.genpop_query).to eq "any"
-          expect(distribution.distributed_cases.length).to eq(1)
+          expect(distribution.distributed_cases.length).to eq(limit)
           expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([not_tied])
         end
       end
@@ -414,9 +424,9 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
-    days_ago = Constants.DISTRIBUTION.hearing_case_affinity_days + 5
-    scheduled_for = Time.zone.now.days_ago(days_ago)
-    most_recent = create(:hearing_day, scheduled_for: scheduled_for)
+    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    days_ago = Time.zone.now.days_ago(num_days)
+    most_recent = create(:hearing_day, scheduled_for: days_ago)
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
@@ -428,6 +438,10 @@ describe HearingRequestDocket, :all_dbs do
                      transcript_sent_date: 1.day.ago,
                      hearing_day: most_recent)
     hearing.update(judge: judge_with_team)
+
+    # Artificially set the `assigned_at` of DistributionTask so it's in the past
+    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
+
     appeal
   end
 
@@ -494,16 +508,19 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-    days_ago = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-    scheduled_for = Time.zone.now.days_ago(days_ago)
+    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    days_ago = Time.zone.now.days_ago(num_days)
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing)
 
-    most_recent = create(:hearing_day, scheduled_for: scheduled_for)
+    most_recent = create(:hearing_day, scheduled_for: days_ago)
     hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
     hearing.update(judge: distribution_judge)
+
+    # Artificially set the `assigned_at` of DistributionTask so it's in the past
+    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
 
     appeal
   end
