@@ -911,18 +911,16 @@ describe Appeal, :all_dbs do
         end
       end
 
-      ensure_stable do
-        describe "when there is an actionable task with an assignee" do
-          let(:assignee) { create(:user) }
-          let!(:task) do
-            create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
-          end
+      describe "when there is an actionable task with an assignee" do
+        let(:assignee) { create(:user) }
+        let!(:task) do
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
+        end
 
-          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-            expect(appeal.assigned_to_location).to(
-              eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
-            )
-          end
+        it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          )
         end
       end
     end
