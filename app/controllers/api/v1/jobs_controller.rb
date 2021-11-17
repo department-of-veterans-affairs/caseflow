@@ -4,6 +4,7 @@ class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
+    "annual_metrics" => AnnualMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
@@ -11,8 +12,10 @@ class Api::V1::JobsController < Api::ApplicationController
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
-    "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,
     "etl_builder" => ETLBuilderJob,
+    "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
+    "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,
+    "hearing_disposition_change_job" => HearingDispositionChangeJob,
     "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
     "heartbeat" => HeartbeatTasksJob,
     "incomplete_distributions_job" => IncompleteDistributionsJob,
@@ -21,20 +24,19 @@ class Api::V1::JobsController < Api::ApplicationController
     "out_of_service_reminder" => OutOfServiceReminderJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
+    "quarterly_metrics" => QuarterlyMetricsReportJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
-    "send_reminder_emails_job" => Hearings::SendReminderEmailsJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
+    "send_reminder_emails_job" => Hearings::SendReminderEmailsJob,
     "set_appeal_age_aod" => SetAppealAgeAodJob,
     "stats_collector" => StatsCollectorJob,
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
     "task_timer_job" => TaskTimerJob,
-    "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
-    "hearing_disposition_change_job" => HearingDispositionChangeJob,
-    "warm_bgs_caches_job" => WarmBgsCachesJob,
-    "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob
+    "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
+    "warm_bgs_caches_job" => WarmBgsCachesJob
   }.freeze
 
   def create
