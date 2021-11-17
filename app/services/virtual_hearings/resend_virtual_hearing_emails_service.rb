@@ -10,10 +10,11 @@ class VirtualHearings::ResendVirtualHearingEmailsService
           reset_email_sent_on_email_recipients(sent_email.hearing)
           Hearings::SendEmail.new(
             custom_subject: custom_email_subject(sent_email.hearing),
-            virtual_hearing: sent_email.hearing.virtual_hearing, 
+            virtual_hearing: sent_email.hearing.virtual_hearing,
             type: :confirmation,
             hearing: sent_email.hearing
           ).call
+          SentHearingAdminEmailEvent.create(sent_hearing_email_event: sent_email)
         end
       end
     end
@@ -29,13 +30,18 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
     def should_resend_email?(sent_email)
       return false unless sent_email.hearing.virtual?
+
       return false if sent_email.hearing.scheduled_for.past?
+
       return false if hearing_has_non_confirmation_emails?(sent_email.hearing)
+
+      return false if sent_email.sent_hearing_admin_email_event.present?
+
       message = get_gov_delivery_message_body(sent_email)
-      is_bad_email?(message[:body])
+      bad_email?(message[:body])
     end
 
-    def is_bad_email?(email_body)
+    def bad_email?(email_body)
       email_body.include?("care.va.gov")
     end
 
@@ -48,7 +54,9 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     end
 
     def custom_email_subject(hearing)
-      "Updated confirmation (please disregard previous email): #{hearing.appeal.appellant_or_veteran_name}'s Board hearing is #{hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
+      "Updated confirmation (please disregard previous email): " \
+      "#{hearing.appeal.appellant_or_veteran_name}'s Board hearing is " \
+      "#{hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
     end
   end
 end

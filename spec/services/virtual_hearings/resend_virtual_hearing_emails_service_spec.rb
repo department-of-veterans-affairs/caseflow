@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 describe VirtualHearings::ResendVirtualHearingEmailsService do
-  let(:sample_bad_email) {
+  let(:sample_bad_email) do
     "This is a bad email it contains care.va.gov which is the bad url"
-  }
-  let(:start_date) { '2021-01-01' }
-  let(:end_date) { '2021-01-10' }
+  end
+  let(:start_date) { "2021-01-01" }
+  let(:end_date) { "2021-01-10" }
   subject { VirtualHearings::ResendVirtualHearingEmailsService.call(start_date: start_date, end_date: end_date) }
   before do
     allow(VirtualHearings::ResendVirtualHearingEmailsService)
       .to receive(:get_gov_delivery_message_body)
-      .and_return({body: sample_bad_email})
+      .and_return(body: sample_bad_email)
     @se = create(
       :sent_hearing_email_event,
-      sent_at: Time.zone.parse('2021-01-02'),
+      sent_at: Time.zone.parse("2021-01-02"),
       email_type: "confirmation"
     )
     @hearing_email_recipient = create(
@@ -29,18 +29,37 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
     @se.hearing.hearing_day.update(scheduled_for: 2.days.from_now)
   end
 
-  describe ".call" do 
+  describe ".call" do
     it "resends emails for confirmation email" do
+      initial_sent_email_event_count = @se.hearing.email_events.count
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(true)
+      expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients.count)
+      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(true)
     end
     it "doesnt resend emails if a reminder email has been sent" do
       @se.update(email_type: "reminder")
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
+      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
     end
     it "doesnt resend emails if hearing already occured" do
       @se.hearing.hearing_day.update(scheduled_for: Time.zone.now - 2.days)
+      subject
+      expect(@hearing_email_recipient.reload.email_sent).to eq(false)
+      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
+    end
+    it "doesnt resend emails outside of the expected date range" do
+      @se.update(sent_at: "2022-01-01")
+      subject
+      expect(@hearing_email_recipient.reload.email_sent).to eq(false)
+      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(false)
+    end
+    it "doesnt resend emails twice" do
+      subject
+      expect(@hearing_email_recipient.reload.email_sent).to eq(true)
+      expect(@se.reload.sent_hearing_admin_email_event.present?).to eq(true)
+      @hearing_email_recipient.update(email_sent: false)
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
     end
@@ -48,16 +67,18 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
   describe ".custom_email_subject" do
     it "returns correct email subject" do
       expect(VirtualHearings::ResendVirtualHearingEmailsService.custom_email_subject(@se.hearing)).to eq(
-        "Updated confirmation (please disregard previous email): Bob Smithdouglas's Board hearing is #{@se.hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
+        "Updated confirmation (please disregard previous email): " \
+        "#{@se.hearing.appeal.appellant_or_veteran_name}'s Board hearing is " \
+        "#{@se.hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
       )
     end
   end
-  describe ".is_bad_email?" do
+  describe ".bad_email?" do
     it "returns true if contains care.va.gov" do
-      expect(VirtualHearings::ResendVirtualHearingEmailsService.is_bad_email?(sample_bad_email)).to eq(true)
+      expect(VirtualHearings::ResendVirtualHearingEmailsService.bad_email?(sample_bad_email)).to eq(true)
     end
     it "returns false if does not contain care.va.gov" do
-      expect(VirtualHearings::ResendVirtualHearingEmailsService.is_bad_email?("test email")).to eq(false)
+      expect(VirtualHearings::ResendVirtualHearingEmailsService.bad_email?("test email")).to eq(false)
     end
   end
 end
