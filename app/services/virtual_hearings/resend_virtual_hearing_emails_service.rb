@@ -22,6 +22,7 @@ class VirtualHearings::ResendVirtualHearingEmailsService
         type: :confirmation,
         hearing: sent_email.hearing
       ).call
+      sent_email.update(sent_by: User.system_user)
     end
 
     def confirmation_hearing_email_events(start_date, end_date)
@@ -41,6 +42,8 @@ class VirtualHearings::ResendVirtualHearingEmailsService
       return false if hearing_has_non_confirmation_emails?(sent_email.hearing)
 
       return false if sent_email.sent_hearing_admin_email_event.present?
+
+      return false if sent_email.sent_by == User.system_user
 
       message = get_gov_delivery_message_body(sent_email)
       bad_email?(message[:body])

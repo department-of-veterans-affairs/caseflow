@@ -61,6 +61,7 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       @hearing_email_recipient.update(email_sent: false)
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
+      expect(@se.reload.sent_by).to eq(User.system_user)
     end
   end
   describe ".custom_email_subject" do
