@@ -56,7 +56,7 @@ const Tooltip = (props) => {
 };
 
 Tooltip.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.any,
   id: PropTypes.string,
   position: PropTypes.string,
   offset: PropTypes.object,
