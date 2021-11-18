@@ -558,7 +558,7 @@ hearings,appeal_id,integer ∗ FK,x,,x,,,Appeal ID; use as FK to appeals
 hearings,bva_poc,string,,,,,,Hearing coordinator full name
 hearings,created_at,datetime,,,,,,Automatic timestamp when row was created.
 hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who created the Hearing
-hearings,disposition,string,,,,,,"Hearing disposition; can be one of: 'held', 'postponed', 'no_show', or 'cancelled'"
+hearings,disposition,string,,,,,x,"Hearing disposition; can be one of: 'held', 'postponed', 'no_show', or 'cancelled'"
 hearings,evidence_window_waived,boolean,,,,,,Determines whether the veteran/appelant has wavied the 90 day evidence hold
 hearings,hearing_day_id,integer ∗ FK,x,,x,,,HearingDay ID; use as FK to HearingDays
 hearings,id,integer (8) PK,x,x,,,,
