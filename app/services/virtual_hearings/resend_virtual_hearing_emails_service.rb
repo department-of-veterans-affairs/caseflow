@@ -17,6 +17,7 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     def reset_sent_status_and_send(sent_email)
       reset_email_sent_on_email_recipients(sent_email.hearing)
       Hearings::SendEmail.new(
+        custom_subject: custom_email_subject(sent_email.hearing),
         virtual_hearing: sent_email.hearing.virtual_hearing,
         type: :confirmation,
         hearing: sent_email.hearing
@@ -55,6 +56,12 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
     def reset_email_sent_on_email_recipients(hearing)
       hearing.email_recipients.update_all(email_sent: false)
+    end
+
+    def custom_email_subject(hearing)
+      "Updated confirmation (please disregard previous email): " \
+      "#{hearing.appeal.appellant_or_veteran_name}'s Board hearing is " \
+      "#{hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
     end
   end
 end

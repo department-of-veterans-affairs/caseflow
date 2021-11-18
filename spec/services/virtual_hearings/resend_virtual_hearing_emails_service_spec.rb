@@ -63,6 +63,15 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
     end
   end
+  describe ".custom_email_subject" do
+    it "returns correct email subject" do
+      expect(VirtualHearings::ResendVirtualHearingEmailsService.custom_email_subject(@se.hearing)).to eq(
+        "Updated confirmation (please disregard previous email): " \
+        "#{@se.hearing.appeal.appellant_or_veteran_name}'s Board hearing is " \
+        "#{@se.hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
+      )
+    end
+  end
   describe ".bad_email?" do
     it "returns true if contains care.va.gov" do
       expect(VirtualHearings::ResendVirtualHearingEmailsService.bad_email?(sample_bad_email)).to eq(true)
