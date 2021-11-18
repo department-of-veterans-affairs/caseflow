@@ -9,7 +9,7 @@ import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
-import FilterOutlineIcon from 'app/components/icons/FilterOutlineIcon';
+import FilterIcon from 'app/components/icons/FilterIcon';
 import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
@@ -58,7 +58,7 @@ export const CategoryHeader = ({
 }) => (
   <div id="categories-header">
     Categories
-    <FilterOutlineIcon
+    <FilterIcon
       label="Filter by category"
       idPrefix="category"
       getRef={catFilterRef}
@@ -214,7 +214,7 @@ export const TagHeader = ({
 }) => (
   <div id="tags-header" className="document-list-header-issue-tags">
     Issue Tags
-    <FilterOutlineIcon
+    <FilterIcon
       label="Filter by tag"
       idPrefix="tag"
       getRef={tagFilterRef}

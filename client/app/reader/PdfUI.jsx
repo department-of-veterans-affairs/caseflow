@@ -16,7 +16,7 @@ import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsA
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
-import { FilterIcon } from '../components/icons/FilterIcon';
+import { FilterNoOutlineIcon } from '../components/icons/FilterNoOutlineIcon';
 import { PageArrowLeftIcon } from '../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../components/icons/PageArrowRightIcon';
 import { LeftChevronIcon } from '../components/icons/LeftChevronIcon';
@@ -162,7 +162,7 @@ export class PdfUI extends React.Component {
       </div>
       <div className="cf-pdf-buttons-center">
         { !this.props.loadError && this.getPageIndicator() }
-        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterNoOutlineIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
       </div>

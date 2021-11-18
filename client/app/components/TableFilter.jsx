@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 
 import { css, hover } from 'glamor';
 import COPY from '../../COPY';
-import FilterOutlineIcon from './icons/FilterOutlineIcon';
+import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
 
@@ -184,7 +184,7 @@ class TableFilter extends React.PureComponent {
 
     return (
       <span {...iconStyle}>
-        <FilterOutlineIcon
+        <FilterIcon
           aria-label={this.filterIconAriaLabel()}
           label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}

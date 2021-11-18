@@ -13,7 +13,7 @@ export { ReaderCommentIcon } from './ReaderCommentIcon';
 export { DoubleArrowIcon } from './DoubleArrowIcon';
 export { DownloadIcon } from './DownloadIcon';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
-export { FilterIcon } from './FilterIcon';
+export { FilterNoOutlineIcon } from './FilterNoOutlineIcon';
 export { FitToScreenIcon } from './FitToScreenIcon';
 export { GrayDotIcon } from './GrayDotIcon';
 export { GreenCheckmarkIcon } from './GreenCheckmarkIcon';

@@ -30,7 +30,7 @@ import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterOutlineIcon from '../components/icons/FilterOutlineIcon';
+import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 
@@ -183,7 +183,7 @@ class DocumentsTable extends React.Component {
               Categories{' '}
               {anyCategoryFiltersAreSet ? 'Filtering by Category' : ''}
             </span>
-            <FilterOutlineIcon
+            <FilterIcon
               label="Filter by category"
               idPrefix="category"
               getRef={this.getCategoryFilterIconRef}
@@ -271,7 +271,7 @@ class DocumentsTable extends React.Component {
               Issue Tags
               {anyTagFiltersAreSet ? 'Filtering by Issue Tags' : ''}
             </span>
-            <FilterOutlineIcon
+            <FilterIcon
               label="Filter by tag"
               idPrefix="tag"
               getRef={this.getTagFilterIconRef}

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
-import { FilterIcon } from 'app/components/icons/FilterIcon';
+import { FilterNoOutlineIcon } from 'app/components/icons/FilterNoOutlineIcon';
 import { PageArrowLeftIcon } from 'app/components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from 'app/components/icons/PageArrowRightIcon';
 
@@ -70,7 +70,7 @@ export const DocumentFooter = ({
         </span>
       )}
       <span className="doc-list-progress-indicator">
-        {docsFiltered && <FilterIcon />}
+        {docsFiltered && <FilterNoOutlineIcon />}
         Document {currentIndex + 1} of {filteredDocIds.length}
       </span>
     </div>
