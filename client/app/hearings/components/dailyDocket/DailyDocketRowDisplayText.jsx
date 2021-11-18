@@ -74,12 +74,7 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
     />}
     <ContestedClaimBadge
       appeal={{ contestedClaim: hearing.contestedClaim }}
-      docketTooltipText={
-        <div>
-          This is a Contested Claim. Please ensure<br />
-          proper notice is sent to all parties.
-        </div>
-      }
+      docketTooltip={true}
     />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
