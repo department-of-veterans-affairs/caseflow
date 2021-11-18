@@ -45,7 +45,7 @@ class HearingRequestDistributionQuery
   end
 
   def most_recent_held_hearings_exceeding_affinity_threshold
-    base_relation.most_recent_hearings.not_tied_exceeding_affinity_threshold
+    base_relation.most_recent_hearings.exceeding_affinity_threshold
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge
@@ -77,7 +77,7 @@ class HearingRequestDistributionQuery
       joins(query, hearings: :hearing_day)
     end
 
-    def tied_to_judge_join_sql
+    def with_assigned_distribution_task_sql
       # both `appeal_type` and `appeal_id` necessary due to composite index
       <<~SQL
         INNER JOIN tasks AS t1
@@ -89,19 +89,20 @@ class HearingRequestDistributionQuery
     end
 
     def tied_to_distribution_judge(judge)
-      joins(tied_to_judge_join_sql)
+      joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
         .where("t1.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
-    def not_tied_exceeding_affinity_threshold
-      joins(tied_to_judge_join_sql)
+    # If an appeal has exceeded the affinity, it should be returned to genpop.
+    def exceeding_affinity_threshold
+      joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held" })
         .where("t1.assigned_at <= ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
     # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
-    # when that distinction became irrelevant because cases become untied after 30 days anyway.
+    # when that distinction became irrelevant because cases become genpop after 30 days anyway.
     def not_tied_to_any_judge
       where(hearings: { disposition: "held", judge_id: nil })
     end
