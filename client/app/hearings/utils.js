@@ -3,6 +3,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import {
+  findKey,
   flatMap,
   keyBy,
   isEmpty,
@@ -22,12 +23,17 @@ import {
   map
 } from 'lodash';
 
+import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
-import { VIDEO_HEARING_LABEL } from './constants';
+import {
+  VIDEO_HEARING_LABEL,
+  VIRTUAL_HEARING_LABEL,
+  REQUEST_TYPE_OPTIONS
+} from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -63,8 +69,8 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   };
 };
 
-export const sortHearings = (hearings) =>
-  orderBy(
+export const sortHearings = (hearings) => {
+  return orderBy(
     Object.values(hearings || {}),
     // Convert to EST before sorting, this timezeon doesn't effect what's displayed
     //   we just need to pick one so the sorting works correctly if hearings were
@@ -72,6 +78,7 @@ export const sortHearings = (hearings) =>
     (hearing) => moment.tz(hearing.scheduledFor, 'America/New_York'),
     'asc'
   );
+};
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
   pickBy(omitBy(issues, '_destroy'), { appeal_id: appealId });
@@ -471,7 +478,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
     ...list,
-    [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+    [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
        message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
@@ -943,6 +950,80 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+export const docketTypes = (originalType) => {
+  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
+
+  return [
+    option,
+    {
+      value: HEARING_REQUEST_TYPES.virtual,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
+};
+
+export const readableDocketType = (docketType) =>
+  REQUEST_TYPE_OPTIONS.find((type) => docketType === type.value || docketType?.value === type.value);
+
+export const getRegionalOffice = (roKey) => {
+  if (!roKey) {
+    return {
+      timezone: COMMON_TIMEZONES[0],
+      key: 'C',
+    };
+  }
+
+  return ({
+    ...REGIONAL_OFFICE_INFORMATION[roKey],
+    key: roKey
+  });
+};
+
+const virtualHearingOption = {
+  value: true,
+  label: VIRTUAL_HEARING_LABEL
+};
+
+export const allScheduleVeteranDropdownOptions = (readableHearingRequestType, readableOriginalHearingRequestType) => {
+  if (readableHearingRequestType === 'Virtual') {
+    return [{ value: false, label: readableOriginalHearingRequestType }, virtualHearingOption];
+  }
+
+  return [{ value: false, label: readableHearingRequestType }, virtualHearingOption];
+};
+
+export const allDetailsDropdownOptions = (hearing) => {
+  return [{ value: false, label: hearing?.readableRequestType }, virtualHearingOption];
+};
+
+export const hearingRequestTypeCurrentOption = (options, virtualHearing) => {
+  if (!virtualHearing || !virtualHearing?.status || virtualHearing?.status === 'cancelled') {
+    return options[0];
+  }
+
+  return options[1];
+};
+
+export const hearingRequestTypeOptions = (allOptions, currentOption) => {
+  return allOptions.filter((opt) => opt.label !== currentOption.label);
+};
+
+export const formatRoomOption = (room) => {
+  const option = findKey(HEARING_ROOMS_LIST, { label: room });
+
+  return ({
+    label: option ? HEARING_ROOMS_LIST[option.toString()].label : 'None',
+    value: option ? option.toString() : null
+  });
+};
+
+const isVirtualHearingJobCompleted = (hearing) =>
+  (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted);
+
+export const readOnlyEmails = (hearing) => {
+  return isVirtualHearingJobCompleted(hearing) || hearing?.scheduledForIsPast;
 };
 
 /* eslint-enable camelcase */

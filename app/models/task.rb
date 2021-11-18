@@ -483,18 +483,14 @@ class Task < CaseflowRecord
     self.class.hide_from_queue_table_view
   end
 
-  def duplicate_org_task
-    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
-      User.name == child_task.assigned_to_type && type == child_task.type
-    end
-  end
-
   def hide_from_case_timeline
-    duplicate_org_task
+    !child_user_tasks_of_same_type.empty?
   end
 
   def hide_from_task_snapshot
-    duplicate_org_task
+    # We want to hide org tasks if there is an open user task of same type
+    # However, if user task has been cancelled, show the org task so that an org admin can assign to another user
+    child_user_tasks_of_same_type.any? { |child_task| !child_task.cancelled? }
   end
 
   def legacy?
@@ -543,6 +539,12 @@ class Task < CaseflowRecord
       Raven.capture_message("Closed task #{id} re-opened because child task created") if !open?
       update!(status: :on_hold)
     end
+  end
+
+  # N.B. that this does not check permissions, only assignee
+  # Use task_is_assigned_to_users_organization? if that is needed.
+  def task_is_assigned_to_organization?(org)
+    assigned_to.is_a?(Organization) && assigned_to == org
   end
 
   def task_is_assigned_to_users_organization?(user)
@@ -783,6 +785,14 @@ class Task < CaseflowRecord
     task_just_closed? && parent
   end
 
+  def child_user_tasks_of_same_type
+    return [] unless assigned_to_type == "Organization"
+
+    descendants.select do |child_task|
+      child_task.assigned_to_type == "User" && type == child_task.type
+    end
+  end
+
   def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
@@ -806,6 +816,8 @@ class Task < CaseflowRecord
   end
 
   def cascade_closure_from_child_task?(child_task)
+    return if is_a?(AssessDocumentationTask)
+
     type == child_task&.type
   end
 

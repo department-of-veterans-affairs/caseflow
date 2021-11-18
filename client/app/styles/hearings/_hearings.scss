@@ -376,6 +376,7 @@ $form-width: 575px;
   margin-top: 15;
   color: $color-gray-dark;
   line-height: 1.5em;
+  margin-bottom: $form-spacing;
 }
 
 .appeal-information-docket-type-badge {
@@ -676,4 +677,12 @@ $form-width: 575px;
   .time-slot-button {
     width: 280px;
   }
+}
+
+.hearing-day-date:disabled {
+  background-color: $color-gray-lightest;
+}
+
+.usa-input-error .cf-select {
+  max-width: $form-width;
 }

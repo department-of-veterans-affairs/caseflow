@@ -169,4 +169,35 @@ describe HearingTimeService, :all_dbs do
       end
     end
   end
+
+  context "with a legacy hearing scheduled for 08:30am EST" do
+    describe "#local_time" do
+      it "returns the right time even when the Legacy Hearing scheduled_for is in UTC", tz: "UTC" do
+        vacols_hearing = create(
+          :case_hearing,
+          hearing_type: HearingDay::REQUEST_TYPES[:central],
+          hearing_date: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) }
+        )
+        legacy_hearing = create(
+          :legacy_hearing,
+          regional_office: "C",
+          scheduled_for: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) },
+          vacols_record: vacols_hearing,
+          vacols_id: vacols_hearing.hearing_pkseq.to_s
+        )
+
+        expected_time = Time.use_zone("America/New_York") do
+          Time.zone.now.change(
+            year: legacy_hearing.scheduled_for.year,
+            month: legacy_hearing.scheduled_for.month,
+            day: legacy_hearing.scheduled_for.day,
+            hour: 8,
+            min: 30
+          )
+        end
+
+        expect(legacy_hearing.time.local_time).to eq(expected_time)
+      end
+    end
+  end
 end

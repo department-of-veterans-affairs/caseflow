@@ -14,13 +14,18 @@ class Idt::Token
     # to activate the token.
     client.set(ONE_TIME_KEYS_KEY + one_time_key, token)
 
+    Rails.logger.info("Associating one-time key #{one_time_key} with IDT token #{token}")
+
     [one_time_key, token]
   end
 
   def self.activate_proposed_token(one_time_key, css_id)
+    Rails.logger.info("Fetching one-time key #{one_time_key} for user #{css_id}")
     token = client.get(ONE_TIME_KEYS_KEY + one_time_key)
 
     fail Caseflow::Error::InvalidOneTimeKey unless token && token.length == 128
+
+    Rails.logger.info("Deleting one-time key #{one_time_key} and activating IDT token #{token} for user #{css_id}")
 
     # Remove the one_time_key/token association to ensure it isn't used again,
     # and move the token to the valid tokens list for the validity period.

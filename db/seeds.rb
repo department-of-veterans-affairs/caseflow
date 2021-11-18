@@ -15,8 +15,10 @@ class SeedDB
     Fakes::VeteranStore.new.clear!
   end
 
+  # In development environments this log goes to
+  # caseflow/log/development.log
   def call_and_log_seed_step(step)
-    msg = "Starting seed step #{step}"
+    msg = "Starting seed step #{step} at #{Time.zone.now.strftime('%m/%d/%Y %H:%M:%S')}"
     Rails.logger.debug(msg)
 
     if step.is_a?(Symbol)
@@ -25,7 +27,7 @@ class SeedDB
       step.new.seed!
     end
 
-    msg = "Finished seed step #{step}"
+    msg = "Finished seed step #{step} at #{Time.zone.now.strftime('%m/%d/%Y %H:%M:%S')}"
     Rails.logger.debug(msg)
   end
 
@@ -44,8 +46,8 @@ class SeedDB
     call_and_log_seed_step Seeds::DecisionIssues
     call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
-    call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::VeteransHealthAdministration
+    call_and_log_seed_step Seeds::MTV
   end
 end
 

@@ -43,6 +43,7 @@ import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
+import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
 import HearingScheduledInErrorModal from './components/HearingScheduledInErrorModal';
@@ -332,12 +333,28 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
   );
 
+  routedVhaCompleteTaskModal = (props) => (
+    <CompleteTaskModal modalType="ready_for_review" {...props.match.params} />
+  );
+
   routedDocketAppeal = (props) => (
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
 
+  routedReturnToCamo = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
+  routedReturnToProgramOffice = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedCancelTaskModal = (props) => (
     <CancelTaskModal {...props.match.params} />
+  );
+
+  routedMarkTaskInProgressModal = (props) => (
+    <InProgressTaskModal {...props.match.params} />
   );
 
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
@@ -865,6 +882,24 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
+                }`}
+              render={this.routedReturnToCamo}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
+                }`}
+              render={this.routedReturnToProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.value
+                }`}
+              render={this.routedMarkTaskInProgressModal}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CREATE_MAIL_TASK.value
                 }`}
               render={this.routedCreateMailTask}
@@ -979,6 +1014,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.READY_FOR_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedVhaCompleteTaskModal}
             />
             <PageRoute
               exact

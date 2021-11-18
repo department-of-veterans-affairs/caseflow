@@ -46,9 +46,16 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
-import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
+import {
+  appealHasSubstitution,
+  isAppealDispatched,
+  supportsSubstitutionPostDispatch,
+  supportsSubstitutionPreDispatch,
+} from './substituteAppellant/caseDetails/utils';
 import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
+import { useHistory } from 'react-router';
+import Button from '../components/Button';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -68,6 +75,8 @@ const alertPaddingStyle = css({
   marginTop: '2rem',
 });
 
+const sectionGap = css({ marginBottom: '3rem' });
+
 const editAppellantInformationLinkStyling = css({
   fontSize: '2rem',
   fontWeight: 'normal',
@@ -77,6 +86,7 @@ const editAppellantInformationLinkStyling = css({
 const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
+  const { push } = useHistory();
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -155,7 +165,7 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
+  const appealIsDispatched = isAppealDispatched(appeal);
 
   const editAppellantInformation =
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
@@ -167,17 +177,23 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
   currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
-  const hasSubstitution = appeal.substitutions?.length;
-  const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
+  const hasSubstitution = appealHasSubstitution(appeal);
+  const supportPostDispatchSubstitution = supportsSubstitutionPostDispatch({
     appeal,
     currentUserOnClerkOfTheBoard,
     featureToggles,
     hasSubstitution,
     userIsCobAdmin
   });
+  const supportPendingAppealSubstitution = supportsSubstitutionPreDispatch({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    userIsCobAdmin
+  });
 
   const showPostDispatch =
-    appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
+    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution);
 
   const openScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
@@ -207,17 +223,33 @@ export const CaseDetailsView = (props) => {
         <CaseDetailsPostDispatchActions
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
-          includeSubstitute={supportSubstituteAppellant}
+          includeSubstitute={supportPostDispatchSubstitution}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
+        {supportPendingAppealSubstitution && (
+          <div {...sectionGap}>
+            <Button
+              onClick={() =>
+                push(`/queue/appeals/${appealId}/substitute_appellant`)
+              }
+            >
+              {COPY.SUBSTITUTE_APPELLANT_BUTTON}
+            </Button>
+          </div>
+        )}
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
         )}
-        {shouldShowVsoVisibilityAlert({ featureToggles, userIsVsoEmployee }) && (
-          <div className={topAlertStyles}><VsoVisibilityAlert /></div>
+        {shouldShowVsoVisibilityAlert({
+          featureToggles,
+          userIsVsoEmployee,
+        }) && (
+          <div className={topAlertStyles}>
+            <VsoVisibilityAlert />
+          </div>
         )}
         <CaseTitleDetails
           appealId={appealId}
@@ -256,7 +288,10 @@ export const CaseDetailsView = (props) => {
             appealId={appealId}
             additionalHeaderContent={
               editPOAInformation && (
-                <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
+                <span
+                  className="cf-push-right"
+                  {...editAppellantInformationLinkStyling}
+                >
                   <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
                     {updatePOALink}
                   </Link>
@@ -267,7 +302,11 @@ export const CaseDetailsView = (props) => {
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
             openScheduledHearingTasks.length) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} hearingTasks={parentHearingTasks} />
+            <CaseHearingsDetail
+              title="Hearings"
+              appeal={appeal}
+              hearingTasks={parentHearingTasks}
+            />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
           {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
@@ -277,15 +316,20 @@ export const CaseDetailsView = (props) => {
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
               additionalHeaderContent={
                 editAppellantInformation && (
-                  <span className="cf-push-right" {...editAppellantInformationLinkStyling}>
-                    <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
+                  <span
+                    className="cf-push-right"
+                    {...editAppellantInformationLinkStyling}
+                  >
+                    <Link
+                      to={`/queue/appeals/${appealId}/edit_appellant_information`}
+                    >
                       {COPY.EDIT_APPELLANT_INFORMATION_LINK}
                     </Link>
                   </span>
                 )
               }
             />
-          ) }
+          )}
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
             <CavcDetail
@@ -319,6 +363,7 @@ CaseDetailsView.propTypes = {
   error: PropTypes.object,
   featureToggles: PropTypes.object,
   resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
   userCanAccessReader: PropTypes.bool,

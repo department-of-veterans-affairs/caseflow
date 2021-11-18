@@ -27,16 +27,12 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
-      userUseFullPageVideoToVirtual,
-      userCanConvertCentralHearings,
-      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
-      userCanViewAndDownloadHearingScheduledColumn,
       userCanAddVirtualHearingDays,
       userCanViewFnodBadgeInHearings,
       userId,
@@ -44,16 +40,12 @@ export default class HearingsApp extends React.PureComponent {
     } = this.props;
 
     return Object.freeze({
-      userUseFullPageVideoToVirtual,
-      userCanConvertCentralHearings,
-      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
-      userCanViewAndDownloadHearingScheduledColumn,
       userCanAddVirtualHearingDays,
       userCanViewFnodBadgeInHearings,
       userId,
@@ -82,7 +74,14 @@ export default class HearingsApp extends React.PureComponent {
       {...this.propsForAssignHearingsContainer()}
     />
   );
-  routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
+
+  routeForDailyDocket = (print, edit = false) => () => (
+    <DailyDocketContainer
+      user={this.userPermissionProps()}
+      print={print}
+      editDocket={edit}
+    />
+  );
 
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
@@ -154,6 +153,12 @@ export default class HearingsApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path="/schedule/docket/:hearingDayId/edit"
+              title="Edit Hearing Day"
+              render={this.routeForDailyDocket(false, true)}
+            />
+            <PageRoute
+              exact
               path="/schedule/docket/:hearingDayId"
               title="Daily Docket"
               render={this.routeForDailyDocket(false)}
@@ -205,16 +210,12 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  userUseFullPageVideoToVirtual: PropTypes.bool,
-  userCanScheduleVirtualHearings: PropTypes.bool,
-  userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanVsoHearingSchedule: PropTypes.bool,
   userHasHearingPrepRole: PropTypes.bool,
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
-  userCanViewAndDownloadHearingScheduledColumn: PropTypes.bool,
   userCanAddVirtualHearingDays: PropTypes.bool,
   userCanViewFnodBadgeInHearings: PropTypes.bool,
   userRole: PropTypes.string,

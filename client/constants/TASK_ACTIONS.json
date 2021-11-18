@@ -201,6 +201,11 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
+  "READY_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data"
+  },
   "PLACE_TIMED_HOLD": {
     "label": "Put task on hold",
     "value": "modal/place_timed_hold"
@@ -374,9 +379,24 @@
     "value": "modal/assign_to_regional_office",
     "func": "vha_assign_to_regional_office_data"
   },
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
+    "label": "Return to CAMO team",
+    "value": "modal/return_to_camo",
+    "func": "vha_program_office_return_to_camo"
+  },
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
+    "label": "Return to Program Office",
+    "value": "modal/return_to_program_office",
+    "func": "vha_regional_office_return_to_program_office"
+  },
   "VHA_SEND_TO_BOARD_INTAKE": {
     "label": "Send to Board Intake",
     "value": "modal/vha_send_to_board_intake",
     "func": "vha_send_to_board_intake"
+  },
+  "VHA_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "vha_mark_task_in_progress"
   }
 }
