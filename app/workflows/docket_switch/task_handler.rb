@@ -48,6 +48,7 @@ class DocketSwitch::TaskHandler
 
   # For full grants, cancel all tasks on the original stream
   # For partial grants, some tasks remain open such as root, distribution and tasks related to the original docket
+  # Post-distribution tasks also remain open if the original stream remains active
   # Other tasks can be selected (moved to the new stream), or cancelled without moving
   # Note: there is not currently an option to keep switchable tasks open on the original stream for a partial grant
   def cancel_old_tasks
@@ -69,6 +70,10 @@ class DocketSwitch::TaskHandler
     ColocatedTask.create_many_from_params(params_array, attorney_user)
   end
 
+  # When switching to Evidence Submission or Hearing, the new stream goes through distribution again
+  # with the new pre-distribution requirements, so post-distribution tasks aren't copied over.
+  # Direct Review is the opposite; if there are post-distribution tasks, we preserve them and
+  # cancel the DistributionTask to prevent double distribution.
   def copy_persistent_tasks
     tasks_to_copy = docket_switchable_tasks.select { |task| selected_task_ids.include?(task.id.to_s) }
     if docket_type == "direct_review"
