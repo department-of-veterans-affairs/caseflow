@@ -84,6 +84,7 @@ RSpec.describe DocketSwitch, type: :model do
             expect(docket_switch_task).to be_completed
 
             expect(docket_switch.new_docket_stream.tasks.find_by(type: "JudgeDecisionReviewTask")).to be_nil
+            expect(docket_switch.new_docket_stream.tasks.find_by(type: "AttorneyTask")).to be_nil
           end
         end
 
@@ -117,8 +118,18 @@ RSpec.describe DocketSwitch, type: :model do
       context "when disposition is partially_granted" do
         let(:disposition) { "partially_granted" }
         let(:granted_request_issue_ids) { appeal.request_issues[0..1].map(&:id) }
+        let!(:judge_assign_task) do
+          create(
+            :ama_judge_assign_task,
+            :in_progress,
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: judge,
+            placed_on_hold_at: 2.days.ago
+          )
+        end
 
-        it "moves granted issues to new appeal stream and maintains original stream" do
+        it "moves granted issues to new stream and maintains original post-distribution tasks" do
           expect(docket_switch_task).to be_assigned
 
           subject
@@ -142,6 +153,8 @@ RSpec.describe DocketSwitch, type: :model do
           )
           expect(new_completed_task).to_not be_nil
           expect(new_completed_task).to be_completed
+
+          expect(appeal.tasks.find_by(type: "JudgeAssignTask")).to be_in_progress
 
           # To do: Check for correct appeal status after task handling logic is implemented
         end
