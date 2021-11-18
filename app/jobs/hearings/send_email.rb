@@ -12,13 +12,12 @@
 class Hearings::SendEmail
   class RecipientIsDeceasedVeteran < StandardError; end
 
-  attr_reader :hearing, :virtual_hearing, :type, :reminder_info, :custom_subject
+  attr_reader :hearing, :virtual_hearing, :type, :reminder_info
 
-  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {}, custom_subject: nil)
+  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {})
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
     @reminder_info = reminder_info
-    @custom_subject = custom_subject
     @hearing.reload
   end
 
@@ -81,7 +80,7 @@ class Hearings::SendEmail
 
     case type
     when "confirmation"
-      HearingMailer.confirmation(**args, custom_subject: custom_subject)
+      HearingMailer.confirmation(**args)
     when "cancellation"
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"

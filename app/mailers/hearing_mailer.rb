@@ -38,7 +38,7 @@ class HearingMailer < ActionMailer::Base
     )
   end
 
-  def confirmation(email_recipient_info:, virtual_hearing: nil, custom_subject: nil)
+  def confirmation(email_recipient_info:, virtual_hearing: nil)
     @recipient_info = email_recipient_info
     @virtual_hearing = virtual_hearing
     @hearing = virtual_hearing.hearing
@@ -47,7 +47,7 @@ class HearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient_info.email, subject: custom_subject || confirmation_subject)
+    mail(to: recipient_info.email, subject: confirmation_subject)
   end
 
   def updated_time_confirmation(email_recipient_info:, virtual_hearing: nil)
