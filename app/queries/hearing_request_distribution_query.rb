@@ -82,26 +82,26 @@ class HearingRequestDistributionQuery
     end
 
     def tied_to_judge_join_sql
-       # both `appeal_type` and `appeal_id` necessary due to composite index
-       <<~SQL
-       INNER JOIN tasks AS t1
-       ON t1.appeal_type = 'Appeal'
-       AND t1.appeal_id = appeals.id
-       AND t1.type = 'DistributionTask'
-       AND t1.status = 'assigned'
+      # both `appeal_type` and `appeal_id` necessary due to composite index
+      <<~SQL
+        INNER JOIN tasks AS t1
+        ON t1.appeal_type = 'Appeal'
+        AND t1.appeal_id = appeals.id
+        AND t1.type = 'DistributionTask'
+        AND t1.status = 'assigned'
       SQL
     end
 
     def tied_to_distribution_judge(judge)
       joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("t1.assigned_at > ?", affinity_days.days.ago)        
+        .where("t1.assigned_at > ?", affinity_days.days.ago)
     end
 
     def not_tied_exceeding_affinity_threshold
-     joins(tied_to_judge_join_sql)
+      joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held" })
-        .where("t1.assigned_at <= ?", affinity_days.days.ago)        
+        .where("t1.assigned_at <= ?", affinity_days.days.ago)
     end
 
     # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

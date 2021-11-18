@@ -47,7 +47,7 @@ describe HearingRequestDocket, :all_dbs do
           but doesn't exceed affinity threshold" do
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        
+
         # This is the only one that is still considered tied (we want only non_genpop)
         appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
 
@@ -189,9 +189,10 @@ describe HearingRequestDocket, :all_dbs do
         expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
 
         tasks = subject
-        # binding.pry
 
-        expect(tasks.length).to eq(expected_result.length)
+        appeal_ids = tasks.map(&:case_id)
+        expect(appeal_ids).to match_array(expected_result.map(&:uuid))
+        expect(appeal_ids).to_not include(non_distributable.uuid)
         expect(tasks.first.class).to eq(DistributedCase)
         expect(tasks.first.genpop).to eq false
         expect(tasks.first.genpop_query).to eq "any"
@@ -457,33 +458,33 @@ describe HearingRequestDocket, :all_dbs do
   # TODO: this still needs refining to ensure proper setup of blocking task
   def create_nonpriority_blocked_hearing_appeal
     appeal = create(:appeal,
-      :with_post_intake_tasks,
-      :held_hearing,
-      # :with_evidence_submission_window_task,
-      :denied_advance_on_docket,
-      docket_type: Constants.AMA_DOCKETS.hearing,
-      created_at: 60.days.ago, # within the evidence submission window
-      adding_user: judge_with_team
-    )
+                    :with_post_intake_tasks,
+                    :held_hearing,
+                    # :with_evidence_submission_window_task,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing,
+                    created_at: 60.days.ago, # within the evidence submission window
+                    adding_user: judge_with_team)
     # create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
   end
 
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
-      :with_post_intake_tasks,
-      :held_hearing,
-      :with_evidence_submission_window_task,
-      :denied_advance_on_docket,
-      docket_type: Constants.AMA_DOCKETS.hearing,
-      created_at: 95.days.ago, # accounting for evidence submission window for better realism
-      adding_user: judge_with_team
-    )
+                    :with_post_intake_tasks,
+                    :held_hearing,
+                    :with_evidence_submission_window_task,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing,
+                    created_at: 95.days.ago, # accounting for evidence submission window for better realism
+                    adding_user: judge_with_team)
     # Complete the ScheduleHearingTask to set up legit tree for when hearing would be created
-    ScheduleHearingTask.find_by(appeal: appeal).update!(status: Constants.TASK_STATUSES.completed, closed_at: 90.days.ago)
+    ScheduleHearingTask.find_by(appeal: appeal)
+      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 90.days.ago)
 
     # Complete the EvidenceSubmissionWindowTask for 90 days after hearing
-    EvidenceSubmissionWindowTask.find_by(appeal: appeal).update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
+    EvidenceSubmissionWindowTask.find_by(appeal: appeal)
+      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
 
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
     DistributionTask.find_by(appeal: appeal).update!(assigned_at: 5.days.ago)
