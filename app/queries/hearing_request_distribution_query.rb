@@ -77,10 +77,6 @@ class HearingRequestDistributionQuery
       joins(query, hearings: :hearing_day)
     end
 
-    def affinity_days
-      Constants::DISTRIBUTION["hearing_case_affinity_days"]
-    end
-
     def tied_to_judge_join_sql
       # both `appeal_type` and `appeal_id` necessary due to composite index
       <<~SQL
@@ -95,13 +91,13 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("t1.assigned_at > ?", affinity_days.days.ago)
+        .where("t1.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
     def not_tied_exceeding_affinity_threshold
       joins(tied_to_judge_join_sql)
         .where(hearings: { disposition: "held" })
-        .where("t1.assigned_at <= ?", affinity_days.days.ago)
+        .where("t1.assigned_at <= ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
     # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
