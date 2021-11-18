@@ -256,7 +256,12 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right">
-            {!user.userVsoEmployee && `VLJ: ${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}`}
+            {!user.userVsoEmployee && (
+              <React.Fragment>
+                `VLJ: ${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}`
+                <br />
+               </React.Fragment>
+             )}
             <br />
             Coordinator: {dailyDocket.bvaPoc} <br />
             Hearing type: {dailyDocket.readableRequestType} <br />
