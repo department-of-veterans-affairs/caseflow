@@ -43,7 +43,8 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
       return false if sent_email.sent_hearing_admin_email_event.present?
 
-      # Reminder emails can also have User.system user as the sender, this works because we're only interested in confirmation emails for now.
+      # Reminder emails can also have User.system user as the sender, this works because we're only interested in
+      # confirmation emails for now.
       return false if sent_email.sent_by == User.system_user
 
       message = get_gov_delivery_message_body(sent_email)
