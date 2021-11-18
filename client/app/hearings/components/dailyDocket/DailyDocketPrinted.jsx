@@ -99,7 +99,6 @@ export class DailyDocketPrinted extends React.Component {
                 <br />
               </React.Fragment>
             }
-            <br />
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
             <strong>Hearing type:</strong> {docket.readableRequestType} <br />
             <strong>Regional office:</strong> {docket.regionalOffice}<br />
