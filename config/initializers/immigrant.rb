@@ -7,9 +7,6 @@ Immigrant.ignore_keys = [
   # See https://dsva.slack.com/archives/C3EAF3Q15/p1636061857138600?thread_ts=1636060646.138000&cid=C3EAF3Q15
   { from_table: "available_hearing_locations", column: "veteran_file_number" },
 
-  # Add FK to dispatch_tasks table (not the tasks table)
-  { from_table: "claim_establishments", column: "task_id" },
-
   # Investigate these next and add foreign key if possible.
   { from_table: "advance_on_docket_motions", column: "person_id" },
   { from_table: "ramp_issues", column: "source_issue_id" },
@@ -42,5 +39,6 @@ Immigrant.ignore_keys = [
 
   # Don't need FKs on a cache table
   { from_table: "cached_appeal_attributes", column: "appeal_id" },
-  { from_table: "cached_appeal_attributes", column: "vacols_id" }
+  { from_table: "cached_appeal_attributes", column: "vacols_id" },
+  { from_table: "cached_user_attributes", column: "sdomainid" }
 ]
