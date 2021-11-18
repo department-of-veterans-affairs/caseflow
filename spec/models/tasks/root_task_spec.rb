@@ -242,14 +242,14 @@ describe RootTask, :postgres do
 
     context "when the root task is on hold" do
       before { root_task.on_hold! }
-      it "returns unassigned" do
+      it "returns Unassigned" do
         expect(subject).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
       end
     end
 
     context "when the root task is open" do
       before { root_task.in_progress! }
-      it "returns unassigned" do
+      it "returns Unassigned" do
         expect(subject).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
       end
     end

@@ -889,7 +889,7 @@ describe Appeal, :all_dbs do
         create(:root_task, :in_progress, appeal: appeal)
       end
 
-      it "returns unassigned" do
+      it "returns Unassigned" do
         expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         expect(appeal_with_cancelled_dispatch.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
       end
@@ -906,7 +906,7 @@ describe Appeal, :all_dbs do
       end
 
       describe "when there are no other tasks" do
-        it "returns unassigned because it does not include nonactionable tasks in its determinations" do
+        it "returns Unassigned" do
           expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         end
       end
