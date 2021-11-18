@@ -455,20 +455,6 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  # TODO: this still needs refining to ensure proper setup of blocking task
-  def create_nonpriority_blocked_hearing_appeal
-    appeal = create(:appeal,
-                    :with_post_intake_tasks,
-                    :held_hearing,
-                    # :with_evidence_submission_window_task,
-                    :denied_advance_on_docket,
-                    docket_type: Constants.AMA_DOCKETS.hearing,
-                    created_at: 60.days.ago, # within the evidence submission window
-                    adding_user: judge_with_team)
-    # create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-    appeal
-  end
-
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
                     :with_post_intake_tasks,
