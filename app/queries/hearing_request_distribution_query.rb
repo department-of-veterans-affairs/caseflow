@@ -91,7 +91,7 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("t1.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+        .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
