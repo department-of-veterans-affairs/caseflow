@@ -17,11 +17,11 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     def reset_sent_status_and_send(sent_email)
       reset_email_sent_on_email_recipients(sent_email.hearing)
       Hearings::SendEmail.new(
-            custom_subject: custom_email_subject(sent_email.hearing),
-            virtual_hearing: sent_email.hearing.virtual_hearing,
-            type: :confirmation,
-            hearing: sent_email.hearing
-          ).call
+        custom_subject: custom_email_subject(sent_email.hearing),
+        virtual_hearing: sent_email.hearing.virtual_hearing,
+        type: :confirmation,
+        hearing: sent_email.hearing
+      ).call
     end
 
     def confirmation_hearing_email_events(start_date, end_date)
