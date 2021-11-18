@@ -12,3 +12,10 @@ export default {
 const Template = (args) => <SelectedFilterIcon {...args} />;
 
 export const Default = Template.bind({});
+Default.parameters = {
+  docs: {
+    description: {
+      component: 'Used with the FilterIcon component.',
+    },
+  },
+};
