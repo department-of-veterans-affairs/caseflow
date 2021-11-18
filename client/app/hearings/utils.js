@@ -39,6 +39,7 @@ import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 import COPY from '../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -1019,22 +1020,22 @@ export const formatRoomOption = (room) => {
   });
 };
 
-export const getHearingScheduleColumnsForUser = (user, columns) => {
+export const columnsForUser = (user, columns) => {
   if (user.userVsoEmployee) {
     const omitColumnsNames = ['VLJ'];
 
     return columns.filter((column) => !omitColumnsNames.includes(column.name));
-  };
+  }
 
   return columns;
 };
 
-export const getexportHeadersforUser = (user, headers) => {
+export const headersforUser = (user, headers) => {
   if (user.userVsoEmployee) {
     const omitHeadersLabels = ['VLJ', 'CSS ID'];
 
     return headers.filter((header) => !omitHeadersLabels.includes(header.label));
-  };
+  }
 
   return headers;
 };
@@ -1044,6 +1045,122 @@ const isVirtualHearingJobCompleted = (hearing) =>
 
 export const readOnlyEmails = (hearing) => {
   return isVirtualHearingJobCompleted(hearing) || hearing?.scheduledForIsPast;
+};
+
+export const formatVljName = (lastName, firstName) => {
+  if (lastName && firstName) {
+    return `${lastName}, ${firstName}`;
+  }
+};
+
+export const scheduleData = ({ hearingSchedule, user }) => {
+  const rows = orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
+    map((hearingDay) => ({
+      id: hearingDay.id,
+      scheduledFor: hearingDay.scheduledFor,
+      readableRequestType: hearingDay.readableRequestType,
+      regionalOffice: hearingDay.regionalOffice,
+      room: hearingDay.room,
+      judgeCssId: hearingDay.judgeCssId,
+      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
+      hearingsScheduled: hearingDay.filledSlots
+    }));
+
+  const columnData = [
+    {
+      header: 'Date',
+      name: 'Date',
+      align: 'left',
+      valueName: 'scheduledFor',
+      columnName: 'date',
+      valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
+        {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
+      </Link>,
+      getSortValue: (row) => {
+        return row.scheduledFor;
+      }
+    },
+    {
+      header: 'Type',
+      name: 'Type',
+      cellClass: 'type-column',
+      align: 'left',
+      tableData: rows,
+      enableFilter: true,
+      filterValueTransform: formatHearingType,
+      anyFiltersAreSet: true,
+      label: 'Filter by type',
+      columnName: 'readableRequestType',
+      valueName: 'Hearing Type',
+      valueFunction: (row) => row.readableRequestType
+    },
+    {
+      header: 'Regional Office',
+      name: 'Regional Office',
+      tableData: rows,
+      enableFilter: true,
+      anyFiltersAreSet: true,
+      enableFilterTextTransform: false,
+      label: 'Filter by RO',
+      columnName: 'regionalOffice',
+      valueName: 'regionalOffice'
+    },
+    {
+      header: 'Room',
+      name: 'Room',
+      align: 'left',
+      valueName: 'room',
+      columnName: 'room',
+      tableData: rows,
+      getSortValue: (hearingDay) => {
+        return hearingDay.room;
+      }
+    },
+    {
+      header: 'VLJ',
+      name: 'VLJ',
+      align: 'left',
+      tableData: rows,
+      enableFilter: true,
+      anyFiltersAreSet: true,
+      label: 'Filter by VLJ',
+      columnName: 'vlj',
+      valueName: 'vlj'
+    },
+    {
+      header: 'Hearings Scheduled',
+      name: 'Hearings Scheduled',
+      align: 'left',
+      tableData: rows,
+      columnName: 'hearingsScheduled',
+      valueName: 'hearingsScheduled'
+    }
+  ];
+
+  const columns = columnsForUser(user, columnData);
+
+  const exportHeaders = [
+    { label: 'ID',
+      key: 'id' },
+    { label: 'Scheduled For',
+      key: 'scheduledFor' },
+    { label: 'Type',
+      key: 'readableRequestType' },
+    { label: 'Regional Office',
+      key: 'regionalOffice' },
+    { label: 'Room',
+      key: 'room' },
+    { label: 'CSS ID',
+      key: 'judgeCssId' },
+    { label: 'VLJ',
+      key: 'vlj' },
+    { label: 'Hearings Scheduled',
+      key: 'hearingsScheduled' }
+  ];
+
+  const headers = headersforUser(user, exportHeaders);
+
+  return { headers, rows, columns };
 };
 
 /* eslint-enable camelcase */

@@ -98,7 +98,7 @@ export class DailyDocketPrinted extends React.Component {
                 <strong>VLJ:</strong> `${docket.judgeFirstName}` `${docket.judgeLastName}`
                 <br />
               </React.Fragment>
-            }
+            )}
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
             <strong>Hearing type:</strong> {docket.readableRequestType} <br />
             <strong>Regional office:</strong> {docket.regionalOffice}<br />
