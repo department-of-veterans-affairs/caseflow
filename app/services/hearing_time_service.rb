@@ -81,6 +81,14 @@ class HearingTimeService
     # if the hearing's regional_office_timezone is nil, assume this is a
     # central office hearing (eastern time)
     regional_office_timezone = @hearing.regional_office_timezone || CENTRAL_OFFICE_TIMEZONE
+    scheduled_for = @hearing.scheduled_for
+
+    # There is a bug in Vacols where timestamps are saved in local time with UTC timezone
+    # for example, Fri, 28 Jul 2017 14:28:01 UTC +00:00 is actually an EST time with UTC timezone
+    # This code is to account for this bug.
+    if scheduled_for.utc?
+      return scheduled_for.strftime("%a, %d %b %Y %H:%M:%S").in_time_zone(regional_office_timezone)
+    end
 
     # convert the hearing time returned by LegacyHearing.scheduled_for
     # to the regional office timezone
