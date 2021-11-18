@@ -1,3 +1,3 @@
 require 'connect_mpi/mpi'
 
-MPIService = ExternalApi::MPIService
+MPIService = (!ApplicationController.dependencies_faked? ? ExternalApi::MPIService : Fakes::MPIService)

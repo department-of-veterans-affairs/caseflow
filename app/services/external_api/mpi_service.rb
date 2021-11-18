@@ -15,25 +15,30 @@ class ExternalApi::MPIService
   end
 
   # rubocop:disable Metrics/ParameterLists
-  def search_people_info(last_name:, first_name: nil, middle_name: nil, date_of_birth: nil, gender: nil, address: nil)
+  def search_people_info(last_name:, first_name: nil, middle_name: nil,
+                         ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
     DBService.release_db_connections
 
     mpi_info = MetricsService.record("MPI: search people info: \
                                      last_name = #{last_name}, \
                                      first_name = #{first_name}, \
                                      middle_name = #{middle_name}, \
+                                     ssn = #{ssn}, \
                                      date_of_birth = #{date_of_birth}, \
                                      gender = #{gender}, \
-                                     address = #{address}",
+                                     address = #{address}, \
+                                     telephone = #{telephone}",
                                      service: :mpi,
                                      name: "people.search_people_info") do
       client.people.search_people_info(
         last_name: last_name,
         first_name: first_name,
         middle_name: middle_name,
+        ssn: ssn,
         date_of_birth: date_of_birth,
         gender: gender,
-        address: address
+        address: address,
+        telephone: telephone
       )
     end
     {} unless mpi_info

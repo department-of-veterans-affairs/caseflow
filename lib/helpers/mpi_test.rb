@@ -6,7 +6,7 @@ class MpiTest
   end
 
   def search_people(hash)
-    results = mpi.client.people.search_people_info(hash)
+    results = mpi.search_people_info(hash)
     puts "\n\nFound #{results.count} search results"
     results.each do |res|
       puts
@@ -30,8 +30,9 @@ class MpiTest
   end
 
   def format_name(person)
-    given_names = [person[:name][:given]].flatten.join(" ")
-    "#{person[:name][:family]}, #{given_names}"
+    name = [person[:name]].flatten.find { |hash| hash[:@use] == "L" } # legal name only
+    given_names = [name[:given]].flatten.join(" ")
+    "#{name[:family]}, #{given_names}"
   end
 
   def format_status(hash)
