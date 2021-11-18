@@ -36,7 +36,7 @@ class FilterIcon extends React.PureComponent {
 }
 
 FilterIcon.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   iconName: PropTypes.string,
   handleActivate: PropTypes.func,
   getRef: PropTypes.func,

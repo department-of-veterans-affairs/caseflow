@@ -9,3 +9,10 @@ export default {
 const Template = (args) => <CrossIcon {...args} />;
 
 export const Default = Template.bind({});
+Default.parameters = {
+  docs: {
+    description: {
+      component: 'This is a Font Awesome Icon and gets no props.',
+    },
+  },
+};
