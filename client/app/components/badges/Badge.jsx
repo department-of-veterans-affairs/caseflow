@@ -39,7 +39,7 @@ Badge.propTypes = {
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   tooltipText: PropTypes.object,
-  id: PropTypes.number
+  id: PropTypes.string
 };
 
 export default Badge;
