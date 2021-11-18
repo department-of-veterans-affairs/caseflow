@@ -13,7 +13,9 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
-  fetchAmaTasksOfUser
+  fetchVhaProgramOffices,
+  fetchAmaTasksOfUser,
+  fetchCamoTasks
 } from './QueueActions';
 import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
@@ -24,10 +26,15 @@ class QueueLoadingScreen extends React.PureComponent {
     const {
       userId,
       userRole,
-      type
+      type,
+      userIsCamoEmployee
     } = this.props;
 
     this.props.setUserId(userId);
+
+    if (userIsCamoEmployee && type === 'assign') {
+      return this.props.fetchCamoTasks(chosenUserId, userRole, type);
+    }
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
   }
@@ -67,6 +74,14 @@ class QueueLoadingScreen extends React.PureComponent {
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
+  maybeLoadCamoData = (userIsCamoEmployee) => {
+    if (!userIsCamoEmployee) {
+      return Promise.resolve();
+    }
+
+    this.props.fetchVhaProgramOffices();
+  }
+
   maybeLoadTargetUserInfo = () => {
     const userUrlParam = this.props.match?.params.userId;
 
@@ -102,11 +117,13 @@ class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     return this.maybeLoadTargetUserInfo().then(() => {
       const chosenUserId = this.props.targetUserId || this.props.userId;
+      const userIsCamoEmployee = this.props.userIsCamoEmployee;
 
       return Promise.all([
         this.loadAmaQueue(chosenUserId),
         this.loadLegacyQueue(chosenUserId),
-        this.maybeLoadJudgeData(chosenUserId)
+        this.maybeLoadJudgeData(chosenUserId),
+        this.maybeLoadCamoData(userIsCamoEmployee)
       ]);
     });
   }
@@ -141,7 +158,9 @@ QueueLoadingScreen.propTypes = {
   appeals: PropTypes.object,
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
+  fetchVhaProgramOffices: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
+  fetchCamoTasks: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -159,7 +178,8 @@ QueueLoadingScreen.propTypes = {
   // `userId` refers to logged-in user and provided by app/views/queue/index.html.erb via QueueApp.jsx
   userId: PropTypes.number,
   userCssId: PropTypes.string,
-  userRole: PropTypes.string
+  userRole: PropTypes.string,
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
@@ -179,7 +199,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
+  fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
+  fetchCamoTasks,
   setUserId,
   setTargetUser
 }, dispatch);

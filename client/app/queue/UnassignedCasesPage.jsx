@@ -5,16 +5,22 @@ import PropTypes from 'prop-types';
 
 import TaskTable from './components/TaskTable';
 import {
-  initialAssignTasksToUser
+  initialAssignTasksToUser,
+  initialCamoAssignTasksToVhaProgramOffice
 } from './QueueActions';
 import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
+import AssignToVhaProgramOfficeWidget from './components/AssignToVhaProgramOfficeWidget';
 import RequestDistributionButton from './components/RequestDistributionButton';
 import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { judgeAssignTasksSelector, selectedTasksSelector } from './selectors';
+import {
+  judgeAssignTasksSelector,
+  selectedTasksSelector,
+  camoAssignTasksSelector
+} from './selectors';
 import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -37,7 +43,24 @@ class UnassignedCasesPage extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, selectedTasks, success, error } = this.props;
+    const { userId, selectedTasks, success, error, userIsCamoEmployee } = this.props;
+    let assignWidget;
+
+    if (userIsCamoEmployee) {
+      assignWidget = <AssignToVhaProgramOfficeWidget
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
+    } else {
+      assignWidget = <AssignToAttorneyWidget
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialAssignTasksToUser}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
+    }
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
@@ -46,13 +69,8 @@ class UnassignedCasesPage extends React.PureComponent {
       <div {...assignSectionStyling}>
         <React.Fragment>
           <div {...assignAndRequestStyling}>
-            <AssignToAttorneyWidget
-              userId={userId}
-              previousAssigneeId={userId}
-              onTaskAssignment={this.props.initialAssignTasksToUser}
-              selectedTasks={selectedTasks}
-              showRequestCasesButton />
-            <RequestDistributionButton userId={userId} />
+            {assignWidget}
+            {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
@@ -89,6 +107,7 @@ const mapStateToProps = (state, ownProps) => {
       pendingDistribution
     },
     ui: {
+      userIsCamoEmployee,
       messages: {
         success,
         error
@@ -96,24 +115,33 @@ const mapStateToProps = (state, ownProps) => {
     }
   } = state;
 
+  let taskSelector = judgeAssignTasksSelector(state);
+
+  if (userIsCamoEmployee) {
+    taskSelector = camoAssignTasksSelector(state);
+  }
+
   return {
-    tasks: judgeAssignTasksSelector(state),
+    tasks: taskSelector,
     isTaskAssignedToUserSelected,
     pendingDistribution,
     distributionLoading: pendingDistribution !== null,
     distributionCompleteCasesLoading: pendingDistribution && pendingDistribution.status === 'completed',
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
-    error
+    error,
+    userIsCamoEmployee
   };
 };
 
 UnassignedCasesPage.propTypes = {
   tasks: PropTypes.array,
   userId: PropTypes.number,
+  userRole: PropTypes.string,
   selectedTasks: PropTypes.array,
   distributionCompleteCasesLoading: PropTypes.bool,
   initialAssignTasksToUser: PropTypes.func,
+  initialCamoAssignTasksToVhaProgramOffice: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   error: PropTypes.shape({
@@ -123,12 +151,14 @@ UnassignedCasesPage.propTypes = {
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
-  })
+  }),
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser,
+    initialCamoAssignTasksToVhaProgramOffice,
     resetErrorMessages,
     resetSuccessMessages
   }, dispatch);
