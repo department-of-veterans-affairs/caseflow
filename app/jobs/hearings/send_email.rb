@@ -18,9 +18,9 @@ class Hearings::SendEmail
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
     @reminder_info = reminder_info
+    @hearing.reload
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def call
     # Assumption: Reminders and confirmation/cancellation/change emails are sent
     # separately, so this will return early if any reminder emails are sent. If
@@ -28,7 +28,7 @@ class Hearings::SendEmail
     # already been sent too.
     return if send_reminder
 
-    if !hearing.appellant_recipient.email_sent
+    if !appellant_recipient.email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
 
@@ -36,11 +36,10 @@ class Hearings::SendEmail
       judge_recipient.update!(email_sent: send_email(judge_recipient_info))
     end
 
-    if hearing.representative_recipient&.email_address.present? && !hearing.representative_recipient.email_sent
+    if representative_recipient&.email_address.present? && !representative_recipient.email_sent
       representative_recipient.update!(email_sent: send_email(representative_recipient_info))
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 

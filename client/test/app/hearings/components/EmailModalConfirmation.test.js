@@ -1,12 +1,12 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import VirtualHearingModal, {
+import EmailModalConfirmation, {
   ChangeHearingTime,
   ChangeToVirtual,
   ChangeFromVirtual,
   ChangeEmailOrTimezone
-  , DateTime, ReadOnlyEmails } from 'app/hearings/components/VirtualHearingModal';
+  , DateTime, ReadOnlyEmails } from 'app/hearings/components/EmailModalConfirmation';
 import { defaultHearing, virtualHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import Button from 'app/components/Button';
@@ -26,13 +26,13 @@ const location = { name: 'Somewhere' };
 const showAllEmailsAssertion = (node, hearing) => {
   expect(node.find(ReadOnly)).toHaveLength(4);
   expect(node.find(ReadOnly).first().
-    text()).toContain(zoneName(hearing.scheduledTimeString, virtualHearing.virtualHearing.appellantTz));
+    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.appellantTz));
   expect(node.find(ReadOnly).at(1).
-    text()).toContain(virtualHearing.virtualHearing.appellantEmail);
+    text()).toContain(hearing.appellantEmailAddress);
   expect(node.find(ReadOnly).at(2).
-    text()).toContain(zoneName(hearing.scheduledTimeString, virtualHearing.virtualHearing.representativeTz));
+    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.representativeTz));
   expect(node.find(ReadOnly).at(3).
-    text()).toContain(virtualHearing.virtualHearing.representativeEmail);
+    text()).toContain(hearing.representativeEmailAddress);
   expect(node.find('.cf-help-divider')).toHaveLength(1);
 };
 
@@ -45,11 +45,11 @@ const showSingleEmailAssertion = (node, hearing, email, tz) => {
   expect(node.find('.cf-help-divider')).toHaveLength(0);
 };
 
-describe('VirtualHearingModal', () => {
+describe('EmailModalConfirmation', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const modal = mount(
-      <VirtualHearingModal
+      <EmailModalConfirmation
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -70,7 +70,7 @@ describe('VirtualHearingModal', () => {
   test('Displays ChangeFromVirtual component when type is change_from_virtual', () => {
     // Run the test
     const modal = mount(
-      <VirtualHearingModal
+      <EmailModalConfirmation
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -91,7 +91,7 @@ describe('VirtualHearingModal', () => {
   test('Displays ChangeEmailOrTimezone component when type is change_email_or_timezone', () => {
     // Run the test
     const modal = mount(
-      <VirtualHearingModal
+      <EmailModalConfirmation
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -112,7 +112,7 @@ describe('VirtualHearingModal', () => {
   test('Displays ChangeHearingTime component when type is change_hearing_time', () => {
     // Run the test
     const modal = mount(
-      <VirtualHearingModal
+      <EmailModalConfirmation
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -312,8 +312,8 @@ describe('VirtualHearingModal', () => {
       showSingleEmailAssertion(
         readOnlyEmails,
         hearing,
-        virtualHearing.virtualHearing.appellantEmail,
-        virtualHearing.virtualHearing.appellantTz
+        hearing.appellantEmailAddress,
+        hearing.appellantTz
       );
       expect(readOnlyEmails).toMatchSnapshot();
     });
@@ -333,8 +333,8 @@ describe('VirtualHearingModal', () => {
       showSingleEmailAssertion(
         readOnlyEmails,
         hearing,
-        virtualHearing.virtualHearing.representativeEmail,
-        virtualHearing.virtualHearing.representativeTz
+        hearing.representativeEmailAddress,
+        hearing.representativeTz
       );
       expect(readOnlyEmails).toMatchSnapshot();
     });
@@ -421,8 +421,8 @@ describe('VirtualHearingModal', () => {
       showSingleEmailAssertion(
         readOnlyEmails,
         hearing,
-        virtualHearing.virtualHearing.appellantEmail,
-        virtualHearing.virtualHearing.appellantTz
+        hearing.appellantEmailAddress,
+        hearing.appellantTz
       );
       expect(readOnlyEmails).toMatchSnapshot();
     });
@@ -442,8 +442,8 @@ describe('VirtualHearingModal', () => {
       showSingleEmailAssertion(
         readOnlyEmails,
         hearing,
-        virtualHearing.virtualHearing.representativeEmail,
-        virtualHearing.virtualHearing.representativeTz
+        hearing.representativeEmailAddress,
+        hearing.representativeTz
       );
       expect(readOnlyEmails).toMatchSnapshot();
     });

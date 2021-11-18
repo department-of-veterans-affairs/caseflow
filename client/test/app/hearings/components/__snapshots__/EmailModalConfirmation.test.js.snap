@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
+exports[`EmailModalConfirmation ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
 <ChangeEmailOrTimezone
   hearing={
     Object {
@@ -16,6 +16,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -71,6 +72,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -173,6 +175,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -228,6 +231,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -322,7 +326,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
 </ChangeEmailOrTimezone>
 `;
 
-exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
+exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
 <ChangeFromVirtual
   hearing={
     Object {
@@ -338,6 +342,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -395,6 +400,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -497,6 +503,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -554,6 +561,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -674,6 +682,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -731,6 +740,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -825,7 +835,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       <ReadOnly
         label="Veteran Hearing Time"
         spacing={15}
-        text="4:00 AM Mountain Time (US & Canada)"
+        text="3:00 AM Pacific Time (US & Canada)"
       >
         <div
           data-css-acl5jg=""
@@ -834,14 +844,14 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
             Veteran Hearing Time
           </strong>
           <pre>
-            4:00 AM Mountain Time (US & Canada)
+            3:00 AM Pacific Time (US & Canada)
           </pre>
         </div>
       </ReadOnly>
       <ReadOnly
         label="Veteran Email"
         spacing={15}
-        text="Bob.Smith@test.com"
+        text="tom.brady@caseflow.gov"
       >
         <div
           data-css-acl5jg=""
@@ -850,7 +860,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
             Veteran Email
           </strong>
           <pre>
-            Bob.Smith@test.com
+            tom.brady@caseflow.gov
           </pre>
         </div>
       </ReadOnly>
@@ -894,7 +904,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
 </ChangeFromVirtual>
 `;
 
-exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEmails 1`] = `
+exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays ReadOnlyEmails 1`] = `
 <ChangeFromVirtual
   hearing={
     Object {
@@ -910,6 +920,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -965,6 +976,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -1067,6 +1079,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -1122,6 +1135,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -1236,6 +1250,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -1291,6 +1306,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -1385,7 +1401,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       <ReadOnly
         label="Veteran Hearing Time"
         spacing={15}
-        text="4:00 AM Mountain Time (US & Canada)"
+        text="3:00 AM Pacific Time (US & Canada)"
       >
         <div
           data-css-acl5jg=""
@@ -1394,14 +1410,14 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
             Veteran Hearing Time
           </strong>
           <pre>
-            4:00 AM Mountain Time (US & Canada)
+            3:00 AM Pacific Time (US & Canada)
           </pre>
         </div>
       </ReadOnly>
       <ReadOnly
         label="Veteran Email"
         spacing={15}
-        text="Bob.Smith@test.com"
+        text="tom.brady@caseflow.gov"
       >
         <div
           data-css-acl5jg=""
@@ -1410,7 +1426,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
             Veteran Email
           </strong>
           <pre>
-            Bob.Smith@test.com
+            tom.brady@caseflow.gov
           </pre>
         </div>
       </ReadOnly>
@@ -1454,7 +1470,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
 </ChangeFromVirtual>
 `;
 
-exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEmails component 1`] = `
+exports[`EmailModalConfirmation ChangeHearingTime sub-component Displays ReadOnlyEmails component 1`] = `
 <ChangeHearingTime
   hearing={
     Object {
@@ -1470,6 +1486,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -1525,6 +1542,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -1627,6 +1645,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -1682,6 +1701,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -1796,6 +1816,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -1851,6 +1872,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -1945,7 +1967,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       <ReadOnly
         label="Veteran Hearing Time"
         spacing={15}
-        text="4:00 AM Mountain Time (US & Canada)"
+        text="3:00 AM Pacific Time (US & Canada)"
       >
         <div
           data-css-acl5jg=""
@@ -1954,14 +1976,14 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
             Veteran Hearing Time
           </strong>
           <pre>
-            4:00 AM Mountain Time (US & Canada)
+            3:00 AM Pacific Time (US & Canada)
           </pre>
         </div>
       </ReadOnly>
       <ReadOnly
         label="Veteran Email"
         spacing={15}
-        text="Bob.Smith@test.com"
+        text="tom.brady@caseflow.gov"
       >
         <div
           data-css-acl5jg=""
@@ -1970,7 +1992,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
             Veteran Email
           </strong>
           <pre>
-            Bob.Smith@test.com
+            tom.brady@caseflow.gov
           </pre>
         </div>
       </ReadOnly>
@@ -2014,7 +2036,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
 </ChangeHearingTime>
 `;
 
-exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
+exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
 <ChangeToVirtual
   appellantEmailError="Something went wrong..."
   hearing={
@@ -2031,6 +2053,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -2086,6 +2109,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -2179,6 +2203,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -2234,6 +2259,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -2437,7 +2463,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
 </ChangeToVirtual>
 `;
 
-exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for appellant and representative email 1`] = `
+exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays input for appellant and representative email 1`] = `
 <ChangeToVirtual
   hearing={
     Object {
@@ -2453,6 +2479,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -2508,6 +2535,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -2590,6 +2618,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -2645,6 +2674,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -2832,7 +2862,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
 </ChangeToVirtual>
 `;
 
-exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representative email error when present 1`] = `
+exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays representative email error when present 1`] = `
 <ChangeToVirtual
   hearing={
     Object {
@@ -2848,6 +2878,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -2903,6 +2934,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -3006,6 +3038,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "appellantLastName": "Brady",
         "appellantRelationship": "Spouse",
         "appellantState": "CA",
+        "appellantTz": "America/Los_Angeles",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
@@ -3061,6 +3094,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
+        "representativeTz": "America/Los_Angeles",
         "room": "1",
         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
         "scheduledForIsPast": false,
@@ -3275,7 +3309,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
 </ChangeToVirtual>
 `;
 
-exports[`VirtualHearingModal DateTime sub-component Displays divider for formerly Central hearings 1`] = `
+exports[`EmailModalConfirmation DateTime sub-component Displays divider for formerly Central hearings 1`] = `
 <DateTime
   hearing={
     Object {
@@ -3440,7 +3474,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
 </DateTime>
 `;
 
-exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing date and time 1`] = `
+exports[`EmailModalConfirmation DateTime sub-component Displays formatted hearing date and time 1`] = `
 <DateTime
   hearing={
     Object {
@@ -3456,6 +3490,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -3511,6 +3546,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -3612,8 +3648,8 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
 </DateTime>
 `;
 
-exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
-<VirtualHearingModal
+exports[`EmailModalConfirmation Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
+<EmailModalConfirmation
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -3628,6 +3664,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -3683,6 +3720,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -3861,7 +3899,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "An email notification for the virtual hearing will be sent to:",
+                      "__html": "An email notification for the hearing will be sent to:",
                     }
                   }
                 />
@@ -3881,6 +3919,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       "appellantLastName": "Brady",
                       "appellantRelationship": "Spouse",
                       "appellantState": "CA",
+                      "appellantTz": "America/Los_Angeles",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
                       "bvaPoc": null,
@@ -3936,6 +3975,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
+                      "representativeTz": "America/Los_Angeles",
                       "room": "1",
                       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
@@ -4012,6 +4052,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -4067,6 +4108,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -4208,11 +4250,11 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       </section>
     </Modal>
   </div>
-</VirtualHearingModal>
+</EmailModalConfirmation>
 `;
 
-exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is change_from_virtual 1`] = `
-<VirtualHearingModal
+exports[`EmailModalConfirmation Displays ChangeFromVirtual component when type is change_from_virtual 1`] = `
+<EmailModalConfirmation
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -4227,6 +4269,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -4282,6 +4325,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -4480,6 +4524,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "appellantLastName": "Brady",
                       "appellantRelationship": "Spouse",
                       "appellantState": "CA",
+                      "appellantTz": "America/Los_Angeles",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
                       "bvaPoc": null,
@@ -4535,6 +4580,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
+                      "representativeTz": "America/Los_Angeles",
                       "room": "1",
                       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
@@ -4611,6 +4657,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -4666,6 +4713,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -4754,6 +4802,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -4809,6 +4858,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -4876,7 +4926,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       <ReadOnly
                         label="Veteran Hearing Time"
                         spacing={15}
-                        text="4:00 AM Mountain Time (US & Canada)"
+                        text="3:00 AM Pacific Time (US & Canada)"
                       >
                         <div
                           data-css-acl5jg=""
@@ -4885,14 +4935,14 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                             Veteran Hearing Time
                           </strong>
                           <pre>
-                            4:00 AM Mountain Time (US & Canada)
+                            3:00 AM Pacific Time (US & Canada)
                           </pre>
                         </div>
                       </ReadOnly>
                       <ReadOnly
                         label="Veteran Email"
                         spacing={15}
-                        text="Bob.Smith@test.com"
+                        text="tom.brady@caseflow.gov"
                       >
                         <div
                           data-css-acl5jg=""
@@ -4901,7 +4951,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                             Veteran Email
                           </strong>
                           <pre>
-                            Bob.Smith@test.com
+                            tom.brady@caseflow.gov
                           </pre>
                         </div>
                       </ReadOnly>
@@ -5019,11 +5069,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       </section>
     </Modal>
   </div>
-</VirtualHearingModal>
+</EmailModalConfirmation>
 `;
 
-exports[`VirtualHearingModal Displays ChangeHearingTime component when type is change_hearing_time 1`] = `
-<VirtualHearingModal
+exports[`EmailModalConfirmation Displays ChangeHearingTime component when type is change_hearing_time 1`] = `
+<EmailModalConfirmation
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -5038,6 +5088,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -5093,6 +5144,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -5291,6 +5343,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "appellantLastName": "Brady",
                       "appellantRelationship": "Spouse",
                       "appellantState": "CA",
+                      "appellantTz": "America/Los_Angeles",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
                       "bvaPoc": null,
@@ -5346,6 +5399,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
+                      "representativeTz": "America/Los_Angeles",
                       "room": "1",
                       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
@@ -5422,6 +5476,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -5477,6 +5532,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -5565,6 +5621,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -5620,6 +5677,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -5687,7 +5745,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       <ReadOnly
                         label="Veteran Hearing Time"
                         spacing={15}
-                        text="4:00 AM Mountain Time (US & Canada)"
+                        text="3:00 AM Pacific Time (US & Canada)"
                       >
                         <div
                           data-css-acl5jg=""
@@ -5696,14 +5754,14 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                             Veteran Hearing Time
                           </strong>
                           <pre>
-                            4:00 AM Mountain Time (US & Canada)
+                            3:00 AM Pacific Time (US & Canada)
                           </pre>
                         </div>
                       </ReadOnly>
                       <ReadOnly
                         label="Veteran Email"
                         spacing={15}
-                        text="Bob.Smith@test.com"
+                        text="tom.brady@caseflow.gov"
                       >
                         <div
                           data-css-acl5jg=""
@@ -5712,7 +5770,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                             Veteran Email
                           </strong>
                           <pre>
-                            Bob.Smith@test.com
+                            tom.brady@caseflow.gov
                           </pre>
                         </div>
                       </ReadOnly>
@@ -5830,11 +5888,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       </section>
     </Modal>
   </div>
-</VirtualHearingModal>
+</EmailModalConfirmation>
 `;
 
-exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
-<VirtualHearingModal
+exports[`EmailModalConfirmation Matches snapshot with default props 1`] = `
+<EmailModalConfirmation
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -5849,6 +5907,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -5904,6 +5963,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -6102,6 +6162,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "appellantLastName": "Brady",
                       "appellantRelationship": "Spouse",
                       "appellantState": "CA",
+                      "appellantTz": "America/Los_Angeles",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
                       "bvaPoc": null,
@@ -6157,6 +6218,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
+                      "representativeTz": "America/Los_Angeles",
                       "room": "1",
                       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
@@ -6233,6 +6295,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "appellantLastName": "Brady",
                         "appellantRelationship": "Spouse",
                         "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
                         "bvaPoc": null,
@@ -6288,6 +6351,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
+                        "representativeTz": "America/Los_Angeles",
                         "room": "1",
                         "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
@@ -6548,10 +6612,10 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       </section>
     </Modal>
   </div>
-</VirtualHearingModal>
+</EmailModalConfirmation>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -6707,7 +6771,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6716,14 +6780,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -6732,7 +6796,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -6742,7 +6806,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6751,7 +6815,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6775,7 +6839,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -6931,7 +6995,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6940,14 +7004,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -6956,7 +7020,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -6966,7 +7030,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6975,7 +7039,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6999,7 +7063,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -7155,7 +7219,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7164,14 +7228,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -7180,7 +7244,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -7190,7 +7254,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7199,7 +7263,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7223,7 +7287,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7378,7 +7442,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7387,14 +7451,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -7403,7 +7467,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -7413,7 +7477,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7422,7 +7486,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7446,7 +7510,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -7601,7 +7665,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7610,14 +7674,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -7626,7 +7690,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -7634,7 +7698,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7789,7 +7853,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7798,7 +7862,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7822,7 +7886,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7977,7 +8041,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7986,7 +8050,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -8010,7 +8074,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -8165,7 +8229,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -8174,14 +8238,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -8190,7 +8254,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -8198,7 +8262,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -8215,6 +8279,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -8270,6 +8335,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -8364,7 +8430,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -8373,14 +8439,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -8389,7 +8455,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -8432,7 +8498,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -8449,6 +8515,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -8504,6 +8571,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -8598,7 +8666,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -8607,14 +8675,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -8623,7 +8691,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -8666,7 +8734,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -8683,6 +8751,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -8738,6 +8807,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -8832,7 +8902,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -8841,14 +8911,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -8857,7 +8927,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -8900,7 +8970,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -8916,6 +8986,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -8971,6 +9042,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -9065,7 +9137,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -9074,14 +9146,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -9090,7 +9162,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -9133,7 +9205,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -9150,6 +9222,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -9205,6 +9278,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -9298,7 +9372,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -9307,14 +9381,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -9323,7 +9397,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>
@@ -9331,7 +9405,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -9347,6 +9421,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -9402,6 +9477,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -9529,7 +9605,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -9545,6 +9621,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -9600,6 +9677,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -9727,7 +9805,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -9744,6 +9822,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantLastName": "Brady",
       "appellantRelationship": "Spouse",
       "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
@@ -9799,6 +9878,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
       "room": "1",
       "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
@@ -9892,7 +9972,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="4:00 AM Mountain Time (US & Canada)"
+      text="3:00 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -9901,14 +9981,14 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Hearing Time
         </strong>
         <pre>
-          4:00 AM Mountain Time (US & Canada)
+          3:00 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
     <ReadOnly
       label="Veteran Email"
       spacing={15}
-      text="Bob.Smith@test.com"
+      text="tom.brady@caseflow.gov"
     >
       <div
         data-css-acl5jg=""
@@ -9917,7 +9997,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
           Veteran Email
         </strong>
         <pre>
-          Bob.Smith@test.com
+          tom.brady@caseflow.gov
         </pre>
       </div>
     </ReadOnly>

@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 // Component under test
-import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHearingForm';
+import { VirtualHearingFields } from 'app/hearings/components/details/VirtualHearingFields';
 
 // Additional components
 import { ContentSection } from 'app/components/ContentSection';
@@ -15,11 +15,11 @@ import { anyUser, amaHearing, defaultHearing, virtualHearing } from 'test/data';
 // Setup the spies
 const updateSpy = jest.fn();
 
-describe('VirtualHearingForm', () => {
+describe('VirtualHearingFields', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const virtualHearingForm = mount(
-      <VirtualHearingForm
+      <VirtualHearingFields
         update={updateSpy}
         hearing={defaultHearing}
       />,
@@ -39,7 +39,7 @@ describe('VirtualHearingForm', () => {
   test('Shows only hearing links with no virtualHearing', () => {
     // Run the test
     const virtualHearingForm = mount(
-      <VirtualHearingForm
+      <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
       />,
@@ -53,15 +53,14 @@ describe('VirtualHearingForm', () => {
     // Assertions
     expect(virtualHearingForm.find(ContentSection)).toHaveLength(1);
     expect(virtualHearingForm.find(HearingLinks)).toHaveLength(1);
-    expect(virtualHearingForm.find('#email-section')).toHaveLength(0)
-    ;
+
     expect(virtualHearingForm).toMatchSnapshot();
   });
 
   test('Shows hearing details with virtualHearing', () => {
     // Run the test
     const virtualHearingForm = mount(
-      <VirtualHearingForm
+      <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -76,8 +75,7 @@ describe('VirtualHearingForm', () => {
     // Assertions
     expect(virtualHearingForm.find(ContentSection)).toHaveLength(1);
     expect(virtualHearingForm.find(HearingLinks)).toHaveLength(1);
-    expect(virtualHearingForm.find('#email-section')).toHaveLength(1)
-    ;
+
     expect(virtualHearingForm).toMatchSnapshot();
   });
 })
