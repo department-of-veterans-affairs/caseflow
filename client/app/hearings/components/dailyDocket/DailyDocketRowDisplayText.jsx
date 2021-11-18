@@ -74,7 +74,11 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
     />}
     <ContestedClaimBadge
       appeal={{ contestedClaim: hearing.contestedClaim }}
-      docketTooltip={true}
+      docketTooltipText={
+        <div style={{ whiteSpace: 'pre-line' }}>
+          {COPY.CC_BADGE_DOCKET_TOOLTIP}
+        </div>
+      }
     />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
