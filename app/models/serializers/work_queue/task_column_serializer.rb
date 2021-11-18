@@ -7,6 +7,8 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
+  attribute :instructions
+
   # Used by hasDASRecord()
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -307,10 +309,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :closed_at do
-    nil
-  end
-
-  attribute :instructions do
     nil
   end
 

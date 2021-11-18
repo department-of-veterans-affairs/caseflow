@@ -11,6 +11,7 @@ import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
+import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
@@ -121,7 +122,16 @@ export const taskColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by task',
     valueName: 'label',
-    valueFunction: (task) => task.label,
+    valueFunction: (task) => {
+      if (task.label !== 'Transcription Task') {
+        return task.label
+      }
+      return <TranscriptionTaskTooltip {...task}>
+        <div>
+          {task.label}
+        </div>
+      </TranscriptionTaskTooltip>
+    },
     backendCanSort: true,
     getSortValue: (task) => task.label
   };
