@@ -95,6 +95,8 @@ class RootTask < Task
   end
 
   def assigned_to_label
+    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if completed?
+
     COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL
   end
 
