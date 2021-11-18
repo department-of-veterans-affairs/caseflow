@@ -262,7 +262,6 @@ export default class DailyDocket extends React.Component {
                 <br />
                </React.Fragment>
              )}
-            <br />
             Coordinator: {dailyDocket.bvaPoc} <br />
             Hearing type: {dailyDocket.readableRequestType} <br />
             Regional office: {dailyDocket.regionalOffice}
