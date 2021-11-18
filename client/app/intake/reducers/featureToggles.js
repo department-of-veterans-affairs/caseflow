@@ -17,6 +17,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     filedByVaGovHlr: {
       $set: Boolean(featureToggles.filedByVaGovHlr)
     },
+    updatedIntakeForms: {
+      $set: Boolean(featureToggles.updatedIntakeForms)
+    },
   });
 };
 
@@ -26,7 +29,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       useAmaActivationDate: false,
       vhaPreDocketAppeals: false,
       correctClaimReviews: false,
-      filedByVaGovHlr: false
+      filedByVaGovHlr: false,
+      updatedIntakeForms: false,
     },
     data.featureToggles
   );
