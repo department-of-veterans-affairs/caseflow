@@ -94,7 +94,10 @@ export class DailyDocketPrinted extends React.Component {
 
           <div className="cf-push-right">
             {!user.userVsoEmployee && (
-              <strong>VLJ:</strong> `${docket.judgeFirstName}` `${docket.judgeLastName}`
+              <React.Fragment>
+                <strong>VLJ:</strong> `${docket.judgeFirstName}` `${docket.judgeLastName}`
+                <br />
+              </React.Fragment>
             }
             <br />
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
