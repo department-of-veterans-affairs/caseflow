@@ -857,16 +857,23 @@ describe Appeal, :all_dbs do
   end
 
   context "#assigned_to_location" do
-    context "if the RootTask status is completed" do
+    context "if the RootTask status is completed and a task is open" do
       let(:appeal) { create(:appeal) }
+      before { create(:root_task, :completed, appeal: appeal) }
 
-      before do
-        create(:root_task, :completed, appeal: appeal)
-        create(:schedule_hearing_task, :completed, appeal: appeal)
+      context "open task is invalid" do
+        before { create(:schedule_hearing_task, :completed, appeal: appeal) }
+
+        it "returns Board of Veterans' Appeals" do
+          expect(appeal.assigned_to_location).to eq("Board of Veterans' Appeals")
+        end
       end
+      context "open task is valid" do
+        before { create(:congressional_interest_mail_task, parent: appeal.root_task) }
 
-      it "returns Post-decision" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+        it "returns Mail" do
+          expect(appeal.assigned_to_location).to eq("Mail")
+        end
       end
     end
 
