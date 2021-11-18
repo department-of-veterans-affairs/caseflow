@@ -267,6 +267,73 @@ feature "Intake", :all_dbs do
       end
     end
 
+    context "Updated Supplemental Claim Form 20-0995 and Higher Level Reveiw Form 20-0996" do
+      let(:veteran) { create(:veteran, file_number: "123419876") }
+      before { FeatureToggle.enable!(:updated_intake_forms) }
+      after { FeatureToggle.disable!(:updated_intake_forms) }
+
+      context "when replacing Vocational Rehab and Employment benefit type" do
+        it "shows 'Veterans Readiness and Employment' as benefit type option for SC form" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Veterans Readiness and Employment")
+          expect(page).to_not have_content(Constants.BENEFIT_TYPES.voc_rehab)
+        end
+
+        it "shows 'Veterans Readiness and Employment' as benefit type option for HLR form" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Veterans Readiness and Employment")
+          expect(page).to_not have_content("Vocational Rehabilitation and Employment")
+        end
+
+        context "when removing same office question" do
+          it "does not show question for HLR form" do
+            visit "/intake"
+            select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "123419876"
+            click_on "Search"
+            expect(page).to_not have_content("Was an interview by the same office requested?")
+          end
+        end
+      end
+
+      context "when implementing existing form" do
+        before { FeatureToggle.disable!(:updated_intake_forms) }
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for SC" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
+        end
+
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option fro HLR" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
+        end
+      end
+    end
+
     scenario "Search for a veteran whose form is already being processed" do
       create(:higher_level_review, veteran_file_number: "12341234")
 
