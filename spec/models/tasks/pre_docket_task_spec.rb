@@ -28,9 +28,15 @@ describe PreDocketTask, :postgres do
 
   describe "#available_actions" do
     subject { pre_docket_task.available_actions(user) }
-    let(:user) { bva_intake_user }
+    let(:user) { create(:user) }
 
     it { is_expected.to eq [] }
+
+    context "When the user is a BVA Intake user" do
+      let(:user) { bva_intake_user }
+
+      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+    end
 
     context "When the user is a BVA Intake admin" do
       let(:user) { bva_intake_admin_user }
