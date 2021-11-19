@@ -2463,13 +2463,13 @@ RSpec.feature "Case details", :all_dbs do
       let(:bgs) { Fakes::BGSService.new }
       msg = "(Power of Attorney of Folder is none. Access to this record is denied.)"
 
-      context "user gets an access denied message from bgs initially" do
+      context "rescue POA Folder denied errors from BGS for VSOs" do
         it "case details displays error message" do
           visit("/queue/appeals/#{appeal.uuid}")
           allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
         end
       end
-      context "check via caseflow to see if vso should have access" do
+      context "check to see if VSO should have access to appeal anyway" do
         it "should display case details" do
           expect(appeal.accessible?).to be_truthy
           visit("/queue/appeals/#{appeal.uuid}")
