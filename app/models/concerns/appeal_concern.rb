@@ -91,8 +91,9 @@ module AppealConcern
     assigned_to_vso?(user) || user_represents_claimant_not_veteran?(user) || bgs.can_access?(veteran_file_number)
   end
 
+  # :reek:FeatureEnvy
   def assigned_to_vso?(user)
-    # copied from legacy_hearing model
+    # moved from hearing model
     tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
