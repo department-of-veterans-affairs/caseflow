@@ -686,3 +686,17 @@ $form-width: 575px;
 .usa-input-error .cf-select {
   max-width: $form-width;
 }
+
+
+// Docket Styles
+.judge-view {
+  .cf-fnod-badge,
+  .cf-contested-badge {
+    display: inline-block;
+    margin-left: -1rem;
+  }
+
+  .cf-fnod-badge {
+    margin-right: 1rem;
+  }
+}
