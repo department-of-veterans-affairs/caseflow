@@ -9,6 +9,7 @@ import DocketTypeBadge from 'app/components/DocketTypeBadge';
 import { PowerOfAttorneyName } from 'app/queue/PowerOfAttorneyDetail';
 
 import FnodBadge from 'app/components/badges/FnodBadge/FnodBadge';
+import ContestedClaimBadge from 'app/components/badges/ContestedBadge/ContestedClaimBadge';
 import { tooltipListStyling } from 'app/components/badges/style';
 import { DateString } from 'app/util/DateUtil';
 
@@ -48,7 +49,8 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
     </strong><br />
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
     {hearing.docketNumber} <br />
-    {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
+    {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}<br /></span>}
+    <br />
     {userCanViewFnodBadgeInHearings && <FnodBadge
       veteranAppellantDeceased={hearing.veteranDateOfDeathInfo?.veteranAppellantDeceased}
       uniqueId={hearing.id}
@@ -70,6 +72,14 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
         </div>
       }
     />}
+    <ContestedClaimBadge
+      appeal={{ contestedClaim: hearing.contestedClaim }}
+      docketTooltipText={
+        <div style={{ whiteSpace: 'pre-line' }}>
+          {COPY.CC_BADGE_DOCKET_TOOLTIP}
+        </div>
+      }
+    />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?

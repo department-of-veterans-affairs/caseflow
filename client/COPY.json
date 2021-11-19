@@ -170,6 +170,7 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select a valid date for the court's decision",
+  "CC_BADGE_DOCKET_TOOLTIP": "This is a Contested Claim. Please ensure\nproper notice is sent to all parties.",
   "CC_BADGE_TOOLTIP_LONG": "This is a Contested Claim and needs to be processed by the Specialty\nCase team. Please include all parties and POA in correspondence.",
   "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
