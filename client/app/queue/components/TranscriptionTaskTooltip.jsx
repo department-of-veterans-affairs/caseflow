@@ -13,11 +13,11 @@ const instructionStyling = css({
 // Creates a tool tip that displays task instructions
 const TranscriptionTaskTooltip = (props) => {
   const { instructions, taskId, children } = props;
-  const instructionText = instructions.trim() ? instructions : COPY.CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP
+  const instructionText = instructions.trim() ? instructions : COPY.CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP;
 
   const tooltipText = (
     <div style={{ whiteSpace: 'pre-line' }}>
-      {<div {...instructionStyling}>{instructionText}</div>}
+      <div {...instructionStyling}>{instructionText}</div>
     </div>
   );
 

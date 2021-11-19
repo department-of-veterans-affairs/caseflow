@@ -124,22 +124,23 @@ export const taskColumn = (tasks, filterOptions) => {
     valueName: 'label',
     valueFunction: (task) => {
       if (task.label !== 'Transcription Task') {
-        return task.label
+        return task.label;
       }
 
-      const instructions = Array.isArray(task.instructions) ? task.instructions : [task.instructions]
+      const instructions = Array.isArray(task.instructions) ? task.instructions : [task.instructions];
+
       return <TranscriptionTaskTooltip instructions={instructions.join('\n')} taskId={task.uniqueId}>
         <div>
           {task.label}
         </div>
-      </TranscriptionTaskTooltip>
+      </TranscriptionTaskTooltip>;
     },
     backendCanSort: true,
     getSortValue: (task) => task.label
   };
 };
 
-export const assignedByColumn = (tasks, filterOptions) => {
+export const assignedByColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
