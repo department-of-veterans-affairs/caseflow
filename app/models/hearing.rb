@@ -121,15 +121,6 @@ class Hearing < CaseflowRecord
 
   alias original_request_type request_type
 
-  def assigned_to_vso?(user)
-    appeal.tasks.any? do |task|
-      task.type == TrackVeteranTask.name &&
-        task.assigned_to.is_a?(Representative) &&
-        task.assigned_to.user_has_access?(user) &&
-        task.open?
-    end
-  end
-  
   def assigned_to_judge?(user)
     return hearing_day&.judge == user if judge.nil?
 
