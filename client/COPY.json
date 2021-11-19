@@ -40,6 +40,7 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
+  "CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP": "No instructions.",
 
   "DOB_INVALID_ERRS": {
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",

@@ -126,7 +126,9 @@ export const taskColumn = (tasks, filterOptions) => {
       if (task.label !== 'Transcription Task') {
         return task.label
       }
-      return <TranscriptionTaskTooltip {...task}>
+
+      const instructions = Array.isArray(task.instructions) ? task.instructions : [task.instructions]
+      return <TranscriptionTaskTooltip instructions={instructions.join('\n')} taskId={task.uniqueId}>
         <div>
           {task.label}
         </div>

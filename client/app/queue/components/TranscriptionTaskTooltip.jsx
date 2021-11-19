@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
+import COPY from 'app/../COPY';
 import Tooltip from '../../components/Tooltip';
 
 const instructionStyling = css({
@@ -9,26 +10,23 @@ const instructionStyling = css({
   textAlign: 'left'
 });
 
-// Creates a tool tip that displays who assigned a transcription task, as well as any task instructions
+// Creates a tool tip that displays task instructions
 const TranscriptionTaskTooltip = (props) => {
-  const { assignedBy, instructions, uniqueId, children } = props;
-  const displayName = `${assignedBy.firstName} ${assignedBy.lastName}`
-  const instructionText = instructions.length > 0 ? instructions : 'No instructions.'
+  const { instructions, taskId, children } = props;
+  const instructionText = instructions.trim() ? instructions : COPY.CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP
 
   const tooltipText = (
-    <div>
-      {displayName.trim() ? <div><strong>Assigned By: </strong> {displayName}</div> : ''}
+    <div style={{ whiteSpace: 'pre-line' }}>
       {<div {...instructionStyling}>{instructionText}</div>}
     </div>
   );
 
-  return <Tooltip id={`task-${uniqueId}`} text={tooltipText} position="bottom" >{children}</Tooltip>;
+  return <Tooltip id={`task-${taskId}`} text={tooltipText} position="bottom" >{children}</Tooltip>;
 };
 
 TranscriptionTaskTooltip.propTypes = {
-  assignedBy: PropTypes.object,
   instructions: PropTypes.string,
-  uniqueId: PropTypes.string,
+  taskId: PropTypes.string,
   children: PropTypes.node
 };
 
