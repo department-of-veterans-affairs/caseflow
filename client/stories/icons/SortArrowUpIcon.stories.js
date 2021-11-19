@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { SortArrowUpIcon } from '../../app/components/icons/SortArrowUpIcon';
 
 export default {
@@ -14,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
+    size: ICON_SIZES.XSMALL,
     color: COLORS.GREY_DARK,
-    size: 10,
     className: 'cf-sort-arrowup table-icon'
   }
 };

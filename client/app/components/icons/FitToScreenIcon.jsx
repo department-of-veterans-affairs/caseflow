@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const FitToScreenIcon = (props) => {
   const { color, size, className } = props;
@@ -40,7 +40,8 @@ export const FitToScreenIcon = (props) => {
 FitToScreenIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '19px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.MEDIUM'.
   */
   size: PropTypes.number,
 
@@ -55,7 +56,7 @@ FitToScreenIcon.propTypes = {
   className: PropTypes.string
 };
 FitToScreenIcon.defaultProps = {
-  size: 19,
+  size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
   className: ''
 };

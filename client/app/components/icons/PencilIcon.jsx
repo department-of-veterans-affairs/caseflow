@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const PencilIcon = (props) => {
   const { size, color, className } = props;
@@ -22,12 +23,13 @@ export const PencilIcon = (props) => {
 PencilIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.MEDIUM.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#0071BC'.
+  Sets color of the component. Default value is 'COLORS.PRIMARY'.
   */
   color: PropTypes.string,
 
@@ -37,7 +39,7 @@ PencilIcon.propTypes = {
   className: PropTypes.string
 };
 PencilIcon.defaultProps = {
-  size: 25,
-  color: '#0071BC',
+  size: ICON_SIZES.MEDIUM,
+  color: COLORS.PRIMARY,
   className: ''
 };

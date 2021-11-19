@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { PlusIcon } from '../../app/components/icons/PlusIcon';
 
 export default {
@@ -15,7 +15,7 @@ export default {
   },
   args: {
     color: COLORS.WHITE,
-    size: '12px',
+    size: ICON_SIZES.XSMALL,
     className: ''
   }
 };

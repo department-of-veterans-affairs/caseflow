@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { DoubleArrowIcon } from '../../app/components/icons/DoubleArrowIcon';
 
 export default {
@@ -17,7 +17,7 @@ export default {
   args: {
     topColor: COLORS.GREY_DARK,
     bottomColor: COLORS.GREY_DARK,
-    size: 16,
+    size: ICON_SIZES.SMALL,
     className: 'table-icon'
   }
 };

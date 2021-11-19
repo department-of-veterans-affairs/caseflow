@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const LeftChevronIcon = (props) => {
   const { size, color, className } = props;
@@ -24,7 +24,8 @@ export const LeftChevronIcon = (props) => {
 LeftChevronIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -39,7 +40,7 @@ LeftChevronIcon.propTypes = {
   className: PropTypes.string
 };
 LeftChevronIcon.defaultProps = {
-  size: 17,
+  size: ICON_SIZES.SMALL,
   color: COLORS.WHITE,
   className: 'fa-chevron-left'
 };

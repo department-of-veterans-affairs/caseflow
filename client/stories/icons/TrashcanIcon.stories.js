@@ -1,5 +1,6 @@
 import React from 'react';
 import { TrashcanIcon } from '../../app/components/icons/TrashcanIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/TrashcanIcon',
@@ -10,11 +11,13 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
+    strokeColor: { control: { type: 'color' } },
     className: { control: { type: 'text' } }
   },
   args: {
-    size: 26,
-    color: '',
+    size: ICON_SIZES.MEDIUM,
+    color: COLORS.WHITE,
+    strokeColor: COLORS.PRIMARY,
     className: ''
   }
 };

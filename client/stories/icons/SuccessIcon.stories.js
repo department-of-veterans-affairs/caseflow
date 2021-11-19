@@ -14,7 +14,7 @@ export default {
   },
   args: {
     color: '',
-    size: '55',
+    size: 55,
     className: 'cf-icon-found'
   }
 };

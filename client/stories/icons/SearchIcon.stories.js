@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { SearchIcon } from '../../app/components/icons/SearchIcon';
 
 export default {
@@ -14,7 +14,7 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    size: 24,
+    size: ICON_SIZES.MEDIUM,
     color: COLORS.WHITE,
     className: ''
   }

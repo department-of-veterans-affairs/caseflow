@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const DoubleArrowIcon = (props) => {
   const { topColor, bottomColor, size, className } = props;
@@ -54,7 +54,8 @@ DoubleArrowIcon.propTypes = {
   bottomColor: PropTypes.string,
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -66,6 +67,6 @@ DoubleArrowIcon.propTypes = {
 DoubleArrowIcon.defaultProps = {
   topColor: COLORS.GREY_DARK,
   bottomColor: COLORS.GREY_DARK,
-  size: 16,
+  size: ICON_SIZES.SMALL,
   className: 'table-icon'
 };

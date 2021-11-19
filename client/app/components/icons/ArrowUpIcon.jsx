@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const ArrowUpIcon = (props) => {
   const { size, color, className } = props;
@@ -27,12 +28,13 @@ export const ArrowUpIcon = (props) => {
 ArrowUpIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is 'COLORS.GREY_MEDIUM'.
+  Sets color of the component. Default value is 'COLORS.GREY_DARK'.
   */
   color: PropTypes.string,
 
@@ -42,7 +44,7 @@ ArrowUpIcon.propTypes = {
   className: PropTypes.string
 };
 ArrowUpIcon.defaultProps = {
-  size: 17,
+  size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
   className: ''
 };

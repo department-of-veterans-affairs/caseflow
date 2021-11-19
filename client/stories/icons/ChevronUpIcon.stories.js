@@ -1,4 +1,5 @@
 import React from 'react';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { ChevronUpIcon } from '../../app/components/icons/ChevronUpIcon';
 
 export default {
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    color: '#0872B9',
-    size: 10,
+    size: ICON_SIZES.XSMALL,
+    color: COLORS.PRIMARY,
     className: 'table-icon'
   }
 };

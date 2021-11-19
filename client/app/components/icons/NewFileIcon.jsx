@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const NewFileIcon = (props) => {
   const { size, color, className } = props;
@@ -26,12 +27,13 @@ export const NewFileIcon = (props) => {
 NewFileIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.XSMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#844E9F'.
+  Sets color of the component. Default value is 'ICON_COLORS.PURPLE'.
   */
   color: PropTypes.string,
 
@@ -41,7 +43,7 @@ NewFileIcon.propTypes = {
   className: PropTypes.string
 };
 NewFileIcon.defaultProps = {
-  size: 11,
-  color: '#844E9F',
+  size: ICON_SIZES.XSMALL,
+  color: COLORS.PURPLE,
   className: ''
 };

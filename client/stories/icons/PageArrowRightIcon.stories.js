@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { PageArrowRightIcon } from '../../app/components/icons/PageArrowRightIcon';
 
 export default {
@@ -15,7 +15,7 @@ export default {
   },
   args: {
     color: COLORS.WHITE,
-    size: 20,
+    size: ICON_SIZES.MEDIUM,
     className: ''
   }
 };

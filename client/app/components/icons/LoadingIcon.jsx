@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { LOGO_COLORS } from '../../../app/constants/AppConstants';
+import { ICON_SIZES, COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 
 export const LoadingIcon = (props) => {
   const { text, size, color, className } = props;
@@ -87,9 +86,9 @@ LoadingIcon.propTypes = {
   text: PropTypes.string,
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is 'ICON_SIZES.LARGE'.
   */
-  size: PropTypes.string,
+  size: PropTypes.number,
 
   /**
   Sets the color of the component. Default state is 'LOGO_COLORS.DISPATCH.ACCENT'.
@@ -103,7 +102,7 @@ LoadingIcon.propTypes = {
 };
 LoadingIcon.defaultProps = {
   text: '',
-  size: '30px',
+  size: ICON_SIZES.LARGE,
   color: LOGO_COLORS.DISPATCH.ACCENT,
   className: 'cf-loading-button-symbol cf-small-loader-symbol'
 };

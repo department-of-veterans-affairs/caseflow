@@ -24,7 +24,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: handleActivate
+      onClick: handleActivate,
     };
 
     if (selected) {
@@ -41,7 +41,7 @@ FilterIcon.propTypes = {
   handleActivate: PropTypes.func,
   getRef: PropTypes.func,
   className: PropTypes.string,
-  selected: PropTypes.bool
+  selected: PropTypes.bool,
 };
 
 export default FilterIcon;

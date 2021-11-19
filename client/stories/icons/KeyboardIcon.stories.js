@@ -1,5 +1,6 @@
 import React from 'react';
 import { KeyboardIcon } from '../../app/components/icons/KeyboardIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/KeyboardIcon',
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    color: '#0872B9',
-    size: 17,
+    size: ICON_SIZES.SMALL,
+    color: COLORS.PRIMARY,
     className: ''
   }
 };

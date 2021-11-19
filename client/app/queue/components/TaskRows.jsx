@@ -38,7 +38,7 @@ export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
 const greyDotAndlineStyling = css({ top: '25px' });
 
 const closedAtIcon = (task, timeline) => {
-  return (task.closedAt && timeline ? <GreenCheckmarkIcon /> : <GrayDotIcon />);
+  return (task.closedAt && timeline ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />);
 };
 
 const taskContainerStyling = css({
@@ -498,7 +498,7 @@ class TaskRows extends React.PureComponent {
               {...taskInfoWithIconTimelineContainer}
               className={appeal.form9Date ? '' : 'greyDotStyling'}
             >
-              {appeal.form9Date ? <GreenCheckmarkIcon /> : <GrayDotIcon />}
+              {appeal.form9Date ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />}
               {appeal.nodDate && (
                 <div className="grayLineStyling grayLineTimelineStyling" />
               )}

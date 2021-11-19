@@ -1,5 +1,6 @@
 import React from 'react';
 import { PencilIcon } from '../../app/components/icons/PencilIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/PencilIcon',
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    size: 25,
-    color: '#0071BC',
+    size: ICON_SIZES.MEDIUM,
+    color: COLORS.PRIMARY,
     className: ''
   }
 };

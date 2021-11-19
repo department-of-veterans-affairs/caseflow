@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const GrayDotIcon = (props) => {
   const { size, color, className, strokeColor } = props;
@@ -17,17 +18,18 @@ export const GrayDotIcon = (props) => {
 GrayDotIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '25px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.MEDIUM'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#D6D7D9'.
+  Sets color of the component. Default value is 'COLORS.GREY_LIGHT'.
   */
   color: PropTypes.string,
 
   /**
-  Sets stroke color of the component. Default value is '#ffffff'.
+  Sets stroke color of the component. Default value is 'COLORS.WHITE'.
   */
   strokeColor: PropTypes.string,
 
@@ -37,8 +39,8 @@ GrayDotIcon.propTypes = {
   className: PropTypes.string
 };
 GrayDotIcon.defaultProps = {
-  size: 25,
-  color: '#D6D7D9',
+  size: ICON_SIZES.MEDIUM,
+  color: COLORS.GREY_LIGHT,
   className: 'gray-dot',
-  strokeColor: '#ffffff'
+  strokeColor: COLORS.WHITE
 };

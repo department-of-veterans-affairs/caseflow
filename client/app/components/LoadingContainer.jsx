@@ -14,7 +14,7 @@ export default class LoadingContainer extends React.Component {
           <div className="loadingContainer-table-cell">
             <LoadingIcon
               text=""
-              size="150px"
+              size={150}
               color={color}
             />
           </div>

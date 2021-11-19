@@ -55,7 +55,7 @@ export default class AutoSave extends React.Component {
         <div className="loadingSymbol">
           <LoadingIcon
             text="Saving..."
-            size="20px"
+            size={20}
             color={color}
           />
         </div>

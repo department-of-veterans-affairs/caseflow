@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const CancelIcon = (props) => {
   const { size, color, className, bgColor } = props;
@@ -23,17 +24,17 @@ export const CancelIcon = (props) => {
 CancelIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
+  Sets height of the component, width is set automatically by the svg viewbox property. Default height is 'ICON_SIZES.LARGE'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#E31C3D'.
+  Sets color of the component. Default value is 'COLORS.RED'.
   */
   color: PropTypes.string,
 
   /**
-  Sets the background color of the component. Default value is '#ffffff'.
+  Sets the background color of the component. Default value is 'COLORS.WHITE'.
   */
   bgColor: PropTypes.string,
 
@@ -43,8 +44,8 @@ CancelIcon.propTypes = {
   className: PropTypes.string
 };
 CancelIcon.defaultProps = {
-  size: 40,
-  color: '#E31C3D',
+  size: ICON_SIZES.LARGE,
+  color: COLORS.RED,
   className: '',
-  bgColor: '#ffffff'
+  bgColor: COLORS.WHITE
 };

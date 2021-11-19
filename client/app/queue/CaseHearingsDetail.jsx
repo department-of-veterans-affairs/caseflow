@@ -171,7 +171,7 @@ class CaseHearingsDetail extends React.PureComponent {
         label: 'Notes',
         value: <React.Fragment>
           <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
-            <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+            <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
             <span {...css({ marginLeft: '24px' })}>Edit</span>
           </Button>
           <br />

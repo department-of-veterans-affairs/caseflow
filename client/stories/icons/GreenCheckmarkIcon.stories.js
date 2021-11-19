@@ -1,5 +1,6 @@
 import React from 'react';
 import { GreenCheckmarkIcon } from '../../app/components/icons/GreenCheckmarkIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/GreenCheckmarkIcon',
@@ -14,9 +15,9 @@ export default {
     strokeColor: { control: { type: 'color' } }
   },
   args: {
-    size: 40,
-    strokeColor: '#ffffff',
-    color: '#2E8540',
+    size: ICON_SIZES.LARGE,
+    strokeColor: COLORS.WHITE,
+    color: COLORS.GREEN,
     className: 'green-checkmark'
   }
 };

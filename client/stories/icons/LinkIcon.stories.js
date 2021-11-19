@@ -1,5 +1,6 @@
 import React from 'react';
 import { LinkIcon } from '../../app/components/icons/LinkIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/LinkIcon',
@@ -14,9 +15,9 @@ export default {
     className: { control: { type: 'text' } },
   },
   args: {
-    size: 9,
-    leftColor: '#0F0F10',
-    rightColor: '#050606',
+    size: ICON_SIZES.XSMALL,
+    leftColor: COLORS.BASE,
+    rightColor: COLORS.BASE,
     className: ''
   }
 };

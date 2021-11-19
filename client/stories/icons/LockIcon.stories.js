@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { LockIcon } from '../../app/components/icons/LockIcon';
 
 export default {
@@ -14,7 +14,7 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    size: 18,
+    size: ICON_SIZES.SMALL,
     color: COLORS.GREY_DARK,
     className: 'cf-lock-icon'
   }

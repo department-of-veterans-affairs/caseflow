@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ChevronUpIcon = (props) => {
   const { size, color, className } = props;
@@ -25,12 +26,13 @@ export const ChevronUpIcon = (props) => {
 ChevronUpIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '10px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.XSMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#0872B9'.
+  Sets color of the component. Default value is 'COLORS.PRIMARY'.
   */
   color: PropTypes.string,
 
@@ -40,7 +42,7 @@ ChevronUpIcon.propTypes = {
   className: PropTypes.string
 };
 ChevronUpIcon.defaultProps = {
-  size: 10,
-  color: '#0872B9',
+  size: ICON_SIZES.XSMALL,
+  color: COLORS.PRIMARY,
   className: 'table-icon'
 };

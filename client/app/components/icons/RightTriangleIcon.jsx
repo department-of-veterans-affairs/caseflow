@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const RightTriangleIcon = (props) => {
   const { size, color, className } = props;
@@ -23,12 +24,13 @@ export const RightTriangleIcon = (props) => {
 RightTriangleIcon.propTypes = {
 
   /**
-  Sets the color of the component. Default color is '#000000.
+  Sets the color of the component. Default color is 'COLORS.BASE'.
   */
   color: PropTypes.string,
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -38,7 +40,7 @@ RightTriangleIcon.propTypes = {
   className: PropTypes.string
 };
 RightTriangleIcon.defaultProps = {
-  color: '#000000',
-  size: 18,
+  color: COLORS.BASE,
+  size: ICON_SIZES.SMALL,
   className: ''
 };

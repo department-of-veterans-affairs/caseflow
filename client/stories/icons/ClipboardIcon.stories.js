@@ -1,5 +1,6 @@
 import React from 'react';
 import { ClipboardIcon } from '../../app/components/icons/ClipboardIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/ClipboardIcon',
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    size: 16,
-    color: '#5B616B',
+    size: ICON_SIZES.SMALL,
+    color: COLORS.GREY,
     className: ''
   }
 };

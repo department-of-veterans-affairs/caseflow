@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 // Not used anywhere
 
@@ -24,7 +25,7 @@ SuccessIcon.propTypes = {
   /**
   Sets height of the component, width is set automatically by the svg viewbox property. Default height is '55px'.
   */
-  size: PropTypes.string,
+  size: PropTypes.number,
 
   /**
   Sets the color of the component. Default color is green.
@@ -37,7 +38,7 @@ SuccessIcon.propTypes = {
   className: PropTypes.string,
 };
 SuccessIcon.defaultProps = {
-  size: '55',
-  color: 'green',
+  size: ICON_SIZES.XLARGE,
+  color: COLORS.GREEN,
   className: 'cf-icon-found'
 };

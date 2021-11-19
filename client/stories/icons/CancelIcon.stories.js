@@ -1,5 +1,6 @@
 import React from 'react';
 import { CancelIcon } from '../../app/components/icons/CancelIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/CancelIcon',
@@ -14,10 +15,10 @@ export default {
     bgColor: { control: { type: 'color' } }
   },
   args: {
-    size: 40,
-    color: '#E31C3D',
+    size: ICON_SIZES.LARGE,
+    color: COLORS.RED,
     className: '',
-    bgColor: '#ffffff'
+    bgColor: COLORS.WHITE
   }
 };
 

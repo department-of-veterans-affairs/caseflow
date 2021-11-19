@@ -109,7 +109,7 @@ export const HearingDetailsLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link to={`/${hearing.externalId}/details`}>
         Edit Hearing Details
-        <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+        <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
       </Link>
     </div>
   </div>
@@ -213,7 +213,7 @@ export const HearingPrepWorkSheetLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link href={`/hearings/${hearing.externalId}/worksheet`}>
         Edit VLJ Hearing Worksheet
-        <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+        <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
       </Link>
     </div>
   </div>

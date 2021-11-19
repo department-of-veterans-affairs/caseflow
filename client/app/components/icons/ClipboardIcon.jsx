@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ClipboardIcon = (props) => {
   const { size, color, className } = props;
@@ -17,12 +18,13 @@ export const ClipboardIcon = (props) => {
 ClipboardIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#5B616B'.
+  Sets color of the component. Default value is 'COLORS.GREY'.
   */
   color: PropTypes.string,
 
@@ -32,7 +34,7 @@ ClipboardIcon.propTypes = {
   className: PropTypes.string
 };
 ClipboardIcon.defaultProps = {
-  size: 16,
-  color: '#5B616B',
+  size: ICON_SIZES.SMALL,
+  color: COLORS.GREY,
   className: ''
 };

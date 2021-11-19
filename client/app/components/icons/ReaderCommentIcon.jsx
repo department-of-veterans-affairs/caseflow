@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 // used in CommentIcon.jsx
 
 export const ReaderCommentIcon = (props) => {
 
-  const { selected, id, size, className } = props;
+  const { selected, id, size, className, color } = props;
 
   const filter = selected ? `url(#${id}-filter-1)` : '';
 
@@ -44,7 +45,7 @@ export const ReaderCommentIcon = (props) => {
           32.972973,20.9978947 32.972973,21.5789474 C32.972973,22.16 32.4886486,22.6315789 31.8918919,22.6315789
           L8.10810811,22.6315789 C7.51135135,22.6315789 7.02702703,22.16 7.02702703,21.5789474 C7.02702703,20.9978947
           7.51135135,20.5263158 8.10810811,20.5263158 L31.8918919,20.5263158 Z"
-          id="Page-1-Copy-12" fill="#EEDF1B"></path>
+          id="Page-1-Copy-12" fill={color} ></path>
           <path d="M35.6756757,0.0184989194 C38.0518919,0.0184989194 40,1.91534102 40,4.22902524 L40,25.2816568
           C40,27.595341 38.0518919,29.4921831 35.6756757,29.4921831 L32.0100901,29.4921831 L32.9895495,38.8507796
           C33.0796396,39.8184989 31.8861261,40.3770954 31.1654054,39.7055165 L20.6421622,29.4921831
@@ -75,6 +76,11 @@ export const ReaderCommentIcon = (props) => {
 ReaderCommentIcon.propTypes = {
 
   /**
+  Sets the selected color of the component. Default value is 'COLORS.GOLD_LIGHT'.
+  */
+  color: PropTypes.string,
+
+  /**
   Sets the selected prop of the component. Default value is 'false'.
   */
   selected: PropTypes.bool,
@@ -85,7 +91,8 @@ ReaderCommentIcon.propTypes = {
   id: PropTypes.number,
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '40px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.LARGE'.
   */
   size: PropTypes.number,
 
@@ -95,8 +102,9 @@ ReaderCommentIcon.propTypes = {
   className: PropTypes.string,
 };
 ReaderCommentIcon.defaultProps = {
+  color: COLORS.GOLD_LIGHT,
   selected: false,
   id: 1,
-  size: 40,
+  size: ICON_SIZES.LARGE,
   classNameName: ''
 };

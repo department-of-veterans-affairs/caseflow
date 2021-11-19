@@ -1,5 +1,6 @@
 import React from 'react';
 import { RightTriangleIcon } from '../../app/components/icons/RightTriangleIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/RightTriangleIcon',
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    color: '#000000',
-    size: 18,
+    color: COLORS.BASE,
+    size: ICON_SIZES.SMALL,
     className: ''
   }
 };

@@ -16,7 +16,7 @@ const EditHearingDayLink = ({ docketId, history }) => (
     linkStyling
     onClick={() => history.push(`/schedule/docket/${docketId}/edit`)}
   >
-    <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+    <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
     <span {...css({ marginRight: '5px', marginLeft: '20px' })} >
       Edit Hearing Day
     </span>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ArrowLeftIcon = (props) => {
   const { size, color, className } = props;
@@ -43,7 +43,7 @@ ArrowLeftIcon.propTypes = {
   className: PropTypes.string
 };
 ArrowLeftIcon.defaultProps = {
-  size: 17,
+  size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
   className: ''
 };

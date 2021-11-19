@@ -48,7 +48,7 @@ class DecisionDateTimeLine extends React.PureComponent {
         return <span className="timelineLeftPaddingStyle"><CancelIcon /></span>;
       }
 
-      return <span className="greyDotTimelineStyling"><GrayDotIcon /></span>;
+      return <span className="greyDotTimelineStyling"><GrayDotIcon size={25} /></span>;
     };
 
     const showTaskListStyling = () => {

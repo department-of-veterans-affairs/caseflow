@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const GreenCheckmarkIcon = (props) => {
   const { size, color, className, strokeColor } = props;
@@ -18,7 +19,7 @@ export const GreenCheckmarkIcon = (props) => {
           7.32516129,16.8013468 L13.1083871,22.6700337 C13.3174194,22.8821549 13.6077419,23 13.8980645,23
           C14.1883871,23 14.4787097,22.8821549 14.6877419,22.6700337 L24.6748387,12.5353535
           C24.883871,12.3232323 25,12.0286195 25,11.7340067 Z" id="Check"
-          fillOpacity="0.91" fill="#FFFFFF"></path>
+          fillOpacity="0.91" fill={strokeColor}></path>
         </g>
       </g>
     </g>
@@ -27,17 +28,18 @@ export const GreenCheckmarkIcon = (props) => {
 GreenCheckmarkIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '24px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.LARGE'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#2E8540'.
+  Sets color of the component. Default value is 'COLORS.GREEN'.
   */
   color: PropTypes.string,
 
   /**
-  Sets stroke color of the component. Default value is '#ffffff'.
+  Sets stroke color of the component. Default value is 'COLORS.WHITE'.
   */
   strokeColor: PropTypes.string,
 
@@ -47,8 +49,8 @@ GreenCheckmarkIcon.propTypes = {
   className: PropTypes.string
 };
 GreenCheckmarkIcon.defaultProps = {
-  size: 40,
-  strokeColor: '#ffffff',
-  color: '#2E8540',
+  size: ICON_SIZES.LARGE,
+  strokeColor: COLORS.WHITE,
+  color: COLORS.GREEN,
   className: 'green-checkmark'
 };

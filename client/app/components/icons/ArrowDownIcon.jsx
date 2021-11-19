@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const ArrowDownIcon = (props) => {
   const { size, color, className } = props;
@@ -27,7 +28,8 @@ export const ArrowDownIcon = (props) => {
 ArrowDownIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -42,7 +44,7 @@ ArrowDownIcon.propTypes = {
   className: PropTypes.string
 };
 ArrowDownIcon.defaultProps = {
-  size: 17,
+  size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
   className: ''
 };

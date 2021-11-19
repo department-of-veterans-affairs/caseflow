@@ -72,7 +72,7 @@ export default class SearchBar extends React.Component {
         <div className="search-text-spinner">
           <LoadingIcon
             text=""
-            size="25px"
+            size={25}
             color={spinnerColor}
           />
         </div>

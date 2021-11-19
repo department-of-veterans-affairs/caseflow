@@ -1,5 +1,6 @@
 import React from 'react';
 import { GrayDotIcon } from '../../app/components/icons/GrayDotIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/GrayDotIcon',
@@ -14,10 +15,10 @@ export default {
     strokeColor: { control: { type: 'color' } }
   },
   args: {
-    size: 25,
-    color: '#D6D7D9',
+    size: ICON_SIZES.MEDIUM,
+    color: COLORS.GREY,
     className: 'gray-dot',
-    strokeColor: '#ffffff'
+    strokeColor: COLORS.WHITE
   }
 };
 

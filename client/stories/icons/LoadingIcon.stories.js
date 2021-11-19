@@ -1,5 +1,5 @@
 import React from 'react';
-import { LOGO_COLORS } from '../../app/constants/AppConstants';
+import { ICON_SIZES, LOGO_COLORS } from '../../app/constants/AppConstants';
 import { LoadingIcon } from '../../app/components/icons/LoadingIcon';
 
 export default {
@@ -16,7 +16,7 @@ export default {
   },
   args: {
     text: '',
-    size: '30px',
+    size: ICON_SIZES.LARGE,
     color: LOGO_COLORS.DISPATCH.ACCENT,
     className: 'cf-loading-button-symbol cf-small-loader-symbol'
   }
@@ -30,4 +30,4 @@ export const WithText = Template.bind({});
 WithText.args = { text: 'loading...' };
 
 export const Large = Template.bind({});
-Large.args = { size: '150px' };
+Large.args = { size: 150 };

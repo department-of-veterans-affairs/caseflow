@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const LinkIcon = (props) => {
   const { size, leftColor, className, rightColor } = props;
@@ -53,17 +54,18 @@ export const LinkIcon = (props) => {
 LinkIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '9px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.XSMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#050606'.
+  Sets color of the component. Default value is 'COLORS.BASE'.
   */
   rightColor: PropTypes.string,
 
   /**
-  Sets the background color of the component. Default value is '#0F0F10'.
+  Sets the background color of the component. Default value is 'COLORS.BASE'.
   */
   leftColor: PropTypes.string,
 
@@ -73,8 +75,8 @@ LinkIcon.propTypes = {
   className: PropTypes.string
 };
 LinkIcon.defaultProps = {
-  size: 9,
-  leftColor: '#0F0F10',
-  rightColor: '#050606',
+  size: ICON_SIZES.XSMALL,
+  leftColor: COLORS.BASE,
+  rightColor: COLORS.BASE,
   className: ''
 };

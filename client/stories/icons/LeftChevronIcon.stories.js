@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { LeftChevronIcon } from '../../app/components/icons/LeftChevronIcon';
 
 export default {
@@ -14,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
+    size: ICON_SIZES.SMALL,
     color: COLORS.WHITE,
-    size: 17,
     className: 'fa-chevron-left'
   }
 };

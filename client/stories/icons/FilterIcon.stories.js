@@ -12,7 +12,7 @@ export default {
     selected: false,
     label: '',
     iconName: '',
-    className: 'table-icon'
+    className: 'table-icon',
   }
 };
 
@@ -22,7 +22,7 @@ export const Default = Template.bind({});
 Default.parameters = {
   docs: {
     description: {
-      component: 'The FilterIcon toggles the SelectedFilterIcon and UnselectedFilterIcon based on the selected props value.',
+      component: 'The FilterIcon toggles the SelectedFilterIcon and UnselectedFilterIcon based on the selected props value. The size of this icon is set independently on the SelectedFilterIcon and UnselectedFilterIcon components.',
     },
   },
 };

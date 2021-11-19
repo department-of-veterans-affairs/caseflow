@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const MagnifyingGlassIcon = (props) => {
   const { color, size, className } = props;
@@ -21,7 +21,7 @@ export const MagnifyingGlassIcon = (props) => {
 MagnifyingGlassIcon.propTypes = {
 
   /**
-  Sets size of the component. Default value is '24px'.
+  Sets size of the component. Default value is 'ICON_SIZES.MEDIUM'.
   */
   size: PropTypes.number,
 
@@ -36,7 +36,7 @@ MagnifyingGlassIcon.propTypes = {
   className: PropTypes.string
 };
 MagnifyingGlassIcon.defaultProps = {
-  size: 24,
+  size: ICON_SIZES.MEDIUM,
   color: COLORS.GREY_MEDIUM,
   className: ''
 };

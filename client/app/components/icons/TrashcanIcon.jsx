@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const TrashcanIcon = (props) => {
   const { color, size, className, strokeColor } = props;
@@ -39,17 +40,18 @@ export const TrashcanIcon = (props) => {
 TrashcanIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '26px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.MEDIUM'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is ''.
+  Sets color of the component. Default value is 'COLORS.WHITE'.
   */
   color: PropTypes.string,
 
   /**
-  Sets stroke color of the component. Default value is '#0872B9'.
+  Sets stroke color of the component. Default value is 'COLORS.PRIMARY'.
   */
 
   strokeColor: PropTypes.string,
@@ -60,8 +62,8 @@ TrashcanIcon.propTypes = {
   className: PropTypes.string
 };
 TrashcanIcon.defaultProps = {
-  size: 26,
-  color: '',
-  strokeColor: '#0872B9',
+  size: ICON_SIZES.MEDIUM,
+  color: COLORS.WHITE,
+  strokeColor: COLORS.PRIMARY,
   className: ''
 };

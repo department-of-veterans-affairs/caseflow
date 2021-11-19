@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const FilterNoOutlineIcon = (props) => {
   const { color, size, className } = props;
@@ -26,12 +26,13 @@ export const FilterNoOutlineIcon = (props) => {
 FilterNoOutlineIcon.propTypes = {
 
   /**
-  Sets the color of the component. Default color is white.
+  Sets the color of the component. Default color is 'COLORS.WHITE'.
   */
   color: PropTypes.string,
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '12px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -42,6 +43,6 @@ FilterNoOutlineIcon.propTypes = {
 };
 FilterNoOutlineIcon.defaultProps = {
   color: COLORS.WHITE,
-  size: 14,
+  size: ICON_SIZES.SMALL,
   className: 'filter-icon'
 };

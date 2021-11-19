@@ -1,6 +1,6 @@
 import React from 'react';
 import { FilterNoOutlineIcon } from '../../app/components/icons/FilterNoOutlineIcon';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/FilterNoOutlineIcon',
@@ -15,7 +15,7 @@ export default {
   },
   args: {
     color: COLORS.WHITE,
-    size: 14,
+    size: ICON_SIZES.SMALL,
     className: 'filter-icon'
   }
 };

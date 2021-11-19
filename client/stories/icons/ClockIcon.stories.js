@@ -1,5 +1,6 @@
 import React from 'react';
 import { ClockIcon } from '../../app/components/icons/ClockIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/ClockIcon',
@@ -13,8 +14,8 @@ export default {
     className: { control: { type: 'text' } },
   },
   args: {
-    size: 16,
-    color: 'currentColor',
+    size: ICON_SIZES.SMALL,
+    color: COLORS.BASE,
     className: 'svg-inline--fa fa-clock fa-w-16'
   }
 };

@@ -18,7 +18,7 @@ export default class SmallLoader extends React.Component {
       {...componentProps}>
       <LoadingIcon
         text={message}
-        size="19px"
+        size={19}
         color={spinnerColor}
       />
     </Component>;

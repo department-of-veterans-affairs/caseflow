@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-// Not used anywhere
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const MissingIcon = (props) => {
   const { color, size, className } = props;
@@ -23,22 +22,23 @@ export const MissingIcon = (props) => {
 MissingIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '55px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.XLARGE'.
   */
-  size: PropTypes.string,
+  size: PropTypes.number,
 
   /**
-  Sets the color of the component. Default color is red.
+  Sets the color of the component. Default color is 'COLORS.RED'.
   */
   color: PropTypes.string,
 
   /**
-  Sets the className of the component. Default class is empty.
+  Sets the className of the component. Default class is 'cf-icon-missing'.
   */
   className: PropTypes.string,
 };
 MissingIcon.defaultProps = {
-  size: '55',
-  color: '',
+  size: ICON_SIZES.XLARGE,
+  color: COLORS.RED,
   className: 'cf-icon-missing'
 };

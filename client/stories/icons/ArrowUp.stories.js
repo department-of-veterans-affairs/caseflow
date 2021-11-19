@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { ArrowUpIcon } from '../../app/components/icons/ArrowUpIcon';
 
 export default {
@@ -14,8 +14,8 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
+    size: ICON_SIZES.SMALL,
     color: COLORS.GREY_DARK,
-    size: 17,
     className: ''
   }
 };

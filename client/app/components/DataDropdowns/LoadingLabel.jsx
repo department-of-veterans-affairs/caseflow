@@ -12,7 +12,7 @@ const LoadingLabel = ({ text = '' }) => (
   })}>
     <LoadingIcon
       text=""
-      size="15px"
+      size={15}
     />
     {text}
   </span>

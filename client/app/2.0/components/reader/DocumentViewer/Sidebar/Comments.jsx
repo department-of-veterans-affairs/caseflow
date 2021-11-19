@@ -30,7 +30,7 @@ export const SidebarComments = ({
   <div>
     <span className="cf-right-side cf-add-comment-button">
       <Button name="AddComment" onClick={addComment} >
-        <span><PlusIcon />&nbsp; Add a comment</span>
+        <span><PlusIcon size={12} />&nbsp; Add a comment</span>
       </Button>
     </span>
     <div style={{ clear: 'both' }}></div>

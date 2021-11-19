@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const LockIcon = (props) => {
 
@@ -36,7 +36,8 @@ export const LockIcon = (props) => {
 LockIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '18px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
@@ -51,7 +52,7 @@ LockIcon.propTypes = {
   className: PropTypes.string,
 };
 LockIcon.defaultProps = {
-  size: 18,
+  size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
   className: 'cf-lock-icon'
 };

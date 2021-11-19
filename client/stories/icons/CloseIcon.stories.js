@@ -1,5 +1,6 @@
 import React from 'react';
 import { CloseIcon } from '../../app/components/icons/CloseIcon';
+import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 
 export default {
   title: 'Commons/Components/Icons/CloseIcon',
@@ -13,9 +14,9 @@ export default {
     className: { control: { type: 'text' } }
   },
   args: {
-    color: '',
-    size: '55',
-    className: ''
+    size: ICON_SIZES.XLARGE,
+    color: COLORS.BASE,
+    className: 'cf-icon-close'
   }
 };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ClockIcon = (props) => {
   const { size, color, className } = props;
@@ -14,12 +15,13 @@ export const ClockIcon = (props) => {
 ClockIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '16px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#000000'.
+  Sets color of the component. Default value is 'COLORS.BASE'.
   */
   color: PropTypes.string,
 
@@ -29,7 +31,7 @@ ClockIcon.propTypes = {
   className: PropTypes.string
 };
 ClockIcon.defaultProps = {
-  size: 16,
-  color: '#000000',
+  size: ICON_SIZES.SMALL,
+  color: COLORS.BASE,
   className: 'svg-inline--fa fa-clock fa-w-16'
 };

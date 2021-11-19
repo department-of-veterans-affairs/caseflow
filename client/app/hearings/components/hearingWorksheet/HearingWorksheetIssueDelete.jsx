@@ -36,7 +36,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
         name="Delete Issue"
         aria-label="Delete Issue"
         type="button">
-        <TrashcanIcon />
+        <TrashcanIcon size={26} />
       </button>
       { issue.isShowingModal && <Modal
         buttons = {[

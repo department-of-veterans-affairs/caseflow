@@ -31,7 +31,7 @@ class SideBarComments extends PureComponent {
         <Button
           name="AddComment"
           onClick={this.handleAddClick}>
-          <span><PlusIcon /> &nbsp; Add a comment</span>
+          <span><PlusIcon size={12} /> &nbsp; Add a comment</span>
         </Button>
       </span>
       <div style={{ clear: 'both' }}></div>

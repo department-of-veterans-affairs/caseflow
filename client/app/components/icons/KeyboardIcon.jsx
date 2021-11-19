@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const KeyboardIcon = (props) => {
   const { size, color, className } = props;
@@ -31,12 +32,13 @@ export const KeyboardIcon = (props) => {
 KeyboardIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is '17px'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 
   /**
-  Sets color of the component. Default value is '#0872B9'.
+  Sets color of the component. Default value is 'COLORS.PRIMARY'.
   */
   color: PropTypes.string,
 
@@ -46,7 +48,7 @@ KeyboardIcon.propTypes = {
   className: PropTypes.string
 };
 KeyboardIcon.defaultProps = {
-  size: 17,
-  color: '#0872B9',
+  size: ICON_SIZES.SMALL,
+  color: COLORS.PRIMARY,
   className: ''
 };
