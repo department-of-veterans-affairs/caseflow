@@ -49,8 +49,15 @@ feature "Higher-Level Review", :all_dbs do
   let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
-  before { FeatureToggle.enable!(:filed_by_va_gov_hlr) }
-  after { FeatureToggle.disable!(:filed_by_va_gov_hlr) }
+  before do
+    FeatureToggle.enable!(:filed_by_va_gov_hlr)
+    FeatureToggle.enable!(:updated_intake_forms)
+  end
+  after do
+    FeatureToggle.disable!(:filed_by_va_gov_hlr)
+    FeatureToggle.disable!(:updated_intake_forms)
+  end
+
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -90,12 +97,11 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content(
       "Was this form submitted through VA.gov?"
     )
+
     expect(page).to have_content(
       "Was an informal conference requested?\nPlease select an option."
     )
-    expect(page).to have_content(
-      "Was an interview by the same office requested?\nPlease select an option."
-    )
+
     expect(page).to have_content(
       "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
@@ -118,10 +124,6 @@ feature "Higher-Level Review", :all_dbs do
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Was an interview by the same office requested?") do
-      find("label", text: "No", match: :prefer_exact).click
     end
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
@@ -181,9 +183,7 @@ feature "Higher-Level Review", :all_dbs do
       expect(find_field("Yes", visible: false)).to be_checked
     end
 
-    within_fieldset("Was an interview by the same office requested?") do
-      expect(find_field("No", visible: false)).to be_checked
-    end
+    expect(page).to_not have_content("Was an interview by the same office requested?")
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
@@ -198,7 +198,7 @@ feature "Higher-Level Review", :all_dbs do
     expect(higher_level_review.filed_by_va_gov).to eq(true)
     expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
-    expect(higher_level_review.same_office).to eq(false)
+    expect(higher_level_review.same_office).to be_nil
     expect(higher_level_review.legacy_opt_in_approved).to eq(false)
     expect(higher_level_review.claimant).to have_attributes(
       participant_id: "5382910292",
@@ -401,61 +401,66 @@ feature "Higher-Level Review", :all_dbs do
 
   let(:special_issue_reference_id) { "IAMANEPID" }
 
-  it "Creates contentions with same office special issue" do
-    Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
+  context("when remove same office input toggle disabled") do
+    before { FeatureToggle.disable!(:updated_intake_forms) }
+    after { FeatureToggle.enable!(:updated_intake_forms) }
 
-    visit "/intake"
-    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
-    safe_click ".cf-submit.usa-button"
-    fill_in search_bar_title, with: veteran_file_number
-    click_on "Search"
+    it "Creates contentions with same office special issue" do
+      Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      safe_click ".cf-submit.usa-button"
+      fill_in search_bar_title, with: veteran_file_number
+      click_on "Search"
+
+      within_fieldset("What is the Benefit Type?") do
+        find("label", text: "Compensation", match: :prefer_exact).click
+      end
+
+      fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
+
+      within_fieldset("Was this form submitted through VA.gov?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      within_fieldset("Was an informal conference requested?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      within_fieldset("Was an interview by the same office requested?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+
+      select_agree_to_withdraw_legacy_issues(false)
+
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
+      expect(higher_level_review.same_office).to eq(true)
+
+      click_intake_add_issue
+      add_intake_rating_issue("PTSD denied")
+
+      click_intake_finish
+
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: veteran_file_number,
+        claim_id: special_issue_reference_id,
+        contentions: [{ description: "PTSD denied",
+                        contention_type: Constants.CONTENTION_TYPES.higher_level_review,
+                        special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
+      )
     end
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
-
-    within_fieldset("Was this form submitted through VA.gov?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Was an informal conference requested?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Was an interview by the same office requested?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    select_agree_to_withdraw_legacy_issues(false)
-
-    click_intake_continue
-    expect(page).to have_current_path("/intake/add_issues")
-
-    higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
-    expect(higher_level_review.same_office).to eq(true)
-
-    click_intake_add_issue
-    add_intake_rating_issue("PTSD denied")
-
-    click_intake_finish
-
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-
-    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: veteran_file_number,
-      claim_id: special_issue_reference_id,
-      contentions: [{ description: "PTSD denied",
-                      contention_type: Constants.CONTENTION_TYPES.higher_level_review,
-                      special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
-      user: current_user,
-      claim_date: higher_level_review.receipt_date.to_date
-    )
   end
 
   context "when disabling claim establishment is enabled" do
@@ -508,7 +513,7 @@ feature "Higher-Level Review", :all_dbs do
       veteran_file_number: test_veteran.file_number,
       filed_by_va_gov: false,
       receipt_date: receipt_date,
-      informal_conference: false, same_office: false,
+      informal_conference: false,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?

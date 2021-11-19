@@ -14,10 +14,12 @@ class Hearings::SendEmail
 
   attr_reader :hearing, :virtual_hearing, :type, :reminder_info
 
-  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {})
+  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {}, custom_subject: nil)
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
     @reminder_info = reminder_info
+    @custom_subject = custom_subject
+    @hearing.reload
   end
 
   def call
@@ -79,7 +81,7 @@ class Hearings::SendEmail
 
     case type
     when "confirmation"
-      HearingMailer.confirmation(**args)
+      HearingMailer.confirmation(**args, custom_subject: @custom_subject)
     when "cancellation"
       HearingMailer.cancellation(**args)
     when "updated_time_confirmation"

@@ -130,6 +130,16 @@ describe HearingMailer do
     subject { HearingMailer.confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
+  shared_context "confirmation_email_custom_subject" do
+    subject do
+      HearingMailer.confirmation(
+        email_recipient_info: recipient_info,
+        virtual_hearing: virtual_hearing,
+        custom_subject: "custom"
+      )
+    end
+  end
+
   shared_context "updated_time_confirmation_email" do
     subject do
       HearingMailer.updated_time_confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing)
@@ -402,6 +412,7 @@ describe HearingMailer do
 
       describe "#confirmation" do
         include_context "confirmation_email"
+        include_context "confirmation_email_custom_subject"
 
         it "sends an email" do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
@@ -446,6 +457,14 @@ describe HearingMailer do
               expect(error).to be_a(HearingMailer::BadVirtualLinkError)
             end
           end
+        end
+      end
+
+      describe "#confirmation with custom subject" do
+        include_context "confirmation_email_custom_subject"
+
+        it "sends an email with custom subject" do
+          expect(subject.subject).to include("custom")
         end
       end
 

@@ -263,8 +263,8 @@ CaseTitleDetails.propTypes = {
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
-  legacyJudgeTasks: PropTypes.object,
-  legacyAttorneyTasks: PropTypes.object
+  legacyJudgeTasks: PropTypes.array,
+  legacyAttorneyTasks: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => {

@@ -98,6 +98,8 @@ const formFieldMapping = (props) => {
       onChange={props.setBenefitType}
       errorMessage={props.benefitTypeError || props.errors?.['benefit-type-options']?.message}
       register={props.register}
+      formName={props.formName}
+      featureToggles={props.featureToggles}
     />,
     'informal-conference': <RadioField
       name="informal-conference"
