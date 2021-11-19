@@ -37,11 +37,19 @@ class HearingRequestDistributionQuery
   # due to incompatibilities between the two queries.
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
-    [most_recent_held_hearings_not_tied_to_any_active_judge, no_hearings_or_no_held_hearings].flatten
+    [
+      most_recent_held_hearings_not_tied_to_any_judge,
+      most_recent_held_hearings_exceeding_affinity_threshold,
+      no_hearings_or_no_held_hearings
+    ].flatten.uniq
   end
 
-  def most_recent_held_hearings_not_tied_to_any_active_judge
-    base_relation.most_recent_hearings.not_tied_to_any_active_judge
+  def most_recent_held_hearings_exceeding_affinity_threshold
+    base_relation.most_recent_hearings.exceeding_affinity_threshold
+  end
+
+  def most_recent_held_hearings_not_tied_to_any_judge
+    base_relation.most_recent_hearings.not_tied_to_any_judge
   end
 
   def with_no_hearings
@@ -69,14 +77,34 @@ class HearingRequestDistributionQuery
       joins(query, hearings: :hearing_day)
     end
 
-    def tied_to_distribution_judge(judge)
-      where(hearings: { disposition: "held", judge_id: judge.id })
+    def with_assigned_distribution_task_sql
+      # both `appeal_type` and `appeal_id` necessary due to composite index
+      <<~SQL
+        INNER JOIN tasks AS distribution_task
+        ON distribution_task.appeal_type = 'Appeal'
+        AND distribution_task.appeal_id = appeals.id
+        AND distribution_task.type = 'DistributionTask'
+        AND distribution_task.status = 'assigned'
+      SQL
     end
 
-    def not_tied_to_any_active_judge
-      judge_css_ids = JudgeTeam.pluck(:name)
-      inactive_judges = User.where(css_id: judge_css_ids).where("last_login_at < ?", 60.days.ago).pluck(:id)
-      where(hearings: { disposition: "held", judge_id: inactive_judges.append(nil) })
+    def tied_to_distribution_judge(judge)
+      joins(with_assigned_distribution_task_sql)
+        .where(hearings: { disposition: "held", judge_id: judge.id })
+        .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+    end
+
+    # If an appeal has exceeded the affinity, it should be returned to genpop.
+    def exceeding_affinity_threshold
+      joins(with_assigned_distribution_task_sql)
+        .where(hearings: { disposition: "held" })
+        .where("distribution_task.assigned_at <= ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+    end
+
+    # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
+    # when that distinction became irrelevant because cases become genpop after 30 days anyway.
+    def not_tied_to_any_judge
+      where(hearings: { disposition: "held", judge_id: nil })
     end
 
     def with_no_hearings

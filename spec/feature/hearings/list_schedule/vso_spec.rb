@@ -20,8 +20,8 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:judge_one) { create(:user, :with_vacols_judge_record, full_name: "Judge One") }
     let!(:judge_two) { create(:user, :with_vacols_judge_record, full_name: "Judge Two") }
     let!(:judge_three) { create(:user, :with_vacols_judge_record, full_name: "Judge Three") }
-    let!(:hearing_day_one) { create(:hearing_day, judge: judge_one) }
-    let!(:hearing_day_two) { create(:hearing_day, judge: judge_two) }
+    let!(:hearing_day_one) { create(:hearing_day, judge: judge_one, request_type: "R", regional_office: "RO17") }
+    let!(:hearing_day_two) { create(:hearing_day, judge: judge_two, request_type: "V", regional_office: "RO17") }
     let!(:hearing_day_three) { create(:hearing_day, judge: judge_three) }
     let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
     let!(:hearing_two) { create(:hearing, :with_tasks, hearing_day: hearing_day_two) }
@@ -45,9 +45,17 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
 
     scenario "Only hearing days with VSO assigned hearings are displayed" do
       visit "hearings/schedule"
-      expect(page).to have_content("One, Judge")
-      expect(page).to_not have_content("Two, Judge")
-      expect(page).to have_content("Three, Judge")
+
+      expect(page).to have_content("Central")
+      expect(page).to_not have_content("Video")
+      expect(page).to have_content("Virtual")
+    end
+
+    scenario "VLJ names do not displayed" do
+      visit "hearings/schedule"
+
+      expect(page).to_not have_content("One, Judge")
+      expect(page).to_not have_content("Three, Judge")
     end
   end
 end
