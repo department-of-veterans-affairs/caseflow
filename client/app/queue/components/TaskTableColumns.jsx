@@ -139,6 +139,17 @@ export const taskColumn = (tasks, filterOptions) => {
   };
 };
 
+export const assignedByColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+    backendCanSort: true,
+    valueFunction: (task) =>
+      task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+    getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
 export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
