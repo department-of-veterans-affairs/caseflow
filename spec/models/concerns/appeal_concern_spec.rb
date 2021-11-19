@@ -81,6 +81,46 @@ describe AppealConcern do
   end
 
   describe "accessibility for VSOs" do
-    # add some context stuff here
+    let(:user) { "TestVsoUser" }
+    let(:appeal) { create(:appeal) }
+    let(:bgs) { Fakes::BGSService.new }
+
+    context "when assigned_to_vso" do
+      before do
+        allow_any_instance_of(Appeal).to receive(:assigned_to_vso?).and_return(true)
+      end
+      it "returns true" do
+        expect(appeal.accessible?).to be_truthy
+      end
+    end
+
+    context "when user represents claimant not veteran" do
+      before do
+        allow_any_instance_of(Appeal).to receive(:user_represents_claimant_not_veteran?).and_return(true)
+      end
+      it "returns true" do
+        expect(appeal.accessible?).to be_truthy
+      end
+    end
+
+    context "when bgs can access is true" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(true)
+      end
+      it "returns true" do
+        expect(appeal.accessible?).to be_truthy
+      end
+    end
+
+    context "when none of the parameters are true" do
+      before do
+        allow_any_instance_of(Appeal).to receive(:assigned_to_vso?).and_return(false)
+        allow_any_instance_of(Appeal).to receive(:user_represents_claimant_not_veteran?).and_return(false)
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
+      end
+      it "returns false" do
+        expect(appeal.accessible?).to be_falsey
+      end
+    end
   end
 end
