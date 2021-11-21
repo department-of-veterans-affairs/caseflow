@@ -49,6 +49,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
 
