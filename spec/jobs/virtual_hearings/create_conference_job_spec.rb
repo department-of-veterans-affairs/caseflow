@@ -117,7 +117,8 @@ describe VirtualHearings::CreateConferenceJob do
       before do
         expected_mailer_args = {
           email_recipient_info: having_attributes(title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]),
-          virtual_hearing: instance_of(VirtualHearing)
+          virtual_hearing: instance_of(VirtualHearing),
+          custom_subject: nil
         }
 
         allow(HearingMailer).to receive(:confirmation).with(any_args).and_call_original
