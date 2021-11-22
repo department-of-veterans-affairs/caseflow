@@ -26,9 +26,7 @@ class AssessDocumentationTask < Task
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
 
-    task_actions = []
-
-    task_actions.concat(DEFAULT_ACTIONS)
+    task_actions = Array.new(DEFAULT_ACTIONS)
 
     if assigned_to.is_a?(VhaProgramOffice)
       if FeatureToggle.enabled?(:visn_predocket_workflow, user: user)
