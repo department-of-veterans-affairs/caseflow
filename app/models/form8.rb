@@ -93,7 +93,7 @@ class Form8 < CaseflowRecord
       _initial_representative_name: appeal.representative_name,
       _initial_representative_type: appeal.representative_type,
       _initial_hearing_requested: appeal.hearing_requested ? "Yes" : "No",
-      _initial_ssoc_required: appeal.ssoc_dates.present? ? "Required and furnished": "Not required"
+      _initial_ssoc_required: appeal.ssoc_dates.present? ? "Required and furnished" : "Not required"
     )
   end
   # rubocop:enable Metrics/MethodLength
