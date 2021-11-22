@@ -29,7 +29,8 @@ export const ArrowRightIcon = (props) => {
 ArrowRightIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is 'ICON_SIZES.SMALL'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.SMALL'.
   */
   size: PropTypes.number,
 

@@ -24,7 +24,8 @@ export const CancelIcon = (props) => {
 CancelIcon.propTypes = {
 
   /**
-  Sets height of the component, width is set automatically by the svg viewbox property. Default height is 'ICON_SIZES.LARGE'.
+  Sets height of the component, width is set automatically by the svg viewbox property.
+  Default height is 'ICON_SIZES.LARGE'.
   */
   size: PropTypes.number,
 

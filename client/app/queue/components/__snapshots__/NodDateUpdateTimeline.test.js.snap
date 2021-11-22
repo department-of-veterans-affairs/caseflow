@@ -21,9 +21,9 @@ exports[`NodDateUpdateTimeline renders correctly 1`] = `
     >
       <GreenCheckmarkIcon
         className="green-checkmark"
-        color="#2E8540"
+        color="#2e8540"
         size={40}
-        strokeColor="#ffffff"
+        strokeColor="#fff"
       />
       <div
         data-css-78t0uq=""

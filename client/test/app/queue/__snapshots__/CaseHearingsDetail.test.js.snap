@@ -64,7 +64,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                     stroke-width="1"
                   >
                     <g
-                      fill="#0071BC"
+                      fill="#0071bc"
                       fill-rule="nonzero"
                       transform="translate(-729.000000, -307.000000)"
                     >
