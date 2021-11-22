@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class BvaIntake < Organization
-  class << self
-    def singleton
+    def self.singleton
       BvaIntake.first || BvaIntake.create(name: "BVA Intake", url: "bva-intake")
     end
 
@@ -33,5 +32,4 @@ class BvaIntake < Organization
 			Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
 			Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
 		].compact
-  end
 end
