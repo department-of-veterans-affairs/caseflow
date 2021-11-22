@@ -1,14 +1,12 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import QueueTable from '../../queue/QueueTable';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
-import { formatHearingType } from '../utils';
+import { scheduleData } from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -18,8 +16,6 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
-import moment from 'moment';
-
 import { LIST_SCHEDULE_VIEWS } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 import WindowUtil from '../../util/WindowUtil';
@@ -27,12 +23,6 @@ import WindowUtil from '../../util/WindowUtil';
 const downloadButtonStyling = css({
   marginTop: '60px'
 });
-
-const formatVljName = (lastName, firstName) => {
-  if (lastName && firstName) {
-    return `${lastName}, ${firstName}`;
-  }
-};
 
 const inlineFormStyling = css({
   '> div': {
@@ -60,25 +50,6 @@ const clearfix = css({
     display: 'block'
   }
 });
-
-const exportHeaders = [
-  { label: 'ID',
-    key: 'id' },
-  { label: 'Scheduled For',
-    key: 'scheduledFor' },
-  { label: 'Type',
-    key: 'readableRequestType' },
-  { label: 'Regional Office',
-    key: 'regionalOffice' },
-  { label: 'Room',
-    key: 'room' },
-  { label: 'CSS ID',
-    key: 'judgeCssId' },
-  { label: 'VLJ',
-    key: 'vlj' },
-  { label: 'Hearings Scheduled',
-    key: 'hearingsScheduled' }
-];
 
 const SwitchViewDropdown = ({ onSwitchView }) => {
   return (
@@ -149,7 +120,10 @@ class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
+    const data = scheduleData(this.props);
+
     this.state = {
+      ...data,
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
@@ -158,6 +132,16 @@ class ListSchedule extends React.Component {
     this.props.onResetDeleteSuccessful();
   };
 
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.hearingSchedule !== this.props.hearingSchedule) {
+      const data = scheduleData(this.props);
+
+      this.setState({
+        ...data
+      });
+    }
+  }
+
   // forces remount of LoadingDataDisplay
   setDateRangeKey = () => {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
@@ -165,97 +149,6 @@ class ListSchedule extends React.Component {
 
   formatHearingsScheduled = (filledSlots) => {
     return filledSlots;
-  }
-
-  getHearingScheduleRows = () => {
-    const { hearingSchedule } = this.props;
-
-    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
-      map((hearingDay) => ({
-        id: hearingDay.id,
-        scheduledFor: hearingDay.scheduledFor,
-        readableRequestType: hearingDay.readableRequestType,
-        regionalOffice: hearingDay.regionalOffice,
-        room: hearingDay.room,
-        judgeCssId: hearingDay.judgeCssId,
-        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
-        hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots)
-      }));
-  };
-
-  getHearingScheduleColumns = (hearingScheduleRows) => {
-    const columns = [
-      {
-        header: 'Date',
-        name: 'Date',
-        align: 'left',
-        valueName: 'scheduledFor',
-        columnName: 'date',
-        valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
-          {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
-        </Link>,
-        getSortValue: (row) => {
-          return row.scheduledFor;
-        }
-      },
-      {
-        header: 'Type',
-        name: 'Type',
-        cellClass: 'type-column',
-        align: 'left',
-        tableData: hearingScheduleRows,
-        enableFilter: true,
-        filterValueTransform: formatHearingType,
-        anyFiltersAreSet: true,
-        label: 'Filter by type',
-        columnName: 'readableRequestType',
-        valueName: 'Hearing Type',
-        valueFunction: (row) => row.readableRequestType
-      },
-      {
-        header: 'Regional Office',
-        name: 'Regional Office',
-        tableData: hearingScheduleRows,
-        enableFilter: true,
-        anyFiltersAreSet: true,
-        enableFilterTextTransform: false,
-        label: 'Filter by RO',
-        columnName: 'regionalOffice',
-        valueName: 'regionalOffice'
-      },
-      {
-        header: 'Room',
-        name: 'Room',
-        align: 'left',
-        valueName: 'room',
-        columnName: 'room',
-        tableData: hearingScheduleRows,
-        getSortValue: (hearingDay) => {
-          return hearingDay.room;
-        }
-      },
-      {
-        header: 'VLJ',
-        name: 'VLJ',
-        align: 'left',
-        tableData: hearingScheduleRows,
-        enableFilter: true,
-        anyFiltersAreSet: true,
-        label: 'Filter by VLJ',
-        columnName: 'vlj',
-        valueName: 'vlj'
-      },
-      {
-        header: 'Hearings Scheduled',
-        name: 'Hearings Scheduled',
-        align: 'left',
-        tableData: hearingScheduleRows,
-        columnName: 'hearingsScheduled',
-        valueName: 'hearingsScheduled'
-      }
-    ];
-
-    return columns;
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -280,9 +173,6 @@ class ListSchedule extends React.Component {
   }
 
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows();
-    const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
-
     return (
       <React.Fragment>
         <div {...clearfix}>
@@ -297,8 +187,8 @@ class ListSchedule extends React.Component {
           <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
             {this.props.user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
-              data={hearingScheduleRows}
-              headers={exportHeaders}
+              data={this.state.columns}
+              headers={this.state.headers}
               target="_blank"
               filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
               <Button classNames={['usa-button-secondary']}>
@@ -308,7 +198,7 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          {this.getListView(hearingScheduleColumns, hearingScheduleRows)}
+          {this.getListView(this.state.columns, this.state.rows)}
         </div>
       </React.Fragment>
 

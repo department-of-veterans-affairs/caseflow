@@ -21,7 +21,11 @@ class HearingSerializer
   attribute :appeal_id
   attribute :appellant_address_line_1
   attribute :appellant_city
-  attribute :appellant_email_address, if: for_full
+  attribute :appellant_email_address
+  attribute :appellant_tz
+  attribute :appellant_email_id, if: for_full do |hearing|
+    hearing.appellant_recipient&.id.to_s
+  end
   attribute :appellant_first_name
   attribute :appellant_is_not_veteran do |hearing|
     hearing.appeal.appellant_is_not_veteran
@@ -35,19 +39,14 @@ class HearingSerializer
   attribute :central_office_time_string
   attribute :claimant_id
   attribute :closest_regional_office
+  attribute :contested_claim do |hearing|
+    hearing.appeal.contested_claim?
+  end
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
   attribute :docket_name
   attribute :docket_number
-  attribute :email_recipients do |object|
-    {
-      representativeTz: object.representative_recipient&.timezone,
-      representativeEmail: object.representative_recipient&.email_address,
-      appellantTz: object.appellant_recipient&.timezone,
-      appellantEmail: object.appellant_recipient&.email_address
-    }
-  end
   attribute :evidence_window_waived
   attribute :external_id
   attribute :hearing_day_id
@@ -71,6 +70,12 @@ class HearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
+  attribute :representative_tz, if: for_full do |hearing|
+    hearing.representative_tz || hearing.appeal.appellant_tz
+  end
+  attribute :representative_email_id, if: for_full do |hearing|
+    hearing.representative_recipient&.id.to_s
+  end
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_for_is_past, &:scheduled_for_past?
@@ -88,8 +93,6 @@ class HearingSerializer
   attribute :veteran_last_name
   attribute :veteran_email_address, if: for_full
   attribute :is_virtual, &:virtual?
-  attribute :appellant_tz, if: for_full
-  attribute :representative_tz, if: for_full
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]

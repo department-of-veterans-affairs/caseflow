@@ -10,7 +10,7 @@ import { COLORS } from 'app/constants/AppConstants';
  */
 
 const ContestedClaimBadge = (props) => {
-  const { appeal, longTooltip } = props;
+  const { appeal, longTooltip, docketTooltipText } = props;
 
   if (!appeal.contestedClaim) {
     return null;
@@ -21,12 +21,13 @@ const ContestedClaimBadge = (props) => {
   </div>;
 
   return <Badge name="contested"
-    displayName="CC" color={COLORS.PURPLE} tooltipText={tooltipText} />;
+    displayName="CC" color={COLORS.PURPLE} tooltipText={docketTooltipText ? docketTooltipText : tooltipText} />;
 };
 
 ContestedClaimBadge.propTypes = {
   appeal: PropTypes.object,
-  longTooltip: PropTypes.bool
+  longTooltip: PropTypes.bool,
+  docketTooltipText: PropTypes.object
 };
 
 export default ContestedClaimBadge;

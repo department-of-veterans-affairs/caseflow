@@ -180,6 +180,7 @@ class Appeal < DecisionReview
       tasks.active.visible_in_queue_table_view,
       tasks.on_hold.visible_in_queue_table_view
     )
+
     return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks
@@ -464,7 +465,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
     end
   end
 

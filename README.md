@@ -560,7 +560,7 @@ We use the [simplecov](https://github.com/colszowka/simplecov) gem to evaluate t
 If you see a test coverage failure at CircleCI, you can evaluate test coverage locally for the affected files using
 the [single_cov](https://github.com/grosser/single_cov) gem.
 
-Add the line to any rspec file locally:
+Locally, add the below statement to the first line of any rspec file:
 
 ```
 SingleCov.covered!

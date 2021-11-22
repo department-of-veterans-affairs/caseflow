@@ -12,8 +12,8 @@ describe Distribution, :all_dbs do
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:today) { Time.utc(2019, 1, 1, 12, 0, 0) }
   let(:original_distributed_case_id) { "#{case_id}-redistributed-#{today.strftime('%F')}" }
-  let(:min_legacy_proportion) { DocketCoordinator::MINIMUM_LEGACY_PROPORTION }
-  let(:max_direct_review_proportion) { DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION }
+  let(:min_legacy_proportion) { Constants.DISTRIBUTION.minimum_legacy_proportion }
+  let(:max_direct_review_proportion) { Constants.DISTRIBUTION.maximum_direct_review_proportion }
 
   before do
     FeatureToggle.enable!(:test_facols)
@@ -217,7 +217,7 @@ describe Distribution, :all_dbs do
               .to eq total_tied_nonpriority_hearings
             subject.distribute!
             expect(subject.valid?).to eq(true)
-            # This may be less than BACKLOG_LIMIT when MINIMUM_LEGACY_PROPORTION is very large
+            # This may be less than BACKLOG_LIMIT when minimum_legacy_proportion is very large
             expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= BACKLOG_LIMIT
             dcs_legacy = subject.distributed_cases.where(docket: "legacy")
 

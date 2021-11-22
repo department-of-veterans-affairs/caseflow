@@ -49,7 +49,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
       subject
 
-      message = /Found [[:digit:]]+ unusual records for SpecialIssueList:.*\[#{sil.id}, "Appeal", nil\]/m
+      message = /Found [[:digit:]]+ unusual records .* for SpecialIssueList:.*\[#{sil.id}, "Appeal", nil\]/m
       expect(slack_service).to have_received(:send_notification).with(message, any_args).once
     end
   end
@@ -66,7 +66,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
 
       subject
 
-      message = /Found [[:digit:]]+ unusual records for HearingEmailRecipient:.*\[#{her.id}, nil, #{hearing.id}\]/m
+      message = /Found [[:digit:]]+ unusual records .* for HearingEmailRecipient:.*\[#{her.id}, nil, #{hearing.id}\]/m
       expect(slack_service).to have_received(:send_notification).with(message, any_args).once
     end
   end

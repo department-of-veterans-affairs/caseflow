@@ -71,6 +71,7 @@ export default class DailyDocketHearingRows extends React.Component {
           {this.state.hearings.length > 0 &&
             this.state.hearings.map((hearing, index) => (
               <DailyDocketRow
+                hearing={hearing}
                 hearingId={hearing.externalId}
                 index={index}
                 readOnly={readOnly}

@@ -6,7 +6,7 @@ import { mount } from 'enzyme';
 import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from 'test/data';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import { AddressLine } from 'app/hearings/components/details/Address';
-import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { getAppellantTitle } from 'app/hearings/utils';
 
 import COPY from 'COPY';
@@ -16,14 +16,14 @@ describe('HearingTypeConversionForm', () => {
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={legacyAppealForTravelBoard}
-        type={'Virtual'}
+        type="Virtual"
       />
     );
 
     // Assertions
     expect(hearingTypeConversionForm.find(VirtualHearingSection)).toHaveLength(2);
     expect(hearingTypeConversionForm.find(AddressLine)).toHaveLength(1);
-    expect(hearingTypeConversionForm.find(VirtualHearingEmail)).toHaveLength(2);
+    expect(hearingTypeConversionForm.find(HearingEmail)).toHaveLength(2);
     expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 
@@ -31,9 +31,9 @@ describe('HearingTypeConversionForm', () => {
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={legacyAppealForTravelBoard}
-        type={'Virtual'}
+        type="Virtual"
       />
-    )
+    );
 
     expect(
       hearingTypeConversionForm.
@@ -52,12 +52,12 @@ describe('HearingTypeConversionForm', () => {
       veteranInfo: {
         ...veteranInfoWithoutEmail
       }
-    }
+    };
 
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={appeal}
-        type={'Virtual'}
+        type="Virtual"
       />
     );
 
@@ -74,16 +74,16 @@ describe('HearingTypeConversionForm', () => {
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={appeal}
-        type={'Virtual'}
+        type="Virtual"
       />
     );
 
     expect(
-      hearingTypeConversionForm
-        .find('p')
-        .first()
-        .text()
-        .includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
+      hearingTypeConversionForm.
+        find('p').
+        first().
+        text().
+        includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
     ).toEqual(true);
     expect(hearingTypeConversionForm).toMatchSnapshot();
   });

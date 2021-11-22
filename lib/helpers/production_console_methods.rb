@@ -3,6 +3,20 @@
 require_relative "check_task_tree"
 
 module ProductionConsoleMethods
+  # Prints a more readable version of PaperTrail versioning data
+  # Usage: `pp _versions DistributionTask.last`
+  # :reek:UtilityFunction
+  def _versions(record)
+    record.try(:versions)&.map do |version|
+      {
+        who: [User.find_by_id(version.whodunnit)].compact
+          .map { |user| "#{user.css_id} (#{user.id}, #{user.full_name})" }.first,
+        when: version.created_at,
+        changeset: version.changeset
+      }
+    end
+  end
+
   # Run this before and after modifying a task tree
   def check_task_tree(appeal, verbose: true)
     CheckTaskTree.call(appeal, verbose: verbose)
