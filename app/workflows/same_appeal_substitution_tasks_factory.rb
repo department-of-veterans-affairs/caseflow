@@ -7,7 +7,10 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def create_substitute_tasks!
-    @appeal.distributed_to_a_judge? ? create_tasks_for_distributed_appeal : create_tasks_for_undistributed_appeal
+    if @appeal.distributed_to_a_judge?
+      create_tasks_for_distributed_appeal
+    end
+    create_selected_tasks
   end
 
   def create_tasks_for_distributed_appeal
@@ -16,7 +19,6 @@ class SameAppealSubstitutionTasksFactory
     elsif no_tasks_selected?
       reopen_decision_tasks
     end
-    create_selected_tasks
   end
 
   def no_tasks_selected?
@@ -36,15 +38,11 @@ class SameAppealSubstitutionTasksFactory
 
     puts("TKTK")
   end
+
   # TODO: clarify this is correct with product/design
   # copy existing judge decision review and atty decision tasks and reopen both if they are not already open
   def reopen_decision_tasks
     # TODO: attorney decision tasks copy_with_ancestors_to stream (reopen it, exclude the status and closed_at on_hold_at)
     puts("TKTK")
-  end
-
-
-  def create_tasks_for_undistributed_appeal
-    create_selected_tasks
   end
 end
