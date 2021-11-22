@@ -13,13 +13,10 @@ class SameAppealSubstitutionTasksFactory
   def create_tasks_for_distributed_appeal
     if @appeal.docket_type == Constants.AMA_DOCKETS.hearing && selected_tasks_include_hearing_tasks?
       send_hearing_appeal_back_to_distribution
-      create_selected_tasks
     elsif no_tasks_selected?
       reopen_decision_tasks
-    elsif !selected_tasks_include_hearing_tasks?
-      # Applies to every docket type.  Case remains with assigned judge.
-      create_selected_tasks
     end
+    create_selected_tasks
   end
 
   def no_tasks_selected?
@@ -29,12 +26,14 @@ class SameAppealSubstitutionTasksFactory
   def selected_tasks_include_hearing_tasks?
     puts("TKTK")
   end
-  
+
   def send_hearing_appeal_back_to_distribution
     puts("TKTK")
   end
 
   def create_selected_tasks
+    return if no_tasks_selected?
+
     puts("TKTK")
   end
   # TODO: clarify this is correct with product/design
@@ -46,7 +45,6 @@ class SameAppealSubstitutionTasksFactory
 
 
   def create_tasks_for_undistributed_appeal
-    puts("TKTK")
-    #  - submethod: no_selected_tasks
+    create_selected_tasks
   end
 end
