@@ -3,6 +3,14 @@
 describe AssessDocumentationTask, :postgres do
   let(:user) { create(:user) }
 
+  before do
+    FeatureToggle.enable!(:visn_predocket_workflow)
+  end
+
+  after do
+    FeatureToggle.disable!(:visn_predocket_workflow)
+  end
+
   context "#available_actions" do
     describe "for program office user" do
       let(:program_office) { VhaProgramOffice.create!(name: "Program Office", url: "Program Office") }
