@@ -180,6 +180,7 @@ class Appeal < DecisionReview
       tasks.active.visible_in_queue_table_view,
       tasks.on_hold.visible_in_queue_table_view
     )
+
     return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks

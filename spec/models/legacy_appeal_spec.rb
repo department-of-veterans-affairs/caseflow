@@ -1888,7 +1888,9 @@ describe LegacyAppeal, :all_dbs do
         end
       end
 
-      let(:vacols_case) { create(:case, :representative_american_legion, correspondent: correspondent) }
+      let(:vacols_case) do
+        create(:case, :representative_american_legion, correspondent: correspondent, bfcorlid: appellant_ssn)
+      end
       let(:appellant_ssn) { "666001234" }
       let(:appellant_pid) { "1234" }
       let(:poa_pid) { "600153863" } # defined in Fakes::BGSService
@@ -1901,10 +1903,11 @@ describe LegacyAppeal, :all_dbs do
           ssn: appellant_ssn
         )
       end
+      let!(:veteran) { create(:veteran, ssn: appellant_ssn) }
 
       it "uses appellant to load BGS POA" do
-        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
-        expect(appeal.power_of_attorney.bgs_participant_id).to eq poa_pid
+        expect(appeal.power_of_attorney.bgs_representative_name).to eq nil
+        expect(appeal.power_of_attorney.bgs_participant_id).to eq nil
       end
     end
 
@@ -2717,8 +2720,8 @@ describe LegacyAppeal, :all_dbs do
       context "if the only active case is a RootTask" do
         let!(:root_task) { create(:root_task, appeal: appeal) }
 
-        it "returns Case storage" do
-          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        it "returns Unassigned" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         end
       end
 
@@ -2731,8 +2734,8 @@ describe LegacyAppeal, :all_dbs do
         end
 
         describe "when there are no other tasks" do
-          it "returns Case storage because it does not include nonactionable tasks in its determinations" do
-            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+          it "returns Unassigned because it does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
           end
         end
 
