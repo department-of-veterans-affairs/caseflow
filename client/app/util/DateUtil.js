@@ -58,7 +58,7 @@ export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) 
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
-  if (Array.isArray(arrayOfDateStrings) {
+  if (Array.isArray(arrayOfDateStrings)) {
     return arrayOfDateStrings.map((dateString) => {
       return formatDateStr(dateString);
     }).join(', ');
