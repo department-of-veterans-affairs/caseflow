@@ -17,10 +17,12 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     def reset_sent_status_and_send(sent_email)
       reset_email_sent_on_email_recipients(sent_email.hearing)
       Hearings::SendEmail.new(
+        custom_subject: custom_email_subject(sent_email.hearing),
         virtual_hearing: sent_email.hearing.virtual_hearing,
         type: :confirmation,
         hearing: sent_email.hearing
       ).call
+      sent_email.update(sent_by: User.system_user)
     end
 
     def confirmation_hearing_email_events(start_date, end_date)
@@ -41,6 +43,10 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
       return false if sent_email.sent_hearing_admin_email_event.present?
 
+      # Reminder emails can also have User.system user as the sender, this works because we're only interested in
+      # confirmation emails for now.
+      return false if sent_email.sent_by == User.system_user
+
       message = get_gov_delivery_message_body(sent_email)
       bad_email?(message[:body])
     end
@@ -55,6 +61,12 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
     def reset_email_sent_on_email_recipients(hearing)
       hearing.email_recipients.update_all(email_sent: false)
+    end
+
+    def custom_email_subject(hearing)
+      "Updated confirmation (please disregard previous email): " \
+      "#{hearing.appeal.appellant_or_veteran_name}'s Board hearing is " \
+      "#{hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
     end
   end
 end
