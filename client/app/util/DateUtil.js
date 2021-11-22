@@ -58,9 +58,13 @@ export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) 
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
-  return arrayOfDateStrings.map((dateString) => {
-    return formatDateStr(dateString);
-  }).join(', ');
+  if (Array.isArray(arrayOfDateStrings) {
+    return arrayOfDateStrings.map((dateString) => {
+      return formatDateStr(dateString);
+    }).join(', ');
+  } else {
+    return ""
+  }
 };
 
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>

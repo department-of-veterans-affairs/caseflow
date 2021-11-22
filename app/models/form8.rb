@@ -79,7 +79,7 @@ class Form8 < CaseflowRecord
       representative_type: appeal.representative_type,
       hearing_requested: appeal.hearing_requested ? "Yes" : "No",
       hearing_held: appeal.hearing_held ? "Yes" : "No",
-      ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
+      ssoc_required: appeal.ssoc_dates.present? ? "Required and furnished" : "Not required",
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
       certification_date: Time.zone.now.to_date,
@@ -93,7 +93,7 @@ class Form8 < CaseflowRecord
       _initial_representative_name: appeal.representative_name,
       _initial_representative_type: appeal.representative_type,
       _initial_hearing_requested: appeal.hearing_requested ? "Yes" : "No",
-      _initial_ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished"
+      _initial_ssoc_required: appeal.ssoc_dates.present? ? "Required and furnished": "Not required"
     )
   end
   # rubocop:enable Metrics/MethodLength
