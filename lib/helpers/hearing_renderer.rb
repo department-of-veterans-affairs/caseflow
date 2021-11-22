@@ -291,7 +291,7 @@ class HearingRenderer
         end
       }
     end
-    children << structure(hearing&.hearing_task_association&.hearing_task)
+    children << structure(hearing&.any_hearing_task)
   end
 
   def legacy_hearing_children(hearing)

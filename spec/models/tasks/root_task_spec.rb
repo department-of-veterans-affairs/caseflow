@@ -233,4 +233,25 @@ describe RootTask, :postgres do
       end
     end
   end
+
+  context "#assigned_to_label" do
+    let!(:root_task) { create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    subject { root_task.assigned_to_label }
+
+    context "when the root task is on hold" do
+      before { root_task.on_hold! }
+      it "returns Unassigned" do
+        expect(subject).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
+      end
+    end
+
+    context "when the root task is open" do
+      before { root_task.in_progress! }
+      it "returns Unassigned" do
+        expect(subject).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
+      end
+    end
+  end
 end

@@ -198,7 +198,7 @@ export const REVIEW_DATA_FIELDS = {
   },
   higherLevelReview: {
     informal_conference: { key: 'informalConference', required: true },
-    same_office: { key: 'sameOffice', required: true },
+    same_office: { key: 'sameOffice' },
     benefit_type: { key: 'benefitType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },

@@ -293,7 +293,7 @@ HeaderRow.propTypes = {
 
 Row.propTypes = {
   footer: PropTypes.bool,
-  rowId: PropTypes.number,
+  rowId: PropTypes.string,
   rowClassNames: PropTypes.func,
   rowObject: PropTypes.object.isRequired
 };
