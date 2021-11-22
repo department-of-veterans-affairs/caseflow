@@ -22,6 +22,8 @@ class AppellantSubstitution < CaseflowRecord
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
   after_commit :initialize_tasks
+  after_commit :initialize_tasks, unless: :same_appeal_substitution_allowed?
+  after_commit :create_substitute_tasks, if: :same_appeal_substitution_allowed?
 
   def substitute_claimant
     target_appeal.claimant
@@ -87,6 +89,10 @@ class AppellantSubstitution < CaseflowRecord
 
   def initialize_tasks
     InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
+  end
+
+  def create_substitute_tasks
+    SameAppealSubstitutionTasksFactory.new(target_appeal, selected_task_ids).create_substitute_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
