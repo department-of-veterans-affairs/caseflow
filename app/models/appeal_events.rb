@@ -87,7 +87,7 @@ class AppealEvents
   end
 
   def ssoc_events
-    appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
+    appeal.ssoc_dates&.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
   end
 
   def decision_event
