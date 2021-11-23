@@ -36,6 +36,7 @@ class SameAppealSubstitutionTasksFactory
   def send_hearing_appeal_back_to_distribution
     @appeal.root_task.in_progress!
     judge_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask]
+    # todo: also cancel any open attorney task here
     @appeal.tasks.of_type(judge_tasks).open.each(&:cancelled!)
     params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
                type: DistributionTask.name }
@@ -53,11 +54,10 @@ class SameAppealSubstitutionTasksFactory
   def reopen_decision_tasks
     excluded_attrs = %w[status closed_at placed_on_hold_at]
     # The appeal only has closed attorney tasks
-    if @appeal.tasks.of_type(:AttorneyTask) && @appeal.tasks.of_type(:AttorneyTask).open&.empty?
-      # which should get reopened if there are multiple completed attorney tasks?
-      # TODO: write a test for this later
-      attorney_task = @appeal.tasks.of_type(:AttorneyTask)[0]
+    if @appeal.tasks.of_type(:AttorneyTask)&.open&.empty?
+      attorney_task = @appeal.tasks.of_type(:AttorneyTask).closed.order(:id).last
       attorney_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
     end
+    # TODO: handle case where judge decision review task open and child attorney task is completed
   end
 end
