@@ -133,8 +133,6 @@ const mapStateToProps = (state, ownProps) => {
 
   const appeal = appealWithDetailSelector(state, { appealId: ownProps.appealId });
 
-  window.console.log(`Substitution appeal info - ${JSON.stringify(appeal)}`);
-
   return {
     veteranInfo: appeal?.veteranInfo,
     substitutions: appeal?.substitutions,
