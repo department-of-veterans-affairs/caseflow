@@ -14,6 +14,21 @@ class VirtualHearings::ResendVirtualHearingEmailsService
       end
     end
 
+    # This method is specific to a problem where :confirmation emails were going out with the wrong link in a
+    # certain time period. This allows tracking/retrieval of all the resent emails.
+    def find_resent_confirmaion_email_events
+      start_date = "16/Aug/2021 00:00:00 +0500" # Day before confirmation email problem potentially started
+      end_date = "17/Nov/2021 00:00:00 +0500" # Day after confirmation email  problem was stopped
+      events_in_date_range = SentHearingEmailEvent.where("sent_at > ?", start_date).where("sent_at < ?", end_date)
+
+      confirmations_with_system_user = events_in_date_range.where(email_type: :confirmation).where(sent_by: User.system_user)
+      resent_email_events = confirmations_with_system_user.inject([]) do |events, c|
+        events + c.hearing.email_events.where("sent_at > ?", end_date).where(email_type: :confirmation)
+      end
+
+      resent_email_events.sort_by { |e| e[:hearing_id] }.uniq
+    end
+
     def reset_sent_status_and_send(sent_email)
       begin
         reset_email_sent_on_email_recipients(sent_email.hearing)
