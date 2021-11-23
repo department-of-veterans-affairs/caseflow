@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
-  def initialize(appeal, selected_task_ids)
+  def initialize(appeal, selected_task_ids, created_by)
     @appeal = appeal
     @selected_task_ids = selected_task_ids
+    @created_by = created_by
   end
 
   def create_substitute_tasks!
@@ -26,11 +27,17 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def selected_tasks_include_hearing_tasks?
-    puts("TKTK")
+    selected_tasks = Task.where(id: @selected_task_ids).order(:id)
+    task_types = [:ScheduleHearingTask, :AssignHearingDispositionTask, :ChangeHearingDispositionTask,
+                  :ScheduleHearingColocatedTask, :NoShowHearingTask]
+    !selected_tasks.of_type(task_types).empty?
   end
 
   def send_hearing_appeal_back_to_distribution
-    puts("TKTK")
+    @appeal.root_task.in_progress!
+    params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
+      type: DistributionTask.name }
+    DistributionTask.create_from_params(params, @created_by)
   end
 
   def create_selected_tasks

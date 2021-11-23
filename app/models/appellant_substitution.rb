@@ -92,7 +92,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def create_substitute_tasks
-    SameAppealSubstitutionTasksFactory.new(target_appeal, selected_task_ids).create_substitute_tasks!
+    SameAppealSubstitutionTasksFactory.new(target_appeal, selected_task_ids, created_by).create_substitute_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
