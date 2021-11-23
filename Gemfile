@@ -34,6 +34,7 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
+gem "pagy"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -51,6 +52,7 @@ gem "rack", "~> 2.2.3"
 gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "ransack"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
