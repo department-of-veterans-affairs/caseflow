@@ -26,6 +26,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           it "sends the case back to distribution" do
             subject
             expect(appeal.ready_for_distribution?).to be true
+            judge_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask]
+            # binding.pry
+            expect(appeal.tasks.of_type(judge_tasks).open.empty?).to be true
           end
         end
       end
