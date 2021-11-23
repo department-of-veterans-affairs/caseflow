@@ -15,14 +15,19 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     end
 
     def reset_sent_status_and_send(sent_email)
-      reset_email_sent_on_email_recipients(sent_email.hearing)
-      Hearings::SendEmail.new(
-        custom_subject: custom_email_subject(sent_email.hearing),
-        virtual_hearing: sent_email.hearing.virtual_hearing,
-        type: :confirmation,
-        hearing: sent_email.hearing
-      ).call
-      sent_email.update(sent_by: User.system_user)
+      begin
+        reset_email_sent_on_email_recipients(sent_email.hearing)
+        Hearings::SendEmail.new(
+          custom_subject: custom_email_subject(sent_email.hearing),
+          virtual_hearing: sent_email.hearing.virtual_hearing,
+          type: :confirmation,
+          hearing: sent_email.hearing
+        ).call
+        sent_email.update(sent_by: User.system_user)
+      rescue StandardError, Hearings::SendEmail::RecipientIsDeceasedVeteran,
+             Caseflow::Error::VacolsRecordNotFound => error
+        Rails.logger.info(error)
+      end
     end
 
     def confirmation_hearing_email_events(start_date, end_date)
