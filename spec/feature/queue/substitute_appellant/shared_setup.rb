@@ -218,10 +218,8 @@ RSpec.shared_examples("fill substitution form") do
       visit "/queue/appeals/#{appeal.uuid}"
 
       expect(page).to_not have_content "+ Add Substitute"
+      # expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
 
-      if source_appeal.request_issues.none?(&:death_dismissed?)
-        expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
-      end
     end
   end
 end
