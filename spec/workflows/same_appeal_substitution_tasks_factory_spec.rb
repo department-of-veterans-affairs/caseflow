@@ -42,7 +42,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
                    associated_judge: judge,
                    associated_attorney: attorney)
           end
-          context "when there are only open decision tasks" do
+          context "when there is only one open JudgeDecisionReviewTask and one open AttorneyTask" do
             it "maintains the existing open decision tasks" do
               original_open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open.first
               original_open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
@@ -85,8 +85,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
               appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:completed!)
               decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task,
-                assigned_to: judge_two)
-              AttorneyTask.create!(appeal: appeal, parent: decision_task, assigned_by: judge_two, assigned_to: attorney_two)
+                                                              assigned_to: judge_two)
+              AttorneyTask.create!(appeal: appeal, parent: decision_task,
+                                   assigned_by: judge_two, assigned_to: attorney_two)
               appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
               appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:completed!)
             end
@@ -111,7 +112,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
               appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:completed!)
               decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task,
-                assigned_to: judge)
+                                                              assigned_to: judge)
               AttorneyTask.create!(appeal: appeal, parent: decision_task, assigned_by: judge, assigned_to: attorney)
             end
             it "maintains the existing open and closed tasks" do
@@ -127,6 +128,22 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first).to eq(original_open_judge_task)
               expect(appeal.tasks.of_type(:AttorneyTask).closed.first).to eq(original_closed_attorney_task)
               expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).closed.first).to eq(original_closed_judge_task)
+            end
+          end
+          context "when there is a closed AttorneyTask and an open JudgeDecisionReviewTask" do
+            before do
+              appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
+            end
+            it "maintains the existing appeal task tree" do
+              closed_attorney_task = appeal.tasks.of_type(:AttorneyTask).first
+              open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
+
+              subject
+
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first).to eq(open_judge_task)
+              expect(appeal.tasks.of_type(:AttorneyTask).first).to eq(closed_attorney_task)
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open.length).to eq(1)
+              expect(appeal.tasks.of_type(:AttorneyTask).open.length).to eq(0)
             end
           end
         end
