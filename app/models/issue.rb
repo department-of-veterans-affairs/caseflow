@@ -253,7 +253,7 @@ class Issue
     # the close_date is our local normalized disposition_date
     return close_date > legacy_appeal.soc_date if legacy_appeal.soc_date
 
-    legacy_appeal.ssoc_dates.any? { |ssoc_date| close_date > ssoc_date }
+    legacy_appeal.ssoc_dates&.any? { |ssoc_date| close_date > ssoc_date }
   end
 
   def friendly_description_for_codes(code_array)
