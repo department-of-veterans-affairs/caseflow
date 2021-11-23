@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-class VhaProgramOfficeAssignedTasksTab < QueueTab
+class VhaProgramOfficeOnHoldTasksTab < QueueTab
     validate :assignee_is_organization
 
     attr_accessor :show_reader_link_column, :allow_bulk_assign
 
     def label
-      COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
+      COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE
     end
 
     def self.tab_name
-      Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+      Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
     end
 
     def description
@@ -18,9 +18,7 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
     end
 
     def tasks
-      Task.includes(*task_includes).visible_in_queue_table_view
-      .where(assigned_to: assignee).assigned
-      .select{|task| task.children.any?(&:active?)}
+        Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(assigned_to: VhaProgramOffice.all.map(&:id))
     end
 
     def column_names

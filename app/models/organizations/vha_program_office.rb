@@ -19,7 +19,7 @@ class VhaProgramOffice < Organization
     ::VhaProgramOfficeAssignedTasksTab.new(assignee: self)
   end
 
-  def completed_tasks_tab
+  def in_progress_tasks_tab
     ::VhaProgramOfficeInProgressTasksTab.new(assignee: self)
   end
 

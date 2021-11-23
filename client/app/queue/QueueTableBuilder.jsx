@@ -13,6 +13,7 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Button from '../components/Button';
 import {
   assignedToColumn,
+  // boardIntakeColumn,
   badgesColumn,
   completedToNameColumn,
   daysOnHoldColumn,
@@ -20,13 +21,16 @@ import {
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
+  // lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn
+  typeColumn,
+  taskOwnerColumn,
+  // vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -119,6 +123,22 @@ class QueueTableBuilder extends React.PureComponent {
         tasks,
         filterOptions
       ),
+      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: boardIntakeColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
+      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: lastActionColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: taskOwnerColumn(
+        tasks,
+        filterOptions
+      ),
+      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: vamcOwnerColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)

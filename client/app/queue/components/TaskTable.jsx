@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, badgesColumn, detailsColumn, daysWaitingColumn, issueCountColumn, typeColumn,
-  readerLinkColumn, taskCompletedDateColumn } from './TaskTableColumns';
+  readerLinkColumn, taskOwnerColumn, taskCompletedDateColumn } from './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
@@ -68,6 +68,10 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeType ? typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
+  taskOwnerColumn = () => {
+    return this.props.includeTaskOwner ? taskOwnerColumn() : null;
+  }
+
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
@@ -97,6 +101,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseSelectColumn(),
         this.caseDetailsColumn(),
         this.caseTypeColumn(),
+        this.taskOwnerColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
         this.caseDaysWaitingColumn(),
@@ -144,6 +149,7 @@ TaskTableUnconnected.propTypes = {
   includeIssueCount: PropTypes.bool,
   includeDaysWaiting: PropTypes.bool,
   includeCompletedDate: PropTypes.bool,
+  includeTaskOwner: PropTypes.bool,
   userIsVsoEmployee: PropTypes.bool,
   includeReaderLink: PropTypes.bool,
   includeNewDocsIcon: PropTypes.bool,

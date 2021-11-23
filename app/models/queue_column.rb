@@ -99,6 +99,7 @@ class QueueColumn
   end
 
   def task_type_options(tasks)
+    # byebug
     tasks.group(:type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(Object.const_get(option).label, count)
       self.class.filter_option_hash(option, label)
