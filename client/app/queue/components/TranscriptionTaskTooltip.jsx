@@ -6,7 +6,7 @@ import COPY from 'app/../COPY';
 import Tooltip from '../../components/Tooltip';
 
 const instructionStyling = css({
-  maxWidth: '140px',
+  maxWidth: '300px',
   textAlign: 'left'
 });
 
