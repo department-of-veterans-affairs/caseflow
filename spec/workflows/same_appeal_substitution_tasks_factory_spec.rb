@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 describe SameAppealSubstitutionTasksFactory, :postgres do
-  let!(:hearing_appeal) do
-    create(:appeal,
-           :hearing_docket,
-           :assigned_to_judge,
-           associated_judge: judge)
-  end
+  before { JudgeTeam.for_judge(judge).add_user(attorney) }
+
+  let(:hearing_appeal) { create(:appeal, :hearing_docket, :assigned_to_judge, associated_judge: judge) }
+
   let!(:schedule_hearing_task) { hearing_appeal.tasks.of_type(:ScheduleHearingTask)[0] }
   let(:judge) { create(:user, :judge) }
+  let(:attorney) { create(:user, :with_vacols_attorney_record) }
   let(:created_by) { create(:user) }
 
   describe "#create_substitute_tasks!" do
@@ -18,7 +17,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
       end
       context "when an appeal has already been distributed" do
         let(:selected_task_ids) { [] }
-        subject { SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by).create_substitute_tasks! }
+        subject do
+          SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by).create_substitute_tasks!
+        end
 
         context "when it is a hearing lane appeal with hearing tasks selected" do
           let(:appeal) { hearing_appeal }
@@ -27,8 +28,39 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             subject
             expect(appeal.ready_for_distribution?).to be true
             judge_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask]
-            # binding.pry
             expect(appeal.tasks.of_type(judge_tasks).open.empty?).to be true
+          end
+        end
+
+        context "when it is an appeal with no tasks selected" do
+          let(:appeal) do
+            create(:appeal,
+                   :direct_review_docket,
+                   :at_attorney_drafting,
+                   associated_judge: judge,
+                   associated_attorney: attorney)
+          end
+          context "when there are no open decision tasks" do
+            before do
+              appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
+              appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:completed!)
+            end
+            it "reopens all closed decision tasks" do
+              original_judge_assignment = appeal.tasks.of_type(:JudgeDecisionReviewTask)[0].assigned_to
+
+              subject
+
+              open_attorney_tasks = appeal.tasks.of_type(:AttorneyTask).open
+              open_attorney_task = open_attorney_tasks[0]
+              closed_attorney_task = appeal.tasks.of_type(:AttorneyTask).closed[0]
+              open_judge_review_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open[0]
+
+              expect(open_attorney_tasks.size).to eq(1)
+              expect(open_attorney_task.status).to eq(Constants.TASK_STATUSES.assigned)
+              expect(open_attorney_task.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(open_attorney_task.assigned_to).to eq(closed_attorney_task.assigned_to)
+              expect(open_judge_review_task.assigned_to).to eq(original_judge_assignment)
+            end
           end
         end
       end
@@ -36,7 +68,10 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   end
 
   describe "#selected_tasks_include_hearing_tasks?" do
-    subject { SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by).selected_tasks_include_hearing_tasks? }
+    subject do
+      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by)
+        .selected_tasks_include_hearing_tasks?
+    end
 
     context "when hearing tasks are selected" do
       let(:appeal) { hearing_appeal }

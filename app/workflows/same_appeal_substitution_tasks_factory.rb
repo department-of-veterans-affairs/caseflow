@@ -51,7 +51,12 @@ class SameAppealSubstitutionTasksFactory
   # TODO: clarify this is correct with product/design
   # copy existing judge decision review and atty decision tasks and reopen both if they are not already open
   def reopen_decision_tasks
-    # TODO: attorney decision tasks copy_with_ancestors_to stream (reopen it, exclude the status and closed_at on_hold_at)
-    puts("TKTK")
+    excluded_attrs = %w[status closed_at placed_on_hold_at]
+    if @appeal.tasks.of_type(:AttorneyTask)
+      # which should get reopened if there are multiple completed attorney tasks?
+      # TODO: write a test for this later
+      attorney_task = @appeal.tasks.of_type(:AttorneyTask)[0]
+      attorney_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+    end
   end
 end
