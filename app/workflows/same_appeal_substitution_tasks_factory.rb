@@ -52,7 +52,8 @@ class SameAppealSubstitutionTasksFactory
   # copy existing judge decision review and atty decision tasks and reopen both if they are not already open
   def reopen_decision_tasks
     excluded_attrs = %w[status closed_at placed_on_hold_at]
-    if @appeal.tasks.of_type(:AttorneyTask)
+    # The appeal only has closed attorney tasks
+    if @appeal.tasks.of_type(:AttorneyTask) && @appeal.tasks.of_type(:AttorneyTask).open&.empty?
       # which should get reopened if there are multiple completed attorney tasks?
       # TODO: write a test for this later
       attorney_task = @appeal.tasks.of_type(:AttorneyTask)[0]

@@ -40,6 +40,18 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
                    associated_judge: judge,
                    associated_attorney: attorney)
           end
+          context "when there are open decision tasks" do
+            it "maintains the existing open decision tasks" do
+              original_open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open[0]
+              original_open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open[0]
+
+              subject
+
+              expect(appeal.tasks.of_type(:AttorneyTask).open.length).to equal(1)
+              expect(appeal.tasks.of_type(:AttorneyTask).open[0]).to eq(original_open_attorney_task)
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open[0]).to eq(original_open_judge_task)
+            end
+          end
           context "when there are no open decision tasks" do
             before do
               appeal.tasks.of_type(:AttorneyTask).open.each(&:completed!)
