@@ -72,6 +72,10 @@ class HearingDay < CaseflowRecord
             format: { with: HEARING_TIME_STRING_PATTERN, message: "doesn't match hh:mm time format" },
             allow_nil: true
 
+  scope :hearing_days_in_range, lambda { |start_date, end_date|
+    where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+  }
+
   def central_office?
     request_type == REQUEST_TYPES[:central]
   end
