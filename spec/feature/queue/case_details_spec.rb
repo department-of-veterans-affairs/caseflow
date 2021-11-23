@@ -2431,48 +2431,70 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  describe "VSO not having access due to BGS returning false when they should have access" do
-    context "when the current vso user should have access and does not" do
-      let(:veteran) { create(:veteran) }
-      let(:user) { create(:default_user, roles: ["VSO"]) }
-      let(:vso) { create(:vso) }
-      let(:appeal) { create(:appeal) }
-      let(:root_task) { create(:root_task, appeal: appeal) }
+  describe "VSO access to the veteran's Case Details page where there's a PowerOfAttorneyDenied error" do
+    let(:veteran) { create(:veteran) }
+    let(:user) { create(:default_user, roles: ["VSO"]) }
+    let(:vso) { create(:vso) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:poa) do
+      create(
+        :bgs_power_of_attorney,
+        :with_name_cached,
+        appeal: appeal,
+        poa_participant_id: vso.participant_id
+      )
+    end
+
+    before do
+      User.authenticate!(user: user)
+      vso.add_user(user)
+      allow_any_instance_of(Appeal).to receive(:representatives).and_return([vso])
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
+      allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
+      allow(bgs).to receive(:fetch_veteran_info).and_call_original
+    end
+
+    let(:bgs) { Fakes::BGSService.new }
+    msg = "(Power of Attorney of Folder is none. Access to this record is denied.)"
+
+    context "when the VSO User should have access" do
       let!(:vso_task) do
         create(:track_veteran_task, :in_progress, parent: root_task, assigned_to: vso, appeal: root_task.appeal)
       end
-      let!(:poa) do
-        create(
-          :bgs_power_of_attorney,
-          :with_name_cached,
-          appeal: appeal,
-          poa_participant_id: vso.participant_id
-        )
-      end
-
-      before do
-        User.authenticate!(user: user)
-        vso.add_user(user)
-        allow_any_instance_of(Appeal).to receive(:representatives).and_return([vso])
-        allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
-        allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
-        allow(bgs).to receive(:fetch_veteran_info).and_call_original
-      end
-
-      let(:bgs) { Fakes::BGSService.new }
-      msg = "(Power of Attorney of Folder is none. Access to this record is denied.)"
 
       context "rescue POA Folder denied errors from BGS for VSOs" do
         it "case details displays error message" do
           visit("/queue/appeals/#{appeal.uuid}")
           allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
+          # revisit the queue page and make sure it loads
+          expect(appeal.accessible?).to be_truthy
+          visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content(appeal.claimant.address_line_1)
         end
       end
+
       context "check to see if VSO should have access to appeal anyway" do
         it "should display case details" do
           expect(appeal.accessible?).to be_truthy
           visit("/queue/appeals/#{appeal.uuid}")
+        end
+      end
+    end
+
+    context "when the VSO User should have not access" do
+      # no vso task
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
+      end
+      context "the Case Details page displays error message" do
+        it "should continue to not display details" do
+          visit("/queue/appeals/#{appeal.uuid}")
+          allow(bgs).to receive(:fetch_veteran_info).and_raise(BGS::PowerOfAttorneyFolderDenied.new(msg))
+          # revist the queue page and make sure it still errors
+          expect(appeal.accessible?).to be_falsey
+          visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to_not have_content(appeal.claimant.address_line_1)
         end
       end
     end

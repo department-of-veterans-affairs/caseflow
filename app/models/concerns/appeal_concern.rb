@@ -88,11 +88,11 @@ module AppealConcern
     # does this VSO have access to this appeal? check if current user is one of the reps on the appeal.
     # if so return true, if not then do the BgsService.can_access? path.
     user = RequestStore[:current_user]
-    assigned_to_vso?(user) || user_represents_claimant_not_veteran?(user) || bgs.can_access?(veteran_file_number)
+    assigned_to_vso_user?(user) || user_represents_claimant_not_veteran?(user) || bgs.can_access?(veteran_file_number)
   end
 
   # :reek:FeatureEnvy
-  def assigned_to_vso?(user)
+  def assigned_to_vso_user?(user)
     # moved from hearing model
     tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
@@ -103,8 +103,6 @@ module AppealConcern
   end
 
   def user_represents_claimant_not_veteran?(user)
-    return false unless FeatureToggle.enabled?(:vso_claimant_representative)
-
     appellant_is_not_veteran && representatives.any? { |rep| rep.user_has_access?(user) }
   end
 
