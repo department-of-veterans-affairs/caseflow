@@ -20,11 +20,6 @@
       "filterable": true,
       "name": "typeColumn"
     },
-    "BOARD_INTAKE": {
-      "name": "boardIntakeColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["assigned_at"]
-    },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
       "sorting_table": "cached_appeal_attributes",
@@ -37,11 +32,6 @@
       "name": "daysWaitingColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["assigned_at"]
-    },
-    "LAST_ACTION": {
-      "name": "lastActionColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["updated_at"]
     },
     "DOCKET_NUMBER": {
       "filterable": true,
@@ -101,21 +91,11 @@
       "sorting_table": "tasks",
       "sorting_columns": ["placed_on_hold_at"]
     },
-    "TASK_OWNER": {
-      "name": "taskOwnerColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["assigned_to"]
-    },
     "TASK_TYPE": {
       "filterable": true,
       "name": "taskColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
-    },
-    "VAMC_OWNER": {
-      "name": "vamcOwnerColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["assigned_to"]
     }
   },
 

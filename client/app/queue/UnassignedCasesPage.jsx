@@ -39,8 +39,6 @@ class UnassignedCasesPage extends React.PureComponent {
   render = () => {
     const { userId, selectedTasks, success, error } = this.props;
 
-    console.log('This is the unassigned cases page!');
-
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}

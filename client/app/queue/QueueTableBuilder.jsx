@@ -28,8 +28,8 @@ import {
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn,
-  taskOwnerColumn,
+  typeColumn
+  // taskOwnerColumn,
   // vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -62,6 +62,10 @@ class QueueTableBuilder extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
+
+    console.log('Tab names =====>', tabNames);
+    console.log('Config =====>', config);
+
     const activeTab = this.paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
@@ -131,10 +135,10 @@ class QueueTableBuilder extends React.PureComponent {
       //   tasks,
       //   filterOptions
       // ),
-      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: taskOwnerColumn(
-        tasks,
-        filterOptions
-      ),
+      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: taskOwnerColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
       // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: vamcOwnerColumn(
       //   tasks,
       //   filterOptions

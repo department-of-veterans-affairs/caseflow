@@ -37,6 +37,7 @@ class QueueConfig
   end
 
   def attach_tasks_to_tab(tab)
+    byebug
     task_pager = TaskPager.new(assignee: assignee, tab_name: tab.name)
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 

@@ -175,18 +175,43 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 //   };
 // };
 
-export const taskOwnerColumn = () => {
-  return {
-    header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    valueFunction: (task) => task.assignedTo.name,
-    getSortValue: (task) => task.assignedTo.name
-  };
-};
+// export const boardIntakeColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+//     valueFunction: (task) => task.assignedAt.name,
+//     getSortValue: (task) => task.assignedAt.name
+//   };
+// };
+
+// export const lastActionColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+//     valueFunction: (task) => task.updatedAt,
+//     getSortValue: (task) => task.updatedAt
+//   };
+// };
+
+// export const taskOwnerColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+//     valueFunction: (task) => task.assignedTo.name,
+//     getSortValue: (task) => task.assignedTo.name
+//   };
+// };
+
+// export const vamcOwnerColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+//     valueFunction: (task) => task.assignedTo.name,
+//     getSortValue: (task) => task.assignedTo.name
+//   };
+// };
 
 export const taskColumn = (tasks, filterOptions) => {
-  console.log('Tasks ====>', tasks);
-
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
