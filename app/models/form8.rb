@@ -57,7 +57,8 @@ class Form8 < CaseflowRecord
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
-    ssoc_dates = appeal.ssoc_dates.present? ? appeal.ssoc_dates.sort : []
+    ssoc_dates = appeal.ssoc_dates&.sort || []
+    ssoc_required = appeal.ssoc_dates.present? ? "Required and furnished" : "Not required"
 
     assign_attributes(
       vacols_id: appeal.vacols_id,
@@ -79,7 +80,7 @@ class Form8 < CaseflowRecord
       representative_type: appeal.representative_type,
       hearing_requested: appeal.hearing_requested ? "Yes" : "No",
       hearing_held: appeal.hearing_held ? "Yes" : "No",
-      ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
+      ssoc_required: ssoc_required,
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
       certification_date: Time.zone.now.to_date,
@@ -93,7 +94,7 @@ class Form8 < CaseflowRecord
       _initial_representative_name: appeal.representative_name,
       _initial_representative_type: appeal.representative_type,
       _initial_hearing_requested: appeal.hearing_requested ? "Yes" : "No",
-      _initial_ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished"
+      _initial_ssoc_required: ssoc_required
     )
   end
   # rubocop:enable Metrics/MethodLength

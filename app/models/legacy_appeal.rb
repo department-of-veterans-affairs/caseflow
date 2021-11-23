@@ -216,7 +216,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def soc_opt_in_due_date
-    return unless soc_date || !ssoc_dates.empty?
+    return unless soc_date || ssoc_dates.present?
 
     ([soc_date] + ssoc_dates).max.to_date + 60.days
   end
@@ -278,7 +278,7 @@ class LegacyAppeal < CaseflowRecord
 
   def person_for_appellant
     return nil if appellant_ssn.blank?
-    return nil if appellant_is_not_veteran && appellant_ssn == veteran.ssn
+    return nil if appellant_is_not_veteran && appellant_ssn == veteran&.ssn
 
     Person.find_or_create_by_ssn(appellant_ssn)
   end
@@ -525,7 +525,7 @@ class LegacyAppeal < CaseflowRecord
   def ssocs
     # an appeal might have multiple SSOC documents so match vacols date
     # to each VBMS document
-    @ssocs ||= ssoc_dates.sort.inject([]) do |docs, ssoc_date|
+    @ssocs ||= ssoc_dates&.sort&.inject([]) do |docs, ssoc_date|
       docs << fuzzy_matched_document("SSOC", ssoc_date, excluding: docs)
     end
   end
