@@ -2,84 +2,28 @@
 
 class HearingDayRange
   include ActiveModel::Validations
+  include Pagy::Backend
+
   validate :valid_regional_office_key, :valid_start_date, :valid_end_date
-  attr_reader :start_date, :end_date, :regional_office
+  attr_reader :start_date, :end_date, :regional_office, :user, :pagination, :query,
+              :page
 
-  def initialize(start_date, end_date, regional_office = nil)
-    @start_date = start_date
-    @end_date = end_date
-    @regional_office = regional_office
+  def initialize(params)
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
+    @regional_office = params[:regional_office]
+    @user = params[:current_user]
+    @query = params[:query]
+    @page = params[:page] || 1
   end
 
-  def load_days
-    query = if regional_office.nil?
-              HearingDay.where(
-                "DATE(scheduled_for) between ? and ?", start_date, end_date
-              )
-            elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
-              HearingDay.where(
-                "request_type = ? and DATE(scheduled_for) between ? and ? and regional_office IS NULL",
-                regional_office, # regional_office stores the hearing request type in this case
-                start_date,
-                end_date
-              )
-            else
-              HearingDay.where(
-                "regional_office = ? and DATE(scheduled_for) between ? and ?",
-                regional_office,
-                start_date,
-                end_date
-              )
-            end
-
-    query.includes(:judge)
-  end
-
-  def upcoming_days_for_judge(user)
-    days_in_range = hearing_days_in_range
-    vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
-      days_in_range.first(1000).pluck(:id), user
-    )
-
-    days_in_range.select do |hearing_day|
-      self.class.hearing_day_for_judge?(hearing_day, user) || !vacols_hearings[hearing_day.id.to_s].nil?
-    end
-  end
-
-  def upcoming_days_for_vso_user(user)
-    days_in_range = hearing_days_in_range
-
-    ama_days = days_in_range.select do |hearing_day|
-      self.class.ama_hearing_day_for_vso_user?(hearing_day, user)
-    end
-
-    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(
-      Arel.sql(
-        "CASE WHEN regional_office = '#{user.regional_office}' THEN 1 ELSE 2 END, "\
-        "scheduled_for"
-      )
-    ).limit(1000)
-
-    vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
-
-    loaded_hearings = LegacyHearing
-      .includes(appeal: [tasks: :assigned_to])
-      .where(id: vacols_hearings_for_remaining_days.values.flatten.pluck(:id))
-
-    vacols_days = remaining_days.select do |day|
-      vacols_hearings = vacols_hearings_for_remaining_days[day.id.to_s]
-
-      self.class.legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings, user)
-    end
-
-    ama_days + vacols_days
-  end
-
-  def load_days_for_user(user)
-    if user&.vso_employee?
-      upcoming_days_for_vso_user(user)
+  def hearing_days_for_user
+    if return_all_upcoming_hearing_days?
+      load_days
+    elsif user&.vso_employee?
+      upcoming_days_for_vso_user
     elsif user&.roles&.include?("Hearing Prep")
-      upcoming_days_for_judge(user)
+      upcoming_days_for_judge
     else
       load_days
     end
@@ -123,15 +67,15 @@ class HearingDayRange
       scheduled_hearings.size < hearing_day.total_slots
     end
 
-    def hearing_day_for_judge?(hearing_day, user)
+    def hearing_day_for_judge?(hearing_day)
       hearing_day.judge == user || hearing_day.hearings.any? { |hearing| hearing.judge == user }
     end
 
-    def ama_hearing_day_for_vso_user?(hearing_day, user)
+    def ama_hearing_day_for_vso_user?(hearing_day)
       hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
     end
 
-    def legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings, user)
+    def legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings)
       loaded_hearing_ids = loaded_hearings.map(&:id)
       vacols_hearings
         &.map do |hearing|
@@ -164,6 +108,82 @@ class HearingDayRange
 
   private
 
+  attr_accessor :hearing_days
+  attr_writer :pagination
+  attr_reader :show_all
+
+  def load_days
+    hearing_days_in_range = HearingDay
+      .hearing_days_in_range(start_date, end_date)
+      .includes(:judge)
+
+    days = if regional_office.nil?
+             hearing_days_in_range
+           elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
+             hearing_days_in_range.where(
+               request_type: regional_office,
+               regional_office: nil
+             )
+           else
+             hearing_days_in_range.where(regional_office: regional_office)
+           end
+
+    ransack = days.ransack(query)
+    self.pagination, self.hearing_days = pagy(ransack.result, page: page)
+
+    hearing_days
+  end
+
+  def upcoming_days_for_judge
+    hearing_days_in_range = HearingDay
+      .hearing_days_in_range(start_date, end_date)
+      .includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
+
+    vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
+      hearing_days_in_range.first(1000).pluck(:id), user
+    )
+
+    hearing_days_in_range.select do |hearing_day|
+      self.class.hearing_day_for_judge?(hearing_day) || !vacols_hearings[hearing_day.id.to_s].nil?
+    end
+  end
+
+  def upcoming_days_for_vso_user
+    hearing_days_in_range = HearingDay
+      .hearing_days_in_range(start_date, end_date)
+      .includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
+
+    ama_days = hearing_days_in_range.select do |hearing_day|
+      self.class.ama_hearing_day_for_vso_user?(hearing_day)
+    end
+
+    remaining_days = hearing_days_in_range.where.not(id: ama_days.pluck(:id)).order(
+      Arel.sql(
+        "CASE WHEN regional_office = '#{user.regional_office}' THEN 1 ELSE 2 END, "\
+        "scheduled_for"
+      )
+    ).limit(1000)
+
+    vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
+
+    loaded_hearings = LegacyHearing
+      .includes(appeal: [tasks: :assigned_to])
+      .where(id: vacols_hearings_for_remaining_days.values.flatten.pluck(:id))
+
+    vacols_days = remaining_days.select do |day|
+      vacols_hearings = vacols_hearings_for_remaining_days[day.id.to_s]
+
+      self.class.legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings)
+    end
+
+    ama_days + vacols_days
+  end
+  
+  def return_all_upcoming_hearing_days?
+    ActiveRecord::Type::Boolean.new.deserialize(show_all) &&
+      user&.roles&.include?("Hearing Prep")
+  end
+
   def valid_start_date
     if start_date.nil? || start_date.is_a?(String)
       errors.add(:start_date, "Start date is not valid.")
@@ -182,10 +202,5 @@ class HearingDayRange
     rescue HearingDayMapper::InvalidRegionalOfficeError
       errors.add(:regional_office, "Selected regional office is invalid.")
     end
-  end
-
-  def hearing_days_in_range
-    HearingDay.includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
-      .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
   end
 end
