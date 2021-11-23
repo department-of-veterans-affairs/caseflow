@@ -105,7 +105,7 @@ class MismatchReport < Report
     appeal.documents_with_type("SSOC")
       .map(&:received_at)
       .select do |date|
-      appeal.ssoc_dates.any? do |appdate|
+      appeal.ssoc_dates&.any? do |appdate|
         appdate.to_date != date.to_date &&
           (appeal.soc_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD
       end
