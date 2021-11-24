@@ -28,9 +28,9 @@ import {
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn,
-  taskOwnerColumn,
-  vamcOwnerColumn
+  typeColumn
+  // taskOwnerColumn,
+  // vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -140,14 +140,14 @@ class QueueTableBuilder extends React.PureComponent {
       //   tasks,
       //   filterOptions
       // ),
-      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
-        tasks,
-        filterOptions
-      ),
-      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
-        tasks,
-        filterOptions
-      ),
+      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
+      // [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)

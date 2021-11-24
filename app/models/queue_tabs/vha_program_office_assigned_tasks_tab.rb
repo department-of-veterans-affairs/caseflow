@@ -16,7 +16,7 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   end
 
   def tasks
-    # byebug
+    byebug
     Task.includes(*task_includes).visible_in_queue_table_view
     .where(assigned_to: assignee)
     .assigned
