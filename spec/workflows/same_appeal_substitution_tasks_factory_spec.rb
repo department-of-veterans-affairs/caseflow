@@ -11,6 +11,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   let(:attorney) { create(:user, :with_vacols_attorney_record) }
 
   let(:created_by) { create(:user) }
+  let(:task_params) { {} }
 
   describe "#create_substitute_tasks!" do
     context "when created_by is a COB admin" do
@@ -20,37 +21,28 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
       context "when an appeal has already been distributed" do
         let(:selected_task_ids) { [] }
         subject do
-          SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by).create_substitute_tasks!
+          SameAppealSubstitutionTasksFactory.new(appeal,
+                                                 selected_task_ids,
+                                                 created_by,
+                                                 task_params).create_substitute_tasks!
         end
 
         context "when it is a hearing lane appeal with hearing tasks selected" do
           let(:appeal) { hearing_appeal }
-          let!(:appellant_substitution) do
-            AppellantSubstitution.new(claimant_type: "DependentClaimant",
-                                      created_by_id: created_by.id,
-                                      substitution_date: "Wed, 24 Nov 2021",
-                                      poa_participant_id: nil,
-                                      selected_task_ids: selected_task_ids,
-                                      source_appeal_id: appeal.id,
-                                      substitute_participant_id: "CLAIMANT_WITH_PVA_AS_VSO",
-                                      target_appeal_id: appeal.id,
-                                      task_params: {})
-          end
           let(:selected_task_ids) { [schedule_hearing_task.id] }
           it "sends the case back to distribution" do
-            appeal.treee
-
             subject
+
             expect(appeal.ready_for_distribution?).to be true
             judge_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask]
             expect(appeal.tasks.of_type(judge_tasks).open.empty?).to be true
           end
-          it "creates the selected hearing task" do
+
+          it "does not create the selected hearing task" do
             subject
 
             open_schedule_hearing_tasks = hearing_appeal.tasks.of_type(:ScheduleHearingTask).open
-            expect(open_schedule_hearing_tasks.length).to eq(1)
-            expect(open_schedule_hearing_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
+            expect(open_schedule_hearing_tasks.empty?).to be true
           end
         end
 
@@ -173,7 +165,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
   describe "#selected_tasks_include_hearing_tasks?" do
     subject do
-      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by)
+      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params)
         .selected_tasks_include_hearing_tasks?
     end
 

@@ -1,21 +1,22 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
-  def initialize(appeal, selected_task_ids, created_by)
+  def initialize(appeal, selected_task_ids, created_by, task_params)
     @appeal = appeal
     @selected_task_ids = selected_task_ids
     @created_by = created_by
+    @task_params = task_params
   end
 
   def create_substitute_tasks!
     if @appeal.distributed_to_a_judge?
       create_tasks_for_distributed_appeal
+    else
+      create_selected_tasks
     end
-    create_selected_tasks
   end
 
   def create_tasks_for_distributed_appeal
-    # binding.pry
     if @appeal.docket_type == Constants.AMA_DOCKETS.hearing && selected_tasks_include_hearing_tasks?
       send_hearing_appeal_back_to_distribution
     elsif no_tasks_selected?
@@ -52,7 +53,7 @@ class SameAppealSubstitutionTasksFactory
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
     source_tasks.each do |source_task|
-      creation_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
+      creation_params = @task_params[source_task.id.to_s]
       create_task_from(source_task, creation_params)
     end.flatten
   end
