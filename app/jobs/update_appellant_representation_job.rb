@@ -53,8 +53,8 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   end
 
   def retrieve_number_to_update
-    number_of_legacy_appeals = legacy_appeals_with_hearings.size
-    number_of_ama_appeals = active_docketed_appeals.size
+    number_of_legacy_appeals = legacy_appeals_with_hearings.length
+    number_of_ama_appeals = active_docketed_appeals.length
 
     {
       number_of_legacy_appeals_to_update:
@@ -77,10 +77,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   end
 
   def active_docketed_appeals
-    current_predocket_appeals = Appeal
-      .joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "PreDocketTask", Task.closed_statuses)
-
-    active_appeals - current_predocket_appeals
+    active_appeals.where.not(id: Appeal.pre_docket.map(&:id))
   end
 
   def increment_task_count(task_effect, appeal_id, count = 1)

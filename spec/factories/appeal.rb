@@ -272,6 +272,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_pre_docket_task do
+      after(:create) do |appeal, _evaluator|
+        bva = BvaIntake.singleton
+        create(:pre_docket_task, appeal: appeal, assigned_to: bva)
+      end
+    end
+
     ## Appeal with a realistic task tree
     ## Appeal has finished intake
     trait :with_post_intake_tasks do
