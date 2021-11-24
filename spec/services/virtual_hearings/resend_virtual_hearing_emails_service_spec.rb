@@ -17,6 +17,8 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       .and_return(body: sample_bad_email)
     @se = create(
       :sent_hearing_email_event,
+      # All tests should also work with this comented out, which creates an AMA hearing
+      #:with_legacy_hearing,
       sent_at: Time.zone.parse("2021-01-02"),
       email_type: "confirmation"
     )
@@ -38,7 +40,7 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       initial_sent_email_event_count = @se.hearing.email_events.count
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(true)
-      expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients.count)
+      expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients.where(hearing_type: @se.hearing.class.name).count)
     end
     it "doesnt resend emails if a reminder email has been sent" do
       @se.update(email_type: "reminder")
@@ -46,7 +48,12 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
     end
     it "doesnt resend emails if hearing already occured" do
+      # Works for AMA Hearings
       @se.hearing.hearing_day.update(scheduled_for: Time.zone.now - 2.days)
+      # Fake legacy hearings are complex, so just mock the scheduled_for return
+      allow_any_instance_of(LegacyHearing)
+        .to receive(:scheduled_for)
+        .and_return(Time.zone.now - 2.days)
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
     end
@@ -62,6 +69,38 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(false)
       expect(@se.reload.sent_by).to eq(User.system_user)
+    end
+  end
+  describe "continues with other events if vacols hearing record not found" do
+  end
+
+  describe "Continues without failing when RecipientIsDeceasedVeteran errors encountered" do
+    before do
+      allow_any_instance_of(Hearings::SendEmail)
+        .to receive(:send_email)
+        .and_raise(Hearings::SendEmail::RecipientIsDeceasedVeteran)
+    end
+
+    it "continues" do
+      expect(Raven).to receive(:capture_exception)
+        .with(Hearings::SendEmail::RecipientIsDeceasedVeteran, any_args)
+      subject
+    end
+  end
+  describe "Continues without failing when VacolsRecordNotFound errors encountered" do
+    before do
+      allow(HearingRepository)
+        .to receive(:load_vacols_data)
+        .and_raise(Caseflow::Error::VacolsRecordNotFound)
+    end
+
+    it "continues" do
+      # This only applies to VACOLS (Legacy) Hearings
+      if @se.hearing.class.name == "LegacyHearing"
+        expect(Raven).to receive(:capture_exception)
+          .with(Caseflow::Error::VacolsRecordNotFound, any_args)
+        subject
+      end
     end
   end
   describe ".custom_email_subject" do

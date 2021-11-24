@@ -39,8 +39,8 @@ class VirtualHearings::ResendVirtualHearingEmailsService
           hearing: sent_email.hearing
         ).call
         sent_email.update(sent_by: User.system_user)
-      rescue StandardError, Hearings::SendEmail::RecipientIsDeceasedVeteran,
-        Rails.logger.info(error)
+      rescue StandardError, Hearings::SendEmail::RecipientIsDeceasedVeteran => error
+        Raven.capture_exception(error, extra: { application: "hearings" })
       end
     end
 
@@ -70,7 +70,7 @@ class VirtualHearings::ResendVirtualHearingEmailsService
         message = get_gov_delivery_message_body(sent_email)
         bad_email?(message[:body])
       rescue StandardError, Caseflow::Error::VacolsRecordNotFound => error
-        Rails.logger.info(error)
+        Raven.capture_exception(error, extra: { application: "hearings" })
       end
     end
 
