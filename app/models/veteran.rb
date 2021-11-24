@@ -133,7 +133,10 @@ class Veteran < CaseflowRecord
 
     # If the result is nil, the veteran wasn't found.
     # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    # rescue PowerOfAttorneyFolderDenied errors from BGS for VSO's that should actually have access
     return result if result && result[:ptcpnt_id]
+  rescue BGS::PowerOfAttorneyFolderDenied
+    { ptcpnt_id: participant_id }
   rescue BGS::ShareError => error
     handle_bgs_share_error(error)
   end
