@@ -55,7 +55,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
           context "with open JudgeDecisionReviewTasks or AttorneyTasks" do
             before do
-              decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)
+              decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task,
+                                                              assigned_to: judge)
               AttorneyTask.create!(appeal: appeal, parent: decision_task, assigned_by: judge, assigned_to: attorney)
             end
             it "cancels any open JudgeDecisionReviewTasks and AttorneyTasks" do
