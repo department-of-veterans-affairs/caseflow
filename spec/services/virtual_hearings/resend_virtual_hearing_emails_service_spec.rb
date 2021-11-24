@@ -117,11 +117,4 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       expect(VirtualHearings::ResendVirtualHearingEmailsService.bad_email?("test email")).to eq(false)
     end
   end
-  describe ".find_resent_confirmation_email_events" do
-    it "finds the resent event" do
-      # This is a mocked in version, should have "expect to be 1"
-      subject
-      expect(VirtualHearings::ResendVirtualHearingEmailsService.find_resent_confirmation_email_events.count)
-    end
-  end
 end

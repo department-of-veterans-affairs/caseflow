@@ -4,6 +4,7 @@
 
 class VirtualHearings::ResendVirtualHearingEmailsService
   class << self
+    # :nocov:
     def call(start_date:, end_date:, perform_resend: false)
       confirmation_email_events_in_date_range = confirmation_hearing_email_events(start_date, end_date)
       email_events_to_resend = confirmation_email_events_in_date_range.select { |cee| should_resend_email?(cee) }
@@ -94,4 +95,5 @@ class VirtualHearings::ResendVirtualHearingEmailsService
       "#{hearing.scheduled_for.to_formatted_s(:short_date)} -- Do Not Reply"
     end
   end
+  # :nocov:
 end
