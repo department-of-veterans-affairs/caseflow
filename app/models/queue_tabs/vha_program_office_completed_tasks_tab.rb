@@ -12,7 +12,7 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
   end
 
   # def task_includes

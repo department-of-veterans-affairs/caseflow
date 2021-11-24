@@ -12,7 +12,7 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks

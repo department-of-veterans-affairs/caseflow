@@ -28,9 +28,9 @@ import {
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn
-  // taskOwnerColumn,
-  // vamcOwnerColumn
+  typeColumn,
+  taskOwnerColumn,
+  vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -84,6 +84,11 @@ class QueueTableBuilder extends React.PureComponent {
     column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
+
+    console.log('Col ====>', column);
+    console.log('Col Config ====>', config);
+    console.log('Col Tasks ====>', tasks);
+
     const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
@@ -127,22 +132,22 @@ class QueueTableBuilder extends React.PureComponent {
         tasks,
         filterOptions
       ),
-      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: boardIntakeColumn(
+      // [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
       //   tasks,
       //   filterOptions
       // ),
-      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: lastActionColumn(
+      // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
       //   tasks,
       //   filterOptions
       // ),
-      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: taskOwnerColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
-      // [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: vamcOwnerColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
+        tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
+        tasks,
+        filterOptions
+      ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)

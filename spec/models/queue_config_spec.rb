@@ -197,6 +197,43 @@ describe QueueConfig, :postgres do
         end
       end
 
+      context "when the organization assignee is a VHA Program Office" do
+        let(:assignee) { VhaProgramOffice.create!(name: "Program Office", url: "Program Office") }
+
+        it "includes a tab for ready for review tasks" do
+          expect(subject.length).to eq(4)
+          expect(subject.pluck(:name)).to include(Constants.QUEUE_CONFIG.READY_FOR_REVIEW_TASKS_TAB_NAME)
+        end
+
+        it "has the correct shape for each tab hash" do
+          subject.each do |tab|
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :contains_legacy_tasks,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path
+              ]
+            )
+          end
+        end
+
+        context "when the VHA Program Office has ready for review tasks assigned to it" do
+          let(:program_office_task) { create(:assess_documentation_task, :completed, assigned_to: assignee) }
+
+          it "returns the tasks in the ready for review tasks tabs" do
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(subject[0][:tasks].pluck(:id)).to match_array(program_office_task.map { |t| t.id.to_s })
+          end
+        end
+      end
+
       context "with a user assignee" do
         let(:assignee) { create(:user) }
         let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }

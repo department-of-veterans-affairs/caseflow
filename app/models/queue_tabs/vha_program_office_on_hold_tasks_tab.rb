@@ -12,12 +12,18 @@ class VhaProgramOfficeOnHoldTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION, assignee.name)
   end
 
+  # def tasks
+  #     Task.includes(*task_includes).visible_in_queue_table_view.on_hold
+  #     .where(assigned_to: VhaProgramOffice.all.map(&:id))
+  # end
+
   def tasks
-      Task.includes(*task_includes).visible_in_queue_table_view.on_hold
-      .where(assigned_to: VhaProgramOffice.all.map(&:id))
+    Task.includes(*task_includes).visible_in_queue_table_view
+    .where(assigned_to: assignee)
+    .assigned
   end
 
   def column_names

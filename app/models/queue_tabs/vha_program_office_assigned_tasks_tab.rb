@@ -12,14 +12,14 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks
+    # byebug
     Task.includes(*task_includes).visible_in_queue_table_view
     .where(assigned_to: assignee)
     .assigned
-    .select{|task| task.children.any?(&:active?)}
   end
 
   def column_names

@@ -12,14 +12,21 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TASKS_DESCRIPTION, assignee.name)
   end
+
+  # def tasks
+  #   Task.includes(*task_includes).visible_in_queue_table_view
+  #   .where(assigned_to: assignee)
+  #   .assigned
+  #   .select{|task| task.children.any?(&:active?)}
+  # end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view
     .where(assigned_to: VhaProgramOffice.all.map(&:id))
     .assigned
-    .select{|task| task.children.any?(&:completed?)}
+    # .select{|task| task.children.any?(&:completed?)}
   end
 
   def column_names
