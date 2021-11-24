@@ -103,6 +103,10 @@ Metrics/AbcSize:
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+
 Style/DoubleNegation:
   Enabled: false
 
