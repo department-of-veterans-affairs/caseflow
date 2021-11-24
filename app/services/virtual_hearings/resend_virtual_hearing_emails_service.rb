@@ -16,17 +16,19 @@ class VirtualHearings::ResendVirtualHearingEmailsService
 
     # This method is specific to a problem where :confirmation emails were going out with the wrong link in a
     # certain time period. This allows tracking/retrieval of all the resent emails.
-    def find_resent_confirmaion_email_events
+    def find_resent_confirmation_email_events
       start_date = "16/Aug/2021 00:00:00 +0500" # Day before confirmation email problem potentially started
       end_date = "17/Nov/2021 00:00:00 +0500" # Day after confirmation email  problem was stopped
       events_in_date_range = SentHearingEmailEvent.where("sent_at > ?", start_date).where("sent_at < ?", end_date)
 
-      confirmations_with_system_user = events_in_date_range.where(email_type: :confirmation).where(sent_by: User.system_user)
-      resent_email_events = confirmations_with_system_user.inject([]) do |events, c|
-        events + c.hearing.email_events.where("sent_at > ?", end_date).where(email_type: :confirmation)
+      confirmations_with_system_user = events_in_date_range.where(email_type: :confirmation)
+        .where(sent_by: User.system_user)
+
+      resent_email_events = confirmations_with_system_user.inject([]) do |events, confirmation|
+        events + confirmation.hearing.email_events.where("sent_at > ?", end_date).where(email_type: :confirmation)
       end
 
-      resent_email_events.sort_by { |e| e[:hearing_id] }.uniq
+      resent_email_events.sort_by { |event| event[:hearing_id] }.uniq
     end
 
     def reset_sent_status_and_send(sent_email)
@@ -56,17 +58,17 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     def should_resend_email?(sent_email)
       begin
         return false unless sent_email.hearing.virtual?
-  
+
         return false if sent_email.hearing.scheduled_for.past?
-  
+
         return false if hearing_has_non_confirmation_emails?(sent_email.hearing)
-  
+
         return false if sent_email.sent_hearing_admin_email_event.present?
-  
+
         # Reminder emails can also have User.system user as the sender, this works because we're only interested in
         # confirmation emails for now.
         return false if sent_email.sent_by == User.system_user
-  
+
         message = get_gov_delivery_message_body(sent_email)
         bad_email?(message[:body])
       rescue StandardError, Caseflow::Error::VacolsRecordNotFound => error

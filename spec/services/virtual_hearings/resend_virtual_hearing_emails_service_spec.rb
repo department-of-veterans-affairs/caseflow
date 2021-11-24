@@ -71,16 +71,12 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       expect(@se.reload.sent_by).to eq(User.system_user)
     end
   end
-  describe "continues with other events if vacols hearing record not found" do
-  end
-
   describe "Continues without failing when RecipientIsDeceasedVeteran errors encountered" do
     before do
       allow_any_instance_of(Hearings::SendEmail)
         .to receive(:send_email)
         .and_raise(Hearings::SendEmail::RecipientIsDeceasedVeteran)
     end
-
     it "continues" do
       expect(Raven).to receive(:capture_exception)
         .with(Hearings::SendEmail::RecipientIsDeceasedVeteran, any_args)
@@ -118,6 +114,13 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
     end
     it "returns false if does not contain care.va.gov" do
       expect(VirtualHearings::ResendVirtualHearingEmailsService.bad_email?("test email")).to eq(false)
+    end
+  end
+  describe ".find_resent_confirmation_email_events" do
+    it "finds the resent event" do
+      # This is a mocked in version, should have "expect to be 1"
+      subject
+      expect(VirtualHearings::ResendVirtualHearingEmailsService.find_resent_confirmation_email_events.count)
     end
   end
 end
