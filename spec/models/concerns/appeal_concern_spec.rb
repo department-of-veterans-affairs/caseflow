@@ -87,7 +87,7 @@ describe AppealConcern do
 
     context "when assigned_to_vso" do
       before do
-        allow_any_instance_of(Appeal).to receive(:assigned_to_vso_user?).and_return(true)
+        allow_any_instance_of(Appeal).to receive(:assigned_to_vso?).and_return(true)
       end
       it "returns true" do
         expect(appeal.accessible?).to be_truthy
@@ -114,7 +114,7 @@ describe AppealConcern do
 
     context "when none of the parameters are true" do
       before do
-        allow_any_instance_of(Appeal).to receive(:assigned_to_vso_user?).and_return(false)
+        allow_any_instance_of(Appeal).to receive(:assigned_to_vso?).and_return(false)
         allow_any_instance_of(Appeal).to receive(:user_represents_claimant_not_veteran?).and_return(false)
         allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
       end
