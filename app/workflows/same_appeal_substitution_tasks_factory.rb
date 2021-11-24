@@ -37,9 +37,9 @@ class SameAppealSubstitutionTasksFactory
 
   def send_hearing_appeal_back_to_distribution
     @appeal.root_task.in_progress!
-    judge_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask]
-    # TODO: also cancel any open attorney task here
-    @appeal.tasks.of_type(judge_tasks).open.each(&:cancelled!)
+    decision_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask, :AttorneyTask]
+    @appeal.tasks.of_type(decision_tasks).open.each(&:cancelled!)
+
     params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
                type: DistributionTask.name }
     DistributionTask.create_child_task(@appeal.root_task, @created_by, params)

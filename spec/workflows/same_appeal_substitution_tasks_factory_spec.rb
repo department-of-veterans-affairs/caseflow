@@ -44,6 +44,30 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             open_schedule_hearing_tasks = hearing_appeal.tasks.of_type(:ScheduleHearingTask).open
             expect(open_schedule_hearing_tasks.empty?).to be true
           end
+
+          it "cancels any open JudgeAssignTasks" do
+            expect(appeal.tasks.of_type(:JudgeAssignTask).open.empty?).to be false
+
+            subject
+
+            expect(appeal.tasks.of_type(:JudgeAssignTask).open.empty?).to be true
+          end
+
+          context "with open JudgeDecisionReviewTasks or AttorneyTasks" do
+            before do
+              decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)
+              AttorneyTask.create!(appeal: appeal, parent: decision_task, assigned_by: judge, assigned_to: attorney)
+            end
+            it "cancels any open JudgeDecisionReviewTasks and AttorneyTasks" do
+              expect(appeal.tasks.of_type(:AttorneyTask).open.empty?).to be false
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open.empty?).to be false
+
+              subject
+
+              expect(appeal.tasks.of_type(:AttorneyTask).open.empty?).to be true
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).open.empty?).to be true
+            end
+          end
         end
 
         context "when it is an appeal with no tasks selected" do
