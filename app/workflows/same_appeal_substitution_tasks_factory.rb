@@ -15,6 +15,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def create_tasks_for_distributed_appeal
+    # binding.pry
     if @appeal.docket_type == Constants.AMA_DOCKETS.hearing && selected_tasks_include_hearing_tasks?
       send_hearing_appeal_back_to_distribution
     elsif no_tasks_selected?
@@ -46,10 +47,29 @@ class SameAppealSubstitutionTasksFactory
   def create_selected_tasks
     return if no_tasks_selected?
 
-    puts("TKTK")
+    source_tasks = Task.where(id: @selected_task_ids).order(:id)
+
+    fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
+
+    source_tasks.each do |source_task|
+      creation_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
+      create_task_from(source_task, creation_params)
+    end.flatten
   end
 
-  # TODO: clarify this is correct with product/design or yoom
+  def create_task_from(source_task, creation_params)
+    case source_task.type
+    when "EvidenceSubmissionWindowTask"
+      InitialTasksFactory.new(@appeal).evidence_submission_window_task(source_task, creation_params)
+    when "ScheduleHearingTask"
+      distribution_task = @appeal.tasks.open.find_by(type: :DistributionTask)
+      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+    else
+      excluded_attrs = %w[status closed_at placed_on_hold_at]
+      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+    end
+  end
+
   # copy existing judge decision review and atty decision tasks and reopen both if they are not already open
   # discussion with JC: only reopen cancelled tasks. do not reopen completed tasks.
   def reopen_decision_tasks
