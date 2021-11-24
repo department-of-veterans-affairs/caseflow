@@ -14,6 +14,8 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
+  "PENDING_TASKS_TAB_NAME": "pending",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
@@ -27,6 +29,9 @@
     },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
+    },
+    "DAYS_SINCE_LAST": {
+      "name": "daysSinceLastColumn"
     },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
@@ -94,6 +99,11 @@
     "TASK_TYPE": {
       "filterable": true,
       "name": "taskColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type", "action", "created_at"]
+    },
+    "TASK_OWNER": {
+      "name": "taskOwnerColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
     }

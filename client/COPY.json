@@ -32,6 +32,7 @@
   "CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE": "Date Completed",
   "CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE": "Sent to",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Tasks",
+  "CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE": "Task Owner",
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
   "CASE_LIST_TABLE_POST_DECISION_LABEL": "Post-decision",
   "CASE_LIST_TABLE_DOCKET_SWITCH_LABEL": "Docket Switched (Inactive)",
@@ -40,6 +41,9 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
+  "CASE_LIST_TABLE_TASK_OWNER_COLUMN_TITLE":"Task Owner",
+  "CASE_LIST_TABLE_DAYS_SINCE_LAST_COLUMN_TITLE":"Days Since Last Status Change",
+  "CASE_LIST_TABLE_TOTAL_DAYS_COLUMN_TITLE":"Total Days",
 
   "DOB_INVALID_ERRS": {
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
@@ -272,6 +276,9 @@
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
+  "ORGANIZATIONAL_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending",
+  "ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review",
+  "ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE": "Completed",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",

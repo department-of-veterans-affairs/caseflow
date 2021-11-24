@@ -127,6 +127,26 @@ export const taskColumn = (tasks, filterOptions) => {
   };
 };
 
+export const taskOwnerColumn = (tasks, filterOptions) => {
+
+  console.log("LOGGING: ",tasks)
+
+  return {
+    header: COPY.CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+    tableData: tasks,
+    columnName: 'label',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
+    label: 'Filter by owner',
+    valueName: 'label',
+    valueFunction: (task) => {
+      return task.label
+    },
+    getSortValue: (task) => task.label
+  };
+};
+
 export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
@@ -266,6 +286,19 @@ export const daysOnHoldColumn = (requireDasRecord) => {
           diff(task.placedOnHoldAt, 'days')} />
       </React.Fragment>;
     },
+    backendCanSort: true,
+    getSortValue: (task) => numDaysOnHold(task)
+  };
+};
+
+export const daysSinceLastColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_DAYS_SINCE_LAST_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => `${task.days_since_last_status_change} days`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };

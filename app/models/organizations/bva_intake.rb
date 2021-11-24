@@ -28,8 +28,8 @@ class BvaIntake < Organization
 		COLUMN_NAMES = [
 			Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
 			Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-			Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-			Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+			Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+			Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name,
 			Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
 		].compact
 end

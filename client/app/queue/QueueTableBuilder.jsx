@@ -16,6 +16,7 @@ import {
   badgesColumn,
   completedToNameColumn,
   daysOnHoldColumn,
+  daysSinceLastColumn,
   daysWaitingColumn,
   detailsColumn,
   docketNumberColumn,
@@ -25,6 +26,7 @@ import {
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
   taskColumn,
+  taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn
 } from './components/TaskTableColumns';
@@ -93,6 +95,9 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
         requireDasRecord
       ),
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]: daysSinceLastColumn(
+        requireDasRecord
+      ),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
         requireDasRecord
       ),
@@ -121,7 +126,8 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions)
     };
 
     return functionForColumn[column.name];
