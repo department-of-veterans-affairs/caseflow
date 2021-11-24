@@ -203,7 +203,7 @@ class AppealSeries < CaseflowRecord
     end
 
     if latest_appeal.form9_date
-      return :pending_certification_ssoc if !latest_appeal.ssoc_dates.empty?
+      return :pending_certification_ssoc if latest_appeal.ssoc_dates.present?
 
       return :pending_certification
     end
@@ -257,7 +257,7 @@ class AppealSeries < CaseflowRecord
   end
 
   def disambiguate_status_remand
-    post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
+    post_decision_ssocs = latest_appeal.ssoc_dates&.select { |ssoc| ssoc > latest_appeal.decision_date }
     return :remand_ssoc if !post_decision_ssocs.empty?
 
     :remand
