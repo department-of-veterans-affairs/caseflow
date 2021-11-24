@@ -71,15 +71,12 @@ class SameAppealSubstitutionTasksFactory
     end
   end
 
-  # copy existing judge decision review and atty decision tasks and reopen both if they are not already open
-  # discussion with JC: only reopen cancelled tasks. do not reopen completed tasks.
   def reopen_decision_tasks
     excluded_attrs = %w[status closed_at placed_on_hold_at]
-    # The appeal only has closed attorney tasks and closed judge decision review tasks
     if @appeal.tasks.of_type(:AttorneyTask)&.open&.empty? &&
        @appeal.tasks.of_type(:JudgeDecisionReviewTask)&.open&.empty?
-      attorney_task = @appeal.tasks.of_type(:AttorneyTask).closed.order(:id).last
-      attorney_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+      attorney_task = @appeal.tasks.of_type(:AttorneyTask).cancelled.order(:id).last
+      attorney_task&.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
     end
   end
 end
