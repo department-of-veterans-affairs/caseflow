@@ -2478,6 +2478,7 @@ RSpec.feature "Case details", :all_dbs do
         it "should display case details" do
           expect(appeal.accessible?).to be_truthy
           visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content(appeal.claimant.address_line_1)
         end
       end
     end
@@ -2494,7 +2495,7 @@ RSpec.feature "Case details", :all_dbs do
           # revist the queue page and make sure it still errors
           expect(appeal.accessible?).to be_falsey
           visit("/queue/appeals/#{appeal.uuid}")
-          expect(page).to_not have_content(appeal.claimant.address_line_1)
+          expect(page).to have_content("Additional access needed")
         end
       end
     end
