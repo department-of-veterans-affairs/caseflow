@@ -77,6 +77,39 @@ describe Docket, :all_dbs do
         end
       end
 
+      # This should probably actually test distribute_appeals
+      context "when there is a judge and it's not_genpop" do
+        let(:other_judge) { create(:user, :judge, :with_judge_team) }
+
+        # This may be excessive
+        let(:cavc_remand) { cavc_appeal.cavc_remand }
+        let(:source_appeal) { cavc_remand.source_appeal }
+        let(:judge_decision_review_task) do
+          source_appeal.tasks.where(
+            type: "JudgeDecisionReviewTask",
+            status: "completed"
+          ).first
+        end
+
+        context "when called for another judge who has no affinity" do
+          subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
+
+          it "returns no appeals" do
+            expect(subject.count.size).to eq 0 # still don't get why this is needed
+          end
+
+        end
+
+        context "when called for the judge with affinity" do
+          let(:judge) { judge_decision_review_task.assigned_to }
+          subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: judge) }
+
+          it "returns only the cavc appeal" do
+            expect(subject).to eq [cavc_appeal]
+          end
+        end
+      end
+
       context "when ready is false" do
         subject { DirectReviewDocket.new.appeals(priority: true, ready: false) }
         it "throws an error" do
