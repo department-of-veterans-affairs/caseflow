@@ -218,8 +218,8 @@ RSpec.shared_examples("fill substitution form") do
       visit "/queue/appeals/#{appeal.uuid}"
 
       expect(page).to_not have_content "+ Add Substitute"
-
-      if appeal_death_dismissal?(appeal)
+      # Only display message if it does not have same appeal substitution.
+      unless appeal.hasSameAppealSubstitution == true
         expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
       end
     end
@@ -229,8 +229,4 @@ end
 def same_appeal_substitution_allowed?(source_appeal)
   (ClerkOfTheBoard.singleton.user_is_admin?(current_user) || !!source_appeal.veteran.date_of_death) &&
     source_appeal.request_issues.none?(&:death_dismissed?)
-end
-
-def appeal_death_dismissal?(source_appeal)
-  source_appeal.request_issues.none?(&:death_dismissed?)
 end
