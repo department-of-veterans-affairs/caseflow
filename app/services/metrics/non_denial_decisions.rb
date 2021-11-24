@@ -9,10 +9,6 @@ class Metrics::NonDenialDecisions < Metrics::Base
 
     @appeal_type = appeal_type
     @within = within.to_i
-
-    if start_or_end_date_within_n_days
-      fail Metrics::DateRange::DateRangeError, "Start and end dates must be #{within} days or more ago"
-    end
   end
 
   def call
@@ -30,11 +26,6 @@ class Metrics::NonDenialDecisions < Metrics::Base
   private
 
   attr_reader :appeal_type, :within
-
-  def start_or_end_date_within_n_days
-    n_days_ago = (Time.zone.now - within.days).to_date
-    end_date > n_days_ago || start_date > n_days_ago
-  end
 
   def completed_dispatch_tasks
     completed = BvaDispatchTask.completed
