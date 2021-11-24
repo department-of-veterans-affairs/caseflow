@@ -40,7 +40,8 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
       initial_sent_email_event_count = @se.hearing.email_events.count
       subject
       expect(@hearing_email_recipient.reload.email_sent).to eq(true)
-      expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients.where(hearing_type: @se.hearing.class.name).count)
+      expect(@se.hearing.email_events.count).to eq(initial_sent_email_event_count + @se.hearing.email_recipients
+        .where(hearing_type: @se.hearing.class.name).count)
     end
     it "doesnt resend emails if a reminder email has been sent" do
       @se.update(email_type: "reminder")
