@@ -40,7 +40,6 @@ class VirtualHearings::ResendVirtualHearingEmailsService
         ).call
         sent_email.update(sent_by: User.system_user)
       rescue StandardError, Hearings::SendEmail::RecipientIsDeceasedVeteran,
-             Caseflow::Error::VacolsRecordNotFound => error
         Rails.logger.info(error)
       end
     end
@@ -55,20 +54,24 @@ class VirtualHearings::ResendVirtualHearingEmailsService
     end
 
     def should_resend_email?(sent_email)
-      return false unless sent_email.hearing.virtual?
-
-      return false if sent_email.hearing.scheduled_for.past?
-
-      return false if hearing_has_non_confirmation_emails?(sent_email.hearing)
-
-      return false if sent_email.sent_hearing_admin_email_event.present?
-
-      # Reminder emails can also have User.system user as the sender, this works because we're only interested in
-      # confirmation emails for now.
-      return false if sent_email.sent_by == User.system_user
-
-      message = get_gov_delivery_message_body(sent_email)
-      bad_email?(message[:body])
+      begin
+        return false unless sent_email.hearing.virtual?
+  
+        return false if sent_email.hearing.scheduled_for.past?
+  
+        return false if hearing_has_non_confirmation_emails?(sent_email.hearing)
+  
+        return false if sent_email.sent_hearing_admin_email_event.present?
+  
+        # Reminder emails can also have User.system user as the sender, this works because we're only interested in
+        # confirmation emails for now.
+        return false if sent_email.sent_by == User.system_user
+  
+        message = get_gov_delivery_message_body(sent_email)
+        bad_email?(message[:body])
+      rescue StandardError, Caseflow::Error::VacolsRecordNotFound => error
+        Rails.logger.info(error)
+      end
     end
 
     def bad_email?(email_body)
