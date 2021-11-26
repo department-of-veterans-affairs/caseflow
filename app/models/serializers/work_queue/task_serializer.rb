@@ -175,5 +175,4 @@ class WorkQueue::TaskSerializer
   attribute :unscheduled_hearing_notes do |object|
     object.try(:unscheduled_hearing_notes)
   end
-
 end
