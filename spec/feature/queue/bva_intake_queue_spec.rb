@@ -2,12 +2,12 @@
 
 feature "BvaIntakeQueue", :all_dbs do
   context "Load BVA Intake Queue" do
-    let(:organization) { VhaCamo.singleton }
-    let(:camo_user) { User.authenticate!(roles: ["Admin Intake"]) }
+    let(:organization) { BvaIntake.singleton }
+    let(:bva_user) { User.authenticate!(roles: ["Admin Intake"]) }
 
     before do
       organization.add_user(camo_user)
-      camo_user.reload
+      bva_user.reload
       visit "/organizations/#{organization.url}"
     end
 
