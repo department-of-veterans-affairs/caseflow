@@ -405,7 +405,7 @@ class Task < CaseflowRecord
   end
 
   def calculated_last_change_duration
-    (Date.today - self.updated_at&.to_date)&.to_i
+    (Time.zone.today - updated_at&.to_date)&.to_i
   end
 
   def update_task_type(params)

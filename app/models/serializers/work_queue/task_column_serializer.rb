@@ -288,11 +288,11 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]
 
     if serialize_attribute?(params, columns)
-      if object.assigned_to_type = "Organization"
+      if object.assigned_to_type == "Organization"
         Organization.find(object.assigned_to_id).name
-      elsif object.assigned_to_type = "User"
+      elsif object.assigned_to_type == "User"
         User.find(object.assigned_to_id).css_id
-      end 
+      end
     end
   end
 
