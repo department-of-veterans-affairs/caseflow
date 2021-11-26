@@ -14,7 +14,7 @@ class BvaIntakeCompletedTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_BVA_COMPLETED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks
