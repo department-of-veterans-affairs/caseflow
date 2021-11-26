@@ -176,7 +176,4 @@ class WorkQueue::TaskSerializer
     object.try(:unscheduled_hearing_notes)
   end
 
-  attribute :fresh_attribute do |object|
-    "This"
-  end
 end

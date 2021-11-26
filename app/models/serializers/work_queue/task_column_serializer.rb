@@ -285,10 +285,15 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :owned_by do |object, params|
-    Rails.logger.debug("****************")
-    Rails.logger.debug(object.inspect)
-    Rails.logger.debug(params)
-    Rails.logger.debug("****************")
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]
+
+    if serialize_attribute?(params, columns)
+      if object.assigned_to_type = "Organization"
+        Organization.find(object.assigned_to_id).name
+      elsif object.assigned_to_type = "User"
+        User.find(object.assigned_to_id).css_id
+      end 
+    end
   end
 
   attribute :days_since_last_status_change do |object, params|

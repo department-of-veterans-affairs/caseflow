@@ -140,9 +140,7 @@ export const taskOwnerColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by owner',
     valueName: 'label',
-    valueFunction: (task) => {
-      return task.label
-    },
+    valueFunction: (task) => task.ownedBy,
     getSortValue: (task) => task.label
   };
 };
@@ -298,7 +296,7 @@ export const daysSinceLastColumn = (requireDasRecord) => {
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
-    valueFunction: (task) => `${task.days_since_last_status_change} days`,
+    valueFunction: (task) => `${task.daysSinceLastSatusChange} days`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };
