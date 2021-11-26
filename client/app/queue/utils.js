@@ -72,7 +72,6 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
 };
 
 const taskAttributesFromRawTask = (task) => {
-  console.log("LOGGING 2: ",task)
   const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
     {
       firstName: task.attributes.decision_prepared_by.first_name,
