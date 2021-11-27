@@ -90,6 +90,13 @@ class Appeal < DecisionReview
               RootTask.name, Task.closed_statuses, 1)
   }
 
+  scope :pre_docket, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              PreDocketTask.name, Task.closed_statuses, 1)
+  }
+
   scope :established, -> { where.not(established_at: nil) }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
