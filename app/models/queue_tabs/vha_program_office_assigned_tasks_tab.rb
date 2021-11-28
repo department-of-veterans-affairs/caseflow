@@ -17,14 +17,14 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
 
   def parents_with_child_assess_documentation_task
     assigned_task_children.where(type: AssessDocumentationTask.name)
-    .where.not(status: Constants.TASK_STATUSES.completed)
-    .pluck(:parent_id)
+      .where.not(status: Constants.TASK_STATUSES.completed)
+      .pluck(:parent_id)
   end
 
   def no_children_tasks
     assigned_task_children.where(type: AssessDocumentationTask.name)
-    .where(assigned_to_id: assignee.id)
-    .pluck(:parent_id)
+      .where(assigned_to_id: assignee.id)
+      .pluck(:parent_id)
   end
 
   def tasks
@@ -36,5 +36,4 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   def column_names
     VhaProgramOffice::COLUMN_NAMES
   end
-
 end

@@ -17,11 +17,11 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view
-    .in_progress
-    .where(assigned_to: assignee)
+      .in_progress
+      .where(assigned_to: assignee)
   end
 
   def column_names
-      VhaProgramOffice::COLUMN_NAMES
+    VhaProgramOffice::COLUMN_NAMES
   end
 end

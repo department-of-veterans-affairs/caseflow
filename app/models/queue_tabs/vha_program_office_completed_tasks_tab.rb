@@ -16,10 +16,9 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def tasks
-  Task.includes(*task_includes).visible_in_queue_table_view
-  .closed
-  .where(assigned_to: assignee)
-
+    Task.includes(*task_includes).visible_in_queue_table_view
+      .closed
+      .where(assigned_to: assignee)
   end
 
   def column_names
