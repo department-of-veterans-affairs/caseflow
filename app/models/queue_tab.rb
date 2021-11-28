@@ -16,6 +16,7 @@ class QueueTab
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
+  # If you don't create your own tab name it will default to the tab defined in QueueTab
   def self.from_name(tab_name)
     tab = descendants.find { |subclass| subclass.tab_name == tab_name }
     fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name) unless tab
@@ -98,12 +99,36 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
+  def assigned_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).assigned
+  end
+
+  def cancelled_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).cancelled
+  end
+
   def recently_completed_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
   end
 
+  # def without_child_tasks
+  #   Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).assigned.without_children
+  # end
+
+  def without_child_tasks
+    Task.where(children: nil)
+  end
+
   def on_hold_task_children
     Task.where(parent: on_hold_tasks)
+  end
+
+  def parent_has_cancelled_child_tasks
+    Task.where(children: cancelled_tasks)
+  end
+
+  def assigned_task_children
+    Task.where(parent: assigned_tasks)
   end
 
   def visible_child_task_ids

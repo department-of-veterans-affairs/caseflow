@@ -28,9 +28,9 @@ import {
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn
-  // taskOwnerColumn,
-  // vamcOwnerColumn
+  typeColumn,
+  taskOwnerColumn,
+  vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -63,9 +63,6 @@ class QueueTableBuilder extends React.PureComponent {
       return tab.name;
     });
 
-    console.log('Tab names =====>', tabNames);
-    console.log('Config =====>', config);
-
     const activeTab = this.paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
@@ -84,10 +81,6 @@ class QueueTableBuilder extends React.PureComponent {
     column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
-
-    console.log('Col ====>', column);
-    console.log('Col Config ====>', config);
-    console.log('Col Tasks ====>', tasks);
 
     const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
@@ -140,14 +133,14 @@ class QueueTableBuilder extends React.PureComponent {
       //   tasks,
       //   filterOptions
       // ),
-      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
-      // [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
+        tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
+        tasks,
+        filterOptions
+      ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)

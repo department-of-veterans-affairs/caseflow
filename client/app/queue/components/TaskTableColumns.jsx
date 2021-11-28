@@ -159,37 +159,37 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 //   };
 // };
 
-// export const taskOwnerColumn = (tasks, filterOptions) => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-//     backendCanSort: true,
-//     enableFilter: true,
-//     tableData: tasks,
-//     columnName: 'assignedTo.name',
-//     anyFiltersAreSet: true,
-//     filterOptions,
-//     label: 'Filter by assignee',
-//     valueFunction: (task) => task.assignedTo.name,
-//     getSortValue: (task) => task.assignedTo.name
-//   };
-// };
+export const taskOwnerColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedTo.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by assignee',
+    valueFunction: (task) => task.assignedTo.name,
+    getSortValue: (task) => task.assignedTo.name
+  };
+};
 
-// export const vamcOwnerColumn = (tasks, filterOptions) => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
-//     backendCanSort: true,
-//     enableFilter: true,
-//     tableData: tasks,
-//     columnName: 'assignedTo.name',
-//     anyFiltersAreSet: true,
-//     filterOptions,
-//     label: 'Filter by VAMC Owner',
-//     valueFunction: (task) => task.assignedTo.name,
-//     getSortValue: (task) => task.assignedTo.name
-//   };
-// };
+export const vamcOwnerColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedTo.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by VAMC Owner',
+    valueFunction: (task) => task.assignedTo.name,
+    getSortValue: (task) => task.assignedTo.name
+  };
+};
 
 export const taskColumn = (tasks, filterOptions) => {
   return {

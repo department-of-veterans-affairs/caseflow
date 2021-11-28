@@ -147,9 +147,9 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-      # Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-      # Constants.QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name
     ]
     assignee = object.assigned_to
 

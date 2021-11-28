@@ -72,6 +72,12 @@ class Task < CaseflowRecord
 
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
+  # scope :completed, -> { completed.where(status: completed) }
+
+  # scope :without_children, -> { left_outer_joins(:children).where(children: { id: nil }) }
+
+  scope :without_children, -> { where(:children => { :id => nil }) }
+
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   scope :of_type, ->(task_type) { where(type: task_type) }
@@ -327,6 +333,10 @@ class Task < CaseflowRecord
 
   def open_with_no_children?
     open? && children.empty?
+  end
+
+  def active_with_no_children?
+    active? && children.empty?
   end
 
   # When a status is "active" we expect properties of the task to change

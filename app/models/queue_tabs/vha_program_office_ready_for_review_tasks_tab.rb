@@ -15,18 +15,16 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
     format(COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TASKS_DESCRIPTION, assignee.name)
   end
 
-  # def tasks
-  #   Task.includes(*task_includes).visible_in_queue_table_view
-  #   .where(assigned_to: assignee)
-  #   .assigned
-  #   .select{|task| task.children.any?(&:active?)}
-  # end
+  def parents_with_child_assess_documentation_task
+    assigned_task_children.where(type: AssessDocumentationTask.name)
+    .where.not(status: Constants.TASK_STATUSES.cancelled)
+    .pluck(:parent_id)
+  end
 
   def tasks
+    # byebug
     Task.includes(*task_includes).visible_in_queue_table_view
-    .where(assigned_to: VhaProgramOffice.all.map(&:id))
-    .assigned
-    # .select{|task| task.children.any?(&:completed?)}
+    .where(id: parents_with_child_assess_documentation_task)
   end
 
   def column_names

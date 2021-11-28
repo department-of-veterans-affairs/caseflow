@@ -8,21 +8,18 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.VHA_PO_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
     COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
   end
 
-  # def task_includes
-  #     # Customer version of this method
-  # end
-
   def tasks
   Task.includes(*task_includes).visible_in_queue_table_view
-  .where(assigned_to: VhaProgramOffice.all.map(&:id))
   .closed
+  .where(assigned_to: assignee)
+
   end
 
   def column_names

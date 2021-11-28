@@ -8,7 +8,7 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.IN_PROGRESS_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.VHA_PO_IN_PROGRESS_TASKS_TAB_NAME
   end
 
   def description
@@ -17,8 +17,8 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view
+    .in_progress
     .where(assigned_to: assignee)
-    .active
   end
 
   def column_names
