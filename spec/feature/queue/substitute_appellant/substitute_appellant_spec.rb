@@ -35,14 +35,6 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
 
       context "with hearing docket" do
         let(:docket_type) { Constants.AMA_DOCKETS.hearing }
-        let(:appeal) do
-          create(:appeal,
-                 :dispatched, :with_decision_issue, :held_hearing,
-                 docket_type: docket_type,
-                 disposition: "dismissed_death",
-                 receipt_date: veteran.date_of_death + 5.days,
-                 veteran: veteran)
-        end
 
         it_should_behave_like "substitution unavailable"
       end
