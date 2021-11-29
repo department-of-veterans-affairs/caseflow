@@ -16,20 +16,35 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   end
 
   def parents_with_child_assess_documentation_task
-    assigned_task_children.where(type: AssessDocumentationTask.name)
-      .where.not(status: Constants.TASK_STATUSES.completed)
+    assigned_task_children.where(type: :AssessDocumentationTask).cancelled
+      # .where.not(status: Constants.TASK_STATUSES.completed)
       .pluck(:parent_id)
   end
 
-  def no_children_tasks
-    assigned_task_children.where(type: AssessDocumentationTask.name)
-      .where(assigned_to_id: assignee.id)
+  def parent_ids_with_completed_child_assess_documentation_task
+    assigned_task_children.where(type: :AssessDocumentationTask).completed
+      # .where(status: Constants.TASK_STATUSES.completed)
       .pluck(:parent_id)
   end
+
+  # def no_child_assess_documentation_tasks
+  #   Task.children.where.not(type: AssessDocumentationTask.name)
+  #     .pluck(:parent_id)
+  # end
+
+  # def no_child_assess_documentation_tasks
+  #   Task.left_joins(:children).group('tasks.id').having('count(children_tasks.id) = 0')
+  # end
+
+  # def tasks
+  #   Task.includes(*task_includes).visible_in_queue_table_view.where(
+  #     id: parents_with_child_assess_documentation_task
+  #   )
+  # end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: [no_children_tasks, parents_with_child_assess_documentation_task].flatten
+      id: assigned_tasks.map(&:id) - parent_ids_with_completed_child_assess_documentation_task
     )
   end
 

@@ -72,10 +72,6 @@ class Task < CaseflowRecord
 
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
-  # scope :completed, -> { completed.where(status: completed) }
-
-  # scope :without_children, -> { left_outer_joins(:children).where(children: { id: nil }) }
-
   scope :without_children, -> { where(:children => { id: nil }) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
