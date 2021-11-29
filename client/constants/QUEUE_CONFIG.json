@@ -14,6 +14,7 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
 
   "COLUMNS": {
     "APPEAL_TYPE": {

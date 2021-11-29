@@ -123,7 +123,7 @@ export const taskColumn = (tasks, filterOptions) => {
     label: 'Filter by task',
     valueName: 'label',
     valueFunction: (task) => {
-      if (task.label !== 'Transcription Task') {
+      if (task.label !== QUEUE_CONFIG.TRANSCRIPTION_TASK_LABEL) {
         return task.label;
       }
 
