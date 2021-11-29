@@ -13,7 +13,7 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Button from '../components/Button';
 import {
   assignedToColumn,
-  // boardIntakeColumn,
+  boardIntakeColumn,
   badgesColumn,
   completedToNameColumn,
   daysOnHoldColumn,
@@ -125,10 +125,10 @@ class QueueTableBuilder extends React.PureComponent {
         tasks,
         filterOptions
       ),
-      // [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
+      [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
+        tasks,
+        filterOptions
+      ),
       // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
       //   tasks,
       //   filterOptions

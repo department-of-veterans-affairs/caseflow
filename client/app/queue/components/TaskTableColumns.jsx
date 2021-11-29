@@ -109,21 +109,21 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
-// export const boardIntakeColumn = (tasks, filterOptions) => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
-//     backendCanSort: true,
-//     enableFilter: true,
-//     tableData: tasks,
-//     columnName: 'assignedAt.name',
-//     anyFiltersAreSet: true,
-//     filterOptions,
-//     label: 'Filter by Board Intake',
-//     valueFunction: (task) => task.assignedAt.name,
-//     getSortValue: (task) => task.assignedAt.name
-//   };
-// };
+export const boardIntakeColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedAt.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by Board Intake',
+    valueFunction: (task) => task.assignedAt.name,
+    getSortValue: (task) => task.assignedAt.name
+  };
+};
 
 // export const lastActionColumn = (tasks, filterOptions) => {
 //   return {
