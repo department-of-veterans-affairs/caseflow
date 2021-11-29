@@ -14,7 +14,11 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 
-import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
+import {
+  judgeAssignTasksSelector,
+  camoAssignTasksSelector,
+  getTasksByUserId
+} from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -25,10 +29,11 @@ const containerStyles = css({
 
 /**
  * Case assignment page used by judges to request new cases and assign cases to their attorneys.
+ * Also used by VHA CAMO to bulk assign to VHA Program Offices.
  * Cases to be assigned are rendered by component UnassignedCasesPage.
  * Cases that have been assigned are rendered by component AssignedCasesPage.
  */
-class JudgeAssignTaskListView extends React.PureComponent {
+class TeamAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -46,7 +51,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
       attorneysOfJudge,
       organizations,
       unassignedTasksCount,
-      match
+      match,
+      userIsCamoEmployee
     } = this.props;
 
     const chosenUserId = targetUserId || userId;
@@ -57,27 +63,31 @@ class JudgeAssignTaskListView extends React.PureComponent {
           <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
-        <div className="usa-width-one-fourth">
-          <ul className="usa-sidenav-list">
-            <li>
-              <NavLink to={`/queue/${targetUserCssId}/assign`} activeClassName="usa-current" exact>
-                Cases to Assign ({unassignedTasksCount})
-              </NavLink>
-            </li>
-            {attorneysOfJudge.
-              map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                  {attorney.full_name} ({attorney.active_task_count})
+        {!userIsCamoEmployee &&
+          <div className="usa-width-one-fourth">
+            <ul className="usa-sidenav-list">
+              <li>
+                <NavLink
+                  to={`/queue/${targetUserCssId}/assign`}
+                  activeClassName="usa-current" exact>
+                  Cases to Assign ({unassignedTasksCount})
                 </NavLink>
-              </li>)}
-          </ul>
-        </div>
-        <div className="usa-width-three-fourths">
+              </li>
+              {attorneysOfJudge.
+                map((attorney) => <li key={attorney.id}>
+                  <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                    {attorney.full_name} ({attorney.active_task_count})
+                  </NavLink>
+                </li>)}
+            </ul>
+          </div>
+        }
+        <div className={`usa-width-${userIsCamoEmployee ? 'one-whole' : 'three-fourths'}`}>
           <PageRoute
             exact
             path={match.url}
             title="Cases to Assign | Caseflow"
-            render={() => <UnassignedCasesPage userId={chosenUserId.toString()} />}
+            render={() => <UnassignedCasesPage userId={chosenUserId} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -90,7 +100,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 }
 
-JudgeAssignTaskListView.propTypes = {
+TeamAssignTaskListView.propTypes = {
   attorneysOfJudge: PropTypes.array.isRequired,
   resetSuccessMessages: PropTypes.func,
   resetSaveState: PropTypes.func,
@@ -101,18 +111,28 @@ JudgeAssignTaskListView.propTypes = {
   userCssId: PropTypes.string,
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
-  organizations: PropTypes.array
+  organizations: PropTypes.array,
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge
+    },
+    ui: {
+      userIsCamoEmployee
     }
   } = state;
 
+  let taskSelector = judgeAssignTasksSelector(state);
+
+  if (userIsCamoEmployee) {
+    taskSelector = camoAssignTasksSelector(state);
+  }
+
   return {
-    unassignedTasksCount: judgeAssignTasksSelector(state).length,
+    unassignedTasksCount: taskSelector.length,
     userCssId: state.ui.userCssId,
     targetUserId: state.ui.targetUser?.id,
     targetUserCssId: state.ui.targetUser?.cssId,
@@ -129,4 +149,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeAssignTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(TeamAssignTaskListView);

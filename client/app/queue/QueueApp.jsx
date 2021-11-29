@@ -19,6 +19,7 @@ import {
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
+  setUserIsCamoEmployee,
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
@@ -34,7 +35,7 @@ import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
-import JudgeAssignTaskListView from './JudgeAssignTaskListView';
+import TeamAssignTaskListView from './TeamAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
@@ -114,6 +115,7 @@ class QueueApp extends React.PureComponent {
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
+    this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -154,16 +156,17 @@ class QueueApp extends React.PureComponent {
     </QueueLoadingScreen>
   );
 
-  routedJudgeQueueList = (label) => ({ match }) => (
+  routedTeamQueueList = (label) => ({ match }) => (
     <QueueLoadingScreen
       {...this.propsForQueueLoadingScreen()}
       match={match}
-      userRole={USER_ROLE_TYPES.judge}
+      userRole={this.props.userRole}
+      loadJudgeData
       loadAttorneys={label === 'assign'}
       type={label}
     >
       {label === 'assign' ? (
-        <JudgeAssignTaskListView {...this.props} match={match} />
+        <TeamAssignTaskListView {...this.props} match={match} />
       ) : (
         <JudgeDecisionReviewTaskListView {...this.props} />
       )}
@@ -559,12 +562,13 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
+      userIsCamoEmployee
     };
   };
 
@@ -615,12 +619,12 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/:userId/review"
               title="Review Cases | Caseflow"
-              render={this.routedJudgeQueueList('review')}
+              render={this.routedTeamQueueList('review')}
             />
             <PageRoute
               path="/queue/:userId/assign"
               title="Unassigned Cases | Caseflow"
-              render={this.routedJudgeQueueList('assign')}
+              render={this.routedTeamQueueList('assign')}
             />
 
             <PageRoute
@@ -1211,6 +1215,8 @@ QueueApp.propTypes = {
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
+  setUserIsCamoEmployee: PropTypes.func,
+  userIsCamoEmployee: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1243,6 +1249,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,
+      setUserIsCamoEmployee,
       setFeedbackUrl,
       setOrganizations,
     },
