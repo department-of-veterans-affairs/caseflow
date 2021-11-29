@@ -17,6 +17,10 @@ class BvaIntakePendingTab < QueueTab
     format(COPY::ORGANIZATIONAL_QUEUE_PAGE_BVA_PENDING_TASKS_DESCRIPTION, assignee.name)
   end
 
+  def tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+  end
+
   def column_names
     BvaIntake::COLUMN_NAMES
   end
