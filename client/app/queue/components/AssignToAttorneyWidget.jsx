@@ -281,7 +281,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 }
 
 AssignToAttorneyWidget.propTypes = {
-  previousAssigneeId: PropTypes.string,
+  previousAssigneeId: PropTypes.number,
   userId: PropTypes.number,
   currentUser: PropTypes.shape({
     id: PropTypes.number,
