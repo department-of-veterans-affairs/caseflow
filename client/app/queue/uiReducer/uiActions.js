@@ -231,6 +231,11 @@ export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
   payload: { userIsVsoEmployee }
 });
 
+export const setUserIsCamoEmployee = (userIsCamoEmployee) => ({
+  type: ACTIONS.SET_USER_IS_CAMO_EMPLOYEE,
+  payload: { userIsCamoEmployee }
+});
+
 export const setFeedbackUrl = (feedbackUrl) => ({
   type: ACTIONS.SET_FEEDBACK_URL,
   payload: { feedbackUrl }
