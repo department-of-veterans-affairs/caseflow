@@ -608,6 +608,12 @@ class Task < CaseflowRecord
     true
   end
 
+  def post_distribution?
+    [JudgeAssignTask, JudgeDecisionReviewTask].any? do |task_type|
+      type == task_type.to_s || ancestor_task_of_type(task_type).present?
+    end
+  end
+
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
 
   # This method is for copying a task and its ancestors to a new appeal stream
