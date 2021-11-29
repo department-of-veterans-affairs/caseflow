@@ -16,6 +16,7 @@
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
   "PENDING_TASKS_TAB_NAME": "pending",
+  "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
 
   "COLUMNS": {
     "APPEAL_TYPE": {

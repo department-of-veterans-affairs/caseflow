@@ -10,7 +10,7 @@ class BvaIntakeCompletedTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.BVA_INTAKE_COMPLETED_TAB_NAME
   end
 
   def description
@@ -18,7 +18,7 @@ class BvaIntakeCompletedTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).completed
   end
 
   def column_names
