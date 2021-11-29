@@ -60,7 +60,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
         expect(page).to have_content(COPY::CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL)
       end
 
-      step "cases are assigned when a program office is selected" do
+      step "cases are assignable when a program office and tasks are selected" do
         safe_click ".cf-select"
         click_dropdown(text: vha_po_org.name)
 
