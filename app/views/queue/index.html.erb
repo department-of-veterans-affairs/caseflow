@@ -6,6 +6,7 @@
     userCssId: current_user.css_id,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
+    userIsCamoEmployee: current_user.camo_employee?,
     canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
