@@ -7,6 +7,14 @@ module HasHearingTask
     has_one :hearing_task_association,
             -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
             as: :hearing
+    has_one :any_hearing_task_association,
+            -> { includes(:hearing_task) },
+            class_name: :HearingTaskAssociation,
+            as: :hearing
+  end
+
+  def any_hearing_task
+    any_hearing_task_association&.hearing_task
   end
 
   def hearing_task

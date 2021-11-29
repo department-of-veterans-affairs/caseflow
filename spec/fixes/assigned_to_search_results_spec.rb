@@ -5,7 +5,7 @@ require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
 
 ##
-# This RSpec replicates the "Case Storage" nomenclature in the "Assigned To" column of the search results.
+# This RSpec replicates the "Unassigned" nomenclature in the "Assigned To" column of the search results.
 #
 # - [Dispatch Task #204](https://github.com/department-of-veterans-affairs/dsva-vacols/issues/204)
 
@@ -35,8 +35,8 @@ feature "Search results for AMA appeal" do
       visit "/search?veteran_ids=#{appeal.veteran.id}"
       expect(page).to have_content("Unknown") # in the "Appellant Name" column
       expect(appeal.status.status).to eq :unknown
-      expect(page).to have_content("Case storage") # in the "Assigned To" column
-      expect(appeal.assigned_to_location).to eq "Case storage"
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL) # in the "Assigned To" column
+      expect(appeal.assigned_to_location).to eq COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL
 
       # Code from Appeal#assigned_to_location
       tasks = appeal.tasks
@@ -45,7 +45,7 @@ feature "Search results for AMA appeal" do
         tasks.on_hold.visible_in_queue_table_view
       )
       expect(recently_updated_task).to eq appeal.root_task
-      expect(recently_updated_task.assigned_to_label).to eq "Case storage"
+      expect(recently_updated_task.assigned_to_label).to eq COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL
 
       org_dispatch_task = BvaDispatchTask.create_from_root_task(appeal.root_task)
       params = {
