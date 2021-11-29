@@ -63,7 +63,6 @@ class TeamAssignTaskListView extends React.PureComponent {
           <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
-        <pre>{ JSON.stringify(attorneysOfJudge, null, 2) }</pre>
         {!userIsCamoEmployee &&
           <div className="usa-width-one-fourth">
             <ul className="usa-sidenav-list">
