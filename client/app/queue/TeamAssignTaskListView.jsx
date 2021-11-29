@@ -63,23 +63,25 @@ class TeamAssignTaskListView extends React.PureComponent {
           <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
-        <div className="usa-width-one-fourth">
-          <ul className="usa-sidenav-list">
-            <li>
-              <NavLink
-                to={`/queue/${targetUserCssId}/assign`}
-                activeClassName="usa-current" exact>
-                Cases to Assign ({unassignedTasksCount})
-              </NavLink>
-            </li>
-            {attorneysOfJudge.
-              map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                  {attorney.full_name} ({attorney.active_task_count})
+        {!userIsCamoEmployee &&
+          <div className="usa-width-one-fourth">
+            <ul className="usa-sidenav-list">
+              <li>
+                <NavLink
+                  to={`/queue/${targetUserCssId}/assign`}
+                  activeClassName="usa-current" exact>
+                  Cases to Assign ({unassignedTasksCount})
                 </NavLink>
-              </li>)}
-          </ul>
-        </div>
+              </li>
+              {attorneysOfJudge.
+                map((attorney) => <li key={attorney.id}>
+                  <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                    {attorney.full_name} ({attorney.active_task_count})
+                  </NavLink>
+                </li>)}
+            </ul>
+          </div>
+        }
         <div className={`usa-width-${userIsCamoEmployee ? 'one-whole' : 'three-fourths'}`}>
           <PageRoute
             exact
