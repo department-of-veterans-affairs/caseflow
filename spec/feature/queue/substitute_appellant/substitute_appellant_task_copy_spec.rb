@@ -44,10 +44,12 @@ TASKS = {
 note = "This test is only used to aid manual testing/demonstration."
 RSpec.feature "CASEFLOW-1501 Substitute appellant behavior", :postgres, skip: note do
   describe "Substitute Appellant appeal creation" do
-    cob_user = create(:user, css_id: "COB_USER", station_id: "101")
-    ClerkOfTheBoard.singleton.add_user(cob_user)
-    OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton)
-    User.authenticate!(user: cob_user)
+    before do
+      cob_user = create(:user, css_id: "COB_USER", station_id: "101")
+      ClerkOfTheBoard.singleton.add_user(cob_user)
+      OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton)
+      User.authenticate!(user: cob_user)
+    end
 
     let!(:appeal) do
       sji = SanitizedJsonImporter.from_file(

@@ -44,7 +44,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
                  veteran: veteran)
         end
 
-        it_should_behave_like "fill substitution form"
+        it_should_behave_like "substitution unavailable"
       end
     end
   end
