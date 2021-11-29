@@ -85,7 +85,7 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, hasSameAppealSubs
       <div {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
-        {substitutionAppealId && (
+        {!hasSameAppealSubstitution && (
           <AppealHasSubstitutionAlert
             targetAppealId={substitutionAppealId}
             hasSameAppealSubstitution={hasSameAppealSubstitution}
