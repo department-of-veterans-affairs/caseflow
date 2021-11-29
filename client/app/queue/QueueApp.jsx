@@ -161,6 +161,7 @@ class QueueApp extends React.PureComponent {
       {...this.propsForQueueLoadingScreen()}
       match={match}
       userRole={this.props.userRole}
+      loadJudgeData
       loadAttorneys={label === 'assign'}
       type={label}
     >
