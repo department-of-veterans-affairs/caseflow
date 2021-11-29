@@ -77,11 +77,10 @@ class HearingDay < CaseflowRecord
   }
 
   scope :for_judge_schedule, lambda { |judge, vacols_ids|
-    references(:hearings)
-      .where("hearing_days.judge_id = ? OR hearings.judge_id = ?", judge.id, judge.id)
+    where(hearings: { judge_id: judge.id })
+      .or(where(judge_id: judge.id))
       .or(where(id: vacols_ids))
-      .includes(:hearings)
-      .distinct
+      .includes(:hearings, :judge).distinct
   }
 
   def central_office?
