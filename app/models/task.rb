@@ -76,7 +76,7 @@ class Task < CaseflowRecord
 
   # scope :without_children, -> { left_outer_joins(:children).where(children: { id: nil }) }
 
-  scope :without_children, -> { where(:children => { :id => nil }) }
+  scope :without_children, -> { where(:children => { id: nil }) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
