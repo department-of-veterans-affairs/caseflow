@@ -12,7 +12,7 @@ class HearingDayRange
     @start_date = params[:start_date]
     @end_date = params[:end_date]
     @regional_office = params[:regional_office]
-    @user = params[:current_user]
+    @user = params[:user]
     @query = params[:query]
     @page = params[:page] || 1
   end
@@ -67,10 +67,6 @@ class HearingDayRange
       scheduled_hearings.size < hearing_day.total_slots
     end
 
-    def hearing_day_for_judge?(hearing_day)
-      hearing_day.judge == user || hearing_day.hearings.any? { |hearing| hearing.judge == user }
-    end
-
     def ama_hearing_day_for_vso_user?(hearing_day)
       hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
     end
@@ -113,9 +109,7 @@ class HearingDayRange
   attr_reader :show_all
 
   def load_days
-    hearing_days_in_range = HearingDay
-      .hearing_days_in_range(start_date, end_date)
-      .includes(:judge)
+    hearing_days_in_range = HearingDay.in_range(start_date, end_date)
 
     days = if regional_office.nil?
              hearing_days_in_range
@@ -129,33 +123,37 @@ class HearingDayRange
            end
 
     ransack = days.ransack(query)
-    self.pagination, self.hearing_days = pagy(ransack.result, page: page)
+    self.pagination, self.hearing_days = pagy(
+      ransack.result.includes(:judge),
+      page: page
+    )
 
     hearing_days
   end
 
   def upcoming_days_for_judge
-    hearing_days_in_range = HearingDay
-      .hearing_days_in_range(start_date, end_date)
-      .includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
+    hearing_days_in_range = HearingDay.in_range(start_date, end_date)
 
     vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
-      hearing_days_in_range.first(1000).pluck(:id), user
+      all_days.first(1000).pluck(:id), user
     )
 
-    hearing_days_in_range.select do |hearing_day|
-      self.class.hearing_day_for_judge?(hearing_day) || !vacols_hearings[hearing_day.id.to_s].nil?
-    end
+    days = hearing_days_in_range.for_judge_schedule(user, vacols_hearings.keys)
+
+    ransack = days.ransack(query)
+    self.pagination, self.hearing_days = pagy(
+      ransack.result.includes(:judge, hearings: [appeal: [tasks: :assigned_to]]),
+      page: page
+    )
+
+    hearing_days
   end
 
   def upcoming_days_for_vso_user
     hearing_days_in_range = HearingDay
-      .hearing_days_in_range(start_date, end_date)
+      .in_range(start_date, end_date)
       .includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
-
-    ama_days = hearing_days_in_range.select do |hearing_day|
-      self.class.ama_hearing_day_for_vso_user?(hearing_day)
-    end
+    ama_days = ama_days_for_vso_user(day_range)
 
     remaining_days = hearing_days_in_range.where.not(id: ama_days.pluck(:id)).order(
       Arel.sql(
@@ -178,7 +176,13 @@ class HearingDayRange
 
     ama_days + vacols_days
   end
-  
+
+  def ama_days_for_vso_user(day_range)
+    day_range.select do |hearing_day|
+      self.class.ama_hearing_day_for_vso_user?(hearing_day)
+    end
+  end
+
   def return_all_upcoming_hearing_days?
     ActiveRecord::Type::Boolean.new.deserialize(show_all) &&
       user&.roles&.include?("Hearing Prep")
