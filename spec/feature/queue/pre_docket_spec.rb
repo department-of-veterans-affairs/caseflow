@@ -142,7 +142,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
         expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
@@ -159,7 +159,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         fill_in("Provide instructions and context for this action:", with: ro_instructions)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
         expect(page).to have_content("Task assigned to #{regional_office.name}")
       end
 
