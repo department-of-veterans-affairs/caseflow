@@ -16,8 +16,8 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
   end
 
   def parents_with_completed_child_assess_documentation_task
-    assigned_task_children.where(type: :AssessDocumentationTask).completed
-      # .where(status: Constants.TASK_STATUSES.completed)
+    assigned_task_children.where(type: :AssessDocumentationTask)
+      .completed
       .pluck(:parent_id)
   end
 
