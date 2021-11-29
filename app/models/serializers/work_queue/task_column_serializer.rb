@@ -7,7 +7,9 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
-  attribute :instructions
+  attribute :instructions do |object|
+    object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
+  end
 
   # Used by hasDASRecord()
   attribute :docket_name do |object|
