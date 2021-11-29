@@ -30,6 +30,8 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
   end
 
   context "CAMO user can load assign page and relevant information" do
+    let(:task_first) { VhaDocumentSearchTask.first }
+    let(:task_last) { VhaDocumentSearchTask.last }
     scenario "can visit 'Assign' view and assign cases" do
       step "visit assign queue" do
         visit "/queue/#{camo_user.css_id}/assign?role=camo"
@@ -38,11 +40,27 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
         expect(case_rows.length).to eq(5)
       end
 
-      step "checks two cases and assigns them to a program office" do
-        scroll_to(".usa-table-borderless")
-        page.find(:css, "input[name='#{VhaDocumentSearchTask.first.id}']", visible: false).execute_script("this.click()")
-        page.find(:css, "input[name='#{VhaDocumentSearchTask.last.id}']", visible: false).execute_script("this.click()")
+      step "page errors when cases aren't selected" do
+        safe_click ".cf-select"
+        click_dropdown(text: vha_po_org.name)
 
+        click_on "Assign 0 cases"
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_TITLE)
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_DETAIL)
+      end
+
+      step "page errors when a program office isn't selected" do
+        visit "/queue/#{camo_user.css_id}/assign?role=camo"
+        scroll_to(".usa-table-borderless")
+        page.find(:css, "input[name='#{task_first.id}']", visible: false).execute_script("this.click()")
+        page.find(:css, "input[name='#{task_last.id}']", visible: false).execute_script("this.click()")
+
+        click_on "Assign 2 cases"
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_ASSIGNEE_TITLE)
+        expect(page).to have_content(COPY::CAMO_ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL)
+      end
+
+      step "cases are assigned when a program office is selected" do
         safe_click ".cf-select"
         click_dropdown(text: vha_po_org.name)
 
