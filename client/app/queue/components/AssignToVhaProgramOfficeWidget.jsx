@@ -162,7 +162,7 @@ export class AssignToVhaProgramOfficeWidget extends React.PureComponent {
       <Button
         onClick={this.submit}
         name={sprintf(
-          COPY.ASSIGN_WIDGET_BUTTON_TEXT,
+          COPY.VHA_ASSIGN_WIDGET_BUTTON_TEXT,
           { numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length) })}
         loading={savePending}
