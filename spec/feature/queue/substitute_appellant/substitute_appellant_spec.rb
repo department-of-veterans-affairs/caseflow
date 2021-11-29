@@ -44,15 +44,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
                  veteran: veteran)
         end
 
-        context "without hearings feature toggle" do
-          it_should_behave_like "substitution unavailable"
-        end
-
-        context "with hearings feature toggle" do
-          include_context "with hearings_substitution_death_dismissal feature toggle"
-
-          it_should_behave_like "fill substitution form"
-        end
+        it_should_behave_like "fill substitution form"
       end
     end
   end

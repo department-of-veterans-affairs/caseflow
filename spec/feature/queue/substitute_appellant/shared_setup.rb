@@ -9,11 +9,6 @@ RSpec.shared_context("with Clerk of the Board user") do
   end
 end
 
-RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle") do
-  before { FeatureToggle.enable!(:hearings_substitution_death_dismissal) }
-  after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
-end
-
 RSpec.shared_context("with listed_granted_substitution_before_dismissal feature toggle") do
   before { FeatureToggle.enable!(:listed_granted_substitution_before_dismissal) }
   after { FeatureToggle.disable!(:listed_granted_substitution_before_dismissal) }
