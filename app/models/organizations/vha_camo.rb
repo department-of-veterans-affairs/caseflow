@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# organization representing the VHA Claims and Appeals Modernization Office
+
 class VhaCamo < Organization
   def self.singleton
     VhaCamo.first || VhaCamo.create(name: "VHA CAMO", url: "vha-camo")
