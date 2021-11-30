@@ -47,7 +47,6 @@ export const supportsSubstitutionPostDispatch = ({
   return (
     appealSupportsSubstitution(appeal) &&
     currentUserOnClerkOfTheBoard &&
-    (appeal.docketName !== 'hearing') &&
     // For now, only allow a single substitution from a given appeal
     !hasSubstitution &&
     // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`

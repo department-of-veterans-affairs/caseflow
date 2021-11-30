@@ -284,7 +284,7 @@ describe('supportsSubstitutionPostDispatch', () => {
     const hearingAppeal = { ...appeal, docketName: 'hearing' };
 
     it('returns true', () => {
-      const args = { ...defaults, appeal: hearingAppeal, userIsCobAdmin: true };
+      const args = { ...defaults, appeal: hearingAppeal };
 
       expect(supportsSubstitutionPostDispatch(args)).toBe(true);
     });
