@@ -283,10 +283,10 @@ describe('supportsSubstitutionPostDispatch', () => {
   describe('with hearing docket', () => {
     const hearingAppeal = { ...appeal, docketName: 'hearing' };
 
-    it('returns false', () => {
-      const args = { ...defaults, appeal: hearingAppeal };
+    it('returns true', () => {
+      const args = { ...defaults, appeal: hearingAppeal, userIsCobAdmin: true };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPostDispatch(args)).toBe(true);
     });
   });
 });
