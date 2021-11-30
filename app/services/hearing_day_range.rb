@@ -85,9 +85,11 @@ class HearingDayRange
     end
   end
 
-  def all_hearing_days
+  def hearing_days_with_hearings
     total_video_and_co = load_days
-    vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
+    vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
+      total_video_and_co.pluck(:id)
+    )
 
     total_video_and_co
       .reject(&:lock)
@@ -96,25 +98,6 @@ class HearingDayRange
         scheduled_hearings = self.class.filter_non_scheduled_hearings(all_hearings || [])
 
         [hearing_day, scheduled_hearings]
-      end
-  end
-
-  def open_hearing_days_with_hearings_hash
-    # Optimzation: shared for every call to hash the HearingDay.
-    video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
-
-    all_hearing_days
-      .map do |hearing_day, scheduled_hearings|
-        hearing_day_serialized = ::HearingDaySerializer.new(
-          hearing_day,
-          params: { video_hearing_days_request_types: video_hearing_days_request_types }
-        ).serializable_hash[:data][:attributes]
-
-        hearing_day_serialized.merge(
-          hearings: scheduled_hearings.map do |hearing|
-            HearingForHearingDaySerializer.new(hearing).serializable_hash[:data][:attributes]
-          end
-        )
       end
   end
 
