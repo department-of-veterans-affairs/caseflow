@@ -13,13 +13,13 @@ class VhaCamo < Organization
 
   def queue_tabs
     [
-      in_progress_tasks_tab,
+      assigned_tasks_tab,
       completed_tasks_tab
     ]
   end
 
-  def in_progress_tasks_tab
-    ::VhaCamoInProgressTasksTab.new(assignee: self)
+  def assigned_tasks_tab
+    ::VhaCamoAssignedTasksTab.new(assignee: self)
   end
 
   def completed_tasks_tab

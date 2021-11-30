@@ -78,7 +78,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
-        visit "/organizations/vha-camo?tab=inProgressTab"
+        visit "/organizations/vha-camo?tab=camo_assigned"
         expect(page).to have_content("Assess Documentation")
 
         created_task_types = Set.new(appeal.tasks.map(&:type))
@@ -98,7 +98,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "CAMO user assigns to Program Office" do
         User.authenticate!(user: camo_user)
-        visit "/organizations/vha-camo?tab=inProgressTab"
+        visit "/organizations/vha-camo?tab=camo_assigned"
         expect(page).to have_content(COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
@@ -111,7 +111,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         fill_in("Provide instructions and context for this action:", with: po_instructions)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{camo.url}?tab=inProgressTab&page=1")
+        expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&page=1")
         expect(page).to have_content("Task assigned to #{program_office.name}")
 
         expect(AssessDocumentationTask.last).to have_attributes(

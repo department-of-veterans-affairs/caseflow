@@ -4,7 +4,7 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
+    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
   end
 
   def self.tab_name
@@ -18,7 +18,7 @@ class VhaProgramOfficeAssignedTasksTab < QueueTab
   def parent_ids_with_completed_child_assess_documentation_task
     assigned_task_children.where(type: :AssessDocumentationTask)
       .completed
-      .pluck(:parent_id)
+      .pluck(:parent_id).uniq
   end
 
   def tasks
