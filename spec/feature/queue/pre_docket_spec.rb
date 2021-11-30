@@ -6,6 +6,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   before do
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_predocket_appeals)
+    FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
@@ -16,6 +17,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   after do
     FeatureToggle.disable!(:vha_predocket_workflow)
     FeatureToggle.disable!(:vha_predocket_appeals)
+    FeatureToggle.disable!(:visn_predocket_workflow)
     FeatureToggle.disable!(:docket_vha_appeals)
   end
 
