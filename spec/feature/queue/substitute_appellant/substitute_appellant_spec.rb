@@ -83,6 +83,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         end
 
         context "with hearing docket" do
+          # create appeal with docket type 'hearing'
           let(:docket_type) { Constants.AMA_DOCKETS.hearing }
           let(:appeal) do
             create(:appeal,
