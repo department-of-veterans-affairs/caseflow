@@ -293,7 +293,7 @@ export const daysSinceLastColumn = (requireDasRecord) => {
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
-    valueFunction: (task) => `${task.daysSinceLastSatusChange} days`,
+    valueFunction: (task) => `${task.daysSinceLastSatusChange} days ago`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };
