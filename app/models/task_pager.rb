@@ -52,7 +52,6 @@ class TaskPager
   end
 
   def queue_tab
-    # byebug
     @queue_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee)
   end
 
