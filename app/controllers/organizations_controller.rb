@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OrganizationsController < ApplicationController
-  before_action :verify_organization_access
-  before_action :verify_role_access
+  before_action :verify_organization_access, except: [:org_index]
+  before_action :verify_role_access, except: [:org_index]
   before_action :verify_business_line, only: [:show]
   # Needs to be run after verify_organization_access to ensure the user has access to the VSO in BGS
   before_action :add_user_to_vso, only: [:show]
@@ -13,7 +13,21 @@ class OrganizationsController < ApplicationController
     render "queue/index"
   end
 
+  def org_index
+    return filter_by_type if params[:type]
+
+    render json: {}, status: :ok
+  end
+
   private
+
+  def filter_by_type
+    organizations = []
+    if params[:type]
+      organizations += Organization.where(type: params[:type])
+    end
+    render json: { organizations: json_organizations(organizations) }
+  end
 
   def verify_organization_access
     redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
@@ -49,6 +63,12 @@ class OrganizationsController < ApplicationController
     # Allow the url to be the ID of the row in the table since this will be what is associated with
     # tasks assigned to the organization in the tasks table.
     Organization.find_by(url: organization_url) || Organization.find(organization_url)
+  end
+
+  def json_organizations(organizations)
+    return [] if organizations.blank?
+
+    ::WorkQueue::OrganizationSerializer.new(organizations, is_collection: true)
   end
   helper_method :organization
 end

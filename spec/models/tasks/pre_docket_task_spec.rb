@@ -10,9 +10,14 @@ describe PreDocketTask, :postgres do
   let!(:bva_intake_admin_user) { create(:intake_admin_user) }
 
   before do
+    FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     bva_intake.add_user(bva_intake_admin_user)
     OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+  end
+
+  after do
+    FeatureToggle.disable!(:docket_vha_appeals)
   end
 
   describe ".label" do
@@ -23,9 +28,15 @@ describe PreDocketTask, :postgres do
 
   describe "#available_actions" do
     subject { pre_docket_task.available_actions(user) }
-    let(:user) { bva_intake_user }
+    let(:user) { create(:user) }
 
     it { is_expected.to eq [] }
+
+    context "When the user is a BVA Intake user" do
+      let(:user) { bva_intake_user }
+
+      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+    end
 
     context "When the user is a BVA Intake admin" do
       let(:user) { bva_intake_admin_user }
