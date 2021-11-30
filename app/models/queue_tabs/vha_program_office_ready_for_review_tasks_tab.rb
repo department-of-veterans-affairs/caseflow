@@ -15,16 +15,16 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
     format(COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TASKS_DESCRIPTION, assignee.name)
   end
 
-  def parents_with_completed_child_assess_documentation_task
+  def parent_ids_with_completed_child_assess_documentation_task
     assigned_task_children.where(type: :AssessDocumentationTask)
       .completed
-      .pluck(:parent_id)
+      .pluck(:parent_id).uniq
   end
 
   def tasks
     # byebug
     Task.includes(*task_includes).visible_in_queue_table_view
-      .where(id: parents_with_completed_child_assess_documentation_task)
+      .where(id: parent_ids_with_completed_child_assess_documentation_task)
   end
 
   def column_names

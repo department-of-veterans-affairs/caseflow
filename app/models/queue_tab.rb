@@ -103,28 +103,16 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).assigned
   end
 
-  def cancelled_tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).cancelled
+  def closed_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).closed
   end
 
   def recently_completed_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
   end
 
-  # def without_child_tasks
-  #   Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).assigned.without_children
-  # end
-
-  def without_child_tasks
-    Task.where(children: nil)
-  end
-
   def on_hold_task_children
     Task.where(parent: on_hold_tasks)
-  end
-
-  def parent_has_cancelled_child_tasks
-    Task.where(children: cancelled_tasks)
   end
 
   def assigned_task_children
@@ -179,8 +167,8 @@ require_dependency "organization_completed_tasks_tab"
 require_dependency "organization_on_hold_tasks_tab"
 require_dependency "organization_tracking_tasks_tab"
 require_dependency "organization_unassigned_tasks_tab"
-require_dependency "vha_program_office_assigned_tasks_tab"
-require_dependency "vha_program_office_in_progress_tasks_tab"
-require_dependency "vha_program_office_ready_for_review_tasks_tab"
-require_dependency "vha_program_office_on_hold_tasks_tab"
-require_dependency "vha_program_office_completed_tasks_tab"
+# require_dependency "vha_program_office_assigned_tasks_tab"
+# require_dependency "vha_program_office_in_progress_tasks_tab"
+# require_dependency "vha_program_office_ready_for_review_tasks_tab"
+# require_dependency "vha_program_office_on_hold_tasks_tab"
+# require_dependency "vha_program_office_completed_tasks_tab"
