@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_10_163649) do
+ActiveRecord::Schema.define(version: 2021_11_30_140954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -838,6 +838,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness", comment: "Witness/Observer present during hearing"
     t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
+    t.index ["disposition"], name: "index_hearings_on_disposition"
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
     t.index ["uuid"], name: "index_hearings_on_uuid"
@@ -1683,6 +1684,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
     t.index ["updated_at"], name: "index_worksheet_issues_on_updated_at"
   end
 
+  add_foreign_key "advance_on_docket_motions", "people"
   add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
@@ -1702,6 +1704,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
+  add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
@@ -1784,4 +1787,5 @@ ActiveRecord::Schema.define(version: 2021_09_10_163649) do
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
+  add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 end

@@ -28,6 +28,7 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     HearingEmailRecipient => [HEARING_ASSOCIATION_DETAILS],
     SentHearingEmailEvent => [HEARING_ASSOCIATION_DETAILS],
 
+    AvailableHearingLocations => [APPEAL_ASSOCIATION_DETAILS],
     AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
@@ -48,16 +49,24 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def find_bad_records(klass, config)
     select_fields = [:id, config[:type_column] || Arel::Nodes::SqlLiteral.new("NULL"), config[:id_column]]
-    orphaned_ids = scoped_orphan_records(klass, config).pluck(*select_fields)
-    send_alert("Found #{orphaned_ids.size} orphaned records", klass, config, orphaned_ids) if orphaned_ids.any?
 
+    already_reported_ids = []
     if config[:type_column]
       unusual_record_ids = unusual_records(klass, config).pluck(*select_fields)
-      heading = "Found #{unusual_record_ids.size} unusual records"
+      heading = "Found #{unusual_record_ids.size} unusual records " \
+                "(nil #{config[:type_column]} or #{config[:id_column]})"
       send_alert(heading, klass, config, unusual_record_ids) if unusual_record_ids.any?
+
+      already_reported_ids = unusual_record_ids.map(&:first)
     end
+
+    orphaned_ids = scoped_orphan_records(klass, config).pluck(*select_fields)
+    unreported_orphaned_ids = orphaned_ids.reject { |id, _, _| already_reported_ids.include?(id) }
+    heading = "Found #{unreported_orphaned_ids.size} orphaned records"
+    send_alert(heading, klass, config, unreported_orphaned_ids) if unreported_orphaned_ids.any?
   end
 
   # :reek:LongParameterList

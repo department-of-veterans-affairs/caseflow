@@ -15,6 +15,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
+  has_one :vacols_staff, class_name: "VACOLS::Staff", foreign_key: :sdomainid, primary_key: :css_id
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
@@ -243,6 +244,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     roles.include?("VSO")
   end
 
+  def camo_employee?
+    member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
+  end
+
   def organization_queue_user?
     organizations.any?
   end
@@ -321,11 +326,19 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
+    camo_team_users = camo_employee? ? [self] : []
 
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
         url: "/queue/#{judge.css_id}/assign"
+      }
+    end
+
+    camo_team_users.each do |user|
+      orgs << {
+        name: "Assign VHA CAMO",
+        url: "/queue/#{user.css_id}/assign?role=camo"
       }
     end
 

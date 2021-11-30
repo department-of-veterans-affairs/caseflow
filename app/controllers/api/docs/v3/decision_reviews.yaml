@@ -1105,7 +1105,6 @@ components:
       enum:
         # for benefit type:  compensation_all
         - Unknown Issue Category
-        - Apportionment
         - Incarceration Adjustments
         - Audit Error Worksheet (DFAS)
         - Active Duty Adjustments

@@ -14,7 +14,7 @@ import {
   legacyJudgeTasksAssignedToUser,
   legacyAttorneyTasksAssignedByUser
 } from './selectors';
-import { pencilSymbol, clockIcon } from '../components/RenderFunctions';
+import { PencilIcon, ClockIcon } from '../components/RenderFunctions';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -188,7 +188,7 @@ export class CaseTitleDetails extends React.PureComponent {
               />
               {appeal.canEditDocumentId && (
                 <Button linkStyling onClick={this.handleModalClose}>
-                  <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+                  <span {...css({ position: 'absolute' })}><PencilIcon /></span>
                   <span {...css({ marginRight: '5px', marginLeft: '20px' })}>Edit</span>
                 </Button>
               )}
@@ -234,7 +234,7 @@ export class CaseTitleDetails extends React.PureComponent {
         {featureToggles.overtime_revamp && showOvertimeButton && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_OVERTIME_LABEL}>
             <Button linkStyling styling={overtimeButton} onClick={this.changeRoute}>
-              <span>{clockIcon()}</span>
+              <span><ClockIcon /></span>
               <span {...overtimeLink}>
                 &nbsp;{appeal.overtime ? COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME}
               </span>
@@ -263,8 +263,8 @@ CaseTitleDetails.propTypes = {
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
-  legacyJudgeTasks: PropTypes.object,
-  legacyAttorneyTasks: PropTypes.object
+  legacyJudgeTasks: PropTypes.array,
+  legacyAttorneyTasks: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => {

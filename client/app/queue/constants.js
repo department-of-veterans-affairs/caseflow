@@ -63,7 +63,9 @@ export const ACTIONS = {
   START_ASSIGN_TASKS_TO_USER: 'START_ASSIGN_TASKS_TO_USER',
   SET_PENDING_DISTRIBUTION: 'SET_PENDING_DISTRIBUTION',
   RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
+  RECEIVE_VHA_PROGRAM_OFFICES: 'RECEIVE_VHA_PROGRAM_OFFICES',
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
+  ERROR_LOADING_VHA_PROGRAM_OFFICES: 'ERROR_LOADING_VHA_PROGRAM_OFFICES',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
   RECEIVE_CLAIM_REVIEW_DETAILS: 'RECEIVE_CLAIM_REVIEW_DETAILS',
@@ -95,6 +97,8 @@ export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 
 export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
+export const slimHeight = css({ height: '4rem' });
+
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
@@ -119,7 +123,7 @@ export const APPELLANT_TYPES = {
   OTHER_CLAIMANT: 'OtherClaimant',
   ATTORNEY_CLAIMANT: 'AttorneyClaimant',
   VETERAN_CLAIMANT: 'VeteranClaimant',
-}
+};
 
 export const SEARCH_ERROR_FOR = {
   EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
@@ -177,3 +181,4 @@ export const PAGE_TITLES = {
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
+export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];

@@ -127,7 +127,11 @@ export const ScheduleVeteran = ({
 
   const virtual = hearing?.requestType === VIRTUAL_HEARING_LABEL;
   const virtualHearing = virtual ? { status: 'pending' } : null;
-  const allDropdownOptions = allScheduleVeteranDropdownOptions(appeal);
+
+  const allDropdownOptions = allScheduleVeteranDropdownOptions(
+    appeal?.readableHearingRequestType,
+    appeal?.readableOriginalHearingRequestType
+  );
 
   const hearingRequestTypeDropdownCurrentOption = hearingRequestTypeCurrentOption(
     allDropdownOptions,
@@ -287,7 +291,7 @@ export const ScheduleVeteran = ({
         document.getElementById('email-section').scrollIntoView();
 
         return setErrors({
-          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });

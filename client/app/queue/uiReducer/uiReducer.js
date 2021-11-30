@@ -26,6 +26,7 @@ export const initialState = {
     isVso: false
   },
   userIsVsoEmployee: false,
+  userIsCamoEmployee: false,
   feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
@@ -208,6 +209,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {
       userIsVsoEmployee: { $set: action.payload.userIsVsoEmployee }
+    });
+  case ACTIONS.SET_USER_IS_CAMO_EMPLOYEE:
+    return update(state, {
+      userIsCamoEmployee: { $set: action.payload.userIsCamoEmployee }
     });
   case ACTIONS.SET_FEEDBACK_URL:
     return update(state, {

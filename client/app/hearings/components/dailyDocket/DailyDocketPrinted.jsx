@@ -74,7 +74,7 @@ export class DailyDocketPrinted extends React.Component {
   ];
 
   render() {
-    const { docket, hearings } = this.props;
+    const { docket, hearings, user } = this.props;
     const allHearings = sortHearings(hearings);
     const currentHearings = _.filter(allHearings, _.negate(isPreviouslyScheduledHearing));
     const previousHearings = _.filter(allHearings, isPreviouslyScheduledHearing);
@@ -93,7 +93,12 @@ export class DailyDocketPrinted extends React.Component {
           </div>
 
           <div className="cf-push-right">
-            <strong>VLJ:</strong> {docket.judgeFirstName} {docket.judgeLastName} <br />
+            {!user.userVsoEmployee && (
+              <React.Fragment>
+                <strong>VLJ:</strong> `${docket.judgeFirstName}` `${docket.judgeLastName}`
+                <br />
+              </React.Fragment>
+            )}
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
             <strong>Hearing type:</strong> {docket.readableRequestType} <br />
             <strong>Regional office:</strong> {docket.regionalOffice}<br />

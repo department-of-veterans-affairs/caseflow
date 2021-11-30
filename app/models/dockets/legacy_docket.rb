@@ -3,10 +3,6 @@
 class LegacyDocket
   include ActiveModel::Model
 
-  # When counting the total number of appeals on the legacy docket for purposes of docket balancing, we
-  # include NOD-stage appeals at a discount reflecting the likelihood that they will advance to a Form 9.
-  NOD_ADJUSTMENT = 0.4
-
   def docket_type
     "legacy"
   end
@@ -27,7 +23,7 @@ class LegacyDocket
   end
 
   def weight
-    count(priority: false) + nod_count * NOD_ADJUSTMENT
+    count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
   end
 
   def ready_priority_appeal_ids
@@ -48,32 +44,32 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  # This is not doing any distribution. It's only determining whether we _should_.
-  # I propose we rename this to should_distribute? or something
-  def really_distribute(distribution, style: "push", genpop: "any")
+  def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
-      !JudgeTeam.for_judge(distribution.judge).ama_only_request
+      (style == "request" && !JudgeTeam.for_judge(distribution.judge).ama_only_request)
   end
 
-  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+  # rubocop:disable Metrics/ParameterLists
+  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1, range: nil)
+    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     if priority
       distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     else
-      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit)
+      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit, range: range)
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
+      next unless existing_distribution_case_may_be_redistributed?(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, true)
-      save_dist_case(dist_case, record, distribution.judge)
+      save_dist_case(dist_case)
       dist_case
     end.compact
   end
@@ -85,17 +81,17 @@ class LegacyDocket
                                      range: nil,
                                      limit: 1,
                                      bust_backlog: false)
-    return [] unless really_distribute(distribution, style: style, genpop: genpop)
+    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     return [] if !range.nil? && range <= 0
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(
       distribution.judge, genpop, range, limit, bust_backlog
     ).map do |record|
-      next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
+      next unless existing_distribution_case_may_be_redistributed?(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, false)
-      save_dist_case(dist_case, record, distribution.judge)
+      save_dist_case(dist_case)
       dist_case
     end.compact
   end
@@ -103,7 +99,7 @@ class LegacyDocket
 
   private
 
-  def save_dist_case(dist_case, record, judge)
+  def save_dist_case(dist_case)
     if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
       DasDeprecation::CaseDistribution.create_judge_assign_task(record, judge) { dist_case.save! }
     else
@@ -111,7 +107,7 @@ class LegacyDocket
     end
   end
 
-  def existing_distribution_case_may_be_redistributed(case_id, distribution)
+  def existing_distribution_case_may_be_redistributed?(case_id, distribution)
     return true unless existing_distributed_case(case_id)
 
     redistributed_case = RedistributedCase.new(case_id: case_id, new_distribution: distribution)

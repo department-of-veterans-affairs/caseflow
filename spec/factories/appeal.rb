@@ -251,7 +251,10 @@ FactoryBot.define do
     trait :with_evidence_submission_window_task do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: root_task)
+        parent = root_task
+        parent = appeal.tasks.open.find_by(type: "HearingTask") if appeal.docket_type == Constants.AMA_DOCKETS.hearing
+
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent)
       end
     end
 
@@ -264,11 +267,15 @@ FactoryBot.define do
     trait :with_ihp_task do
       after(:create) do |appeal, _evaluator|
         org = Organization.find_by(type: "Vso")
-        FactoryBot.create(
-          :informal_hearing_presentation_task,
-          appeal: appeal,
-          assigned_to: org
-        )
+        org ||= create(:vso)
+        create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+      end
+    end
+
+    trait :with_pre_docket_task do
+      after(:create) do |appeal, _evaluator|
+        bva = BvaIntake.singleton
+        create(:pre_docket_task, appeal: appeal, assigned_to: bva)
       end
     end
 

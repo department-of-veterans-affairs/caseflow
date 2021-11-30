@@ -130,6 +130,16 @@ describe HearingMailer do
     subject { HearingMailer.confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing) }
   end
 
+  shared_context "confirmation_email_custom_subject" do
+    subject do
+      HearingMailer.confirmation(
+        email_recipient_info: recipient_info,
+        virtual_hearing: virtual_hearing,
+        custom_subject: "custom"
+      )
+    end
+  end
+
   shared_context "updated_time_confirmation_email" do
     subject do
       HearingMailer.updated_time_confirmation(email_recipient_info: recipient_info, virtual_hearing: virtual_hearing)
@@ -345,6 +355,26 @@ describe HearingMailer do
     end
   end
 
+  shared_examples "appellant shared 30-day reminder details sections" do
+    it "displays shared additional reminder details sections" do
+      expect(subject.body).to include("What if I miss my hearing?")
+      expect(subject.body).to include("What if I need to reschedule my hearing?")
+      expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
+
+      if virtual_hearing.nil?
+        expect(subject.body).to include("What is a virtual tele-hearing?")
+      end
+    end
+  end
+
+  shared_context "30 day reminder" do
+    context "30 day reminder body" do
+      let(:reminder_type) { Hearings::ReminderService::THIRTY_DAY_REMINDER }
+
+      include_examples "appellant shared 30-day reminder details sections"
+    end
+  end
+
   before do
     # Freeze the time to when this fix is made to workaround a potential DST bug.
     Timecop.freeze(Time.utc(2020, 1, 20, 16, 50, 0))
@@ -382,6 +412,7 @@ describe HearingMailer do
 
       describe "#confirmation" do
         include_context "confirmation_email"
+        include_context "confirmation_email_custom_subject"
 
         it "sends an email" do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
@@ -416,6 +447,24 @@ describe HearingMailer do
             # judge time in the email will always be in central office time (ET)
             expect(subject.html_part.body).to include(expected_ama_times[:ro_pacific_recipient_eastern])
           end
+        end
+
+        context "incorrect hearing link" do
+          it "raises an exception if the link contains care.va.gov" do
+            virtual_hearing.update(host_hearing_link: nil)
+            allow(VirtualHearing).to receive(:base_url).and_return(HearingMailer::BAD_VIRTUAL_LINK_TEXT)
+            expect { subject.deliver_now! }.to raise_error do |error|
+              expect(error).to be_a(HearingMailer::BadVirtualLinkError)
+            end
+          end
+        end
+      end
+
+      describe "#confirmation with custom subject" do
+        include_context "confirmation_email_custom_subject"
+
+        it "sends an email with custom subject" do
+          expect(subject.subject).to include("custom")
         end
       end
 
@@ -768,6 +817,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -789,6 +839,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -810,6 +861,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -1033,6 +1085,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end
@@ -1054,6 +1107,7 @@ describe HearingMailer do
           include_examples "appellant shared reminder sections"
           include_examples "appellant non-virtual reminder sections"
 
+          include_context "30 day reminder"
           include_context "60 day reminder"
         end
       end

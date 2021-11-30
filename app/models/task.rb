@@ -506,12 +506,8 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
-
-    @latest_attorney_case_review = AttorneyCaseReview
-      .where(task_id: Task.where(appeal: appeal)
-      .pluck(:id))
-      .order(:created_at).last
+    # Should be the same as calling: appeal.latest_attorney_case_review
+    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -610,6 +606,12 @@ class Task < CaseflowRecord
     return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
 
     true
+  end
+
+  def post_distribution?
+    [JudgeAssignTask, JudgeDecisionReviewTask].any? do |task_type|
+      type == task_type.to_s || ancestor_task_of_type(task_type).present?
+    end
   end
 
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
@@ -816,6 +818,8 @@ class Task < CaseflowRecord
   end
 
   def cascade_closure_from_child_task?(child_task)
+    return if is_a?(AssessDocumentationTask)
+
     type == child_task&.type
   end
 

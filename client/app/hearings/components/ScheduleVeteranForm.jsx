@@ -67,6 +67,12 @@ export const ScheduleVeteranForm = ({
     virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
     showTimezoneField: true,
+    appellantEmailAddress: hearing?.virtualHearing?.appellantEmailAddress,
+    appellantTimezone: hearing?.virtualHearing?.appellantTz,
+    representativeEmailAddress: hearing?.virtualHearing?.representativeEmailAddress,
+    representativeTimezone: hearing?.virtualHearing?.representativeTz,
+    appellantEmailType: 'appellantEmail',
+    representativeEmailType: 'representativeEmail',
     update: (_, virtualHearing) =>
       props.onChange('virtualHearing', {
         ...hearing?.virtualHearing,
@@ -78,7 +84,7 @@ export const ScheduleVeteranForm = ({
     const onTimeChange =
       (scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString);
 
-    if (hearingDayIsVideo && hearing.hearingDay?.beginsAt) {
+    if (hearingDayIsVideo && hearing.hearingDay?.halfDay) {
       return (
         <ReadOnlyHearingTimeWithZone
           hearingStartTime={hearing.hearingDay?.beginsAt}

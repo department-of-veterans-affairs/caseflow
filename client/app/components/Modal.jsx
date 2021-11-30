@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScrollLock from 'react-scrolllock';
-import { closeSymbolHtml } from './RenderFunctions';
+import { CloseIcon } from './RenderFunctions';
 import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -145,7 +145,7 @@ export default class Modal extends React.Component {
             ref={this.modalCloseFocus}
           >
             <span className="usa-sr-only">Close</span>
-            {closeSymbolHtml()}
+            <CloseIcon />
           </button>
           <div style={{ display: 'flex' }}>
             {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}

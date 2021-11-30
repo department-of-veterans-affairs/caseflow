@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { rightTriangle } from 'app/components/RenderFunctions';
+import { RightTriangle } from 'app/components/RenderFunctions';
 
 /**
  * Last Read Document Indicator component
@@ -15,7 +15,7 @@ export const LastReadIndicator = ({ lastReadRef, documentList, docId }) =>
       id="read-indicator"
       ref={lastReadRef}
       aria-label="Most recently read document indicator">
-      {rightTriangle()}
+      <RightTriangle />
     </span>
   );
 

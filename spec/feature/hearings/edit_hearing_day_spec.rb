@@ -71,7 +71,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the Coordinator on the docket" do
-      click_dropdown(name: "coordinator", index: 1)
+      click_dropdown(name: "coordinator", text: "#{coordinator.snamef} #{coordinator.snamel}")
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
@@ -147,6 +147,39 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
   end
 
+  shared_examples "edit hearing start time" do
+    it "can edit hearing start time to full day" do
+      # If the docket is not already video or travel, first convert it
+      if hearing_day.request_type != HearingDay::REQUEST_TYPES[:video]
+        click_dropdown(name: "requestType", text: "Video")
+      end
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[0].click
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.first_slot_time).to eq(nil)
+      expect(hearing_day.reload.total_slots).to eq(10)
+    end
+
+    it "can edit hearing start time to half day" do
+      # If the docket is not already video or travel, first convert it
+      if hearing_day.request_type != HearingDay::REQUEST_TYPES[:video] ||
+         hearing_day.request_type != HearingDay::REQUEST_TYPES[:travel]
+        click_dropdown(name: "requestType", text: "Video")
+      end
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      find("button", text: "Save Changes").click
+
+      expect(page).to have_content("You have successfully updated this hearing day.")
+      expect(hearing_day.reload.first_slot_time).to eq("08:30")
+      expect(hearing_day.reload.total_slots).to eq(5)
+    end
+  end
+
   context "when request type is 'Central'" do
     include_examples "always editable fields"
     include_examples "convert to virtual"
@@ -193,6 +226,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     include_examples "convert to virtual"
     include_examples "edit virtual docket"
     include_examples "edit room"
+    include_examples "edit hearing start time"
   end
 
   context "when request type is 'Travel'" do
