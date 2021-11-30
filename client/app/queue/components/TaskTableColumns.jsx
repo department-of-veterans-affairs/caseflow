@@ -109,69 +109,62 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
-export const boardIntakeColumn = (tasks, filterOptions) => {
+export const boardIntakeColumn = (requireDasRecord) => {
+  const boardIntakeStyle = css({ display: 'inline-block' });
+
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => {
+      const daysSinceAssigned = moment().startOf('day').
+          diff(moment(task.assignedOn), 'days'),
+        daysSincePlacedOnHold = moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days');
+
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
+        <div className={boardIntakeStyle}>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)} ago
+          </span>
+          { taskHasCompletedHold(task) &&
+          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
+        </div>
+      </IhpDaysWaitingTooltip>;
+    },
     backendCanSort: true,
-    enableFilter: true,
-    tableData: tasks,
-    columnName: 'assignedAt.name',
-    anyFiltersAreSet: true,
-    filterOptions,
-    label: 'Filter by Board Intake',
-    valueFunction: (task) => task.assignedAt.name,
-    getSortValue: (task) => task.assignedAt.name
+    getSortValue: (task) => moment().startOf('day').
+      diff(moment(task.assignedOn), 'days')
   };
 };
 
-// export const lastActionColumn = (tasks, filterOptions) => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
-//     backendCanSort: true,
-//     enableFilter: true,
-//     tableData: tasks,
-//     columnName: 'updatedAt',
-//     anyFiltersAreSet: true,
-//     filterOptions,
-//     label: 'Filter by Last Action',
-//     valueFunction: (task) => task.updatedAt,
-//     getSortValue: (task) => task.updatedAt
-//   };
-// };
-
-// export const boardIntakeColumn = () => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
-//     valueFunction: (task) => task.assignedAt.name,
-//     getSortValue: (task) => task.assignedAt.name
-//   };
-// };
-
-// export const lastActionColumn = () => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
-//     valueFunction: (task) => task.updatedAt,
-//     getSortValue: (task) => task.updatedAt
-//   };
-// };
+export const lastActionColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => `${task.daysSinceLastSatusChange} days ago`,
+    backendCanSort: true,
+    getSortValue: (task) => numDaysOnHold(task)
+  };
+};
 
 export const taskOwnerColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    backendCanSort: true,
-    enableFilter: true,
     tableData: tasks,
-    columnName: 'assignedTo.name',
-    anyFiltersAreSet: true,
+    columnName: 'label',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
     filterOptions,
-    label: 'Filter by assignee',
-    valueFunction: (task) => task.assignedTo.name,
-    getSortValue: (task) => task.assignedTo.name
+    label: 'Filter by owner',
+    valueName: 'label',
+    valueFunction: (task) => task.ownedBy,
+    getSortValue: (task) => task.label
   };
 };
 
@@ -179,15 +172,14 @@ export const vamcOwnerColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
-    backendCanSort: true,
-    enableFilter: true,
     tableData: tasks,
-    columnName: 'assignedTo.name',
-    anyFiltersAreSet: true,
+    columnName: 'label',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
     filterOptions,
-    label: 'Filter by VAMC Owner',
-    valueFunction: (task) => task.assignedTo.name,
-    getSortValue: (task) => task.assignedTo.name
+    label: 'Filter by owner',
+    valueName: 'label',
+    valueFunction: (task) => task.ownedBy,
+    getSortValue: (task) => task.label
   };
 };
 

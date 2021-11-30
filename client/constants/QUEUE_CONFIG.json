@@ -44,9 +44,7 @@
       "sorting_columns": ["assigned_at"]
     },
     "LAST_ACTION": {
-      "name": "lastActionColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["updated_at"]
+      "name": "lastActionColumn"
     },
     "DOCKET_NUMBER": {
       "filterable": true,
@@ -109,7 +107,7 @@
     "TASK_OWNER": {
       "name": "taskOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     },
     "TASK_TYPE": {
       "filterable": true,
@@ -120,7 +118,7 @@
     "VAMC_OWNER": {
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     }
   },
 
