@@ -8,7 +8,6 @@ Immigrant.ignore_keys = [
   { from_table: "available_hearing_locations", column: "veteran_file_number" },
 
   # Investigate these next and add foreign key if possible.
-  { from_table: "advance_on_docket_motions", column: "person_id" },
   { from_table: "ramp_issues", column: "source_issue_id" },
   { from_table: "remand_reasons", column: "decision_issue_id" },
   { from_table: "certification_cancellations", column: "certification_id" },
