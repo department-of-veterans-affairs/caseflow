@@ -111,7 +111,7 @@ class ValidateSqlQueries
       FileUtils.identical?(rb_out_file, out_file)
     end
 
-    MAP_TO_STRING = "map{|r| r.map(&:inspect).join(',')}.join('\n')"
+    MAP_TO_STRING ||= "map{|r| r.map(&:inspect).join(',')}.join('\n')"
 
     def eval_rails_query(query)
       # Use default postprocessing to split results into separate lines if "array_output" appears in query
@@ -210,21 +210,21 @@ class ValidateSqlQueries
     end
 
     # identifies block of Rails code that is equivalent to the SQL query
-    RAILS_EQUIV_PREFIX = "RAILS_EQUIV"
+    RAILS_EQUIV_PREFIX ||= "RAILS_EQUIV"
 
     def rails_query
       extract_block_contents(RAILS_EQUIV_PREFIX)
     end
 
     # identifies block of Rails code to postprocess SQL query results
-    POSTPROC_SQL_RESULT_PREFIX = "POSTPROC_SQL_RESULT"
+    POSTPROC_SQL_RESULT_PREFIX ||= "POSTPROC_SQL_RESULT"
 
     def postprocess_cmds
       extract_block_contents(POSTPROC_SQL_RESULT_PREFIX)
     end
 
     # identifies the class on which to call `.connection` to execute the SQL query
-    DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
+    DATABASE_CONNECTION ||= "-- SQL_DB_CONNECTION:"
 
     # :reek:FeatureEnvy
     def db_connection
