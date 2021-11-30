@@ -19,7 +19,7 @@ class VhaCamo < Organization
   end
 
   def in_progress_tasks_tab
-    ::VhaCamoInProgressTasksTab.new(assignee: self)
+    ::VhaCamoAssignedTasksTab.new(assignee: self)
   end
 
   def completed_tasks_tab
