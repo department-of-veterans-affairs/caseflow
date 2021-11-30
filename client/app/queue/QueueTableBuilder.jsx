@@ -12,6 +12,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import {
   assignedToColumn,
+  boardIntakeColumn,
   badgesColumn,
   completedToNameColumn,
   daysOnHoldColumn,
@@ -19,13 +20,16 @@ import {
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
+  // lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn
+  typeColumn,
+  taskOwnerColumn,
+  vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -52,6 +56,7 @@ class QueueTableBuilder extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
+
     const activeTab = this.paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
@@ -70,6 +75,7 @@ class QueueTableBuilder extends React.PureComponent {
     column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
+
     const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
@@ -110,6 +116,22 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(
+        tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
+        tasks,
+        filterOptions
+      ),
+      // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
+        tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
         tasks,
         filterOptions
       ),
