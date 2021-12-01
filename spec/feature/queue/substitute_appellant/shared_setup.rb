@@ -216,10 +216,11 @@ RSpec.shared_examples("fill substitution form") do
 
     step "verify items on original appeal" do
       visit "/queue/appeals/#{appeal.uuid}"
-
+      appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
       expect(page).to_not have_content "+ Add Substitute"
-
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
+      unless appellant_substitution.source_appeal_id == appellant_substitution.target_appeal_id
+        expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
+      end
     end
   end
 end

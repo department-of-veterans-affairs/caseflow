@@ -12,7 +12,7 @@ class PreDocketTask < Task
   ].freeze
 
   def available_actions(user)
-    return [] unless assigned_to.user_is_admin?(user)
+    return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
     TASK_ACTIONS
   end
