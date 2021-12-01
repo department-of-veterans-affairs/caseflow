@@ -23,6 +23,11 @@
       "filterable": true,
       "name": "typeColumn"
     },
+    "BOARD_INTAKE": {
+      "name": "boardIntakeColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
       "sorting_table": "cached_appeal_attributes",

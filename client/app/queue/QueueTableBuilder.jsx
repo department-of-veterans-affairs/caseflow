@@ -14,6 +14,7 @@ import Button from '../components/Button';
 import {
   assignedToColumn,
   badgesColumn,
+  boardIntakeColumn,
   completedToNameColumn,
   daysOnHoldColumn,
   daysSinceLastColumn,
@@ -127,7 +128,8 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
-      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions)
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(requireDasRecord)
     };
 
     return functionForColumn[column.name];

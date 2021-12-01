@@ -156,6 +156,7 @@ const taskAttributesFromRawTask = (task) => {
     },
     ownedBy: task.attributes.owned_by,
     daysSinceLastSatusChange: task.attributes.days_since_last_status_change,
+    daysSinceBoardIntake: task.attributes.days_since_board_intake,
   };
 };
 

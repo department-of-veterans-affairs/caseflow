@@ -267,6 +267,23 @@ export const daysWaitingColumn = (requireDasRecord) => {
   };
 };
 
+export const boardIntakeColumn = (requireDasRecord) => {
+  const boardIntakeStyle = css({ display: 'inline-block' });
+
+  return {
+    header: COPY.CASE_LIST_TABLE_BOARD_INTAKE,
+    name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => {
+      return `${task.daysSinceBoardIntake} days ago`;
+    },
+    backendCanSort: true,
+    getSortValue: (task) => task.daysSinceBoardIntake
+  };
+};
+
 export const daysOnHoldColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,

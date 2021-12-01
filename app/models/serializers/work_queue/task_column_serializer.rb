@@ -304,6 +304,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :days_since_board_intake do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]
+
+    if serialize_attribute?(params, columns)
+      object.calculated_duration_from_board_intake
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
