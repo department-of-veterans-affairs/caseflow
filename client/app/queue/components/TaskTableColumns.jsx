@@ -318,7 +318,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask} taskId={task.uniqueId}>
         <div className={daysWaitingStyle}>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
             {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
