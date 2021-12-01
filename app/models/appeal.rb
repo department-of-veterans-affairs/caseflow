@@ -90,6 +90,13 @@ class Appeal < DecisionReview
               RootTask.name, Task.closed_statuses, 1)
   }
 
+  scope :pre_docket, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              PreDocketTask.name, Task.closed_statuses, 1)
+  }
+
   scope :established, -> { where.not(established_at: nil) }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -211,18 +218,6 @@ class Appeal < DecisionReview
 
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
-  end
-
-  def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
-
-    @latest_attorney_case_review = AttorneyCaseReview
-      .where(task_id: tasks.pluck(:id))
-      .order(:created_at).last
-  end
-
-  def latest_judge_case_review
-    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
   end
 
   def reviewing_judge_name
