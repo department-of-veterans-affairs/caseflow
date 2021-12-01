@@ -268,8 +268,6 @@ export const daysWaitingColumn = (requireDasRecord) => {
 };
 
 export const boardIntakeColumn = (requireDasRecord) => {
-  const boardIntakeStyle = css({ display: 'inline-block' });
-
   return {
     header: COPY.CASE_LIST_TABLE_BOARD_INTAKE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
