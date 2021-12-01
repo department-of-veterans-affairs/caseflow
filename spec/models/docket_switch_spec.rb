@@ -16,6 +16,7 @@ RSpec.describe DocketSwitch, type: :model do
       )
     )
   end
+  let(:root_task) { create(:root_task, appeal: appeal) }
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
   let(:docket_switch_task) do
     task_class_type = (disposition == "denied") ? "denied" : "granted"
@@ -23,6 +24,7 @@ RSpec.describe DocketSwitch, type: :model do
   end
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
+  let(:docket_type) { Constants.AMA_DOCKETS.hearing }
   let(:granted_request_issue_ids) { appeal.request_issues.map(&:id) }
   let(:docket_switch) do
     create(
@@ -30,6 +32,7 @@ RSpec.describe DocketSwitch, type: :model do
       old_docket_stream: appeal,
       task: docket_switch_task,
       disposition: disposition,
+      docket_type: docket_type,
       granted_request_issue_ids: granted_request_issue_ids
     )
   end
@@ -85,13 +88,64 @@ RSpec.describe DocketSwitch, type: :model do
           expect(new_completed_task).to_not be_nil
           expect(new_completed_task).to be_completed
         end
+
+        context "when old docket stream has active attorney tasks" do
+          let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+          # add AttorneyTask w/ status of assigned or in_progress
+          let!(:attorney_task) do
+            create(
+              :ama_attorney_task,
+              :in_progress,
+              appeal: appeal,
+              assigned_to: attorney,
+              placed_on_hold_at: 2.days.ago
+            )
+          end
+
+          it "doesn't move attorney tasks to new stream" do
+            docket_switch.selected_task_ids = [attorney_task.id.to_s]
+            attorney_task.parent.update!(parent: root_task)
+            docket_switch.process!
+
+            expect(docket_switch_task).to be_completed
+
+            expect(docket_switch.new_docket_stream.tasks.find_by(type: "JudgeDecisionReviewTask")).to be_nil
+            expect(docket_switch.new_docket_stream.tasks.find_by(type: "AttorneyTask")).to be_nil
+          end
+
+          context "when switching to Direct Review" do
+            let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+
+            it "preserves the post-distribution tasks and cancels the new DistributionTask" do
+              docket_switch.selected_task_ids = [attorney_task.id.to_s]
+              attorney_task.parent.update!(parent: root_task)
+              docket_switch.process!
+
+              expect(docket_switch_task).to be_completed
+              new_tasks = docket_switch.new_docket_stream.tasks
+              expect(new_tasks.find_by(type: :DistributionTask)).to be_cancelled
+              expect(new_tasks.find_by(type: :JudgeDecisionReviewTask)).to_not be_nil
+              expect(new_tasks.find_by(type: :AttorneyTask)).to_not be_nil
+            end
+          end
+        end
       end
 
       context "when disposition is partially_granted" do
         let(:disposition) { "partially_granted" }
         let(:granted_request_issue_ids) { appeal.request_issues[0..1].map(&:id) }
+        let!(:judge_assign_task) do
+          create(
+            :ama_judge_assign_task,
+            :in_progress,
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: judge,
+            placed_on_hold_at: 2.days.ago
+          )
+        end
 
-        it "moves granted issues to new appeal stream and maintains original stream" do
+        it "moves granted issues to new stream and maintains original post-distribution tasks" do
           expect(docket_switch_task).to be_assigned
 
           subject
@@ -115,6 +169,8 @@ RSpec.describe DocketSwitch, type: :model do
           )
           expect(new_completed_task).to_not be_nil
           expect(new_completed_task).to be_completed
+
+          expect(appeal.tasks.find_by(type: "JudgeAssignTask")).to be_in_progress
 
           # To do: Check for correct appeal status after task handling logic is implemented
         end
