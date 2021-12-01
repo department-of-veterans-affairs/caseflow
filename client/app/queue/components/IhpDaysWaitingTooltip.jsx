@@ -19,7 +19,7 @@ const listStyling = css({
 // Presentation task. If the ihp task is not complete, days waiting will show how long it has been since the IHP was
 // requested. If the ihp task is complete, days waiting will show how long took for the IHP task to be received.
 const IhpDaysWaitingTooltip = (props) => {
-  const { requestedAt, receivedAt, children } = props;
+  const { requestedAt, receivedAt, taskId, children } = props;
 
   if (!requestedAt) {
     return children;
@@ -46,12 +46,13 @@ const IhpDaysWaitingTooltip = (props) => {
     </div>
   );
 
-  return <Tooltip text={tooltipText} position="bottom" >{children}</Tooltip>;
+  return <Tooltip id={`waiting-${taskId}`} text={tooltipText} position="bottom" >{children}</Tooltip>;
 };
 
 IhpDaysWaitingTooltip.propTypes = {
   receivedAt: PropTypes.string,
   requestedAt: PropTypes.string,
+  taskId: PropTypes.string,
   children: PropTypes.node
 };
 
