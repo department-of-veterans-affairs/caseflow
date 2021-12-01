@@ -7,6 +7,10 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
+  attribute :instructions do |object|
+    object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
+  end
+
   # Used by hasDASRecord()
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -130,12 +134,23 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :assigned_at do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name
+    ]
 
     if serialize_attribute?(params, columns)
       object.assigned_at
     end
   end
+
+  # attribute :updated_at do |object, params|
+  #   columns = [Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]
+
+  #   if serialize_attribute?(params, columns)
+  #     object.updated_at
+  #   end
+  # end
 
   attribute :closest_regional_office do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]
@@ -146,7 +161,11 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :assigned_to do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name
+    ]
     assignee = object.assigned_to
 
     if serialize_attribute?(params, columns)
@@ -307,10 +326,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :closed_at do
-    nil
-  end
-
-  attribute :instructions do
     nil
   end
 

@@ -65,4 +65,23 @@ describe OrganizationsController, :postgres, type: :controller do
       end
     end
   end
+
+  describe "GET /organizations?type=organizationType" do
+    let(:org) { VhaProgramOffice.create!(url: "test-vha-po", name: "Test VHA Program Office") }
+    before { User.authenticate!(user: create(:user)) }
+    subject { get :org_index, params: { type: org.type } }
+
+    context "when a request is made to get orgs of a certain type" do
+      it "returns the appropriate information" do
+        subject
+        response_body = JSON.parse(response.body)
+        org_attr = response_body["organizations"]["data"][0]["attributes"]
+
+        expect(response.status).to eq 200
+        expect(response_body["organizations"]["data"].size).to eq 1
+        expect(org_attr["id"]).to eq org.id
+        expect(org_attr["name"]).to eq org.name
+      end
+    end
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_18_214040) do
+ActiveRecord::Schema.define(version: 2021_11_30_140954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1684,6 +1684,7 @@ ActiveRecord::Schema.define(version: 2021_11_18_214040) do
     t.index ["updated_at"], name: "index_worksheet_issues_on_updated_at"
   end
 
+  add_foreign_key "advance_on_docket_motions", "people"
   add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
