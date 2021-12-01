@@ -329,10 +329,6 @@ class Task < CaseflowRecord
     open? && children.empty?
   end
 
-  def active_with_no_children?
-    active? && children.empty?
-  end
-
   # When a status is "active" we expect properties of the task to change
   # When a task is not "active" we expect that properties of the task will not change
   # on_hold is not included
