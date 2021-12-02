@@ -130,7 +130,7 @@ const HearingDetails = (props) => {
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
 
-      if (errors && hearing.isVirtual) {
+      if (errors && (hearing.isVirtual || convertingToVirtual)) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
@@ -154,16 +154,17 @@ const HearingDetails = (props) => {
         omitBy(
           {
             id: hearing?.appellantEmailId,
-            timezone: hearingChanges?.appellantTz,
-            email_address: hearingChanges?.appellantEmailAddress,
+            // Prefer hearingChanges, but include timezone and email_address if they already existed
+            timezone: hearingChanges?.appellantTz || hearing?.appellantTz,
+            email_address: hearingChanges?.appellantEmailAddress || hearing?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
           }, isUndefined
         ),
         omitBy(
           {
             id: hearing?.representativeEmailId,
-            timezone: hearingChanges?.representativeTz,
-            email_address: hearingChanges?.representativeEmailAddress,
+            timezone: hearingChanges?.representativeTz || hearing?.representativeTz,
+            email_address: hearingChanges?.representativeEmailAddress || hearing?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
