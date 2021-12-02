@@ -43,20 +43,20 @@ class HearingDayRange
   end
 
   def all_hearing_days
-    days_in_range = HearingDay.in_range(start_date, end_date)
+    hearing_days_in_range = HearingDay.in_range(start_date, end_date)
 
-    self.hearing_days = if regional_office.nil?
-                          days_in_range
-                        elsif central_or_virtual?(regional_office)
-                          days_in_range.where(
-                            request_type: regional_office,
-                            regional_office: nil
-                          )
-                        else
-                          days_in_range.where(
-                            regional_office: regional_office
-                          )
-                        end
+    if regional_office.nil?
+      hearing_days_in_range
+    elsif central_or_virtual?(regional_office)
+      hearing_days_in_range.where(
+        request_type: regional_office,
+        regional_office: nil
+      )
+    else
+      hearing_days_in_range.where(
+        regional_office: regional_office
+      )
+    end
   end
 
   class << self
@@ -117,7 +117,7 @@ class HearingDayRange
     hearing_days_in_range = HearingDay
       .in_range(start_date, end_date)
       .includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
-    ama_days = ama_days_for_vso_user(day_range)
+    ama_days = ama_days_for_vso_user(hearing_days_in_range)
 
     remaining_days = hearing_days_in_range.where.not(id: ama_days.pluck(:id)).order(
       Arel.sql(
@@ -135,7 +135,7 @@ class HearingDayRange
     vacols_days = remaining_days.select do |day|
       vacols_hearings = vacols_hearings_for_remaining_days[day.id.to_s]
 
-      self.class.legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings)
+      self.class.legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings, user)
     end
 
     ama_days + vacols_days
