@@ -12,6 +12,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import {
   assignedToColumn,
+  assignedByColumn,
   boardIntakeColumn,
   badgesColumn,
   completedToNameColumn,
@@ -136,6 +137,7 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)
     };
