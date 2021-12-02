@@ -16,12 +16,13 @@ class HealthChecksController < ActionController::Base
   end
 
   private
+
   def check_migrations
     migrations = []
     pending_migrations = false
     ActiveRecord::Base.connection.migration_context.migrations_status.each do |status, version, name|
-        migrations << { status: status, version: version, name: name }
-        pending_migrations = true if status != "up"
+      migrations << { status: status, version: version, name: name }
+      pending_migrations = true if status != "up"
     end
     { migrations: migrations, pending_migrations: pending_migrations }
   end
