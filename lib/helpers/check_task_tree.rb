@@ -47,7 +47,7 @@ class CheckTaskTree
     @errors = []
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def check(verbose: true)
     puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
 
@@ -123,7 +123,7 @@ class CheckTaskTree
       @errors << "There should be no more than 1 open among these root-children tasks: #{open_task_types}"
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def check_task_prerequisites
     unless missing_dispatch_task_prerequisite.blank?
