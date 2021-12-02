@@ -126,56 +126,6 @@ export const boardIntakeColumn = (tasks, filterOptions) => {
   };
 };
 
-// export const lastActionColumn = (tasks, filterOptions) => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
-//     backendCanSort: true,
-//     enableFilter: true,
-//     tableData: tasks,
-//     columnName: 'updatedAt',
-//     anyFiltersAreSet: true,
-//     filterOptions,
-//     label: 'Filter by Last Action',
-//     valueFunction: (task) => task.updatedAt,
-//     getSortValue: (task) => task.updatedAt
-//   };
-// };
-
-// export const boardIntakeColumn = () => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
-//     valueFunction: (task) => task.assignedAt.name,
-//     getSortValue: (task) => task.assignedAt.name
-//   };
-// };
-
-// export const lastActionColumn = () => {
-//   return {
-//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
-//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
-//     valueFunction: (task) => task.updatedAt,
-//     getSortValue: (task) => task.updatedAt
-//   };
-// };
-
-export const taskOwnerColumn = (tasks, filterOptions) => {
-  return {
-    header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    backendCanSort: true,
-    enableFilter: true,
-    tableData: tasks,
-    columnName: 'assignedTo.name',
-    anyFiltersAreSet: true,
-    filterOptions,
-    label: 'Filter by assignee',
-    valueFunction: (task) => task.assignedTo.name,
-    getSortValue: (task) => task.assignedTo.name
-  };
-};
-
 export const vamcOwnerColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
@@ -233,6 +183,8 @@ export const taskOwnerColumn = (tasks, filterOptions) => {
     valueName: 'label',
     valueFunction: (task) => task.ownedBy,
     getSortValue: (task) => task.label
+  };
+};
 
 export const assignedByColumn = () => {
   return {
@@ -370,7 +322,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
   };
 };
 
-export const boardIntakeColumn = (requireDasRecord) => {
+export const daysSinceIntakeColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_BOARD_INTAKE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,

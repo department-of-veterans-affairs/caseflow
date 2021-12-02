@@ -44,6 +44,9 @@
     "DAYS_SINCE_LAST": {
       "name": "daysSinceLastColumn"
     },
+    "DAYS_SINCE_INTAKE": {
+      "name": "daysSinceIntakeColumn"
+    },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
       "sorting_table": "tasks",
@@ -126,10 +129,6 @@
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
     },
-    "TASK_OWNER": {
-      "name": "taskOwnerColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["type", "action", "created_at"]
     "VAMC_OWNER": {
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
