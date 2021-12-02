@@ -170,7 +170,6 @@ export const taskColumn = (tasks, filterOptions) => {
   };
 };
 
-
 export const taskOwnerColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE,
