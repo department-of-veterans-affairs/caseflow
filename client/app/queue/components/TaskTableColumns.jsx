@@ -11,6 +11,7 @@ import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
+import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
@@ -109,6 +110,88 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
+export const boardIntakeColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedAt.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by Board Intake',
+    valueFunction: (task) => task.assignedAt.name,
+    getSortValue: (task) => task.assignedAt.name
+  };
+};
+
+// export const lastActionColumn = (tasks, filterOptions) => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+//     backendCanSort: true,
+//     enableFilter: true,
+//     tableData: tasks,
+//     columnName: 'updatedAt',
+//     anyFiltersAreSet: true,
+//     filterOptions,
+//     label: 'Filter by Last Action',
+//     valueFunction: (task) => task.updatedAt,
+//     getSortValue: (task) => task.updatedAt
+//   };
+// };
+
+// export const boardIntakeColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+//     valueFunction: (task) => task.assignedAt.name,
+//     getSortValue: (task) => task.assignedAt.name
+//   };
+// };
+
+// export const lastActionColumn = () => {
+//   return {
+//     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+//     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+//     valueFunction: (task) => task.updatedAt,
+//     getSortValue: (task) => task.updatedAt
+//   };
+// };
+
+export const taskOwnerColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedTo.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by assignee',
+    valueFunction: (task) => task.assignedTo.name,
+    getSortValue: (task) => task.assignedTo.name
+  };
+};
+
+export const vamcOwnerColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
+    backendCanSort: true,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedTo.name',
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by VAMC Owner',
+    valueFunction: (task) => task.assignedTo.name,
+    getSortValue: (task) => task.assignedTo.name
+  };
+};
+
 export const taskColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
@@ -121,11 +204,22 @@ export const taskColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by task',
     valueName: 'label',
-    valueFunction: (task) => task.label,
+    valueFunction: (task) => {
+      if (task.label !== QUEUE_CONFIG.TRANSCRIPTION_TASK_LABEL) {
+        return task.label;
+      }
+
+      return <TranscriptionTaskTooltip instructions={task.instructions.join('\n')} taskId={task.uniqueId}>
+        <div>
+          {task.label}
+        </div>
+      </TranscriptionTaskTooltip>;
+    },
     backendCanSort: true,
     getSortValue: (task) => task.label
   };
 };
+
 
 export const taskOwnerColumn = (tasks, filterOptions) => {
   return {
@@ -139,6 +233,15 @@ export const taskOwnerColumn = (tasks, filterOptions) => {
     valueName: 'label',
     valueFunction: (task) => task.ownedBy,
     getSortValue: (task) => task.label
+
+export const assignedByColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+    backendCanSort: true,
+    valueFunction: (task) =>
+      task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+    getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
   };
 };
 
@@ -251,7 +354,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask} taskId={task.uniqueId}>
         <div className={daysWaitingStyle}>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
             {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}

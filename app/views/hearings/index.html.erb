@@ -22,6 +22,7 @@
   userHasHearingPrepRole: current_user.can?('Hearing Prep'),
   userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
   userCanViewFnodBadgeInHearings: FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: current_user),
+  userVsoEmployee: current_user.vso_employee?,
   userId: current_user.id,
   userCssId: current_user.css_id
 }) %>

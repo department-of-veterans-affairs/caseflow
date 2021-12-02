@@ -31,6 +31,7 @@ export default class HearingsApp extends React.PureComponent {
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
       userCanVsoHearingSchedule,
+      userVsoEmployee,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
       userCanAddVirtualHearingDays,
@@ -44,6 +45,7 @@ export default class HearingsApp extends React.PureComponent {
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
       userCanVsoHearingSchedule,
+      userVsoEmployee,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
       userCanAddVirtualHearingDays,
@@ -218,6 +220,7 @@ HearingsApp.propTypes = {
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userCanAddVirtualHearingDays: PropTypes.bool,
   userCanViewFnodBadgeInHearings: PropTypes.bool,
+  userVsoEmployee: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

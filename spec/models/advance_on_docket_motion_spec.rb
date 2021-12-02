@@ -63,7 +63,7 @@ describe AdvanceOnDocketMotion, :postgres do
 
   describe "#granted_for_person?" do
     let(:appeal_receipt_date) { Time.zone.now }
-    let(:person_id) { 1 }
+    let(:person_id) { create(:person).id }
     let(:granted) { false }
     let(:reason) { described_class.reasons[:financial_distress] }
     let(:appeal) { create(:appeal, receipt_date: appeal_receipt_date) }

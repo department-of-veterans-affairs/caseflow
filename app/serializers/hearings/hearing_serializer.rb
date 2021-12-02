@@ -39,6 +39,9 @@ class HearingSerializer
   attribute :central_office_time_string
   attribute :claimant_id
   attribute :closest_regional_office
+  attribute :contested_claim do |hearing|
+    hearing.appeal.contested_claim?
+  end
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
