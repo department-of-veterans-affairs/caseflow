@@ -23,6 +23,10 @@ FactoryBot.define do
       hearing { create(:hearing) }
     end
 
+    trait :with_legacy_hearing do
+      hearing { create(:legacy_hearing) }
+    end
+
     trait :with_virtual_hearing do
       hearing { create(:hearing, :virtual) }
     end

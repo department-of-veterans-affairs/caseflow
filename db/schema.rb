@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_18_214040) do
+ActiveRecord::Schema.define(version: 2021_11_30_175237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1684,6 +1684,7 @@ ActiveRecord::Schema.define(version: 2021_11_18_214040) do
     t.index ["updated_at"], name: "index_worksheet_issues_on_updated_at"
   end
 
+  add_foreign_key "advance_on_docket_motions", "people"
   add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
@@ -1702,6 +1703,7 @@ ActiveRecord::Schema.define(version: 2021_11_18_214040) do
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
+  add_foreign_key "certification_cancellations", "certifications"
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
@@ -1759,6 +1761,7 @@ ActiveRecord::Schema.define(version: 2021_11_18_214040) do
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "remand_reasons", "decision_issues"
   add_foreign_key "request_decision_issues", "decision_issues"
   add_foreign_key "request_decision_issues", "request_issues"
   add_foreign_key "request_issues", "decision_issues", column: "contested_decision_issue_id"
