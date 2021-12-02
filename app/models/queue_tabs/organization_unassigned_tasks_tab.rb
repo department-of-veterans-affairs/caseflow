@@ -28,6 +28,7 @@ class OrganizationUnassignedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       show_regional_office_column ? Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name : nil,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
