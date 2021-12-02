@@ -9,7 +9,6 @@ Immigrant.ignore_keys = [
 
   # Investigate these next and add foreign key if possible.
   { from_table: "ramp_issues", column: "source_issue_id" },
-  { from_table: "remand_reasons", column: "decision_issue_id" },
   { from_table: "certification_cancellations", column: "certification_id" },
 
   # The documents table is extremely large -- investigate these later
