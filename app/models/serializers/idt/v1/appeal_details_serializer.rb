@@ -70,7 +70,7 @@ class Idt::V1::AppealDetailsSerializer
     {
       contested_claim: object.contested_claim?,
       fnod: object.veteran_appellant_deceased?,
-      hearing: object.hearing_docket?,
+      hearing: object.hearings.any? { |hearing| hearing.held? },
       overtime: object.overtime?
     }
   end
