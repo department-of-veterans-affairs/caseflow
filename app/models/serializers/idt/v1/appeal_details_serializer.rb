@@ -66,6 +66,7 @@ class Idt::V1::AppealDetailsSerializer
   end
 
   attribute :badges do |object|
+    object.is_a?(LegacyAppeal) ? nil :
     {
       contested_claim: object.contested_claim?,
       fnod: object.veteran_appellant_deceased?,
