@@ -37,7 +37,9 @@ export default class AssignHearingsTabs extends React.PureComponent {
       defaultTabIndex
     } = this.props;
 
-    const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - _.get(selectedHearingDay, 'filledSlots', 0);
+    const availableSlots = Math.max(
+      (_.get(selectedHearingDay, 'totalSlots', 0) - _.get(selectedHearingDay, 'filledSlots', 0)), 0
+    );
 
     return (
       <div className="usa-width-three-fourths assign-hearing-tabs">
