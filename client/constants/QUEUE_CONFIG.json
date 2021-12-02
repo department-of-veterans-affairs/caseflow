@@ -12,6 +12,7 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
 
   "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
 
@@ -86,6 +87,9 @@
     },
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
+    },
+    "TASK_ASSIGNED_BY": {
+      "name": "assignedByColumn"
     },
     "TASK_CLOSED_DATE": {
       "name": "completedDateColumn",
