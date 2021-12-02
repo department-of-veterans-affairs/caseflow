@@ -286,6 +286,19 @@ describe "CheckTaskTree" do
         include_examples "has error message", /There should be no more than 1 open org task of type .*BvaDispatchTask/
       end
     end
+    describe "#open_exclusive_root_children_tasks" do
+      subject { CheckTaskTree.new(appeal).open_exclusive_root_children_tasks }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      it_behaves_like "when tasks are correct"
+
+      context "when tasks are invalid" do
+        let(:judge_task) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask) }
+        before { judge_task.assigned! }
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                         /There should be no more than 1 open among these root-children tasks:.*JudgeDecisionReviewTask/
+      end
+    end
   end
 
   describe "#open_tasks_with_no_active_issues" do
