@@ -16,7 +16,8 @@ class LegacyAppealsWithNoVacolsCase < DataIntegrityChecker
   def check_legacy_appeals(legacy_appeals, batch)
     Rails.logger.debug("Starting LegacyAppeal/VACOLS check batch #{batch}")
 
-    vacols_ids = legacy_appeals.pluck(:vacols_id)
+    # Skip those that start with 'for '
+    vacols_ids = legacy_appeals.pluck(:vacols_id).reject{|id| id.start_with?('for ')}
     vacols_ids_count = vacols_ids.count
 
     Rails.logger.debug("Found #{vacols_ids_count} vacols_id values")
