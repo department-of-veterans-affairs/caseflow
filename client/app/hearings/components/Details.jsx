@@ -129,7 +129,7 @@ const HearingDetails = (props) => {
       );
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
-      const virtualHearingCheck = hearing.isVirtual || convertingToVirtual
+      const virtualHearingCheck = hearing.isVirtual || convertingToVirtual;
 
       if (errors && virtualHearingCheck) {
         // Set the Virtual Hearing errors
