@@ -65,6 +65,15 @@ class Idt::V1::AppealDetailsSerializer
     object.is_a?(LegacyAppeal) ? object.contested_claimant_agents : nil
   end
 
+  attribute :badges do |object|
+    {
+      contested_claim: object.contested_claim?,
+      fnod: object.veteran_appellant_deceased?,
+      hearing: object.hearing_docket?,
+      overtime: object.overtime?
+    }
+  end
+
   attribute :congressional_interest_addresses do |object|
     object.is_a?(LegacyAppeal) ? object.congressional_interest_addresses : "Not implemented for AMA"
   end
