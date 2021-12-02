@@ -289,7 +289,11 @@ describe "CheckTaskTree" do
     describe "#open_exclusive_root_children_tasks" do
       subject { CheckTaskTree.new(appeal).open_exclusive_root_children_tasks }
       let(:appeal) { create(:appeal, :at_bva_dispatch) }
-      it_behaves_like "when tasks are correct"
+      context "when tasks are correct" do
+        it "returns no errors" do
+          expect(errors).to be_empty
+        end
+      end
 
       context "when tasks are invalid" do
         let(:judge_task) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask) }
