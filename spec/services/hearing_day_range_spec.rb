@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 describe HearingDayRange, :all_dbs do
-  describe ".load_days" do
+  describe ".all_hearing_days" do
     let(:start_date) { Time.zone.today }
     let(:end_date) { Time.zone.today + 2.days }
 
-    subject { HearingDayRange.new(start_date, end_date, regional_office_key).load_days }
+    subject { HearingDayRange.new(start_date, end_date, regional_office_key).all_hearing_days }
 
     context "load Video and Travel days for a range date" do
       let(:regional_office_key) { "RO13" }
