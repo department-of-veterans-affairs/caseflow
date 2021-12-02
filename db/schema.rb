@@ -1761,6 +1761,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "remand_reasons", "decision_issues"
   add_foreign_key "request_decision_issues", "decision_issues"
   add_foreign_key "request_decision_issues", "request_issues"
   add_foreign_key "request_issues", "decision_issues", column: "contested_decision_issue_id"

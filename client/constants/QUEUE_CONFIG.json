@@ -9,10 +9,12 @@
   "UNASSIGNED_TASKS_TAB_NAME": "unassignedTab",
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
-  "IN_PROGRESS_TASKS_TAB_NAME": "inProgressTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
+
+  "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
 
   "VHA_PO_ASSIGNED_TASKS_TAB_NAME": "po_assigned",
   "VHA_PO_IN_PROGRESS_TASKS_TAB_NAME": "po_inProgressTab",
@@ -85,6 +87,9 @@
     },
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
+    },
+    "TASK_ASSIGNED_BY": {
+      "name": "assignedByColumn"
     },
     "TASK_CLOSED_DATE": {
       "name": "completedDateColumn",
