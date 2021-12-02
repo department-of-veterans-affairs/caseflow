@@ -8,9 +8,132 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
 
   subject { described_class.new(appeal, params: params) }
 
+  context "badges attribute" do
+    context "legacy appeals " do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "returns nil for legacy appeals" do
+        serialized_attributes = subject.serializable_hash[:data][:attributes]
+        badges = serialized_attributes[:badges]
+
+        expect(badges).to be nil
+      end
+    end
+
+    context "ama appeals" do
+      it "does not return nil for ama appeals" do
+        serialized_attributes = subject.serializable_hash[:data][:attributes]
+        badges = serialized_attributes[:badges]
+
+        expect(badges).to_not be nil
+      end
+
+      it "returns object with false default values" do
+        serialized_attributes = subject.serializable_hash[:data][:attributes]
+        badges = serialized_attributes[:badges]
+
+        expect(badges[:contested_claim]).to be false
+        expect(badges[:fnod]).to be false
+        expect(badges[:hearing]).to be false
+        expect(badges[:overtime]).to be false
+      end
+
+      context "contested claims" do
+        before { FeatureToggle.enable!(:indicator_for_contested_claims) }
+        after { FeatureToggle.disable!(:indicator_for_contested_claims) }
+
+        let(:appeal) { create(:appeal, request_issues: request_issues) }
+        let(:request_issues) do
+          [
+            create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
+          ]
+        end
+
+        it "sets contested claim key value to true" do
+          serialized_attributes = subject.serializable_hash[:data][:attributes]
+          badges = serialized_attributes[:badges]
+
+          expect(badges[:contested_claim]).to be true
+          expect(badges[:fnod]).to be false
+          expect(badges[:hearing]).to be false
+          expect(badges[:overtime]).to be false
+        end
+      end
+
+      context "overtime" do
+        before do
+          FeatureToggle.enable!(:overtime_revamp)
+          appeal.overtime = true
+        end
+        after { FeatureToggle.disable!(:overtime_revamp) }
+
+        it "sets overtime key value to true" do
+          serialized_attributes = subject.serializable_hash[:data][:attributes]
+          badges = serialized_attributes[:badges]
+
+          expect(badges[:contested_claim]).to be false
+          expect(badges[:fnod]).to be false
+          expect(badges[:hearing]).to be false
+          expect(badges[:overtime]).to be true
+        end
+      end
+
+      context "fnod" do
+        before do
+          veteran.update!(date_of_death: date_of_death)
+          FeatureToggle.enable!(:view_fnod_badge_in_hearings)
+        end
+        after { FeatureToggle.disable!(:view_fnod_badge_in_hearings) }
+        let(:veteran) { create(:veteran) }
+        let(:appeal) { create(:appeal, veteran: veteran) }
+        let(:date_of_death) { Time.zone.today - 1.year }
+
+
+        it "sets fnod key value to true" do
+          serialized_attributes = subject.serializable_hash[:data][:attributes]
+          badges = serialized_attributes[:badges]
+
+          expect(badges[:contested_claim]).to be false
+          expect(badges[:fnod]).to be true
+          expect(badges[:hearing]).to be false
+          expect(badges[:overtime]).to be false
+        end
+      end
+
+      # context "hearing" do
+      #   let!(:attorney_task_with_hearing) do
+      #     create(
+      #       :ama_attorney_task,
+      #       :in_progress,
+      #       assigned_to: create(:user)
+      #     )
+      #   end
+      #   let(:appeal) { attorney_task_with_hearing.appeal }
+      #   let!(:hearing) do
+      #     create(
+      #       :hearing,
+      #       appeal: attorney_task_with_hearing.appeal,
+      #       disposition: "held"
+      #     )
+      #   end
+
+      #   it "sets both fnod and hearing key values to true" do
+      #     serialized_attributes = subject.serializable_hash[:data][:attributes]
+      #     badges = serialized_attributes[:badges]
+
+      #     expect(badges[:contested_claim]).to be false
+      #     expect(badges[:fnod]).to be false
+      #     expect(badges[:hearing]).to be true
+      #     expect(badges[:overtime]).to be false
+      #   end
+      # end
+    end
+  end
+
   context "Appellant data" do
     it "includes address_line_3" do
       serialized_attributes = subject.serializable_hash[:data][:attributes]
+
       claimant_attributes = serialized_attributes[:appellants].first
       expect(claimant_attributes[:address][:address_line_3]).to_not be nil
     end
