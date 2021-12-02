@@ -17,8 +17,9 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
-          serialized_hearing_days =
-            ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
+          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
+            hearing_day_range.hearing_days
+          )
 
           render json: {
             hearings: serialized_hearing_days,
@@ -43,7 +44,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   def index_with_hearings
     if hearing_day_range.valid?
       serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
-        hearing_day_range.load_days
+        hearing_day_range.all_hearing_days
       )
 
       render json: { hearing_days: serialized_hearing_days }
@@ -86,7 +87,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def hearing_day_range
     @hearing_day_range ||= HearingDayRange.new(
-      range_start_date, range_end_date, params[:regional_office]
+      hearing_day_range_params
     )
   end
 
@@ -120,24 +121,23 @@ class Hearings::HearingDayController < HearingsApplicationController
     nil
   end
 
-  def hearing_days_in_range_for_user
-    if return_all_upcoming_hearing_days?
-      hearing_day_range.load_days
-    else
-      hearing_day_range.load_days_for_user(current_user)
-    end
-  end
-
-  def return_all_upcoming_hearing_days?
-    ActiveRecord::Type::Boolean.new.deserialize(params[:show_all]) && current_user&.roles&.include?("Hearing Prep")
-  end
-
   def hearing_day_rooms
     @hearing_day_rooms ||= HearingDayRoomAssignment.new(
       request_type: params[:request_type],
       assign_room: params[:assign_room],
       scheduled_for: params[:scheduled_for],
       room: params[:room]
+    )
+  end
+
+  def hearing_day_range_params
+    params.permit(
+      :regional_office,
+      :show_all
+    ).merge(
+      start_date: range_start_date,
+      end_date: range_end_date,
+      user: current_user
     )
   end
 
