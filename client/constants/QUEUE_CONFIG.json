@@ -13,6 +13,7 @@
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
+  "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
   "PENDING_TASKS_TAB_NAME": "pending",
   "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
   "TRANSCRIPTION_TASK_LABEL": "Transcription Task",

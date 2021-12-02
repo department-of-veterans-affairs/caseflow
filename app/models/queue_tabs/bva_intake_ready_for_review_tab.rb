@@ -10,7 +10,7 @@ class BvaIntakeReadyForReviewTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.READY_FOR_REVIEW_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.BVA_READY_FOR_REVIEW_TASKS_TAB_NAME
   end
 
   def description
