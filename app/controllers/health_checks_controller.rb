@@ -8,10 +8,9 @@ class HealthChecksController < ActionController::Base
   newrelic_ignore_apdex
 
   def show
-    migrations = migration_status
     body = {
       healthy: true
-    }.merge(Rails.application.config.build_version || {}).merge(migrations)
+    }.merge(Rails.application.config.build_version || {}).merge(migration_status)
     render(json: body, status: :ok)
   end
 
