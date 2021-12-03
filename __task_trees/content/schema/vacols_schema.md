@@ -4,6 +4,7 @@ tags: "vacols"
 weight: 31
 ---
 # VACOLS Schema
+https://github.com/department-of-veterans-affairs/VACOLS/blob/master/vacols_schema.sql
 
 ## VACOLS - VBMS Mapping
 
