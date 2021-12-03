@@ -9,6 +9,7 @@ weight: 30
 This page documents the VACOLS DB and its schema.
 * VACOLS is the source of truth for Legacy Appeals.
 * [VACOLS GitHub repo](https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs)
+* [DBDiagram of VACOLS table relationships](https://dbdiagram.io/d/5f8225973a78976d7b77234f)
 * [VACOLS Data Dictionary spreadsheet](https://docs.google.com/spreadsheets/d/1I8vb7PWeDSJBQhwUFAkvywlwNXJW0KnzQQtb_rxz7j4/edit?usp=sharing) copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.
 * [Docs in the VACOLS repo](https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs)
   - [VACOLS Reference docs](https://github.com/department-of-veterans-affairs/VACOLS/tree/master/docs/VACOLS%20Reference%20Docs) - VACOLS_Table_Joins.xls
