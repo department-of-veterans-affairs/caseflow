@@ -38,7 +38,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
         let(:appeal) { create(:appeal, request_issues: request_issues) }
         let(:request_issues) do
           [
-            create(:request_issue,
+            create(
+              :request_issue,
               benefit_type: "compensation",
               nonrating_issue_category: "Contested Claims - Insurance")
           ]
