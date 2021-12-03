@@ -155,17 +155,16 @@ const HearingDetails = (props) => {
         omitBy(
           {
             id: hearing?.appellantEmailId,
-            // Prefer hearingChanges, but include timezone and email_address if they already existed
-            timezone: hearingChanges?.appellantTz || hearing?.appellantTz,
-            email_address: hearingChanges?.appellantEmailAddress || hearing?.appellantEmailAddress,
+            timezone: hearingChanges?.appellantTz,
+            email_address: hearingChanges?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
           }, isUndefined
         ),
         omitBy(
           {
             id: hearing?.representativeEmailId,
-            timezone: hearingChanges?.representativeTz || hearing?.representativeTz,
-            email_address: hearingChanges?.representativeEmailAddress || hearing?.representativeEmailAddress,
+            timezone: hearingChanges?.representativeTz,
+            email_address: hearingChanges?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
