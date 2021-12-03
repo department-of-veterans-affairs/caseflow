@@ -10,15 +10,14 @@ class Docket
 
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
-    # Ugggghhhh
-    consider_affinity = judge.present?
 
     scope = docket_appeals.active
 
     if ready
       scope = scope.ready_for_distribution
-      #scope = genpop ? scope.genpop : scope.non_genpop_for_judge(judge)
-      scope = (genpop == 'not_genpop' ? scope.non_genpop_for_judge(judge) : scope.genpop) if consider_affinity
+      if judge.present?
+        scope = genpop == 'not_genpop' ? scope.non_genpop_for_judge(judge) : scope.genpop
+      end
     end
 
     if priority == true

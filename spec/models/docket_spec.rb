@@ -326,42 +326,84 @@ describe Docket, :all_dbs do
       end
     end
 
-    context "distribute_appeals" do
+    context "distribute_appeals for CAVC" do
       let(:cavc_distribution_task) { cavc_appeal.tasks.where(type: DistributionTask.name).first }
+      let(:cavc_remand) { cavc_appeal.cavc_remand }
+      let(:source_appeal) { cavc_remand.source_appeal }
+      let(:judge_decision_review_task) do
+        source_appeal.tasks.where(
+          type: "JudgeDecisionReviewTask",
+          status: "completed"
+        ).first
+      end
 
       context "when the cavc remand is within affinity (< 21 days)" do
-        # FIXME: I'm missing something in the setup, so the test below never returns anything.
-        # It's probably something trivial I'll find in the AM?
-
-        let(:judge_user) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:judge_user) { judge_decision_review_task.assigned_to }
         let(:first_distribution) { Distribution.create!(judge: other_judge) }
 
         let(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: judge_user) }
 
         before do
-          cavc_distribution_task.update!(assigned_at: Time.zone.now, assigned_to: judge_user)
+          cavc_distribution_task.update!(assigned_at: Time.zone.now)
         end
 
         it "is distributed only to the issuing judge" do
           # priority: true would normally return CAVC tasks, so if not for affinity, this should include it:
-          tasks = EvidenceSubmissionDocket.new.distribute_appeals(first_distribution, priority: true)
-          expect(tasks).not_to include(cavc_appeal)
+          dist_cases = DirectReviewDocket.new.distribute_appeals(
+            first_distribution,
+            genpop: 'not_genpop',
+            priority: true,
+            limit: 3
+          )
+          expect(dist_cases.map(&:case_id)).not_to include(cavc_appeal.uuid)
 
           # But because of affinity, it sticks to this judge user:
-          tasks = EvidenceSubmissionDocket.new.distribute_appeals(second_distribution, priority: true)
-          # Well actually, it doesn't! :lolsob: FIXME.
-          expect(tasks).to include(cavc_appeal)
+          dist_cases = DirectReviewDocket.new.distribute_appeals(
+            second_distribution,
+            genpop: 'not_genpop',
+            priority: true,
+            limit: 3
+          )
+          expect(dist_cases.map(&:case_id)).to include(cavc_appeal.uuid)
         end
       end
 
       context "when the cavc remand is outside of affinity (>= 21 days)" do
+        let(:judge_user) { judge_decision_review_task.assigned_to }
+        let(:first_distribution) { Distribution.create!(judge: judge_user) }
+
+        let(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:second_distribution) { Distribution.create!(judge: other_judge) }
+
         before do
           cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
         end
 
-        it "is distributed to the first available judge" do
-          #
+        context "when genpop: not_genpop is set" do
+          it "is not distributed because it is now genpop" do
+            dist_cases = DirectReviewDocket.new.distribute_appeals(
+              first_distribution,
+              genpop: 'not_genpop',
+              priority: true,
+              limit: 3
+            )
+
+            expect(dist_cases.map(&:case_id)).not_to include(cavc_appeal.uuid)
+          end
+        end
+
+        context "when genpop is not 'not_genpop' (i.e., is genpop)" do
+          it "is distributed to the first available judge" do
+            dist_cases = DirectReviewDocket.new.distribute_appeals(
+              second_distribution,
+              genpop: 'any',
+              priority: true,
+              limit: 3
+            )
+
+            expect(dist_cases.map(&:case_id)).to include(cavc_appeal.uuid)
+          end
         end
       end
 
