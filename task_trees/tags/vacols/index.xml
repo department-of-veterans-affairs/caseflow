@@ -13,7 +13,7 @@
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols.html</guid>
       <description>VACOLS #  This page documents the VACOLS DB and its schema.
- VACOLS is the source of truth for Legacy Appeals.  VACOLS GitHub repo  VACOLS Data Dictionary spreadsheet copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.  Docs in the VACOLS repo   VACOLS Reference docs - VACOLS_Table_Joins.xls  Feb 2017 VACOLS doc in appeals-data repo - explanations of example queries    FACOLS - &amp;ldquo;Fake VACOLS&amp;rdquo; used for local testing  Caseflow&amp;rsquo;s Rails Source Code for VACOLS DB #   Caseflow&amp;rsquo;s VACOLS Rails models</description>
+ VACOLS is the source of truth for Legacy Appeals.  VACOLS GitHub repo  DBDiagram of VACOLS table relationships  VACOLS Data Dictionary spreadsheet copied from VACOLS.Database.tables.pdf (Last Updated: July 12, 2016). Ask for permission to edit via Google.  Docs in the VACOLS repo   VACOLS Reference docs - VACOLS_Table_Joins.xls  Feb 2017 VACOLS doc in appeals-data repo - explanations of example queries    FACOLS - &amp;ldquo;Fake VACOLS&amp;rdquo; used for local testing  Caseflow&amp;rsquo;s Rails Source Code for VACOLS DB #   Caseflow&amp;rsquo;s VACOLS Rails models</description>
     </item>
     
     <item>
