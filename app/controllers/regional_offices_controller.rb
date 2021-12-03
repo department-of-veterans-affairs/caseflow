@@ -15,9 +15,9 @@ class RegionalOfficesController < ApplicationController
     ro = HearingDayMapper.validate_regional_office(params[:regional_office])
 
     hearing_days = HearingDayRange.new(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 182.days,
-      ro
+      start_date: Time.zone.today.beginning_of_day,
+      end_date: Time.zone.today.beginning_of_day + 182.days,
+      regional_office: ro
     ).hearing_days_with_hearings
 
     render json: {

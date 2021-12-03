@@ -534,7 +534,12 @@ describe HearingDay, :all_dbs do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
+      subject do
+        HearingDayRange.new(
+          start_date: schedule_period.start_date,
+          end_date: schedule_period.end_date
+        ).all_hearing_days
+      end
 
       it do
         expect(subject.size).to eql(970)
