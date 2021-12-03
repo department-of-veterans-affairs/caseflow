@@ -8,7 +8,7 @@ class HealthChecksController < ActionController::Base
   newrelic_ignore_apdex
 
   def show
-    migrations = check_migrations
+    migrations = migration_status
     body = {
       healthy: true
     }.merge(Rails.application.config.build_version || {}).merge(migrations)
@@ -17,13 +17,15 @@ class HealthChecksController < ActionController::Base
 
   private
 
-  def check_migrations
+  def migration_status
     migrations = []
     pending_migrations = false
     ActiveRecord::Base.connection.migration_context.migrations_status.each do |status, version, name|
-      migrations << { status: status, version: version, name: name }
-      pending_migrations = true if status != "up"
+      if status != "up"
+        migrations << { status: status, version: version, name: name }
+        pending_migrations = true
+      end
     end
-    { migrations: migrations, pending_migrations: pending_migrations }
+    { pending_migrations: pending_migrations, migrations: migrations }
   end
 end
