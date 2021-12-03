@@ -14,6 +14,7 @@ describe "Health Check API" do
       json = JSON.parse(response.body)
       expect(json["healthy"]).to eq(true)
       expect(json["deployed_at"]).to eq("the best day ever")
+      expect(json["pending_migrations"]).to eq(false)
     end
   end
 end
