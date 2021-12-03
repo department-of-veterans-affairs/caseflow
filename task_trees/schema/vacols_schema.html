@@ -16,7 +16,7 @@
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.9c1d67ca082359064d1985daef12341ffab83060607424483ba223e2e5e7c9ea.js" integrity="sha256-nB1nyggjWQZNGYXa7xI0H/q4MGBgdCRIO6Ij4uXnyeo=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.732667a78ea6c502a17c21edf208a976fc1adf68c961a8648a4fb8d37ca0ab2e.js" integrity="sha256-cyZnp46mxQKhfCHt8gipdvwa32jJYahkik&#43;403ygqy4=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -594,8 +594,12 @@ https://github.com/alex-shpak/hugo-book
 <nav id="TableOfContents">
   <ul>
     <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
-    <li><a href="#table-joins">Table Joins</a></li>
-    <li><a href="#unique-indexes">Unique Indexes</a></li>
+    <li><a href="#table-joins">Table Joins</a>
+      <ul>
+        <li><a href="#unique-indexes">Unique Indexes</a></li>
+        <li><a href="#primary-indexes">Primary Indexes</a></li>
+      </ul>
+    </li>
     <li><a href="#main-tables">Main Tables</a>
       <ul>
         <li><a href="#assign-diary">ASSIGN (Diary)</a></li>
@@ -750,13 +754,13 @@ https://github.com/alex-shpak/hugo-book
 <p>Also check out 
 
 <a href="https://dbdiagram.io/d/5f8225973a78976d7b77234f" target="_blank">visualization of table relationships</a>.</p>
-<h2 id="unique-indexes">
+<h3 id="unique-indexes">
   Unique Indexes
   <small><a class="anchor-heading" href="#unique-indexes" aria-labelledby="unique-indexes">#</a></small>
-</h2>
+</h3>
 <details ><summary>Unique indexes</summary>
   <div class="markdown-inner">
-    <pre tabindex="0"><code>&gt; grep &quot;CREATE UNIQUE INDEX&quot; vacols_schema.sql
+    <pre tabindex="0"><code>$ grep &quot;CREATE UNIQUE INDEX&quot; vacols_schema.sql
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;BRFFKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;BRIEFF&quot; (&quot;BFKEY&quot;)
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;CSTAFKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;CORRES&quot; (&quot;STAFKEY&quot;)
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;INV_ID_IDX&quot; ON &quot;VACOLS&quot;.&quot;INVENTORY&quot; (&quot;INV_ID&quot;)
@@ -767,6 +771,21 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;SYS_C0012075&quot; ON &quot;VACOLS&
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;TBKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;TBSCHED&quot; (&quot;TBYEAR&quot;, &quot;TBTRIP&quot;, &quot;TBLEG&quot;)
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;TICKNUM_IDX&quot; ON &quot;VACOLS&quot;.&quot;FOLDER&quot; (&quot;TICKNUM&quot;)
 CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS&quot;.&quot;BVAINV&quot; (&quot;VABARCODE&quot;)
+</code></pre>
+  </div>
+</details>
+
+<h3 id="primary-indexes">
+  Primary Indexes
+  <small><a class="anchor-heading" href="#primary-indexes" aria-labelledby="primary-indexes">#</a></small>
+</h3>
+<details ><summary>Primary indexes</summary>
+  <div class="markdown-inner">
+    <pre tabindex="0"><code>$ grep &quot;PRIMARY&quot; vacols_schema.sql
+	CONSTRAINT &quot;VABARCODE_IDX&quot; PRIMARY KEY (&quot;VABARCODE&quot;)
+	PRIMARY KEY (&quot;HEARING_PKSEQ&quot;)
+	CONSTRAINT &quot;PK_REPKEY_ADDTIME&quot; PRIMARY KEY (&quot;REPKEY&quot;, &quot;REPADDTIME&quot;)
+	CONSTRAINT &quot;TBKEY_IDX&quot; PRIMARY KEY (&quot;TBYEAR&quot;, &quot;TBTRIP&quot;, &quot;TBLEG&quot;)
 </code></pre>
   </div>
 </details>
@@ -6498,8 +6517,12 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 <nav id="TableOfContents">
   <ul>
     <li><a href="#vacols---vbms-mapping">VACOLS - VBMS Mapping</a></li>
-    <li><a href="#table-joins">Table Joins</a></li>
-    <li><a href="#unique-indexes">Unique Indexes</a></li>
+    <li><a href="#table-joins">Table Joins</a>
+      <ul>
+        <li><a href="#unique-indexes">Unique Indexes</a></li>
+        <li><a href="#primary-indexes">Primary Indexes</a></li>
+      </ul>
+    </li>
     <li><a href="#main-tables">Main Tables</a>
       <ul>
         <li><a href="#assign-diary">ASSIGN (Diary)</a></li>
