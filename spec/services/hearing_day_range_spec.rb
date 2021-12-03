@@ -5,7 +5,13 @@ describe HearingDayRange, :all_dbs do
     let(:start_date) { Time.zone.today }
     let(:end_date) { Time.zone.today + 2.days }
 
-    subject { HearingDayRange.new(start_date, end_date, regional_office_key).all_hearing_days }
+    subject do
+      HearingDayRange.new(
+        start_date: start_date,
+        end_date: end_date,
+        regional_office: regional_office_key
+      ).all_hearing_days
+    end
 
     context "load Video and Travel days for a range date" do
       let(:regional_office_key) { "RO13" }
@@ -107,7 +113,13 @@ describe HearingDayRange, :all_dbs do
     let(:end_date) { Time.zone.now - 1.day + 1.year }
     let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
-    subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user) }
+    subject do
+      HearingDayRange.new(
+        start_date: start_date,
+        end_date: end_date,
+        user: current_user
+      ).upcoming_days_for_vso_user
+    end
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
