@@ -5,6 +5,7 @@ class HearingsController < HearingsApplicationController
 
   before_action :verify_access_to_hearings, except: [:show]
   before_action :verify_access_to_reader_or_hearings, only: [:show]
+  before_action :set_hearing_day, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound do |error|
     Rails.logger.debug "Unable to find hearing in Caseflow: #{error.message}"
@@ -22,6 +23,14 @@ class HearingsController < HearingsApplicationController
   rescue_from Caseflow::Error::VacolsRepositoryError do |error|
     Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
     render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
+  end
+
+  def index
+    render json: {
+      hearings: @hearing_day.hearings_for_user(current_user).map do |hearing|
+        hearing.quick_to_hash(current_user.id)
+      end
+    }
   end
 
   def show
@@ -156,5 +165,9 @@ class HearingsController < HearingsApplicationController
         .permit(:person_id, :reason, :granted)
         .tap { |aod_params| aod_params.empty? || aod_params.require([:person_id, :reason]) }
     end
+  end
+
+  def set_hearing_day
+    @hearing_day = HearingDay.find(params.require(:hearing_day_id))
   end
 end
