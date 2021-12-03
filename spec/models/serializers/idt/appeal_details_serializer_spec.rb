@@ -41,7 +41,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
             create(
               :request_issue,
               benefit_type: "compensation",
-              nonrating_issue_category: "Contested Claims - Insurance")
+              nonrating_issue_category: "Contested Claims - Insurance"
+            )
           ]
         end
 
