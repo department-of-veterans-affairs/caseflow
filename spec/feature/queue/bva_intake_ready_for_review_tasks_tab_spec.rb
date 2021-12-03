@@ -4,7 +4,7 @@ describe BvaIntakeReadyForReviewTab, :postgres do
   let(:tab) { BvaIntakeReadyForReviewTab.new(params) }
   let(:params) do
     {
-      assignee: assignee,
+      assignee: assignee
     }
   end
   let(:assignee) { create(:bva_intake) }

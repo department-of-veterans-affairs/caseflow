@@ -4,7 +4,7 @@ describe BvaIntakeCompletedTab, :postgres do
   let(:tab) { BvaIntakeCompletedTab.new(params) }
   let(:params) do
     {
-      assignee: assignee,
+      assignee: assignee
     }
   end
   let(:assignee) { create(:bva_intake) }
