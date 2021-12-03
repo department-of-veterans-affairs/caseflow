@@ -66,13 +66,16 @@ class Idt::V1::AppealDetailsSerializer
   end
 
   attribute :badges do |object|
-    object.is_a?(LegacyAppeal) ? nil :
-    {
-      contested_claim: object.contested_claim?,
-      fnod: object.veteran_appellant_deceased?,
-      hearing: object.hearings.any? { |hearing| hearing.held? },
-      overtime: object.overtime?
-    }
+    if object.is_a?(LegacyAppeal)
+      nil
+    else
+      {
+        contested_claim: object.contested_claim?,
+        fnod: object.veteran_appellant_deceased?,
+        hearing: object.hearings.any?(&:held?)},
+        overtime: object.overtime?
+      }
+    end
   end
 
   attribute :congressional_interest_addresses do |object|

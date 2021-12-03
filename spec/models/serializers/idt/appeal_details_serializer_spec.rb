@@ -38,7 +38,9 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
         let(:appeal) { create(:appeal, request_issues: request_issues) }
         let(:request_issues) do
           [
-            create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance")
+            create(:request_issue,
+              benefit_type: "compensation",
+              nonrating_issue_category: "Contested Claims - Insurance")
           ]
         end
 
@@ -74,7 +76,6 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
         let(:veteran) { create(:veteran) }
         let(:appeal) { create(:appeal, veteran: veteran) }
         let(:date_of_death) { Time.zone.today - 1.year }
-
 
         it "sets fnod key value to true" do
           expect(subject[:contested_claim]).to be false
