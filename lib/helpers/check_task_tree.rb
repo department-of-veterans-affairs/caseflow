@@ -357,8 +357,7 @@ class CheckTaskTree
   end
 
   def open_exclusive_root_children_tasks
-    exclusive_root_children_task_types = AppealsWithMoreThanOneOpenRootChildTaskChecker::EXCLUSIVE_OPEN_TASKS
-    @appeal.tasks.open.of_type(exclusive_root_children_task_types).where(parent: @appeal.root_task)
+    MultipleOpenRootChildTaskChecker.open_exclusive_root_children_tasks(@appeal)
   end
 
   # See DecisionReviewTasksForInactiveAppealsChecker

@@ -10,27 +10,28 @@ class MultipleOpenRootChildTaskChecker < DataIntegrityChecker
                               BvaDispatchTask].freeze
 
   def call
-    build_report(appeals_with_multiple_exclusive_open_tasks_assigned_to_user)
+    build_report(appeals_with_multiple_open_root_child_task)
   end
 
   def slack_channel
     "#appeals-echo"
   end
 
+  def self.open_exclusive_root_children_tasks(appeal)
+    appeal.tasks.open.of_type(EXCLUSIVE_OPEN_TASKS).where(parent: appeal.root_task)
+  end
+
   private
 
-  # This efficient query is an approximation to the query we really want.
-  def appeals_with_multiple_exclusive_open_tasks_assigned_to_user
-    Task.open.assigned_to_any_user.where(type: EXCLUSIVE_OPEN_TASKS)
-      .group(:appeal_type, :appeal_id).having("count(*) > 1").count
+  def appeals_with_multiple_open_root_child_task
+    Task.open.where(type: EXCLUSIVE_OPEN_TASKS, parent: open_root_tasks)
+      .select("appeal_type, appeal_id")
+      .group(:appeal_type, :appeal_id).having("count(*) > 1")
+      .map(&:appeal).uniq
   end
 
   def open_root_tasks
     RootTask.open
-  end
-
-  def appeals_with_more_than_one_open_root_child_task
-    # query is complex
   end
 
   def build_report(appeals)
@@ -38,6 +39,11 @@ class MultipleOpenRootChildTaskChecker < DataIntegrityChecker
 
     count = appeals.count
     add_to_report "Found #{count} #{'appeal'.pluralize(count)} with multiple open root-children task types:"
-    add_to_report appeals.entries.map { |appeal, count| "#{appeal.join(' ')} => #{count} tasks"}.join(", ")
+
+    appeal_list = appeals.map do |appeal|
+      open_task_types = self.class.open_exclusive_root_children_tasks(appeal).pluck(:type, :id)
+      "#{appeal.class} #{appeal.id} => #{open_task_types.size} tasks: #{open_task_types}"
+    end
+    add_to_report appeal_list.join("\n")
   end
 end
