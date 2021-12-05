@@ -30,4 +30,4 @@ An `assigned_by_id` or `assigned_to_id` will correspond with the `id` of the use
 
 Finally, `organization_users` is representative of a users relationship to a particular type of organization.  Therefore the users table's `id` will correspond with the `user_id` and the organizations table's `id` will correspond with the `organization_id`.
 
-<img src="https://user-images.githubusercontent.com/63597932/116123110-9c236980-a690-11eb-9482-add90c31e4f9.png">
+<img src="https://user-images.githubusercontent.com/63597932/116122858-4c44a280-a690-11eb-8198-666b0c23a82e.png">
