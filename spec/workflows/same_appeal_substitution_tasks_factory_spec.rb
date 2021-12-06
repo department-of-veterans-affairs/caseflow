@@ -213,6 +213,34 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             expect(appeal.tasks.open.count).to eq(open_task_count)
           end
         end
+        context "when the user selects a task assigned to an individual" do
+          before do
+            EngineeringTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
+          end
+          let(:eng_task) { appeal.tasks.of_type(:EngineeringTask).first }
+          let(:selected_task_ids) { [eng_task.id] }
+          it "throws an error" do
+            expect { subject }.to raise_error("Expecting only tasks assigned to organizations")
+          end
+        end
+        context "when the user selects a task assigned to a group" do
+          let(:appeal) { create(:appeal, :with_post_intake_tasks) }
+          let(:translation_task) { create(:ama_colocated_task, :translation, appeal: appeal, parent: appeal.root_task) }
+          let(:selected_task_ids) { [translation_task.id] }
+          before do
+            translation_task.children.of_type(:TranslationTask).first.cancelled!
+          end
+          it "copies the task" do
+            first_translation_task = appeal.tasks.of_type(:TranslationTask).first
+
+            subject
+
+            second_translation_task = appeal.tasks.open.of_type(:TranslationTask).first
+            expect(first_translation_task.id).to_not eq(second_translation_task.id)
+            expect(second_translation_task.placed_on_hold_at).to be_nil
+            expect(second_translation_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          end
+        end
       end
     end
   end
