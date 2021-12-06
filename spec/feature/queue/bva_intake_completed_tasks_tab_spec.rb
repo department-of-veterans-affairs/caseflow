@@ -39,6 +39,10 @@ describe BvaIntakeCompletedTab, :postgres do
 
       it "returns assignee's completed tasks that are older than 7 days" do
         assignee_completed_tasks.first.created_at = Time.zone.now - 1.year
+        assignee_completed_tasks.first.updated_at = Time.zone.now - 1.year
+        assignee_completed_tasks.first.assigned_at = Time.zone.now - 1.year
+        assignee_completed_tasks.first.closed_at = Time.zone.now - 1.year
+        assignee_completed_tasks.first.save
         expect(subject).to match_array(assignee_completed_tasks)
       end
 
