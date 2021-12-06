@@ -13,7 +13,6 @@ import {
 } from '../actions/hearingScheduleActions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
-import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import { LIST_SCHEDULE_VIEWS } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
@@ -70,23 +69,8 @@ SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 class ListTable extends React.Component {
 
   render() {
-    const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load the hearing schedule.<br />
-      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
-    </div>;
-
     return (
-      <LoadingDataDisplay
-        createLoadPromise={this.props.onApply}
-        loadingComponentProps={{
-          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-          message: 'Loading the hearing schedule...'
-        }}
-        failStatusMessageProps={{
-          title: 'Unable to load the hearing schedule.'
-        }}
-        failStatusMessageChildren={failStatusMessageChildren}
-      >
+      <React.Fragment>
         {this.props.user.userCanBuildHearingSchedule && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
             onClick={() => this.props.history.push('/schedule/add_hearing_day')}>
@@ -101,8 +85,7 @@ class ListTable extends React.Component {
           slowReRendersAreOk
           useHearingsApi
         />
-
-      </LoadingDataDisplay>
+      </React.Fragment>
     );
   }
 }
@@ -110,7 +93,6 @@ class ListTable extends React.Component {
 ListTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
-  onApply: PropTypes.func,
   history: PropTypes.object,
   onQueryUpdate: PropTypes.func,
   user: PropTypes.shape({
@@ -145,11 +127,10 @@ class ListSchedule extends React.Component {
     }
   }
 
-  // forces remount of LoadingDataDisplay
   setDateRangeKey = () => {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
     // show first page by default by sending index of 0
-    this.props.fetchHearings(0)
+    this.props.updateList(0)
   }
 
   formatHearingsScheduled = (filledSlots) => {
@@ -179,11 +160,10 @@ class ListSchedule extends React.Component {
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
 
-    const { user, view, onApply, history } = this.props;
+    const { user, view, history } = this.props;
 
     if (!user.userHasHearingPrepRole || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
-      return <ListTable onApply={onApply}
-        history={history}
+      return <ListTable history={history}
         key={`hearings${this.state.dateRangeKey}`}
         user={user}
         hearingScheduleRows={hearingScheduleRows}
@@ -191,8 +171,7 @@ class ListSchedule extends React.Component {
         onQueryUpdate={this.onQueryUpdate} />;
     }
 
-    return <ListTable onApply={() => onApply({ showAll: true })}
-      history={history}
+    return <ListTable history={history}
       key={`allHearings${this.state.dateRangeKey}`}
       user={user}
       hearingScheduleRows={hearingScheduleRows}
@@ -246,9 +225,8 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  fetchHearings: PropTypes.func.isRequired,
+  updateList: PropTypes.func.isRequired,
   onResetDeleteSuccessful: PropTypes.func,
-  onApply: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,
   history: PropTypes.object,
