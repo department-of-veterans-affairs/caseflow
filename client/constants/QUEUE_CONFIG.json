@@ -12,10 +12,12 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
+  "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
+  "PENDING_TASKS_TAB_NAME": "pending",
+  "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
   "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
-
   "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
-
   "VHA_PO_ASSIGNED_TASKS_TAB_NAME": "po_assigned",
   "VHA_PO_IN_PROGRESS_TASKS_TAB_NAME": "po_inProgressTab",
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
@@ -39,6 +41,12 @@
     },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
+    },
+    "DAYS_SINCE_LAST": {
+      "name": "daysSinceLastColumn"
+    },
+    "DAYS_SINCE_INTAKE": {
+      "name": "daysSinceIntakeColumn"
     },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
