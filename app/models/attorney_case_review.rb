@@ -37,6 +37,10 @@ class AttorneyCaseReview < CaseflowRecord
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
     task.parent.update(assigned_by_id: task.assigned_to_id)
+    if note && !note.nil?
+      note1 = "AttorneyTask notes: " + note
+      task.parent.append_instruction(note1)
+    end
     update_issue_dispositions_in_caseflow!
   end
 
