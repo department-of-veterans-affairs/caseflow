@@ -2,6 +2,7 @@
 
 class Hearings::HearingDayController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
+  include Pagy::Backend
 
   before_action :verify_view_hearing_schedule_access
   before_action :verify_access_to_hearings, only: [:update]
@@ -17,14 +18,17 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
+          pagy, hearing_days = pagy(hearing_day_range.hearing_days)
+
           serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
-            hearing_day_range.hearing_days
+            hearing_days
           )
 
           render json: {
             hearings: serialized_hearing_days,
             startDate: hearing_day_range.start_date,
-            endDate: hearing_day_range.end_date
+            endDate: hearing_day_range.end_date,
+            pagination: pagy_metadata(pagy)
           }
         else
           hearing_day_range_invalid

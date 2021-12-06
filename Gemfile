@@ -34,6 +34,7 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
+gem "pagy"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
