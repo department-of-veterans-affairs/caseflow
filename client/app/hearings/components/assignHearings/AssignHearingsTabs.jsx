@@ -37,8 +37,9 @@ export default class AssignHearingsTabs extends React.PureComponent {
       defaultTabIndex
     } = this.props;
 
-    const hearingsForSelected = _.get(selectedHearingDay, 'hearings', {});
-    const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
+    const availableSlots = Math.max(
+      (_.get(selectedHearingDay, 'totalSlots', 0) - _.get(selectedHearingDay, 'filledSlots', 0)), 0
+    );
 
     return (
       <div className="usa-width-three-fourths assign-hearing-tabs">
@@ -58,7 +59,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
               page: <UpcomingHearingsTable
                 selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
-                hearings={hearingsForSelected}
               />
             },
             {

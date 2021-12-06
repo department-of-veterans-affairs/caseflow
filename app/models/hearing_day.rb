@@ -72,6 +72,17 @@ class HearingDay < CaseflowRecord
             format: { with: HEARING_TIME_STRING_PATTERN, message: "doesn't match hh:mm time format" },
             allow_nil: true
 
+  scope :in_range, lambda { |start_date, end_date|
+    where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+  }
+
+  scope :for_judge_schedule, lambda { |judge, vacols_ids|
+    where(hearings: { judge_id: judge.id })
+      .or(where(judge_id: judge.id))
+      .or(where(id: vacols_ids))
+      .includes(:hearings, :judge).distinct
+  }
+
   def central_office?
     request_type == REQUEST_TYPES[:central]
   end

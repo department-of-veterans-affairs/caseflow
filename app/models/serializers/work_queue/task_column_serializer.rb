@@ -303,6 +303,34 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :owned_by do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]
+
+    if serialize_attribute?(params, columns)
+      if object.assigned_to_type == "Organization"
+        Organization.find(object.assigned_to_id).name
+      elsif object.assigned_to_type == "User"
+        User.find(object.assigned_to_id).css_id
+      end
+    end
+  end
+
+  attribute :days_since_last_status_change do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]
+
+    if serialize_attribute?(params, columns)
+      object.calculated_last_change_duration
+    end
+  end
+
+  attribute :days_since_board_intake do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]
+
+    if serialize_attribute?(params, columns)
+      object.calculated_duration_from_board_intake
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
