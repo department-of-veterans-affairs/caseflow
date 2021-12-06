@@ -20,8 +20,13 @@ const ContestedClaimBadge = (props) => {
     { longTooltip ? CC_BADGE_TOOLTIP_LONG : CC_BADGE_TOOLTIP }
   </div>;
 
-  return <Badge name="contested"
-    displayName="CC" color={COLORS.PURPLE} tooltipText={docketTooltipText ? docketTooltipText : tooltipText} />;
+  return <Badge
+    name="contested"
+    displayName="CC"
+    color={COLORS.PURPLE}
+    tooltipText={docketTooltipText ? docketTooltipText : tooltipText}
+    id={`cc-${appeal.id}`}
+  />;
 };
 
 ContestedClaimBadge.propTypes = {

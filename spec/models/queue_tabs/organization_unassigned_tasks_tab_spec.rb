@@ -22,7 +22,7 @@ describe OrganizationUnassignedTasksTab, :postgres do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(6)
+        expect(subject.length).to eq(7)
       end
 
       it "does not include optional columns" do
