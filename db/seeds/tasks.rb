@@ -497,7 +497,9 @@ module Seeds
         vacols_id = "3019752"
       end
 
-      LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+      legacy_appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+      legacy_appeal.update!(closest_regional_office: ro_key)
+      legacy_appeal
     rescue ActiveRecord::RecordNotFound
       Rails.logger.error("Could not load FACOLS record for vacols_id #{vacols_id} -- are FACOLS seeds present?")
     end
