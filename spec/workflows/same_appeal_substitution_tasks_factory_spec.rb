@@ -18,14 +18,14 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
       before do
         OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
       end
+      let(:selected_task_ids) { [] }
+      subject do
+        SameAppealSubstitutionTasksFactory.new(appeal,
+                                               selected_task_ids,
+                                               created_by,
+                                               task_params).create_substitute_tasks!
+      end
       context "when an appeal has already been distributed" do
-        let(:selected_task_ids) { [] }
-        subject do
-          SameAppealSubstitutionTasksFactory.new(appeal,
-                                                 selected_task_ids,
-                                                 created_by,
-                                                 task_params).create_substitute_tasks!
-        end
 
         context "when it is a hearing lane appeal with hearing tasks selected" do
           let(:appeal) { hearing_appeal }
@@ -197,6 +197,21 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               expect(open_attorney_tasks.empty?).to be true
               expect(open_judge_review_tasks.empty?).to be true
             end
+          end
+        end
+      end
+
+      context "when an appeal has not been distributed" do
+        let(:appeal) { create(:appeal, :with_post_intake_tasks) }
+        context "when the user selects no tasks" do
+          it "leaves the appeal tree unchanged" do
+            task_count = appeal.tasks.count
+            open_task_count = appeal.tasks.open.count
+
+            subject
+
+            expect(appeal.tasks.count).to eq(task_count)
+            expect(appeal.tasks.open.count).to eq(open_task_count)
           end
         end
       end

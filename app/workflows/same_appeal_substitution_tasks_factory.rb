@@ -45,6 +45,8 @@ class SameAppealSubstitutionTasksFactory
     DistributionTask.create_child_task(@appeal.root_task, @created_by, params)
   end
 
+  private
+
   def create_selected_tasks
     return if no_tasks_selected?
 
