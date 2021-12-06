@@ -16,19 +16,13 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      if judge.present?
-        # reek sayeth:
-        # Docket#appeals is controlled by argument 'genpop'
-        scope = (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
-      end
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present?
     end
 
-    if priority == true
-      scope = scope.priority
-      return scope.ordered_by_distribution_ready_date
-    end
+    return scoped_for_priority(scope) if priority == true
 
     scope = scope.nonpriority if priority == false
+
     scope.order("appeals.receipt_date")
   end
 
@@ -106,6 +100,14 @@ class Docket
   end
 
   private
+
+  def adjust_for_genpop(scope, genpop, judge)
+    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
+  end
+
+  def scoped_for_priority(scope)
+    scope.priority.ordered_by_distribution_ready_date
+  end
 
   def docket_appeals
     Appeal.where(docket_type: docket_type).extending(Scopes)
