@@ -96,7 +96,6 @@ describe Docket, :all_dbs do
           it "returns no appeals" do
             expect(subject.count.size).to eq 0 # still don't get why this is needed
           end
-
         end
 
         context "when called for the judge with affinity" do
@@ -352,7 +351,7 @@ describe Docket, :all_dbs do
           # priority: true would normally return CAVC tasks, so if not for affinity, this should include it:
           dist_cases = DirectReviewDocket.new.distribute_appeals(
             first_distribution,
-            genpop: 'not_genpop',
+            genpop: "not_genpop",
             priority: true,
             limit: 3
           )
@@ -361,7 +360,7 @@ describe Docket, :all_dbs do
           # But because of affinity, it sticks to this judge user:
           dist_cases = DirectReviewDocket.new.distribute_appeals(
             second_distribution,
-            genpop: 'not_genpop',
+            genpop: "not_genpop",
             priority: true,
             limit: 3
           )
@@ -384,7 +383,7 @@ describe Docket, :all_dbs do
           it "is not distributed because it is now genpop" do
             dist_cases = DirectReviewDocket.new.distribute_appeals(
               first_distribution,
-              genpop: 'not_genpop',
+              genpop: "not_genpop",
               priority: true,
               limit: 3
             )
@@ -397,7 +396,7 @@ describe Docket, :all_dbs do
           it "is distributed to the first available judge" do
             dist_cases = DirectReviewDocket.new.distribute_appeals(
               second_distribution,
-              genpop: 'any',
+              genpop: "any",
               priority: true,
               limit: 3
             )
@@ -406,7 +405,6 @@ describe Docket, :all_dbs do
           end
         end
       end
-
 
       context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
