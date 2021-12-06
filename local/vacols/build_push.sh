@@ -26,16 +26,16 @@ if [[ $1 == "-h" ]]; then
   exit 0
 fi
 
-if ! aws s3 ls --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ > /dev/null ; then
-  echo "Please run issue_mfa.sh first"
-  exit 1
-fi
+#if ! aws s3 ls --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ > /dev/null ; then
+#  echo "Please run issue_mfa.sh first"
+#  exit 1
+#fi
 
-if ! [ -x "$(command -v aws)" ]; then
-  echo 'Error: aws-cli is not installed.' >&2
-  echo 'Try: brew install awscli' >&2
-  exit 1
-fi
+#if ! [ -x "$(command -v aws)" ]; then
+#  echo 'Error: aws-cli is not installed.' >&2
+#  echo 'Try: brew install awscli' >&2
+#  exit 1
+#fi
 
 if [[ $# -gt 1 ]]; then
   echo "$USAGE" >&2
@@ -54,8 +54,8 @@ build(){
 
   cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* $build_facols_dir
 
-  echo -e "\tDownloading FACOLS Dependencies..."
-  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
+#  echo -e "\tDownloading FACOLS Dependencies..."
+#  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
 
   echo -e "\tChecking if Instant Client has been downloaded"
   if [ $? -eq 0 ]; then
