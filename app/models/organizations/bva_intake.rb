@@ -5,5 +5,6 @@ class BvaIntake < Organization
     def singleton
       BvaIntake.first || BvaIntake.create(name: "BVA Intake", url: "bva-intake")
     end
+    # noop
   end
 end
