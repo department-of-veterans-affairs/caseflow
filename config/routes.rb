@@ -360,5 +360,5 @@ Rails.application.routes.draw do
   get "/route_docs", to: "route_docs#index"
 
   get "/mpi", to: "mpi#index"
-  get "/mpi/search", to: "mpi#search"
+  post "/mpi/search", to: "mpi#search"
 end
