@@ -29,7 +29,7 @@ class NightlySyncsJob < CaseflowJob
       next if legacy_appeal.case_record.present? # extra check
 
       # delete pure danglers
-      if has_any_task?(legacy_appeal)
+      if any_task?(legacy_appeal)
         legacy_appeal.destroy!
       else
         # if we have tasks and no case_record, then we need to cancel all the tasks,
@@ -42,7 +42,7 @@ class NightlySyncsJob < CaseflowJob
   end
 
   # check both `Task` and `Dispatch::Task` (which doesn't inherit from `Task`)
-  def has_any_task?(legacy_appeal)
+  def any_task?(legacy_appeal)
     legacy_appeal.tasks.none? && legacy_appeal.dispatch_tasks.none?
   end
 
