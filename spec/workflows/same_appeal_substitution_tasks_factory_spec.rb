@@ -26,7 +26,6 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
                                                task_params).create_substitute_tasks!
       end
       context "when an appeal has already been distributed" do
-
         context "when it is a hearing lane appeal with hearing tasks selected" do
           let(:appeal) { hearing_appeal }
           let(:selected_task_ids) { [schedule_hearing_task.id] }
