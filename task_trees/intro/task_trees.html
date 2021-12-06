@@ -20,7 +20,7 @@ This documentation is useful for the following:
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.f2db3ade7d0199965783ff13612e10ac74713a56396dfdccafe96cc341e1f5fc.js" integrity="sha256-8ts63n0BmZZXg/8TYS4QrHRxOlY5bf3Mr&#43;lsw0Hh9fw=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.3b67638fc3321bd0eab4c45db8ad23ed7ddcd12bcb713ec86605dc258d4712e3.js" integrity="sha256-O2djj8MyG9DqtMRduK0j7X3c0SvLcT7IZgXcJY1HEuM=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -754,7 +754,22 @@ Each task has its own page (i.e., an <code>md</code> file).</p>
 <li>Manually-added content is kept in the <code>task_descr</code> subdirectory.</li>
 <li>Generated files are placed in the <code>docs-*</code> subdirectories, which can be deleted and regenerated. To regenerate the files, use the <code>gen_ttdocs.py</code> and <code>createPngs.sh</code> scripts in the 
 
-<a href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees" target="_blank">trees directory</a>.</li>
+<a href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees" target="_blank">trees directory</a>.
+<ol>
+<li>Checkout 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees" target="_blank">branch main-gh-pages</a></li>
+<li>Follow instructions provided by running <code>python3 ./gen_ttdocs.py</code></li>
+<li>Export non-PII tasks from production as instructed</li>
+<li>Download exported file and run something like <code>python3 ./gen_ttdocs.py ~/Downloads/appeals-tasks.json</code></li>
+<li>Then run <code>bash ./createPngs.sh</code></li>
+<li>Wait for 
+
+<a href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/alltasks.html" target="_blank">alltasks.html</a> to update. For webpage update status, see 
+
+<a href="https://github.com/department-of-veterans-affairs/caseflow/actions" target="_blank">GitHub Actions</a></li>
+</ol>
+</li>
 </ul>
 </article>
  
