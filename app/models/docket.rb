@@ -7,7 +7,8 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-
+  # Complaint about 4 parameters here. Do we definitely need judge and genpop both? I think so?
+  # Also, cyclomatic complexity is too high.
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
@@ -16,7 +17,9 @@ class Docket
     if ready
       scope = scope.ready_for_distribution
       if judge.present?
-        scope = genpop == 'not_genpop' ? scope.non_genpop_for_judge(judge) : scope.genpop
+        # reek sayeth:
+        # Docket#appeals is controlled by argument 'genpop'
+        scope = (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
       end
     end
 
@@ -173,10 +176,9 @@ class Docket
         .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
         .joins(
           "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
-           AND original_judge_task.type = '#{JudgeDecisionReviewTask.name}'
-           AND original_judge_task.status = '#{Constants.TASK_STATUSES.completed}'"
+           AND original_judge_task.type = 'JudgeDecisionReviewTask'
+           AND original_judge_task.status = 'completed'"
         )
-
     end
 
     # Within the first 21 days, the appeal should be distributed only to the issuing judge.
