@@ -266,7 +266,7 @@ class WarmBgsCachesJob < CaseflowJob
       # Calling `quick_to_hash` here runs the code that will touch records that need
       # to be cached.
       HearingDayRange.new(start_range, end_range, regional_office)
-        .all_hearing_days
+        .hearing_days_with_hearings
         .map { |_hearing_day, scheduled_hearings| scheduled_hearings }
         .flatten
         .map { |hearing| hearing.quick_to_hash(RequestStore.store[:current_user].id) }
