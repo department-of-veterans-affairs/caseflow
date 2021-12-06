@@ -157,7 +157,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_content("Scheduling in progress")
       end
 
-      expect(page).to have_content(virtual_hearing_success_alert)
+      expect(page).to have_content(expected_alert)
       check_virtual_hearings_links(hearing.reload.virtual_hearing)
 
       # Check the Email Notification History
