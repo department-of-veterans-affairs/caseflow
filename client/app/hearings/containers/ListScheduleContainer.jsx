@@ -122,10 +122,6 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = () => Promise.all([
-    // this.loadHearingSchedule(this.state.currentPage, params)
-  ]);
-
   openModal = (event) => {
     this.setState({
       showModalAlert: false,
@@ -251,7 +247,7 @@ export class ListScheduleContainer extends React.Component {
             ) : (
               <ListSchedule
                 hearingSchedule={this.props.hearingSchedule}
-                onApply={this.createHearingPromise}
+                updateList={this.loadHearingSchedule}
                 user={user}
                 view={this.state.view}
                 switchListView={this.switchListView}
