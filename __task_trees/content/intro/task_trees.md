@@ -93,3 +93,9 @@ digraph G {
 
 - Manually-added content is kept in the `task_descr` subdirectory.
 - Generated files are placed in the `docs-*` subdirectories, which can be deleted and regenerated. To regenerate the files, use the `gen_ttdocs.py` and `createPngs.sh` scripts in the [trees directory](https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees).
+  1. Checkout [branch main-gh-pages](https://github.com/department-of-veterans-affairs/caseflow/tree/main-gh-pages/__task_trees/content/trees)
+  2. Follow instructions provided by running `python3 ./gen_ttdocs.py`
+  3. Export non-PII tasks from production as instructed
+  4. Download exported file and run something like `python3 ./gen_ttdocs.py ~/Downloads/appeals-tasks.json`
+  5. Then run `bash ./createPngs.sh`
+  6. Wait for [alltasks.html](https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/alltasks.html) to update. For webpage update status, see [GitHub Actions](https://github.com/department-of-veterans-affairs/caseflow/actions)
