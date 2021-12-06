@@ -29,7 +29,7 @@ class NightlySyncsJob < CaseflowJob
       next if legacy_appeal.case_record.present? # extra check
 
       # delete pure danglers
-      if legacy_appeal.tasks.none? && legacy_appeal.dispatch_tasks.none?
+      if has_any_task?(legacy_appeal)
         legacy_appeal.destroy!
       else
         # if we have tasks and no case_record, then we need to cancel all the tasks,
@@ -39,6 +39,11 @@ class NightlySyncsJob < CaseflowJob
       end
     end
     datadog_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)
+  end
+
+  # check both `Task` and `Dispatch::Task` (which doesn't inherit from `Task`)
+  def has_any_task?(legacy_appeal)
+    legacy_appeal.tasks.none? && legacy_appeal.dispatch_tasks.none?
   end
 
   def sync_decision_review_tasks

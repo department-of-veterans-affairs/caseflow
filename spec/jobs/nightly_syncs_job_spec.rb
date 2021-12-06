@@ -32,9 +32,6 @@ describe NightlySyncsJob, :all_dbs do
 
     context "dangling LegacyAppeal" do
       class FakeTask < Dispatch::Task
-        # def should_invalidate?
-        #   appeal.vbms_id == "INVALID"
-        # end
       end
 
       context "with zero tasks" do
