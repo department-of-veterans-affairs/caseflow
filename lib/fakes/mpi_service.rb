@@ -6,6 +6,7 @@ class Fakes::MPIService
     fail MPI::NotFoundError if [first_name, last_name] == ["Not", "Found"]
     fail MPI::QueryResultError if [first_name, last_name] == ["Too", "Vague"]
     fail MPI::ApplicationError if [first_name, last_name] == ["Database", "Down"]
+    fail Savon::SOAPFault.new(nil, Nori.new, '<?xml version="1.0" ?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><env:Fault><faultcode>env:Client</faultcode><faultstring>Internal Error</faultstring></env:Fault></env:Body></env:Envelope>') if [first_name, last_name] == ["System", "Unreachable"]
 
     [{:registration_event=>
    {:id=>{:@null_flavor=>"NA"},
