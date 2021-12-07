@@ -130,7 +130,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_on("#{program_office.name} team cases")
 
         expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
-        expect(page).to have_content("Assess Documentation")
+        expect(page).to have_content("Review Documentation")
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
 
@@ -175,7 +175,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_on("#{regional_office.name} team cases")
 
         expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
-        expect(page).to have_content("Assess Documentation")
+        expect(page).to have_content("Review Documentation")
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
 
