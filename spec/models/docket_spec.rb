@@ -93,7 +93,7 @@ describe Docket, :all_dbs do
           subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
 
           it "returns no appeals" do
-            expect(subject.count.size).to eq 0 # still don't get why this is needed
+            expect(subject.count.size).to eq 0
           end
         end
 
