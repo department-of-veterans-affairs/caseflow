@@ -3,6 +3,10 @@
 class Fakes::MPIService
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
                          ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
+    fail MPI::NotFoundError if [first_name, last_name] == ["Not", "Found"]
+    fail MPI::QueryResultError if [first_name, last_name] == ["Too", "Vague"]
+    fail MPI::ApplicationError if [first_name, last_name] == ["Database", "Down"]
+
     [{:registration_event=>
    {:id=>{:@null_flavor=>"NA"},
     :status_code=>{:@code=>"active"},
