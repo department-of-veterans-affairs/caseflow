@@ -148,3 +148,35 @@ class CavcRemand < CaseflowRecord
   end
   # :nocov:
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: cavc_remands
+#
+#  id                      :bigint           not null, primary key
+#  cavc_decision_type      :string           not null
+#  cavc_docket_number      :string           not null
+#  cavc_judge_full_name    :string           not null
+#  decision_date           :date             not null
+#  decision_issue_ids      :bigint           default([]), is an Array
+#  federal_circuit         :boolean
+#  instructions            :string           not null
+#  judgement_date          :date
+#  mandate_date            :date
+#  remand_subtype          :string
+#  represented_by_attorney :boolean          not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  created_by_id           :bigint           not null
+#  remand_appeal_id        :bigint           indexed
+#  source_appeal_id        :bigint           not null, indexed
+#  updated_by_id           :bigint
+#
+# Foreign Keys
+#
+#  fk_rails_00f5f7d902  (source_appeal_id => appeals.id)
+#  fk_rails_66a7a25ed4  (updated_by_id => users.id)
+#  fk_rails_e26a52170b  (remand_appeal_id => appeals.id)
+#  fk_rails_e26f0927a4  (created_by_id => users.id)
+#

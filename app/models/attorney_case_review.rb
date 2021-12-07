@@ -85,3 +85,29 @@ class AttorneyCaseReview < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: attorney_case_reviews
+#
+#  id                 :integer          not null, primary key
+#  appeal_type        :string           indexed => [appeal_id]
+#  document_type      :string
+#  note               :text
+#  overtime           :boolean          default(FALSE)
+#  untimely_evidence  :boolean          default(FALSE)
+#  work_product       :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null, indexed
+#  appeal_id          :bigint           indexed => [appeal_type]
+#  attorney_id        :integer
+#  document_id        :string
+#  reviewing_judge_id :integer
+#  task_id            :string           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_62df33daa9  (reviewing_judge_id => users.id)
+#  fk_rails_c041faf228  (attorney_id => users.id)
+#

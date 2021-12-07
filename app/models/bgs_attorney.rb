@@ -38,3 +38,17 @@ class BgsAttorney < CaseflowRecord
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: bgs_attorneys
+#
+#  id             :bigint           not null, primary key
+#  last_synced_at :datetime         indexed
+#  name           :string           not null, indexed
+#  record_type    :string           not null
+#  created_at     :datetime         not null, indexed
+#  updated_at     :datetime         not null, indexed
+#  participant_id :string           not null, indexed
+#

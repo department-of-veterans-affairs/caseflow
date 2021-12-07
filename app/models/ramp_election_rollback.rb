@@ -51,3 +51,22 @@ class RampElectionRollback < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ramp_election_rollbacks
+#
+#  id                  :bigint           not null, primary key
+#  reason              :string
+#  reopened_vacols_ids :string           is an Array
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null, indexed
+#  ramp_election_id    :bigint           indexed
+#  user_id             :bigint           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_941a4b9f48  (ramp_election_id => ramp_elections.id)
+#  fk_rails_c173738cd6  (user_id => users.id)
+#

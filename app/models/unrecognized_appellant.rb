@@ -69,3 +69,28 @@ class UnrecognizedAppellant < CaseflowRecord
     version.update(current_version: self)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: unrecognized_appellants
+#
+#  id                                :bigint           not null, primary key
+#  relationship                      :string           not null
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
+#  claimant_id                       :bigint           not null, indexed
+#  created_by_id                     :bigint           not null
+#  current_version_id                :bigint
+#  poa_participant_id                :string
+#  unrecognized_party_detail_id      :bigint           indexed
+#  unrecognized_power_of_attorney_id :bigint           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_267c498eb4  (created_by_id => users.id)
+#  fk_rails_2b0a69aeb4  (unrecognized_power_of_attorney_id => unrecognized_party_details.id)
+#  fk_rails_d0226cf019  (current_version_id => unrecognized_appellants.id)
+#  fk_rails_e8337670e5  (unrecognized_party_detail_id => unrecognized_party_details.id)
+#  fk_rails_ea795d9c79  (claimant_id => claimants.id)
+#

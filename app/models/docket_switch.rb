@@ -97,3 +97,26 @@ class DocketSwitch < CaseflowRecord
     new_completed_task.save(validate: false)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: docket_switches
+#
+#  id                        :bigint           not null, primary key
+#  disposition               :string
+#  docket_type               :string
+#  granted_request_issue_ids :integer          is an Array
+#  receipt_date              :datetime         not null
+#  created_at                :datetime         not null, indexed
+#  updated_at                :datetime         not null
+#  new_docket_stream_id      :bigint           indexed
+#  old_docket_stream_id      :bigint           not null, indexed
+#  task_id                   :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_7cd2eda5f7  (old_docket_stream_id => appeals.id)
+#  fk_rails_a6a4b60dcd  (task_id => tasks.id)
+#  fk_rails_a814e322b7  (new_docket_stream_id => appeals.id)
+#

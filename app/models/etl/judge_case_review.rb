@@ -70,3 +70,37 @@ class ETL::JudgeCaseReview < ETL::Record
     # rubocop:enable Metrics/MethodLength
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: judge_case_reviews
+#
+#  id                     :bigint           not null, primary key
+#  appeal_type            :string           not null, indexed
+#  areas_for_improvement  :text             default([]), is an Array
+#  attorney_full_name     :string(255)      not null
+#  attorney_sattyid       :string(20)
+#  comment                :text
+#  complexity             :string
+#  factors_not_considered :text             default([]), is an Array
+#  judge_full_name        :string(255)      not null
+#  judge_sattyid          :string(20)
+#  location               :string
+#  one_touch_initiative   :boolean
+#  positive_feedback      :text             default([]), is an Array
+#  quality                :string
+#  review_created_at      :datetime         not null, indexed
+#  review_updated_at      :datetime         not null, indexed
+#  created_at             :datetime         not null, indexed
+#  updated_at             :datetime         not null, indexed
+#  actual_task_id         :string           indexed
+#  appeal_id              :bigint           not null, indexed
+#  attorney_css_id        :string(20)       not null
+#  attorney_id            :bigint           not null, indexed
+#  judge_css_id           :string(20)       not null
+#  judge_id               :integer          indexed
+#  original_task_id       :string           indexed
+#  review_id              :bigint           not null, indexed
+#  vacols_id              :string           indexed
+#

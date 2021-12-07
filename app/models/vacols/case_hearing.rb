@@ -241,3 +241,45 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearsched
+#
+#  addon         :string(1)
+#  addtime       :date
+#  adduser       :string(16)
+#  aod           :string(1)
+#  board_member  :string(20)
+#  canceldate    :date
+#  clsdate       :date
+#  conret        :date
+#  consent       :date
+#  contapes      :string(1)
+#  folder_nr     :string(12)       indexed
+#  hearing_date  :date             indexed
+#  hearing_disp  :string(1)
+#  hearing_pkseq :integer          not null, primary key
+#  hearing_type  :string(1)        indexed
+#  holddays      :integer
+#  mdtime        :date
+#  mduser        :string(16)
+#  notes1        :string(100)
+#  recmed        :string(1)
+#  recprob       :string(1)
+#  rep_state     :string(2)
+#  repname       :string(25)
+#  reqdate       :date
+#  room          :string(4)
+#  taskno        :string(7)
+#  team          :string(2)
+#  tranreq       :string(1)
+#  transent      :date
+#  vdbvapoc      :string(40)
+#  vdkey         :string(12)       indexed
+#  vdropoc       :string(40)
+#  wbbackup      :string(1)
+#  wbsent        :date
+#  wbtapes       :boolean
+#

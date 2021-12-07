@@ -100,3 +100,21 @@ class UserQuota < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: user_quotas
+#
+#  id                :integer          not null, primary key
+#  locked_task_count :integer
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null, indexed
+#  team_quota_id     :integer          not null, indexed => [user_id]
+#  user_id           :integer          not null, indexed => [team_quota_id]
+#
+# Foreign Keys
+#
+#  fk_rails_3ae148fe3b  (user_id => users.id)
+#  fk_rails_a9ec205b50  (team_quota_id => team_quotas.id)
+#

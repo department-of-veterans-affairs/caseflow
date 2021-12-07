@@ -18,3 +18,16 @@ class WorkMode < CaseflowRecord
     fail Caseflow::Error::WorkModeCouldNotUpdateError
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: work_modes
+#
+#  id          :bigint           not null, primary key
+#  appeal_type :string           not null, indexed => [appeal_id]
+#  overtime    :boolean          default(FALSE)
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  appeal_id   :integer          not null, indexed => [appeal_type]
+#

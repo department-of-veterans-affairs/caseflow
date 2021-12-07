@@ -185,3 +185,34 @@ class VACOLS::Representative < VACOLS::Record
       with the same `repkey`. Instead, use `repkey` and `repaddtime` to safely update one record."
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: rep
+#
+#  repacknw   :date
+#  repaddr1   :string(50)
+#  repaddr2   :string(100)
+#  repaddtime :date
+#  repcity    :string(20)
+#  repcorkey  :string(16)       indexed
+#  repdfee    :date
+#  repdirpay  :string(1)
+#  repfeedisp :date
+#  repfeerecv :date
+#  repfirst   :string(24)
+#  repkey     :string(12)       not null, primary key
+#  replast    :string(40)
+#  replastdoc :date
+#  repmi      :string(4)
+#  repmodtime :date
+#  repmoduser :string(16)
+#  repnotes   :string(50)
+#  repphone   :string(20)
+#  repso      :string(1)
+#  repst      :string(4)
+#  repsuf     :string(4)
+#  reptype    :string(1)        indexed
+#  repzip     :string(10)
+#

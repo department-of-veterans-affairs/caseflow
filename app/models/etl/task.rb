@@ -62,3 +62,37 @@ class ETL::Task < ETL::Record
     # rubocop:enable Metrics/MethodLength
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: tasks
+#
+#  id                         :bigint           not null, primary key
+#  appeal_type                :string           not null, indexed => [appeal_id]
+#  assigned_at                :datetime
+#  assigned_by_user_full_name :string(255)
+#  assigned_by_user_sattyid   :string(20)
+#  assigned_to_org_name       :string(255)
+#  assigned_to_org_type       :string(50)
+#  assigned_to_type           :string           not null, indexed => [assigned_to_id]
+#  assigned_to_user_full_name :string(255)
+#  assigned_to_user_sattyid   :string(20)
+#  closed_at                  :datetime
+#  instructions               :text             default([]), is an Array
+#  placed_on_hold_at          :datetime
+#  started_at                 :datetime
+#  task_created_at            :datetime
+#  task_status                :string(20)       not null, indexed
+#  task_type                  :string(50)       not null, indexed
+#  task_updated_at            :datetime
+#  created_at                 :datetime         not null, indexed
+#  updated_at                 :datetime         not null, indexed
+#  appeal_id                  :bigint           not null, indexed => [appeal_type]
+#  assigned_by_id             :bigint
+#  assigned_by_user_css_id    :string(50)
+#  assigned_to_id             :bigint           not null, indexed => [assigned_to_type]
+#  assigned_to_user_css_id    :string(50)
+#  parent_id                  :bigint           indexed
+#  task_id                    :bigint           not null, indexed
+#

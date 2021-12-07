@@ -44,3 +44,15 @@ class DocketSnapshot < CaseflowRecord
     today - days_since_friday
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: docket_snapshots
+#
+#  id                  :integer          not null, primary key
+#  docket_count        :integer
+#  latest_docket_month :date
+#  created_at          :datetime
+#  updated_at          :datetime         indexed
+#

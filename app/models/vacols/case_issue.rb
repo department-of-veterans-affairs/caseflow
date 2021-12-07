@@ -161,3 +161,27 @@ class VACOLS::CaseIssue < VACOLS::Record
   end
   # :nocov:
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: issues
+#
+#  issadtime :date
+#  issaduser :string(16)
+#  isscode   :string(6)
+#  issdc     :string(1)
+#  issdcls   :date
+#  issdesc   :string(100)
+#  issdev    :string(2)
+#  issgr     :string(1)
+#  isskey    :string(12)       primary key, indexed
+#  isslev1   :string(6)
+#  isslev2   :string(6)
+#  isslev3   :string(6)
+#  issmdtime :date
+#  issmduser :string(16)
+#  issprog   :string(6)
+#  isssel    :string(1)
+#  issseq    :integer
+#

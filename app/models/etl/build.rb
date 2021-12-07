@@ -25,3 +25,17 @@ class ETL::Build < ETL::Record
     etl_build_tables.find { |ebt| ebt.table_name == table_name }
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: etl_builds
+#
+#  id          :bigint           not null, primary key
+#  comments    :string
+#  finished_at :datetime         indexed
+#  started_at  :datetime         indexed
+#  status      :string           indexed
+#  created_at  :datetime         not null, indexed
+#  updated_at  :datetime         not null, indexed
+#

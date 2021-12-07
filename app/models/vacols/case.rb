@@ -382,3 +382,95 @@ class VACOLS::Case < VACOLS::Record
     bfddec.present?
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: brieff
+#
+#  bf41stat   :date
+#  bfac       :string(1)
+#  bfarc      :string(4)        indexed
+#  bfarcdisp  :string(1)
+#  bfattid    :string(16)
+#  bfboard    :string(10)
+#  bfbox      :string(4)
+#  bfbsasgn   :date
+#  bfcallup   :string(1)
+#  bfcallyymm :string(4)        indexed
+#  bfcasev    :string(4)
+#  bfcaseva   :string(4)
+#  bfcasevb   :string(4)
+#  bfcasevc   :string(4)
+#  bfcclkid   :string(16)
+#  bfcorkey   :string(16)
+#  bfcorlid   :string(16)       indexed
+#  bfcurloc   :string(16)       indexed
+#  bfd19      :date
+#  bfdarcin   :date
+#  bfdarcout  :date
+#  bfdasgn    :date
+#  bfdc       :string(1)
+#  bfdcertool :date
+#  bfdcfld1   :string(2)
+#  bfdcfld2   :string(2)
+#  bfdcfld3   :string(2)
+#  bfdcn      :string(6)
+#  bfdcue     :date
+#  bfddec     :date             indexed
+#  bfddro     :date
+#  bfddvdsp   :date
+#  bfddvin    :date
+#  bfddvout   :date
+#  bfddvret   :date
+#  bfddvwrk   :date
+#  bfdlocin   :date
+#  bfdloout   :date             indexed
+#  bfdmcon    :date
+#  bfdmem     :date
+#  bfdnod     :date
+#  bfdocind   :string(1)
+#  bfdorg     :date
+#  bfdpdcn    :date
+#  bfdqrsnt   :date
+#  bfdrocket  :date
+#  bfdrodec   :date
+#  bfdroid    :string(3)
+#  bfdrortr   :string(1)
+#  bfdsoc     :date
+#  bfdtb      :date
+#  bfdtbready :date
+#  bfdthurb   :date
+#  bfha       :string(1)
+#  bfhines    :string(2)
+#  bfhr       :string(1)
+#  bfic       :string(2)
+#  bfio       :string(2)
+#  bfissnr    :string(1)
+#  bfkey      :string(12)       primary key, indexed
+#  bflot      :string(2)
+#  bfmemid    :string(16)
+#  bfmpro     :string(3)        indexed
+#  bfms       :string(1)
+#  bfmstat    :string(1)
+#  bfnrci     :string(5)
+#  bfnrcopy   :string(4)
+#  bfoc       :string(1)
+#  bforgtic   :string(12)
+#  bfpdnum    :string(12)
+#  bfrdmref   :string(1)
+#  bfregoff   :string(16)       indexed
+#  bfro1      :string(4)
+#  bfrocdoc   :string(1)
+#  bfsh       :string(1)
+#  bfso       :string(1)
+#  bfssoc1    :date
+#  bfssoc2    :date
+#  bfssoc3    :date
+#  bfssoc4    :date
+#  bfssoc5    :date
+#  bfst       :string(1)
+#  bfstasgn   :string(16)
+#  bfsub      :string(1)
+#  bftbind    :string(1)
+#

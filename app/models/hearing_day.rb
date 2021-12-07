@@ -282,3 +282,33 @@ class HearingDay < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearing_days
+#
+#  id                  :bigint           not null, primary key
+#  bva_poc             :string
+#  deleted_at          :datetime         indexed
+#  first_slot_time     :string(5)
+#  lock                :boolean
+#  notes               :text
+#  number_of_slots     :integer
+#  regional_office     :string
+#  request_type        :string           not null
+#  room                :string
+#  scheduled_for       :date             not null
+#  slot_length_minutes :integer
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null, indexed
+#  created_by_id       :bigint           not null, indexed
+#  judge_id            :integer
+#  updated_by_id       :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_8cfc7a63ed  (updated_by_id => users.id)
+#  fk_rails_963b5dcc32  (judge_id => users.id)
+#  fk_rails_e7c371c9ac  (created_by_id => users.id)
+#

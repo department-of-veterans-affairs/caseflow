@@ -34,3 +34,19 @@ class VACOLS::Priorloc < VACOLS::Record
     }
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: priorloc
+#
+#  locdin   :date
+#  locdout  :date             indexed
+#  locdto   :date
+#  locexcep :string(10)
+#  lockey   :string(12)       primary key, indexed
+#  loclcode :string(10)
+#  locstout :string(16)
+#  locstrcv :string(16)
+#  locstto  :string(16)
+#

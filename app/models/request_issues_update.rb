@@ -198,3 +198,31 @@ class RequestIssuesUpdate < CaseflowRecord
     correction.call
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: request_issues_updates
+#
+#  id                          :bigint           not null, primary key
+#  after_request_issue_ids     :integer          not null, is an Array
+#  attempted_at                :datetime
+#  before_request_issue_ids    :integer          not null, is an Array
+#  canceled_at                 :datetime
+#  corrected_request_issue_ids :integer          is an Array
+#  edited_request_issue_ids    :integer          is an Array
+#  error                       :string
+#  last_submitted_at           :datetime
+#  processed_at                :datetime
+#  review_type                 :string           not null, indexed => [review_id]
+#  submitted_at                :datetime
+#  withdrawn_request_issue_ids :integer          is an Array
+#  created_at                  :datetime
+#  updated_at                  :datetime         indexed
+#  review_id                   :bigint           not null, indexed => [review_type]
+#  user_id                     :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_408764afe8  (user_id => users.id)
+#

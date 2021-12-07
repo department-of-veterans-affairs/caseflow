@@ -145,3 +145,28 @@ class SupplementalClaim < ClaimReview
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: supplemental_claims
+#
+#  id                              :bigint           not null, primary key
+#  benefit_type                    :string
+#  decision_review_remanded_type   :string           indexed => [decision_review_remanded_id]
+#  establishment_attempted_at      :datetime
+#  establishment_canceled_at       :datetime
+#  establishment_error             :string
+#  establishment_last_submitted_at :datetime
+#  establishment_processed_at      :datetime
+#  establishment_submitted_at      :datetime
+#  filed_by_va_gov                 :boolean
+#  legacy_opt_in_approved          :boolean
+#  receipt_date                    :date
+#  uuid                            :uuid             not null, indexed
+#  veteran_file_number             :string           not null, indexed
+#  veteran_is_not_claimant         :boolean
+#  created_at                      :datetime
+#  updated_at                      :datetime         indexed
+#  decision_review_remanded_id     :bigint           indexed => [decision_review_remanded_type]
+#

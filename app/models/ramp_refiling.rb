@@ -118,3 +118,21 @@ class RampRefiling < RampReview
     self.appeal_docket = nil if option_selected != "appeal"
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ramp_refilings
+#
+#  id                         :integer          not null, primary key
+#  appeal_docket              :string
+#  established_at             :datetime
+#  establishment_processed_at :datetime
+#  establishment_submitted_at :datetime
+#  has_ineligible_issue       :boolean
+#  option_selected            :string
+#  receipt_date               :date
+#  veteran_file_number        :string           not null, indexed
+#  created_at                 :datetime
+#  updated_at                 :datetime         indexed
+#

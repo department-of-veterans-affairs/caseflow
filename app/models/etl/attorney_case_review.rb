@@ -45,3 +45,34 @@ class ETL::AttorneyCaseReview < ETL::Record
     # rubocop:enable Metrics/MethodLength
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: attorney_case_reviews
+#
+#  id                        :bigint           not null, primary key
+#  appeal_type               :string           not null, indexed
+#  attorney_full_name        :string(255)      not null
+#  attorney_sattyid          :string(20)
+#  document_type             :string(20)       indexed
+#  note                      :text
+#  overtime                  :boolean
+#  review_created_at         :datetime         not null, indexed
+#  review_updated_at         :datetime         not null, indexed
+#  reviewing_judge_full_name :string(255)      not null
+#  reviewing_judge_sattyid   :string(20)
+#  untimely_evidence         :boolean
+#  work_product              :string(20)
+#  created_at                :datetime         not null, indexed
+#  updated_at                :datetime         not null, indexed
+#  appeal_id                 :bigint           not null, indexed
+#  attorney_css_id           :string(50)       not null
+#  attorney_id               :bigint           not null, indexed
+#  document_reference_id     :string(50)
+#  review_id                 :bigint           not null, indexed
+#  reviewing_judge_css_id    :string(50)       not null
+#  reviewing_judge_id        :bigint           not null, indexed
+#  task_id                   :string           not null, indexed
+#  vacols_id                 :string           indexed
+#

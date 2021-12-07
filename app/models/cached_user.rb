@@ -37,3 +37,22 @@ class CachedUser < CaseflowRecord
     FullName.new(snamef, nil, snamel).formatted(:readable_short)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: cached_user_attributes
+#
+#  sactive    :string           not null
+#  sattyid    :string
+#  sdomainid  :string           not null, primary key, indexed
+#  slogid     :string           not null
+#  smemgrp    :string(8)
+#  snamef     :string
+#  snamel     :string
+#  stafkey    :string           not null
+#  stitle     :string(16)
+#  svlj       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null, indexed
+#

@@ -21,3 +21,30 @@ class WorksheetIssue < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: worksheet_issues
+#
+#  id                 :integer          not null, primary key
+#  allow              :boolean          default(FALSE)
+#  deleted_at         :datetime         indexed
+#  deny               :boolean          default(FALSE)
+#  description        :string
+#  dismiss            :boolean          default(FALSE)
+#  disposition        :string
+#  from_vacols        :boolean
+#  notes              :string
+#  omo                :boolean          default(FALSE)
+#  remand             :boolean          default(FALSE)
+#  reopen             :boolean          default(FALSE)
+#  created_at         :datetime
+#  updated_at         :datetime         indexed
+#  appeal_id          :integer          indexed
+#  vacols_sequence_id :string
+#
+# Foreign Keys
+#
+#  fk_rails_a5ba28a6da  (appeal_id => legacy_appeals.id)
+#

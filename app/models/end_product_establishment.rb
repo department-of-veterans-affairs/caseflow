@@ -576,3 +576,37 @@ class EndProductEstablishment < CaseflowRecord
     BGSService.new.generate_tracked_items!(reference_id)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: end_product_establishments
+#
+#  id                            :bigint           not null, primary key
+#  benefit_type_code             :string
+#  claim_date                    :date
+#  code                          :string
+#  committed_at                  :datetime
+#  established_at                :datetime
+#  last_synced_at                :datetime
+#  limited_poa_access            :boolean
+#  limited_poa_code              :string
+#  modifier                      :string
+#  payee_code                    :string           not null
+#  source_type                   :string           not null, indexed => [source_id]
+#  station                       :string
+#  synced_status                 :string
+#  veteran_file_number           :string           not null, indexed
+#  created_at                    :datetime
+#  updated_at                    :datetime         indexed
+#  claimant_participant_id       :string
+#  development_item_reference_id :string
+#  doc_reference_id              :string
+#  reference_id                  :string
+#  source_id                     :bigint           not null, indexed => [source_type]
+#  user_id                       :integer          indexed
+#
+# Foreign Keys
+#
+#  fk_rails_3b6a920e3b  (user_id => users.id)
+#

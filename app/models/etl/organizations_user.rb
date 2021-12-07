@@ -13,3 +13,16 @@ class ETL::OrganizationsUser < ETL::Record
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: organizations_users
+#
+#  id              :bigint           not null, primary key
+#  admin           :boolean          default(FALSE)
+#  created_at      :datetime         indexed
+#  updated_at      :datetime         indexed
+#  organization_id :integer          indexed, indexed => [user_id]
+#  user_id         :integer          indexed => [organization_id]
+#

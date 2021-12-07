@@ -15,3 +15,18 @@ class ETL::RemandReason < ETL::Record
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: remand_reasons
+#
+#  id                       :bigint           not null, primary key
+#  code                     :string(30)       indexed
+#  post_aoj                 :boolean          indexed
+#  remand_reason_created_at :datetime         indexed
+#  remand_reason_updated_at :datetime         indexed
+#  created_at               :datetime         not null, indexed
+#  updated_at               :datetime         not null, indexed
+#  decision_issue_id        :integer          indexed
+#

@@ -277,3 +277,29 @@ class DecisionIssue < CaseflowRecord
     raise
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: decision_issues
+#
+#  id                           :bigint           not null, primary key
+#  benefit_type                 :string
+#  caseflow_decision_date       :date
+#  decision_review_type         :string           indexed => [decision_review_id]
+#  decision_text                :string
+#  deleted_at                   :datetime         indexed
+#  description                  :string
+#  diagnostic_code              :string
+#  disposition                  :string           indexed
+#  end_product_last_action_date :date
+#  percent_number               :string
+#  rating_profile_date          :datetime
+#  rating_promulgation_date     :datetime
+#  subject_text                 :text
+#  created_at                   :datetime
+#  updated_at                   :datetime         indexed
+#  decision_review_id           :integer          indexed => [decision_review_type]
+#  participant_id               :string           not null
+#  rating_issue_reference_id    :string           indexed
+#

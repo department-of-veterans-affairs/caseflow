@@ -82,3 +82,51 @@ class ETL::Appeal < ETL::Record
     tasks.find { |task| task.task_type == "RootTask" }
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: appeals
+#
+#  id                       :bigint           not null, primary key
+#  active_appeal            :boolean          not null, indexed
+#  aod_due_to_dob           :boolean          default(FALSE), indexed
+#  aod_granted              :boolean          default(FALSE), not null, indexed
+#  aod_reason               :string(50)
+#  appeal_created_at        :datetime         not null, indexed
+#  appeal_updated_at        :datetime         not null, indexed
+#  claimant_dob             :date             indexed
+#  claimant_first_name      :string
+#  claimant_last_name       :string
+#  claimant_middle_name     :string
+#  claimant_name_suffix     :string
+#  claimant_payee_code      :string(20)
+#  closest_regional_office  :string(20)
+#  decision_status_sort_key :integer          not null, indexed
+#  docket_number            :string(50)       not null
+#  docket_range_date        :date
+#  docket_type              :string(50)       not null, indexed
+#  established_at           :datetime         not null
+#  legacy_opt_in_approved   :boolean
+#  receipt_date             :date             not null, indexed
+#  status                   :string(32)       not null, indexed
+#  target_decision_date     :date
+#  uuid                     :uuid             not null, indexed
+#  veteran_dob              :date
+#  veteran_file_number      :string(20)       not null, indexed
+#  veteran_first_name       :string
+#  veteran_is_not_claimant  :boolean          indexed
+#  veteran_last_name        :string
+#  veteran_middle_name      :string
+#  veteran_name_suffix      :string
+#  created_at               :datetime         not null, indexed
+#  updated_at               :datetime         not null, indexed
+#  aod_user_id              :bigint           indexed
+#  appeal_id                :bigint           not null, indexed
+#  claimant_id              :bigint           indexed
+#  claimant_participant_id  :string(50)       indexed
+#  claimant_person_id       :bigint           indexed
+#  poa_participant_id       :string(20)       indexed
+#  veteran_id               :bigint           not null, indexed
+#  veteran_participant_id   :string(20)       indexed
+#

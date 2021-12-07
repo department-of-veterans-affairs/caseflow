@@ -153,3 +153,29 @@ class LegacyIssueOptin < CaseflowRecord
     )
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: legacy_issue_optins
+#
+#  id                                      :bigint           not null, primary key
+#  error                                   :string
+#  folder_decision_date                    :date
+#  optin_processed_at                      :datetime
+#  original_disposition_code               :string
+#  original_disposition_date               :date
+#  original_legacy_appeal_decision_date    :date
+#  original_legacy_appeal_disposition_code :string
+#  rollback_created_at                     :datetime
+#  rollback_processed_at                   :datetime
+#  created_at                              :datetime         not null
+#  updated_at                              :datetime         not null, indexed
+#  legacy_issue_id                         :bigint           indexed
+#  request_issue_id                        :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_454ac20dc9  (request_issue_id => request_issues.id)
+#  fk_rails_e0eeb64460  (legacy_issue_id => legacy_issues.id)
+#

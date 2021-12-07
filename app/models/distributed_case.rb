@@ -37,3 +37,27 @@ class DistributedCase < CaseflowRecord
     docket == "legacy" && !priority
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: distributed_cases
+#
+#  id              :bigint           not null, primary key
+#  docket          :string
+#  docket_index    :integer
+#  genpop          :boolean
+#  genpop_query    :string
+#  priority        :boolean
+#  ready_at        :datetime
+#  created_at      :datetime
+#  updated_at      :datetime         indexed
+#  case_id         :string           indexed
+#  distribution_id :integer
+#  task_id         :integer
+#
+# Foreign Keys
+#
+#  fk_rails_b31c8376f7  (task_id => tasks.id)
+#  fk_rails_bfca65a760  (distribution_id => distributions.id)
+#

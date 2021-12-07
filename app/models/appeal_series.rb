@@ -263,3 +263,15 @@ class AppealSeries < CaseflowRecord
     :remand
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: appeal_series
+#
+#  id                  :integer          not null, primary key
+#  incomplete          :boolean          default(FALSE)
+#  merged_appeal_count :integer
+#  created_at          :datetime
+#  updated_at          :datetime         indexed
+#

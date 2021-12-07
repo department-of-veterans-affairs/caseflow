@@ -69,3 +69,17 @@ class VACOLS::RemandReason < VACOLS::Record
   end
   # :nocov:
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: rmdrea
+#
+#  rmddev      :string(2)
+#  rmdissseq   :integer
+#  rmdkey      :string(12)       primary key, indexed
+#  rmdmdtim    :date
+#  rmdmdusr    :string(16)
+#  rmdpriority :string(2)
+#  rmdval      :string(2)
+#

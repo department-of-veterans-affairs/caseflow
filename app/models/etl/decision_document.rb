@@ -52,3 +52,32 @@ class ETL::DecisionDocument < ETL::Record
     # rubocop:enable Metrics/PerceivedComplexity
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: decision_documents
+#
+#  id                           :bigint           not null, primary key
+#  appeal_type                  :string           not null, indexed => [appeal_id]
+#  attempted_at                 :datetime
+#  canceled_at                  :datetime
+#  citation_number              :string           not null, indexed
+#  decision_date                :date             not null, indexed
+#  decision_document_created_at :datetime         indexed
+#  decision_document_updated_at :datetime         indexed
+#  docket_number                :string
+#  error                        :string
+#  last_submitted_at            :datetime
+#  processed_at                 :datetime
+#  redacted_document_location   :string           not null
+#  submitted_at                 :datetime
+#  uploaded_to_vbms_at          :datetime
+#  created_at                   :datetime         not null, indexed
+#  updated_at                   :datetime         not null, indexed
+#  appeal_id                    :bigint           not null, indexed => [appeal_type]
+#  attorney_case_review_id      :bigint           not null, indexed
+#  attorney_user_id             :bigint           indexed
+#  judge_case_review_id         :bigint           not null, indexed
+#  judge_user_id                :bigint           indexed
+#

@@ -31,3 +31,24 @@ class TaskTimer < CaseflowRecord
     task.appeal.veteran
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: task_timers
+#
+#  id                :bigint           not null, primary key
+#  attempted_at      :datetime
+#  canceled_at       :datetime
+#  error             :string
+#  last_submitted_at :datetime
+#  processed_at      :datetime
+#  submitted_at      :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null, indexed
+#  task_id           :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_932e4eea15  (task_id => tasks.id)
+#

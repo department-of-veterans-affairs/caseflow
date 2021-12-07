@@ -19,3 +19,26 @@ class HearingIssueNote < CaseflowRecord
     )
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearing_issue_notes
+#
+#  id               :bigint           not null, primary key
+#  allow            :boolean          default(FALSE)
+#  deny             :boolean          default(FALSE)
+#  dismiss          :boolean          default(FALSE)
+#  remand           :boolean          default(FALSE)
+#  reopen           :boolean          default(FALSE)
+#  worksheet_notes  :string
+#  created_at       :datetime
+#  updated_at       :datetime         indexed
+#  hearing_id       :bigint           not null, indexed
+#  request_issue_id :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_9386e8e2ab  (hearing_id => hearings.id)
+#  fk_rails_e9f8d88657  (request_issue_id => request_issues.id)
+#

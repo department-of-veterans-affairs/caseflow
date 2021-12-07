@@ -111,3 +111,28 @@ class AppellantSubstitution < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: appellant_substitutions
+#
+#  id                        :bigint           not null, primary key
+#  claimant_type             :string           not null
+#  selected_task_ids         :bigint           default([]), not null, is an Array
+#  substitution_date         :date             not null
+#  task_params               :jsonb            not null
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  created_by_id             :bigint           not null
+#  poa_participant_id        :string
+#  source_appeal_id          :bigint           not null, indexed
+#  substitute_participant_id :string           not null
+#  target_appeal_id          :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_7dcf41562f  (source_appeal_id => appeals.id)
+#  fk_rails_e33f49edc2  (target_appeal_id => appeals.id)
+#  fk_rails_f95a17ce39  (created_by_id => users.id)
+#

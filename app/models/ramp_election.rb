@@ -88,3 +88,18 @@ class RampElection < RampReview
     validate_receipt_date_not_in_future
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ramp_elections
+#
+#  id                  :integer          not null, primary key
+#  established_at      :datetime
+#  notice_date         :date
+#  option_selected     :string
+#  receipt_date        :date
+#  veteran_file_number :string           not null, indexed
+#  created_at          :datetime
+#  updated_at          :datetime         indexed
+#

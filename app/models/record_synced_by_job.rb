@@ -8,3 +8,18 @@ class RecordSyncedByJob < CaseflowRecord
       .order("record_synced_by_jobs.processed_at ASC NULLS FIRST").limit(limit)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: record_synced_by_jobs
+#
+#  id            :bigint           not null, primary key
+#  error         :string
+#  processed_at  :datetime
+#  record_type   :string           indexed => [record_id]
+#  sync_job_name :string
+#  created_at    :datetime
+#  updated_at    :datetime         indexed
+#  record_id     :bigint           indexed => [record_type]
+#

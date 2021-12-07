@@ -97,3 +97,16 @@ class TeamQuota < CaseflowRecord
     self.class.where(task_type: task_type).order(:date).limit(31).lazy.map(&:user_count)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: team_quotas
+#
+#  id         :integer          not null, primary key
+#  date       :date             not null, indexed => [task_type]
+#  task_type  :string           not null, indexed => [date]
+#  user_count :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null, indexed
+#

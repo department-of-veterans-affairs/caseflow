@@ -221,3 +221,56 @@ class Certification < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: certifications
+#
+#  id                               :integer          not null, primary key
+#  already_certified                :boolean
+#  bgs_rep_address_line_1           :string
+#  bgs_rep_address_line_2           :string
+#  bgs_rep_address_line_3           :string
+#  bgs_rep_city                     :string
+#  bgs_rep_country                  :string
+#  bgs_rep_state                    :string
+#  bgs_rep_zip                      :string
+#  bgs_representative_name          :string
+#  bgs_representative_type          :string
+#  certification_date               :string
+#  certifying_office                :string
+#  certifying_official_name         :string
+#  certifying_official_title        :string
+#  certifying_username              :string
+#  completed_at                     :datetime
+#  form8_started_at                 :datetime
+#  form9_matching_at                :datetime
+#  form9_type                       :string
+#  hearing_change_doc_found_in_vbms :boolean
+#  hearing_preference               :string
+#  loading_data                     :boolean
+#  loading_data_failed              :boolean
+#  nod_matching_at                  :datetime
+#  poa_correct_in_bgs               :boolean
+#  poa_correct_in_vacols            :boolean
+#  poa_matches                      :boolean
+#  representative_name              :string
+#  representative_type              :string
+#  soc_matching_at                  :datetime
+#  ssocs_matching_at                :datetime
+#  ssocs_required                   :boolean
+#  v2                               :boolean
+#  vacols_data_missing              :boolean
+#  vacols_hearing_preference        :string
+#  vacols_representative_name       :string
+#  vacols_representative_type       :string
+#  created_at                       :datetime         not null
+#  updated_at                       :datetime         not null, indexed
+#  user_id                          :integer          indexed
+#  vacols_id                        :string
+#
+# Foreign Keys
+#
+#  fk_rails_99ad041748  (user_id => users.id)
+#

@@ -592,3 +592,36 @@ class Appeal < DecisionReview
   end
 end
 # rubocop:enable Metrics/ClassLength
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: appeals
+#
+#  id                              :bigint           not null, primary key
+#  aod_based_on_age                :boolean          indexed
+#  changed_hearing_request_type    :string
+#  closest_regional_office         :string
+#  docket_range_date               :date
+#  docket_type                     :string           indexed
+#  established_at                  :datetime         indexed
+#  establishment_attempted_at      :datetime
+#  establishment_canceled_at       :datetime
+#  establishment_error             :string
+#  establishment_last_submitted_at :datetime
+#  establishment_processed_at      :datetime
+#  establishment_submitted_at      :datetime
+#  filed_by_va_gov                 :boolean
+#  legacy_opt_in_approved          :boolean
+#  original_hearing_request_type   :string
+#  receipt_date                    :date
+#  stream_docket_number            :string
+#  stream_type                     :string           default(NULL)
+#  target_decision_date            :date
+#  uuid                            :uuid             not null, indexed
+#  veteran_file_number             :string           not null, indexed
+#  veteran_is_not_claimant         :boolean
+#  created_at                      :datetime
+#  updated_at                      :datetime         indexed
+#  poa_participant_id              :string
+#

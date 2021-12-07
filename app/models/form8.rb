@@ -247,3 +247,83 @@ class Form8 < CaseflowRecord
     @remarks_rolled ||= RolledOverText.new(remarks, 6)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: form8s
+#
+#  id                                            :integer          not null, primary key
+#  _initial_appellant_name                       :string
+#  _initial_appellant_relationship               :string
+#  _initial_hearing_requested                    :string
+#  _initial_increased_rating_notification_date   :date
+#  _initial_insurance_loan_number                :string
+#  _initial_other_notification_date              :date
+#  _initial_representative_name                  :string
+#  _initial_representative_type                  :string
+#  _initial_service_connection_notification_date :date
+#  _initial_soc_date                             :date
+#  _initial_ssoc_required                        :string
+#  _initial_veteran_name                         :string
+#  agent_accredited                              :string
+#  appellant_name                                :string
+#  appellant_relationship                        :string
+#  certification_date                            :date
+#  certifying_office                             :string
+#  certifying_official_name                      :string
+#  certifying_official_title                     :string
+#  certifying_official_title_specify_other       :string
+#  certifying_username                           :string
+#  contested_claims_procedures_applicable        :string
+#  contested_claims_requirements_followed        :string
+#  file_number                                   :string
+#  form9_date                                    :date
+#  form_646_not_of_record_explanation            :string
+#  form_646_of_record                            :string
+#  hearing_held                                  :string
+#  hearing_preference                            :string
+#  hearing_requested                             :string
+#  hearing_requested_explanation                 :string
+#  hearing_transcript_on_file                    :string
+#  increased_rating_for                          :text
+#  increased_rating_notification_date            :date
+#  insurance_loan_number                         :string
+#  nod_date                                      :date
+#  other_for                                     :text
+#  other_notification_date                       :date
+#  power_of_attorney                             :string
+#  power_of_attorney_file                        :string
+#  record_cf_or_xcf                              :string
+#  record_clinical_rec                           :string
+#  record_dental_f                               :string
+#  record_dep_ed_f                               :string
+#  record_hospital_cor                           :string
+#  record_inactive_cf                            :string
+#  record_insurance_f                            :string
+#  record_loan_guar_f                            :string
+#  record_other                                  :string
+#  record_other_explanation                      :text
+#  record_outpatient_f                           :string
+#  record_r_and_e_f                              :string
+#  record_slides                                 :string
+#  record_tissue_blocks                          :string
+#  record_training_sub_f                         :string
+#  record_x_rays                                 :string
+#  remarks                                       :text
+#  representative_name                           :string
+#  representative_type                           :string
+#  representative_type_specify_other             :string
+#  service_connection_for                        :text
+#  service_connection_notification_date          :date
+#  soc_date                                      :date
+#  ssoc_date_1                                   :date
+#  ssoc_date_2                                   :date
+#  ssoc_date_3                                   :date
+#  ssoc_required                                 :string
+#  veteran_name                                  :string
+#  created_at                                    :datetime         not null
+#  updated_at                                    :datetime         not null
+#  certification_id                              :integer          indexed
+#  vacols_id                                     :string
+#

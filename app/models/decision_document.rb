@@ -165,3 +165,25 @@ class DecisionDocument < CaseflowRecord
     false
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: decision_documents
+#
+#  id                         :bigint           not null, primary key
+#  appeal_type                :string
+#  attempted_at               :datetime
+#  canceled_at                :datetime
+#  citation_number            :string           not null, indexed
+#  decision_date              :date             not null
+#  error                      :string
+#  last_submitted_at          :datetime
+#  processed_at               :datetime
+#  redacted_document_location :string           not null
+#  submitted_at               :datetime
+#  uploaded_to_vbms_at        :datetime
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null, indexed
+#  appeal_id                  :bigint           not null, indexed
+#

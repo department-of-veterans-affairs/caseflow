@@ -372,3 +372,32 @@ class LegacyHearing < CaseflowRecord
     self.created_by ||= RequestStore[:current_user]
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: legacy_hearings
+#
+#  id                           :bigint           not null, primary key
+#  military_service             :string
+#  original_vacols_request_type :string
+#  prepped                      :boolean
+#  summary                      :text
+#  witness                      :string
+#  created_at                   :datetime
+#  updated_at                   :datetime         indexed
+#  appeal_id                    :integer
+#  created_by_id                :bigint           indexed
+#  hearing_day_id               :bigint           indexed
+#  updated_by_id                :bigint           indexed
+#  user_id                      :integer          indexed
+#  vacols_id                    :string           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_1c39b6a84c  (updated_by_id => users.id)
+#  fk_rails_3ee6dc1617  (hearing_day_id => hearing_days.id)
+#  fk_rails_5f8536cc83  (user_id => users.id)
+#  fk_rails_ab18e2245f  (appeal_id => legacy_appeals.id)
+#  fk_rails_ef04ca8e14  (created_by_id => users.id)
+#

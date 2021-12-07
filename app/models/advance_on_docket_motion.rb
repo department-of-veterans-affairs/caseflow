@@ -97,3 +97,24 @@ class AdvanceOnDocketMotion < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: advance_on_docket_motions
+#
+#  id          :bigint           not null, primary key
+#  appeal_type :string
+#  granted     :boolean          indexed
+#  reason      :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null, indexed
+#  appeal_id   :integer
+#  person_id   :bigint           indexed
+#  user_id     :bigint           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_33ef04a6d3  (person_id => people.id)
+#  fk_rails_9573b3db7e  (user_id => users.id)
+#

@@ -15,3 +15,23 @@ class Message < CaseflowRecord
   scope :unread, -> { where(read_at: nil) }
   scope :created_after, ->(datetime) { where("created_at > :datetime", datetime: datetime) }
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: messages
+#
+#  id           :bigint           not null, primary key
+#  detail_type  :string           indexed => [detail_id]
+#  message_type :string
+#  read_at      :datetime
+#  text         :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null, indexed
+#  detail_id    :integer          indexed => [detail_type]
+#  user_id      :integer          not null
+#
+# Foreign Keys
+#
+#  fk_rails_273a25a7a6  (user_id => users.id)
+#

@@ -29,3 +29,31 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
   end
   # :nocov:
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: tbsched
+#
+#  tbaddtime :date
+#  tbadduser :string(16)
+#  tbaty1    :string(6)
+#  tbaty2    :string(6)
+#  tbaty3    :string(6)
+#  tbaty4    :string(6)
+#  tbbvapoc  :string(40)
+#  tbcancel  :string(1)
+#  tbenddate :date
+#  tbleg     :boolean          not null
+#  tbmem1    :string(6)
+#  tbmem2    :string(6)
+#  tbmem3    :string(6)
+#  tbmem4    :string(6)
+#  tbmodtime :date
+#  tbmoduser :string(16)
+#  tbro      :string(16)
+#  tbropoc   :string(40)
+#  tbstdate  :date
+#  tbtrip    :integer          not null
+#  tbyear    :string(4)        not null
+#

@@ -64,3 +64,23 @@ class PostDecisionMotion < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: post_decision_motions
+#
+#  id                         :bigint           not null, primary key
+#  disposition                :string
+#  vacate_type                :string
+#  vacated_decision_issue_ids :integer          is an Array
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null, indexed
+#  appeal_id                  :bigint
+#  task_id                    :bigint           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_0a986af930  (task_id => tasks.id)
+#  fk_rails_d551f6a982  (appeal_id => appeals.id)
+#

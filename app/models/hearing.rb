@@ -260,3 +260,40 @@ class Hearing < CaseflowRecord
     self.created_by ||= RequestStore[:current_user]
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearings
+#
+#  id                     :bigint           not null, primary key
+#  bva_poc                :string
+#  disposition            :string           indexed
+#  evidence_window_waived :boolean
+#  military_service       :string
+#  notes                  :string
+#  prepped                :boolean
+#  representative_name    :string
+#  room                   :string
+#  scheduled_time         :time             not null
+#  summary                :text
+#  transcript_requested   :boolean
+#  transcript_sent_date   :date
+#  uuid                   :uuid             not null, indexed
+#  witness                :string
+#  created_at             :datetime
+#  updated_at             :datetime         indexed
+#  appeal_id              :integer          not null
+#  created_by_id          :bigint           indexed
+#  hearing_day_id         :integer          not null
+#  judge_id               :integer
+#  updated_by_id          :bigint           indexed
+#
+# Foreign Keys
+#
+#  fk_rails_2de461e755  (judge_id => users.id)
+#  fk_rails_627ef9897d  (hearing_day_id => hearing_days.id)
+#  fk_rails_6876977395  (created_by_id => users.id)
+#  fk_rails_9b565dc0d0  (updated_by_id => users.id)
+#  fk_rails_ed404cdb6e  (appeal_id => appeals.id)
+#

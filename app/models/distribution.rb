@@ -121,3 +121,24 @@ class Distribution < CaseflowRecord
     team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: distributions
+#
+#  id            :bigint           not null, primary key
+#  completed_at  :datetime
+#  errored_at    :datetime
+#  priority_push :boolean          default(FALSE)
+#  started_at    :datetime
+#  statistics    :json
+#  status        :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null, indexed
+#  judge_id      :integer
+#
+# Foreign Keys
+#
+#  fk_rails_3e575fdba2  (judge_id => users.id)
+#

@@ -22,3 +22,18 @@ class RampIssue < CaseflowRecord
     Intake::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ramp_issues
+#
+#  id                      :integer          not null, primary key
+#  description             :string           not null
+#  review_type             :string           not null, indexed => [review_id]
+#  created_at              :datetime
+#  updated_at              :datetime         indexed
+#  contention_reference_id :string
+#  review_id               :integer          not null, indexed => [review_type]
+#  source_issue_id         :integer
+#

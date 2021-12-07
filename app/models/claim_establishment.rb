@@ -31,3 +31,23 @@ class ClaimEstablishment < CaseflowRecord
     email_recipient && RegionalOfficeEmail.new(recipient: email_recipient, ro_id: email_ro_id)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: claim_establishments
+#
+#  id              :integer          not null, primary key
+#  decision_type   :integer
+#  email_recipient :string
+#  ep_code         :string
+#  outcoding_date  :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null, indexed
+#  email_ro_id     :string
+#  task_id         :integer
+#
+# Foreign Keys
+#
+#  fk_rails_46071c0164  (task_id => dispatch_tasks.id)
+#

@@ -100,3 +100,31 @@ class JudgeCaseReview < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: judge_case_reviews
+#
+#  id                     :bigint           not null, primary key
+#  appeal_type            :string           indexed => [appeal_id]
+#  areas_for_improvement  :text             default([]), is an Array
+#  comment                :text
+#  complexity             :string
+#  factors_not_considered :text             default([]), is an Array
+#  location               :string
+#  one_touch_initiative   :boolean
+#  positive_feedback      :text             default([]), is an Array
+#  quality                :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null, indexed
+#  appeal_id              :bigint           indexed => [appeal_type]
+#  attorney_id            :integer
+#  judge_id               :integer
+#  task_id                :string
+#
+# Foreign Keys
+#
+#  fk_rails_0d94f52186  (judge_id => users.id)
+#  fk_rails_226122cfd5  (attorney_id => users.id)
+#

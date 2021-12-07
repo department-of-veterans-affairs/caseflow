@@ -59,3 +59,24 @@ class HearingLocation < CaseflowRecord
     Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key] || {}
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearing_locations
+#
+#  id             :bigint           not null, primary key
+#  address        :string
+#  city           :string
+#  classification :string
+#  distance       :float
+#  facility_type  :string
+#  hearing_type   :string           indexed
+#  name           :string
+#  state          :string
+#  zip_code       :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null, indexed
+#  facility_id    :string
+#  hearing_id     :integer          indexed
+#

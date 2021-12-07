@@ -29,3 +29,28 @@ class UnrecognizedPartyDetail < CaseflowRecord
     Hash[fields.collect { |field| [field.to_sym, send(field)] }]
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: unrecognized_party_details
+#
+#  id             :bigint           not null, primary key
+#  address_line_1 :string           not null
+#  address_line_2 :string
+#  address_line_3 :string
+#  city           :string           not null
+#  country        :string           not null
+#  date_of_birth  :date
+#  email_address  :string
+#  last_name      :string
+#  middle_name    :string
+#  name           :string           not null
+#  party_type     :string           not null
+#  phone_number   :string
+#  state          :string           not null
+#  suffix         :string
+#  zip            :string           not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#

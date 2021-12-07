@@ -49,3 +49,21 @@ class OrganizationsUser < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: organizations_users
+#
+#  id              :bigint           not null, primary key
+#  admin           :boolean          default(FALSE)
+#  created_at      :datetime
+#  updated_at      :datetime         indexed
+#  organization_id :integer          indexed, indexed => [user_id]
+#  user_id         :integer          indexed => [organization_id]
+#
+# Foreign Keys
+#
+#  fk_rails_1a7373774d  (organization_id => organizations.id)
+#  fk_rails_a89915da94  (user_id => users.id)
+#

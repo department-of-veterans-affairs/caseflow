@@ -895,3 +895,34 @@ class Task < CaseflowRecord
   end
 end
 # rubocop:enable Metrics/ClassLength
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: tasks
+#
+#  id                  :bigint           not null, primary key
+#  appeal_type         :string           not null, indexed => [appeal_id]
+#  assigned_at         :datetime
+#  assigned_to_type    :string           not null, indexed => [assigned_to_id]
+#  cancellation_reason :string           indexed
+#  closed_at           :datetime
+#  instructions        :text             default([]), is an Array
+#  placed_on_hold_at   :datetime
+#  started_at          :datetime
+#  status              :string           default("assigned"), indexed
+#  type                :string           indexed
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null, indexed
+#  appeal_id           :integer          not null, indexed => [appeal_type]
+#  assigned_by_id      :integer
+#  assigned_to_id      :integer          not null, indexed => [assigned_to_type]
+#  cancelled_by_id     :integer
+#  parent_id           :integer          indexed
+#
+# Foreign Keys
+#
+#  fk_rails_034a3a58b2  (assigned_by_id => users.id)
+#  fk_rails_4f4225f467  (cancelled_by_id => users.id)
+#  fk_rails_538e121d51  (parent_id => tasks.id)
+#

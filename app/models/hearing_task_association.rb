@@ -26,3 +26,20 @@ class HearingTaskAssociation < CaseflowRecord
     )
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: hearing_task_associations
+#
+#  id              :bigint           not null, primary key
+#  hearing_type    :string           not null, indexed => [hearing_id]
+#  created_at      :datetime
+#  updated_at      :datetime         indexed
+#  hearing_id      :bigint           not null, indexed => [hearing_type]
+#  hearing_task_id :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_c4530bdb1f  (hearing_task_id => tasks.id)
+#

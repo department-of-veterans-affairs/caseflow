@@ -95,3 +95,22 @@ class RampClosedAppeal < CaseflowRecord
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ramp_closed_appeals
+#
+#  id                                 :integer          not null, primary key
+#  closed_on                          :datetime
+#  nod_date                           :date
+#  partial_closure_issue_sequence_ids :string           is an Array
+#  created_at                         :datetime
+#  updated_at                         :datetime         indexed
+#  ramp_election_id                   :integer
+#  vacols_id                          :string           not null
+#
+# Foreign Keys
+#
+#  fk_rails_d2dc5ed04b  (ramp_election_id => ramp_elections.id)
+#

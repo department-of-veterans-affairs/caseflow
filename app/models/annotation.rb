@@ -13,3 +13,24 @@ class Annotation < CaseflowRecord
     )
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: annotations
+#
+#  id            :integer          not null, primary key
+#  comment       :string           not null
+#  page          :integer
+#  relevant_date :date
+#  x             :integer
+#  y             :integer
+#  created_at    :datetime
+#  updated_at    :datetime
+#  document_id   :integer          not null, indexed
+#  user_id       :integer          indexed
+#
+# Foreign Keys
+#
+#  fk_rails_4043df79bf  (user_id => users.id)
+#

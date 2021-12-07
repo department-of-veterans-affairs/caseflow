@@ -236,3 +236,22 @@ class BgsPowerOfAttorney < CaseflowRecord
       saved_change_to_poa_participant_id?
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: bgs_power_of_attorneys
+#
+#  id                             :bigint           not null, primary key
+#  authzn_change_clmant_addrs_ind :string
+#  authzn_poa_access_ind          :string
+#  file_number                    :string           indexed => [claimant_participant_id], indexed
+#  last_synced_at                 :datetime         indexed
+#  legacy_poa_cd                  :string
+#  representative_name            :string           not null, indexed
+#  representative_type            :string           not null, indexed
+#  created_at                     :datetime         not null, indexed
+#  updated_at                     :datetime         not null, indexed
+#  claimant_participant_id        :string           not null, indexed => [file_number], indexed
+#  poa_participant_id             :string           not null, indexed
+#

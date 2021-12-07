@@ -111,3 +111,27 @@ class EndProductUpdate < CaseflowRecord
     Constants.ISSUE_CATEGORIES.compensation.find { |cat| cat.include?("Unknown") }
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: end_product_updates
+#
+#  id                            :bigint           not null, primary key
+#  active_request_issue_ids      :bigint           default([]), not null, is an Array
+#  error                         :string
+#  new_code                      :string
+#  original_code                 :string
+#  original_decision_review_type :string           indexed => [original_decision_review_id]
+#  status                        :string
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  end_product_establishment_id  :bigint           not null, indexed
+#  original_decision_review_id   :bigint           indexed => [original_decision_review_type]
+#  user_id                       :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_7138c63a0b  (user_id => users.id)
+#  fk_rails_871ddbbfc0  (end_product_establishment_id => end_product_establishments.id)
+#

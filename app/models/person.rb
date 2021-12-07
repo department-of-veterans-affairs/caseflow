@@ -153,3 +153,21 @@ class Person < CaseflowRecord
     bgs_record
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: people
+#
+#  id             :bigint           not null, primary key
+#  date_of_birth  :date
+#  email_address  :string
+#  first_name     :string
+#  last_name      :string
+#  middle_name    :string
+#  name_suffix    :string
+#  ssn            :string           indexed
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null, indexed
+#  participant_id :string           not null, indexed
+#

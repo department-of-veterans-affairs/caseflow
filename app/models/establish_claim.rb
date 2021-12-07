@@ -290,3 +290,30 @@ class EstablishClaim < Dispatch::Task
     end
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: dispatch_tasks
+#
+#  id                    :integer          not null, primary key
+#  aasm_state            :string
+#  assigned_at           :datetime
+#  comment               :string
+#  completed_at          :datetime
+#  completion_status     :integer
+#  lock_version          :integer
+#  prepared_at           :datetime
+#  started_at            :datetime
+#  type                  :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null, indexed
+#  appeal_id             :integer          not null
+#  outgoing_reference_id :string
+#  user_id               :integer          indexed
+#
+# Foreign Keys
+#
+#  fk_rails_4b45ff44c0  (appeal_id => legacy_appeals.id)
+#  fk_rails_e5f06ac1fc  (user_id => users.id)
+#

@@ -38,3 +38,21 @@ class IhpDraft < CaseflowRecord
     errors.add(:path, COPY::INVALID_IHP_DRAFT_PATH)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: ihp_drafts
+#
+#  id              :bigint           not null, primary key
+#  appeal_type     :string           not null, indexed => [appeal_id, organization_id]
+#  path            :string           not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  appeal_id       :integer          not null, indexed => [appeal_type, organization_id]
+#  organization_id :integer          not null, indexed => [appeal_id, appeal_type]
+#
+# Foreign Keys
+#
+#  fk_rails_550cb27209  (organization_id => organizations.id)
+#

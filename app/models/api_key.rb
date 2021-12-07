@@ -26,3 +26,15 @@ class ApiKey < CaseflowRecord
     self.key_digest = self.class.digest_key_string(key_string)
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: api_keys
+#
+#  id            :integer          not null, primary key
+#  consumer_name :string           not null, indexed
+#  key_digest    :string           not null, indexed
+#  created_at    :datetime
+#  updated_at    :datetime         indexed
+#

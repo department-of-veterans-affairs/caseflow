@@ -305,3 +305,24 @@ class Document < CaseflowRecord
     VBMSService
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: documents
+#
+#  id                           :integer          not null, primary key
+#  category_medical             :boolean
+#  category_other               :boolean
+#  category_procedural          :boolean
+#  description                  :string
+#  file_number                  :string           indexed
+#  received_at                  :date
+#  type                         :string
+#  upload_date                  :date
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  previous_document_version_id :integer
+#  series_id                    :string           indexed
+#  vbms_document_id             :string           not null, indexed
+#

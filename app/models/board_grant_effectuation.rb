@@ -174,3 +174,32 @@ class BoardGrantEffectuation < CaseflowRecord
     "397" # ARC
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: board_grant_effectuations
+#
+#  id                              :bigint           not null, primary key
+#  decision_sync_attempted_at      :datetime
+#  decision_sync_canceled_at       :datetime
+#  decision_sync_error             :string
+#  decision_sync_last_submitted_at :datetime
+#  decision_sync_processed_at      :datetime
+#  decision_sync_submitted_at      :datetime
+#  last_submitted_at               :datetime
+#  created_at                      :datetime
+#  updated_at                      :datetime         indexed
+#  appeal_id                       :bigint           not null, indexed
+#  contention_reference_id         :string           indexed
+#  decision_document_id            :bigint           indexed
+#  end_product_establishment_id    :bigint           indexed
+#  granted_decision_issue_id       :bigint           not null, indexed
+#
+# Foreign Keys
+#
+#  fk_rails_30b193e1b1  (end_product_establishment_id => end_product_establishments.id)
+#  fk_rails_4711b24fb1  (appeal_id => appeals.id)
+#  fk_rails_9d715a65f6  (granted_decision_issue_id => decision_issues.id)
+#  fk_rails_c3d39401e9  (decision_document_id => decision_documents.id)
+#

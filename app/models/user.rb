@@ -595,3 +595,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     alias development_system_user uat_system_user
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: users
+#
+#  id                           :integer          not null, primary key
+#  efolder_documents_fetched_at :datetime
+#  email                        :string
+#  full_name                    :string
+#  last_login_at                :datetime
+#  roles                        :string           is an Array
+#  selected_regional_office     :string
+#  status                       :string           default("active"), indexed
+#  status_updated_at            :datetime
+#  created_at                   :datetime
+#  updated_at                   :datetime         indexed
+#  css_id                       :string           not null, indexed
+#  station_id                   :string           not null
+#

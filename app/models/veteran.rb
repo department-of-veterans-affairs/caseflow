@@ -547,3 +547,24 @@ class Veteran < CaseflowRecord
     )
   end
 end
+
+# (This section is updated by the annotate gem)
+# == Schema Information
+#
+# Table name: veterans
+#
+#  id                        :bigint           not null, primary key
+#  bgs_last_synced_at        :datetime
+#  closest_regional_office   :string
+#  date_of_death             :date
+#  date_of_death_reported_at :datetime
+#  file_number               :string           not null, indexed
+#  first_name                :string
+#  last_name                 :string
+#  middle_name               :string
+#  name_suffix               :string
+#  ssn                       :string           indexed
+#  created_at                :datetime
+#  updated_at                :datetime         indexed
+#  participant_id            :string           indexed
+#
