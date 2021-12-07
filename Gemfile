@@ -121,6 +121,7 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "annotate"
   gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "derailed_benchmarks"

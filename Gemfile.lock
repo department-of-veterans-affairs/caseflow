@@ -130,6 +130,9 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     anbt-sql-formatter (0.1.0)
+    annotate (3.1.1)
+      activerecord (>= 3.2, < 7.0)
+      rake (>= 10.4, < 14.0)
     arel (9.0.0)
     ast (2.4.0)
     aws-sdk (2.10.112)
@@ -681,6 +684,7 @@ DEPENDENCIES
   activerecord-oracle_enhanced-adapter (~> 5.2.0)
   acts_as_tree
   anbt-sql-formatter
+  annotate
   bgs!
   bootsnap
   brakeman
