@@ -1,14 +1,10 @@
 # frozen_string_literal: true
 
 # See annotate gem: https://github.com/ctran/annotate_models#configuration-in-rails
-# NOTE: only doing this in development as some production environments (Heroku)
-# NOTE: are sensitive to local FS writes, and besides -- it's just not proper
-# NOTE: to have a dev-mode tool do its thing in production.
 if Rails.env.development?
   require "annotate"
   task :set_annotation_options do
-    # You can override any of these by setting an environment variable of the
-    # same name.
+    # You can override any of these by setting an environment variable of the same name.
     Annotate.set_defaults(
       "active_admin" => "false",
       "additional_file_patterns" => [],
@@ -35,26 +31,26 @@ if Rails.env.development?
       "exclude_scaffolds" => "true",
       "exclude_controllers" => "true",
       "exclude_helpers" => "true",
-      "exclude_sti_subclasses" => "false",
+      "exclude_sti_subclasses" => "true", # Not needed
       "ignore_model_sub_dir" => "false",
       "ignore_columns" => nil,
       "ignore_routes" => nil,
       "ignore_unknown_models" => "false",
       "hide_limit_column_types" => "integer,bigint,boolean",
       "hide_default_column_types" => "json,jsonb,hstore",
-      "skip_on_db_migrate" => "true", # true => don't run annotate with every db:migrate
+      "skip_on_db_migrate" => "true", # true => don't run annotate with every db:migrate b/c it adds more time
       "format_bare" => "true",
       "format_rdoc" => "false",
       "format_yard" => "false",
       "format_markdown" => "false",
-      "sort" => "false",
+      "sort" => "false", # Keep the same order as in schema.rb
       "force" => "false",
       "frozen" => "false",
       "classified_sort" => "true",
       "trace" => "false",
       "wrapper_open" => "(This section is updated by the annotate gem)",
       "wrapper_close" => nil,
-      "with_comment" => "false"
+      "with_comment" => "false" # Leave out comments because some of them are very long
     )
   end
 
