@@ -18,7 +18,7 @@ class RegionalOfficesController < ApplicationController
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       ro
-    ).all_hearing_days
+    ).hearing_days_with_hearings
 
     render json: {
       hearing_days: hearing_days.map { |day, hearings| RegionalOfficesController.hearing_day_hash(ro, day, hearings) }

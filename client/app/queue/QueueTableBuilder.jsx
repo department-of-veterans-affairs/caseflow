@@ -12,10 +12,13 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import {
   assignedToColumn,
-  boardIntakeColumn,
+  assignedByColumn,
   badgesColumn,
+  boardIntakeColumn,
   completedToNameColumn,
   daysOnHoldColumn,
+  daysSinceLastColumn,
+  daysSinceIntakeColumn,
   daysWaitingColumn,
   detailsColumn,
   docketNumberColumn,
@@ -26,9 +29,10 @@ import {
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
   taskColumn,
+  taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  taskOwnerColumn,
+  // taskOwnerColumn,
   vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -93,6 +97,9 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
         requireDasRecord
       ),
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]: daysSinceLastColumn(
+        requireDasRecord
+      ),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
         requireDasRecord
       ),
@@ -136,8 +143,11 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
+      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord)
     };
 
     return functionForColumn[column.name];
