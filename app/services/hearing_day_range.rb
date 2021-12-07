@@ -43,7 +43,7 @@ class HearingDayRange
   end
 
   def all_hearing_days
-    hearing_days_in_range = HearingDay.includes(:judge).in_range(start_date, end_date)
+    hearing_days_in_range = HearingDay.in_range(start_date, end_date)
 
     if regional_office.nil?
       hearing_days_in_range

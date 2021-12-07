@@ -76,12 +76,12 @@ class HearingDaySerializer
   end
 
   def self.serialize_collection(hearing_days)
-    video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
+    video_hearing_days_request_types = HearingDayRequestTypeQuery.new(hearing_days).call
     filled_slots_count_for_days = HearingDayFilledSlotsQuery.new(hearing_days).call
     judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
 
     ::HearingDaySerializer.new(
-      hearing_days,
+      hearing_days.includes(:judge),
       collection: true,
       params: {
         video_hearing_days_request_types: video_hearing_days_request_types,
