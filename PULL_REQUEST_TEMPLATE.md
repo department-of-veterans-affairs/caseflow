@@ -39,6 +39,7 @@ Please explain the changes you made here.
 * [ ] Add `belongs_to` for associations to enable the [schema diagrams](https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/schema_diagrams) to be automatically updated
 * [ ] Post this PR in #appeals-schema with a summary
 * [ ] Document any non-obvious semantics or logic useful for interpreting database data at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
+* [ ] Run `bundle exec annotate` after adding a Rails model class to automatically add a 'Schema Information' section
 
 ### Integrations: Adding endpoints for external APIs
 * [ ] Check that Caseflow's external API code for the endpoint matches the code in the relevant integration repo
