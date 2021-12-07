@@ -419,25 +419,40 @@ describe('prepTaskDataForUi', () => {
 describe('calculateEvidenceSubmissionEndDate', () => {
   const tasks = sampleTasksForDismissedEvidenceSubmissionDocket();
 
-  it('outputs the expected result', () => {
-    const args = {
-      substitutionDate: '2021-03-25',
-      veteranDateOfDeath: '2021-03-20',
-      selectedTasks: tasks
-    };
-    const result = calculateEvidenceSubmissionEndDate(args);
+  describe('when the data is valid', () => {
 
-    expect(isSameDay(parseISO(result), parseISO('2021-06-04'))).toBe(true);
+    it('outputs the expected result', () => {
+      const args = {
+        substitutionDate: '2021-03-25',
+        veteranDateOfDeath: '2021-03-20',
+        selectedTasks: tasks
+      };
+      const result = calculateEvidenceSubmissionEndDate(args);
+
+      expect(isSameDay(parseISO(result), parseISO('2021-06-04'))).toBe(true);
+    });
+
+    it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
+      const args = {
+        substitutionDate: '2021-03-25',
+        veteranDateOfDeath: '2021-02-01',
+        selectedTasks: tasks
+      };
+      const result = calculateEvidenceSubmissionEndDate(args);
+
+      expect(isSameDay(parseISO(result), parseISO('2021-06-23'))).toBe(true);
+    });
   });
+  describe('when the veteran has no date of death', () => {
+    it('returns null', () => {
+      const args = {
+        substitutionDate: '2021-03-25',
+        veteranDateOfDeath: null,
+        selectedTasks: tasks
+      };
+      const result = calculateEvidenceSubmissionEndDate(args);
 
-  it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
-    const args = {
-      substitutionDate: '2021-03-25',
-      veteranDateOfDeath: '2021-02-01',
-      selectedTasks: tasks
-    };
-    const result = calculateEvidenceSubmissionEndDate(args);
-
-    expect(isSameDay(parseISO(result), parseISO('2021-06-23'))).toBe(true);
+      expect(result).toBeNull();
+    });
   });
 });
