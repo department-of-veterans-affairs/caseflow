@@ -37,8 +37,10 @@ import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 import UserAlerts from '../../components/UserAlerts';
-
+import Pagination from '../../components/Pagination/Pagination';
 import { LIST_SCHEDULE_VIEWS, ENDPOINT_NAMES } from '../constants';
+import LoadingScreen from '../../components/LoadingScreen';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -49,6 +51,7 @@ const actionButtonsStyling = css({
 export class ListScheduleContainer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
@@ -56,15 +59,22 @@ export class ListScheduleContainer extends React.Component {
       view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW,
       // This will hold a reference to the button that opens the modal in order to preserve
       // page flow when the modal is closed
-      modalButton: null
+      modalButton: null,
+      currentPage: 0,
+      totalCases: 0,
+      currentCases: 0,
+      totalPages: 0,
+      pageSize: 0,
+      loading: false
     };
   }
 
   switchListView = (view) => {
-    this.setState({ view });
+    this.setState({ view }, () => this.loadHearingSchedule(0));
   }
 
   componentDidMount = () => {
+    this.loadHearingSchedule(this.state.currentPage);
     this.props.onSelectedHearingDayChange('');
   };
 
@@ -74,8 +84,12 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = ({ showAll = false }) => {
-    let requestUrl = '/hearings/hearing_day.json';
+  loadHearingSchedule = (index) => {
+    this.setState({
+      loading: true
+    });
+
+    let requestUrl = `/hearings/hearing_day.json?page=${index + 1}`;
 
     if (this.props.startDate && this.props.endDate) {
       if (!moment(this.props.startDate, dateFormatString, true).isValid() ||
@@ -83,7 +97,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${showAll}`;
+      requestUrl += `&start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
     }
 
     const requestOptions = {
@@ -96,11 +110,20 @@ export class ListScheduleContainer extends React.Component {
       this.props.onReceiveHearingSchedule(resp.hearings);
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
       this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));
+
+      this.setState({
+        loading: false,
+        currentPage: resp.pagination.page,
+        totalCases: resp.pagination.count,
+        currentCases: resp.pagination.items,
+        totalPages: resp.pagination.pages,
+        pageSize: resp.pagination.in
+      });
     });
   };
 
-  createHearingPromise = (params = { showAll: false }) => Promise.all([
-    this.loadHearingSchedule(params)
+  createHearingPromise = () => Promise.all([
+    // this.loadHearingSchedule(this.state.currentPage, params)
   ]);
 
   openModal = (event) => {
@@ -220,13 +243,31 @@ export class ListScheduleContainer extends React.Component {
               }
             </div>
             <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-            <ListSchedule
-              hearingSchedule={this.props.hearingSchedule}
-              onApply={this.createHearingPromise}
-              user={user}
-              view={this.state.view}
-              switchListView={this.switchListView} />
+            {this.state.loading ? (
+              <LoadingScreen
+                spinnerColor = {LOGO_COLORS.HEARINGS.ACCENT}
+                message = "Loading the hearing schedule..."
+              />
+            ) : (
+              <ListSchedule
+                hearingSchedule={this.props.hearingSchedule}
+                onApply={this.createHearingPromise}
+                user={user}
+                view={this.state.view}
+                switchListView={this.switchListView}
+              />
+            )}
+
+            <Pagination
+              pageSize={this.state.pageSize}
+              currentPage={this.state.currentPage}
+              currentCases={this.state.currentCases}
+              totalPages={this.state.totalPages}
+              totalCases={this.state.totalCases}
+              updatePage={(index) => this.loadHearingSchedule(index)}
+            />
           </AppSegment>
+
         )}
       </React.Fragment>
     );
