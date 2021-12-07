@@ -356,15 +356,8 @@ class CheckTaskTree
       .group(:type).having("count(*) > 1").count
   end
 
-  # Task types where only one of any of these root-children task types should be open at a time.
-  EXCLUSIVE_OPEN_TASKS ||= %w[DistributionTask
-                              JudgeAssignTask
-                              JudgeDecisionReviewTask
-                              QualityReviewTask
-                              BvaDispatchTask].freeze
-
   def open_exclusive_root_children_tasks
-    @appeal.tasks.open.of_type(EXCLUSIVE_OPEN_TASKS).where(parent: @appeal.root_task)
+    MultipleOpenRootChildTaskChecker.open_exclusive_root_children_tasks(@appeal)
   end
 
   # See DecisionReviewTasksForInactiveAppealsChecker
