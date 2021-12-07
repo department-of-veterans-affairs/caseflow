@@ -121,9 +121,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               appeal.tasks.of_type(:AttorneyTask).open.each(&:cancelled!)
               appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:cancelled!)
               decision_task = JudgeDecisionReviewTask.create!(appeal: appeal, parent: appeal.root_task,
-                                                              assigned_to: judge_two)
+                                                              assigned_to: judge_two, instructions: ["most recent"])
               AttorneyTask.create!(appeal: appeal, parent: decision_task,
-                                   assigned_by: judge_two, assigned_to: attorney_two)
+                                   assigned_by: judge_two, assigned_to: attorney_two, instructions: ["most recent"])
               appeal.tasks.of_type(:AttorneyTask).open.each(&:cancelled!)
               appeal.tasks.of_type(:JudgeDecisionReviewTask).open.each(&:cancelled!)
             end
@@ -132,15 +132,11 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               recent_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).cancelled.order(:id).last
 
               subject
-
               open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open.first
               open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
 
-              # this may fail on status
-              expect(open_attorney_task.assigned_to).to eq(recent_attorney_task.assigned_to)
-              expect(open_attorney_task.assigned_by).to eq(recent_attorney_task.assigned_by)
-              expect(open_judge_task.assigned_to).to eq(recent_judge_task.assigned_to)
-              expect(open_judge_task.assigned_by).to eq(recent_judge_task.assigned_by)
+              expect(open_attorney_task.instructions).to eq(recent_attorney_task.instructions)
+              expect(open_judge_task.instructions).to eq(recent_judge_task.instructions)
             end
           end
           context "when there are open and cancelled JudgeDecisionReviewTasks and AttorneyTasks" do
