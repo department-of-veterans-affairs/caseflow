@@ -83,6 +83,87 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
+  # We still need to make some calls to VACOLS to be able
+  # to display the filters in the front-end:
+  #   1. HearingDayRequestTypeQuery provides all readable_request_types.
+  #   2. HearingDayJudgeNameQuery provides all judges names.
+
+  def self.filter_options(hearing_days)
+    {
+      request_type_filters: request_type_filters(hearing_days),
+      regional_office_filters: regional_office_filters(hearing_days),
+      judge_filters: judge_filters(hearing_days)
+    }
+  end
+
+  def self.request_type_filters(hearing_days)
+    hearing_days_request_types = HearingDayRequestTypeQuery.new(hearing_days).call
+
+    hearing_days.each_with_object({}) do |day, hash|
+      request_types = HearingDaySerializer.get_readable_request_type(
+        day,
+        video_hearing_days_request_types: hearing_days_request_types
+      )
+
+      request_types.split(",").map(&:strip).each do |request_type|
+        if hash[request_type].present?
+          hash[request_type][:count] += 1
+        else
+          hash[request_type] = {
+            query_value: request_type,
+            count: 1
+          }
+        end
+      end
+    end
+  end
+
+  def self.regional_office_filters(hearing_days)
+    regional_offices_filters = hearing_days.each_with_object({}) do |day, hash|
+      regional_office = HearingDayMapper.city_for_regional_office(day.regional_office)
+
+      if hash[regional_office&.strip].present?
+        hash[regional_office&.strip][:count] += 1
+      else
+        hash[regional_office&.strip] = {
+          query_value: day.regional_office,
+          count: 1
+        }
+      end
+    end
+
+    regional_offices_filters["Blank"] = regional_offices_filters.delete(nil)
+
+    regional_offices_filters
+  end
+
+  def self.judge_filters(hearing_days)
+    judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
+
+    judge_filters = hearing_days.each_with_object({}) do |day, hash|
+      judge_first_name = HearingDaySerializer.get_judge_first_name(day, judge_names: judge_names)
+      judge_last_name = HearingDaySerializer.get_judge_last_name(day, judge_names: judge_names)
+      judge_full_name = FullName.new(
+        judge_first_name,
+        nil,
+        judge_last_name
+      ).formatted(:form)
+
+      if hash[judge_full_name].present?
+        hash[judge_full_name][:count] += 1
+      else
+        hash[judge_full_name] = {
+          query_value: day.judge_id || judge_full_name,
+          count: 1
+        }
+      end
+    end
+
+    judge_filters["Blank"] = judge_filters.delete("")
+
+    judge_filters
+  end
+
   def central_office?
     request_type == REQUEST_TYPES[:central]
   end
