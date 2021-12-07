@@ -337,7 +337,7 @@ decision_issues,rating_promulgation_date,datetime,,,,,,The promulgation date of 
 decision_issues,subject_text,text,,,,,,subject_text from RatingIssue (subjctTxt from Rating Profile)
 decision_issues,updated_at,datetime,,,,,x,
 dispatch_tasks,,,,,,,,
-dispatch_tasks,aasm_state,string,,,,,,
+dispatch_tasks,aasm_state,string,,,,,x,"Current task state: unprepared, unassigned, assigned, started, reviewed, completed"
 dispatch_tasks,appeal_id,integer ∗ FK,x,,x,,,
 dispatch_tasks,assigned_at,datetime,,,,,,
 dispatch_tasks,comment,string,,,,,,
