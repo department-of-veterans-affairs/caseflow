@@ -7,8 +7,7 @@ import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { createFilter } from 'react-select';
 
-export const AddressForm = ({ control, register, watch }) => {
-  const watchPartyType = watch('partyType');
+export const AddressForm = ({ control, register, watch, isOrgPartyType }) => {
   const watchState = watch('state');
   const defaultState = useMemo(
     () => STATES.find((state) => state.label === watchState),
@@ -34,7 +33,7 @@ export const AddressForm = ({ control, register, watch }) => {
           strongLabel
         />
       </FieldDiv>
-      {watchPartyType === 'organization' && (
+      {isOrgPartyType && (
         <StreetAddress>
           <TextField
             name="addressLine3"
@@ -87,7 +86,8 @@ AddressForm.propTypes = {
   control: PropTypes.object,
   register: PropTypes.func,
   watch: PropTypes.func,
-  setValue: PropTypes.func,
+  isOrgPartyType: PropTypes.bool
+  // setValue: PropTypes.func,
 };
 
 const CityState = styled.div`

@@ -21,12 +21,12 @@ export default function MPISearch() {
       max(new Date(), 'Date cannot be in the future').
       typeError(FORM_ERROR_FIELD_INVALID),
     gender: yup.mixed().oneOf(['M', 'F']),
-    // addressLine1: yup.string(),
-    // addressLine2: yup.string(),
-    // addressLine3: yup.string(),
-    // city: yup.string(),
-    // state: yup.string(),
-    // zip: yup.string(),
+    addressLine1: yup.string(),
+    addressLine2: yup.string(),
+    addressLine3: yup.string(),
+    city: yup.string(),
+    state: yup.string(),
+    zip: yup.string(),
     telephone: yup.string().typeError(FORM_ERROR_FIELD_INVALID)
   });
 
@@ -182,7 +182,8 @@ export default function MPISearch() {
         />
 
         <AddressForm
-          {...methods} ref={register} />
+          {...methods}
+        />
 
         <TextField
           inputRef={register}

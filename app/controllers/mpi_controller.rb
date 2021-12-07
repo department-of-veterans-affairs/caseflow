@@ -4,7 +4,7 @@ class MpiController < ApplicationController
   def index; end
 
   def mpi
-    @mpi ||= Fakes::MPIService.new
+    @mpi ||= MPIService.new
   end
 
   def search
