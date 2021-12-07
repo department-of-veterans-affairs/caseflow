@@ -99,7 +99,8 @@ class ListTable extends React.Component {
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
           summary="hearing-schedule"
-          slowReRendersAreOk />
+          slowReRendersAreOk
+        />
 
       </LoadingDataDisplay>
     );
