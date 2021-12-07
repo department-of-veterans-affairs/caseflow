@@ -79,7 +79,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content("Assess Documentation")
+        expect(page).to have_content("Review Documentation")
 
         created_task_types = Set.new(appeal.tasks.map(&:type))
         pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
