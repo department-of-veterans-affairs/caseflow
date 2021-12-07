@@ -7,8 +7,7 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  # Complaint about 4 parameters here. Do we definitely need judge and genpop both? I think so?
-  # Also, cyclomatic complexity is too high.
+  # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
@@ -101,6 +100,7 @@ class Docket
 
   private
 
+  # :reek:ControlParameter
   def adjust_for_genpop(scope, genpop, judge)
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
