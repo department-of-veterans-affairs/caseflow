@@ -36,6 +36,8 @@ class Dispatch::Task < CaseflowRecord
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
+  scope :open, -> { where.not(aasm_state: "completed") }
+
   class << self
     # Returns either the users currently assigned task, or
     # assigns the next assignable task to the user.
@@ -171,6 +173,10 @@ class Dispatch::Task < CaseflowRecord
     assign_attributes(comment: feedback)
 
     complete!(status: :canceled)
+  end
+
+  def open?
+    aasm_state != "completed"
   end
 
   def progress_status
