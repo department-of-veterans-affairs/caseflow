@@ -7,6 +7,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   before_action :verify_view_hearing_schedule_access
   before_action :verify_access_to_hearings, only: [:update]
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
+  before_action :set_pagination, only: [:index]
   skip_before_action :deny_vso_access, only: [:index, :show]
 
   # show schedule days for date range provided
@@ -18,17 +19,16 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
-          pagy, hearing_days = pagy(hearing_day_range.hearing_days)
-
-          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
-            hearing_days
+          serialized_dockets = ::HearingDaySerializer.serialize_collection(
+            @paginated_dockets
           )
 
           render json: {
-            hearings: serialized_hearing_days,
+            hearings: serialized_dockets,
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date,
-            pagination: pagy_metadata(pagy)
+            pagination: pagy_metadata(@pagy),
+            filter_options: HearingDay.filter_options(dockets_in_range)
           }
         else
           hearing_day_range_invalid
@@ -205,5 +205,13 @@ class Hearings::HearingDayController < HearingsApplicationController
         "status": 400
       ]
     }, status: :not_found
+  end
+
+  def dockets_in_range
+    @dockets_in_range ||= hearing_day_range.hearing_days
+  end
+
+  def set_pagination
+    @pagy, @paginated_dockets = pagy(dockets_in_range)
   end
 end
