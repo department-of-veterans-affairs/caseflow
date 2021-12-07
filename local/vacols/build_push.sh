@@ -48,7 +48,7 @@ build(){
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
   echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
-  rm -rf $build_facols_dir && mkdir $build_facols_dir
+#  rm -rf $build_facols_dir && mkdir $build_facols_dir
 
   parent_dir=$PWD
 
