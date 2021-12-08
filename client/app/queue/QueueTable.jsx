@@ -143,9 +143,19 @@ export const HeaderRow = (props) => {
             );
           }
 
-          // Keeping the historical prop `getFilterValues` for backwards compatibility,
-          // will remove this once all apps are using this new component.
-          if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
+          if (props.useHearingsApi && column.filterOptions) {
+            filterIcon = (
+              <TableFilter
+                {...column}
+                tableData={column.tableData || props.rowObjects}
+                filterOptionsFromApi={column.filterOptions}
+                updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+                filteredByList={props.filteredByList}
+              />
+            );
+          } else if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
+            // Keeping the historical prop `getFilterValues` for backwards compatibility,
+            // will remove this once all apps are using this new component.
             filterIcon = (
               <TableFilter
                 {...column}
@@ -650,6 +660,7 @@ export default class QueueTable extends React.PureComponent {
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
+          useHearingsApi={useHearingsApi}
           {...this.state}
         />
         <BodyRows
@@ -715,6 +726,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   taskPagesApiEndpoint: PropTypes.string,
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
+  useHearingsApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
   tabPaginationOptions: PropTypes.shape({
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,

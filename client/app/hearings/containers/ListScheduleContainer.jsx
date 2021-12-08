@@ -117,7 +117,8 @@ export class ListScheduleContainer extends React.Component {
         totalCases: resp.pagination.count,
         currentCases: resp.pagination.items,
         totalPages: resp.pagination.pages,
-        pageSize: resp.pagination.in
+        pageSize: resp.pagination.in,
+        filterOptions: resp.filterOptions
       });
     });
   };
@@ -251,6 +252,7 @@ export class ListScheduleContainer extends React.Component {
                 user={user}
                 view={this.state.view}
                 switchListView={this.switchListView}
+                filterOptions={this.state.filterOptions}
               />
             )}
 
