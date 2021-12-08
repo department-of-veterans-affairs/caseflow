@@ -204,22 +204,11 @@ const HearingDetails = (props) => {
 
       // email validations should be thrown inline
       if (code === 1002) {
-        // API errors from the server need to be bubbled up to the VirtualHearingModal so it can
-        // update the email components with the validation error messages.
-        const changingFromVideoToVirtualWithModalFlow = (
-          hearing?.readableRequestType === 'Video' && !hearing.isVirtual
-        );
-
-        if (changingFromVideoToVirtualWithModalFlow) {
-          // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
-          throw respError;
-        } else {
           const errors = parseVirtualHearingErrors(msg);
 
           document.getElementById('email-section').scrollIntoView();
 
           setVirtualHearingErrors(errors);
-        }
       } else {
         setError(msg);
       }
