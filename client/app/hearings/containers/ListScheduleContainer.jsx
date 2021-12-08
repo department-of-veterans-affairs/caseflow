@@ -130,7 +130,8 @@ export class ListScheduleContainer extends React.Component {
         totalCases: resp.pagination.count,
         currentCases: resp.pagination.items,
         totalPages: resp.pagination.pages,
-        pageSize: resp.pagination.in
+        pageSize: resp.pagination.in,
+        filterOptions: resp.filterOptions
       });
     });
   };
@@ -261,16 +262,17 @@ export class ListScheduleContainer extends React.Component {
                 spinnerColor = {LOGO_COLORS.HEARINGS.ACCENT}
                 message = "Loading the hearing schedule..."
               />
-            }
-            <ListSchedule
-              hearingSchedule={this.props.hearingSchedule}
-              fetchHearings={this.loadHearingSchedule}
-              user={user}
-              view={this.state.view}
-              switchListView={this.switchListView}
-              filterOptions={this.state.filterOptions}
-              updateQueries={this.updateQueries}
-            />
+            ) : (
+              <ListSchedule
+                hearingSchedule={this.props.hearingSchedule}
+                fetchHearings={this.loadHearingSchedule}
+                user={user}
+                view={this.state.view}
+                switchListView={this.switchListView}
+                filterOptions={this.state.filterOptions}
+              />
+            )}
+
             <Pagination
               pageSize={this.state.pageSize}
               currentPage={this.state.currentPage}
