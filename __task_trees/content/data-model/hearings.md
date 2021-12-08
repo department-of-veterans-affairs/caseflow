@@ -50,6 +50,5 @@ In the diagram below you can see the following relationships between various hea
 * The `hearings` and `legacy_hearings` table's `hearing_day_id` corresponds with the `hearing_days` table's `id`.
 * The `hearings_tasks_assocations` table's hearing_task_id corresponds with the `tasks` table's `id`.
 
-<img src="https://user-images.githubusercontent.com/63597932/105734269-760af380-5f00-11eb-8766-cc8fea5ba437.png">
-
+<img src="https://user-images.githubusercontent.com/55255674/145253083-f879c527-37a8-4673-933e-92f824ce7c6e.png">
 
