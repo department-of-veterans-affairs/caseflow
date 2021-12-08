@@ -77,7 +77,6 @@ describe Docket, :all_dbs do
         end
       end
 
-      # This should probably actually test distribute_appeals
       context "when there is a judge and the distribution is not_genpop" do
         let(:other_judge) { create(:user, :judge, :with_judge_team) }
 
@@ -94,7 +93,7 @@ describe Docket, :all_dbs do
           subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
 
           it "returns no appeals" do
-            expect(subject.count.size).to eq 0 # still don't get why this is needed
+            expect(subject.count.size).to eq 0
           end
         end
 
