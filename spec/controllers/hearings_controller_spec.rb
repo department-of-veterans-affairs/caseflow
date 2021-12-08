@@ -136,8 +136,8 @@ RSpec.describe HearingsController, type: :controller do
           }
         end
 
-        it "returns 400 status code" do
-          expect(subject.status).to eq(400)
+        it "returns 200 status code" do
+          expect(subject.status).to eq(200)
         end
 
         context "with hearing that already has a virtual hearing" do
