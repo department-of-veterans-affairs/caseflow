@@ -300,6 +300,13 @@ FactoryBot.define do
       bfhr { "2" }
     end
 
+    trait :travel_board_hearing_requested do
+      bfdocind { "T" }
+      bfcurloc { "57" }
+      bfhr { "2" }
+      bfac { "1" }
+    end
+
     trait :reopenable do
       bfmpro { "HIS" }
       bfcurloc { "99" }
