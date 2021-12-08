@@ -292,15 +292,19 @@ export const calculateEvidenceSubmissionEndDate = ({
   veteranDateOfDeath: veteranDateOfDeathStr,
   selectedTasks,
 }) => {
-  const substitutionDate = parseISO(substitutionDateStr);
-  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
   const evidenceSubmissionTask = selectedTasks.find(
     (task) => task.type === 'EvidenceSubmissionWindowTask'
   );
 
-  if (!evidenceSubmissionTask?.timerEndsAt) {
+  if (!evidenceSubmissionTask?.timerEndsAt || !veteranDateOfDeathStr) {
+    console.error('Error: Either the evidence submission task timer end date or the veteran date of death is missing');
+
     return null;
   }
+
+  const substitutionDate = parseISO(substitutionDateStr);
+  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
+
   const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
   const timerEndsAtDate = parseISO(timerEndsAt);
 
