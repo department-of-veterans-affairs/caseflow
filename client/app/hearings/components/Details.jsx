@@ -204,11 +204,11 @@ const HearingDetails = (props) => {
 
       // email validations should be thrown inline
       if (code === 1002) {
-          const errors = parseVirtualHearingErrors(msg);
+        const errors = parseVirtualHearingErrors(msg);
 
-          document.getElementById('email-section').scrollIntoView();
+        document.getElementById('email-section').scrollIntoView();
 
-          setVirtualHearingErrors(errors);
+        setVirtualHearingErrors(errors);
       } else {
         setError(msg);
       }
