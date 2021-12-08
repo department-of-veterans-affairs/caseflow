@@ -83,16 +83,13 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
-  # We still need to make some calls to VACOLS to be able
-  # to display the filters in the front-end:
-  #   1. HearingDayRequestTypeQuery provides all readable_request_types.
-  #   2. HearingDayJudgeNameQuery provides all judges names.
-
+  # This method returns the filter headers used on the table in the front-end for
+  # hearings schedule.
   def self.filter_options(hearing_days)
     {
-      request_type_filters: request_type_filters(hearing_days),
-      regional_office_filters: regional_office_filters(hearing_days),
-      judge_filters: judge_filters(hearing_days)
+      readable_request_type: request_type_filters(hearing_days),
+      regional_office: regional_office_filters(hearing_days),
+      vlj: judge_filters(hearing_days)
     }
   end
 
