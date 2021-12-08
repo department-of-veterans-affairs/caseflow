@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SharedScopes
+module DistributionScopes
   extend ActiveSupport::Concern
 
   def with_assigned_distribution_task_sql

@@ -132,7 +132,7 @@ class Docket
   end
 
   module Scopes
-    include SharedScopes
+    include DistributionScopes
 
     def priority
       include_aod_motions

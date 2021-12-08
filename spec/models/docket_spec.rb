@@ -103,7 +103,7 @@ describe Docket, :all_dbs do
           subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: judge) }
 
           it "returns only the cavc appeal" do
-            expect(subject).to eq [cavc_appeal]
+            expect(subject).to match_array([cavc_appeal])
           end
         end
       end
@@ -337,11 +337,11 @@ describe Docket, :all_dbs do
       end
 
       context "when the cavc remand is within affinity (< 21 days)" do
-        let(:judge_user) { judge_decision_review_task.assigned_to }
-        let(:first_distribution) { Distribution.create!(judge: other_judge) }
+        let(:first_judge) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:first_distribution) { Distribution.create!(judge: first_judge) }
 
-        let(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
-        let(:second_distribution) { Distribution.create!(judge: judge_user) }
+        let(:second_judge) { judge_decision_review_task.assigned_to }
+        let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
         before do
           cavc_distribution_task.update!(assigned_at: Time.zone.now)
@@ -369,11 +369,11 @@ describe Docket, :all_dbs do
       end
 
       context "when the cavc remand is outside of affinity (>= 21 days)" do
-        let(:judge_user) { judge_decision_review_task.assigned_to }
-        let(:first_distribution) { Distribution.create!(judge: judge_user) }
+        let(:first_judge) { judge_decision_review_task.assigned_to }
+        let(:first_distribution) { Distribution.create!(judge: first_judge) }
 
-        let(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
-        let(:second_distribution) { Distribution.create!(judge: other_judge) }
+        let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
         before do
           cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
@@ -414,11 +414,11 @@ describe Docket, :all_dbs do
         let!(:distribution) { Distribution.create!(judge: judge_user) }
 
         it "distributes the priority appeals" do
-          tasks = subject
+          distributed_cases = subject
           # cavc_appeal is priority, but out of affinity and thus not included:
           expected_appeal_ids = [aod_age_appeal.uuid, aod_motion_appeal.uuid]
-          expect(tasks.map(&:case_id)).to match_array(expected_appeal_ids)
-          expect(tasks.first.class).to eq(DistributedCase)
+          expect(distributed_cases.map(&:case_id)).to match_array(expected_appeal_ids)
+          expect(distributed_cases.first.class).to eq(DistributedCase)
           expect(distribution.distributed_cases.map(&:case_id)).to eq(expected_appeal_ids)
           judge_appeals = judge_user.reload.tasks.map(&:appeal)
           expect(judge_appeals).to include(aod_age_appeal)

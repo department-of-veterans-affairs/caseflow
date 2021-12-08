@@ -61,7 +61,7 @@ class HearingRequestDistributionQuery
   end
 
   module Scopes
-    include SharedScopes
+    include DistributionScopes
 
     def most_recent_hearings
       query = <<-SQL
