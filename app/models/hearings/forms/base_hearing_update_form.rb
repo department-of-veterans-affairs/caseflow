@@ -329,11 +329,13 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_email_recipients
-    hearing.create_or_update_recipients(
-      type: AppellantHearingEmailRecipient,
-      email_address: appellant_email,
-      timezone: appellant_timezone
-    )
+    if appellant_email.present?
+      hearing.create_or_update_recipients(
+        type: AppellantHearingEmailRecipient,
+        email_address: appellant_email,
+        timezone: appellant_timezone
+      )
+    end
 
     hearing.representative_recipient&.unset_email_address!
     if representative_email.present?
@@ -357,7 +359,7 @@ class BaseHearingUpdateForm
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do
-      create_or_update_email_recipients unless email_recipients_attributes.blank?
+      create_or_update_email_recipients
 
       @virtual_hearing_created = true
     end
