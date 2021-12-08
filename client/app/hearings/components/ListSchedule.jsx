@@ -5,7 +5,7 @@ import QueueTable from '../../queue/QueueTable';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
-import { scheduleData } from '../utils';
+import { formatTableData } from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -123,7 +123,6 @@ class ListSchedule extends React.Component {
     super(props);
 
     const data = formatTableData(this.props);
-    this.mergeFilterOptions(data);
 
     this.state = {
       ...data,
@@ -138,7 +137,7 @@ class ListSchedule extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (prevProps.hearingSchedule !== this.props.hearingSchedule) {
-      const data = scheduleData(this.props);
+      const data = formatTableData(this.props);
 
       this.setState({
         ...data
