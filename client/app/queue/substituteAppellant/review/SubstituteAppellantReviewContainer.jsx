@@ -25,6 +25,20 @@ export const SubstituteAppellantReviewContainer = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
+  const activeTasks = allTasks.filter((task) => {
+    return (task.status === 'in_progress' || task.status === 'assigned');
+  });
+
+  window.console.log(`active tasks: ${JSON.stringify(activeTasks)}`);
+
+  // get only the active tasks - all tasks that are assigned tasks or in progress
+
+  // Get ids to cancel from unselected active tasks
+  const findCancelTaskIds = (activeTaskIds, openTaskIds) => {
+    return activeTaskIds.filter((id) => !openTaskIds.includes(id.toString()));
+  };
+  const cancelTaskIds = findCancelTaskIds(activeTasks, existingValues.openTaskIds);
+
   const findSelectedTasks = (appealTasks, selectedTaskIds) => {
     if (selectedTaskIds === null) {
       return [];
@@ -78,15 +92,16 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
-    // To-Do: update this once the backend schema/endpoint has been updated
-    // To-Do: use delta between openTaskIds and the open tasks to determine task IDs to cancel
     const payload = {
       source_appeal_id: appealId,
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: poa ? poa.poa_participant_id : null,
+      // these are task ids to reopen
       selected_task_ids: existingValues.closedTaskIds,
+      // these are task ids to cancel
+      cancelled_task_ids: cancelTaskIds.length ? cancelTaskIds : null,
       task_params: buildTaskCreationParameters()
     };
 

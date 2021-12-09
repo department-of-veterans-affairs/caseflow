@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
-  def initialize(appeal, selected_task_ids, created_by, task_params)
+  def initialize(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
     @appeal = appeal
     @selected_task_ids = selected_task_ids
     @created_by = created_by
     @task_params = task_params
+    @cancelled_task_ids = cancelled_task_ids
   end
 
   def create_substitute_tasks!
@@ -14,6 +15,7 @@ class SameAppealSubstitutionTasksFactory
     else
       create_selected_tasks
     end
+    cancel_unselected_tasks
   end
 
   def create_tasks_for_distributed_appeal
@@ -22,6 +24,10 @@ class SameAppealSubstitutionTasksFactory
     elsif no_tasks_selected?
       reopen_decision_tasks
     end
+  end
+
+  def no_tasks_to_cancel?
+    @cancelled_task_ids.empty?
   end
 
   def no_tasks_selected?
@@ -79,6 +85,19 @@ class SameAppealSubstitutionTasksFactory
        @appeal.tasks.of_type(:JudgeDecisionReviewTask)&.open&.empty?
       attorney_task = @appeal.tasks.of_type(:AttorneyTask).cancelled.order(:id).last
       attorney_task&.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+    end
+  end
+
+  def cancel_unselected_tasks
+    return if no_tasks_to_cancel?
+
+    cancel_tasks = Task.where(id: @cancelled_task_ids)
+    puts(cancel_tasks)
+    cancel_tasks.each do |task|
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution
+      )
     end
   end
 end
