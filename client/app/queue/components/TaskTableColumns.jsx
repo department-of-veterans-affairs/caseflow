@@ -355,14 +355,14 @@ export const daysOnHoldColumn = (requireDasRecord) => {
   };
 };
 
-export const daysSinceLastColumn = (requireDasRecord) => {
+export const daysSinceLastActionColumn = (requireDasRecord) => {
   return {
-    header: COPY.CASE_LIST_TABLE_DAYS_SINCE_LAST_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name,
+    header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
-    valueFunction: (task) => `${task.daysSinceLastSatusChange} days ago`,
+    valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };

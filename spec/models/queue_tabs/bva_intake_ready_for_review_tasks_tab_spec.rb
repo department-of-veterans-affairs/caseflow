@@ -7,13 +7,13 @@ describe BvaIntakeReadyForReviewTab, :postgres do
       assignee: assignee
     }
   end
-  let(:assignee) { create(:bva_intake) }
+  let(:assignee) { create(:bva) }
 
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating an BvaIntakeReadyForReviewTab" do
-      let(:params) { { assignee: create(:bva_intake) } }
+    context "when only the assignee argument is passed when instantiating a BvaIntakeReadyForReviewTab" do
+      let(:params) { { assignee: create(:bva) } }
 
       it "returns the correct number of columns" do
         expect(subject.length).to eq(6)
@@ -24,8 +24,7 @@ describe BvaIntakeReadyForReviewTab, :postgres do
   describe ".tasks" do
     subject { tab.tasks }
 
-    context "when there are tasks assigned to the assignee and other folks" do
-      let!(:other_folks_tasks) { create_list(:pre_docket_task, 11) }
+    context "when there are tasks assigned to the assignee" do
       let!(:assignee_ready_to_review) { create_list(:pre_docket_task, 4, :assigned, assigned_to: assignee) }
       let!(:assignee_completed_tasks) { create_list(:pre_docket_task, 3, :completed, assigned_to: assignee) }
 

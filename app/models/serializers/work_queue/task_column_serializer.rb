@@ -316,7 +316,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :days_since_last_status_change do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name]
 
     if serialize_attribute?(params, columns)
       object.calculated_last_change_duration
