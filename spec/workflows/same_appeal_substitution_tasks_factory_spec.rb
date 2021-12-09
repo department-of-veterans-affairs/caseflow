@@ -19,12 +19,13 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
         OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
       end
       let(:selected_task_ids) { [] }
+      let(:cancelled_task_ids) { [] }
       subject do
         SameAppealSubstitutionTasksFactory.new(appeal,
                                                selected_task_ids,
                                                created_by,
                                                task_params,
-                                               cancelledTaskIds).create_substitute_tasks!
+                                               cancelled_task_ids).create_substitute_tasks!
       end
       context "when an appeal has already been distributed" do
         context "when it is a hearing lane appeal with hearing tasks selected" do
@@ -131,10 +132,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             it "reopens the most recently created AttorneyTask and JudgeDecisionReviewTask" do
               recent_attorney_task = appeal.tasks.of_type(:AttorneyTask).cancelled.order(:id).last
               recent_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).cancelled.order(:id).last
-
               subject
               open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open.first
-              open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
+              open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.last
 
               expect(open_attorney_task.instructions).to eq(recent_attorney_task.instructions)
               expect(open_judge_task.instructions).to eq(recent_judge_task.instructions)
@@ -243,6 +243,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   end
 
   describe "#selected_tasks_include_hearing_tasks?" do
+    let(:cancelled_task_ids) { [] }
     subject do
       SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
         .selected_tasks_include_hearing_tasks?
