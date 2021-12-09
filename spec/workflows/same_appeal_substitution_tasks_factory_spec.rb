@@ -23,7 +23,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
         SameAppealSubstitutionTasksFactory.new(appeal,
                                                selected_task_ids,
                                                created_by,
-                                               task_params).create_substitute_tasks!
+                                               task_params,
+                                               cancelledTaskIds).create_substitute_tasks!
       end
       context "when an appeal has already been distributed" do
         context "when it is a hearing lane appeal with hearing tasks selected" do
@@ -243,7 +244,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
   describe "#selected_tasks_include_hearing_tasks?" do
     subject do
-      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params)
+      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
         .selected_tasks_include_hearing_tasks?
     end
 
