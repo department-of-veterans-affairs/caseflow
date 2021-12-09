@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
-import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
+import { calculateEvidenceSubmissionEndDate, openTasksToShow } from '../tasks/utils';
 
 import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
@@ -25,19 +25,23 @@ export const SubstituteAppellantReviewContainer = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  const activeTasks = allTasks.filter((task) => {
-    return (task.status === 'in_progress' || task.status === 'assigned');
+  // get all active tasks that can be cancelled by user
+  const activeTasksToShow = allTasks.filter((task) => {
+    return (openTasksToShow.includes(task.type));
   });
 
-  window.console.log(`active tasks: ${JSON.stringify(activeTasks)}`);
+  const findTasksToCancel = (activeTasksIds, openTaskIds) => {
+    if (activeTasksIds === null) {
+      return [];
+    }
 
-  // get only the active tasks - all tasks that are assigned tasks or in progress
-
-  // Get ids to cancel from unselected active tasks
-  const findCancelTaskIds = (activeTaskIds, openTaskIds) => {
-    return activeTaskIds.filter((id) => !openTaskIds.includes(id.toString()));
+    // eslint-disable-next-line max-len
+    return activeTasksToShow.filter((task) => !openTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.taskId);
   };
-  const cancelTaskIds = findCancelTaskIds(activeTasks, existingValues.openTaskIds);
+
+  const cancelTasks = findTasksToCancel(activeTasksToShow, existingValues.openTaskIds);
+
+  window.console.log(cancelTasks);
 
   const findSelectedTasks = (appealTasks, selectedTaskIds) => {
     if (selectedTaskIds === null) {
@@ -100,8 +104,8 @@ export const SubstituteAppellantReviewContainer = () => {
       poa_participant_id: poa ? poa.poa_participant_id : null,
       // these are task ids to reopen
       selected_task_ids: existingValues.closedTaskIds,
-      // these are task ids to cancel
-      cancelled_task_ids: cancelTaskIds.length ? cancelTaskIds : null,
+      // these are the task ids to be cancelled
+      cancelled_task_ids: cancelTasks.length ? cancelTasks : null,
       task_params: buildTaskCreationParameters()
     };
 

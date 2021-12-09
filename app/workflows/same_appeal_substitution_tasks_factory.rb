@@ -92,7 +92,6 @@ class SameAppealSubstitutionTasksFactory
     return if no_tasks_to_cancel?
 
     cancel_tasks = Task.where(id: @cancelled_task_ids)
-    puts(cancel_tasks)
     cancel_tasks.each do |task|
       task.update!(
         status: Constants.TASK_STATUSES.cancelled,
