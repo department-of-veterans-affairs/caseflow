@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
+  # :reek:LongParameterList
   def initialize(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
     @appeal = appeal
     @selected_task_ids = selected_task_ids

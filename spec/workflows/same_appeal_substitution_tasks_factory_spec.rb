@@ -1,7 +1,4 @@
 # frozen_string_literal: true
-# add test for cancel method (unit test)
-# do a describe for cancellation method, make sure tasks are being cancelled.
-# create open tasks to be closed by cancellation method.
 
 describe SameAppealSubstitutionTasksFactory, :postgres do
   before { JudgeTeam.for_judge(judge).add_user(attorney) }
