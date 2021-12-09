@@ -49,10 +49,12 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType }) => {
         <Controller
           control={control}
           name="state"
-          render={({ onChange, ...rest }) => (
+          render={({ onChange, ref, ...rest }) => (
             <SearchableDropdown
+              inputRef={ref}
               {...rest}
               label="State"
+              optional
               options={STATES}
               filterOption={createFilter({ matchFrom: 'start' })}
               onChange={(valObj) => onChange(valObj?.value)}

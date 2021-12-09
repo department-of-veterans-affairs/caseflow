@@ -25,7 +25,7 @@ export default function MPISearch() {
     addressLine2: yup.string(),
     addressLine3: yup.string(),
     city: yup.string(),
-    state: yup.string(),
+    // state: yup.string(),
     zip: yup.string(),
     telephone: yup.string().typeError(FORM_ERROR_FIELD_INVALID)
   });
