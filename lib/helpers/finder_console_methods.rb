@@ -33,6 +33,8 @@ module FinderConsoleMethods
   #   vet = _veteran(123456789).first
   def _veteran(identifier)
     vet = Veteran.find_by_file_number_or_ssn(identifier)
+    return nil unless vet
+
     appeals = AppealFinder.find_appeals_with_file_numbers(vet.file_number)
     legacies = LegacyAppeal.fetch_appeals_by_file_number(vet.file_number)
     crs = ClaimReview.find_all_visible_by_file_number(vet.file_number)
