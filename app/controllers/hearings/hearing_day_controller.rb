@@ -19,16 +19,12 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
-          serialized_dockets = ::HearingDaySerializer.serialize_collection(
-            @paginated_dockets
-          )
-
           render json: {
-            hearings: serialized_dockets,
+            hearings: @serialized_dockets,
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date,
             pagination: pagy_metadata(@pagy),
-            filter_options: HearingDay.filter_options(dockets_in_range)
+            filter_options: dockets_in_range.filter_options
           }
         else
           hearing_day_range_invalid
@@ -174,6 +170,24 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
+  def query_params
+    if params[:query].present?
+      query_params = params.require(:query).permit(
+        HearingDay::AVAILABLE_FILTERS
+      )
+
+      parse_filter_options(query_params)
+    else
+      {}
+    end
+  end
+
+  def parse_filter_options(query_params)
+    query_params.to_hash.each_with_object({}) do |query_values, hash|
+      hash[query_values[0]] = query_values[1].split(",")
+    end
+  end
+
   def record_not_found
     render json: {
       "errors": [
@@ -208,10 +222,23 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def dockets_in_range
-    @dockets_in_range ||= hearing_day_range.hearing_days
+    query = if params[:query].present?
+              initialize_filterrific(
+                hearing_day_range.hearing_days,
+                query_params
+              ).find
+            else
+              hearing_day_range.hearing_days
+            end
+
+    @dockets_in_range ||= query
   end
 
   def set_pagination
     @pagy, @paginated_dockets = pagy(dockets_in_range)
+
+    @serialized_dockets = ::HearingDaySerializer.serialize_collection(
+      @paginated_dockets
+    )
   end
 end

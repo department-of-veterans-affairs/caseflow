@@ -83,23 +83,20 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
-  # We still need to make some calls to VACOLS to be able
-  # to display the filters in the front-end:
-  #   1. HearingDayRequestTypeQuery provides all readable_request_types.
-  #   2. HearingDayJudgeNameQuery provides all judges names.
-
-  def self.filter_options(hearing_days)
+  # This method returns the filter headers used on the table in the front-end for
+  # hearings schedule.
+  def self.filter_options
     {
-      request_type_filters: request_type_filters(hearing_days),
-      regional_office_filters: regional_office_filters(hearing_days),
-      judge_filters: judge_filters(hearing_days)
+      readable_request_type: request_type_filters,
+      regional_office: regional_office_filters,
+      vlj: judge_filters
     }
   end
 
-  def self.request_type_filters(hearing_days)
-    hearing_days_request_types = HearingDayRequestTypeQuery.new(hearing_days).call
+  def self.request_type_filters
+    hearing_days_request_types = HearingDayRequestTypeQuery.new(all).call
 
-    hearing_days.each_with_object({}) do |day, hash|
+    all.each_with_object({}) do |day, hash|
       request_types = HearingDaySerializer.get_readable_request_type(
         day,
         video_hearing_days_request_types: hearing_days_request_types
@@ -118,8 +115,8 @@ class HearingDay < CaseflowRecord
     end
   end
 
-  def self.regional_office_filters(hearing_days)
-    regional_offices_filters = hearing_days.each_with_object({}) do |day, hash|
+  def self.regional_office_filters
+    regional_offices_filters = all.each_with_object({}) do |day, hash|
       regional_office = HearingDayMapper.city_for_regional_office(day.regional_office)
 
       if hash[regional_office&.strip].present?
@@ -137,10 +134,10 @@ class HearingDay < CaseflowRecord
     regional_offices_filters
   end
 
-  def self.judge_filters(hearing_days)
-    judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
+  def self.judge_filters
+    judge_names = HearingDayJudgeNameQuery.new(all).call
 
-    judge_filters = hearing_days.each_with_object({}) do |day, hash|
+    judge_filters = all.each_with_object({}) do |day, hash|
       judge_first_name = HearingDaySerializer.get_judge_first_name(day, judge_names: judge_names)
       judge_last_name = HearingDaySerializer.get_judge_last_name(day, judge_names: judge_names)
       judge_full_name = FullName.new(

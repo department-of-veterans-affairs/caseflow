@@ -94,6 +94,7 @@ group :test, :development, :demo do
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
+  gem "filterrific"
   gem "guard-rspec"
   gem "immigrant"
   # Linters
