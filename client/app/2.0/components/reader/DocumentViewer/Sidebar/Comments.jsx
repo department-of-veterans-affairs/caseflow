@@ -22,7 +22,7 @@ export const SidebarComments = ({
   selectComment,
   commentRef,
   selectedComment,
-  currentDocument,
+  pdf,
   saveComment,
   cancelDrop,
   ...props
@@ -78,7 +78,7 @@ export const SidebarComments = ({
                   }}
                   page={comment.page}
                   date={comment.relevant_date}
-                  currentDocument={currentDocument}
+                  currentDocument={pdf}
                 />
               </div>
             )}
@@ -90,7 +90,7 @@ export const SidebarComments = ({
 );
 
 SidebarComments.propTypes = {
-  currentDocument: PropTypes.object,
+  pdf: PropTypes.object,
   comments: PropTypes.array,
   addComment: PropTypes.func,
   setPageNumber: PropTypes.func,

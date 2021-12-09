@@ -15,7 +15,7 @@ import { ClaimTypeDetail } from 'components/reader/DocumentList/ClaimsFolderDeta
  */
 export const DocumentInformation = ({
   appeal,
-  currentDocument,
+  pdf,
   saveDescription,
   changeDescription,
   resetDescription,
@@ -24,13 +24,13 @@ export const DocumentInformation = ({
   <div className="cf-sidebar-document-information">
     <p className="cf-pdf-meta-title cf-pdf-cutoff">
       <strong>Document Type: </strong>
-      <span title={currentDocument.type} className="cf-document-type">
-        {currentDocument.type}
+      <span title={pdf.type} className="cf-document-type">
+        {pdf.type}
       </span>
     </p>
     <EditableField
       className="cf-pdf-meta-title"
-      value={currentDocument.pendingDescription || currentDocument.description || ''}
+      value={pdf.pendingDescription || pdf.description || ''}
       onSave={saveDescription}
       onChange={changeDescription}
       onCancel={resetDescription}
@@ -41,7 +41,7 @@ export const DocumentInformation = ({
       errorMessage={error?.visible ? error.message : null}
     />
     <p className="cf-pdf-meta-title">
-      <strong>Receipt Date:</strong> {formatDateStr(currentDocument?.received_at)}
+      <strong>Receipt Date:</strong> {formatDateStr(pdf?.received_at)}
     </p>
     <hr />
     {isEmpty(appeal) ? <LoadingMessage message="Loading details..." /> : (
@@ -79,6 +79,6 @@ DocumentInformation.propTypes = {
   resetDescription: PropTypes.func,
   error: PropTypes.object,
   appeal: PropTypes.object,
-  currentDocument: PropTypes.object,
+  pdf: PropTypes.object,
 };
 /* eslint-enable camelcase */

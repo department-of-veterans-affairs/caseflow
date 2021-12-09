@@ -155,6 +155,7 @@ class Document < CaseflowRecord
   def serializable_hash(options = {})
     super({
       methods: [
+        :tags,
         :vbms_document_id,
         :content_url,
         :type,

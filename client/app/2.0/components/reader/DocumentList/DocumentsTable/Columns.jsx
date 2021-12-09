@@ -196,7 +196,6 @@ TypeCell.propTypes = {
   filterCriteria: PropTypes.object,
   doc: PropTypes.object,
   documentPathBase: PropTypes.string,
-  showPdf: PropTypes.func
 };
 
 /**

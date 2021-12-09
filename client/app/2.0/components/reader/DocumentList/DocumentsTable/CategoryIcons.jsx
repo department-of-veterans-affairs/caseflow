@@ -12,7 +12,7 @@ export const CategoryIcons = ({ searchCategoryHighlights, doc }) => {
   // Sort the Categories by the document and apply a filter
   const categories = sortCategories(doc);
 
-  return categories.length && (
+  return Boolean(categories.length) && (
     <ul className="cf-document-category-icons" aria-label="document categories">
       {categories.map((category) => {
         // Set the highlighted value

@@ -1,5 +1,5 @@
 // External Dependencies
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -8,7 +8,9 @@ import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
 import { markStyles, pdfPageStyles } from 'styles/reader/Document/PDF';
 import { CommentSymbol } from 'app/components/RenderFunctions';
-import { showPage } from 'store/reader/documentViewer';
+import { renderPage, renderText, renderContent } from 'utils/reader/pdf';
+import ProgressBar from 'components/shared/ProgressBar';
+import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 /**
  * PDF Page Component
@@ -19,7 +21,6 @@ export const Page = ({
   scale,
   pageRef,
   canvasRef,
-  currentDocument,
   rotation,
   style,
   numColumns,
@@ -30,25 +31,19 @@ export const Page = ({
   moveMouse,
   getCoords,
   currentPageIndex,
+  pdf,
   ...props
 }) => {
   // Calculate the Page Index
   const pageIndex = (numColumns * rowIndex) + columnIndex;
+  const docId = match.params.docId;
+  const page = props.pages[pageIndex];
 
   useEffect(() => {
-    if (currentDocument?.id) {
-      showPage({
-        pageIndex,
-        scale,
-        rotation: currentDocument.rotation,
-        docId: match.params.docId,
-        currentPage: pageIndex + 1,
-      });
+    renderContent({ page, docId, scale, pageIndex, totalPages: props.overscanCount, setRenderError: props.handleError });
+  }, [page, scale]);
 
-    }
-  }, [currentDocument?.id, scale, currentDocument?.rotation]);
-
-  return pageIndex >= currentDocument.numPages ? (
+  return pageIndex >= pdf?.numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
   ) : (
     <div key={pageIndex} style={style} >
@@ -63,7 +58,7 @@ export const Page = ({
         {...markStyles}
       >
         <div id={`rotationDiv${pageNumber(pageIndex)}`} style={pdfPageStyles(rotation, style.height, style.width)}>
-          <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
+          <canvas id={`pdf-canvas-${docId}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
           {addingComment && (
             <div
               id={`canvas-cursor-${pageIndex}`}
@@ -84,8 +79,8 @@ export const Page = ({
               getCoords={getCoords}
               handleDrop={(event) => moveComment(getCoords(event, pageIndex), pageIndex)}
               moveMouse={(event) => moveMouse(getCoords(event, pageIndex), pageIndex)}
-              currentDocument={currentDocument}
-              documentId={currentDocument.id}
+              currentDocument={pdf}
+              documentId={docId}
               pageIndex={pageIndex}
               scale={scale}
               dimensions={{ width: style.width, height: style.height }}
@@ -107,7 +102,7 @@ Page.propTypes = {
   scale: PropTypes.number,
   pageRef: PropTypes.element,
   canvasRef: PropTypes.element,
-  currentDocument: PropTypes.object,
+  pdf: PropTypes.object,
   rotation: PropTypes.number,
   style: PropTypes.object,
   match: PropTypes.object,
@@ -117,4 +112,6 @@ Page.propTypes = {
   columnIndex: PropTypes.number,
   setPageNumber: PropTypes.func,
   moveMouse: PropTypes.func,
+  handleError: PropTypes.func,
+  pages: PropTypes.array,
 };

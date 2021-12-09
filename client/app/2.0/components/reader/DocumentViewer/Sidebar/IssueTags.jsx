@@ -11,14 +11,14 @@ import { formatTagValue } from 'utils/reader';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, currentDocument, handleTagEdit }) => {
+export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, pdf, handleTagEdit }) => {
   return (
     <div className="cf-issue-tag-sidebar">
       {errors?.tag?.visible && <CannotSaveAlert />}
       <SearchableDropdown
         creatableOptions={{ onFocus: handleTagEdit('focus'), onBlur: handleTagEdit('blur') }}
         readOnly={pendingTag}
-        key={currentDocument.id}
+        key={pdf.id}
         name="tags"
         label="Select or tag issues"
         multi
@@ -26,7 +26,7 @@ export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, currentD
         creatable
         options={tagOptions}
         placeholder=""
-        value={currentDocument.tags ? formatTagValue(currentDocument.tags) : []}
+        value={pdf.tags ? formatTagValue(pdf.tags) : []}
         onChange={changeTags}
       />
     </div>
@@ -39,5 +39,5 @@ IssueTags.propTypes = {
   changeTags: PropTypes.func,
   errors: PropTypes.object,
   tagOptions: PropTypes.array,
-  currentDocument: PropTypes.object
+  pdf: PropTypes.object
 };

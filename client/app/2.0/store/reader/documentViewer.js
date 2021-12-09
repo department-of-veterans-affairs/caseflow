@@ -63,7 +63,7 @@ export const initialState = {
   errors: initialErrorState,
   scrollToSidebarComment: null,
   scale: 1,
-  windowingOverscan: random(5, 10).toString(),
+  windowingOverscan: '1',
   deleteCommentId: null,
   shareCommentId: null,
   search: {
@@ -182,117 +182,6 @@ export const searchText = createAsyncThunk(
 );
 
 /**
- * Method to render the PDF page
- * @param {Object} params -- Contains the document and page details for rendering
- */
-export const showPage = async (params) => {
-  // Get the first page
-  const page = pdfDocuments[params.docId].pages[params.pageIndex];
-
-  // Calculate the Viewport
-  const viewport = page ?
-    page.getViewport({ scale: params.scale }) :
-    initialState.viewport;
-
-  // Set the viewport
-  pdfDocuments[params.docId].viewport = viewport;
-
-  // Select the canvas element to draw
-  const canvas = document.getElementById(
-    `pdf-canvas-${params.docId}-${params.pageIndex}`
-  );
-
-  // Only Update the Canvas if it is present
-  if (canvas) {
-    // Update the Canvas
-    canvas.height = viewport.height || PDF_PAGE_HEIGHT;
-    canvas.width = viewport.width || PDF_PAGE_WIDTH;
-
-    // Draw the PDF to the canvas
-    await page.render({
-      canvasContext: canvas.getContext('2d', { alpha: false }),
-      viewport,
-    }).promise;
-
-    const text = await page.getTextContent();
-
-    await PDF.renderTextLayer({
-      container: document.getElementById(`text-${params.pageIndex}`),
-      textContent: text,
-      viewport,
-      textDivs: [],
-    }).promise;
-  }
-
-  return { viewport };
-};
-
-/**
- * Dispatcher to show the selected PDF
- */
-export const showPdf = createAsyncThunk(
-  'documentViewer/show',
-  async (
-    { rotation = null, pageNumber, currentDocument, scale },
-    { dispatch }
-  ) => {
-    // Update the Document as read if not already
-    if (!currentDocument.opened_by_current_user) {
-      dispatch(markDocAsRead({ docId: currentDocument.id }));
-    }
-
-    // Request the PDF document from eFolder
-    if (!pdfDocuments[currentDocument.id]) {
-      const { body } = await ApiUtil.get(currentDocument.content_url, {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      });
-
-      // Store the Document in-memory so that we do not serialize through Redux, but still persist
-      pdfDocuments[currentDocument.id] = {
-        pdf: await PDF.getDocument({ data: body }).promise,
-      };
-
-      // Store the pages for the PDF
-      pdfDocuments[currentDocument.id].pages = await Promise.all(
-        range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
-          (pageIndex) =>
-            pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
-        )
-      );
-    }
-
-    // Store the Viewport
-    pdfDocuments[currentDocument.id].viewport = pdfDocuments[
-      currentDocument.id
-    ].pages.reduce(
-      (viewport, page) => ({
-        height: Math.max(viewport.height, page.getViewport({ scale }).height),
-        width: Math.max(viewport.width, page.getViewport({ scale }).width),
-      }),
-      { height: 0, width: 0 }
-    );
-
-    // Return the new Document state
-    return {
-      scale,
-      viewport: pdfDocuments[currentDocument.id].viewport,
-      currentDocument: {
-        ...currentDocument,
-        rotation:
-          rotation === null ?
-            0 :
-            (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
-        currentPage: parseInt(pageNumber, 10) || 1,
-        numPages: pdfDocuments[currentDocument.id].pdf.numPages,
-      },
-    };
-  }
-);
-
-/**
  * Dispatcher to Remove Tags from a Document
  */
 export const removeTag = createAsyncThunk(
@@ -315,16 +204,16 @@ export const removeTag = createAsyncThunk(
  */
 export const addTag = createAsyncThunk(
   'documentViewer/addTag',
-  async ({ doc, tags }) => {
+  async ({ id, tags }) => {
     // Request the addition of the selected tags
     const { body } = await ApiUtil.post(
-      `/document/${doc.id}/tag`,
+      `/document/${id}/tag`,
       { data: { tags } },
       ENDPOINT_NAMES.TAG
     );
 
     // Return the selected document and tag to the next Dispatcher
-    return { doc, ...body };
+    return { id, ...body };
   }
 );
 
@@ -457,22 +346,6 @@ const documentViewerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
-      addCase(showPdf.rejected, (state) => {
-        state.selected = {
-          loadError: true,
-        };
-      }).
-      addCase(showPdf.pending, (state) => {
-        state.loading = true;
-      }).
-      addCase(showPdf.fulfilled, (state, action) => {
-        // Add the PDF data to the store
-        state.selected = action.payload.currentDocument;
-
-        // Add the PDF data to the store
-        state.scale = action.payload.scale;
-        state.viewport = action.payload.viewport;
-      }).
       addCase(searchText.fulfilled, (state, action) => {
         // Update the Search Term
         state.search.searchTerm = action.payload.searchTerm;

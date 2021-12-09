@@ -14,7 +14,7 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { showPdf, handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
+import { handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
 
 /**
  * PDF Initial State
@@ -236,7 +236,6 @@ const documentListSlice = createSlice({
         }).
       addMatcher(
         (action) => [
-          showPdf.fulfilled.toString()
         ].includes(action.type),
         (state, action) => {
           updateLastReadDoc(state, action.payload.currentDocument.id);
@@ -256,7 +255,7 @@ const documentListSlice = createSlice({
           addTag.fulfilled.toString()
         ].includes(action.type),
         (state, action) => {
-          state.documents[action.payload.doc.id].tags = action.payload.tags;
+          state.documents[action.payload.id].tags = action.payload.tags;
         }
       ).
       addMatcher(

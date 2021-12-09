@@ -38,3 +38,4 @@ export * from 'utils/reader/coordinates';
 export * from 'utils/reader/keyboard';
 export * from 'utils/reader/user';
 export * from 'utils/reader/appeal';
+export * from 'utils/reader/actions';

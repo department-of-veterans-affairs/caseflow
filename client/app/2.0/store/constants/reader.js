@@ -121,3 +121,9 @@ export const LOADING_DATA_MESSAGE = 'Loading claims folder in Reader...';
 export const CACHE_TIMEOUT_HOURS = 3;
 
 export const COMMENT_SCROLL_FROM_THE_TOP = 50;
+
+export const DEFAULT_VIEWPORT = {
+  height: PDF_PAGE_HEIGHT,
+  width: PDF_PAGE_WIDTH,
+}
+;

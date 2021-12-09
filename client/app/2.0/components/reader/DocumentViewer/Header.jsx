@@ -37,12 +37,10 @@ export const DocumentHeader = ({
 }) => (
   <div className="cf-pdf-header cf-pdf-toolbar">
     <span {...toolbarStyles.toolbar} {...toolbarStyles.toolbarLeft}>
-      {docsCount && (
-        <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte" onClick={backToClaimsFolder}>
-          <LeftChevron />
-          &nbsp; Back
-        </Link>
-      )}
+      <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte" onClick={backToClaimsFolder}>
+        <LeftChevron />
+        &nbsp; Back
+      </Link>
     </span>
     <span {...toolbarStyles.toolbar} {...toolbarStyles.toolbarCenter}>
       <span className="category-icons-and-doc-type">

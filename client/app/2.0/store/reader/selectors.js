@@ -78,12 +78,13 @@ export const documentListScreen = (state) => {
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Document State
  */
-export const documentScreen = (state) => {
+export const documentScreen = (pdfId) => (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
+  const pdf = documents[pdfId];
   const categories = Object.keys(documentCategories).reduce((list, key) => {
     // Set the current Category
-    const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
+    const cat = pdf && pdf[formatCategoryName(key)] ? key : '';
 
     // Return the Categories Object
     return {
@@ -93,8 +94,7 @@ export const documentScreen = (state) => {
   }, {});
 
   // Filter the comments for the current document
-  const comments = state.reader.annotationLayer.comments.filter((comment) =>
-    comment.document_id === state.reader.documentViewer.selected.id);
+  const comments = state.reader.annotationLayer.comments.filter((comment) => comment.document_id === pdfId);
 
   return {
     documents,

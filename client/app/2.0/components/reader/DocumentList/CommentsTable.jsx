@@ -12,7 +12,7 @@ import { documentHeaders } from 'components/reader/DocumentList/DocumentsTable/C
  * Comments Table Component
  * @param {Object} -- Props contain the documents and annotations
  */
-export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, show, documentPathBase, ...props }) => {
+export const CommentsTable = ({ documents, comments, filterCriteria, show, documentPathBase, ...props }) => {
   // Filter the rows
   const rows = filterCriteria?.searchQuery ?
     comments.filter(
@@ -41,7 +41,6 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
                   {...props}
                   filterCriteria={filterCriteria}
                   docType={doc?.type}
-                  showPdf={() => showPdf(doc.id)}
                   documentPathBase={documentPathBase}
                   currentDocument={doc}
                   comment={comment}
@@ -71,7 +70,6 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
 CommentsTable.propTypes = {
   documents: PropTypes.object.isRequired,
   documentPathBase: PropTypes.string,
-  showPdf: PropTypes.func,
   comments: PropTypes.array,
   filterCriteria: PropTypes.object,
   show: PropTypes.bool

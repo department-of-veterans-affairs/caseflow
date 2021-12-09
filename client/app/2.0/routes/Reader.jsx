@@ -20,9 +20,7 @@ const ReaderRoutes = (props) => {
   const appName = 'Reader';
 
   // Get the Reader Loading Status
-  const { loading } = useSelector((state) => ({
-    loading: state.reader.documentList.loading
-  }));
+  const { loading } = useSelector((state) => ({ loading: state.reader.documentList.loading }));
 
   // Return the list of routes
   return (
@@ -41,8 +39,6 @@ const ReaderRoutes = (props) => {
           />
           <PageRoute
             exact
-            loading={loading}
-            loadingMessage={LOADING_DATA_MESSAGE}
             title="Document Viewer | Caseflow Reader"
             path="/reader/appeal/:vacolsId/documents/:docId"
             breadcrumb="Document Viewer"

@@ -25,18 +25,18 @@ export const DocumentFooter = ({
   filteredDocIds,
   nextDoc,
   prevDoc,
-  doc,
+  pdf,
   setPageNumber,
   handleKeyPress,
 }) => (
   <div className="cf-pdf-footer cf-pdf-toolbar" {...toolbarStyles.footer}>
     <div className="cf-pdf-footer-buttons-left">
-      {prevDocId !== 0 && (
+      {prevDocId >= 0 && (
         <Button
           id="button-previous"
           name="previous"
           classNames={['cf-pdf-button']}
-          onClick={prevDoc}
+          onClick={() => prevDoc(prevDocId)}
           ariaLabel="previous PDF"
         >
           <PageArrowLeft />
@@ -48,7 +48,7 @@ export const DocumentFooter = ({
       {!loadError && (
         <span>
           <span className="page-progress-indicator">
-            {doc.numPages ? (
+            {pdf?.numPages ? (
               <span>
                 <div style={{ display: 'inline-block' }}>
                   <TextField
@@ -57,12 +57,12 @@ export const DocumentFooter = ({
                     label="Page"
                     onChange={setPageNumber}
                     onKeyPress={handleKeyPress}
-                    value={doc.currentPage}
+                    value={pdf.currentPage}
                     required={false}
                     className={['page-progress-indicator-input']}
                   />
                 </div>
-                of {doc.numPages}
+                of {pdf?.numPages}
               </span>
             ) : (
               <em>Loading document...</em>
@@ -77,12 +77,12 @@ export const DocumentFooter = ({
       </span>
     </div>
     <div className="cf-pdf-footer-buttons-right">
-      {nextDocId !== 0 && (
+      {nextDocId >= 0 && (
         <Button
           id="button-next"
           name="next"
           classNames={['cf-pdf-button cf-right-side']}
-          onClick={nextDoc}
+          onClick={() => nextDoc(nextDocId)}
           ariaLabel="next PDF"
         >
           <span className="right-button-label">Next</span>
@@ -106,5 +106,5 @@ DocumentFooter.propTypes = {
   setPageNumber: PropTypes.func,
   handleKeyPress: PropTypes.func,
   pageNumber: PropTypes.number,
-  doc: PropTypes.object,
+  pdf: PropTypes.object,
 };

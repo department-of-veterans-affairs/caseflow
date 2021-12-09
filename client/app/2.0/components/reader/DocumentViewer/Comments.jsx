@@ -64,7 +64,7 @@ export const Comments = ({
           style={{
             left: comment.x * props.scale,
             top: comment.y * props.scale,
-            transform: `rotate(${currentDocument.rotation}deg)`,
+            transform: `rotate(${props.rotation}deg)`,
             cursor: movingComment === comment.id ? 'grabbing' : 'pointer',
           }}
           draggable

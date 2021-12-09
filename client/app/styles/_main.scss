@@ -392,3 +392,46 @@ select {
   margin-left: 1.5em;
   text-indent: -1.7em;
 }
+
+/**
+* Progress Bar Styles
+**/
+.progress-bar-slider{
+  width: 1000px;
+  height: 10px;
+  overflow-x: hidden;
+  margin-top: 50px;
+}
+
+.progress-bar-line{
+  position:absolute;
+  opacity: 0.4;
+  background: $color-primary;
+  width: 150%;
+  height: 10px;
+}
+
+.progress-bar-subline{
+  position:absolute;
+  background:$color-primary;
+  height: 10px;
+}
+
+.progress-bar-inc{
+  animation: increase 2s infinite;
+  animation-fill-mode: forwards;
+}
+
+.progress-bar-dec{
+  animation: decrease 2s 0.5s infinite;
+  animation-fill-mode: forwards;
+}
+
+@keyframes increase {
+ from { left: -5%; width: 5%; }
+ to { left: 130%; width: 100%;}
+}
+@keyframes decrease {
+ from { left: -80%; width: 80%; }
+ to { left: 110%; width: 10%;}
+}
