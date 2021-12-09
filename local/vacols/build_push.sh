@@ -7,7 +7,7 @@ USAGE=$(cat <<-END
 ./build_push.sh [local|remote|rake]
 
    This is a handy script which allows you to build, push or download FACOLS locally for your use.
-   ${bold}You must first mfa using the issue_mfa.sh since it will download dependencies.${normal}
+
    Example Usage (build but not push): ./build_push.sh local
    Example Usage (build and push): ./build_push.sh remote
 
@@ -26,16 +26,16 @@ if [[ $1 == "-h" ]]; then
   exit 0
 fi
 
-if ! aws s3 ls --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ > /dev/null ; then
-  echo "Please run issue_mfa.sh first"
-  exit 1
-fi
+# if ! aws s3 ls --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ > /dev/null ; then
+#  echo "Please run issue_mfa.sh first"
+#  exit 1
+# fi
 
-if ! [ -x "$(command -v aws)" ]; then
-  echo 'Error: aws-cli is not installed.' >&2
-  echo 'Try: brew install awscli' >&2
-  exit 1
-fi
+# if ! [ -x "$(command -v aws)" ]; then
+#  echo 'Error: aws-cli is not installed.' >&2
+#  echo 'Try: brew install awscli' >&2
+#  exit 1
+# fi
 
 if [[ $# -gt 1 ]]; then
   echo "$USAGE" >&2
@@ -48,14 +48,14 @@ build(){
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
   echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
-  rm -rf $build_facols_dir && mkdir $build_facols_dir
+#  rm -rf $build_facols_dir && mkdir $build_facols_dir
 
   parent_dir=$PWD
 
   cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* $build_facols_dir
 
-  echo -e "\tDownloading FACOLS Dependencies..."
-  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
+#  echo -e "\tDownloading FACOLS Dependencies..."
+#  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
 
   echo -e "\tChecking if Instant Client has been downloaded"
   if [ $? -eq 0 ]; then
