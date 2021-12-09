@@ -38,7 +38,7 @@ class AttorneyCaseReview < CaseflowRecord
     end
     task.parent.update(assigned_by_id: task.assigned_to_id)
     if note && !note.nil?
-      note1 = "AttorneyTask notes: " + note
+      note1 = note_label + note
       task.parent.append_instruction(note1)
     end
     update_issue_dispositions_in_caseflow!
@@ -46,6 +46,16 @@ class AttorneyCaseReview < CaseflowRecord
 
   def written_by_name
     attorney.full_name
+  end
+
+  def note_label
+    if task.type === AttorneyTask.name
+      "*Attorney draft decision notes:*\n"
+    elsif task.type === AttorneyRewriteTask.name
+      "*Attorney revise decision notes:*\n"
+    else
+      ""
+    end
   end
 
   private
