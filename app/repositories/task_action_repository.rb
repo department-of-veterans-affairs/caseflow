@@ -537,7 +537,7 @@ class TaskActionRepository
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
         message_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
-        type: AssessDocumentationTask.name,
+        type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
     end
