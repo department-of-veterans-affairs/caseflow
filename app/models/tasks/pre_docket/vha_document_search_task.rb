@@ -22,6 +22,6 @@ class VhaDocumentSearchTask < Task
   ].freeze
 
   def self.label
-    COPY::CAMO_ASSESS_DOCUMENTATION_TASK_LABEL
+    COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL
   end
 end
