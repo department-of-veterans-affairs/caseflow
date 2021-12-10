@@ -25,7 +25,7 @@ class StuckAppealsChecker < DataIntegrityChecker
 
   def build_report_no_active_task
     add_to_report "AppealsWithNoTasksOrAllTasksOnHoldQuery: #{stuck_appeals.count}"
-    add_to_report "  Appeal ids: #{stuck_appeals.pluck(:id)}"
+    add_to_report "  Appeal ids: #{stuck_appeals.pluck(:id).sort}"
   end
 
   def build_report_closed_root_open_children
