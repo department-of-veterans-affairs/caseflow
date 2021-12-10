@@ -1117,6 +1117,25 @@
     }
   },
 
+  "MPI_SEARCH_ERRORS": {
+    "NOT_FOUND": {
+      "TITLE": "Not Found Error",
+      "MESSAGE": "No matching individuals found."
+    },
+    "QUERY_RESULT": {
+      "TITLE": "Query Result Error",
+      "MESSAGE": "Search query not specific enough."
+    },
+    "APPLICATION_ERROR": {
+      "TITLE": "Application Error",
+      "MESSAGE": "MPI application error; please try again later."
+    },
+    "NOT_REACHABLE": {
+      "TITLE": "Service not Reachable",
+      "MESSAGE": "MPI service not reachable; please try again later."
+    }
+  },
+
   "VIRTUAL_HEARING_ALREADY_CREATED": "Virtual hearing already exists",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
