@@ -484,7 +484,6 @@ describe AttorneyCaseReview, :all_dbs do
             expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
             expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
             subject
-            binding.pry
             expect(judge_task.reload.instructions).to include a_string_matching(/#{Regexp.escape(label)}/)
             expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
           end
