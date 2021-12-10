@@ -238,18 +238,25 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           end
         end
 
-        context "with additional hearing tasks" do
+        context "with additional hearing tasks and ScheduleHearingTask selected for reopening" do
           let(:appeal) { create(:appeal, :hearing_docket, :with_post_intake_tasks) }
           let(:hearing_task) { appeal.tasks.find_by(type: "HearingTask") }
+          let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
           let(:assign_hearing_disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
           let!(:transcription_task) { create(:transcription_task, parent: assign_hearing_disposition_task) }
           let!(:evidence_submission_window_task) { create(:evidence_submission_window_task, parent: assign_hearing_disposition_task) }
 
+          let(:selected_task_ids) { [schedule_hearing_task.id] }
+
           it "cancels related hearing tasks" do
             types_to_cancel = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name, EvidenceSubmissionWindowTask.name, TranscriptionTask.name]
             tasks_to_cancel = appeal.tasks.select { |task| types_to_cancel.include?(task.type) }
-            binding.pry
+
+            expect(tasks_to_cancel.all? { |task| task.open? }).to be true
+
             subject
+
+            expect(tasks_to_cancel.map(&:reload).all? { |task| task.cancelled? }).to be true
           end
         end
       end
