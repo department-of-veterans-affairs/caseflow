@@ -11,18 +11,20 @@ class MpiController < ApplicationController
     results = mpi.search_people_info(
       last_name: params[:last_name],
       first_name: params[:first_name],
-      middle_name: params[:middle_name],
-      ssn: params[:ssn],
-      date_of_birth: params[:date_of_birth],
-      gender: params[:gender],
-      address: params[:address],
-      telephone: params[:telephone]
+      middle_name: params[:middle_name].presence,
+      ssn: params[:ssn].presence,
+      date_of_birth: date_of_birth_param,
+      gender: params[:gender].presence,
+      address: address_param,
+      telephone: params[:telephone].presence
     )
 
     formatted_results = []
     results.each { |res| formatted_results.push(print_patient(res[:registration_event][:subject1][:patient])) }
 
     render json: formatted_results
+  rescue MPI::QueryError, Savon::SOAPFault => err
+    render json: {error: err.class.name}, status: :unprocessable_entity
   end
 
   # From Lib helpers
@@ -75,5 +77,19 @@ class MpiController < ApplicationController
   def format_address(person)
     value = person&.dig(:addr)
     "#{value[:street_address_line]}, #{value[:city]} #{value[:state]} #{value[:postal_code]}" if value.present?
+  end
+
+  def address_param
+    {
+      street: [params[:addressLine1], params[:addressLine2]].compact.join(" ").presence,
+      city: params[:city].presence,
+      state: params[:state].presence,
+      postal_code: params[:zip].presence,
+      country: params[:country].presence
+    }.compact.presence
+  end
+
+  def date_of_birth_param
+    params[:date_of_birth][0..9].gsub("-", "")
   end
 end

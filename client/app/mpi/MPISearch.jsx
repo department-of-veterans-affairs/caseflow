@@ -102,6 +102,7 @@ export default function MPISearch() {
       then((response) => {
         setMpiSearchResults(response.body);
         setSearchSubmitted(true);
+        setSearchError(null);
       }).
       catch((error) => {
         setSearchError(error);
@@ -111,7 +112,7 @@ export default function MPISearch() {
   useEffect(
     () => {
       if (searchError) {
-        const errorText = searchError.response.text;
+        const errorText = searchError.response.body.error;
 
         if (errorText.startsWith('MPI::NotFoundError')) {
           setErrorCopy(MPI_SEARCH_ERRORS.NOT_FOUND);
@@ -119,6 +120,8 @@ export default function MPISearch() {
           setErrorCopy(MPI_SEARCH_ERRORS.QUERY_RESULT);
         } else if (errorText.startsWith('MPI::ApplicationError')) {
           setErrorCopy(MPI_SEARCH_ERRORS.APPLICATION_ERROR);
+        } else if (errorText.startsWith('Savon::SOAPFault')) {
+          setErrorCopy(MPI_SEARCH_ERRORS.NOT_REACHABLE);
         }
       }
     },
@@ -240,6 +243,14 @@ export default function MPISearch() {
             <p className="cf-lead-paragraph">Too many results. Please narrow search query.</p>
           }
         </section>
+      }
+      { searchError &&
+        <Alert
+          type="error"
+          styling={alertStyling}
+          title={errorCopy.TITLE}
+          message={errorCopy.MESSAGE}
+        />
       }
     </React.Fragment>
   );
