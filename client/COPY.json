@@ -45,7 +45,12 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
+  "CASE_LIST_TABLE_TASK_OWNER_COLUMN_TITLE":"Task Owner",
+  "CASE_LIST_TABLE_DAYS_SINCE_LAST_COLUMN_TITLE":"Last Action",
+  "CASE_LIST_TABLE_TOTAL_DAYS_COLUMN_TITLE":"Total Days",
+  "CASE_LIST_TABLE_BOARD_INTAKE": "Board Intake",
   "CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP": "No instructions.",
+  "CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE": "Task Owner",
 
   "DOB_INVALID_ERRS": {
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
@@ -286,7 +291,13 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
+  "ORGANIZATIONAL_QUEUE_PAGE_BVA_COMPLETED_TASKS_DESCRIPTION": "Cases that are complete:",
+  "ORGANIZATIONAL_QUEUE_PAGE_BVA_PENDING_TASKS_DESCRIPTION": "Cases that are pending VHA action:",
+  "ORGANIZATIONAL_QUEUE_PAGE_BVA_READY_FOR_REVIEW_TASKS_DESCRIPTION": "Cases assigned to Board Intake:",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
+  "ORGANIZATIONAL_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending",
+  "ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review",
+  "ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE": "Completed",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
