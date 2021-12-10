@@ -250,6 +250,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
           let(:selected_task_ids) { [schedule_hearing_task.id] }
 
+          let(:selected_task_ids) { [schedule_hearing_task.id] }
+
           it "cancels related hearing tasks" do
             types_to_cancel = [
               AssignHearingDispositionTask.name,
