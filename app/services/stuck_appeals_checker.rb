@@ -11,6 +11,7 @@ class StuckAppealsChecker < DataIntegrityChecker
     add_to_report "To resolve, see https://github.com/department-of-veterans-affairs/caseflow/wiki/Resolving-Background-Job-Alerts#stuckappealschecker\n"
 
     build_report_no_active_task
+    add_to_report ""
     build_report_closed_root_open_children
   end
 
