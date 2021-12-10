@@ -79,7 +79,6 @@ describe AppellantSubstitution do
       let(:selected_task_types) { [] }
       let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
       let(:task_params) { {} }
-      let(:cancelled_task_ids) { {} }
 
       let(:params) do
         {
@@ -90,8 +89,7 @@ describe AppellantSubstitution do
           substitute_participant_id: substitute&.participant_id,
           poa_participant_id: poa_participant_id,
           selected_task_ids: selected_task_ids,
-          task_params: task_params,
-          cancelled_task_ids: cancelled_task_ids
+          task_params: task_params
         }
       end
 
@@ -437,7 +435,7 @@ describe AppellantSubstitution do
       let(:selected_task_types) { [] }
       let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
       let(:task_params) { {} }
-      let(:cancelled_task_ids) { {} }
+      let(:cancelled_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
 
       let(:params) do
         {

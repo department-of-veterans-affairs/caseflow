@@ -209,6 +209,29 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             expect(appeal.tasks.count).to eq(task_count)
             expect(appeal.tasks.open.count).to eq(open_task_count)
           end
+          context "when there are active tasks" do
+            before do
+              # Create active tasks that are visible to the user for selection
+              EvidenceOrArgumentMailTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
+              HearingTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
+            end
+            let(:evidence_task) { appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first }
+            let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+            let(:cancelled_task_ids) { [evidence_task.id, hearing_task.id] }
+            it "cancels active tasks" do
+              active_tasks = [
+                evidence_task,
+                hearing_task
+              ]
+
+              subject
+              expect(
+                active_tasks.map(&:reload).all? do |task|
+                  task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)
+                end
+              ).to be true
+            end
+          end
         end
         context "when the user selects a task assigned to an individual" do
           before do

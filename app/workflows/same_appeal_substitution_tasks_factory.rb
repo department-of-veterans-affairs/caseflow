@@ -27,6 +27,10 @@ class SameAppealSubstitutionTasksFactory
     end
   end
 
+  def no_tasks_to_cancel?
+    @cancelled_task_ids.empty?
+  end
+
   def no_tasks_selected?
     @selected_task_ids.empty?
   end
@@ -86,7 +90,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def cancel_unselected_tasks
-    return if @courseInGroups.blank?
+    return if no_tasks_to_cancel?
 
     cancel_tasks = Task.where(id: @cancelled_task_ids)
     cancel_tasks.each do |task|
