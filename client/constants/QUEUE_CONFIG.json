@@ -42,8 +42,8 @@
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
     },
-    "DAYS_SINCE_LAST": {
-      "name": "daysSinceLastColumn"
+    "DAYS_SINCE_LAST_ACTION": {
+      "name": "daysSinceLastActionColumn"
     },
     "DAYS_SINCE_INTAKE": {
       "name": "daysSinceIntakeColumn"
