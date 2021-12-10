@@ -121,7 +121,7 @@ class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
-    const data = scheduleData(this.props);
+    const data = formatTableData(this.props);
 
     this.state = {
       ...data,
@@ -155,43 +155,6 @@ class ListSchedule extends React.Component {
     return filledSlots;
   }
 
-  onQueryUpdate = (params) => {
-    if (JSON.stringify(params) === this.state.prevQueries) {
-      return;
-    }
-    this.setState({ prevQueries: JSON.stringify(params) });
-
-    let queries = { sort: null, filter: null };
-
-    if (params.sort?.sortCol) {
-      queries.sort = { column: params.sort.sortCol, ascending: params.sort.sortAscending };
-    }
-
-    const filterKeys = Object.keys(params.filter);
-    if (filterKeys.length > 0) {
-      // Find column in order to translate filter[key] into queryValue,
-      // which are properties in column.filterOptions
-      // ex: translate filter[key] "Anchorage, AK" into queryValue "RO63"
-      let filters = {};
-      filterKeys.forEach(key => {
-        const column = this.state.columns.find(col => { return col.columnName === key });
-        const labels = params.filter[key];
-        const values = [];
-        column.filterOptions?.map(option => {
-          if (labels.includes(option.value)) {
-            values.push(option.queryValue);
-          }
-        });
-        if (values.length > 0) {
-          filters[key] = values;
-        }
-      });
-      queries.filter = filters;
-    }
-
-    // Note: double-check handing of "blank" selections for Judge and Regional Office
-    const showLoading = false;
-    this.props.fetchHearings(0, showLoading, queries)
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {

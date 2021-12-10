@@ -1052,7 +1052,7 @@ export const formatVljName = (lastName, firstName) => {
   }
 };
 
-export const scheduleData = ({ hearingSchedule, user }) => {
+export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
   const rows = orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
     map((hearingDay) => ({
       id: hearingDay.id,
@@ -1137,6 +1137,28 @@ export const scheduleData = ({ hearingSchedule, user }) => {
   ];
 
   const columns = columnsForUser(user, columnData);
+
+  if (filterOptions) {
+    // Need to format options to match expected form of:
+    // { value: 'someText', displayText: 'Some Text (1)' }
+    // plus additional property of `queryValue` (specific to Hearings)
+    const columnNames = Object.keys(filterOptions);
+    columns.map(col => {
+      const foundCol = columnNames.find(name => { return name === col.columnName });
+      if (foundCol) {
+        col.filterOptions = [];
+        const options = Object.keys(filterOptions[foundCol]);
+        options.forEach(option => {
+          const values = filterOptions[foundCol][option];
+          col.filterOptions.push({
+            value: option,
+            displayText: `${option} (${values.count})`,
+            queryValue: values.queryValue
+          });
+        });
+      }
+    });
+  };
 
   const exportHeaders = [
     { label: 'ID',
