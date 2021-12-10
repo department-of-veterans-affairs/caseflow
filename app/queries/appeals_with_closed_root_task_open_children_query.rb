@@ -6,7 +6,7 @@ class AppealsWithClosedRootTaskOpenChildrenQuery
   end
 
   def active_tasks
-    Task.open.active.where(appeal: appeals_with_open_child_tasks_and_closed_root_tasks)
+    Task.active.where(appeal: appeals_with_open_child_tasks_and_closed_root_tasks)
   end
 
   private
