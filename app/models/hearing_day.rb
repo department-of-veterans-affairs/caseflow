@@ -48,6 +48,13 @@ class HearingDay < CaseflowRecord
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
+  VIRTUAL_HEARINGS_COUNT_STATEMENT = <<-SQL
+    count(
+      case when virtual_hearings.request_cancelled = false
+        then true
+      end
+    ) as virtual_hearings_count
+  SQL
 
   before_create :assign_created_by_user
   after_update :update_children_records
@@ -82,6 +89,62 @@ class HearingDay < CaseflowRecord
       .or(where(id: vacols_ids))
       .includes(:hearings, :judge).distinct
   }
+
+  def self.counts_for_ama_hearings
+    where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
+      .joins("INNER JOIN hearings ON hearing_days.id = hearings.hearing_day_id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings
+        ON virtual_hearings.hearing_id = hearings.id
+        AND virtual_hearings.hearing_type = 'Hearing'
+        AND virtual_hearings.request_cancelled = false
+      SQL
+      .group(:id)
+      .select(
+        "id",
+        "request_type",
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
+        "count(hearings.id) as hearings_count"
+      )
+  end
+
+  def self.counts_for_legacy_hearings
+    where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
+      .joins("INNER JOIN legacy_hearings ON hearing_days.id = legacy_hearings.hearing_day_id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings
+        ON virtual_hearings.hearing_id = legacy_hearings.id
+        AND virtual_hearings.hearing_type = 'LegacyHearing'
+        AND virtual_hearings.request_cancelled = false
+      SQL
+      .group(:id)
+      .select(
+        "id",
+        "request_type",
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
+        "count(legacy_hearings.id) as hearings_count"
+      )
+  end
+
+  def self.ama_hearings_count_per_day
+    Hearing.where(hearing_day_id: pluck(:id)).where(
+      "disposition NOT in (?) or disposition is null",
+      Hearing::CLOSED_HEARING_DISPOSITIONS
+    ).group(:hearing_day_id).count
+  end
+
+  def self.legacy_hearings_count_per_day
+    vacols_ids = LegacyHearing.where(hearing_day_id: pluck(:id)).pluck(:vacols_id)
+
+    vacols_ids.in_groups_of(1000, false).reduce({}) do |acc, vacols_batched_ids|
+      acc.merge(
+        VACOLS::CaseHearing.where(hearing_pkseq: vacols_batched_ids)
+         .where("hearing_disp NOT in (?) or hearing_disp is null", VACOLS::CaseHearing::CLOSED_HEARING_DISPOSITIONS)
+         .group(:vdkey)
+         .count
+      )
+    end
+  end
 
   # This method returns the filter headers used on the table in the front-end for
   # hearings schedule.
@@ -214,7 +277,7 @@ class HearingDay < CaseflowRecord
   end
 
   def to_hash
-    judge_names = HearingDayJudgeNameQuery.new([self]).call
+    judge_names = HearingDayJudgeNameQuery.new(self.class.where(id: id)).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
                                            .new(HearingDay.where(id: id))
