@@ -1,14 +1,21 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { css } from 'glamor';
 import * as yup from 'yup';
-import { TextField } from '../components/TextField';
-import AddressForm from '../components/AddressForm';
-import DateSelector from '../components/DateSelector';
-import RadioField from '../components/RadioField';
-import { FORM_ERROR_FIELD_REQUIRED, FORM_ERROR_FIELD_INVALID } from '../../COPY';
+
 import ApiUtil from '../util/ApiUtil';
+import Alert from 'app/components/Alert';
+import AddressForm from 'app/components/AddressForm';
+import DateSelector from 'app/components/DateSelector';
+import { TextField } from 'app/components/TextField';
+import RadioField from 'app/components/RadioField';
+import { FORM_ERROR_FIELD_REQUIRED, FORM_ERROR_FIELD_INVALID, MPI_SEARCH_ERRORS } from '../../COPY';
+
+const alertStyling = css({
+  marginBottom: '30px',
+});
 
 export default function MPISearch() {
   const mpiSearchschema = yup.object().shape({
@@ -50,11 +57,10 @@ export default function MPISearch() {
     resolver: yupResolver(mpiSearchschema),
     defaultValues: { ...defaultFormValues }
   });
+
   const {
-    control,
     register,
-    watch,
-    formState: { errors, isDirty },
+    formState: { errors },
     handleSubmit,
   } = methods;
 
@@ -66,12 +72,13 @@ export default function MPISearch() {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [errorCopy, setErrorCopy] = useState(MPI_SEARCH_ERRORS.NOT_REACHABLE);
   const genderOptions = [
     { displayText: 'Male', value: 'M' },
     { displayText: 'Female', value: 'F' }
   ];
-  const [searchSubmitted, setSearchSubmitted] = useState(false);
-  const [searchError, setSearchError] = useState(null);
 
   const onSubmit = (formData) => {
     const queryFromData = {
@@ -101,6 +108,23 @@ export default function MPISearch() {
       });
   };
 
+  useEffect(
+    () => {
+      if (searchError) {
+        const errorText = searchError.response.text;
+
+        if (errorText.startsWith('MPI::NotFoundError')) {
+          setErrorCopy(MPI_SEARCH_ERRORS.NOT_FOUND);
+        } else if (errorText.startsWith('MPI::QueryResultError')) {
+          setErrorCopy(MPI_SEARCH_ERRORS.QUERY_RESULT);
+        } else if (errorText.startsWith('MPI::ApplicationError')) {
+          setErrorCopy(MPI_SEARCH_ERRORS.APPLICATION_ERROR);
+        }
+      }
+    },
+    [searchError]
+  );
+
   const searchResultList = mpiSearchResults.map((person, index) => {
     return <div>
       <ul className="usa-unstyled-list">
@@ -120,6 +144,14 @@ export default function MPISearch() {
   // TO DO: Split form into own component
     <React.Fragment>
       <h1>MPI Search</h1>
+      { searchError &&
+        <Alert
+          type="error"
+          styling={alertStyling}
+          title={errorCopy.TITLE}
+          message={errorCopy.MESSAGE}
+        />
+      }
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           name="lastName"
@@ -201,17 +233,11 @@ export default function MPISearch() {
           { mpiSearchResults.length > 0 && mpiSearchResults.length < 11 &&
             <ul className="usa-unstyled-list">{ searchResultList }</ul>
           }
-          { mpiSearchResults.length == 0 &&
+          { mpiSearchResults.length === 0 &&
             <p className="cf-lead-paragraph">No results</p>
           }
           { mpiSearchResults.length > 10 &&
             <p className="cf-lead-paragraph">Too many results. Please narrow search query.</p>
-          }
-
-          { searchError &&
-
-            /* TO DO If can direct to 500 page with same message this won't be needed */
-            <p className="cf-lead-paragraph">The MPI API is currently unavailable.  Please try again later.</p>
           }
         </section>
       }
