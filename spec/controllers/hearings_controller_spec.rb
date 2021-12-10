@@ -136,10 +136,6 @@ RSpec.describe HearingsController, type: :controller do
           }
         end
 
-        it "returns 400 status code" do
-          expect(subject.status).to eq(400)
-        end
-
         context "with hearing that already has a virtual hearing" do
           let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
           let!(:virtual_hearing) do
