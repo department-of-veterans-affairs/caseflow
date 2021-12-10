@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EmailModalConfirmation ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
+exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
 <ChangeEmailOrTimezone
   hearing={
     Object {
@@ -326,7 +326,7 @@ exports[`EmailModalConfirmation ChangeEmailOrTimezone sub-component Displays Rea
 </ChangeEmailOrTimezone>
 `;
 
-exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
+exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
 <ChangeFromVirtual
   hearing={
     Object {
@@ -904,7 +904,7 @@ exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays Hearing
 </ChangeFromVirtual>
 `;
 
-exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays ReadOnlyEmails 1`] = `
+exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnlyEmails 1`] = `
 <ChangeFromVirtual
   hearing={
     Object {
@@ -1470,7 +1470,7 @@ exports[`EmailModalConfirmation ChangeFromVirtual sub-component Displays ReadOnl
 </ChangeFromVirtual>
 `;
 
-exports[`EmailModalConfirmation ChangeHearingTime sub-component Displays ReadOnlyEmails component 1`] = `
+exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnlyEmails component 1`] = `
 <ChangeHearingTime
   hearing={
     Object {
@@ -2036,7 +2036,7 @@ exports[`EmailModalConfirmation ChangeHearingTime sub-component Displays ReadOnl
 </ChangeHearingTime>
 `;
 
-exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
 <ChangeToVirtual
   appellantEmailError="Something went wrong..."
   hearing={
@@ -2463,7 +2463,7 @@ exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays appellant
 </ChangeToVirtual>
 `;
 
-exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays input for appellant and representative email 1`] = `
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for appellant and representative email 1`] = `
 <ChangeToVirtual
   hearing={
     Object {
@@ -2862,7 +2862,7 @@ exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays input for
 </ChangeToVirtual>
 `;
 
-exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays representative email error when present 1`] = `
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays representative email error when present 1`] = `
 <ChangeToVirtual
   hearing={
     Object {
@@ -3309,7 +3309,7 @@ exports[`EmailModalConfirmation ChangeToVirtual sub-component Displays represent
 </ChangeToVirtual>
 `;
 
-exports[`EmailModalConfirmation DateTime sub-component Displays divider for formerly Central hearings 1`] = `
+exports[`EmailConfirmationModal DateTime sub-component Displays divider for formerly Central hearings 1`] = `
 <DateTime
   hearing={
     Object {
@@ -3474,7 +3474,7 @@ exports[`EmailModalConfirmation DateTime sub-component Displays divider for form
 </DateTime>
 `;
 
-exports[`EmailModalConfirmation DateTime sub-component Displays formatted hearing date and time 1`] = `
+exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearing date and time 1`] = `
 <DateTime
   hearing={
     Object {
@@ -3648,8 +3648,8 @@ exports[`EmailModalConfirmation DateTime sub-component Displays formatted hearin
 </DateTime>
 `;
 
-exports[`EmailModalConfirmation Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
-<EmailModalConfirmation
+exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
+<EmailConfirmationModal
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -4250,11 +4250,11 @@ exports[`EmailModalConfirmation Displays ChangeEmailOrTimezone component when ty
       </section>
     </Modal>
   </div>
-</EmailModalConfirmation>
+</EmailConfirmationModal>
 `;
 
-exports[`EmailModalConfirmation Displays ChangeFromVirtual component when type is change_from_virtual 1`] = `
-<EmailModalConfirmation
+exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type is change_from_virtual 1`] = `
+<EmailConfirmationModal
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -5069,11 +5069,11 @@ exports[`EmailModalConfirmation Displays ChangeFromVirtual component when type i
       </section>
     </Modal>
   </div>
-</EmailModalConfirmation>
+</EmailConfirmationModal>
 `;
 
-exports[`EmailModalConfirmation Displays ChangeHearingTime component when type is change_hearing_time 1`] = `
-<EmailModalConfirmation
+exports[`EmailConfirmationModal Displays ChangeHearingTime component when type is change_hearing_time 1`] = `
+<EmailConfirmationModal
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -5888,11 +5888,11 @@ exports[`EmailModalConfirmation Displays ChangeHearingTime component when type i
       </section>
     </Modal>
   </div>
-</EmailModalConfirmation>
+</EmailConfirmationModal>
 `;
 
-exports[`EmailModalConfirmation Matches snapshot with default props 1`] = `
-<EmailModalConfirmation
+exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
+<EmailConfirmationModal
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -6612,10 +6612,10 @@ exports[`EmailModalConfirmation Matches snapshot with default props 1`] = `
       </section>
     </Modal>
   </div>
-</EmailModalConfirmation>
+</EmailConfirmationModal>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -6839,7 +6839,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -7063,7 +7063,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -7287,7 +7287,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7510,7 +7510,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -7698,7 +7698,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7886,7 +7886,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -8074,7 +8074,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -8262,7 +8262,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Central Vi
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -8498,7 +8498,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -8734,7 +8734,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -8970,7 +8970,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -9205,7 +9205,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -9405,7 +9405,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -9605,7 +9605,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -9805,7 +9805,7 @@ exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virt
 </ReadOnlyEmails>
 `;
 
-exports[`EmailModalConfirmation ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
