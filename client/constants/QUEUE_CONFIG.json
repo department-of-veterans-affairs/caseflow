@@ -7,18 +7,32 @@
   "INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME": "on_hold_person",
   "TRACKING_TASKS_TAB_NAME": "tracking",
   "UNASSIGNED_TASKS_TAB_NAME": "unassignedTab",
-  "COMPLETED_TASKS_TAB_NAME": "completedTab",
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
-  "IN_PROGRESS_TASKS_TAB_NAME": "inProgressTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
+  "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
+  "PENDING_TASKS_TAB_NAME": "pending",
+  "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
+  "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
+  "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
+  "VHA_PO_ASSIGNED_TASKS_TAB_NAME": "po_assigned",
+  "VHA_PO_IN_PROGRESS_TASKS_TAB_NAME": "po_inProgressTab",
+  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
+  "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
+  "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
       "name": "typeColumn"
+    },
+    "BOARD_INTAKE": {
+      "name": "boardIntakeColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
     },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
@@ -28,10 +42,21 @@
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
     },
+    "DAYS_SINCE_LAST": {
+      "name": "daysSinceLastColumn"
+    },
+    "DAYS_SINCE_INTAKE": {
+      "name": "daysSinceIntakeColumn"
+    },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["assigned_at"]
+    },
+    "LAST_ACTION": {
+      "name": "lastActionColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["updated_at"]
     },
     "DOCKET_NUMBER": {
       "filterable": true,
@@ -71,6 +96,9 @@
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
     },
+    "TASK_ASSIGNED_BY": {
+      "name": "assignedByColumn"
+    },
     "TASK_CLOSED_DATE": {
       "name": "completedDateColumn",
       "sorting_table": "tasks",
@@ -91,11 +119,21 @@
       "sorting_table": "tasks",
       "sorting_columns": ["placed_on_hold_at"]
     },
+    "TASK_OWNER": {
+      "name": "taskOwnerColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["display_name"]
+    },
     "TASK_TYPE": {
       "filterable": true,
       "name": "taskColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
+    },
+    "VAMC_OWNER": {
+      "name": "vamcOwnerColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["display_name"]
     }
   },
 

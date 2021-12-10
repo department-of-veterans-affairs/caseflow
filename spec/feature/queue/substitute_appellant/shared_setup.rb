@@ -180,11 +180,12 @@ RSpec.shared_examples("fill substitution form") do
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
 
-      # Verify that the Evidence Submission Window was stored correctly
-      if docket_type.eql?("evidence_submission")
+      # Verify that the Evidence Submission Window was stored correctly when there is an active esw task
+      active_esw_tasks = new_appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask)
+      if docket_type.eql?("evidence_submission") && !active_esw_tasks.empty?
+        active_esw_task = new_appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
         # Ensure that our new window ends on specified date, accounting for user's time zone (not based on midnight UTC)
-        window_task = EvidenceSubmissionWindowTask.find_by(appeal: new_appeal)
-        expect(window_task.timer_ends_at).to be_between(
+        expect(active_esw_task.timer_ends_at).to be_between(
           evidence_submission_window_end_time - 1.day,
           evidence_submission_window_end_time + 1.day
         )

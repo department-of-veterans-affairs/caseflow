@@ -258,7 +258,7 @@ export default class DailyDocket extends React.Component {
           <div className="cf-push-right">
             {!user.userVsoEmployee && (
               <React.Fragment>
-                `VLJ: ${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}`
+                VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
                 <br />
               </React.Fragment>
             )}

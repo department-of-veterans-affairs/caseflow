@@ -10,23 +10,30 @@ import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import Button from '../components/Button';
 import {
   assignedToColumn,
+  assignedByColumn,
   badgesColumn,
+  boardIntakeColumn,
   completedToNameColumn,
   daysOnHoldColumn,
+  daysSinceLastColumn,
+  daysSinceIntakeColumn,
   daysWaitingColumn,
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
+  // lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
   taskColumn,
+  taskOwnerColumn,
   taskCompletedDateColumn,
-  typeColumn
+  typeColumn,
+  // taskOwnerColumn,
+  vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -38,11 +45,6 @@ const rootStyles = css({
   '.usa-alert + &': {
     marginTop: '1.5em'
   }
-});
-
-const style = css({
-  float: 'right',
-  margin: '10px'
 });
 
 /**
@@ -58,6 +60,7 @@ class QueueTableBuilder extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
+
     const activeTab = this.paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
@@ -76,6 +79,7 @@ class QueueTableBuilder extends React.PureComponent {
     column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
+
     const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
@@ -91,6 +95,9 @@ class QueueTableBuilder extends React.PureComponent {
         config.userRole
       ),
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
+        requireDasRecord
+      ),
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]: daysSinceLastColumn(
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
@@ -119,9 +126,28 @@ class QueueTableBuilder extends React.PureComponent {
         tasks,
         filterOptions
       ),
+      [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
+        tasks,
+        filterOptions
+      ),
+      // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
+      //   tasks,
+      //   filterOptions
+      // ),
+      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
+        tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
+        tasks,
+        filterOptions
+      ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
+      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord)
     };
 
     return functionForColumn[column.name];
@@ -190,37 +216,13 @@ class QueueTableBuilder extends React.PureComponent {
       this.taskTableTabFactory(tabConfig, config)
     );
 
-  downloadCsv = () => {
-    // location.href = ``; // Set to Download URL
-  }
-
-  newIntake = () => {
-    location.href = '/intake';
-  }
-
   render = () => {
     const config = this.queueConfig();
-    let header = <QueueOrganizationDropdown organizations={this.props.organizations} />;
-
-    if (window.location.pathname.includes('vha-camo')) {
-      const intakeButton = <Button {...style}
-        classNames={['intake-button']}
-        onClick={this.newIntake}>
-        + New Intake Form
-      </Button>;
-      const downloadButton = <Button {...style}
-        classNames={['donwload-button', 'usa-button-secondary']}
-        onClick={this.downloadCsv}>
-        Download Completed Tasks
-      </Button>;
-
-      header = <div {...style}>{intakeButton} {downloadButton}</div>;
-    }
 
     return (
       <div className={rootStyles}>
         <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-        {header}
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-tabwindow"
           tabs={this.tabsFromConfig(config)}

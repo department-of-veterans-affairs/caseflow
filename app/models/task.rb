@@ -404,6 +404,14 @@ class Task < CaseflowRecord
     (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
+  def calculated_last_change_duration
+    (Time.zone.today - updated_at&.to_date)&.to_i
+  end
+
+  def calculated_duration_from_board_intake
+    (Time.zone.today - created_at&.to_date)&.to_i
+  end
+
   def update_task_type(params)
     multi_transaction do
       new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
@@ -606,6 +614,12 @@ class Task < CaseflowRecord
     return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
 
     true
+  end
+
+  def post_distribution?
+    [JudgeAssignTask, JudgeDecisionReviewTask].any? do |task_type|
+      type == task_type.to_s || ancestor_task_of_type(task_type).present?
+    end
   end
 
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
