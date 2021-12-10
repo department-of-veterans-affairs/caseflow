@@ -244,15 +244,22 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
           let(:assign_hearing_disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
           let!(:transcription_task) { create(:transcription_task, parent: assign_hearing_disposition_task) }
-          let!(:evidence_submission_window_task) { create(:evidence_submission_window_task, parent: assign_hearing_disposition_task) }
+          let!(:evidence_submission_window_task) do
+            create(:evidence_submission_window_task, parent: assign_hearing_disposition_task)
+          end
 
           let(:selected_task_ids) { [schedule_hearing_task.id] }
 
           it "cancels related hearing tasks" do
-            types_to_cancel = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name, EvidenceSubmissionWindowTask.name, TranscriptionTask.name]
+            types_to_cancel = [
+              AssignHearingDispositionTask.name,
+              ChangeHearingDispositionTask.name,
+              EvidenceSubmissionWindowTask.name,
+              TranscriptionTask.name
+            ]
             tasks_to_cancel = appeal.tasks.select { |task| types_to_cancel.include?(task.type) }
 
-            expect(tasks_to_cancel.all? { |task| task.open? }).to be true
+            expect(tasks_to_cancel.all?(&:open?)).to be true
 
             subject
 
