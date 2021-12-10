@@ -468,22 +468,25 @@ describe AttorneyCaseReview, :all_dbs do
         end
 
         it "updates judge task with attorney notes" do
-          expect(judge_task.reload.instructions).not_to include a_string_matching /#{Regexp.escape(COPY::ATTORNEY_TASK_NOTES_PREFIX)}/
-          expect(judge_task.reload.instructions).not_to include a_string_matching /#{note}/
+          label = COPY::ATTORNEY_TASK_NOTES_PREFIX
+          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
+          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
           subject
-          expect(judge_task.reload.instructions).to include a_string_matching /#{Regexp.escape(COPY::ATTORNEY_TASK_NOTES_PREFIX)}/
-          expect(judge_task.reload.instructions).to include a_string_matching /#{note}/
+          expect(judge_task.reload.instructions).to include a_string_matching(/#{Regexp.escape(label)}/)
+          expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
         end
 
         context "with attorney rewrite task" do
           let(:task_id) { create(:ama_attorney_rewrite_task, assigned_by: judge, assigned_to: attorney).id }
 
           it "updates judge task with attorney notes" do
-            expect(judge_task.reload.instructions).not_to include a_string_matching /#{Regexp.escape(COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX)}/
-            expect(judge_task.reload.instructions).not_to include a_string_matching /#{note}/
+            label = COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX
+            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
+            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
             subject
-            expect(judge_task.reload.instructions).to include a_string_matching /#{Regexp.escape(COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX)}/
-            expect(judge_task.reload.instructions).to include a_string_matching /#{note}/
+            binding.pry
+            expect(judge_task.reload.instructions).to include a_string_matching(/#{Regexp.escape(label)}/)
+            expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
           end
         end
       end
