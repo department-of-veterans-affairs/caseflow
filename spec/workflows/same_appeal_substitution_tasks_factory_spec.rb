@@ -256,7 +256,11 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
             subject
 
-            expect(tasks_to_cancel.map(&:reload).all? { |task| task.cancelled? }).to be true
+            expect(
+              tasks_to_cancel.map(&:reload).all? do |task|
+                task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)
+              end
+            ).to be true
           end
         end
       end
