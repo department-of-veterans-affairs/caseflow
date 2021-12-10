@@ -345,7 +345,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedBvaIntakeReturnToCamo = (props) => (
-    <AssignToView isTeamAssign {...props.match.params} />
+    <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />
   );
 
   routedReturnToCamo = (props) => (
