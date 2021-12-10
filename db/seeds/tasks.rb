@@ -3,7 +3,10 @@
 # create tasks and their related appeals
 # to do: split this up more logically for legacy, AMA, etc.
 
+# rubocop:disable Metrics/ModuleLength
 module Seeds
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ClassLength
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
@@ -383,31 +386,9 @@ module Seeds
     end
 
     def create_legacy_hearing_tasks
-      (%w[RO17 RO45] + [nil]).each do |regional_office|
-        appeal = create_legacy_case_with_open_schedule_hearing_task(
-          regional_office
-        )
-
-        create(:available_hearing_locations, regional_office, appeal: appeal)
-
-        root_task = create(:root_task, appeal: appeal)
-        distribution_task = create(
-          :distribution_task,
-          appeal: appeal,
-          parent: root_task
-        )
-        parent_hearing_task = create(
-          :hearing_task,
-          parent: distribution_task,
-          appeal: appeal
-        )
-
-        create(
-          :schedule_hearing_task,
-          :in_progress,
-          parent: parent_hearing_task,
-          appeal: appeal
-        )
+      # Phoenix and St. Petersburg get legacy hearing requests ("Legacy Veterans Waiting" tab)
+      %w[RO17 RO45].each do |regional_office|
+        create_legacy_appeals_with_open_schedule_hearing_task(regional_office, 30)
       end
     end
 
@@ -497,7 +478,9 @@ module Seeds
         vacols_id = "3019752"
       end
 
-      LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+      legacy_appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+      legacy_appeal.update!(closest_regional_office: ro_key)
+      legacy_appeal
     rescue ActiveRecord::RecordNotFound
       Rails.logger.error("Could not load FACOLS record for vacols_id #{vacols_id} -- are FACOLS seeds present?")
     end
@@ -783,8 +766,146 @@ module Seeds
                            bfcorlid: veteran_file_number_legacy_opt_in)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
+
+    # This whole section probably belongs in Seeds::Hearings, but since it doesn't actually create
+    # a hearing I'm leaving it here for now
+    def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+      create(
+        :case,
+        :video_hearing_requested,
+        correspondent: correspondent,
+        bfcorlid: vacols_titrnum,
+        bfcurloc: "CASEFLOW",
+        folder: vacols_folder
+      )
+    end
+
+    def create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+      create(
+        :case,
+        :travel_board_hearing_requested,
+        correspondent: correspondent,
+        bfcorlid: vacols_titrnum,
+        bfcurloc: "CASEFLOW",
+        folder: vacols_folder
+      )
+    end
+
+    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
+      # We need these retries because the sequence for FactoryBot comes out of
+      # sync with what's in the DB. This just essentially updates the FactoryBot
+      # sequence to match what's in the DB.
+      # Note: Because the sequences in FactoryBot are global, these retrys won't happen
+      #   every time you call this, probably only the first time.
+      retry_max = 100
+
+      # Create the vacols_folder
+      begin
+        retries ||= 0
+        vacols_folder = create(
+          :folder,
+          tinum: docket_number,
+          titrnum: vacols_titrnum
+        )
+      rescue ActiveRecord::RecordNotUnique
+        retry if (retries += 1) < retry_max
+      end
+
+      # Create the correspondent (where the name in the UI comes from)
+      begin
+        retries ||= 0
+        correspondent = create(
+          :correspondent,
+          snamef: Faker::Name.first_name,
+          snamel: Faker::Name.last_name,
+          ssalut: ""
+        )
+      rescue ActiveRecord::RecordNotUnique
+        retry if (retries += 1) < retry_max
+      end
+
+      # Create the vacols_case
+      begin
+        retries ||= 0
+        if type == "video"
+          vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+        end
+        if type == "travel"
+          vacols_case = create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+        end
+      rescue ActiveRecord::RecordNotUnique
+        retry if (retries += 1) < retry_max
+      end
+
+      # Create the legacy_appeal, this doesn't fail with index problems, so no need to retry
+      legacy_appeal = create(
+        :legacy_appeal,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
+      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+
+      # Return the legacy_appeal
+      legacy_appeal
+    end
+
+    def create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
+      root_task = create(:root_task, appeal: legacy_appeal)
+      distribution_task = create(
+        :distribution_task,
+        appeal: legacy_appeal,
+        parent: root_task
+      )
+      parent_hearing_task = create(
+        :hearing_task,
+        assigned_by: user,
+        assigned_to: user,
+        parent: distribution_task,
+        appeal: legacy_appeal
+      )
+      create(
+        :schedule_hearing_task,
+        :in_progress,
+        assigned_to: user,
+        assigned_by: user,
+        parent: parent_hearing_task,
+        appeal: legacy_appeal
+      )
+    end
+
+    def create_legacy_appeals_with_open_schedule_hearing_task(regional_office, number_of_appeals_to_create)
+      # The offset should start at 100 to avoid collisions
+      offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
+      # Use a hearings user so the factories don't try to create one (and sometimes fail)
+      user = User.find_by_css_id("BVASYELLOW")
+      # Set this for papertrail when creating vacols_case
+      RequestStore[:current_user] = user
+
+      offsets.each do |offset|
+        # Embed the ro here so that the titrnums are unique across the
+        # different ros, otherwise collisions cause errors
+        vacols_titrnum = "1#{regional_office}#{offset}E"
+        docket_number = "180000#{offset}"
+        # Create some video and some travel hearings
+        type = offset.even? ? "travel" : "video"
+
+        # Create the folder, case, and appeal, there's a lot of retry logic in here
+        # because the way FactoryBot sequences work isn't quite right for this case
+        legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
+        # Create the task tree, need to create each task like this to avoid user creation and index conflicts
+        create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
+        # Create the veteran for this legacy appeal
+        create(:veteran, file_number: vacols_titrnum)
+      end
+
+      # Once everything is created, refresh the cache or they won't appear in the UI
+      UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals
+    end
   end
   # rubocop:enable Metrics/ClassLength
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 end
+# rubocop:enable Metrics/ModuleLength
