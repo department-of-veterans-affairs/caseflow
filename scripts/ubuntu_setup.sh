@@ -19,6 +19,7 @@ if which nvm > /dev/null; then
 else
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
     echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bash_profile
     source ~/.bash_profile
     source ~/.bashrc
 fi
@@ -143,7 +144,7 @@ else
         unzip local/vacols/build_facols/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /opt/oracle
         ln -s /opt/oracle/instantclient_12_2/libclntsh.so.12.1 /opt/oracle/instantclient_12_2/libclntsh.so
         echo 'export PATH="/opt/oracle/instantclient_12_2:$PATH"
-    export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2' >> ~/.bash_profile
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2' >> ~/.bash_profile
         source ~/.bash_profile
     fi
 
