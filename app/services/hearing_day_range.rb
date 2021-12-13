@@ -66,7 +66,7 @@ class HearingDayRange
       hearing_days_in_range.first(1000).pluck(:id), user
     )
 
-    hearing_days_in_range.for_judge_schedule(user, vacols_hearings.keys)
+    hearing_days_in_range.for_judge_schedule([user.id], vacols_hearings.keys)
   end
 
   def upcoming_days_for_vso_user
