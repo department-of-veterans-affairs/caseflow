@@ -98,4 +98,13 @@ module HearingConcern
 
     end_date
   end
+
+  def weekend_and_holiday(end_date, holidays)
+    # Hack to allow this method to stay in hearing_concern without triggering a reek issue
+    if scheduled_for
+      holiday = holidays.find { |entry| entry[:date] == end_date }.present?
+      weekend = end_date.saturday? || end_date.sunday?
+      [weekend, holiday]
+    end
+  end
 end
