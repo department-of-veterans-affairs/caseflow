@@ -12,7 +12,7 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
                     " with a non-on_hold parent task (ignoring TrackVeteranTask and *MailTasks)"
       tasks_with_parents = Task.where(id: task_ids).joins(:parent).includes(:parent)
       grouped_suspect_tasks = tasks_with_parents.group(:type, "parents_tasks.type", "parents_tasks.status").count
-      add_to_report "Counts: #{grouped_suspect_tasks.entries.map(&:to_s).join("\n")}"
+      add_to_report "Counts: \n#{grouped_suspect_tasks.entries.map(&:to_s).join("\n")}"
       add_to_report ONGOING_INVESTIGATIONS
     end
   end
@@ -28,6 +28,8 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   end
 
   ONGOING_INVESTIGATIONS = %(
+    To investigate, query for open tasks with specific parent type and status; for example: 
+      HearingTask.open.joins(:parent).includes(:parent).where(parents_tasks: { type: "DistributionTask", status: :assigned })
     For InformalHearingPresentationTask, https://vajira.max.gov/browse/CASEFLOW-2499
     For HearingTask with a parent assigned DistributionTask, https://dsva.slack.com/archives/C3EAF3Q15/p1633041954109500
     For NoShowHearingTask, https://vajira.max.gov/browse/CASEFLOW-2558
