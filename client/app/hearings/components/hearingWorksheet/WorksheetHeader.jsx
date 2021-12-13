@@ -137,7 +137,7 @@ class WorksheetHeader extends React.PureComponent {
         }
         {this.props.print ? <div {...printBreakRow} /> : <div {...breakRow} />}
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>HEARING DATE</h4>
+          <h4>{this.props.print ? 'HEAR. DATE' : 'HEARING DATE'}</h4>
           <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
