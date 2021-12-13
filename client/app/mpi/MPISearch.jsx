@@ -105,6 +105,7 @@ export default function MPISearch() {
         setSearchError(null);
       }).
       catch((error) => {
+        setMpiSearchResults([]);
         setSearchError(error);
       });
   };
