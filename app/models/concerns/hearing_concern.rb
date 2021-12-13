@@ -84,19 +84,22 @@ module HearingConcern
     poa&.representative_name
   end
 
+  def weekend_and_holiday(end_date)
+    holiday = holidays.find { |entry| entry[:date] == end_date }.present?
+    weekend = end_date.saturday? || end_date.sunday?
+    [weekend, holiday]
+  end
+
   def calculate_submission_window
     # End of evidence submission window is 90 days after scheduled_for, unless
     # that falls on a weekend or holiday
     holidays = Holidays.between(scheduled_for, scheduled_for + 90.days, :federal_reserve)
     end_date = scheduled_for.to_date + 90.days
+    weekend, holiday = weekend_and_holiday(end_date)
 
-    holiday = holidays.find { |h| h[:date] == end_date }.present?
-    weekend = end_date.saturday? || end_date.sunday?
-
-    while holiday || weekend
+    while weekend || holiday
       end_date += 1.day
-      holiday = holidays.find { |h| h[:date] == end_date }.present?
-      weekend = end_date.saturday? || end_date.sunday?
+      weekend, holiday = weekend_and_holiday(end_date)
     end
 
     end_date
