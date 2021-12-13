@@ -212,7 +212,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           context "when there are active tasks" do
             before do
               # Create active tasks that are visible to the user for selection
-              EvidenceOrArgumentMailTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
+              EvidenceOrArgumentMailTask.create!(parent: appeal.root_task,
+                                                 appeal: appeal, 
+                                                 assigned_to: User.system_user)
               HearingTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
             end
             let(:evidence_task) { appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first }
