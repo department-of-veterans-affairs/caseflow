@@ -562,7 +562,8 @@ export default class QueueTable extends React.PureComponent {
       styling,
       bodyStyling,
       enablePagination,
-      useTaskPagesApi
+      useTaskPagesApi,
+      useHearingsApi
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
@@ -586,6 +587,16 @@ export default class QueueTable extends React.PureComponent {
           this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
         }
       }
+    } else if (useHearingsApi) {
+      // For the Hearings Schedule table, back-end handles pagination, sorting and filtering
+      // so send sorting and filtering selections back to ListSchedule
+      const { sortColName, sortAscending, filteredByList } = this.state;
+      const columnToSortBy = getColumns(this.props).find(column => sortColName === column.name);
+      const params = {
+        filter: _.isEmpty(filteredByList) ? {} : filteredByList,
+        sort: sortColName ? { sortCol: columnToSortBy?.columnName, sortAscending: sortAscending } : {}
+      };
+      this.props.returnQueries(params);
     } else {
       // Steps to calculate table data to display:
       // 1. Sort data
@@ -727,6 +738,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   useHearingsApi: PropTypes.bool,
+  returnQueries: PropTypes.func,
   userReadableColumnNames: PropTypes.object,
   tabPaginationOptions: PropTypes.shape({
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
