@@ -23,7 +23,7 @@ module MPI
     private
 
     def wsdl
-      "https://int.services.eauth.va.gov:9303/psim_webservice/dev/IdMWebService?WSDL"
+      "https://sqa.services.eauth.va.gov:9303/psim_webservice/stage1a/IdMWebService?WSDL"
     end
 
     def client
