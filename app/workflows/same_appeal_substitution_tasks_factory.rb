@@ -87,8 +87,6 @@ class SameAppealSubstitutionTasksFactory
 
   # Called if a `ScheduleHearingTask` is selected to be reopened
   def cancel_defunct_hearing_tasks
-    schedule_hearing_task = Task.find_by(id: @selected_task_ids, type: ScheduleHearingTask.name)
-
     types_to_cancel = [
       AssignHearingDispositionTask.name,
       ChangeHearingDispositionTask.name,
