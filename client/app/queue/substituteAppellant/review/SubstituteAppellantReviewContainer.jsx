@@ -41,8 +41,6 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const cancelTasks = findTasksToCancel(activeTasksToShow, existingValues.openTaskIds);
 
-  window.console.log(cancelTasks);
-
   const findSelectedTasks = (appealTasks, selectedTaskIds) => {
     if (selectedTaskIds === null) {
       return [];
