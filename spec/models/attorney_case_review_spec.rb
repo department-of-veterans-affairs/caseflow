@@ -471,7 +471,9 @@ describe AttorneyCaseReview, :all_dbs do
           label = COPY::ATTORNEY_TASK_NOTES_PREFIX
           expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
           expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
+
           subject
+                    
           expect(judge_task.reload.instructions).to include a_string_matching(/#{Regexp.escape(label)}/)
           expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
         end
