@@ -1976,7 +1976,7 @@ RSpec.feature "Case details", :all_dbs do
             before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
             after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
 
-            it_behaves_like "the button is not shown"
+            it_behaves_like "the button is shown"
           end
 
           context "when the user is not an admin" do
