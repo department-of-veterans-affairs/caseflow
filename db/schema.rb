@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_175237) do
+ActiveRecord::Schema.define(version: 2021_12_13_180551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "reason", comment: "VLJ's rationale for their decision on motion to AOD."
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_aod_motion_on_appeal_id_and_appeal_type"
     t.index ["granted"], name: "index_advance_on_docket_motions_on_granted"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
     t.index ["updated_at"], name: "index_advance_on_docket_motions_on_updated_at"
@@ -457,7 +458,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
-    t.string "aasm_state"
+    t.string "aasm_state", comment: "Current task state: unprepared, unassigned, assigned, started, reviewed, completed"
     t.integer "appeal_id", null: false
     t.datetime "assigned_at"
     t.string "comment"
@@ -471,6 +472,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["aasm_state"], name: "index_dispatch_tasks_on_aasm_state"
     t.index ["updated_at"], name: "index_dispatch_tasks_on_updated_at"
     t.index ["user_id"], name: "index_dispatch_tasks_on_user_id"
   end

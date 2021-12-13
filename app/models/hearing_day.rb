@@ -48,6 +48,18 @@ class HearingDay < CaseflowRecord
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
+  VIRTUAL_HEARINGS_COUNT_STATEMENT = <<-SQL
+    count(
+      case when virtual_hearings.request_cancelled = false
+        then true
+      end
+    ) as virtual_hearings_count
+  SQL
+
+  AVAILABLE_FILTERS = [
+    :with_judges,
+    :with_request_type
+  ].freeze
 
   before_create :assign_created_by_user
   after_update :update_children_records
@@ -83,34 +95,100 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
+  scope :with_judges, lambda { |judges_ids|
+    where(hearings: { judge_id: judges_ids })
+      .or(where(judge_id: judges_ids))
+      .includes(:hearings, :judge).distinct
+  }
+
+  scope :with_request_type, lambda { |request_types|
+
+  }
+
+  filterrific(
+    available_filters: AVAILABLE_FILTERS
+  )
+
+  def self.counts_for_ama_hearings
+    where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
+      .joins("INNER JOIN hearings ON hearing_days.id = hearings.hearing_day_id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings
+        ON virtual_hearings.hearing_id = hearings.id
+        AND virtual_hearings.hearing_type = 'Hearing'
+        AND virtual_hearings.request_cancelled = false
+      SQL
+      .group(:id)
+      .select(
+        "id",
+        "request_type",
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
+        "count(hearings.id) as hearings_count"
+      )
+  end
+
+  def self.counts_for_legacy_hearings
+    where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
+      .joins("INNER JOIN legacy_hearings ON hearing_days.id = legacy_hearings.hearing_day_id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings
+        ON virtual_hearings.hearing_id = legacy_hearings.id
+        AND virtual_hearings.hearing_type = 'LegacyHearing'
+        AND virtual_hearings.request_cancelled = false
+      SQL
+      .group(:id)
+      .select(
+        "id",
+        "request_type",
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
+        "count(legacy_hearings.id) as hearings_count"
+      )
+  end
+
+  def self.ama_hearings_count_per_day
+    Hearing.where(hearing_day_id: pluck(:id)).where(
+      "disposition NOT in (?) or disposition is null",
+      Hearing::CLOSED_HEARING_DISPOSITIONS
+    ).group(:hearing_day_id).count
+  end
+
+  def self.legacy_hearings_count_per_day
+    vacols_ids = LegacyHearing.where(hearing_day_id: pluck(:id)).pluck(:vacols_id)
+
+    vacols_ids.in_groups_of(1000, false).reduce({}) do |acc, vacols_batched_ids|
+      acc.merge(
+        VACOLS::CaseHearing.where(hearing_pkseq: vacols_batched_ids)
+         .where("hearing_disp NOT in (?) or hearing_disp is null", VACOLS::CaseHearing::CLOSED_HEARING_DISPOSITIONS)
+         .group(:vdkey)
+         .count
+      )
+    end
+  end
+
   # This method returns the filter headers used on the table in the front-end for
   # hearings schedule.
-  def self.filter_options
+  def self.filter_options(docket_queries)
     {
-      readable_request_type: request_type_filters,
+      readable_request_type: request_type_filters(docket_queries[:video_hearing_days_request_types]),
       regional_office: regional_office_filters,
-      vlj: judge_filters
+      vlj: judge_filters(docket_queries[:judge_names])
     }
   end
 
-  def self.request_type_filters
-    hearing_days_request_types = HearingDayRequestTypeQuery.new(all).call
-
+  def self.request_type_filters(hearing_day_request_query)
     all.each_with_object({}) do |day, hash|
-      request_types = HearingDaySerializer.get_readable_request_type(
+      request_type = HearingDaySerializer.get_readable_request_type(
         day,
-        video_hearing_days_request_types: hearing_days_request_types
-      )
+        video_hearing_days_request_types: hearing_day_request_query
+      ).split(",").first.strip
 
-      request_types.split(",").map(&:strip).each do |request_type|
-        if hash[request_type].present?
-          hash[request_type][:count] += 1
-        else
-          hash[request_type] = {
-            query_value: request_type,
-            count: 1
-          }
-        end
+      if hash[request_type].present?
+        hash[request_type][:count] += 1
+      else
+        hash[request_type] = {
+          query_value: request_type,
+          count: 1
+        }
       end
     end
   end
@@ -134,12 +212,10 @@ class HearingDay < CaseflowRecord
     regional_offices_filters
   end
 
-  def self.judge_filters
-    judge_names = HearingDayJudgeNameQuery.new(all).call
-
-    judge_filters = all.each_with_object({}) do |day, hash|
-      judge_first_name = HearingDaySerializer.get_judge_first_name(day, judge_names: judge_names)
-      judge_last_name = HearingDaySerializer.get_judge_last_name(day, judge_names: judge_names)
+  def self.judge_filters(hearing_day_judge_name_query)
+    judge_filters = all.includes(:judge).each_with_object({}) do |day, hash|
+      judge_first_name = day.judge_first_name(hearing_day_judge_name_query)
+      judge_last_name = day.judge_last_name(hearing_day_judge_name_query)
       judge_full_name = FullName.new(
         judge_first_name,
         nil,
@@ -214,7 +290,7 @@ class HearingDay < CaseflowRecord
   end
 
   def to_hash
-    judge_names = HearingDayJudgeNameQuery.new([self]).call
+    judge_names = HearingDayJudgeNameQuery.new(self.class.where(id: id)).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
                                            .new(HearingDay.where(id: id))
@@ -275,12 +351,20 @@ class HearingDay < CaseflowRecord
     end
   end
 
-  def judge_first_name
-    judge ? judge.full_name.split(" ").first : nil
+  def judge_first_name(params = {})
+    if params.present?
+      params.dig(id, :first_name) || ""
+    else
+      judge ? judge.full_name.split(" ").first : nil
+    end
   end
 
-  def judge_last_name
-    judge ? judge.full_name.split(" ").last : nil
+  def judge_last_name(params = {})
+    if params[:judge_names].present?
+      params[:judge_names].dig(id, :last_name) || ""
+    else
+      judge ? judge.full_name.split(" ").last : nil
+    end
   end
 
   def judge_css_id

@@ -38,4 +38,12 @@ module ProductionConsoleMethods
 
     sje
   end
+
+  # Counts the frequency of each distinct element in the array and
+  # returns a hash representing a histogram for the given array
+  # Example usage: count_freq(Task.pluck(:appeal_type))
+  # :reek:UtilityFunction
+  def count_freq(array)
+    array.each_with_object(Hash.new(0)) { |obj, counts| counts[obj] += 1 }
+  end
 end

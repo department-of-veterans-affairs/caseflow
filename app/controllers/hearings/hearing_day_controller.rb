@@ -20,11 +20,11 @@ class Hearings::HearingDayController < HearingsApplicationController
       format.json do
         if hearing_day_range.valid?
           render json: {
-            hearings: @serialized_dockets,
+            hearings: serialized_dockets,
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date,
             pagination: pagy_metadata(@pagy),
-            filter_options: dockets_in_range.filter_options
+            filter_options: dockets_in_range.filter_options(@docket_queries)
           }
         else
           hearing_day_range_invalid
@@ -222,23 +222,35 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def dockets_in_range
-    query = if params[:query].present?
-              initialize_filterrific(
-                hearing_day_range.hearing_days,
-                query_params
-              ).find
-            else
-              hearing_day_range.hearing_days
-            end
-
-    @dockets_in_range ||= query
+    @dockets_in_range ||= hearing_day_range.hearing_days
   end
 
   def set_pagination
-    @pagy, @paginated_dockets = pagy(dockets_in_range)
+    @pagy, @paginated_dockets = pagy(filtered_dockets)
+  end
 
-    @serialized_dockets = ::HearingDaySerializer.serialize_collection(
-      @paginated_dockets
+  def filtered_dockets
+    if params[:query].present?
+      initialize_filterrific(
+        hearing_day_range.hearing_days,
+        query_params
+      ).find
+    else
+      dockets_in_range
+    end
+  end
+
+  def serialized_dockets
+    @docket_queries = {
+      video_hearing_days_request_types: HearingDayRequestTypeQuery.new(
+        HearingDay.where(id: dockets_in_range.pluck(:id))
+      ).call,
+      filled_slots_count_for_days: HearingDayFilledSlotsQuery.new(@paginated_dockets).call,
+      judge_names: HearingDayJudgeNameQuery.new(dockets_in_range).call
+    }
+
+    @serialized_dockets ||= ::HearingDaySerializer.serialize_collection(
+      @paginated_dockets, @docket_queries
     )
   end
 end
