@@ -19,16 +19,12 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
-          serialized_dockets = ::HearingDaySerializer.serialize_collection(
-            @paginated_dockets
-          )
-
           render json: {
             hearings: serialized_dockets,
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date,
             pagination: pagy_metadata(@pagy),
-            filter_options: HearingDay.filter_options(dockets_in_range)
+            filter_options: dockets_in_range.filter_options(@docket_queries)
           }
         else
           hearing_day_range_invalid
@@ -174,6 +170,24 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
+  def query_params
+    if params[:query].present?
+      query_params = params.require(:query).permit(
+        HearingDay::AVAILABLE_FILTERS
+      )
+
+      parse_filter_options(query_params)
+    else
+      {}
+    end
+  end
+
+  def parse_filter_options(query_params)
+    query_params.to_hash.each_with_object({}) do |query_values, hash|
+      hash[query_values[0]] = query_values[1].split(",")
+    end
+  end
+
   def record_not_found
     render json: {
       "errors": [
@@ -212,6 +226,31 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def set_pagination
-    @pagy, @paginated_dockets = pagy(dockets_in_range)
+    @pagy, @paginated_dockets = pagy(filtered_dockets)
+  end
+
+  def filtered_dockets
+    if params[:query].present?
+      initialize_filterrific(
+        hearing_day_range.hearing_days,
+        query_params
+      ).find
+    else
+      dockets_in_range
+    end
+  end
+
+  def serialized_dockets
+    @docket_queries = {
+      video_hearing_days_request_types: HearingDayRequestTypeQuery.new(
+        HearingDay.where(id: dockets_in_range.pluck(:id))
+      ).call,
+      filled_slots_count_for_days: HearingDayFilledSlotsQuery.new(@paginated_dockets).call,
+      judge_names: HearingDayJudgeNameQuery.new(dockets_in_range).call
+    }
+
+    @serialized_dockets ||= ::HearingDaySerializer.serialize_collection(
+      @paginated_dockets, @docket_queries
+    )
   end
 end
