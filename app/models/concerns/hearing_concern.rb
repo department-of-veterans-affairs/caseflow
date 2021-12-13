@@ -84,7 +84,7 @@ module HearingConcern
     poa&.representative_name
   end
 
-  def weekend_and_holiday(end_date)
+  def weekend_and_holiday(end_date, holidays)
     holiday = holidays.find { |entry| entry[:date] == end_date }.present?
     weekend = end_date.saturday? || end_date.sunday?
     [weekend, holiday]
@@ -95,11 +95,11 @@ module HearingConcern
     # that falls on a weekend or holiday
     holidays = Holidays.between(scheduled_for, scheduled_for + 90.days, :federal_reserve)
     end_date = scheduled_for.to_date + 90.days
-    weekend, holiday = weekend_and_holiday(end_date)
+    weekend, holiday = weekend_and_holiday(end_date, holidays)
 
     while weekend || holiday
       end_date += 1.day
-      weekend, holiday = weekend_and_holiday(end_date)
+      weekend, holiday = weekend_and_holiday(end_date, holidays)
     end
 
     end_date
