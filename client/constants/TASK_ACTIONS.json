@@ -365,6 +365,11 @@
     "value": "modal/docket_appeal",
     "func": "docket_appeal_data"
   },
+  "BVA_INTAKE_RETURN_TO_CAMO": {
+    "label": "Return appeal to VHA",
+    "value": "modal/bva_intake_return_to_camo",
+    "func": "bva_intake_return_to_camo"
+  },
   "READY_TO_DOCKET": {
     "label": "Ready to Docket",
     "value": "modal/ready_to_docket"

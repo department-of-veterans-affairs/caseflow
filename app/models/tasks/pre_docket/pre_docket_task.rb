@@ -8,7 +8,8 @@
 
 class PreDocketTask < Task
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
+    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h,
+    Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
   ].freeze
 
   def available_actions(user)
