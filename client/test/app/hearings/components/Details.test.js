@@ -21,7 +21,7 @@ import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDrop
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
-import EmailModalConfirmation from 'app/hearings/components/EmailModalConfirmation';
+import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
 
 // Define the function spies
@@ -110,7 +110,7 @@ describe('Details', () => {
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
-    expect(details.find(EmailModalConfirmation)).toHaveLength(0);
+    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
     expect(details.find(HearingConversion)).toHaveLength(1);
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
@@ -147,7 +147,7 @@ describe('Details', () => {
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
-    expect(details.find(EmailModalConfirmation)).toHaveLength(0);
+    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
     expect(details.find(HearingConversion)).toHaveLength(1);
 
     expect(details).toMatchSnapshot();
@@ -188,7 +188,7 @@ describe('Details', () => {
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
-  test('Does not display EmailModalConfirmation when updating transcription details with AMA virtual hearing', () => {
+  test('Does not display EmailConfirmationModal when updating transcription details with AMA virtual hearing', () => {
     const details = mount(
       <Details
         hearing={amaHearing}
@@ -223,7 +223,7 @@ describe('Details', () => {
       simulate('click');
 
     // Ensure the modal is not displayed
-    expect(details.exists(EmailModalConfirmation)).toEqual(false);
+    expect(details.exists(EmailConfirmationModal)).toEqual(false);
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });

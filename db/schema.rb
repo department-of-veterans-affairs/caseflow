@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_175237) do
+ActiveRecord::Schema.define(version: 2021_12_06_223908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -457,7 +457,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
-    t.string "aasm_state"
+    t.string "aasm_state", comment: "Current task state: unprepared, unassigned, assigned, started, reviewed, completed"
     t.integer "appeal_id", null: false
     t.datetime "assigned_at"
     t.string "comment"
@@ -471,6 +471,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["aasm_state"], name: "index_dispatch_tasks_on_aasm_state"
     t.index ["updated_at"], name: "index_dispatch_tasks_on_updated_at"
     t.index ["user_id"], name: "index_dispatch_tasks_on_user_id"
   end
