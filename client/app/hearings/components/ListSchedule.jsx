@@ -96,6 +96,7 @@ class ListTable extends React.Component {
         <QueueTable
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
+          returnQueries={this.props.onQueryUpdate}
           summary="hearing-schedule"
           slowReRendersAreOk
         />
@@ -110,6 +111,7 @@ ListTable.propTypes = {
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
   history: PropTypes.object,
+  onQueryUpdate: PropTypes.func,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool
   })
@@ -123,7 +125,8 @@ class ListSchedule extends React.Component {
 
     this.state = {
       ...data,
-      dateRangeKey: `${props.startDate}->${props.endDate}`
+      dateRangeKey: `${props.startDate}->${props.endDate}`,
+      prevQueries: JSON.stringify({ sort: {}, filter: {} })
     };
   }
 
@@ -165,21 +168,16 @@ class ListSchedule extends React.Component {
     }
 
     const filterKeys = Object.keys(params.filter);
-
     if (filterKeys.length > 0) {
       // Find column in order to translate filter[key] into queryValue,
       // which are properties in column.filterOptions
       // ex: translate filter[key] "Anchorage, AK" into queryValue "RO63"
       let filters = {};
-
-      filterKeys.forEach((key) => {
-        const column = this.state.columns.find((col) => {
-          return col.columnName === key;
-        });
+      filterKeys.forEach(key => {
+        const column = this.state.columns.find(col => { return col.columnName === key });
         const labels = params.filter[key];
         const values = [];
-
-        column.filterOptions?.map((option) => {
+        column.filterOptions?.map(option => {
           if (labels.includes(option.value)) {
             values.push(option.queryValue);
           }
@@ -192,7 +190,8 @@ class ListSchedule extends React.Component {
     }
 
     // Note: double-check handing of "blank" selections for Judge and Regional Office
-    this.props.updateQueries(queries)
+    const showLoading = false;
+    this.props.fetchHearings(0, showLoading, queries)
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -205,7 +204,8 @@ class ListSchedule extends React.Component {
         key={`hearings${this.state.dateRangeKey}`}
         user={user}
         hearingScheduleRows={hearingScheduleRows}
-        hearingScheduleColumns={hearingScheduleColumns} />;
+        hearingScheduleColumns={hearingScheduleColumns}
+        onQueryUpdate={this.onQueryUpdate} />;
     }
 
     return <ListTable onApply={() => onApply({ showAll: true })}
@@ -213,7 +213,8 @@ class ListSchedule extends React.Component {
       key={`allHearings${this.state.dateRangeKey}`}
       user={user}
       hearingScheduleRows={hearingScheduleRows}
-      hearingScheduleColumns={hearingScheduleColumns} />;
+      hearingScheduleColumns={hearingScheduleColumns}
+      onQueryUpdate={this.onQueryUpdate} />;
   }
 
   render() {
