@@ -163,6 +163,17 @@ describe "Request Issue Correction Cleaner", :postgres do
         it "returns a itf_rating EP code" do
           expect(subject).to eq("040SCRGTY")
         end
+
+        context "when the veteran is deceased" do
+          let!(:veteran) do
+            create(:veteran, file_number: decision_review.veteran_file_number,
+                             date_of_death: Time.zone.yesterday)
+          end
+
+          it "returns the non-ITF EP code" do
+            expect(subject).to eq("040SCR")
+          end
+        end
       end
 
       context "for a rating request issue contesting a decision within the past year" do
