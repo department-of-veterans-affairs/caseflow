@@ -61,6 +61,15 @@ const secondRowStyling = css({
   flex: '100%'
 });
 
+const breakRow = css({
+  flexBasis: '100%',
+  marginBottom: '1.765em'
+});
+
+const printBreakRow = css({
+  flexBasis: '100%'
+});
+
 class WorksheetHeader extends React.PureComponent {
 
   onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
@@ -118,10 +127,6 @@ class WorksheetHeader extends React.PureComponent {
           <h4>{this.props.print ? 'R.O.' : 'REGIONAL OFFICE'}</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>DATE</h4>
-          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
-        </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
             <h4>{this.props.print ? 'HEAR. DISP.' : 'HEARING DISPOSITION'}</h4>
@@ -130,6 +135,15 @@ class WorksheetHeader extends React.PureComponent {
             </div>
           </div>
         }
+        {this.props.print ? <div {...printBreakRow} /> : <div {...breakRow} />}
+        <div className="cf-hearings-worksheet-data-cell">
+          <h4>HEARING DATE</h4>
+          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h4>+ 90 DAYS</h4>
+          <div className="cf-hearings-headers">{moment(worksheet.submission_window_end).format('ddd l')}</div>
+        </div>
       </div>
 
       <div className="cf-hearings-worksheet-data">
@@ -257,6 +271,7 @@ WorksheetHeader.propTypes = {
     representative: PropTypes.string,
     representative_name: PropTypes.string,
     scheduled_for: PropTypes.string,
+    submission_window_end: PropTypes.string,
     veteran_age: PropTypes.number,
     veteran_file_number: PropTypes.string,
     veteran_first_name: PropTypes.string,
