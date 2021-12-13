@@ -1,4 +1,10 @@
-import { format, sub } from 'date-fns';
+import { add, format, sub } from 'date-fns';
+
+export const decisionIssues = [
+  { id: 1, description: 'Tinnitus, Left Ear' },
+  { id: 2, description: 'Right Knee' },
+  { id: 3, description: 'Right Knee' },
+];
 
 export const existingValues = {
   docketNumber: '12-3456',
@@ -11,11 +17,18 @@ export const existingValues = {
   instructions: 'Lorem ipsum dolor sit amet',
 };
 
-export const decisionIssues = [
-  { id: 1, description: 'Tinnitus, Left Ear' },
-  { id: 2, description: 'Right Knee' },
-  { id: 3, description: 'Right Knee' },
-];
+export const invalidDates = {
+  docketNumber: '12-3456',
+  attorney: 'no',
+  judge: 'Panel',
+  decisionType: 'remand',
+  remandType: 'mdr',
+  decisionDate: format(add(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+  judgementDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
+  mandateDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
+  issueIds: [2, 3],
+  instructions: 'Lorem ipsum dolor sit amet',
+};
 
 export const supportedDecisionTypes = [
   'remand',

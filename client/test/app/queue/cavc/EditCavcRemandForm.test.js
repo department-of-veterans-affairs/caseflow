@@ -15,8 +15,9 @@ import COPY from 'app/../COPY';
 import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
 
 import {
-  existingValues,
   decisionIssues,
+  existingValues,
+  invalidDates,
   supportedDecisionTypes,
   supportedRemandTypes,
 } from 'test/data/queue/cavc';
@@ -90,7 +91,7 @@ describe('EditCavcRemandForm', () => {
         expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
-      it.only('passes a11y testing', async () => {
+      it('passes a11y testing', async () => {
         const { container } = setup();
 
         const results = await axe(container);
@@ -206,6 +207,19 @@ describe('EditCavcRemandForm', () => {
 
       userEvent.click(screen.getByRole('button', { name: /cancel/i }));
       expect(onCancel).toHaveBeenCalled();
+    });
+  });
+
+  describe('submitting invalid dates', () => {
+    setup({ invalidDates });
+
+    it('displays an error message for a future decision date', () => {
+      expect(screen.findByText(COPY.CAVC_DECISION_DATE_ERROR)).toBeInTheDocument();
+    });
+
+    it('displays error messages for judgement and remand dates before January 1, 2018', () => {
+      expect(screen.findByText(COPY.CAVC_DECISION_DATE_PAST)).toBeInTheDocument();
+      expect(screen.findByText(COPY.CAVC_JUDGEMENT_DATE_PAST)).toBeInTheDocument();
     });
   });
 });
