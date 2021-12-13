@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-##
-# See https://query.prod.appeals.va.gov/question/309-parent-tasks-not-on-hold-with-open-children-tasks
-
 class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   def call
     task_ids = open_tasks_with_parent_not_on_hold.pluck(:id) - ignored_tasks_with_closed_root_task_parent.pluck(:id)
@@ -33,6 +30,7 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
     For InformalHearingPresentationTask, https://vajira.max.gov/browse/CASEFLOW-2499
     For HearingTask with a parent assigned DistributionTask, https://dsva.slack.com/archives/C3EAF3Q15/p1633041954109500
     For NoShowHearingTask, https://vajira.max.gov/browse/CASEFLOW-2558
+    See https://query.prod.appeals.va.gov/question/309-parent-tasks-not-on-hold-with-open-children-tasks
   )
 
   # It's acceptable to have a closed RootTask parent for:
