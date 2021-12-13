@@ -56,6 +56,11 @@ class HearingDay < CaseflowRecord
     ) as virtual_hearings_count
   SQL
 
+  AVAILABLE_FILTERS = [
+    :with_judges,
+    :with_request_type
+  ].freeze
+
   before_create :assign_created_by_user
   after_update :update_children_records
 
@@ -89,6 +94,20 @@ class HearingDay < CaseflowRecord
       .or(where(id: vacols_ids))
       .includes(:hearings, :judge).distinct
   }
+
+  scope :with_judges, lambda { |judges_ids|
+    where(hearings: { judge_id: judges_ids })
+      .or(where(judge_id: judges_ids))
+      .includes(:hearings, :judge).distinct
+  }
+
+  scope :with_request_type, lambda { |request_types|
+    
+  }
+
+  filterrific(
+    available_filters: AVAILABLE_FILTERS
+  )
 
   def self.counts_for_ama_hearings
     where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
@@ -148,38 +167,34 @@ class HearingDay < CaseflowRecord
 
   # This method returns the filter headers used on the table in the front-end for
   # hearings schedule.
-  def self.filter_options(hearing_days)
+  def self.filter_options(docket_queries)
     {
-      readable_request_type: request_type_filters(hearing_days),
-      regional_office: regional_office_filters(hearing_days),
-      vlj: judge_filters(hearing_days)
+      readable_request_type: request_type_filters(docket_queries[:video_hearing_days_request_types]),
+      regional_office: regional_office_filters,
+      vlj: judge_filters(docket_queries[:judge_names])
     }
   end
 
-  def self.request_type_filters(hearing_days)
-    hearing_days_request_types = HearingDayRequestTypeQuery.new(hearing_days).call
-
-    hearing_days.each_with_object({}) do |day, hash|
-      request_types = HearingDaySerializer.get_readable_request_type(
+  def self.request_type_filters(hearing_day_request_query)
+    all.each_with_object({}) do |day, hash|
+      request_type = HearingDaySerializer.get_readable_request_type(
         day,
-        video_hearing_days_request_types: hearing_days_request_types
-      )
+        video_hearing_days_request_types: hearing_day_request_query
+      ).split(",").first.strip
 
-      request_types.split(",").map(&:strip).each do |request_type|
-        if hash[request_type].present?
-          hash[request_type][:count] += 1
-        else
-          hash[request_type] = {
-            query_value: request_type,
-            count: 1
-          }
-        end
+      if hash[request_type].present?
+        hash[request_type][:count] += 1
+      else
+        hash[request_type] = {
+          query_value: request_type,
+          count: 1
+        }
       end
     end
   end
 
-  def self.regional_office_filters(hearing_days)
-    regional_offices_filters = hearing_days.each_with_object({}) do |day, hash|
+  def self.regional_office_filters
+    regional_offices_filters = all.each_with_object({}) do |day, hash|
       regional_office = HearingDayMapper.city_for_regional_office(day.regional_office)
 
       if hash[regional_office&.strip].present?
@@ -197,12 +212,10 @@ class HearingDay < CaseflowRecord
     regional_offices_filters
   end
 
-  def self.judge_filters(hearing_days)
-    judge_names = HearingDayJudgeNameQuery.new(hearing_days).call
-
-    judge_filters = hearing_days.each_with_object({}) do |day, hash|
-      judge_first_name = HearingDaySerializer.get_judge_first_name(day, judge_names: judge_names)
-      judge_last_name = HearingDaySerializer.get_judge_last_name(day, judge_names: judge_names)
+  def self.judge_filters(hearing_day_judge_name_query)
+    judge_filters = all.includes(:judge).each_with_object({}) do |day, hash|
+      judge_first_name = day.judge_first_name(hearing_day_judge_name_query)
+      judge_last_name = day.judge_last_name(hearing_day_judge_name_query)
       judge_full_name = FullName.new(
         judge_first_name,
         nil,
@@ -338,12 +351,20 @@ class HearingDay < CaseflowRecord
     end
   end
 
-  def judge_first_name
-    judge ? judge.full_name.split(" ").first : nil
+  def judge_first_name(params = {})
+    if params.present?
+      params.dig(id, :first_name) || ""
+    else
+      judge ? judge.full_name.split(" ").first : nil
+    end
   end
 
-  def judge_last_name
-    judge ? judge.full_name.split(" ").last : nil
+  def judge_last_name(params = {})
+    if params[:judge_names].present?
+      params[:judge_names].dig(id, :last_name) || ""
+    else
+      judge ? judge.full_name.split(" ").last : nil
+    end
   end
 
   def judge_css_id
