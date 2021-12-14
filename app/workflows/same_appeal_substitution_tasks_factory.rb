@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# :reek:TooManyInstanceVariables
 class SameAppealSubstitutionTasksFactory
+  # rubocop:disable Metrics/ParameterLists
   # :reek:LongParameterList
   def initialize(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
     @appeal = appeal
