@@ -49,10 +49,11 @@ class AttorneyCaseReview < CaseflowRecord
   end
 
   def note_label
+    # Adding prefix and markup for better formatting of notes appended to judge task
     if task.is_a?(AttorneyRewriteTask)
-      COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX
+      "**#{COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX}**\n"
     elsif task.is_a?(AttorneyTask)
-      COPY::ATTORNEY_TASK_NOTES_PREFIX
+      "**#{COPY::ATTORNEY_TASK_NOTES_PREFIX}**\n"
     else
       ""
     end
