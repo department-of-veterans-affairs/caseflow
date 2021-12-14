@@ -94,11 +94,13 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def create_substitute_tasks
+    task_ids = {}
+    task_ids[:selected] = selected_task_ids
+    task_ids[:cancelled] = cancelled_task_ids
     SameAppealSubstitutionTasksFactory.new(target_appeal,
-                                           selected_task_ids,
+                                           task_ids,
                                            created_by,
-                                           task_params,
-                                           cancelled_task_ids).create_substitute_tasks!
+                                           task_params).create_substitute_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)

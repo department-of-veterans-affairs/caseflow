@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-# :reek:TooManyInstanceVariables
 class SameAppealSubstitutionTasksFactory
-  # :reek:LongParameterList
-  def initialize(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
+  def initialize(appeal, task_ids, created_by, task_params)
     @appeal = appeal
-    @selected_task_ids = selected_task_ids
+    # task_ids takes two parameters - cancelled and selected
+    @task_ids = task_ids
     @created_by = created_by
     @task_params = task_params
-    @cancelled_task_ids = cancelled_task_ids
   end
 
   def create_substitute_tasks!
@@ -29,11 +27,11 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def no_tasks_selected?
-    @selected_task_ids.empty?
+    @task_ids[:selected].empty?
   end
 
   def selected_tasks_include_hearing_tasks?
-    selected_tasks = Task.where(id: @selected_task_ids).order(:id)
+    selected_tasks = Task.where(id: @task_ids[:selected]).order(:id)
     task_types = [:ScheduleHearingTask, :AssignHearingDispositionTask, :ChangeHearingDispositionTask,
                   :ScheduleHearingColocatedTask, :NoShowHearingTask]
     !selected_tasks.of_type(task_types).empty?
@@ -54,7 +52,7 @@ class SameAppealSubstitutionTasksFactory
   def create_selected_tasks
     return if no_tasks_selected?
 
-    source_tasks = Task.where(id: @selected_task_ids).order(:id)
+    source_tasks = Task.where(id: @task_ids[:selected]).order(:id)
 
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
@@ -87,7 +85,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def cancel_unselected_tasks
-    cancel_tasks = Task.where(id: @cancelled_task_ids)
+    cancel_tasks = Task.where(id: @task_ids[:cancelled])
     cancel_tasks.each do |task|
       task.update!(
         status: Constants.TASK_STATUSES.cancelled,

@@ -13,6 +13,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   let(:created_by) { create(:user) }
   let(:task_params) { {} }
 
+  let(:task_ids) { {} }
+
   describe "#create_substitute_tasks!" do
     context "when created_by is a COB admin" do
       before do
@@ -21,11 +23,12 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
       let(:selected_task_ids) { [] }
       let(:cancelled_task_ids) { [] }
       subject do
+        task_ids[:selected] = selected_task_ids
+        task_ids[:cancelled] = cancelled_task_ids
         SameAppealSubstitutionTasksFactory.new(appeal,
-                                               selected_task_ids,
+                                               task_ids,
                                                created_by,
-                                               task_params,
-                                               cancelled_task_ids).create_substitute_tasks!
+                                               task_params).create_substitute_tasks!
       end
       context "when an appeal has already been distributed" do
         context "when it is a hearing lane appeal with hearing tasks selected" do
@@ -270,7 +273,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   describe "#selected_tasks_include_hearing_tasks?" do
     let(:cancelled_task_ids) { [] }
     subject do
-      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params, cancelled_task_ids)
+      task_ids[:selected] = selected_task_ids
+      task_ids[:cancelled] = cancelled_task_ids
+      SameAppealSubstitutionTasksFactory.new(appeal, task_ids, created_by, task_params)
         .selected_tasks_include_hearing_tasks?
     end
 
