@@ -8,7 +8,7 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
                     "task".pluralize(task_ids.count) +
                     " with a non-on_hold parent task (ignoring TrackVeteranTask and *MailTasks)"
       tasks_with_parents = Task.where(id: task_ids).joins(:parent).includes(:parent)
-      grouped_suspect_tasks = tasks_with_parents.group(:type, "parents_tasks.type", "parents_tasks.status").count
+      grouped_suspect_tasks = tasks_with_parents.group(:appeal_type, :type, "parents_tasks.type", "parents_tasks.status").count
       add_to_report "Counts: \n#{grouped_suspect_tasks.entries.map(&:to_s).join("\n")}"
       add_to_report ONGOING_INVESTIGATIONS
     end
@@ -27,6 +27,7 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   ONGOING_INVESTIGATIONS = %(
     To investigate, query for open tasks with specific parent type and status; for example:
       HearingTask.open.joins(:parent).includes(:parent).where(parents_tasks: { type: "DistributionTask", status: :assigned })
+    For LegacyAppeals, confirm with the Board before modifying tasks.
     For InformalHearingPresentationTask, https://vajira.max.gov/browse/CASEFLOW-2499
     For HearingTask with a parent assigned DistributionTask, https://dsva.slack.com/archives/C3EAF3Q15/p1633041954109500
     For NoShowHearingTask, https://vajira.max.gov/browse/CASEFLOW-2558
@@ -38,7 +39,8 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   # - TrackVeteranTask -- https://dsva.slack.com/archives/CJL810329/p1634581182080100?thread_ts=1634553075.073600&cid=CJL810329
   IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT = [
     *MailTask.descendants.map(&:name),
-    "TrackVeteranTask"
+    "TrackVeteranTask",
+    "FoiaTask" # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/255#issuecomment-992758936
   ].freeze
 
   def ignored_tasks_with_closed_root_task_parent
