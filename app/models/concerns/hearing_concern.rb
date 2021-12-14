@@ -89,22 +89,19 @@ module HearingConcern
     # that falls on a weekend or holiday
     holidays = Holidays.between(scheduled_for, scheduled_for + 90.days, :federal_reserve)
     end_date = scheduled_for.to_date + 90.days
-    weekend, holiday = weekend_and_holiday(end_date, holidays)
 
-    while weekend || holiday
+    while weekend_or_holiday?(end_date, holidays)
       end_date += 1.day
-      weekend, holiday = weekend_and_holiday(end_date, holidays)
     end
 
     end_date
   end
 
-  def weekend_and_holiday(end_date, holidays)
-    # Hack to allow this method to stay in hearing_concern without triggering a reek issue
+  def weekend_or_holiday?(day, holidays)
     if scheduled_for
-      holiday = holidays.find { |entry| entry[:date] == end_date }.present?
-      weekend = end_date.saturday? || end_date.sunday?
-      [weekend, holiday]
+      holiday = holidays.find { |entry| entry[:date] == day }.present?
+      weekend = day.saturday? || day.sunday?
+      weekend || holiday
     end
   end
 end
