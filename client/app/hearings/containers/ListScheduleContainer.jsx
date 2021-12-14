@@ -85,8 +85,8 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  updateQueries = (queries) => {
-    this.setState({ queries: queries }, () => this.loadHearingSchedule(0));
+  updateQueries = (newQueries) => {
+    this.setState({ queries: newQueries }, () => this.loadHearingSchedule(0));
   };
 
   loadHearingSchedule = (index) => {
@@ -112,9 +112,10 @@ export class ListScheduleContainer extends React.Component {
     if (this.state.queries.filter) {
       // append filter criteria
       const filterKeys = Object.keys(this.state.queries.filter);
-      filterKeys.forEach(col => {
-        requestUrl += `&query[${col}]=${Object.values(this.state.queries.filter[col]).join(',')}`
-      })
+
+      filterKeys.forEach((col) => {
+        requestUrl += `&query[${col}]=${Object.values(this.state.queries.filter[col]).join(',')}`;
+      });
     }
 
     const requestOptions = {

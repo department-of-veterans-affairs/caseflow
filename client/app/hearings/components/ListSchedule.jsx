@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import QueueTable from '../../queue/QueueTable';
 import Button from '../../components/Button';
@@ -17,7 +16,6 @@ import connect from 'react-redux/es/connect/connect';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import { LIST_SCHEDULE_VIEWS } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
-import WindowUtil from '../../util/WindowUtil';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -132,7 +130,7 @@ class ListSchedule extends React.Component {
   setDateRangeKey = () => {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
     // show first page by default by sending index of 0
-    this.props.fetchHearings(0)
+    this.props.fetchHearings(0);
   }
 
   formatHearingsScheduled = (filledSlots) => {
@@ -152,16 +150,21 @@ class ListSchedule extends React.Component {
     }
 
     const filterKeys = Object.keys(params.filter);
+
     if (filterKeys.length > 0) {
       // Find column in order to translate filter[key] into queryValue,
       // which are properties in column.filterOptions
       // ex: translate filter[key] "Anchorage, AK" into queryValue "RO63"
       let filters = {};
-      filterKeys.forEach(key => {
-        const column = this.state.columns.find(col => { return col.columnName === key });
+
+      filterKeys.forEach((key) => {
+        const column = this.state.columns.find((col) => {
+          return col.columnName === key;
+        });
         const labels = params.filter[key];
         const values = [];
-        column.filterOptions?.map(option => {
+
+        column.filterOptions?.map((option) => {
           if (labels.includes(option.value)) {
             values.push(option.queryValue);
           }
@@ -174,7 +177,7 @@ class ListSchedule extends React.Component {
     }
 
     // Note: double-check handing of "blank" selections for Judge and Regional Office
-    this.props.updateQueries(queries)
+    this.props.updateQueries(queries);
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
