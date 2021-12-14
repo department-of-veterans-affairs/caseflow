@@ -65,6 +65,7 @@ export class ListScheduleContainer extends React.Component {
       currentCases: 0,
       totalPages: 0,
       pageSize: 0,
+      queries: {},
       loading: false
     };
   }
@@ -84,9 +85,13 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = (index, showLoading=true, queries={}) => {
+  updateQueries = (queries) => {
+    this.setState({ queries: queries }, () => this.loadHearingSchedule(0));
+  };
+
+  loadHearingSchedule = (index) => {
     this.setState({
-      loading: showLoading
+      loading: true
     });
 
     let requestUrl = `/hearings/hearing_day.json?page=${index + 1}`;
@@ -100,15 +105,15 @@ export class ListScheduleContainer extends React.Component {
       requestUrl += `&start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
     }
 
-    if (queries.sort) {
+    if (this.state.queries.sort) {
       // append sort criteria
     }
 
-    if (queries.filter) {
+    if (this.state.queries.filter) {
       // append filter criteria
-      const names = Object.keys(queries.filter);
-      names.forEach(name => {
-        requestUrl += `&query[filters][${name}]=${Object.values(queries.filter[name]).join(',')}`
+      const filterKeys = Object.keys(this.state.queries.filter);
+      filterKeys.forEach(col => {
+        requestUrl += `&query[${col}]=${Object.values(this.state.queries.filter[col]).join(',')}`
       })
     }
 
@@ -252,22 +257,21 @@ export class ListScheduleContainer extends React.Component {
               }
             </div>
             <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-            {this.state.loading ? (
+            {this.state.loading &&
               <LoadingScreen
                 spinnerColor = {LOGO_COLORS.HEARINGS.ACCENT}
                 message = "Loading the hearing schedule..."
               />
-            ) : (
-              <ListSchedule
-                hearingSchedule={this.props.hearingSchedule}
-                fetchHearings={this.loadHearingSchedule}
-                user={user}
-                view={this.state.view}
-                switchListView={this.switchListView}
-                filterOptions={this.state.filterOptions}
-              />
-            )}
-
+            }
+            <ListSchedule
+              hearingSchedule={this.props.hearingSchedule}
+              fetchHearings={this.loadHearingSchedule}
+              user={user}
+              view={this.state.view}
+              switchListView={this.switchListView}
+              filterOptions={this.state.filterOptions}
+              updateQueries={this.updateQueries}
+            />
             <Pagination
               pageSize={this.state.pageSize}
               currentPage={this.state.currentPage}
