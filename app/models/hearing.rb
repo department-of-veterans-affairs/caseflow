@@ -259,4 +259,10 @@ class Hearing < CaseflowRecord
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
   end
+
+  def weekend_and_holiday(day, holidays)
+    holiday = holidays.find { |entry| entry[:date] == day }.present?
+    weekend = day.saturday? || day.sunday?
+    [weekend, holiday]
+  end
 end

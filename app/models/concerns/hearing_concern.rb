@@ -89,19 +89,13 @@ module HearingConcern
     # that falls on a weekend or holiday
     holidays = Holidays.between(scheduled_for, scheduled_for + 90.days, :federal_reserve)
     end_date = scheduled_for.to_date + 90.days
+    weekend, holiday = weekend_and_holiday(end_date, holidays)
 
-    while weekend_or_holiday?(end_date, holidays)
+    while weekend || holiday
       end_date += 1.day
+      weekend, holiday = weekend_and_holiday(end_date, holidays)
     end
 
     end_date
-  end
-
-  def weekend_or_holiday?(day, holidays)
-    if scheduled_for
-      holiday = holidays.find { |entry| entry[:date] == day }.present?
-      weekend = day.saturday? || day.sunday?
-      weekend || holiday
-    end
   end
 end
