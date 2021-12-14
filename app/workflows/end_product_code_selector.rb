@@ -305,8 +305,11 @@ class EndProductCodeSelector
       END_PRODUCT_CODES[:fiduciary][review_type]
     else
       code = end_product_codes[benefit_type.to_sym][review_type][issue_type]
-      (code == compensation_sc_rating_ep_code && request_issues_older_than_a_year? && veteran.alive?) ?
-        "040SCRGTY" : code
+      if code == compensation_sc_rating_ep_code && request_issues_older_than_a_year? && veteran.alive?
+        "040SCRGTY"
+      else
+        code
+      end
     end
   end
 
