@@ -468,8 +468,8 @@ describe AttorneyCaseReview, :all_dbs do
         end
 
         it "updates judge task with attorney notes" do
-          label = COPY::ATTORNEY_TASK_NOTES_PREFIX
-          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
+          label = Regexp.escape(COPY::ATTORNEY_TASK_NOTES_PREFIX)
+          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{label}/)
           expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
 
           subject
@@ -482,8 +482,8 @@ describe AttorneyCaseReview, :all_dbs do
           let(:task_id) { create(:ama_attorney_rewrite_task, assigned_by: judge, assigned_to: attorney).id }
 
           it "updates judge task with attorney notes" do
-            label = COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX
-            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{Regexp.escape(label)}/)
+            label = Regexp.escape(COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX)
+            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{label}/)
             expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
             subject
             expect(judge_task.reload.instructions).to include a_string_matching(/#{Regexp.escape(label)}/)
