@@ -372,8 +372,8 @@ class LegacyHearing < CaseflowRecord
     self.created_by ||= RequestStore[:current_user]
   end
 
-  def weekend_and_holiday(day, holidays)
-    holiday = holidays.find { |entry| entry[:date] == day }.present?
+  def weekend_and_holiday(day)
+    holiday = Holidays.on(day, :federal_reserve, :observed).any?
     weekend = day.saturday? || day.sunday?
     [weekend, holiday]
   end
