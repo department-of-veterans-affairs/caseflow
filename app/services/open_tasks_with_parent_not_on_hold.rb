@@ -40,7 +40,8 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT = [
     *MailTask.descendants.map(&:name),
     "TrackVeteranTask",
-    "FoiaTask" # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/255#issuecomment-992758936
+    "FoiaTask", # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/255#issuecomment-992758936
+    "VeteranRecordRequest", # https://dsva.slack.com/archives/CQTDX9BF0/p1635969424041800?thread_ts=1635968729.041500&cid=CQTDX9BF0
   ].freeze
 
   def ignored_tasks_with_closed_root_task_parent
