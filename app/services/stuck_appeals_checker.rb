@@ -15,11 +15,7 @@ class StuckAppealsChecker < DataIntegrityChecker
     build_report_closed_root_open_children
   end
 
-  ACCEPTABLE_POST_DISPATCH_TASKS ||= [
-    TrackVeteranTask.name, # https://dsva.slack.com/archives/C01DFC41BPV/p1634756194393000?thread_ts=1633042678.442600&cid=C01DFC41BPV
-    BoardGrantEffectuationTask.name, # A post-dispatch task
-    *MailTask.descendants.map(&:name) # Mail can arrive after appeal is dispatched
-  ].freeze
+  ACCEPTABLE_POST_DISPATCH_TASKS ||= OpenTasksWithParentNotOnHold::IGNORED_TASKS_WITH_CLOSED_ROOTTASK_PARENT
 
   private
 
