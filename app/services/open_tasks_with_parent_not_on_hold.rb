@@ -8,9 +8,10 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
                     "task".pluralize(task_ids.count) +
                     " with a non-on_hold parent task (ignoring TrackVeteranTask and *MailTasks)"
       tasks_with_parents = Task.where(id: task_ids).joins(:parent).includes(:parent)
-      grouped_suspect_tasks = tasks_with_parents.group(:appeal_type, :type, "parents_tasks.type", "parents_tasks.status").count
-      add_to_report "Counts: \n#{grouped_suspect_tasks.entries.map(&:to_s).join("\n")}"
+      grouped_tasks = tasks_with_parents.group(:appeal_type, :type, "parents_tasks.type", "parents_tasks.status").count
+      add_to_report "Counts: \n#{grouped_tasks.entries.map(&:to_s).join("\n")}"
       add_to_report ONGOING_INVESTIGATIONS
+      add_to_report "AMA Appeal ids: #{tasks_with_parents.where(appeal_type: :Appeal).pluck(:appeal_id).uniq.sort}"
     end
   end
 
@@ -41,7 +42,8 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
     *MailTask.descendants.map(&:name),
     "TrackVeteranTask",
     "FoiaTask", # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/255#issuecomment-992758936
-    "VeteranRecordRequest", # https://dsva.slack.com/archives/CQTDX9BF0/p1635969424041800?thread_ts=1635968729.041500&cid=CQTDX9BF0
+    "BoardGrantEffectuationTask", # https://dsva.slack.com/archives/C2ZAMLK88/p1558555785005300?thread_ts=1558539407.494100&cid=C2ZAMLK88
+    "VeteranRecordRequest" # https://dsva.slack.com/archives/CQTDX9BF0/p1635969424041800?thread_ts=1635968729.041500&cid=CQTDX9BF0
   ].freeze
 
   def ignored_tasks_with_closed_root_task_parent
