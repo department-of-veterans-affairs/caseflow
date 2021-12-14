@@ -84,6 +84,10 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
+  updateQueries = (newQueries) => {
+    this.setState({ queries: newQueries }, () => this.loadHearingSchedule(0));
+  };
+
   loadHearingSchedule = (index) => {
     this.setState({
       loading: true
@@ -98,6 +102,19 @@ export class ListScheduleContainer extends React.Component {
       }
 
       requestUrl += `&start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
+    }
+
+    if (this.state.queries.sort) {
+      // append sort criteria
+    }
+
+    if (this.state.queries.filter) {
+      // append filter criteria
+      const filterKeys = Object.keys(this.state.queries.filter);
+
+      filterKeys.forEach((col) => {
+        requestUrl += `&query[${col}]=${Object.values(this.state.queries.filter[col]).join(',')}`;
+      });
     }
 
     const requestOptions = {

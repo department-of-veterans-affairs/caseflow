@@ -576,6 +576,17 @@ export default class QueueTable extends React.PureComponent {
           this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
         }
       }
+    } else if (useHearingsApi) {
+      // For the Hearings Schedule table, back-end handles pagination, sorting and filtering
+      // so send sorting and filtering selections back to ListSchedule
+      const { sortColName, sortAscending, filteredByList } = this.state;
+      const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
+      const params = {
+        filter: _.isEmpty(filteredByList) ? {} : filteredByList,
+        sort: sortColName ? { sortCol: columnToSortBy?.columnName, ascending: sortAscending } : {}
+      };
+
+      this.props.returnQueries(params);
     } else {
       // Steps to calculate table data to display:
       // 1. Sort data
