@@ -57,7 +57,7 @@ class HearingDay < CaseflowRecord
   SQL
 
   AVAILABLE_FILTERS = [
-    :with_judges,
+    :vlj,
     :with_request_type
   ].freeze
 
@@ -95,7 +95,7 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
-  scope :with_judges, lambda { |judges_ids|
+  scope :vlj, lambda { |judges_ids|
     where(hearings: { judge_id: judges_ids })
       .or(where(judge_id: judges_ids))
       .includes(:hearings, :judge).distinct
