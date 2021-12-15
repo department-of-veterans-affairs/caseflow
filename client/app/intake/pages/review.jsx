@@ -15,7 +15,6 @@ import { rampRefilingHeader, reviewRampRefilingSchema } from './rampRefiling/rev
 import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
 import { higherLevelReviewFormHeader,
   reviewHigherLevelReviewSchema,
-  reviewHigherLevelReviewFiledByVaGov,
   reviewHigherLevelReviewSameOffice,
 } from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
@@ -36,19 +35,11 @@ const textAlignRightStyling = css({
 });
 
 const generateHigherLevelReviewSchema = (featureToggles) => {
-  const formFieldFeatureToggles = {
-    filedByVaGovHlr: reviewHigherLevelReviewFiledByVaGov,
-    updatedIntakeForms: reviewHigherLevelReviewSameOffice
-  };
+  if (!featureToggles.updatedIntakeForms) {
+    return reviewHigherLevelReviewSchema.concat(reviewHigherLevelReviewSameOffice);
+  }
 
-  return Object.keys(formFieldFeatureToggles).reduce((schema, toggle) => {
-    if ((featureToggles[toggle] && toggle !== 'updatedIntakeForms') ||
-    (!featureToggles[toggle] && toggle === 'updatedIntakeForms')) {
-      return schema.concat(formFieldFeatureToggles[toggle]);
-    }
-
-    return schema;
-  }, reviewHigherLevelReviewSchema);
+  return reviewHigherLevelReviewSchema;
 };
 
 const schemaMappings = (featureToggles) => ({

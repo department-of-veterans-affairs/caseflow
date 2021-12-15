@@ -49,14 +49,8 @@ feature "Higher-Level Review", :all_dbs do
   let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
-  before do
-    FeatureToggle.enable!(:filed_by_va_gov_hlr)
-    FeatureToggle.enable!(:updated_intake_forms)
-  end
-  after do
-    FeatureToggle.disable!(:filed_by_va_gov_hlr)
-    FeatureToggle.disable!(:updated_intake_forms)
-  end
+  before { FeatureToggle.enable!(:updated_intake_forms) }
+  after { FeatureToggle.disable!(:updated_intake_forms) }
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
