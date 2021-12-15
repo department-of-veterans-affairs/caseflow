@@ -128,7 +128,7 @@ module HasHearingEmailRecipientsConcern
     recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
 
     if recipient.blank?
-      virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address # TODO this fallback is a problem
+      virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address
     else
       recipient&.email_address
     end
