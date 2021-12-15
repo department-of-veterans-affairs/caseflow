@@ -1,4 +1,5 @@
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -10,7 +11,7 @@ import TextareaField from 'app/components/TextareaField';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 
-import { taskById, appealWithDetailSelector } from '../selectors';
+import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
@@ -114,6 +115,66 @@ ReadyForReviewModal.propTypes = {
   register: PropTypes.func,
 };
 
+const sendToBoardOpts = [
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS, value: 'correct documents' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE, value: 'not appealable' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION, value: 'no vha decision' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
+];
+
+const SendToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+// if the VhaProgramOffice has completed a task, show the task instructions in the modal
+  const programOfficeInstructions = props.tasks.map((task) => {
+  return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1]; 
+});
+
+  return (
+    <React.Fragment>
+      {programOfficeInstructions.map((text) => (
+        <React.Fragment>
+          <div>
+            <ReactMarkdown>{text}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+      ))}
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <RadioField
+            name="sendToBoardIntakeOptions"
+            id="sendToBoardIntakeOptions"
+            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL}
+            inputRef={props.register}
+            vertical
+            onChange={(value) => setState({ radio: value })}
+            value={state.radio}
+            options={sendToBoardOpts}
+          />
+          <TextareaField
+            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
+            name="instructions"
+            id="vhaSendToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+SendToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func
+};
+
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
   <React.Fragment>
     {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
@@ -171,7 +232,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: MarkTaskCompleteModal,
+    getContent: SendToBoardIntakeModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
@@ -226,15 +287,27 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     let formattedInstructions = instructions;
+    let reviewNotes;
 
+    if (this.getTaskAssignedToType() === 'VhaProgramOffice') {
+      reviewNotes = 'Program Office';
+    } else if (this.getTaskAssignedToType() === 'VhaRegionalOffice') {
+      reviewNotes = 'VISN';
+    } else if (this.getTaskAssignedToType() === 'CAMO') {
+      reviewNotes = 'CAMO';
+    }
+
+    // should change "radio" to instead check for either the ready_for_review or vha_send_to_board_intake modal types to
+    // 1. determine which displayText to use i.e. locationTypeOpts or sendToBoardOpts
+    // 2. if instructions should be formatted
     if (radio) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
-      const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
+      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
 
       formattedInstructions = docLocationText;
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+        const instructionsDetail = `\n\n**Details:**\n\n${instructions}`;
 
         formattedInstructions += instructionsDetail;
       }
@@ -304,6 +377,7 @@ CompleteTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
+  tasks: getAllTasksForAppeal(state, ownProps),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending
 });
