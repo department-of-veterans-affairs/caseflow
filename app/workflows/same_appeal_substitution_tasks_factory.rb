@@ -86,6 +86,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   # Called if a `ScheduleHearingTask` is selected to be reopened
+  # :reek:FeatureEnvy
   def cancel_defunct_hearing_tasks
     types_to_cancel = [
       AssignHearingDispositionTask.name,
