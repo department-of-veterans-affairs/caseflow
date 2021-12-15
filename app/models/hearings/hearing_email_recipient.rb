@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# See has_hearing_email_recipients_concern.rb for context on this class.
 class HearingEmailRecipient < CaseflowRecord
   def self.email_error_message
     fail Caseflow::Error::MustImplementInSubclass
