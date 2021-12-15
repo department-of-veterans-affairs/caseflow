@@ -192,6 +192,7 @@ class CheckTaskTree
     end
   end
 
+  # See OpenTasksWithParentNotOnHold
   def open_tasks_with_parent_not_on_hold
     child_tasks.open.reject { |task| task.parent&.status == "on_hold" }
   end
