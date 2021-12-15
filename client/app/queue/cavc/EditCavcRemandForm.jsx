@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { isEmpty } from 'lodash';
@@ -7,7 +7,14 @@ import { isEmpty } from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import COPY from 'app/../COPY';
+import { ADD_CAVC_PAGE_TITLE, CAVC_ATTORNEY_LABEL, CAVC_COURT_DECISION_DATE,
+  CAVC_DECISION_DATE_ERROR, CAVC_DECISION_DATE_PAST, CAVC_DOCKET_NUMBER_LABEL, CAVC_DOCKET_NUMBER_ERROR, CAVC_FEDERAL_CIRCUIT_HEADER,
+  CAVC_FEDERAL_CIRCUIT_LABEL, CAVC_JUDGE_ERROR, CAVC_JUDGE_LABEL,
+  CAVC_JUDGEMENT_DATE, CAVC_JUDGEMENT_DATE_ERROR,
+  CAVC_INSTRUCTIONS_ERROR, CAVC_INSTRUCTIONS_LABEL, CAVC_ISSUES_LABEL,
+  CAVC_MANDATE_DATE, CAVC_MANDATE_DATE_ERROR,
+  CAVC_REMAND_MANDATE_DATES_LABEL, CAVC_REMAND_MANDATE_QUESTION, CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION,
+  CAVC_SUB_TYPE_LABEL, CAVC_TYPE_LABEL, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import TextField from 'app/components/TextField';
 import TextareaField from 'app/components/TextareaField';
 import RadioField from 'app/components/RadioField';
@@ -173,6 +180,15 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
+  const parseDecisionDateErrors = () => {
+    if (errors?.decisionDate && errors?.decisionDate.type === 'min') {
+      return CAVC_DECISION_DATE_PAST;
+    }
+    if (errors?.decisionDate && errors?.decisionDate.type === 'max') {
+      return CAVC_DECISION_DATE_ERROR;
+    }
+  };
+
   // This may be moot, since when fields are removed, values get reset
   // When editing, remandType can't be changed, so this should never fire
   useEffect(() => {
@@ -187,21 +203,21 @@ export const EditCavcRemandForm = ({
       <AppSegment filledBackground>
         <h1>
           {isEmpty(existingValues) ?
-            COPY.ADD_CAVC_PAGE_TITLE :
-            COPY.EDIT_CAVC_PAGE_TITLE}
+            ADD_CAVC_PAGE_TITLE :
+            EDIT_CAVC_PAGE_TITLE}
         </h1>
         <TextField
           inputRef={register}
-          label={COPY.CAVC_DOCKET_NUMBER_LABEL}
+          label={CAVC_DOCKET_NUMBER_LABEL}
           name="docketNumber"
-          errorMessage={errors?.docketNumber && COPY.CAVC_DOCKET_NUMBER_ERROR}
+          errorMessage={errors?.docketNumber && CAVC_DOCKET_NUMBER_ERROR}
           strongLabel
         />
 
         <RadioField
           errorMessage={errors?.attorney?.message}
           inputRef={register}
-          label={COPY.CAVC_ATTORNEY_LABEL}
+          label={CAVC_ATTORNEY_LABEL}
           name="attorney"
           options={YesNoOpts}
           strongLabel
@@ -213,10 +229,10 @@ export const EditCavcRemandForm = ({
           render={({ onChange, ...rest }) => (
             <SearchableDropdown
               {...rest}
-              label={COPY.CAVC_JUDGE_LABEL}
+              label={CAVC_JUDGE_LABEL}
               options={judgeOptions}
               onChange={(valObj) => onChange(valObj?.value)}
-              errorMessage={errors.judge && COPY.CAVC_JUDGE_ERROR}
+              errorMessage={errors.judge && CAVC_JUDGE_ERROR}
               searchable
               strongLabel
             />
@@ -228,7 +244,7 @@ export const EditCavcRemandForm = ({
             errorMessage={errors?.decisionType?.message}
             inputRef={register}
             styling={radioLabelStyling}
-            label={COPY.CAVC_TYPE_LABEL}
+            label={CAVC_TYPE_LABEL}
             name="decisionType"
             options={filteredDecisionTypes}
             strongLabel
@@ -239,7 +255,7 @@ export const EditCavcRemandForm = ({
             <TextField
               name="decisionTypeDisplay"
               value={CAVC_DECISION_TYPE_NAMES[(existingValues?.decisionType)]}
-              label={COPY.CAVC_TYPE_LABEL}
+              label={CAVC_TYPE_LABEL}
               readOnly
               strongLabel
             />
@@ -253,7 +269,7 @@ export const EditCavcRemandForm = ({
               inputRef={register}
               errorMessage={errors?.remandType?.message}
               styling={radioLabelStyling}
-              label={COPY.CAVC_SUB_TYPE_LABEL}
+              label={CAVC_SUB_TYPE_LABEL}
               name="remandType"
               options={filteredRemandTypes}
               strongLabel
@@ -264,7 +280,7 @@ export const EditCavcRemandForm = ({
               <TextField
                 name="remandTypeDisplay"
                 value={CAVC_REMAND_SUBTYPE_NAMES[(existingValues?.remandType)]}
-                label={COPY.CAVC_SUB_TYPE_LABEL}
+                label={CAVC_SUB_TYPE_LABEL}
                 readOnly
                 strongLabel
               />
@@ -276,7 +292,7 @@ export const EditCavcRemandForm = ({
           <RadioField
             inputRef={register}
             styling={radioLabelStyling}
-            label={COPY.CAVC_REMAND_MANDATE_QUESTION}
+            label={CAVC_REMAND_MANDATE_QUESTION}
             name="remandDatesProvided"
             options={YesNoOpts}
             strongLabel
@@ -286,23 +302,22 @@ export const EditCavcRemandForm = ({
 
         <DateSelector
           inputRef={register}
-          label={COPY.CAVC_COURT_DECISION_DATE}
+          label={CAVC_COURT_DECISION_DATE}
           type="date"
           name="decisionDate"
-          errorMessage={errors?.decisionDate && COPY.CAVC_DECISION_DATE_ERROR}
+          errorMessage={parseDecisionDateErrors()}
           strongLabel
         />
-
         {isRemandType('mdr') && <MdrBanner />}
 
         {mode === 'add' && mandateDatesAvailable && (
           <>
             <legend>
-              <strong>{COPY.CAVC_REMAND_MANDATE_DATES_LABEL}</strong>
+              <strong>{CAVC_REMAND_MANDATE_DATES_LABEL}</strong>
             </legend>
             <Checkbox
               inputRef={register}
-              label={COPY.CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
+              label={CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
               name="mandateSame"
             />
           </>
@@ -311,21 +326,21 @@ export const EditCavcRemandForm = ({
           <div>
             <DateSelector
               inputRef={register}
-              label={COPY.CAVC_JUDGEMENT_DATE}
+              label={CAVC_JUDGEMENT_DATE}
               type="date"
               name="judgementDate"
               errorMessage={
-                errors?.judgementDate && COPY.CAVC_JUDGEMENT_DATE_ERROR
+                errors?.judgementDate && CAVC_JUDGEMENT_DATE_ERROR
               }
               strongLabel
             />
 
             <DateSelector
               inputRef={register}
-              label={COPY.CAVC_MANDATE_DATE}
+              label={CAVC_MANDATE_DATE}
               type="date"
               name="mandateDate"
-              errorMessage={errors?.mandateDate && COPY.CAVC_MANDATE_DATE_ERROR}
+              errorMessage={errors?.mandateDate && CAVC_MANDATE_DATE_ERROR}
               strongLabel
             />
           </div>
@@ -341,7 +356,7 @@ export const EditCavcRemandForm = ({
             {!watchDecisionType?.includes('death_dismissal') && (
               <>
                 <legend>
-                  <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
+                  <strong>{CAVC_ISSUES_LABEL}</strong>
                 </legend>
                 <Button
                   name={watchIssueIds.length ? 'Unselect all' : 'Select all'}
@@ -384,21 +399,21 @@ export const EditCavcRemandForm = ({
         {isRemandType('mdr') && (
           <React.Fragment>
             <legend>
-              <strong>{COPY.CAVC_FEDERAL_CIRCUIT_HEADER}</strong>
+              <strong>{CAVC_FEDERAL_CIRCUIT_HEADER}</strong>
             </legend>
             <Checkbox
               inputRef={register}
               name="federalCircuit"
-              label={COPY.CAVC_FEDERAL_CIRCUIT_LABEL}
+              label={CAVC_FEDERAL_CIRCUIT_LABEL}
             />
           </React.Fragment>
         )}
 
         <TextareaField
           inputRef={register}
-          label={COPY.CAVC_INSTRUCTIONS_LABEL}
+          label={CAVC_INSTRUCTIONS_LABEL}
           name="instructions"
-          errorMessage={errors.instructions && COPY.CAVC_INSTRUCTIONS_ERROR}
+          errorMessage={errors.instructions && CAVC_INSTRUCTIONS_ERROR}
           strongLabel
         />
       </AppSegment>

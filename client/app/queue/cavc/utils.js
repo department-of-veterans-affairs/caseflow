@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import StringUtil from 'app/util/StringUtil';
 
-import COPY from 'app/../COPY';
+import { CAVC_DECISION_DATE_PAST, CAVC_JUDGEMENT_DATE_PAST, CAVC_DECISION_DATE_ERROR, CAVC_ALL_ISSUES_ERROR, CAVC_NO_ISSUES_ERROR } from 'app/../COPY';
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from 'constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -21,8 +21,9 @@ export const allRemandTypeOpts = Object.entries(CAVC_REMAND_SUBTYPE_NAMES).map(
 );
 
 export const generateSchema = ({ maxIssues }) => {
-  const requireDateBeforeToday = yup.
+  const requireValidDate = yup.
     date().
+    min(new Date(2018, 1, 1)).
     max(new Date()).
     required();
 
@@ -62,24 +63,25 @@ export const generateSchema = ({ maxIssues }) => {
     }),
     decisionDate: yup.
       date().
+      min(new Date(2018, 1, 1), CAVC_DECISION_DATE_PAST).
       max(new Date()).
       required(),
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: requireDateBeforeToday,
+      then: requireValidDate,
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: requireDateBeforeToday,
+      then: requireValidDate,
     }),
     issueIds: yup.
       array().
       of(yup.string()).
       when('remandType', {
         is: 'jmr',
-        then: yup.array().length(maxIssues, COPY.CAVC_ALL_ISSUES_ERROR),
-        otherwise: yup.array().min(1, COPY.CAVC_NO_ISSUES_ERROR),
+        then: yup.array().length(maxIssues, CAVC_ALL_ISSUES_ERROR),
+        otherwise: yup.array().min(1, CAVC_NO_ISSUES_ERROR),
       }),
     federalCircuit: yup.boolean(),
     instructions: yup.string().required(),

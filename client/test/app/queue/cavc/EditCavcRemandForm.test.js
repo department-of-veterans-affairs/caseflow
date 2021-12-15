@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  findByText,
   fireEvent,
   render,
   screen,
@@ -11,7 +12,7 @@ import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
 
-import COPY from 'app/../COPY';
+import { ADD_CAVC_PAGE_TITLE, CAVC_MANDATE_DATE_PAST, CAVC_JUDGEMENT_DATE_PAST, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
 
 import {
@@ -21,6 +22,7 @@ import {
   supportedDecisionTypes,
   supportedRemandTypes,
 } from 'test/data/queue/cavc';
+import { add, format } from 'date-fns';
 
 const getDecisionGroup = () => {
   return screen.getByRole('group', { name: /how are you proceeding/i });
@@ -88,7 +90,7 @@ describe('EditCavcRemandForm', () => {
         const { container } = setup();
 
         expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
+        expect(screen.getByText(ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
       it('passes a11y testing', async () => {
@@ -189,7 +191,7 @@ describe('EditCavcRemandForm', () => {
         const { container } = setup({ existingValues });
 
         expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
+        expect(screen.getByText(EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
       it('passes a11y testing', async () => {
@@ -211,15 +213,30 @@ describe('EditCavcRemandForm', () => {
   });
 
   describe('submitting invalid dates', () => {
-    setup({ invalidDates });
 
-    it('displays an error message for a future decision date', () => {
-      expect(screen.findByText(COPY.CAVC_DECISION_DATE_ERROR)).toBeInTheDocument();
+    it('displays an error message for a future decision date', async () => {
+      setup({ existingValues });
+      const decisionDateInput = screen.getByLabelText(/What is the Court's decision date?/i);
+      const invalidDate = format(add(new Date(), { days: 7 }), 'yyyy-MM-dd');
+
+      // Enter date
+      fireEvent.change(decisionDateInput, { target: { value: invalidDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/Please select a valid date for the court's decision/i)).toBeInTheDocument();
+      });
     });
 
-    it('displays error messages for judgement and remand dates before January 1, 2018', () => {
-      expect(screen.findByText(COPY.CAVC_DECISION_DATE_PAST)).toBeInTheDocument();
-      expect(screen.findByText(COPY.CAVC_JUDGEMENT_DATE_PAST)).toBeInTheDocument();
+    it('displays error messages for judgement and remand dates before January 1, 2018', async () => {
+      const { container } = setup({ invalidDates });
+
+      expect(await screen.findByText(container, CAVC_MANDATE_DATE_PAST)).toBeVisible();
+      expect(await findByText(container, CAVC_JUDGEMENT_DATE_PAST)).toBeVisible();
     });
   });
 });
