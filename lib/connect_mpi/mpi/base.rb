@@ -65,11 +65,6 @@ module MPI
   <sender typeCode="SND">
     <device classCode="DEV" determinerCode="INSTANCE">
       <id extension="200CFL" root="1.2.840.114350.1.13.99997.2.7788" />
-      <asAgent classCode="AGNT">
-        <representedOrganization classCode="ORG" determinerCode="INSTANCE">
-          <id root="2.16.840.1.113883.4.349" extension="200CFL" />
-        </representedOrganization>
-      </asAgent>
     </device>
   </sender>
   <controlActProcess classCode="CACT" moodCode="EVN">
