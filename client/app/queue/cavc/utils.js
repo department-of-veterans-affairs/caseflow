@@ -68,13 +68,8 @@ export const generateSchema = ({ maxIssues }) => {
       required(),
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
-      // is: (val) => typeof val === 'string',
-      is: true,
-      then: yup.
-        date().
-        min(new Date(2018, 1, 1)).
-        max(new Date()).
-        required(),
+      is: 'yes',
+      then: requireValidDate,
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
