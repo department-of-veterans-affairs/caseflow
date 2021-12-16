@@ -58,7 +58,7 @@ class HearingDay < CaseflowRecord
 
   AVAILABLE_FILTERS = [
     :with_judges,
-    :with_request_type
+    :with_request_types
   ].freeze
 
   before_create :assign_created_by_user
@@ -101,8 +101,19 @@ class HearingDay < CaseflowRecord
       .includes(:hearings, :judge).distinct
   }
 
-  scope :with_request_type, lambda { |request_types|
-    
+  scope :with_request_types, lambda { |request_types|
+    query = request_type_query
+
+    ids = all.select do |day|
+      request_type = HearingDaySerializer.get_readable_request_type(
+        day,
+        video_hearing_days_request_types: query
+      ).split(",").first.strip
+
+      request_types.include?(request_type)
+    end.pluck(:id)
+
+    where(id: ids)
   }
 
   filterrific(
@@ -167,19 +178,21 @@ class HearingDay < CaseflowRecord
 
   # This method returns the filter headers used on the table in the front-end for
   # hearings schedule.
-  def self.filter_options(docket_queries)
+  def self.filter_options(docket_queries = {})
     {
-      readable_request_type: request_type_filters(docket_queries[:video_hearing_days_request_types]),
+      readable_request_type: request_type_filters(docket_queries[:paginated_docket_queries]),
       regional_office: regional_office_filters,
       vlj: judge_filters(docket_queries[:judge_names])
     }
   end
 
-  def self.request_type_filters(hearing_day_request_query)
+  def self.request_type_filters(query = {})
+    query = query.presence || request_type_query
+
     all.each_with_object({}) do |day, hash|
       request_type = HearingDaySerializer.get_readable_request_type(
         day,
-        video_hearing_days_request_types: hearing_day_request_query
+        video_hearing_days_request_types: query
       ).split(",").first.strip
 
       if hash[request_type].present?
@@ -212,10 +225,12 @@ class HearingDay < CaseflowRecord
     regional_offices_filters
   end
 
-  def self.judge_filters(hearing_day_judge_name_query)
+  def self.judge_filters(query = {})
+    query = query.presence || judge_name_query
+
     judge_filters = all.includes(:judge).each_with_object({}) do |day, hash|
-      judge_first_name = day.judge_first_name(hearing_day_judge_name_query)
-      judge_last_name = day.judge_last_name(hearing_day_judge_name_query)
+      judge_first_name = day.judge_first_name(query)
+      judge_last_name = day.judge_last_name(query)
       judge_full_name = FullName.new(
         judge_first_name,
         nil,
@@ -235,6 +250,42 @@ class HearingDay < CaseflowRecord
     judge_filters["Blank"] = judge_filters.delete("")
 
     judge_filters
+  end
+
+  def self.docket_queries(paginated_dockets = [], pagination = false)
+    {
+      video_hearing_days_request_types: request_type_query(paginated_dockets, pagination),
+      filled_slots_count_for_days: filled_slots_query(paginated_dockets, pagination),
+      judge_names: judge_name_query(paginated_dockets, pagination)
+    }
+  end
+
+  def self.filled_slots_query(paginated_dockets = [], pagination = false)
+    if pagination
+      HearingDayFilledSlotsQuery.new(paginated_dockets).call
+    else
+      HearingDayFilledSlotsQuery.new(all).call
+    end
+  end
+
+  def self.request_type_query(paginated_dockets = [], pagination = false)
+    if pagination
+      HearingDayRequestTypeQuery.new(
+        paginated_dockets.unscope(:includes, :where).where(id: all.pluck(:id))
+      ).call
+    else
+      HearingDayRequestTypeQuery.new(
+        all.unscope(:includes, :where).where(id: all.pluck(:id))
+      ).call
+    end
+  end
+
+  def self.judge_name_query(paginated_dockets = [], pagination = false)
+    if pagination
+      HearingDayJudgeNameQuery.new(paginated_dockets).call
+    else
+      HearingDayJudgeNameQuery.new(all).call
+    end
   end
 
   def central_office?
