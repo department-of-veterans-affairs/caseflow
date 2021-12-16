@@ -58,7 +58,8 @@ class HearingDay < CaseflowRecord
 
   AVAILABLE_FILTERS = [
     :with_judges,
-    :with_request_types
+    :with_request_types,
+    :with_ros
   ].freeze
 
   before_create :assign_created_by_user
@@ -114,6 +115,10 @@ class HearingDay < CaseflowRecord
     end.pluck(:id)
 
     where(id: ids)
+  }
+
+  scope :with_ros, lambda { |ros_ids|
+    where(regional_office: ros_ids)
   }
 
   filterrific(
@@ -180,7 +185,7 @@ class HearingDay < CaseflowRecord
   # hearings schedule.
   def self.filter_options(docket_queries = {})
     {
-      readable_request_type: request_type_filters(docket_queries[:paginated_docket_queries]),
+      readable_request_type: request_type_filters(docket_queries[:hearing_days_request_types]),
       regional_office: regional_office_filters,
       vlj: judge_filters(docket_queries[:judge_names])
     }

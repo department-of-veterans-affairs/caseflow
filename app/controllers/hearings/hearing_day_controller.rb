@@ -232,7 +232,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def filtered_dockets
-    if params[:query].present?
+    if query_params.present?
       initialize_filterrific(
         dockets_in_range,
         query_params
