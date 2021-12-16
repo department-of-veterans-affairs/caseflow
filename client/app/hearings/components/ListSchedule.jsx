@@ -105,7 +105,6 @@ class ListSchedule extends React.Component {
     super(props);
 
     const data = formatTableData(this.props);
-    this.mergeFilterOptions(data);
 
     this.state = {
       ...data,
@@ -137,25 +136,6 @@ class ListSchedule extends React.Component {
     return filledSlots;
   }
 
-  mergeFilterOptions = (data) => {
-    if (this.props.filterOptions) {
-      const columnNames = Object.keys(this.props.filterOptions);
-      data.columns.map(col => {
-        const foundCol = columnNames.find(name => { return name === col.columnName });
-        if (foundCol) {
-          col.filterOptions = [];
-          const options = Object.keys(this.props.filterOptions[foundCol]);
-          options.forEach(option => {
-            const values = this.props.filterOptions[foundCol][option];
-            col.filterOptions.push({
-              value: option,
-              displayText: `${option} (${values.count})`,
-              queryValue: values.queryValue
-            });
-          });
-        }
-      });
-    }
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
