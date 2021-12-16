@@ -56,6 +56,9 @@ class SameAppealSubstitutionTasksFactory
 
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
+    # We need to clean up existing tree if starting fresh for hearings
+    cancel_defunct_hearing_tasks if source_tasks.any? { |task| task.is_a?(ScheduleHearingTask) }
+
     source_tasks.each do |source_task|
       creation_params = @task_params[source_task.id.to_s]
       create_task_from(source_task, creation_params)
@@ -89,7 +92,29 @@ class SameAppealSubstitutionTasksFactory
     cancel_tasks.each do |task|
       task.update!(
         status: Constants.TASK_STATUSES.cancelled,
-        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    end
+  end
+
+  # Called if a `ScheduleHearingTask` is selected to be reopened
+  # :reek:FeatureEnvy
+  def cancel_defunct_hearing_tasks
+    types_to_cancel = [
+      AssignHearingDispositionTask.name,
+      ChangeHearingDispositionTask.name,
+      EvidenceSubmissionWindowTask.name,
+      TranscriptionTask.name
+    ]
+    tasks_to_cancel = @appeal.tasks.select { |task| types_to_cancel.include?(task.type) && task.open? }
+    tasks_to_cancel.each do |task|
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
       )
     end
   end
