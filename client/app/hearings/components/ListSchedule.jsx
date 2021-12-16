@@ -83,7 +83,8 @@ class ListTable extends React.Component {
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
           summary="hearing-schedule"
-          slowReRendersAreOk />
+          slowReRendersAreOk
+          useHearingsApi
         />
       </React.Fragment>
     );
@@ -104,6 +105,7 @@ class ListSchedule extends React.Component {
     super(props);
 
     const data = formatTableData(this.props);
+    this.mergeFilterOptions(data);
 
     this.state = {
       ...data,
@@ -133,6 +135,27 @@ class ListSchedule extends React.Component {
 
   formatHearingsScheduled = (filledSlots) => {
     return filledSlots;
+  }
+
+  mergeFilterOptions = (data) => {
+    if (this.props.filterOptions) {
+      const columnNames = Object.keys(this.props.filterOptions);
+      data.columns.map(col => {
+        const foundCol = columnNames.find(name => { return name === col.columnName });
+        if (foundCol) {
+          col.filterOptions = [];
+          const options = Object.keys(this.props.filterOptions[foundCol]);
+          options.forEach(option => {
+            const values = this.props.filterOptions[foundCol][option];
+            col.filterOptions.push({
+              value: option,
+              displayText: `${option} (${values.count})`,
+              queryValue: values.queryValue
+            });
+          });
+        }
+      });
+    }
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -208,7 +231,8 @@ ListSchedule.propTypes = {
   startDate: PropTypes.string,
   switchListView: PropTypes.func,
   user: PropTypes.object,
-  view: PropTypes.string
+  view: PropTypes.string,
+  filterOptions: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

@@ -96,6 +96,16 @@ export class ListScheduleContainer extends React.Component {
       this.props.onReceiveHearingSchedule(resp.hearings);
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
       this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));
+
+      this.setState({
+        loading: false,
+        currentPage: resp.pagination.page,
+        totalCases: resp.pagination.count,
+        currentCases: resp.pagination.items,
+        totalPages: resp.pagination.pages,
+        pageSize: resp.pagination.in,
+        filterOptions: resp.filterOptions
+      });
     });
   };
 
@@ -228,6 +238,7 @@ export class ListScheduleContainer extends React.Component {
                 user={user}
                 view={this.state.view}
                 switchListView={this.switchListView}
+                filterOptions={this.state.filterOptions}
               />
             )}
 
