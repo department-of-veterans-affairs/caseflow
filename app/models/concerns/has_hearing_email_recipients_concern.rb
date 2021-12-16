@@ -99,7 +99,7 @@ module HasHearingEmailRecipientsConcern
 
   def appellant_tz
     recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
-    return recipient.email_address if recipient.present?
+    return recipient.timezone if recipient.present?
     return virtual_hearing[:appellant_tz] if virtual_hearing.present?
   end
 
@@ -111,7 +111,7 @@ module HasHearingEmailRecipientsConcern
 
   def representative_tz
     recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
-    return recipient.email_address if recipient.present?
+    return recipient.timezone if recipient.present?
     return virtual_hearing[:appellant_tz] if virtual_hearing.present?
   end
 
