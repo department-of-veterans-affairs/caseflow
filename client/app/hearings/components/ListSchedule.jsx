@@ -128,7 +128,7 @@ class ListSchedule extends React.Component {
   setDateRangeKey = () => {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
     // show first page by default by sending index of 0
-    this.props.updateList(0)
+    this.props.fetchHearings(0)
   }
 
   formatHearingsScheduled = (filledSlots) => {
@@ -200,7 +200,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  updateList: PropTypes.func.isRequired,
+  fetchHearings: PropTypes.func.isRequired,
   onResetDeleteSuccessful: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,

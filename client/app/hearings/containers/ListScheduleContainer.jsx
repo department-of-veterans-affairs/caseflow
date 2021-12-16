@@ -224,7 +224,7 @@ export class ListScheduleContainer extends React.Component {
             ) : (
               <ListSchedule
                 hearingSchedule={this.props.hearingSchedule}
-                updateList={this.loadHearingSchedule}
+                fetchHearings={this.loadHearingSchedule}
                 user={user}
                 view={this.state.view}
                 switchListView={this.switchListView}
