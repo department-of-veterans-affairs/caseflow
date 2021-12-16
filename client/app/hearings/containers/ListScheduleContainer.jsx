@@ -74,8 +74,12 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = ({ showAll = false }) => {
-    let requestUrl = '/hearings/hearing_day.json';
+  loadHearingSchedule = (index, showLoading=true, queries={}) => {
+    this.setState({
+      loading: showLoading
+    });
+
+    let requestUrl = `/hearings/hearing_day.json?page=${index + 1}`;
 
     if (this.props.startDate && this.props.endDate) {
       if (!moment(this.props.startDate, dateFormatString, true).isValid() ||
@@ -84,6 +88,18 @@ export class ListScheduleContainer extends React.Component {
       }
 
       requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${showAll}`;
+    }
+
+    if (queries.sort) {
+      // append sort criteria
+    }
+
+    if (queries.filter) {
+      // append filter criteria
+      const names = Object.keys(queries.filter);
+      names.forEach(name => {
+        requestUrl += `&query[filters][${name}]=${Object.values(queries.filter[name]).join(',')}`
+      })
     }
 
     const requestOptions = {

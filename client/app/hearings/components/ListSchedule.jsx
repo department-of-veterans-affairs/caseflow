@@ -82,6 +82,7 @@ class ListTable extends React.Component {
         <QueueTable
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
+          returnQueries={this.props.onQueryUpdate}
           summary="hearing-schedule"
           slowReRendersAreOk
           useHearingsApi
@@ -95,6 +96,7 @@ ListTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
   history: PropTypes.object,
+  onQueryUpdate: PropTypes.func,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool
   })
@@ -108,7 +110,8 @@ class ListSchedule extends React.Component {
 
     this.state = {
       ...data,
-      dateRangeKey: `${props.startDate}->${props.endDate}`
+      dateRangeKey: `${props.startDate}->${props.endDate}`,
+      prevQueries: JSON.stringify({ sort: {}, filter: {} })
     };
   }
 
@@ -136,6 +139,43 @@ class ListSchedule extends React.Component {
     return filledSlots;
   }
 
+  onQueryUpdate = (params) => {
+    if (JSON.stringify(params) === this.state.prevQueries) {
+      return;
+    }
+    this.setState({ prevQueries: JSON.stringify(params) });
+
+    let queries = { sort: null, filter: null };
+
+    if (params.sort?.sortCol) {
+      queries.sort = { column: params.sort.sortCol, ascending: params.sort.sortAscending };
+    }
+
+    const filterKeys = Object.keys(params.filter);
+    if (filterKeys.length > 0) {
+      // Find column in order to translate filter[key] into queryValue,
+      // which are properties in column.filterOptions
+      // ex: translate filter[key] "Anchorage, AK" into queryValue "RO63"
+      let filters = {};
+      filterKeys.forEach(key => {
+        const column = this.state.columns.find(col => { return col.columnName === key });
+        const labels = params.filter[key];
+        const values = [];
+        column.filterOptions?.map(option => {
+          if (labels.includes(option.value)) {
+            values.push(option.queryValue);
+          }
+        });
+        if (values.length > 0) {
+          filters[key] = values;
+        }
+      });
+      queries.filter = filters;
+    }
+
+    // Note: double-check handing of "blank" selections for Judge and Regional Office
+    const showLoading = false;
+    this.props.fetchHearings(0, showLoading, queries)
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -147,14 +187,16 @@ class ListSchedule extends React.Component {
         key={`hearings${this.state.dateRangeKey}`}
         user={user}
         hearingScheduleRows={hearingScheduleRows}
-        hearingScheduleColumns={hearingScheduleColumns} />;
+        hearingScheduleColumns={hearingScheduleColumns}
+        onQueryUpdate={this.onQueryUpdate} />;
     }
 
     return <ListTable history={history}
       key={`allHearings${this.state.dateRangeKey}`}
       user={user}
       hearingScheduleRows={hearingScheduleRows}
-      hearingScheduleColumns={hearingScheduleColumns} />;
+      hearingScheduleColumns={hearingScheduleColumns}
+      onQueryUpdate={this.onQueryUpdate} />;
   }
 
   render() {
