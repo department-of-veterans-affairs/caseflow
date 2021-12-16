@@ -49,6 +49,12 @@ const actionButtonsStyling = css({
   marginRight: '25px'
 });
 
+const filterKeyMap = {
+  vlj: 'with_judges',
+  readableRequestType: 'with_request_types',
+  regionalOffice: 'with_ros'
+};
+
 export class ListScheduleContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -115,7 +121,7 @@ export class ListScheduleContainer extends React.Component {
       const filterKeys = Object.keys(this.state.queries.filter);
 
       filterKeys.forEach((col) => {
-        requestUrl += `&query[${col}]=${Object.values(this.state.queries.filter[col]).join(',')}`;
+        requestUrl += `&query[${filterKeyMap[col]}]=${Object.values(this.state.queries.filter[col]).join(',')}`;
       });
     }
 
