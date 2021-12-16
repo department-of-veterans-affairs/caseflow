@@ -108,15 +108,17 @@ class HearingTimeService
 
   # hearing time in poa timezone
   def poa_time
-    representative_tz = @hearing.virtual_hearing&.representative_tz
+    representative_tz_from_recipient = @hearing.representative_recipient&.timezone
+    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
 
-    normalized_time(representative_tz)
+    normalized_time(@hearing.virtual_hearing[:representative_tz])
   end
 
   # hearing time in appellant timezone
   def appellant_time
-    appellant_tz = @hearing.virtual_hearing&.appellant_tz
+    appellant_tz_from_recipient = @hearing.appellant_recipient&.timezone
+    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
 
-    normalized_time(appellant_tz)
+    normalized_time(@hearing.virtual_hearing[:appellant_tz])
   end
 end
