@@ -591,11 +591,12 @@ export default class QueueTable extends React.PureComponent {
       // For the Hearings Schedule table, back-end handles pagination, sorting and filtering
       // so send sorting and filtering selections back to ListSchedule
       const { sortColName, sortAscending, filteredByList } = this.state;
-      const columnToSortBy = getColumns(this.props).find(column => sortColName === column.name);
+      const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
       const params = {
         filter: _.isEmpty(filteredByList) ? {} : filteredByList,
-        sort: sortColName ? { sortCol: columnToSortBy?.columnName, sortAscending: sortAscending } : {}
+        sort: sortColName ? { sortCol: columnToSortBy?.columnName, ascending: sortAscending } : {}
       };
+
       this.props.returnQueries(params);
     } else {
       // Steps to calculate table data to display:
