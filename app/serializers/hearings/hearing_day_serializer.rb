@@ -64,7 +64,7 @@ class HearingDaySerializer
       hearing_days.includes(:judge),
       collection: true,
       params: {
-        video_hearing_days_request_types: params[:video_hearing_days_request_types],
+        video_hearing_days_request_types: params[:hearing_days_request_types],
         filled_slots_count_for_days: params[:filled_slots_count_for_days],
         judge_names: params[:judge_names]
       }
