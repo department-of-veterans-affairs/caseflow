@@ -2991,13 +2991,13 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           name="remandTypeDisplay"
           readonly=""
           type="text"
-          value="Memorandum Decision on Remand (MDR)"
+          value="Joint Motion for Remand (JMR)"
         />
       </div>
       <input
         name="remandType"
         type="hidden"
-        value="mdr"
+        value="jmr"
       />
       <div
         class="cf-form-textinput   "
@@ -3020,21 +3020,6 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           type="date"
           value=""
         />
-      </div>
-      <div
-        class="usa-alert usa-alert-info usa-alert-slim"
-        data-css-1umdg7m=""
-        role="alert"
-      >
-        <div
-          class="usa-alert-body"
-        >
-          <div
-            class="usa-alert-text"
-          >
-            Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.
-          </div>
-        </div>
       </div>
       <legend>
         <strong>
@@ -3107,33 +3092,19 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           </label>
         </div>
       </fieldset>
-      <legend>
-        <strong>
-          Notice of Appeal to the Federal Circuit
-        </strong>
-      </legend>
       <div
-        class="checkbox-wrapper-federalCircuit cf-form-checkboxes"
+        class="usa-alert usa-alert-info usa-alert-slim"
+        data-css-1umdg7m=""
+        role="alert"
       >
         <div
-          class="cf-form-checkbox"
+          class="usa-alert-body"
         >
-          <input
-            aria-label="federalCircuit"
-            id="federalCircuit"
-            name="federalCircuit"
-            type="checkbox"
-          />
-          <label
-            for="federalCircuit"
+          <div
+            class="usa-alert-text"
           >
-            <span
-              class=""
-            >
-              Yes, this case has been appealed to the Federal Circuit
-            </span>
-             
-          </label>
+            For a JMR you must select all issues to proceed
+          </div>
         </div>
       </div>
       <div

@@ -11,21 +11,22 @@ export const existingValues = {
   attorney: 'no',
   judge: 'Panel',
   decisionType: 'remand',
-  remandType: 'mdr',
+  remandType: 'jmr',
   decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
   issueIds: [2, 3],
   instructions: 'Lorem ipsum dolor sit amet',
 };
 
-export const invalidDates = {
+export const remandDatesProvided = {
   docketNumber: '12-3456',
   attorney: 'no',
   judge: 'Panel',
   decisionType: 'remand',
-  remandType: 'mdr',
+  remandType: 'jmpr',
+  remandDatesProvided: 'yes',
   decisionDate: format(add(new Date(), { days: 7 }), 'yyyy-MM-dd'),
-  judgementDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
-  mandateDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
+  judgementDate: format(new Date(), 'yyyy-MM-dd'),
+  mandateDate: format(new Date(), 'yyyy-MM-dd'),
   issueIds: [2, 3],
   instructions: 'Lorem ipsum dolor sit amet',
 };

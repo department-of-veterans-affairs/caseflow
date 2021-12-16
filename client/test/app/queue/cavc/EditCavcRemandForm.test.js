@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  findByText,
   fireEvent,
   render,
   screen,
@@ -12,13 +11,13 @@ import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
 
-import { ADD_CAVC_PAGE_TITLE, CAVC_MANDATE_DATE_PAST, CAVC_JUDGEMENT_DATE_PAST, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
+import { ADD_CAVC_PAGE_TITLE, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
 
 import {
   decisionIssues,
   existingValues,
-  invalidDates,
+  remandDatesProvided,
   supportedDecisionTypes,
   supportedRemandTypes,
 } from 'test/data/queue/cavc';
@@ -213,7 +212,6 @@ describe('EditCavcRemandForm', () => {
   });
 
   describe('submitting invalid dates', () => {
-
     it('displays an error message for a future decision date', async () => {
       setup({ existingValues });
       const decisionDateInput = screen.getByLabelText(/What is the Court's decision date?/i);
@@ -232,11 +230,40 @@ describe('EditCavcRemandForm', () => {
       });
     });
 
-    it('displays error messages for judgement and remand dates before January 1, 2018', async () => {
-      const { container } = setup({ invalidDates });
+    it('displays error messages for judgement dates before January 1, 2018', async () => {
+      setup({ existingValues: remandDatesProvided });
+      const judgementDateInput = screen.getByLabelText(/What is the Court's judgement date?/i);
+      const judgementDate = format(new Date(2017, 4, 12), 'yyyy-MM-dd');
 
-      expect(await screen.findByText(container, CAVC_MANDATE_DATE_PAST)).toBeVisible();
-      expect(await findByText(container, CAVC_JUDGEMENT_DATE_PAST)).toBeVisible();
+      // Enter date
+      fireEvent.change(judgementDateInput, { target: { value: judgementDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/judgement date cannot be before/i)).toBeInTheDocument();
+      });
+    });
+
+    it('displays error messages for mandate dates before January 1, 2018', async () => {
+      setup({ existingValues: remandDatesProvided });
+      const mandateDateInput = screen.getByLabelText(/What is the Court's mandate date?/i);
+      const mandateDate = format(new Date(2017, 5, 12), 'yyyy-MM-dd');
+
+      // Enter date
+      fireEvent.change(mandateDateInput, { target: { value: mandateDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/mandate date cannot be before/i)).toBeInTheDocument();
+      });
     });
   });
 });
