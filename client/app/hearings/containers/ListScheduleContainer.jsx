@@ -37,8 +37,11 @@ import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 import UserAlerts from '../../components/UserAlerts';
+import Pagination from '../../components/Pagination/Pagination';
 
 import { LIST_SCHEDULE_VIEWS, ENDPOINT_NAMES } from '../constants';
+import LoadingScreen from '../../components/LoadingScreen';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -49,6 +52,7 @@ const actionButtonsStyling = css({
 export class ListScheduleContainer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
@@ -68,10 +72,11 @@ export class ListScheduleContainer extends React.Component {
   }
 
   switchListView = (view) => {
-    this.setState({ view });
+    this.setState({ view }, () => this.loadHearingSchedule(0));
   }
 
   componentDidMount = () => {
+    this.loadHearingSchedule(this.state.currentPage);
     this.props.onSelectedHearingDayChange('');
   };
 
@@ -98,7 +103,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${showAll}`;
+      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
     }
 
     if (this.state.queries.sort) {

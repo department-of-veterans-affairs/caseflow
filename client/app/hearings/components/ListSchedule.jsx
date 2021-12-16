@@ -141,6 +141,7 @@ class ListSchedule extends React.Component {
     if (JSON.stringify(params) === this.state.prevQueries) {
       return;
     }
+
     this.setState({ prevQueries: JSON.stringify(params) });
 
     let queries = { sort: null, filter: null };
