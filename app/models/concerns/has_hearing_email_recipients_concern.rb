@@ -14,6 +14,9 @@
 # That's why there are so many checks like virtual_hearing[:appellant_email] in this file. It's looking to
 # see if this record might have data stored on VirtualHearing and if it does it's migrating it to the new
 # HearingEmailRecipient.
+#
+# This fallback would ideally only be in this file, but it is also in:
+# - HearingTimeService::poa_time and HearingTimeService::appellant_time
 
 # rubocop:disable Metrics/ModuleLength
 module HasHearingEmailRecipientsConcern
