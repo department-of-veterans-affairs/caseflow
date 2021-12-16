@@ -56,20 +56,25 @@ export const generateSchema = ({ maxIssues }) => {
         required('Please specify the type of remand').
         oneOf(allRemandTypeOpts.map((opt) => opt.value)),
     }),
-    remandDatesProvided: yup.string().when('decisionType', {
-      is: 'remand',
+    remandDatesProvided: yup.string().when('remandType', {
+      is: (val) => val !== CAVC_REMAND_SUBTYPES.mdr,
       then: yup.string(),
       otherwise: yup.string().required('Choose one'),
     }),
     decisionDate: yup.
       date().
       min(new Date(2018, 1, 1), CAVC_DECISION_DATE_PAST).
-      max(new Date()).
+      max(new Date(), CAVC_DECISION_DATE_ERROR).
       required(),
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
-      is: 'yes',
-      then: requireValidDate,
+      // is: (val) => typeof val === 'string',
+      is: true,
+      then: yup.
+        date().
+        min(new Date(2018, 1, 1)).
+        max(new Date()).
+        required(),
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
