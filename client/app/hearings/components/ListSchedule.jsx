@@ -174,8 +174,7 @@ class ListSchedule extends React.Component {
     }
 
     // Note: double-check handing of "blank" selections for Judge and Regional Office
-    const showLoading = false;
-    this.props.fetchHearings(0, showLoading, queries)
+    this.props.updateQueries(queries)
   }
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
@@ -246,6 +245,7 @@ ListSchedule.propTypes = {
     updatedBy: PropTypes.string
   }),
   fetchHearings: PropTypes.func.isRequired,
+  updateQueries: PropTypes.func.isRequired,
   onResetDeleteSuccessful: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,
