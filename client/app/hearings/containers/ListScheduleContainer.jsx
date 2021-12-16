@@ -99,10 +99,6 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = (params = { showAll: false }) => Promise.all([
-    this.loadHearingSchedule(params)
-  ]);
-
   openModal = (event) => {
     this.setState({
       showModalAlert: false,
@@ -220,12 +216,29 @@ export class ListScheduleContainer extends React.Component {
               }
             </div>
             <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-            <ListSchedule
-              hearingSchedule={this.props.hearingSchedule}
-              onApply={this.createHearingPromise}
-              user={user}
-              view={this.state.view}
-              switchListView={this.switchListView} />
+            {this.state.loading ? (
+              <LoadingScreen
+                spinnerColor = {LOGO_COLORS.HEARINGS.ACCENT}
+                message = "Loading the hearing schedule..."
+              />
+            ) : (
+              <ListSchedule
+                hearingSchedule={this.props.hearingSchedule}
+                updateList={this.loadHearingSchedule}
+                user={user}
+                view={this.state.view}
+                switchListView={this.switchListView}
+              />
+            )}
+
+            <Pagination
+              pageSize={this.state.pageSize}
+              currentPage={this.state.currentPage}
+              currentCases={this.state.currentCases}
+              totalPages={this.state.totalPages}
+              totalCases={this.state.totalCases}
+              updatePage={(index) => this.loadHearingSchedule(index)}
+            />
           </AppSegment>
         )}
       </React.Fragment>
