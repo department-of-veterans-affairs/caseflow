@@ -4,10 +4,10 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import Tooltip from './Tooltip';
-import { DoubleArrow } from './RenderFunctions';
+import { DoubleArrowIcon } from './icons/DoubleArrowIcon';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
-import FilterIcon from './FilterIcon';
+import FilterIcon from './icons/FilterIcon';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
 import ListItemPickerCheckbox from './ListItemPickerCheckbox';
@@ -66,7 +66,7 @@ const HeaderRow = (props) => {
 
           columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
             <span>{column.header || ''}</span>
-            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+            <span {...sortArrowsStyle}><DoubleArrowIcon topColor={topColor} bottomColor={botColor} /></span>
           </span>;
         }
 

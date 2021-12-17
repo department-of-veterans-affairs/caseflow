@@ -7,7 +7,8 @@ import classNames from 'classnames';
 import { formatSearchText } from 'utils/reader';
 import Button from 'app/components/Button';
 import SearchBar from 'app/components/SearchBar';
-import { RightChevron, LeftChevron } from 'app/components/RenderFunctions';
+import { RightChevronIcon } from 'app/components/icons/RightChevronIcon';
+import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 /**
@@ -60,7 +61,7 @@ export const DocumentSearch = ({
         onClick={() => searchText(searchTerm, matchIndex - 1)}
       >
         <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
-          <LeftChevron />
+          <LeftChevronIcon />
           <span className="usa-sr-only">Previous Match</span>
         </div>
       </Button>
@@ -69,7 +70,7 @@ export const DocumentSearch = ({
         onClick={() => searchText(searchTerm, matchIndex + 1)}
       >
         <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
-          <RightChevron />
+          <RightChevronIcon />
           <span className="usa-sr-only">Next Match</span>
         </div>
       </Button>
