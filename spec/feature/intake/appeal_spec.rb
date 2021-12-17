@@ -694,7 +694,7 @@ feature "Appeal Intake", :all_dbs do
     click_intake_add_issue
     click_intake_no_matching_issues
     add_intake_nonrating_issue(
-      benefit_type: "Vocational Rehabilitation and Employment",
+      benefit_type: "Veterans Readiness and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
       date: nonrating_date.mdY
