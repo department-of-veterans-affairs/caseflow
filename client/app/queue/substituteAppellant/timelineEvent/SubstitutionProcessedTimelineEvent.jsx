@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import format from 'date-fns/format';
 import { css } from 'glamor';
 
-import { GreenCheckmark } from 'app/components/RenderFunctions';
+import { GreenCheckmarkIcon } from 'app/components/icons/GreenCheckmarkIcon';
 import { grayLineTimelineStyling } from 'app/queue/components/TaskRows';
 
 import { COLORS } from 'app/constants/AppConstants';
@@ -37,7 +37,7 @@ export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
         <div>{formattedDate}</div>
       </td>
       <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-        <GreenCheckmark />
+        <GreenCheckmarkIcon />
         <div {...grayLineTimelineStyling} />
       </td>
       <td className="taskContainerStyling taskInformationTimelineContainerStyling">
