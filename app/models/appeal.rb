@@ -171,7 +171,7 @@ class Appeal < DecisionReview
   def contested_claim?
     return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
 
-    category_substrings = ["Contested", "Apportionment"]
+    category_substrings = %w(Contested, Apportionment)
 
     request_issues.any? do |request_issue|
       category_substrings.any? { |substring| request_issue.nonrating_issue_category&.include?(substring) }
