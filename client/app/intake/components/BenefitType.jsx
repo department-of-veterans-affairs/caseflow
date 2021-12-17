@@ -42,7 +42,7 @@ export default class BenefitType extends React.PureComponent {
         label="Benefit type"
         strongLabel
         placeholder="Select or enter..."
-        options={formatSearchableDropdownOptions(this.benefitTypes)}
+        options={formatSearchableDropdownOptions(BENEFIT_TYPES)}
         value={value}
         onChange={onChange}
         errorMessage={errorMessage}
