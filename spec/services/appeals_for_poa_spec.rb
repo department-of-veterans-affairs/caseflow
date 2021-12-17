@@ -21,24 +21,6 @@ describe AppealsForPOA, :all_dbs do
     let(:vso_participant_id) { "2452383" }
     let(:participant_ids) { [participant_id, participant_id_without_vso] }
 
-    let(:poas) do
-      [
-        {
-          ptcpnt_id: participant_id,
-          power_of_attorney: {
-            legacy_poa_cd: "071",
-            nm: "PARALYZED VETERANS OF AMERICA, INC.",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: vso_participant_id
-          }
-        },
-        {
-          ptcpnt_id: participant_id_without_vso,
-          power_of_attorney: {}
-        }
-      ]
-    end
-
     before do
       stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = create(:user)
@@ -53,10 +35,39 @@ describe AppealsForPOA, :all_dbs do
       )
     end
 
-    it "returns only the case with vso assigned to it" do
-      returned_appeals = subject.call
-      expect(returned_appeals.count).to eq 2
-      expect(returned_appeals).to contain_exactly(appeal_for_vso, legacy_appeal)
+    context "when there are POAs in BGS" do
+      let(:poas) do
+        [
+          {
+            ptcpnt_id: participant_id,
+            power_of_attorney: {
+              legacy_poa_cd: "071",
+              nm: "PARALYZED VETERANS OF AMERICA, INC.",
+              org_type_nm: "POA National Organization",
+              ptcpnt_id: vso_participant_id
+            }
+          },
+          {
+            ptcpnt_id: participant_id_without_vso,
+            power_of_attorney: {}
+          }
+        ]
+      end
+
+      it "returns only the case with vso assigned to it" do
+        returned_appeals = subject.call
+        expect(returned_appeals.count).to eq 2
+        expect(returned_appeals).to contain_exactly(appeal_for_vso, legacy_appeal)
+      end
+    end
+
+    context "when there are no POAs in BGS" do
+      let(:poas) { [] }
+
+      it "returns no cases" do
+        returned_appeals = subject.call
+        expect(returned_appeals.count).to eq(0)
+      end
     end
   end
 end

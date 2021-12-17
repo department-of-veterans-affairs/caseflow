@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SelectedFilterIcon, UnselectedFilterIcon } from './RenderFunctions';
-
+import { SelectedFilterIcon } from './SelectedFilterIcon';
+import { UnselectedFilterIcon } from './UnselectedFilterIcon';
 class FilterIcon extends React.PureComponent {
   render() {
     const {
@@ -24,7 +24,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: handleActivate
+      onClick: handleActivate,
     };
 
     if (selected) {
@@ -36,11 +36,12 @@ class FilterIcon extends React.PureComponent {
 }
 
 FilterIcon.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   iconName: PropTypes.string,
   handleActivate: PropTypes.func,
   getRef: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  selected: PropTypes.bool,
 };
 
 export default FilterIcon;

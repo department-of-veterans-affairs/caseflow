@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants/index';
 import ApiUtil from '../util/ApiUtil';
-import { LockIcon } from '../components/RenderFunctions';
+import { LockIcon } from '../components/icons/LockIcon';
 
 const UserQuotaControls = ({
   userQuota,
