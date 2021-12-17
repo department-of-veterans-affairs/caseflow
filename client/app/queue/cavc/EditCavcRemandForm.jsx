@@ -180,15 +180,6 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
-  // This may be moot, since when fields are removed, values get reset
-  // When editing, remandType can't be changed, so this should never fire
-  useEffect(() => {
-    if (!mandateDatesAvailable) {
-      setValue('judgementDate', '');
-      setValue('mandateDate', '');
-    }
-  }, [mandateDatesAvailable]);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
