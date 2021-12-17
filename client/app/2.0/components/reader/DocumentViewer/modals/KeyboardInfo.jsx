@@ -3,7 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'app/components/RenderFunctions';
+import { ArrowDownIcon } from 'app/components/icons/ArrowDownIcon';
+import { ArrowUpIcon } from 'app/components/icons/ArrowUpIcon';
+import { ArrowLeftIcon } from 'app/components/icons/ArrowLeftIcon';
+import { ArrowRightIcon } from 'app/components/icons/ArrowRightIcon';
 import Modal from 'app/components/Modal';
 import Table from 'app/components/Table';
 
@@ -31,19 +34,19 @@ export const commentInstructions = [
   },
   {
     commentInstruction: 'Move comment up',
-    shortcut: <span><ArrowUp /></span>
+    shortcut: <span><ArrowUpIcon /></span>
   },
   {
     commentInstruction: 'Move comment down',
-    shortcut: <span><ArrowDown /></span>
+    shortcut: <span><ArrowDownIcon /></span>
   },
   {
     commentInstruction: 'Move comment left',
-    shortcut: <span><ArrowLeft /></span>
+    shortcut: <span><ArrowLeftIcon /></span>
   },
   {
     commentInstruction: 'Move comment right',
-    shortcut: <span><ArrowRight /></span>
+    shortcut: <span><ArrowRightIcon /></span>
   },
   {
     commentInstruction: 'Place a comment',
@@ -116,11 +119,11 @@ export const docInstructions = [
   },
   {
     documentsInstruction: 'View next document',
-    shortcut: <span><ArrowRight /></span>
+    shortcut: <span><ArrowRightIcon /></span>
   },
   {
     documentsInstruction: 'View previous document',
-    shortcut: <span><ArrowLeft /></span>
+    shortcut: <span><ArrowLeftIcon /></span>
   },
   {
     documentsInstruction: 'Open/ Hide menu',

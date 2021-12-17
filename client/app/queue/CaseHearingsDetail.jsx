@@ -12,7 +12,7 @@ import {
 } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
-import { PencilIcon } from '../components/RenderFunctions';
+import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
 
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
@@ -171,7 +171,7 @@ class CaseHearingsDetail extends React.PureComponent {
         label: 'Notes',
         value: <React.Fragment>
           <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
-            <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+            <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
             <span {...css({ marginLeft: '24px' })}>Edit</span>
           </Button>
           <br />
