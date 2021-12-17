@@ -691,7 +691,7 @@ feature "Intake", :all_dbs do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            benefit_type: "Vocational Rehabilitation and Employment",
+            benefit_type: "Veterans Readiness and Employment",
             category: "Additional Training",
             description: "Description for Additional Training",
             date: 1.month.ago.mdY,
