@@ -1,12 +1,12 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import EmailModalConfirmation, {
+import EmailConfirmationModal, {
   ChangeHearingTime,
   ChangeToVirtual,
   ChangeFromVirtual,
   ChangeEmailOrTimezone
-  , DateTime, ReadOnlyEmails } from 'app/hearings/components/EmailModalConfirmation';
+  , DateTime, ReadOnlyEmails } from 'app/hearings/components/EmailConfirmationModal';
 import { defaultHearing, virtualHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import Button from 'app/components/Button';
@@ -45,11 +45,11 @@ const showSingleEmailAssertion = (node, hearing, email, tz) => {
   expect(node.find('.cf-help-divider')).toHaveLength(0);
 };
 
-describe('EmailModalConfirmation', () => {
+describe('EmailConfirmationModal', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const modal = mount(
-      <EmailModalConfirmation
+      <EmailConfirmationModal
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -70,7 +70,7 @@ describe('EmailModalConfirmation', () => {
   test('Displays ChangeFromVirtual component when type is change_from_virtual', () => {
     // Run the test
     const modal = mount(
-      <EmailModalConfirmation
+      <EmailConfirmationModal
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -91,7 +91,7 @@ describe('EmailModalConfirmation', () => {
   test('Displays ChangeEmailOrTimezone component when type is change_email_or_timezone', () => {
     // Run the test
     const modal = mount(
-      <EmailModalConfirmation
+      <EmailConfirmationModal
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}
@@ -112,7 +112,7 @@ describe('EmailModalConfirmation', () => {
   test('Displays ChangeHearingTime component when type is change_hearing_time', () => {
     // Run the test
     const modal = mount(
-      <EmailModalConfirmation
+      <EmailConfirmationModal
         update={updateSpy}
         hearing={defaultHearing}
         virtualHearing={virtualHearing.virtualHearing}

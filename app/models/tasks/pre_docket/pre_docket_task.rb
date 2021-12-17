@@ -8,11 +8,12 @@
 
 class PreDocketTask < Task
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
+    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h,
+    Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
   ].freeze
 
   def available_actions(user)
-    return [] unless assigned_to.user_is_admin?(user)
+    return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
     TASK_ACTIONS
   end

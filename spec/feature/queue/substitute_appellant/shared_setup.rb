@@ -9,11 +9,6 @@ RSpec.shared_context("with Clerk of the Board user") do
   end
 end
 
-RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle") do
-  before { FeatureToggle.enable!(:hearings_substitution_death_dismissal) }
-  after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
-end
-
 RSpec.shared_context("with listed_granted_substitution_before_dismissal feature toggle") do
   before { FeatureToggle.enable!(:listed_granted_substitution_before_dismissal) }
   after { FeatureToggle.disable!(:listed_granted_substitution_before_dismissal) }
@@ -185,11 +180,12 @@ RSpec.shared_examples("fill substitution form") do
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
 
-      # Verify that the Evidence Submission Window was stored correctly
-      if docket_type.eql?("evidence_submission")
+      # Verify that the Evidence Submission Window was stored correctly when there is an active esw task
+      active_esw_tasks = new_appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask)
+      if docket_type.eql?("evidence_submission") && !active_esw_tasks.empty?
+        active_esw_task = new_appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
         # Ensure that our new window ends on specified date, accounting for user's time zone (not based on midnight UTC)
-        window_task = EvidenceSubmissionWindowTask.find_by(appeal: new_appeal)
-        expect(window_task.timer_ends_at).to be_between(
+        expect(active_esw_task.timer_ends_at).to be_between(
           evidence_submission_window_end_time - 1.day,
           evidence_submission_window_end_time + 1.day
         )
@@ -216,10 +212,11 @@ RSpec.shared_examples("fill substitution form") do
 
     step "verify items on original appeal" do
       visit "/queue/appeals/#{appeal.uuid}"
-
+      appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
       expect(page).to_not have_content "+ Add Substitute"
-
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
+      unless appellant_substitution.source_appeal_id == appellant_substitution.target_appeal_id
+        expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
+      end
     end
   end
 end

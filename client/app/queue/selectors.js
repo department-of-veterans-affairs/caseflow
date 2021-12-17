@@ -21,6 +21,7 @@ const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
 const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId;
+const getActiveOrgId = (state) => state.ui.activeOrganization.id;
 const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
@@ -111,6 +112,11 @@ const tasksByAssigneeCssIdSelector = createSelector(
   (tasks, cssId) => filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+const tasksByAssigneeOrgSelector = createSelector(
+  [tasksWithAppealSelector, getActiveOrgId],
+  (tasks, orgId) => filter(tasks, (task) => task.assignedTo.id === orgId)
+);
+
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
@@ -118,6 +124,11 @@ export const legacyJudgeTasksAssignedToUser = createSelector(
 
 const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks) => workTasksSelector(tasks)
+);
+
+const workTasksByAssigneeOrgSelector = createSelector(
+  [tasksByAssigneeOrgSelector],
   (tasks) => workTasksSelector(tasks)
 );
 
@@ -199,6 +210,17 @@ export const judgeAssignTasksSelector = createSelector(
       }
 
       return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL;
+    })
+);
+
+export const camoAssignTasksSelector = createSelector(
+  [workTasksByAssigneeOrgSelector],
+  (tasks) =>
+    filter(tasks, (task) => {
+      return (
+        task.label === COPY.VHA_REVIEW_DOCUMENTATION_TASK_LABEL &&
+        (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
+      );
     })
 );
 

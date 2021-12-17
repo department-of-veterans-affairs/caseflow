@@ -6,6 +6,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   before do
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_predocket_appeals)
+    FeatureToggle.enable!(:visn_predocket_workflow)
+    FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
     program_office.add_user(program_office_user)
@@ -15,6 +17,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   after do
     FeatureToggle.disable!(:vha_predocket_workflow)
     FeatureToggle.disable!(:vha_predocket_appeals)
+    FeatureToggle.disable!(:visn_predocket_workflow)
+    FeatureToggle.disable!(:docket_vha_appeals)
   end
 
   let(:bva_intake) { BvaIntake.singleton }
@@ -74,8 +78,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "CAMO has appeal in queue with VhaDocumentSearchTask assigned" do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
-        visit "/organizations/vha-camo?tab=inProgressTab"
-        expect(page).to have_content("Assess Documentation")
+        visit "/organizations/vha-camo?tab=camo_assigned"
+        expect(page).to have_content("Review Documentation")
 
         created_task_types = Set.new(appeal.tasks.map(&:type))
         pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
@@ -94,8 +98,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "CAMO user assigns to Program Office" do
         User.authenticate!(user: camo_user)
-        visit "/organizations/vha-camo?tab=inProgressTab"
-        expect(page).to have_content(COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL)
+        visit "/organizations/vha-camo?tab=camo_assigned"
+        expect(page).to have_content(COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -107,7 +111,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         fill_in("Provide instructions and context for this action:", with: po_instructions)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{camo.url}?tab=inProgressTab&page=1")
+        expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&page=1")
         expect(page).to have_content("Task assigned to #{program_office.name}")
 
         expect(AssessDocumentationTask.last).to have_attributes(
@@ -125,7 +129,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_on("Switch views")
         click_on("#{program_office.name} team cases")
 
-        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
         expect(page).to have_content("Assess Documentation")
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
@@ -142,7 +146,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
         expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
@@ -159,7 +163,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         fill_in("Provide instructions and context for this action:", with: ro_instructions)
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=unassignedTab&page=1")
+        expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
         expect(page).to have_content("Task assigned to #{regional_office.name}")
       end
 

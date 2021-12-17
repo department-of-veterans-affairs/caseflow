@@ -16,7 +16,6 @@ class AssessDocumentationTask < Task
   ].freeze
 
   PO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
     Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
   ].freeze
 
@@ -27,11 +26,12 @@ class AssessDocumentationTask < Task
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
 
-    task_actions = []
-
-    task_actions.concat(DEFAULT_ACTIONS)
+    task_actions = Array.new(DEFAULT_ACTIONS)
 
     if assigned_to.is_a?(VhaProgramOffice)
+      if FeatureToggle.enabled?(:visn_predocket_workflow, user: user)
+        task_actions.concat([Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h].freeze)
+      end
       task_actions.concat(PO_ACTIONS)
     end
 

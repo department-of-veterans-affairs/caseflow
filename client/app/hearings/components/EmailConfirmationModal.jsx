@@ -14,7 +14,7 @@ import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { ReadOnly } from './details/ReadOnly';
-import { virtualHearingModalStyles } from './details/style';
+import { emailConfirmationModalStyles } from './details/style';
 
 const getCentralOfficeTime = (hearing) => {
   const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
@@ -92,7 +92,7 @@ export const ReadOnlyEmails = ({
   const showDivider = representativeEmailAddress && (repEdited || appellantEdited || showAllEmails);
 
   return (
-    <div {...virtualHearingModalStyles}>
+    <div {...emailConfirmationModalStyles}>
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
         <React.Fragment>
           <ReadOnly
@@ -297,7 +297,7 @@ export const TYPES = {
   }
 };
 
-const EmailModalConfirmation = (props) => {
+const EmailConfirmationModal = (props) => {
   const {
     closeModal,
     hearing,
@@ -409,7 +409,7 @@ const EmailModalConfirmation = (props) => {
   );
 };
 
-EmailModalConfirmation.propTypes = {
+EmailConfirmationModal.propTypes = {
   hearing: PropTypes.shape({
     scheduledFor: PropTypes.string,
     scheduledTimeString: PropTypes.string,
@@ -438,4 +438,4 @@ EmailModalConfirmation.propTypes = {
   scrollLock: PropTypes.bool
 };
 
-export default EmailModalConfirmation;
+export default EmailConfirmationModal;

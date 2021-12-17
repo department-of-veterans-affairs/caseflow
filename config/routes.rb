@@ -149,6 +149,10 @@ Rails.application.routes.draw do
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
+  resources :hearing_days, only: [:show] do
+    resources :hearings, only: [:index]
+  end
+
   namespace :hearings do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
@@ -303,6 +307,7 @@ Rails.application.routes.draw do
     resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
+  get '/organizations(*rest)', to: 'organizations#org_index'
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'
