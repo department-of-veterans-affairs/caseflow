@@ -8,13 +8,12 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import { ADD_CAVC_PAGE_TITLE, CAVC_ATTORNEY_LABEL, CAVC_COURT_DECISION_DATE,
-  CAVC_DECISION_DATE_ERROR, CAVC_DECISION_DATE_PAST, CAVC_DOCKET_NUMBER_LABEL, CAVC_DOCKET_NUMBER_ERROR, CAVC_FEDERAL_CIRCUIT_HEADER,
+  CAVC_DOCKET_NUMBER_LABEL, CAVC_DOCKET_NUMBER_ERROR, CAVC_FEDERAL_CIRCUIT_HEADER,
   CAVC_FEDERAL_CIRCUIT_LABEL, CAVC_JUDGE_ERROR, CAVC_JUDGE_LABEL,
-  CAVC_JUDGEMENT_DATE, CAVC_JUDGEMENT_DATE_PAST, CAVC_JUDGEMENT_DATE_ERROR,
-  CAVC_INSTRUCTIONS_ERROR, CAVC_INSTRUCTIONS_LABEL, CAVC_ISSUES_LABEL,
-  CAVC_MANDATE_DATE, CAVC_MANDATE_DATE_PAST, CAVC_MANDATE_DATE_ERROR,
-  CAVC_REMAND_MANDATE_DATES_LABEL, CAVC_REMAND_MANDATE_QUESTION, CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION,
-  CAVC_SUB_TYPE_LABEL, CAVC_TYPE_LABEL, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
+  CAVC_JUDGEMENT_DATE, CAVC_INSTRUCTIONS_ERROR, CAVC_INSTRUCTIONS_LABEL, CAVC_ISSUES_LABEL,
+  CAVC_MANDATE_DATE, CAVC_REMAND_MANDATE_DATES_LABEL, CAVC_REMAND_MANDATE_QUESTION,
+  CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION, CAVC_SUB_TYPE_LABEL, CAVC_TYPE_LABEL,
+  EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import TextField from 'app/components/TextField';
 import TextareaField from 'app/components/TextareaField';
 import RadioField from 'app/components/RadioField';
@@ -39,6 +38,7 @@ import {
   allDecisionTypeOpts,
   allRemandTypeOpts,
   generateSchema,
+  parseDateFieldErrors
 } from './utils';
 
 const YesNoOpts = [
@@ -179,30 +179,6 @@ export const EditCavcRemandForm = ({
       watchRemandDatesProvided === 'yes',
     [watchRemandType, watchRemandDatesProvided]
   );
-
-  const parseDecisionDateErrors = () => {
-    if (errors?.decisionDate && errors?.decisionDate.type === 'min') {
-      return CAVC_DECISION_DATE_PAST;
-    }
-    if (errors?.decisionDate && errors?.decisionDate.type === 'max') {
-      return CAVC_DECISION_DATE_ERROR;
-    }
-  };
-
-  const errorMessages = {
-    judgementDate: {
-      min: CAVC_JUDGEMENT_DATE_PAST,
-      max: CAVC_JUDGEMENT_DATE_ERROR
-    },
-    mandateDate: {
-      min: CAVC_MANDATE_DATE_PAST,
-      max: CAVC_MANDATE_DATE_ERROR
-    }
-  };
-
-  const parseDateFieldErrors = (fieldName, errorType) => {
-    return errorMessages[fieldName][errorType];
-  };
 
   // This may be moot, since when fields are removed, values get reset
   // When editing, remandType can't be changed, so this should never fire

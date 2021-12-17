@@ -1,7 +1,9 @@
 import * as yup from 'yup';
 import StringUtil from 'app/util/StringUtil';
 
-import { CAVC_DECISION_DATE_PAST, CAVC_JUDGEMENT_DATE_PAST, CAVC_DECISION_DATE_ERROR, CAVC_ALL_ISSUES_ERROR, CAVC_NO_ISSUES_ERROR } from 'app/../COPY';
+import { CAVC_ALL_ISSUES_ERROR, CAVC_DECISION_DATE_PAST, CAVC_DECISION_DATE_ERROR,
+  CAVC_JUDGEMENT_DATE_ERROR, CAVC_JUDGEMENT_DATE_PAST,
+  CAVC_MANDATE_DATE_ERROR, CAVC_MANDATE_DATE_PAST, CAVC_NO_ISSUES_ERROR } from 'app/../COPY';
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from 'constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -86,6 +88,21 @@ export const generateSchema = ({ maxIssues }) => {
     federalCircuit: yup.boolean(),
     instructions: yup.string().required(),
   });
+};
+
+const errorMessages = {
+  judgementDate: {
+    min: CAVC_JUDGEMENT_DATE_PAST,
+    max: CAVC_JUDGEMENT_DATE_ERROR
+  },
+  mandateDate: {
+    min: CAVC_MANDATE_DATE_PAST,
+    max: CAVC_MANDATE_DATE_ERROR
+  }
+};
+
+export const parseDateFieldErrors = (fieldName, errorType) => {
+  return errorMessages[fieldName][errorType];
 };
 
 export const getSupportedDecisionTypes = (featureToggles) => {
