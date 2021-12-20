@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const MissingIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
   return (
     <svg height={size} className={className}
-      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
+      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" role="img" aria-labelledby={`${title}`}>
+      <title id="title">{title}</title>
       <title>missing icon</title>
       <g fill={color}>
         <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13
@@ -36,9 +37,15 @@ MissingIcon.propTypes = {
   Sets the className of the component. Default class is 'cf-icon-missing'.
   */
   className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 MissingIcon.defaultProps = {
   size: ICON_SIZES.XLARGE,
   color: COLORS.RED,
-  className: 'cf-icon-missing'
+  className: 'cf-icon-missing',
+  title: 'Missing Icon'
 };

@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const DoubleArrowIcon = (props) => {
-  const { topColor, bottomColor, size, className } = props;
+  const { topColor, bottomColor, size, className, title } = props;
 
-  return <svg height={size} className={className} viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero">
         <g fill={topColor} transform="translate(2.000000, 1.000000)">
@@ -62,11 +64,17 @@ DoubleArrowIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'table-icon'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 DoubleArrowIcon.defaultProps = {
   topColor: COLORS.GREY_DARK,
   bottomColor: COLORS.GREY_DARK,
   size: ICON_SIZES.SMALL,
-  className: 'table-icon'
+  className: 'table-icon',
+  title: 'Double Arrow Icon'
 };

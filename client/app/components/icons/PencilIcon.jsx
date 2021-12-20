@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const PencilIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 25 25" version="1.1" className={className}>
+  return <svg height={size} viewBox="0 0 25 25" version="1.1" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-729.000000, -307.000000)" fill={color} fillRule="nonzero">
         <g transform="translate(6.000000, 253.000000)">
@@ -36,10 +38,16 @@ PencilIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 PencilIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.PRIMARY,
-  className: ''
+  className: '',
+  title: 'Pencil Icon'
 };

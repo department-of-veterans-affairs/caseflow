@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const RightTriangleIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 21 35" className={className}>
+  return <svg height={size} viewBox="0 0 21 35" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(3.000000, 4.000000)">
@@ -37,10 +38,16 @@ RightTriangleIcon.propTypes = {
   /**
   Sets the className of the component. Default className is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 RightTriangleIcon.defaultProps = {
   color: COLORS.BASE,
   size: ICON_SIZES.SMALL,
-  className: ''
+  className: '',
+  title: 'Right Triangle Icon'
 };

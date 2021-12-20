@@ -18,12 +18,19 @@ Object {
           >
              
             <svg
+              aria-labelledby="External Link"
               class=""
               height="20"
+              role="img"
               version="1.1"
               viewBox="0 0 18 16"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <title
+                id="title"
+              >
+                External Link
+              </title>
               <g
                 fill="none"
                 fill-rule="evenodd"
@@ -68,12 +75,19 @@ Object {
         >
            
           <svg
+            aria-labelledby="External Link"
             class=""
             height="20"
+            role="img"
             version="1.1"
             viewBox="0 0 18 16"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <title
+              id="title"
+            >
+              External Link
+            </title>
             <g
               fill="none"
               fill-rule="evenodd"
@@ -175,12 +189,19 @@ Object {
           >
              
             <svg
+              aria-labelledby="External Link"
               class=""
               height="20"
+              role="img"
               version="1.1"
               viewBox="0 0 18 16"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <title
+                id="title"
+              >
+                External Link
+              </title>
               <g
                 fill="none"
                 fill-rule="evenodd"
@@ -225,12 +246,19 @@ Object {
         >
            
           <svg
+            aria-labelledby="External Link"
             class=""
             height="20"
+            role="img"
             version="1.1"
             viewBox="0 0 18 16"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <title
+              id="title"
+            >
+              External Link
+            </title>
             <g
               fill="none"
               fill-rule="evenodd"
@@ -329,12 +357,19 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
       >
          
         <svg
+          aria-labelledby="External Link"
           class=""
           height="20"
+          role="img"
           version="1.1"
           viewBox="0 0 18 16"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <title
+            id="title"
+          >
+            External Link
+          </title>
           <g
             fill="none"
             fill-rule="evenodd"

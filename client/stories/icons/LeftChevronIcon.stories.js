@@ -11,12 +11,14 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.SMALL,
     color: COLORS.WHITE,
-    className: 'fa-chevron-left'
+    className: 'fa-chevron-left',
+    title: 'Left Chevron Icon'
   }
 };
 

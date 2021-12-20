@@ -11,12 +11,14 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.SMALL,
     color: COLORS.GREY_DARK,
-    className: 'cf-lock-icon'
+    className: 'cf-lock-icon',
+    title: 'Lock Icon'
   }
 };
 

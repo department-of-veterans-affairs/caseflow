@@ -4,9 +4,10 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const PlusIcon = (props) => {
 
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 15 15" className={className}>
+  return <svg height={size} viewBox="0 0 15 15" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g>
@@ -48,9 +49,15 @@ PlusIcon.propTypes = {
   Sets the class of the component. Default class is ''.
   */
   className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 PlusIcon.defaultProps = {
   color: COLORS.WHITE,
   size: ICON_SIZES.XSMALL,
-  className: ''
+  className: '',
+  title: 'Plus Icon'
 };

@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const GrayDotIcon = (props) => {
-  const { size, color, className, strokeColor } = props;
+  const { size, color, className, strokeColor, title } = props;
 
-  return <svg height={size} viewBox="0 0 25 25" version="1.1">
+  return <svg height={size} viewBox="0 0 25 25" version="1.1" role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g className={className} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="750-copy-12" transform="translate(-128.000000, -670.000000)"
         fill={color} stroke={strokeColor} strokeWidth="4">
@@ -36,11 +37,17 @@ GrayDotIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'gray-dot'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 GrayDotIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.GREY_LIGHT,
   className: 'gray-dot',
-  strokeColor: COLORS.WHITE
+  strokeColor: COLORS.WHITE,
+  title: 'Gray dot: Pending'
 };

@@ -1,12 +1,14 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const ArrowDownIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="arrow-down-323A45" fillRule="nonzero" fill={color}>
         <path d="M14.1993267,7.10067326 C14.0081866,6.8760755 13.7599514,6.76382382 13.4543434,6.76382382
@@ -41,10 +43,16 @@ ArrowDownIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ArrowDownIcon.defaultProps = {
   size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
-  className: ''
+  className: '',
+  title: 'Arrow Down Icon'
 };

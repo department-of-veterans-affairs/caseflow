@@ -12,13 +12,15 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
-    strokeColor: { control: { type: 'color' } }
+    strokeColor: { control: { type: 'color' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.MEDIUM,
     color: COLORS.GREY,
     className: 'gray-dot',
-    strokeColor: COLORS.WHITE
+    strokeColor: COLORS.WHITE,
+    title: 'Gray dot: Pending'
   }
 };
 

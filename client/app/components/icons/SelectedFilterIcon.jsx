@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const SelectedFilterIcon = (props) => {
-  const { getRef, color, size, strokeColor, ...restProps } = props;
+  const { getRef, color, size, strokeColor, title, ...restProps } = props;
 
-  return <svg height={size} viewBox="0 0 21 21" {...restProps} ref={getRef}>
+  return <svg height={size} viewBox="0 0 21 21" {...restProps} ref={getRef} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
         <rect stroke={strokeColor} fill={color} fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
@@ -44,11 +46,17 @@ SelectedFilterIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 
 SelectedFilterIcon.defaultProps = {
   color: COLORS.WHITE,
   strokeColor: COLORS.PRIMARY,
-  size: ICON_SIZES.MEDIUM
+  size: ICON_SIZES.MEDIUM,
+  title: 'Selected Filter Icon'
 };

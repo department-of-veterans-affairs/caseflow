@@ -13,14 +13,16 @@ export default {
     selected: { control: { type: 'boolean' } },
     id: { control: { type: 'range' }, options: [1, 3, 1] },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     color: COLORS.GOLD_LIGHT,
     selected: false,
     id: 1,
     size: ICON_SIZES.LARGE,
-    classNameName: ''
+    classNameName: '',
+    title: 'Reader Comment Icon'
   }
 };
 

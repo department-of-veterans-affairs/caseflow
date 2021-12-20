@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const FitToScreenIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 18 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 18 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill={color}>
         <g transform="translate(10.000000, 1.000000)">
@@ -53,10 +55,16 @@ FitToScreenIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 FitToScreenIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
-  className: ''
+  className: '',
+  title: 'Fit to screen icon'
 };

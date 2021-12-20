@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ExternalLinkIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(1.000000, 1.000000)">
@@ -66,10 +68,16 @@ ExternalLinkIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ExternalLinkIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
-  className: ''
+  className: '',
+  title: 'External Link Icon'
 };

@@ -488,6 +488,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
             bottomColor="#d6d7d9"
             className="table-icon"
             size={17}
+            title="Double Arrow Icon"
             topColor="#d6d7d9"
           />
         </span>
@@ -558,6 +559,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
             bottomColor="#d6d7d9"
             className="table-icon"
             size={17}
+            title="Double Arrow Icon"
             topColor="#d6d7d9"
           />
         </span>
@@ -1001,16 +1003,23 @@ exports[`QueueTable render() Can filter rows 1`] = `
                         size={20}
                         strokeColor="#212121"
                         tabIndex="0"
+                        title="Unselected Filter Icon"
                       >
                         <svg
+                          aria-labelledby="Unselected Filter Icon"
                           className="table-icon unselected-filter-icon"
                           height={20}
                           onClick={[Function]}
                           onKeyDown={[Function]}
-                          role="button"
+                          role="img"
                           tabIndex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fillRule="evenodd"
@@ -1612,15 +1621,23 @@ exports[`QueueTable render() Can sort rows 1`] = `
                     bottomColor="#d6d7d9"
                     className="table-icon"
                     size={17}
+                    title="Double Arrow Icon"
                     topColor="#d6d7d9"
                   >
                     <svg
+                      aria-labelledby="Double Arrow Icon"
                       className="table-icon"
                       height={17}
+                      role="img"
                       version="1.1"
                       viewBox="0 0 13 16"
                       xmlns="http://www.w3.org/2000/svg"
                     >
+                      <title
+                        id="title"
+                      >
+                        Double Arrow Icon
+                      </title>
                       <g
                         fill="none"
                         fillRule="evenodd"
@@ -5400,17 +5417,25 @@ exports[`QueueTable render() Renders loading component instead of body when load
               color="#844e9f"
               size={150}
               text=""
+              title="Loading Icon"
             >
               <div>
                 <div
                   className="cf-loading-button-symbol cf-small-loader-symbol"
                 >
                   <svg
+                    aria-labelledby="Loading Icon"
                     className="cf-react-icon-loading-back"
                     height="150px"
+                    role="img"
                     viewBox="0 0 500 500"
                     width="150px"
                   >
+                    <title
+                      id="title"
+                    >
+                      Loading Icon
+                    </title>
                     <path
                       d="M249.9,362c-6.5,0-12.8,1.2-18.9,3.5l-34.4,13.3l12.7,28.8l33-12.8c2.4-0.9,5-1.4,7.5-1.4s5.1,0.5,7.5,1.4 l33.2,12.8l12.7-28.8l-34.6-13.4C262.7,363.2,256.4,362,249.9,362 M418.9,319.9l-28.8,12.7l19.1,49.6c3.5,9,0.1,15.9-2.1,19.3 c-4,5.8-10.4,9.3-17.2,9.3h0c-2.6,0-5.2-0.5-7.7-1.5l-49.5-19.1L320,418.9l50.9,19.7c6.2,2.4,12.6,3.6,19,3.6h0 c17.1,0,33.2-8.6,43.1-23c9.8-14.3,11.9-32,5.5-48.3L418.9,319.9 M81,319.9l-19.7,51c-6.3,16.4-4.3,34,5.5,48.3 c9.9,14.4,26,23,43.1,23c6.4,0,12.9-1.2,19-3.6l51-19.7l-12.7-28.8l-49.5,19.1c-2.5,1-5.1,1.4-7.6,1.4c-6.8,0-13.3-3.4-17.3-9.3 c-2.3-3.3-5.6-10.3-2.1-19.2l19.1-49.6L81,319.9 M121.1,196.6l-28.8,12.7l12.8,33.1c1.9,4.9,1.9,10.2,0,15.1l-12.8,33.1l28.8,12.7 l13.3-34.5c4.7-12.2,4.7-25.6,0-37.7L121.1,196.6 M378.8,196.5l-13.3,34.5c-4.7,12.2-4.7,25.6,0,37.7l13.3,34.5l28.8-12.7 l-12.8-33.1c-1.9-4.9-1.9-10.2,0-15.1l12.8-33.1L378.8,196.5 M290.6,92.3l-33.2,12.8c-2.4,0.9-5,1.4-7.5,1.4 c-2.6,0-5.1-0.5-7.5-1.4l-33-12.7l-12.7,28.8l34.4,13.3c6,2.3,12.4,3.5,18.8,3.5c6.4,0,12.8-1.2,18.9-3.5l34.6-13.4L290.6,92.3 M110,57.8c-17.1,0-33.2,8.6-43.1,23c-9.8,14.3-11.9,32-5.5,48.3L81,180l28.8-12.7l-19.1-49.4c-3.5-9-0.1-15.9,2.1-19.2 c4-5.9,10.5-9.3,17.3-9.3c2.5,0,5.1,0.5,7.6,1.4l49.5,19.1L180,81.1l-50.9-19.7C122.9,59,116.5,57.8,110,57.8 M389.9,57.8 c-6.4,0-12.9,1.2-19,3.6L319.9,81l12.7,28.8l49.5-19.1c2.5-1,5.1-1.4,7.6-1.4c6.8,0,13.3,3.4,17.3,9.3c2.3,3.3,5.6,10.3,2.1,19.2 l-19.1,49.5l28.8,12.7l19.7-50.9c6.3-16.4,4.3-34-5.5-48.3C423.1,66.3,407,57.8,389.9,57.8M303.4,378.9l-12.7,28.8l29.3,11.3l12.7-28.8L303.4,378.9 M196.6,378.8l-29.3,11.3l12.7,28.8l29.3-11.3 L196.6,378.8 M407.6,290.6l-28.8,12.7l11.3,29.3l28.8-12.7L407.6,290.6 M92.4,290.5L81,319.9l28.8,12.7l11.3-29.3L92.4,290.5 M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1 l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81"
                       fill="#844e9f"

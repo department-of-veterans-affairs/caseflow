@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const RotateIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(9.313708, 9.313708) rotate(45.000000) translate(-9.313708, -9.313708)
       translate(1.813708, 0.813708)" fillRule="nonzero" fill={color}>
@@ -40,10 +42,16 @@ RotateIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 RotateIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
-  className: ''
+  className: '',
+  title: 'Rotate Icon'
 };

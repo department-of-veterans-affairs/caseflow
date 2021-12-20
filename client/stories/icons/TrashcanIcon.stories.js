@@ -12,13 +12,15 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     strokeColor: { control: { type: 'color' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.MEDIUM,
     color: COLORS.WHITE,
     strokeColor: COLORS.PRIMARY,
-    className: ''
+    className: '',
+    title: 'Trash Icon'
   }
 };
 

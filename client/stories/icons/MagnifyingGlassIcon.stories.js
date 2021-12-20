@@ -11,12 +11,14 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.MEDIUM,
     color: COLORS.GREY_MEDIUM,
-    className: ''
+    className: '',
+    title: 'Magnifying Glass Icon'
   }
 };
 

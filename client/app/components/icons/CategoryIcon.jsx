@@ -1,12 +1,14 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const CategoryIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill={color}>
         <path d="M4.64092309,1 C3.21738445,1 2,2.16989858 2,3.68789356 L2,17.9336416 C2,18.2762127
@@ -36,10 +38,16 @@ CategoryIcon.propTypes = {
   /**
   Sets the className of the component. Default className is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 CategoryIcon.defaultProps = {
   color: COLORS.WHITE,
   size: ICON_SIZES.MEDIUM,
-  className: ''
+  className: '',
+  title: 'Catagory Select Icon'
 };

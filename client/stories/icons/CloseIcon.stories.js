@@ -11,12 +11,14 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.XLARGE,
     color: COLORS.BASE,
-    className: 'cf-icon-close'
+    className: 'cf-icon-close',
+    title: 'Close Icon'
   }
 };
 

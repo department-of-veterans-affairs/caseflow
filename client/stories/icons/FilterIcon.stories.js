@@ -13,6 +13,7 @@ export default {
     label: '',
     iconName: '',
     className: 'table-icon',
+    title: 'Filter Icon'
   }
 };
 

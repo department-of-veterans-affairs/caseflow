@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
@@ -6,11 +7,12 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ReaderCommentIcon = (props) => {
 
-  const { selected, id, size, className, color } = props;
+  const { selected, id, size, className, color, title } = props;
 
   const filter = selected ? `url(#${id}-filter-1)` : '';
 
-  return <svg height={size} viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <defs>
       <filter x="-13.8%" y="-8.8%" width="127.5%" height="127.5%" filterUnits="objectBoundingBox" id={`${id}-filter-1`}>
         <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
@@ -100,11 +102,17 @@ ReaderCommentIcon.propTypes = {
   Adds class to the component. Default value is ''.
   */
   className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ReaderCommentIcon.defaultProps = {
   color: COLORS.GOLD_LIGHT,
   selected: false,
   id: 1,
   size: ICON_SIZES.LARGE,
-  classNameName: ''
+  classNameName: '',
+  title: 'Comments Icon'
 };

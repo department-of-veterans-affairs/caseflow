@@ -12,15 +12,13 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
-    title: { control: { type: 'text' } },
-    desc: { control: { type: 'text' } }
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.MEDIUM,
     color: COLORS.WHITE,
     className: '',
-    title: 'Download Icon',
-    desc: ''
+    title: 'Download Icon'
   }
 };
 

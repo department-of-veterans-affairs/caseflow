@@ -12,11 +12,13 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.SMALL,
     color: COLORS.BASE,
-    className: 'svg-inline--fa fa-clock fa-w-16'
+    className: 'svg-inline--fa fa-clock fa-w-16',
+    title: 'Clock Icon'
   }
 };
 

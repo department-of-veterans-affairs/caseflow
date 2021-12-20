@@ -12,13 +12,15 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
-    bgColor: { control: { type: 'color' } }
+    bgColor: { control: { type: 'color' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.LARGE,
     color: COLORS.RED,
     className: '',
-    bgColor: COLORS.WHITE
+    bgColor: COLORS.WHITE,
+    title: 'Red minus: Canceled'
   }
 };
 

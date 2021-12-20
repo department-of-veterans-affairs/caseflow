@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const DownloadIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill={color}>
         <path d="M14,15.6826233 C14,15.1556346 13.5724432,14.7280778 13.0454545,14.7280778
@@ -50,10 +52,16 @@ DownloadIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 DownloadIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
-  className: ''
+  className: '',
+  title: 'Download Icon'
 };

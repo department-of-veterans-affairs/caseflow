@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const FilterNoOutlineIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 12 14" className={className}>
+  return <svg height={size} viewBox="0 0 12 14" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="filter-filled-tool-symbol" transform="translate(6.000000, 7.000000)
@@ -39,10 +40,16 @@ FilterNoOutlineIcon.propTypes = {
   /**
   Sets the className of the component. Default className is 'filter-icon'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 FilterNoOutlineIcon.defaultProps = {
   color: COLORS.WHITE,
   size: ICON_SIZES.SMALL,
-  className: 'filter-icon'
+  className: 'filter-icon',
+  title: 'Filter Icon With No Outline'
 };

@@ -147,12 +147,19 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -214,12 +221,19 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -262,12 +276,18 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by task"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -318,12 +338,19 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -366,12 +393,18 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by type"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -422,12 +455,19 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -470,12 +510,18 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by docket name"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -530,12 +576,19 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1283,12 +1336,19 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1350,12 +1410,19 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1398,12 +1465,18 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by task"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1454,12 +1527,19 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1502,12 +1582,18 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by type"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1558,12 +1644,19 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1606,12 +1699,18 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       >
                         <svg
                           aria-label="Filter by docket name"
+                          aria-labelledby="Unselected Filter Icon"
                           class="table-icon unselected-filter-icon"
                           height="20"
-                          role="button"
+                          role="img"
                           tabindex="0"
                           viewBox="0 0 21 21"
                         >
+                          <title
+                            id="title"
+                          >
+                            Unselected Filter Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1666,12 +1765,19 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         tabindex="0"
                       >
                         <svg
+                          aria-labelledby="Double Arrow Icon"
                           class="table-icon"
                           height="17"
+                          role="img"
                           version="1.1"
                           viewBox="0 0 13 16"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          <title
+                            id="title"
+                          >
+                            Double Arrow Icon
+                          </title>
                           <g
                             fill="none"
                             fill-rule="evenodd"
@@ -1988,13 +2094,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    1 of 31
+                    -530 of 31
                     <div
                       class="cf-continuous-progress-bar"
                     >
                       <div
                         class=""
-                        style="width: 3.225806451612903%;"
+                        style="width: -1709.6774193548388%;"
                       />
                     </div>
                   </td>
@@ -2183,13 +2289,12 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    30
+                    -501
                     <div
                       class="cf-continuous-progress-bar"
                     >
                       <div
                         class=""
-                        style="width: 100%;"
                       />
                     </div>
                   </td>

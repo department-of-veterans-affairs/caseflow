@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const LinkIcon = (props) => {
-  const { size, leftColor, className, rightColor } = props;
+  const { size, leftColor, className, rightColor, title } = props;
 
-  return <svg height={size} viewBox="0 0 22 9" version="1.1" className={className}>
+  return <svg height={size} viewBox="0 0 22 9" version="1.1" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-358.000000, -1343.000000)" fillRule="nonzero">
         <g transform="translate(356.000000, 1334.000000)">
@@ -72,11 +74,17 @@ LinkIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 LinkIcon.defaultProps = {
   size: ICON_SIZES.XSMALL,
   leftColor: COLORS.BASE,
   rightColor: COLORS.BASE,
-  className: ''
+  className: '',
+  title: 'Link Icon'
 };

@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const SortArrowUpIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} className={className} viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(2.000000, 1.000000)">
@@ -38,10 +40,16 @@ SortArrowUpIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'cf-sort-arrowup table-icon'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 SortArrowUpIcon.defaultProps = {
   size: ICON_SIZES.XSMALL,
   color: COLORS.GREY_DARK,
-  className: 'cf-sort-arrowup table-icon'
+  className: 'cf-sort-arrowup table-icon',
+  title: 'Sort Arrow Up Icon'
 };

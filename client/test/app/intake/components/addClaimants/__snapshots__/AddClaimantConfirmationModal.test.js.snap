@@ -25,13 +25,17 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
           Close
         </span>
         <svg
+          aria-labelledby="Close Icon"
           class="cf-icon-close"
           height="55"
+          role="img"
           viewBox="0 0 55 55"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>
-            close
+          <title
+            id="title"
+          >
+            Close Icon
           </title>
           <g
             fill="#212121"
@@ -163,13 +167,17 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
           Close
         </span>
         <svg
+          aria-labelledby="Close Icon"
           class="cf-icon-close"
           height="55"
+          role="img"
           viewBox="0 0 55 55"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>
-            close
+          <title
+            id="title"
+          >
+            Close Icon
           </title>
           <g
             fill="#212121"
@@ -284,13 +292,17 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
           Close
         </span>
         <svg
+          aria-labelledby="Close Icon"
           class="cf-icon-close"
           height="55"
+          role="img"
           viewBox="0 0 55 55"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>
-            close
+          <title
+            id="title"
+          >
+            Close Icon
           </title>
           <g
             fill="#212121"
@@ -416,13 +428,17 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
           Close
         </span>
         <svg
+          aria-labelledby="Close Icon"
           class="cf-icon-close"
           height="55"
+          role="img"
           viewBox="0 0 55 55"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>
-            close
+          <title
+            id="title"
+          >
+            Close Icon
           </title>
           <g
             fill="#212121"

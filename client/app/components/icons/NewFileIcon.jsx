@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const NewFileIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1" className={className}>
+  return <svg height={size} viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="Group" transform="translate(0.000000, -3.000000)">
         <g id="icon" transform="translate(0.000000, 3.000000)">
@@ -40,10 +42,16 @@ NewFileIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 NewFileIcon.defaultProps = {
   size: ICON_SIZES.XSMALL,
   color: COLORS.PURPLE,
-  className: ''
+  className: '',
+  title: 'New File Icon'
 };

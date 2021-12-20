@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const PageArrowRightIcon = (props) => {
-  const { color, size, className } = props;
+  const { color, size, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g transform="translate(1.000000, 1.000000)">
@@ -42,10 +44,16 @@ PageArrowRightIcon.propTypes = {
   /**
   Sets the className of the component. Default className is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 PageArrowRightIcon.defaultProps = {
   color: COLORS.WHITE,
   size: ICON_SIZES.MEDIUM,
-  className: ''
+  className: '',
+  title: 'Page Right Icon'
 };

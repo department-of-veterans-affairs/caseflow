@@ -4,10 +4,11 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const LockIcon = (props) => {
 
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
   return <svg height={size} viewBox="0 0 18 20" version="1.1"
-    xmlns="http://www.w3.org/2000/svg" className={className}>
+    xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="padlock" transform="translate(2.000000, 1.000000)">
@@ -50,9 +51,15 @@ LockIcon.propTypes = {
   Adds class to the component. Default value is 'cf-lock-icon'.
   */
   className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 LockIcon.defaultProps = {
   size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
-  className: 'cf-lock-icon'
+  className: 'cf-lock-icon',
+  title: 'Lock Icon'
 };

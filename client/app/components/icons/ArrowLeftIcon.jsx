@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ArrowLeftIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
+  return <svg height={size} viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="arrow-left-323A45" fillRule="nonzero" fill={color}>
         <path d="M13.6906247,7.60937528 C13.4994846,7.38477753 13.2512494,7.27252584 12.9456413,7.27252584
@@ -40,10 +42,16 @@ ArrowLeftIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ArrowLeftIcon.defaultProps = {
   size: ICON_SIZES.SMALL,
   color: COLORS.GREY_DARK,
-  className: ''
+  className: '',
+  title: 'Arrow Left Icon'
 };

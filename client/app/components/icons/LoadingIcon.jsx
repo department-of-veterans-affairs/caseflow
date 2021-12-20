@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 
 export const LoadingIcon = (props) => {
-  const { text, size, color, className } = props;
+  const { text, size, color, className, title } = props;
 
   let imgSize = size;
 
@@ -28,7 +28,8 @@ export const LoadingIcon = (props) => {
           width={imgSize}
           height={imgSize}
           viewBox="0 0 500 500"
-          className="cf-react-icon-loading-back">
+          className="cf-react-icon-loading-back" role="img" aria-labelledby={`${title}`}>
+          <title id="title">{title}</title>
           <path
             opacity="1"
             fill={color}
@@ -98,11 +99,17 @@ LoadingIcon.propTypes = {
   /**
   Sets the class(es) of the component. Default class(es) is 'cf-loading-button-symbol cf-small-loader-symbol'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 LoadingIcon.defaultProps = {
   text: '',
   size: ICON_SIZES.LARGE,
   color: LOGO_COLORS.DISPATCH.ACCENT,
-  className: 'cf-loading-button-symbol cf-small-loader-symbol'
+  className: 'cf-loading-button-symbol cf-small-loader-symbol',
+  title: 'Loading Icon'
 };

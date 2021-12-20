@@ -1,12 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ClipboardIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size}
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" className={className}>
+  return <svg height={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <path d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33
             1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685
             3.89V3.234a.665.665 0 0
@@ -31,10 +32,16 @@ ClipboardIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ClipboardIcon.defaultProps = {
   size: ICON_SIZES.SMALL,
   color: COLORS.GREY,
-  className: ''
+  className: '',
+  title: 'Clipboard Icon'
 };

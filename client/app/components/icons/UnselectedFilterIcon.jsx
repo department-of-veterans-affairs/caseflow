@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const UnselectedFilterIcon = (props) => {
-  const { getRef, className, color, strokeColor, size, ...restProps } = props;
+  const { getRef, className, color, strokeColor, size, title, ...restProps } = props;
 
   return <svg height={size} viewBox="0 0 21 21" {...restProps}
-    ref={getRef} className={`${className} unselected-filter-icon`}>
+    ref={getRef} className={`${className} unselected-filter-icon`} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
         <rect className="unselected-filter-icon-border"
@@ -46,11 +47,17 @@ UnselectedFilterIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 
 UnselectedFilterIcon.defaultProps = {
   color: COLORS.WHITE,
   strokeColor: COLORS.BASE,
   size: ICON_SIZES.MEDIUM,
+  title: 'Unselected Filter Icon'
 };

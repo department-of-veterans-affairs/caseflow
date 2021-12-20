@@ -10,12 +10,14 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     color: '',
     size: 55,
-    className: 'cf-icon-found'
+    className: 'cf-icon-found',
+    title: 'Success Icon'
   }
 };
 

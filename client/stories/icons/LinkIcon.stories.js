@@ -13,12 +13,14 @@ export default {
     leftColor: { control: { type: 'color' } },
     rightColor: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.XSMALL,
     leftColor: COLORS.BASE,
     rightColor: COLORS.BASE,
-    className: ''
+    className: '',
+    title: 'Link Icon'
   }
 };
 

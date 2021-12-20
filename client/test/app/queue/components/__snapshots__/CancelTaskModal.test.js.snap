@@ -444,15 +444,20 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
                         className="cf-icon-close"
                         color="#212121"
                         size={55}
+                        title="Close Icon"
                       >
                         <svg
+                          aria-labelledby="Close Icon"
                           className="cf-icon-close"
                           height={55}
+                          role="img"
                           viewBox="0 0 55 55"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <title>
-                            close
+                          <title
+                            id="title"
+                          >
+                            Close Icon
                           </title>
                           <g
                             fill="#212121"

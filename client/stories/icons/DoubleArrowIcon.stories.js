@@ -12,13 +12,15 @@ export default {
     topColor: { control: { type: 'color' } },
     bottomColor: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     topColor: COLORS.GREY_DARK,
     bottomColor: COLORS.GREY_DARK,
     size: ICON_SIZES.SMALL,
-    className: 'table-icon'
+    className: 'table-icon',
+    title: 'Double Arrow Icon'
   }
 };
 

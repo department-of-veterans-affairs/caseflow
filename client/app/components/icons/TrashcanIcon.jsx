@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const TrashcanIcon = (props) => {
-  const { color, size, className, strokeColor } = props;
+  const { color, size, className, strokeColor, title } = props;
 
   return <svg id="trash-can" height={size} viewBox="0 0 24 26" version="1.1"
-    xmlns="http://www.w3.org/2000/svg" className={className}>
+    xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="Group-7" transform="translate(0.000000, 1.000000)" fill={color}>
         <path d="M14.807412,19.1953107 L14.807412,6.31255183 C14.807412,6.02795378 15.0669633,5.79724147
@@ -59,11 +60,17 @@ TrashcanIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 TrashcanIcon.defaultProps = {
   size: ICON_SIZES.MEDIUM,
   color: COLORS.WHITE,
   strokeColor: COLORS.PRIMARY,
-  className: ''
+  className: '',
+  title: 'Trashcan Icon'
 };

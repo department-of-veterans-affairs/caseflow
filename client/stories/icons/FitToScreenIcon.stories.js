@@ -11,12 +11,15 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } },
+    desc: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.MEDIUM,
     color: COLORS.WHITE,
-    className: ''
+    className: '',
+    title: 'Fit to Screen Icon'
   }
 };
 

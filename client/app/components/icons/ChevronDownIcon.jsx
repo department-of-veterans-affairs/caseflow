@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const ChevronDownIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, title } = props;
 
-  return <svg height={size} className={className} viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  return <svg height={size} className={className} viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <path d="M12.3130435,2.12560386 L6.57777778,7.8531401 C6.47987118,7.9510467 6.36392915,8
@@ -36,10 +38,16 @@ ChevronDownIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'table-icon'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 ChevronDownIcon.defaultProps = {
   size: ICON_SIZES.XSMALL,
   color: COLORS.PRIMARY,
-  className: 'table-icon'
+  className: 'table-icon',
+  title: 'Chevron Down Icon'
 };

@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const CancelIcon = (props) => {
-  const { size, color, className, bgColor } = props;
+  const { size, color, className, bgColor, title } = props;
 
-  return <svg height={size} viewBox="0 0 40 40" version="1.1" className={className}>
+  return <svg height={size} viewBox="0 0 40 40" version="1.1" className={className} role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g id="Artboard" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <path d="M20,0 C8.9516129,0 0,8.9516129 0,20 C0,31.0483871 8.9516129,40 20,40
       C31.0483871,40 40,31.0483871 40,20 C40,8.9516129 31.0483871,0 20,0 Z"
@@ -42,11 +44,17 @@ CancelIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 CancelIcon.defaultProps = {
   size: ICON_SIZES.LARGE,
   color: COLORS.RED,
   className: '',
-  bgColor: COLORS.WHITE
+  bgColor: COLORS.WHITE,
+  title: 'Red minus: Canceled'
 };

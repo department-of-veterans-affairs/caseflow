@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const GreenCheckmarkIcon = (props) => {
-  const { size, color, className, strokeColor } = props;
+  const { size, color, className, strokeColor, title } = props;
 
-  return <svg height={size} viewBox="0 0 40 40" version="1.1">
+  return <svg height={size} viewBox="0 0 40 40" version="1.1" role="img" aria-labelledby={`${title}`}>
+    <title id="title">{title}</title>
     <g className={className} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="750-copy-12" transform="translate(-120.000000, -725.000000)">
         <g id="Group-11" transform="translate(124.000000, 729.000000)">
@@ -46,11 +47,17 @@ GreenCheckmarkIcon.propTypes = {
   /**
   Adds class to the component. Default value is 'green-checkmark'.
   */
-  className: PropTypes.string
+  className: PropTypes.string,
+
+  /**
+  Adds title to the component. Needed for tootips and screenreaders.
+  */
+  title: PropTypes.string
 };
 GreenCheckmarkIcon.defaultProps = {
   size: ICON_SIZES.LARGE,
   strokeColor: COLORS.WHITE,
   color: COLORS.GREEN,
-  className: 'green-checkmark'
+  className: 'green-checkmark',
+  title: 'Green check: Completed'
 };

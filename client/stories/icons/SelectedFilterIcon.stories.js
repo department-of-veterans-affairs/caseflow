@@ -12,11 +12,15 @@ export default {
     color: { control: { type: 'color' } },
     strokeColor: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
+    title: { control: { type: 'text' } }
+
+    
   },
   args: {
     color: COLORS.WHITE,
     strokeColor: COLORS.PRIMARY,
-    size: ICON_SIZES.MEDIUM
+    size: ICON_SIZES.MEDIUM,
+    title: 'Selected Filter Icon'
   }
 };
 

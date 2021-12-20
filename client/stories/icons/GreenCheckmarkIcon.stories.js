@@ -12,13 +12,15 @@ export default {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
     className: { control: { type: 'text' } },
-    strokeColor: { control: { type: 'color' } }
+    strokeColor: { control: { type: 'color' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.LARGE,
     strokeColor: COLORS.WHITE,
     color: COLORS.GREEN,
-    className: 'green-checkmark'
+    className: 'green-checkmark',
+    title: 'Green check: Completed'
   }
 };
 

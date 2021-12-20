@@ -11,12 +11,15 @@ export default {
   argTypes: {
     size: { control: { type: 'number' } },
     color: { control: { type: 'color' } },
-    className: { control: { type: 'text' } }
+    className: { control: { type: 'text' } },
+    title: { control: { type: 'text' } },
+    desc: { control: { type: 'text' } }
   },
   args: {
     color: COLORS.WHITE,
     size: ICON_SIZES.SMALL,
-    className: 'filter-icon'
+    className: 'filter-icon',
+    title: 'Filter Icon No Outline'
   }
 };
 

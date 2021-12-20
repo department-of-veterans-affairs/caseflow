@@ -12,13 +12,15 @@ export default {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
     className: { control: { type: 'text' } },
-    text: { control: { type: 'text' } }
+    text: { control: { type: 'text' } },
+    title: { control: { type: 'text' } }
   },
   args: {
     text: '',
     size: ICON_SIZES.LARGE,
     color: LOGO_COLORS.DISPATCH.ACCENT,
-    className: 'cf-loading-button-symbol cf-small-loader-symbol'
+    className: 'cf-loading-button-symbol cf-small-loader-symbol',
+    title: 'Loading Icon'
   }
 };
 
