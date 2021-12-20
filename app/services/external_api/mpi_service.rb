@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# require "mpi". Once mpi gem file is setup and bundled, need to require gem here
+require "mpi"
 
 class ExternalApi::MPIService
   attr_reader :client
