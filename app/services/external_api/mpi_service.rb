@@ -65,8 +65,22 @@ class ExternalApi::MPIService
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
+      wsdl_url: "#{service_url}?WSDL",
       log: true,
       logger: Rails.logger
     )
+  end
+
+  def service_url
+    case ENV["DEPLOY_ENV"]
+    when "development"
+      "https://int.services.eauth.va.gov:9303/psim_webservice/dev/IdMWebService"
+    when "uat"
+      "https://sqa.services.eauth.va.gov:9303/psim_webservice/stage1a/IdMWebService"
+    when "preprod"
+      "https://preprod.services.eauth.va.gov:9303/psim_webservice/preprod/IdMWebService"
+    when "prod"
+      "https://services.eauth.va.gov:9303/psim_webservice/IdMWebService"
+    end
   end
 end
