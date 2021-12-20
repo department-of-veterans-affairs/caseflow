@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import PropTypes from 'prop-types';
-import { ClipboardIcon } from '../../../components/RenderFunctions';
+import { ClipboardIcon } from '../../../components/icons/ClipboardIcon';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
 import { css } from 'glamor';

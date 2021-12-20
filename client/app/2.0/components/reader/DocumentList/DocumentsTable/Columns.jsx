@@ -9,8 +9,8 @@ import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
-import FilterIcon from 'app/components/FilterIcon';
-import { DoubleArrow } from 'app/components/RenderFunctions';
+import FilterIcon from 'app/components/icons/FilterIcon';
+import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 
 import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 import { CommentIndicator } from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';
@@ -109,7 +109,7 @@ export const ReceiptDateHeader = ({
     ariaLabel={`Sort by Receipt Date. ${sortBy === 'received_at' ? sortLabel : '' }`}
     onClick={() => changeSort('received_at')}
   >
-    Receipt Date {sortBy === 'received_at' ? sortIcon : <DoubleArrow />}
+    Receipt Date {sortBy === 'received_at' ? sortIcon : <DoubleArrowIcon />}
   </Button>
 );
 
@@ -156,7 +156,7 @@ export const TypeHeader = ({
     ariaLabel={`Sort by Document Type. ${sortBy === 'type' ? sortLabel : '' }`}
     onClick={() => changeSort('type')}
   >
-    Document Type {sortBy === 'type' ? sortIcon : <DoubleArrow />}
+    Document Type {sortBy === 'type' ? sortIcon : <DoubleArrowIcon />}
   </Button>
 );
 

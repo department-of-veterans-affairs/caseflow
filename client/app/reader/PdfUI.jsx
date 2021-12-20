@@ -15,8 +15,15 @@ import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpT
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
+import { DownloadIcon } from '../components/icons/DownloadIcon';
+import { FilterNoOutlineIcon } from '../components/icons/FilterNoOutlineIcon';
+import { PageArrowLeftIcon } from '../components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from '../components/icons/PageArrowRightIcon';
+import { LeftChevronIcon } from '../components/icons/LeftChevronIcon';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
+import { FitToScreenIcon } from '../components/icons/FitToScreenIcon';
+import { RotateIcon } from '../components/icons/RotateIcon';
+import { SearchIcon } from '../components/icons/SearchIcon';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
@@ -149,13 +156,13 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button']}
               onClick={this.showPreviousDocument}
               ariaLabel="previous PDF">
-              <PageArrowLeft /><span className="left-button-label">Previous</span>
+              <PageArrowLeftIcon /><span className="left-button-label">Previous</span>
             </Button>
         }
       </div>
       <div className="cf-pdf-buttons-center">
         { !this.props.loadError && this.getPageIndicator() }
-        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterNoOutlineIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
       </div>
@@ -166,7 +173,7 @@ export class PdfUI extends React.Component {
                 classNames={['cf-pdf-button cf-right-side']}
                 onClick={this.showNextDocument}
                 ariaLabel="next PDF">
-                <span className="right-button-label">Next</span><PageArrowRight />
+                <span className="right-button-label">Next</span><PageArrowRightIcon />
               </Button>
         }
       </div>
@@ -225,7 +232,7 @@ export class PdfUI extends React.Component {
             name="backToClaimsFolder"
             button="matte"
             onClick={this.onBackToClaimsFolder}>
-            <LeftChevron />
+            <LeftChevronIcon />
             &nbsp; Back
           </Link> }
         </span>
@@ -244,7 +251,7 @@ export class PdfUI extends React.Component {
                 href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
-                  <span className="cf-pdf-external-link-icon"><ExternalLink /></span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
                 </h1>
               </Link>
             </span>
@@ -271,14 +278,14 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
-            <FitToScreen />
+            <FitToScreenIcon />
           </Button>
           <Button
             name="rotation"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.rotateDocument}
             ariaLabel="rotate document">
-            <Rotate />
+            <RotateIcon />
           </Button>
           <span className="cf-pdf-spaced-buttons">|</span>
           <Button
