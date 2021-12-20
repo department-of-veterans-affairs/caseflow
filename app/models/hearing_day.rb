@@ -101,7 +101,7 @@ class HearingDay < CaseflowRecord
       all.unscope(:includes, :where).where(id: all.pluck(:id))
     ).call
 
-    all.select do |day|
+    days = all.select do |day|
       request_type = HearingDaySerializer.get_readable_request_type(
         day,
         video_hearing_days_request_types: query
@@ -109,6 +109,8 @@ class HearingDay < CaseflowRecord
 
       request_types.include?(request_type)
     end
+
+    where(id: days)
   }
 
   scope :with_ros, lambda { |ros_ids|
