@@ -652,7 +652,7 @@ class QueueApp extends React.PureComponent {
                   ':checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit'
               }
               title={(props) => {
-                let reviewActionType = props.match.params.checkoutFlow;
+                let reviewActionType = props.match.params.checkoutFlow ?? '';
 
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
