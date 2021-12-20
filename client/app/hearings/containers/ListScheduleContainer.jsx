@@ -123,6 +123,7 @@ export class ListScheduleContainer extends React.Component {
       // append sort criteria
       const col = this.state.queries.sort.column;
       const dir = this.state.queries.sort.ascending;
+
       requestUrl += `&query[${sortKeyMap[col]}]=${sortKeyMap[dir]}`;
     }
 
