@@ -55,6 +55,13 @@ const filterKeyMap = {
   regionalOffice: 'with_ros'
 };
 
+const sortKeyMap = {
+  room: 'sort_by_room',
+  date: 'sort_by_scheduled_for',
+  true: 'asc',
+  false: 'desc'
+};
+
 export class ListScheduleContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -114,6 +121,9 @@ export class ListScheduleContainer extends React.Component {
 
     if (this.state.queries.sort) {
       // append sort criteria
+      const col = this.state.queries.sort.column;
+      const dir = this.state.queries.sort.ascending;
+      requestUrl += `&query[${sortKeyMap[col]}]=${sortKeyMap[dir]}`;
     }
 
     if (this.state.queries.filter) {

@@ -147,7 +147,7 @@ class ListSchedule extends React.Component {
     let queries = { sort: null, filter: null };
 
     if (params.sort?.sortCol) {
-      queries.sort = { column: params.sort.sortCol, ascending: params.sort.sortAscending };
+      queries.sort = { column: params.sort.sortCol, ascending: params.sort.ascending };
     }
 
     const filterKeys = Object.keys(params.filter);
