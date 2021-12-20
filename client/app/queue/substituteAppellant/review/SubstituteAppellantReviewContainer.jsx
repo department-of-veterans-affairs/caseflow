@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,16 +31,26 @@ export const SubstituteAppellantReviewContainer = () => {
     return (openTasksToShow.includes(task.type));
   });
 
+  // get array of active Task Ids
+  const activeIds = activeTasksToShow.map((task) => {
+    return task.taskId;
+  });
+
+  const selectedIds = activeIds.filter((id) => existingValues.openTaskIds.includes(parseInt(id, 10)));
+  // selected ids may be missing task parent ids, need these for cancelling unselected tasks
+  const parentIds = activeTasksToShow.filter((task) => selectedIds.includes(task.taskId)).map((task) => task.parentId.toString());
+  const allSelectedTaskIds = selectedIds.concat(parentIds);
+
   const findTasksToCancel = (activeTasksIds, openTaskIds) => {
     if (activeTasksIds === null) {
       return [];
     }
+    const difference = activeTasksIds.filter((id) => !openTaskIds.includes(id));
 
-    // eslint-disable-next-line max-len
-    return activeTasksToShow.filter((task) => !openTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.taskId);
+    return difference;
   };
 
-  const cancelTasks = findTasksToCancel(activeTasksToShow, existingValues.openTaskIds);
+  const cancelTasks = findTasksToCancel(activeIds, allSelectedTaskIds);
 
   const findSelectedTasks = (appealTasks, selectedTaskIds) => {
     if (selectedTaskIds === null) {
