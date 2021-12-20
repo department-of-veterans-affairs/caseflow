@@ -281,6 +281,7 @@ feature "Intake", :all_dbs do
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
           expect(page).to have_content("Veterans Readiness and Employment")
+          expect(page).to_not have_content(Constants.BENEFIT_TYPES.voc_rehab)
         end
 
         it "shows 'Veterans Readiness and Employment' as benefit type option for HLR form" do
@@ -291,6 +292,7 @@ feature "Intake", :all_dbs do
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
           expect(page).to have_content("Veterans Readiness and Employment")
+          expect(page).to_not have_content("Vocational Rehabilitation and Employment")
         end
 
         context "when removing same office question" do
@@ -303,6 +305,31 @@ feature "Intake", :all_dbs do
             click_on "Search"
             expect(page).to_not have_content("Was an interview by the same office requested?")
           end
+        end
+      end
+
+      context "when implementing existing form" do
+        before { FeatureToggle.disable!(:updated_intake_forms) }
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for SC" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
+        end
+
+        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option fro HLR" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Vocational Rehabilitation and Employment")
+          expect(page).to_not have_content("Veterans Readiness and Employment")
         end
       end
     end
@@ -691,7 +718,7 @@ feature "Intake", :all_dbs do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            benefit_type: "Veterans Readiness and Employment",
+            benefit_type: "Vocational Rehabilitation and Employment",
             category: "Additional Training",
             description: "Description for Additional Training",
             date: 1.month.ago.mdY,
