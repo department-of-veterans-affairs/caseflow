@@ -64,5 +64,8 @@ BenefitType.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   register: PropTypes.func,
-  asDropdown: PropTypes.bool
+  asDropdown: PropTypes.bool,
+  formName: PropTypes.string.isRequired,
+  benefitTypes: PropTypes.object.isRequired,
+  featureToggles: PropTypes.object.isRequired,
 };

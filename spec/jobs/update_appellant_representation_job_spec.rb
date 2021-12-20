@@ -201,11 +201,13 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     context "#appeals_to_update" do
       let(:legacy_appeal_count) { 10 }
       let(:appeal_count) { 10 }
+      let!(:predocket_appeal) { create(:appeal, :with_pre_docket_task) }
 
       it "returns both legacy and ama appeals" do
         all_appeals = UpdateAppellantRepresentationJob.new.appeals_to_update
 
         expect(all_appeals).to match_array(legacy_appeals + appeals)
+        expect(all_appeals.include?(predocket_appeal)).to be false
       end
     end
 

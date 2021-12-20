@@ -5,6 +5,7 @@ class HearingsController < HearingsApplicationController
 
   before_action :verify_access_to_hearings, except: [:show]
   before_action :verify_access_to_reader_or_hearings, only: [:show]
+  before_action :set_hearing_day, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound do |error|
     Rails.logger.debug "Unable to find hearing in Caseflow: #{error.message}"
@@ -24,15 +25,23 @@ class HearingsController < HearingsApplicationController
     render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
   end
 
+  def index
+    render json: {
+      hearings: @hearing_day.hearings_for_user(current_user).map do |hearing|
+        hearing.quick_to_hash(current_user.id)
+      end
+    }
+  end
+
   def show
     render json: { data: hearing.to_hash_for_worksheet(current_user.id) }
   end
 
   def update
     form = if hearing.is_a?(LegacyHearing)
-             LegacyHearingUpdateForm.new(update_params_legacy)
+             LegacyHearingUpdateForm.new(hearing_params)
            else
-             HearingUpdateForm.new(update_params)
+             HearingUpdateForm.new(hearing_params)
            end
     form.update
 
@@ -118,7 +127,8 @@ class HearingsController < HearingsApplicationController
         :aod,
         :scheduled_for,
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(hearing: hearing)
   end
@@ -133,11 +143,20 @@ class HearingsController < HearingsApplicationController
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
         hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES,
+        email_recipients_attributes: HearingEmailRecipient::ATTRIBUTES
       )
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
+  end
+
+  def hearing_params
+    if hearing.is_a?(LegacyHearing)
+      update_params_legacy
+    else
+      update_params
+    end
   end
 
   def advance_on_docket_motion_params
@@ -146,5 +165,9 @@ class HearingsController < HearingsApplicationController
         .permit(:person_id, :reason, :granted)
         .tap { |aod_params| aod_params.empty? || aod_params.require([:person_id, :reason]) }
     end
+  end
+
+  def set_hearing_day
+    @hearing_day = HearingDay.find(params.require(:hearing_day_id))
   end
 end

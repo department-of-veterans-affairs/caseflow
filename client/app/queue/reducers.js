@@ -577,9 +577,29 @@ const receiveAllAttorneys = (state, action) => {
   });
 };
 
+const receiveVhaProgramOffices = (state, action) => {
+  return update(state, {
+    vhaProgramOffices: {
+      $set: {
+        data: action.payload.vhaProgramOffices
+      }
+    }
+  });
+};
+
 const errorLoadingAttorneys = (state, action) => {
   return update(state, {
     attorneys: {
+      $set: {
+        error: action.payload.error
+      }
+    }
+  });
+};
+
+const errorLoadingVhaProgramOffices = (state, action) => {
+  return update(state, {
+    vhaProgramOffices: {
       $set: {
         error: action.payload.error
       }
@@ -757,7 +777,9 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SET_SELECTION_OF_TASK_OF_USER]: setSelectionOfTaskOfUser,
   [ACTIONS.SET_PENDING_DISTRIBUTION]: setPendingDistribution,
   [ACTIONS.RECEIVE_ALL_ATTORNEYS]: receiveAllAttorneys,
+  [ACTIONS.RECEIVE_VHA_PROGRAM_OFFICES]: receiveVhaProgramOffices,
   [ACTIONS.ERROR_LOADING_ATTORNEYS]: errorLoadingAttorneys,
+  [ACTIONS.ERROR_LOADING_VHA_PROGRAM_OFFICES]: errorLoadingVhaProgramOffices,
   [ACTIONS.SET_TASK_ATTRS]: setTaskAttrs,
   [ACTIONS.SET_APPEAL_ATTRS]: setAppealAttrs,
   [ACTIONS.SET_SPECIAL_ISSUE]: setSpecialIssue,

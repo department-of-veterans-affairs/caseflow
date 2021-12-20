@@ -862,6 +862,7 @@ describe Appeal, :all_dbs do
 
       before do
         create(:root_task, :completed, appeal: appeal)
+        create(:schedule_hearing_task, :completed, appeal: appeal)
       end
 
       it "returns Post-decision" do
@@ -876,15 +877,21 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "if the only active case is a RootTask" do
+    context "if the only active task is a RootTask" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_with_cancelled_dispatch) do
+        sji = SanitizedJsonImporter.from_file("spec/records/appeal-53008.json", verbosity: 0)
+        sji.import
+        sji.imported_records[Appeal.table_name].first
+      end
 
       before do
         create(:root_task, :in_progress, appeal: appeal)
       end
 
-      it "returns Case storage" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      it "returns Unassigned" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
+        expect(appeal_with_cancelled_dispatch.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
       end
     end
 
@@ -899,12 +906,12 @@ describe Appeal, :all_dbs do
       end
 
       describe "when there are no other tasks" do
-        it "returns Case storage because it does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        it "returns Unassigned" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_UNASSIGNED_LABEL)
         end
       end
 
-      describe "when there is an actionable task with an assignee", skip: "flake" do
+      describe "when there is an actionable task with an assignee" do
         let(:assignee) { create(:user) }
         let!(:task) do
           create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
@@ -1121,7 +1128,7 @@ describe Appeal, :all_dbs do
       it "sets target decision date" do
         subject.set_target_decision_date!
         expect(subject.target_decision_date).to eq(
-          subject.receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days
+          subject.receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days
         )
       end
     end
@@ -1167,6 +1174,15 @@ describe Appeal, :all_dbs do
       context "contains string 'Contested Claim'" do
         let(:benefit_type) { "compensation" }
         let(:issue_category) { "Contested Claims - Insurance" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "contains string 'Contested Death'" do
+        let(:benefit_type) { "compensation" }
+        let(:issue_category) { "Contested Death Claim | Other" }
 
         it "returns true" do
           expect(subject).to be_truthy

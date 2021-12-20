@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isUndefined, get } from 'lodash';
+import { isUndefined, get, omitBy } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -37,7 +37,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
-import VirtualHearingModal from './VirtualHearingModal';
+import EmailConfirmationModal from './EmailConfirmationModal';
 import COPY from '../../../COPY';
 import { VIRTUAL_HEARING_LABEL } from '../constants';
 
@@ -64,8 +64,8 @@ const HearingDetails = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [virtualHearingErrors, setVirtualHearingErrors] = useState({});
-  const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
-  const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
+  const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
+  const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -90,22 +90,22 @@ const HearingDetails = (props) => {
   // Create an effect to remove stale alerts on unmount
   useEffect(() => () => props.clearAlerts(), []);
 
-  const openVirtualHearingModal = ({ type }) => {
-    setVirtualHearingModalOpen(true);
-    setVirtualHearingModalType(type);
+  const openEmailConfirmationModal = ({ type }) => {
+    setEmailConfirmationModalOpen(true);
+    setEmailConfirmationModalType(type);
   };
 
-  const closeVirtualHearingModal = () => setVirtualHearingModalOpen(false);
+  const closeEmailConfirmationModal = () => setEmailConfirmationModalOpen(false);
 
   const getEditedEmailsAndTz = () => {
     const changes = deepDiff(
-      initialHearing.virtualHearing,
-      hearing.virtualHearing || {}
+      initialHearing,
+      hearing || {}
     );
 
     return {
-      appellantEmailEdited: !isUndefined(changes.appellantEmail),
-      representativeEmailEdited: !isUndefined(changes.representativeEmail),
+      appellantEmailEdited: !isUndefined(changes.appellantEmailAddress),
+      representativeEmailEdited: !isUndefined(changes.representativeEmailAddress),
       representativeTzEdited: !isUndefined(changes.representativeTz),
       appellantTzEdited: !isUndefined(changes.appellantTz)
     };
@@ -114,33 +114,35 @@ const HearingDetails = (props) => {
   const submit = async (editedEmailsAndTz) => {
     try {
       // Determine the current state and whether to error
-      const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
-      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantEmail = !hearing?.appellantEmailAddress;
+
       const noRepTimezone = convertingToVirtual ?
-        !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail :
-        editedEmailsAndTz?.representativeEmailEdited && !hearing.virtualHearing?.representativeTz;
-      const noAppellantTimezone = convertingToVirtual ? !hearing.virtualHearing?.appellantTz :
-        editedEmailsAndTz?.appellantEmailEdited && !hearing.virtualHearing?.appellantTz;
+        !hearing?.representativeTz && hearing?.representativeEmailAddress :
+        editedEmailsAndTz?.representativeEmailEdited && !hearing?.representativeTz;
+
+      const noAppellantTimezone = convertingToVirtual ? !hearing?.appellantTz :
+        editedEmailsAndTz?.appellantEmailEdited && !hearing?.appellantTz;
 
       const emailUpdated = (
         editedEmailsAndTz?.appellantEmailEdited ||
-        (editedEmailsAndTz?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
+        (editedEmailsAndTz?.representativeEmailEdited && hearing?.representativeEmailAddress)
       );
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
+      const virtualHearingCheck = hearing.isVirtual || convertingToVirtual;
 
-      if (virtual && errors) {
+      if (errors && virtualHearingCheck) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
-      } else if ((emailUpdated || timezoneUpdated) && !converting) {
-        return openVirtualHearingModal({ type: 'change_email_or_timezone' });
+      } else if ((emailUpdated || timezoneUpdated) && !converting && hearing.isVirtual) {
+        return openEmailConfirmationModal({ type: 'change_email_or_timezone' });
       }
 
       // Only send updated properties
@@ -149,6 +151,25 @@ const HearingDetails = (props) => {
         hearing
       );
 
+      const emailRecipientAttributes = [
+        omitBy(
+          {
+            id: hearing?.appellantEmailId,
+            timezone: hearingChanges?.appellantTz,
+            email_address: hearingChanges?.appellantEmailAddress,
+            type: 'AppellantHearingEmailRecipient'
+          }, isUndefined
+        ),
+        omitBy(
+          {
+            id: hearing?.representativeEmailId,
+            timezone: hearingChanges?.representativeTz,
+            email_address: hearingChanges?.representativeEmailAddress,
+            type: 'RepresentativeHearingEmailRecipient'
+          }, isUndefined
+        )
+      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
+
       // Put the UI into a loading state
       setLoading(true);
 
@@ -156,13 +177,10 @@ const HearingDetails = (props) => {
       const response = await saveHearing({
         hearing: {
           ...(hearingChanges || {}),
-          transcription_attributes: {
-            // Always send full transcription details because a new record is created each update
-            ...(transcription ? hearing.transcription : {}),
-          },
-          virtual_hearing_attributes: {
-            ...(virtualHearing || {}),
-          },
+          // Always send full transcription details because a new record is created each update
+          transcription_attributes: transcription ? hearing.transcription : {},
+          virtual_hearing_attributes: virtualHearing || {},
+          email_recipients_attributes: emailRecipientAttributes.length ? emailRecipientAttributes : {},
         },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
@@ -186,22 +204,11 @@ const HearingDetails = (props) => {
 
       // email validations should be thrown inline
       if (code === 1002) {
-        // API errors from the server need to be bubbled up to the VirtualHearingModal so it can
-        // update the email components with the validation error messages.
-        const changingFromVideoToVirtualWithModalFlow = (
-          hearing?.readableRequestType === 'Video' && !hearing.isVirtual
-        );
+        const errors = parseVirtualHearingErrors(msg);
 
-        if (changingFromVideoToVirtualWithModalFlow) {
-          // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
-          throw respError;
-        } else {
-          const errors = parseVirtualHearingErrors(msg);
+        document.getElementById('email-section').scrollIntoView();
 
-          document.getElementById('email-section').scrollIntoView();
-
-          setVirtualHearingErrors(errors);
-        }
+        setVirtualHearingErrors(errors);
       } else {
         setError(msg);
       }
@@ -317,15 +324,15 @@ const HearingDetails = (props) => {
           </Button>
         </span>
       </div>
-      {virtualHearingModalOpen && (
-        <VirtualHearingModal
+      {emailConfirmationModalOpen && (
+        <EmailConfirmationModal
           hearing={hearing}
           virtualHearing={hearing?.virtualHearing}
           update={updateHearing}
           submit={submit}
-          closeModal={closeVirtualHearingModal}
+          closeModal={closeEmailConfirmationModal}
           reset={() => resetState(initialHearing)}
-          type={virtualHearingModalType}
+          type={emailConfirmationModalType}
           {...editedEmailsAndTz}
         />
       )}

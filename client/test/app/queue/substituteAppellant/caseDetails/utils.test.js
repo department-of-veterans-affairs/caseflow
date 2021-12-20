@@ -102,6 +102,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     currentUserOnClerkOfTheBoard: true,
     featureToggles,
     userIsCobAdmin: false,
+    hasSubstitution: false,
   };
 
   describe('with requisite values', () => {
@@ -119,7 +120,7 @@ describe('supportsSubstitutionPreDispatch', () => {
         appeal: { ...appeal, appellantIsNotVeteran: true },
       };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPreDispatch(args)).toBe(false);
     });
   });
 
@@ -129,7 +130,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     it.each(ineligibleCaseTypes)('for %s, returns false', (caseType) => {
       const args = { ...defaults, appeal: { ...appeal, caseType } };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPreDispatch(args)).toBe(false);
     });
   });
 
@@ -137,7 +138,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     it('returns false', () => {
       const args = { ...defaults, appeal: { ...appeal, isLegacyAppeal: true } };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPreDispatch(args)).toBe(false);
     });
   });
 
@@ -145,7 +146,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     it('returns false', () => {
       const args = { ...defaults, hasSubstitution: true };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPreDispatch(args)).toBe(false);
     });
   });
 
@@ -153,7 +154,7 @@ describe('supportsSubstitutionPreDispatch', () => {
     it('returns false', () => {
       const args = { ...defaults, currentUserOnClerkOfTheBoard: false };
 
-      expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+      expect(supportsSubstitutionPreDispatch(args)).toBe(false);
     });
   });
 
@@ -164,13 +165,14 @@ describe('supportsSubstitutionPreDispatch', () => {
     const testAppeal = {
       ...appeal,
       decisionIssues: nonDismissedDecisionIssues,
+      veteranAppellantDeceased: false,
     };
 
     describe('with regular COB user', () => {
       it('returns false', () => {
         const args = { ...defaults, appeal: testAppeal };
 
-        expect(supportsSubstitutionPostDispatch(args)).toBe(false);
+        expect(supportsSubstitutionPreDispatch(args)).toBe(false);
       });
     });
 
@@ -178,7 +180,7 @@ describe('supportsSubstitutionPreDispatch', () => {
       it('returns true', () => {
         const args = { ...defaults, appeal: testAppeal, userIsCobAdmin: true };
 
-        expect(supportsSubstitutionPostDispatch(args)).toBe(true);
+        expect(supportsSubstitutionPreDispatch(args)).toBe(true);
       });
     });
   });
@@ -192,14 +194,10 @@ describe('supportsSubstitutionPostDispatch', () => {
     docketName: 'direct_review',
     isLegacyAppeal: false,
   };
-  const featureToggles = {
-    hearings_substitution_death_dismissal: true,
-  };
   const defaults = {
     appeal,
     currentUserOnClerkOfTheBoard: true,
     hasSubstitution: false,
-    featureToggles,
     userIsCobAdmin: false,
   };
 
@@ -285,27 +283,10 @@ describe('supportsSubstitutionPostDispatch', () => {
   describe('with hearing docket', () => {
     const hearingAppeal = { ...appeal, docketName: 'hearing' };
 
-    describe('without hearings_substitution_death_dismissal feature toggle', () => {
-      it('returns false', () => {
-        const args = {
-          ...defaults,
-          appeal: hearingAppeal,
-          featureToggles: {
-            ...featureToggles,
-            hearings_substitution_death_dismissal: false,
-          },
-        };
+    it('returns true', () => {
+      const args = { ...defaults, appeal: hearingAppeal };
 
-        expect(supportsSubstitutionPostDispatch(args)).toBe(false);
-      });
-    });
-
-    describe('with hearings_substitution_death_dismissal feature toggle', () => {
-      it('returns true', () => {
-        const args = { ...defaults, appeal: hearingAppeal };
-
-        expect(supportsSubstitutionPostDispatch(args)).toBe(true);
-      });
+      expect(supportsSubstitutionPostDispatch(args)).toBe(true);
     });
   });
 });

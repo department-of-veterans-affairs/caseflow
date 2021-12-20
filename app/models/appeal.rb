@@ -90,6 +90,13 @@ class Appeal < DecisionReview
               RootTask.name, Task.closed_statuses, 1)
   }
 
+  scope :pre_docket, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              PreDocketTask.name, Task.closed_statuses, 1)
+  }
+
   scope :established, -> { where.not(established_at: nil) }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -164,7 +171,7 @@ class Appeal < DecisionReview
   def contested_claim?
     return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
 
-    category_substrings = ["Contested Claims", "Apportionment"]
+    category_substrings = %w[Contested Apportionment]
 
     request_issues.any? do |request_issue|
       category_substrings.any? { |substring| request_issue.nonrating_issue_category&.include?(substring) }
@@ -180,6 +187,7 @@ class Appeal < DecisionReview
       tasks.active.visible_in_queue_table_view,
       tasks.on_hold.visible_in_queue_table_view
     )
+
     return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks
@@ -210,18 +218,6 @@ class Appeal < DecisionReview
 
   def every_request_issue_has_decision?
     active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
-  end
-
-  def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
-
-    @latest_attorney_case_review = AttorneyCaseReview
-      .where(task_id: tasks.pluck(:id))
-      .order(:created_at).last
-  end
-
-  def latest_judge_case_review
-    @latest_judge_case_review ||= JudgeCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
   end
 
   def reviewing_judge_name
@@ -464,7 +460,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
     end
   end
 

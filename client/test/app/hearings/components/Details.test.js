@@ -3,7 +3,7 @@ import React from 'react';
 import { DetailsHeader } from 'app/hearings/components/details/DetailsHeader';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
-import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHearingForm';
+import { VirtualHearingFields } from 'app/hearings/components/details/VirtualHearingFields';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
 import {
@@ -21,7 +21,7 @@ import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDrop
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
-import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
+import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
 
 // Define the function spies
@@ -69,10 +69,10 @@ describe('Details', () => {
     expect(details.find(DetailsForm)).toHaveLength(1);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingForm).children()).toHaveLength(0);
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
@@ -110,7 +110,7 @@ describe('Details', () => {
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
-    expect(details.find(VirtualHearingModal)).toHaveLength(0);
+    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
     expect(details.find(HearingConversion)).toHaveLength(1);
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
@@ -147,7 +147,7 @@ describe('Details', () => {
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
-    expect(details.find(VirtualHearingModal)).toHaveLength(0);
+    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
     expect(details.find(HearingConversion)).toHaveLength(1);
 
     expect(details).toMatchSnapshot();
@@ -188,7 +188,7 @@ describe('Details', () => {
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
-  test('Does not display VirtualHearingModal when updating transcription details with AMA virtual hearing', () => {
+  test('Does not display EmailConfirmationModal when updating transcription details with AMA virtual hearing', () => {
     const details = mount(
       <Details
         hearing={amaHearing}
@@ -223,7 +223,7 @@ describe('Details', () => {
       simulate('click');
 
     // Ensure the modal is not displayed
-    expect(details.exists(VirtualHearingModal)).toEqual(false);
+    expect(details.exists(EmailConfirmationModal)).toEqual(false);
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
@@ -253,10 +253,10 @@ describe('Details', () => {
     expect(details.find(DetailsForm)).toHaveLength(1);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingForm).children()).toHaveLength(0);
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
 
     // Ensure the transcription form is not displayed for legacy hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(0);
@@ -288,10 +288,10 @@ describe('Details', () => {
     );
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingForm).prop('virtualHearing')).toEqual(
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       amaHearing.virtualHearing
     );
-    expect(details.find(VirtualHearingForm).children().length).toBeGreaterThan(
+    expect(details.find(VirtualHearingFields).children().length).toBeGreaterThan(
       0
     );
 

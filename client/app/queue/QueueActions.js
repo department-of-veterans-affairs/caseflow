@@ -6,7 +6,10 @@ import { associateTasksWithAppeals,
   prepareTasksForStore,
   prepareAppealForStore } from './utils';
 import { ACTIONS } from './constants';
-import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
+import { hideErrorMessage,
+  showErrorMessage,
+  showSuccessMessage,
+  setActiveOrganization } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import _ from 'lodash';
@@ -439,6 +442,40 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   }
 };
 
+export const initialCamoAssignTasksToVhaProgramOffice = ({
+  tasks, assigneeId, previousAssigneeId, instructions
+}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const url = '/tasks';
+  const params = {
+    data: {
+      tasks: {
+        type: 'AssessDocumentationTask',
+        assigned_to_id: assigneeId,
+        assigned_to_type: 'Organization',
+        external_id: oldTask.externalAppealId,
+        parent_id: oldTask.uniqueId,
+        instructions
+      }
+    }
+  };
+
+  return ApiUtil.post(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
+      const taskIds = tasks.map((task) => task.uniqueId);
+
+      dispatch(onReceiveTasks(_.pick(receievedTasks, ['tasks', 'amaTasks'])));
+
+      taskIds.forEach((taskId) => {
+        dispatch(setSelectionOfTaskOfUser({
+          userId: previousAssigneeId,
+          selected: false,
+          taskId
+        }));
+      });
+    });
+}));
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
@@ -664,10 +701,29 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
+const receiveVhaProgramOffices = (vhaProgramOffices) => ({
+  type: ACTIONS.RECEIVE_VHA_PROGRAM_OFFICES,
+  payload: {
+    vhaProgramOffices
+  }
+});
+
+const errorVhaProgramOffices = (error) => ({
+  type: ACTIONS.ERROR_LOADING_VHA_PROGRAM_OFFICES,
+  payload: {
+    error
+  }
+});
+
 export const fetchAllAttorneys = () => (dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
+
+export const fetchVhaProgramOffices = () => (dispatch) =>
+  ApiUtil.get('/organizations?type=VhaProgramOffice').
+    then((resp) => dispatch(receiveVhaProgramOffices(resp.body.organizations.data))).
+    catch((error) => dispatch(errorVhaProgramOffices(error)));
 
 export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch) => {
   let url = `/tasks?user_id=${userId}&role=${userRole}`;
@@ -679,6 +735,25 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
   return ApiUtil.get(url).
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    }).
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
+    });
+};
+
+export const fetchCamoTasks = (userId) => (dispatch) => {
+  const url = '/organizations/vha-camo/tasks';
+
+  return ApiUtil.get(url).
+    then((resp) => {
+      dispatch(setActiveOrganization(resp.body.id,
+        resp.body.organization_name,
+        resp.body.is_vso,
+        resp.body.user_can_bulk_assign));
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
     catch((error) => {

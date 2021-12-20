@@ -14,7 +14,8 @@ import {
   legacyJudgeTasksAssignedToUser,
   legacyAttorneyTasksAssignedByUser
 } from './selectors';
-import { PencilIcon, ClockIcon } from '../components/RenderFunctions';
+import { PencilIcon } from '../components/icons/PencilIcon';
+import { ClockIcon } from '../components/icons/ClockIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -263,8 +264,8 @@ CaseTitleDetails.propTypes = {
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
-  legacyJudgeTasks: PropTypes.object,
-  legacyAttorneyTasks: PropTypes.object
+  legacyJudgeTasks: PropTypes.array,
+  legacyAttorneyTasks: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => {

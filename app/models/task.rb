@@ -55,7 +55,8 @@ class Task < CaseflowRecord
   }
 
   enum cancellation_reason: {
-    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change,
+    Constants.TASK_CANCELLATION_REASONS.substitution.to_sym => Constants.TASK_CANCELLATION_REASONS.substitution
   }
 
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
@@ -404,6 +405,14 @@ class Task < CaseflowRecord
     (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
+  def calculated_last_change_duration
+    (Time.zone.today - updated_at&.to_date)&.to_i
+  end
+
+  def calculated_duration_from_board_intake
+    (Time.zone.today - created_at&.to_date)&.to_i
+  end
+
   def update_task_type(params)
     multi_transaction do
       new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
@@ -506,12 +515,8 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
-
-    @latest_attorney_case_review = AttorneyCaseReview
-      .where(task_id: Task.where(appeal: appeal)
-      .pluck(:id))
-      .order(:created_at).last
+    # Should be the same as calling: appeal.latest_attorney_case_review
+    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -610,6 +615,12 @@ class Task < CaseflowRecord
     return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
 
     true
+  end
+
+  def post_distribution?
+    [JudgeAssignTask, JudgeDecisionReviewTask].any? do |task_type|
+      type == task_type.to_s || ancestor_task_of_type(task_type).present?
+    end
   end
 
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze

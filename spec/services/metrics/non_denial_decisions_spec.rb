@@ -31,12 +31,4 @@ describe Metrics::NonDenialDecisions, :postgres do
   it "Produces the percent of non-denial decisions with an EP created within 7 days" do
     expect(subject).to eq(number_of_end_products_created_in_7_days / number_of_decisions_in_range.to_f)
   end
-
-  context "when start date is within 7 days" do
-    let(:start_date) { Time.zone.now - 4.days }
-
-    it "raises DateRangeError" do
-      expect { subject }.to raise_error(Metrics::DateRange::DateRangeError)
-    end
-  end
 end

@@ -267,6 +267,46 @@ feature "Intake", :all_dbs do
       end
     end
 
+    context "Updated Supplemental Claim Form 20-0995 and Higher Level Reveiw Form 20-0996" do
+      let(:veteran) { create(:veteran, file_number: "123419876") }
+      before { FeatureToggle.enable!(:updated_intake_forms) }
+      after { FeatureToggle.disable!(:updated_intake_forms) }
+
+      context "when replacing Vocational Rehab and Employment benefit type" do
+        it "shows 'Veterans Readiness and Employment' as benefit type option for SC form" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Veterans Readiness and Employment")
+        end
+
+        it "shows 'Veterans Readiness and Employment' as benefit type option for HLR form" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123419876"
+          click_on "Search"
+          expect(page).to have_content("Veterans Readiness and Employment")
+        end
+
+        context "when removing same office question" do
+          it "does not show question for HLR form" do
+            visit "/intake"
+            select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "123419876"
+            click_on "Search"
+            expect(page).to_not have_content("Was an interview by the same office requested?")
+          end
+        end
+      end
+    end
+
     scenario "Search for a veteran whose form is already being processed" do
       create(:higher_level_review, veteran_file_number: "12341234")
 
@@ -651,7 +691,7 @@ feature "Intake", :all_dbs do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            benefit_type: "Vocational Rehabilitation and Employment",
+            benefit_type: "Veterans Readiness and Employment",
             category: "Additional Training",
             description: "Description for Additional Training",
             date: 1.month.ago.mdY,

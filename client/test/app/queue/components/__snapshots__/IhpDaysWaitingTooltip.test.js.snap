@@ -3,23 +3,23 @@
 exports[`IhpDaysWaitingTooltip renders correctly 1`] = `
 <div>
   <span
-    aria-describedby="tooltip-id"
+    aria-describedby="waiting-undefined"
     currentitem="false"
     data-event="focus mouseenter"
     data-event-off="mouseleave keydown"
-    data-for="tooltip-id"
+    data-for="waiting-undefined"
     data-tip="true"
     tabindex="0"
   >
     10 days
   </span>
   <span
-    data-css-rmx6hr=""
+    data-css-3c6vjq=""
   >
     <div
       class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
       data-id="tooltip"
-      id="tooltip-id"
+      id="waiting-undefined"
       role="tooltip"
     >
       <style>
