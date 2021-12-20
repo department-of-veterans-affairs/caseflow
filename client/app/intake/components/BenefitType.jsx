@@ -2,10 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
+import { FORM_TYPES } from 'app/intake/constants';
 import { formatRadioOptions, formatSearchableDropdownOptions } from '../util';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 export default class BenefitType extends React.PureComponent {
+  updatedForms = [FORM_TYPES.SUPPLEMENTAL_CLAIM.formName, FORM_TYPES.HIGHER_LEVEL_REVIEW.formName];
+
+  benefitTypes = this.updatedForms.includes(this.props.formName) &&
+    this.props.featureToggles.updatedIntakeForms ?
+    { ...BENEFIT_TYPES, voc_rehab: 'Veterans Readiness and Employment' } :
+    BENEFIT_TYPES;
+
   asRadioField = () => {
     const {
       value,
@@ -20,7 +28,7 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={formatRadioOptions(BENEFIT_TYPES)}
+        options={formatRadioOptions(this.benefitTypes)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
@@ -42,7 +50,7 @@ export default class BenefitType extends React.PureComponent {
         label="Benefit type"
         strongLabel
         placeholder="Select or enter..."
-        options={formatSearchableDropdownOptions(BENEFIT_TYPES)}
+        options={formatSearchableDropdownOptions(this.benefitTypes)}
         value={value}
         onChange={onChange}
         errorMessage={errorMessage}
