@@ -34,7 +34,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   def check_email_event_rows(hearing, row_count)
     within "#hearingEmailEvents table > tbody" do
       # Expecting 2 because rep email is filled as well
-      expect(find_all("tr", wait: 10).length).to eq(row_count)
+      expect(find_all("tr").length).to eq(row_count)
 
       hearing.email_events.order(sent_at: :desc).map.with_index do |event, index|
         check_row_content(event, index)
