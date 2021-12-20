@@ -175,7 +175,13 @@ class Hearings::HearingDayController < HearingsApplicationController
   def query_params
     if params[:query].present?
       query_params = params.require(:query).permit(
-        HearingDay::AVAILABLE_FILTERS
+        [
+          :with_judges,
+          :with_request_types,
+          :with_ros,
+          :sort_by_scheduled_for,
+          :sort_by_room
+        ]
       )
 
       parse_filter_options(query_params)
@@ -249,10 +255,14 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def paginated_docket_queries
+    hearing_days_request_types = HearingDayRequestTypeQuery.new(dockets_in_range).call
+    filled_slots_query = HearingDayFilledSlotsQuery.new(@paginated_dockets).call
+    judge_name_query = HearingDayJudgeNameQuery.new(dockets_in_range).call
+
     @paginated_docket_queries ||= {
-      hearing_days_request_types: dockets_in_range.request_type_query,
-      filled_slots_count_for_days: dockets_in_range.filled_slots_query(@paginated_dockets, true),
-      judge_names: dockets_in_range.judge_name_query
+      hearing_days_request_types: hearing_days_request_types,
+      filled_slots_count_for_days: filled_slots_query,
+      judge_names: judge_name_query
     }
   end
 end

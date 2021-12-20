@@ -56,12 +56,6 @@ class HearingDay < CaseflowRecord
     ) as virtual_hearings_count
   SQL
 
-  AVAILABLE_FILTERS = [
-    :with_judges,
-    :with_request_types,
-    :with_ros
-  ].freeze
-
   before_create :assign_created_by_user
   after_update :update_children_records
 
@@ -99,30 +93,44 @@ class HearingDay < CaseflowRecord
   scope :with_judges, lambda { |judges_ids|
     where(hearings: { judge_id: judges_ids })
       .or(where(judge_id: judges_ids))
-      .includes(:hearings, :judge).distinct
+      .includes(:hearings, :judge)
   }
 
   scope :with_request_types, lambda { |request_types|
-    query = request_type_query
+    query = HearingDayRequestTypeQuery.new(
+      all.unscope(:includes, :where).where(id: all.pluck(:id))
+    ).call
 
-    ids = all.select do |day|
+    all.select do |day|
       request_type = HearingDaySerializer.get_readable_request_type(
         day,
         video_hearing_days_request_types: query
       ).split(",").first.strip
 
       request_types.include?(request_type)
-    end.pluck(:id)
-
-    where(id: ids)
+    end
   }
 
   scope :with_ros, lambda { |ros_ids|
     where(regional_office: ros_ids)
   }
 
+  scope :sort_by_scheduled_for, lambda { |direction|
+    order(scheduled_for: direction.first.to_sym)
+  }
+
+  scope :sort_by_room, lambda { |direction|
+
+  }
+
   filterrific(
-    available_filters: AVAILABLE_FILTERS
+    available_filters: [
+      :with_judges,
+      :with_request_types,
+      :with_ros,
+      :sort_by_scheduled_for,
+      :sort_by_room
+    ]
   )
 
   def self.counts_for_ama_hearings
@@ -162,14 +170,14 @@ class HearingDay < CaseflowRecord
   end
 
   def self.ama_hearings_count_per_day
-    Hearing.where(hearing_day_id: pluck(:id)).where(
+    Hearing.where(hearing_day_id: all.map(&:id)).where(
       "disposition NOT in (?) or disposition is null",
       Hearing::CLOSED_HEARING_DISPOSITIONS
     ).group(:hearing_day_id).count
   end
 
   def self.legacy_hearings_count_per_day
-    vacols_ids = LegacyHearing.where(hearing_day_id: pluck(:id)).pluck(:vacols_id)
+    vacols_ids = LegacyHearing.where(hearing_day_id: all.map(&:id)).pluck(:vacols_id)
 
     vacols_ids.in_groups_of(1000, false).reduce({}) do |acc, vacols_batched_ids|
       acc.merge(
@@ -183,7 +191,7 @@ class HearingDay < CaseflowRecord
 
   # This method returns the filter headers used on the table in the front-end for
   # hearings schedule.
-  def self.filter_options(docket_queries = {})
+  def self.filter_options(docket_queries)
     {
       readable_request_type: request_type_filters(docket_queries[:hearing_days_request_types]),
       regional_office: regional_office_filters,
@@ -191,9 +199,7 @@ class HearingDay < CaseflowRecord
     }
   end
 
-  def self.request_type_filters(query = {})
-    query = query.presence || request_type_query
-
+  def self.request_type_filters(query)
     all.each_with_object({}) do |day, hash|
       request_type = HearingDaySerializer.get_readable_request_type(
         day,
@@ -230,9 +236,7 @@ class HearingDay < CaseflowRecord
     regional_offices_filters
   end
 
-  def self.judge_filters(query = {})
-    query = query.presence || judge_name_query
-
+  def self.judge_filters(query)
     judge_filters = all.includes(:judge).each_with_object({}) do |day, hash|
       judge_first_name = day.judge_first_name(query)
       judge_last_name = day.judge_last_name(query)
@@ -255,42 +259,6 @@ class HearingDay < CaseflowRecord
     judge_filters["Blank"] = judge_filters.delete("")
 
     judge_filters
-  end
-
-  def self.docket_queries(paginated_dockets = [], pagination = false)
-    {
-      video_hearing_days_request_types: request_type_query(paginated_dockets, pagination),
-      filled_slots_count_for_days: filled_slots_query(paginated_dockets, pagination),
-      judge_names: judge_name_query(paginated_dockets, pagination)
-    }
-  end
-
-  def self.filled_slots_query(paginated_dockets = [], pagination = false)
-    if pagination
-      HearingDayFilledSlotsQuery.new(paginated_dockets).call
-    else
-      HearingDayFilledSlotsQuery.new(all).call
-    end
-  end
-
-  def self.request_type_query(paginated_dockets = [], pagination = false)
-    if pagination
-      HearingDayRequestTypeQuery.new(
-        paginated_dockets.unscope(:includes, :where).where(id: all.pluck(:id))
-      ).call
-    else
-      HearingDayRequestTypeQuery.new(
-        all.unscope(:includes, :where).where(id: all.pluck(:id))
-      ).call
-    end
-  end
-
-  def self.judge_name_query(paginated_dockets = [], pagination = false)
-    if pagination
-      HearingDayJudgeNameQuery.new(paginated_dockets).call
-    else
-      HearingDayJudgeNameQuery.new(all).call
-    end
   end
 
   def central_office?
