@@ -177,7 +177,7 @@ class ListSchedule extends React.Component {
       queries.filter = filters;
     }
 
-    // Note: double-check handing of "blank" selections for Judge and Regional Office
+    // Note: coordinate handling of "blank" selections for Judge and Regional Office with back-end
     this.props.updateQueries(queries);
   }
 
