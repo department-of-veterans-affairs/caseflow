@@ -86,7 +86,11 @@ module HearingConcern
 
   def calculate_submission_window
     # End of evidence submission window is 90 days after scheduled_for, unless
-    # that falls on a weekend or holiday
+    # that falls on a weekend or holiday.
+    # Note: It would be ideal to retrieve an EvidenceSubmissionWindowTask for this
+    # hearing, and use its `timer_ends_at` date, rather than calculating this window here.
+    # However, since EvidenceSubmissionWindowTasks are currently created for AMA appeals,
+    # but not Legacy ones, we'll use this method for now.
     end_date = scheduled_for.to_date + 90.days
     weekend, holiday = weekend_and_holiday(end_date)
 
