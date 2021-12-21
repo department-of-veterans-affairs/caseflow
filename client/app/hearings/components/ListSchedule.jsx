@@ -148,6 +148,7 @@ class ListSchedule extends React.Component {
 
     if (params.sort?.sortCol) {
       const sortDirection = params.sort.ascending ? 'asc' : 'desc';
+
       queries.sort = { column: params.sort.sortCol?.sortParamName, direction: sortDirection };
     }
 
