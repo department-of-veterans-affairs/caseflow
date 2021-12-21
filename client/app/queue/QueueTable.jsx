@@ -594,7 +594,7 @@ export default class QueueTable extends React.PureComponent {
       const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
       const params = {
         filter: _.isEmpty(filteredByList) ? {} : filteredByList,
-        sort: sortColName ? { sortCol: columnToSortBy?.columnName, ascending: sortAscending } : {}
+        sort: sortColName ? { sortCol: columnToSortBy, ascending: sortAscending } : {}
       };
 
       this.props.returnQueries(params);

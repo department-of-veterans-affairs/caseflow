@@ -1075,6 +1075,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
       valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
         {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
       </Link>,
+      sortParamName: 'sort_by_scheduled_for',
       getSortValue: (row) => {
         return row.scheduledFor;
       }
@@ -1111,6 +1112,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
       valueName: 'room',
       columnName: 'room',
       tableData: rows,
+      sortParamName: 'sort_by_room',
       getSortValue: (hearingDay) => {
         return hearingDay.room;
       }
