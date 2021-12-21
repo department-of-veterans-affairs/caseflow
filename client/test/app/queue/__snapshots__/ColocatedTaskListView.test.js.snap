@@ -2094,13 +2094,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    -530 of 31
+                    -531 of 31
                     <div
                       class="cf-continuous-progress-bar"
                     >
                       <div
                         class=""
-                        style="width: -1709.6774193548388%;"
+                        style="width: -1712.9032258064517%;"
                       />
                     </div>
                   </td>
@@ -2289,7 +2289,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    -501
+                    -502
                     <div
                       class="cf-continuous-progress-bar"
                     >

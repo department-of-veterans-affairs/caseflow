@@ -52,7 +52,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                 data-css-1qcxu9b=""
               >
                 <svg
-                  aria-labelledby="Edit"
+                  aria-labelledby="Pencil Icon"
                   class=""
                   height="25"
                   role="img"
@@ -62,7 +62,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                   <title
                     id="title"
                   >
-                    Edit
+                    Pencil Icon
                   </title>
                   <g
                     fill="none"

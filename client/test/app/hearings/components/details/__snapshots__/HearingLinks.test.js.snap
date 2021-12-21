@@ -150,10 +150,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                     className=""
                     color="#0071bc"
                     size={20}
-                    title="External Link"
+                    title="External Link Icon"
                   >
                     <svg
-                      aria-labelledby="External Link"
+                      aria-labelledby="External Link Icon"
                       className=""
                       height={20}
                       role="img"
@@ -164,7 +164,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                       <title
                         id="title"
                       >
-                        External Link
+                        External Link Icon
                       </title>
                       <g
                         fill="none"
@@ -505,10 +505,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                     className=""
                     color="#0071bc"
                     size={20}
-                    title="External Link"
+                    title="External Link Icon"
                   >
                     <svg
-                      aria-labelledby="External Link"
+                      aria-labelledby="External Link Icon"
                       className=""
                       height={20}
                       role="img"
@@ -519,7 +519,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                       <title
                         id="title"
                       >
-                        External Link
+                        External Link Icon
                       </title>
                       <g
                         fill="none"
@@ -1595,10 +1595,10 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                     className=""
                     color="#0071bc"
                     size={20}
-                    title="External Link"
+                    title="External Link Icon"
                   >
                     <svg
-                      aria-labelledby="External Link"
+                      aria-labelledby="External Link Icon"
                       className=""
                       height={20}
                       role="img"
@@ -1609,7 +1609,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                       <title
                         id="title"
                       >
-                        External Link
+                        External Link Icon
                       </title>
                       <g
                         fill="none"

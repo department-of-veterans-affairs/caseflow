@@ -868,10 +868,10 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                             className=""
                             color="#0071bc"
                             size={20}
-                            title="External Link"
+                            title="External Link Icon"
                           >
                             <svg
-                              aria-labelledby="External Link"
+                              aria-labelledby="External Link Icon"
                               className=""
                               height={20}
                               role="img"
@@ -882,7 +882,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                               <title
                                 id="title"
                               >
-                                External Link
+                                External Link Icon
                               </title>
                               <g
                                 fill="none"

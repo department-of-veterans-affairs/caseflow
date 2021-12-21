@@ -18,7 +18,7 @@ Object {
           >
              
             <svg
-              aria-labelledby="External Link"
+              aria-labelledby="External Link Icon"
               class=""
               height="20"
               role="img"
@@ -29,7 +29,7 @@ Object {
               <title
                 id="title"
               >
-                External Link
+                External Link Icon
               </title>
               <g
                 fill="none"
@@ -75,7 +75,7 @@ Object {
         >
            
           <svg
-            aria-labelledby="External Link"
+            aria-labelledby="External Link Icon"
             class=""
             height="20"
             role="img"
@@ -86,7 +86,7 @@ Object {
             <title
               id="title"
             >
-              External Link
+              External Link Icon
             </title>
             <g
               fill="none"
@@ -189,7 +189,7 @@ Object {
           >
              
             <svg
-              aria-labelledby="External Link"
+              aria-labelledby="External Link Icon"
               class=""
               height="20"
               role="img"
@@ -200,7 +200,7 @@ Object {
               <title
                 id="title"
               >
-                External Link
+                External Link Icon
               </title>
               <g
                 fill="none"
@@ -246,7 +246,7 @@ Object {
         >
            
           <svg
-            aria-labelledby="External Link"
+            aria-labelledby="External Link Icon"
             class=""
             height="20"
             role="img"
@@ -257,7 +257,7 @@ Object {
             <title
               id="title"
             >
-              External Link
+              External Link Icon
             </title>
             <g
               fill="none"
@@ -357,7 +357,7 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
       >
          
         <svg
-          aria-labelledby="External Link"
+          aria-labelledby="External Link Icon"
           class=""
           height="20"
           role="img"
@@ -368,7 +368,7 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
           <title
             id="title"
           >
-            External Link
+            External Link Icon
           </title>
           <g
             fill="none"
