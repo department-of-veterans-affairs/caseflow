@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Alert from './Alert';
 import Button from './Button';
-import { LoadingSymbol } from '../components/RenderFunctions';
+import { LoadingIcon } from './icons/LoadingIcon';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import _ from 'lodash';
 
@@ -53,9 +53,9 @@ export default class AutoSave extends React.Component {
 
       return <div className="saving">
         <div className="loadingSymbol">
-          <LoadingSymbol
+          <LoadingIcon
             text="Saving..."
-            size="20px"
+            size={20}
             color={color}
           />
         </div>
