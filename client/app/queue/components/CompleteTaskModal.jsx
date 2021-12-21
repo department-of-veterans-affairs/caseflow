@@ -125,10 +125,10 @@ const sendToBoardOpts = [
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-// if the VhaProgramOffice has completed a task, show the task instructions in the modal
+  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
-  return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1]; 
-});
+    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
+  });
 
   return (
     <React.Fragment>
@@ -302,8 +302,8 @@ class CompleteTaskModal extends React.Component {
     // 2. if instructions should be formatted
     if (radio) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
-      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
-        locationLabel}.`;
+      const docLocation = {radio === 'other' ? otherInstructions : locationLabel
+      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${docLocation}.`;
 
       formattedInstructions = docLocationText;
       if (instructions) {
