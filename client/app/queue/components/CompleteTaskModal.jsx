@@ -302,8 +302,8 @@ class CompleteTaskModal extends React.Component {
     // 2. if instructions should be formatted
     if (radio) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
-      const docLocation = {radio === 'other' ? otherInstructions : locationLabel
-      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${docLocation}.`;
+      const location = (radio === 'other') ? otherInstructions : locationLabel;
+      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${location}.`;
 
       formattedInstructions = docLocationText;
       if (instructions) {
