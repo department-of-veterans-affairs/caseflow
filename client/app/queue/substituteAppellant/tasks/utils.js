@@ -60,7 +60,7 @@ export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide,
 // This may be refined after user testing...
 export const openTasksToHide = [...nonAutomatedTasksToHide, ...automatedTasks];
 // active tasks that can be cancelled by the user during a same appeal substitution.
-export const openTasksToShow = [...mailTasks, ...hearingAdminActions];
+export const openTasksToShow = [...mailTasks, ...hearingAdminActions, 'TranslationTask'];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id

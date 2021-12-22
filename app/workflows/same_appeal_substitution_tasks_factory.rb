@@ -3,7 +3,6 @@
 class SameAppealSubstitutionTasksFactory
   def initialize(appeal, task_ids, created_by, task_params)
     @appeal = appeal
-    # task_ids takes two parameters - cancelled and selected
     @task_ids = task_ids
     @created_by = created_by
     @task_params = task_params

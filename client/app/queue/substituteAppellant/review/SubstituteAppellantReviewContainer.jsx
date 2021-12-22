@@ -114,7 +114,7 @@ export const SubstituteAppellantReviewContainer = () => {
       // these are task ids to reopen
       selected_task_ids: existingValues.closedTaskIds,
       // these are the task ids to be cancelled
-      cancelled_task_ids: cancelTasks.length ? cancelTasks : null,
+      cancelled_task_ids: cancelTasks,
       task_params: buildTaskCreationParameters()
     };
 

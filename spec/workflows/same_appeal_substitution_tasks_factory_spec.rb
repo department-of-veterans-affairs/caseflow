@@ -137,7 +137,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               recent_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).cancelled.order(:id).last
               subject
               open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open.first
-              open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.last
+              open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
 
               expect(open_attorney_task.instructions).to eq(recent_attorney_task.instructions)
               expect(open_judge_task.instructions).to eq(recent_judge_task.instructions)
@@ -222,6 +222,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             end
             let(:evidence_task) { appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first }
             let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+            let(:trans_task) { create(:ama_colocated_task, :translation, appeal: appeal, parent: appeal.root_task) }
             let(:cancelled_task_ids) { [evidence_task.id, hearing_task.id] }
             it "cancels active tasks" do
               active_tasks = [
@@ -230,6 +231,9 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               ]
 
               subject
+              trans_task.reload
+              expect(trans_task.cancelled? &&
+                     trans_task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution))
               expect(
                 active_tasks.map(&:reload).all? do |task|
                   task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)
