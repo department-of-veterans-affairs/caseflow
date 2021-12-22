@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RightTriangle } from '../components/RenderFunctions';
+import { RightTriangleIcon } from '../components/icons/RightTriangleIcon';
 import PropTypes from 'prop-types';
 
 class LastReadIndicator extends React.PureComponent {
@@ -13,7 +13,7 @@ class LastReadIndicator extends React.PureComponent {
       id="read-indicator"
       ref={this.props.getRef}
       aria-label="Most recently read document indicator">
-      <RightTriangle />
+      <RightTriangleIcon />
     </span>;
   }
 }
