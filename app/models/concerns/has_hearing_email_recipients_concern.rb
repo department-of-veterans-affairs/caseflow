@@ -69,6 +69,8 @@ module HasHearingEmailRecipientsConcern
   end
 
   def create_or_update_recipients(type:, email_address:, timezone: nil, email_sent: false)
+    # Reload the hearing first
+    reload
     recipient = email_recipients.find_by(type: type.name)
 
     if recipient.blank?
@@ -85,8 +87,6 @@ module HasHearingEmailRecipientsConcern
         email_sent: email_sent
       )
     end
-
-    recipient
   end
 
   def veteran_email_address
