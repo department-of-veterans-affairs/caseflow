@@ -69,7 +69,13 @@ module HasHearingEmailRecipientsConcern
   end
 
   def create_or_update_recipients(type:, email_address:, timezone: nil, email_sent: false)
-    recipient = email_recipients.find_by(type: type.name)
+    recipient = type.find_by(hearing: self)
+    # Sometimes the hearing in the db doesn't have the recipients because
+    # we're inside the multi_transaction in base_hearing_update_form
+    # When that's the case use the object in memory's recipients
+    if recipient.blank?
+      recipient = email_recipients.find_by(type: type.name)
+    end
 
     if recipient.blank?
       type.create!(
