@@ -94,7 +94,7 @@ module HearingConcern
     end_date = scheduled_for.to_date + 90.days
     weekend, holiday = weekend_and_holiday(end_date)
 
-# Make sure the end date is not a weekend or holiday
+    # Make sure the end date is not a weekend or holiday
     while weekend || holiday
       end_date += 1.day
       weekend, holiday = weekend_and_holiday(end_date)
