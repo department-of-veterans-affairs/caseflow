@@ -1090,6 +1090,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
       filterValueTransform: formatHearingType,
       anyFiltersAreSet: true,
       label: 'Filter by type',
+      filterParamName: 'with_request_types',
       columnName: 'readableRequestType',
       valueName: 'Hearing Type',
       valueFunction: (row) => row.readableRequestType
@@ -1102,6 +1103,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
       anyFiltersAreSet: true,
       enableFilterTextTransform: false,
       label: 'Filter by RO',
+      filterParamName: 'with_ros',
       columnName: 'regionalOffice',
       valueName: 'regionalOffice'
     },
@@ -1125,6 +1127,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
       enableFilter: true,
       anyFiltersAreSet: true,
       label: 'Filter by VLJ',
+      filterParamName: 'with_judges',
       columnName: 'vlj',
       valueName: 'vlj'
     },

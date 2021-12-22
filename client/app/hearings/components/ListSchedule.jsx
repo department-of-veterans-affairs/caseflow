@@ -173,7 +173,7 @@ class ListSchedule extends React.Component {
           }
         });
         if (values.length > 0) {
-          filters[key] = values;
+          filters[column.filterParamName] = values;
         }
       });
       queries.filter = filters;
