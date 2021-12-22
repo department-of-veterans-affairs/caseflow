@@ -8,7 +8,7 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
 import TextareaField from '../../../components/TextareaField';
 import { AppealHearingLocationsDropdown } from '../../../components/DataDropdowns';
-import { PencilIcon } from '../../../components/RenderFunctions';
+import { PencilIcon } from '../../../components/icons/PencilIcon';
 import PropTypes from 'prop-types';
 import VirtualHearingLink from '../VirtualHearingLink';
 
@@ -109,7 +109,7 @@ export const HearingDetailsLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link to={`/${hearing.externalId}/details`}>
         Edit Hearing Details
-        <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+        <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
       </Link>
     </div>
   </div>
@@ -213,7 +213,7 @@ export const HearingPrepWorkSheetLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link href={`/hearings/${hearing.externalId}/worksheet`}>
         Edit VLJ Hearing Worksheet
-        <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+        <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
       </Link>
     </div>
   </div>

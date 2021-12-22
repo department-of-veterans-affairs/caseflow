@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
+import { ChevronDownIcon } from '../components/icons/ChevronDownIcon';
+import { ChevronUpIcon } from '../components/icons/ChevronUpIcon';
 import Button from '../components/Button';
 import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
 
@@ -16,7 +17,7 @@ class CommentIndicator extends React.Component {
   render() {
     const { annotationsCount, expanded, docId } = this.props;
     const name = `expand ${annotationsCount} comments`;
-    const commentArrowComponent = expanded ? <ChevronUp /> : <ChevronDown />;
+    const commentArrowComponent = expanded ? <ChevronUpIcon /> : <ChevronDownIcon />;
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
