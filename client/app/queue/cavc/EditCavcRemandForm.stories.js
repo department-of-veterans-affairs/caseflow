@@ -87,7 +87,7 @@ EditingInvalidDates.args = {
     attorney: 'yes',
     judge: 'Panel',
     decisionType: 'death_dismissal',
-    remandType: 'mdr',
+    remandType: null,
     remandDatesProvided: 'yes',
     decisionDate: format(add(new Date(), { days: 7 }), 'yyyy-MM-dd'),
     judgementDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
