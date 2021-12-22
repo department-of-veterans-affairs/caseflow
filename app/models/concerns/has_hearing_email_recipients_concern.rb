@@ -87,6 +87,8 @@ module HasHearingEmailRecipientsConcern
         email_sent: email_sent
       )
     end
+
+    email_recipients.find_by(type: type.name)
   end
 
   def veteran_email_address
