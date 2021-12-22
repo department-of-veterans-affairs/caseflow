@@ -69,7 +69,7 @@ module HasHearingEmailRecipientsConcern
   end
 
   def create_or_update_recipients(type:, email_address:, timezone: nil, email_sent: false)
-    recipient = type.find_by(hearing: self)
+    recipient = email_recipients.find_by(type: type.name)
 
     if recipient.blank?
       type.create!(
