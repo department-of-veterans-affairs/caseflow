@@ -233,7 +233,7 @@ describe('EditCavcRemandForm', () => {
     it('displays error messages for judgement dates before January 1, 2018', async () => {
       setup({ existingValues: remandDatesProvided });
       const judgementDateInput = screen.getByLabelText(/What is the Court's judgement date?/i);
-      const judgementDate = format(new Date(2017, 4, 12), 'yyyy-MM-dd');
+      const judgementDate = format(new Date(2017, 0, 12), 'yyyy-MM-dd');
 
       // Enter date
       fireEvent.change(judgementDateInput, { target: { value: judgementDate } });

@@ -25,7 +25,7 @@ export const allRemandTypeOpts = Object.entries(CAVC_REMAND_SUBTYPE_NAMES).map(
 export const generateSchema = ({ maxIssues }) => {
   const requireValidDate = yup.
     date().
-    min(new Date(2018, 1, 1)).
+    min(new Date(2018, 0, 1)).
     max(new Date()).
     required();
 
@@ -65,7 +65,7 @@ export const generateSchema = ({ maxIssues }) => {
     }),
     decisionDate: yup.
       date().
-      min(new Date(2018, 1, 1), CAVC_DECISION_DATE_PAST).
+      min(new Date(2018, 0, 1), CAVC_DECISION_DATE_PAST).
       max(new Date(), CAVC_DECISION_DATE_ERROR).
       required(),
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
