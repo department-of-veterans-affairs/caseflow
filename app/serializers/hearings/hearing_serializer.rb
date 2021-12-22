@@ -81,6 +81,7 @@ class HearingSerializer
   attribute :scheduled_for_is_past, &:scheduled_for_past?
   attribute :scheduled_time
   attribute :scheduled_time_string
+  attribute :submission_window_end, if: for_worksheet, &:calculate_submission_window
   attribute :summary
   attribute :transcript_requested
   attribute :transcript_sent_date
