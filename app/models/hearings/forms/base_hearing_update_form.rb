@@ -329,6 +329,9 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_email_recipients
+    # If reloaded otherwise duplicate email_recipients can/will be created
+    # for LegacyHearings
+    hearing.reload
     if appellant_email.present?
       hearing.create_or_update_recipients(
         type: AppellantHearingEmailRecipient,
