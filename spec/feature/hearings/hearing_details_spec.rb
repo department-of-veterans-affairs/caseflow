@@ -76,25 +76,16 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   def check_virtual_hearings_links(virtual_hearing, disable_link = false)
-    # Test the hearing link details
+    # Confirm that the host hearing link details exist
     within "#vlj-hearings-link" do
-      expect(page).to have_content(
-        "VLJ Link: Start Virtual Hearing \n" \
-        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
-        "PIN: #{virtual_hearing.host_pin}\n" \
-        "Copy VLJ Link "
-      )
-
+      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
+      find("div", text: "PIN: #{virtual_hearing.host_pin}")
       ensure_link_present(virtual_hearing.host_link, disable_link)
     end
+    # Confirm that the guest hearing link details exist
     within "#guest-hearings-link" do
-      expect(page).to have_content(
-        "Guest Link: Join Virtual Hearing \n" \
-        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
-        "PIN: #{virtual_hearing.guest_pin}\n" \
-        "Copy Guest Link "
-      )
-
+      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
+      find("div", text: "PIN: #{virtual_hearing.guest_pin}")
       ensure_link_present(virtual_hearing.guest_link, disable_link)
     end
   end
