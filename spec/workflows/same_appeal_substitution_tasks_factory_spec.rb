@@ -222,7 +222,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             end
             let(:evidence_task) { appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first }
             let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
-            let(:trans_task) { create(:ama_colocated_task, :translation, appeal: appeal, parent: appeal.root_task) }
+            let!(:trans_task) { create(:ama_colocated_task, :translation, appeal: appeal, parent: appeal.root_task) }
             let(:cancelled_task_ids) { [evidence_task.id, hearing_task.id] }
             it "cancels active tasks" do
               active_tasks = [
@@ -233,7 +233,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               subject
               trans_task.reload
               expect(trans_task.cancelled? &&
-                     trans_task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution))
+                trans_task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)).to be false
               expect(
                 active_tasks.map(&:reload).all? do |task|
                   task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)

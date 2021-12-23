@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
-import { calculateEvidenceSubmissionEndDate, openTasksToShow } from '../tasks/utils';
+import { calculateEvidenceSubmissionEndDate, openTasksToHide } from '../tasks/utils';
 
 import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
@@ -28,7 +28,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
   // get all active tasks that can be cancelled by user
   const activeTasksToShow = allTasks.filter((task) => {
-    return (openTasksToShow.includes(task.type));
+    return (!openTasksToHide.includes(task.type) && task.status !== 'completed');
   });
 
   // get array of active Task Ids
@@ -36,8 +36,10 @@ export const SubstituteAppellantReviewContainer = () => {
     return task.taskId;
   });
 
+  // get selected tasks to find unselected tasks by taking the delta between active and unselected.
   const selectedIds = activeIds.filter((id) => existingValues.openTaskIds.includes(parseInt(id, 10)));
-  // selected ids may be missing task parent ids, need these for cancelling unselected tasks
+
+  // also need parentIds for selected tasks.
   const parentIds = activeTasksToShow.filter((task) => selectedIds.includes(task.taskId)).map((task) => task.parentId.toString());
   const allSelectedTaskIds = selectedIds.concat(parentIds);
 
@@ -46,6 +48,16 @@ export const SubstituteAppellantReviewContainer = () => {
       return [];
     }
     const difference = activeTasksIds.filter((id) => !openTaskIds.includes(id));
+    const cancelTaskObjects = activeTasksToShow.filter((task) => difference.includes(task.taskId));
+
+    // check to see if parent and child are the same type. If they aren't, remove parent task.
+    for (let i = 0; i < difference.length - 1; i++) {
+      if (parseInt(cancelTaskObjects[i].taskId, 10) === cancelTaskObjects[i + 1].parentId) {
+        if (cancelTaskObjects[i].type !== cancelTaskObjects[i + 1].type) {
+          difference.splice(i, 1);
+        }
+      }
+    }
 
     return difference;
   };

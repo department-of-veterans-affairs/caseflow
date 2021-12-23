@@ -433,9 +433,9 @@ describe AppellantSubstitution do
       let(:poa_participant_id) { substitutes_poa.poa_participant_id }
 
       let(:selected_task_types) { [] }
+      let(:cancelled_task_ids) { [] }
       let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
       let(:task_params) { {} }
-      let(:cancelled_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
 
       let(:params) do
         {
