@@ -94,13 +94,9 @@ describe('supportsSubstitutionPreDispatch', () => {
     isLegacyAppeal: false,
     veteranAppellantDeceased: true
   };
-  const featureToggles = {
-    listed_granted_substitution_before_dismissal: true,
-  };
   const defaults = {
     appeal,
     currentUserOnClerkOfTheBoard: true,
-    featureToggles,
     userIsCobAdmin: false,
     hasSubstitution: false,
   };

@@ -63,48 +63,37 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     let(:substitution_date) { appeal.receipt_date + 10.days }
     let(:user) { create(:user) }
 
-    context "without feature toggle" do
+    context "as COTB user" do
       include_context "with Clerk of the Board user"
-      let(:docket_type) { "direct_review" }
+      include_context "with existing relationships"
 
-      it_should_behave_like "substitution unavailable"
-    end
+      context "with evidence submission docket" do
+        let(:docket_type) { "evidence_submission" }
+        let(:evidence_submission_window_end_time) { Time.zone.parse("2021-10-17 00:00") }
 
-    context "with feature toggle" do
-      include_context "with listed_granted_substitution_before_dismissal feature toggle"
+        it_should_behave_like "fill substitution form"
+      end
 
-      context "as COTB user" do
-        include_context "with Clerk of the Board user"
-        include_context "with existing relationships"
+      context "with direct review docket" do
+        let(:docket_type) { "direct_review" }
 
-        context "with evidence submission docket" do
-          let(:docket_type) { "evidence_submission" }
-          let(:evidence_submission_window_end_time) { Time.zone.parse("2021-10-17 00:00") }
+        it_should_behave_like "fill substitution form"
+      end
 
-          it_should_behave_like "fill substitution form"
+      context "with hearing docket" do
+        # create appeal with docket type 'hearing'
+        let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+        let(:appeal) do
+          create(:appeal,
+                 :assigned_to_judge,
+                 :held_hearing,
+                 associated_judge: judge,
+                 docket_type: docket_type,
+                 receipt_date: veteran.date_of_death + 5.days,
+                 veteran: veteran)
         end
 
-        context "with direct review docket" do
-          let(:docket_type) { "direct_review" }
-
-          it_should_behave_like "fill substitution form"
-        end
-
-        context "with hearing docket" do
-          # create appeal with docket type 'hearing'
-          let(:docket_type) { Constants.AMA_DOCKETS.hearing }
-          let(:appeal) do
-            create(:appeal,
-                   :assigned_to_judge,
-                   :held_hearing,
-                   associated_judge: judge,
-                   docket_type: docket_type,
-                   receipt_date: veteran.date_of_death + 5.days,
-                   veteran: veteran)
-          end
-
-          it_should_behave_like "fill substitution form"
-        end
+        it_should_behave_like "fill substitution form"
       end
     end
   end

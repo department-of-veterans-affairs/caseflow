@@ -19,14 +19,12 @@ export const appealHasSubstitution = (appeal) => Boolean(appeal.substitutions?.l
 export const supportsSubstitutionPreDispatch = ({
   appeal,
   currentUserOnClerkOfTheBoard,
-  featureToggles,
   userIsCobAdmin,
   hasSubstitution,
 }) => {
   return (
     appealSupportsSubstitution(appeal) &&
     currentUserOnClerkOfTheBoard &&
-    featureToggles?.listed_granted_substitution_before_dismissal && // eslint-disable-line camelcase
     // For now, only allow a single substitution from a given appeal
     !hasSubstitution &&
     // below is needed to avoid showing multiple substitution buttons on post-dispatch appeals
