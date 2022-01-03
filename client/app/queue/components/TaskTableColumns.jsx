@@ -212,21 +212,6 @@ export const taskColumn = (tasks, filterOptions) => {
   };
 };
 
-export const taskOwnerColumn = (tasks, filterOptions) => {
-  return {
-    header: COPY.CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    tableData: tasks,
-    columnName: 'label',
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    filterOptions,
-    label: 'Filter by owner',
-    valueName: 'label',
-    valueFunction: (task) => task.ownedBy,
-    getSortValue: (task) => task.label
-  };
-};
-
 export const assignedByColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE,
