@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
@@ -70,7 +69,9 @@ module HasHearingEmailRecipientsConcern
   end
 
   def create_or_update_recipients(type:, email_address:, timezone: nil, email_sent: false)
-    recipient = type.find_by(hearing: self)
+    # Reload the hearing first
+    reload
+    recipient = email_recipients.find_by(type: type.name)
 
     if recipient.blank?
       type.create!(
@@ -86,6 +87,8 @@ module HasHearingEmailRecipientsConcern
         email_sent: email_sent
       )
     end
+
+    email_recipients.find_by(type: type.name)
   end
 
   def veteran_email_address
@@ -94,50 +97,26 @@ module HasHearingEmailRecipientsConcern
 
   def appellant_email_address
     recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
-
-    if recipient.blank?
-      virtual_hearing.present? ? virtual_hearing[:appellant_email] : appeal&.appellant_email_address
-    else
-      recipient&.email_address
-    end
+    return recipient.email_address if recipient.present?
+    return virtual_hearing[:appellant_email] if virtual_hearing.present?
   end
 
   def appellant_tz
     recipient = email_recipients.find_by(type: "AppellantHearingEmailRecipient")
-
-    if recipient.blank?
-      virtual_hearing.present? ? virtual_hearing[:appellant_tz] : appeal&.appellant_tz
-    else
-      recipient&.timezone || appeal&.appellant_tz
-    end
+    return recipient.timezone if recipient.present?
+    return virtual_hearing[:appellant_tz] if virtual_hearing.present?
   end
 
   def representative_email_address
     recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
-
-    if recipient.blank?
-      if virtual_hearing.present?
-        virtual_hearing[:representative_email].presence
-      else
-        representative_tz.present? ? appeal&.representative_email_address : nil
-      end
-    else
-      recipient&.email_address
-    end
+    return recipient.email_address if recipient.present?
+    return virtual_hearing[:representative_email] if virtual_hearing.present?
   end
 
   def representative_tz
     recipient = email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
-
-    if recipient.blank?
-      begin
-        virtual_hearing.present? ? virtual_hearing[:representative_tz].presence : appeal&.representative_tz
-      rescue Module::DelegationError
-        nil
-      end
-    else
-      recipient&.timezone
-    end
+    return recipient.timezone if recipient.present?
+    return virtual_hearing[:representative_tz] if virtual_hearing.present?
   end
 
   private
@@ -148,4 +127,3 @@ module HasHearingEmailRecipientsConcern
     events.each { |event| event.update!(email_recipient: recipient) }
   end
 end
-# rubocop:enable Metrics/ModuleLength
