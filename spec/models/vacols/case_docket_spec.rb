@@ -665,7 +665,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  # mawagner: This probably goes somewhere else.
+  # mawagner: This isn't a good top-level group; this is currently mostly for setting up realistic data to build on.
   context "caseflow-2669" do
     # Set up a realistic example or two
     let(:docket_id) { "12345" }
@@ -680,7 +680,6 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:attorney) { create(:user, :with_vacols_attorney_record) }
     let(:original_case) do
       create(:case, :type_original, :assigned, :tied_to_judge, tied_judge: judge, docket_number: docket_id)
-      #      create(:case, :type_original, :status_complete, bfcurloc: "99", docket_number: docket_id)
     end
     let(:original_appeal) { create(:legacy_appeal, vacols_case: original_case) }
     # let(:decision) do
@@ -715,7 +714,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       )
     end
 
-    it "maybe runs a little" do
+    it "sets up some working data" do
 
       # Make sure docket passes along
       expect(original_appeal.docket_number).to eq docket_id

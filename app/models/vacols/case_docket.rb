@@ -61,7 +61,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     on DIARYKEY = BFKEY
   "
 
-  # This feels like it's in teh right area.
+  # We might want to plug into here...
   SELECT_READY_APPEALS = "
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
@@ -78,7 +78,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
 
-  # Oh God, or this. This is used in SELECT_PRIORITY_APPEALS below.
+  # ...or here. This is used in SELECT_PRIORITY_APPEALS below.
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
       select distinct TITRNUM, TINUM,
@@ -319,7 +319,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    # So do we need to implement the affinity in here?
+    # Do we want to add logic here or in the queries above?
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
