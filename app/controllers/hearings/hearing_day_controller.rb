@@ -42,9 +42,11 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def index_with_hearings
     if hearing_day_range.valid?
-      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash
+      serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
+        hearing_day_range.load_days
+      )
 
-      render json: { hearing_days: hearing_days_with_hearings }
+      render json: { hearing_days: serialized_hearing_days }
     else
       hearing_day_range_invalid
     end

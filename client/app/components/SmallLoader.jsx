@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingSymbol } from './RenderFunctions';
+import { LoadingIcon } from './icons/LoadingIcon';
 import PropTypes from 'prop-types';
 
 export default class SmallLoader extends React.Component {
@@ -16,9 +16,9 @@ export default class SmallLoader extends React.Component {
       id="small-loader"
       className="cf-small-loader"
       {...componentProps}>
-      <LoadingSymbol
+      <LoadingIcon
         text={message}
-        size="19px"
+        size={19}
         color={spinnerColor}
       />
     </Component>;

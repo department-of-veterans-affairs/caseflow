@@ -1180,6 +1180,15 @@ describe Appeal, :all_dbs do
         end
       end
 
+      context "contains string 'Contested Death'" do
+        let(:benefit_type) { "compensation" }
+        let(:issue_category) { "Contested Death Claim | Other" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
       context "contains string 'Apportionment'" do
         let(:benefit_type) { "compensation" }
         let(:issue_category) { "Contested Claims - Apportionment" }

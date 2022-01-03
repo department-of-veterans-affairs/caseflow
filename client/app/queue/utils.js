@@ -155,7 +155,8 @@ const taskAttributesFromRawTask = (task) => {
       notes: task.attributes.unscheduled_hearing_notes?.notes
     },
     ownedBy: task.attributes.owned_by,
-    daysSinceLastSatusChange: task.attributes.days_since_last_status_change,
+    daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
+    daysSinceBoardIntake: task.attributes.days_since_board_intake,
   };
 };
 

@@ -7,6 +7,10 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
+  attribute :instructions do |object|
+    object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
+  end
+
   # Used by hasDASRecord()
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -306,10 +310,22 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :days_since_last_status_change do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name
+    ]
 
     if serialize_attribute?(params, columns)
       object.calculated_last_change_duration
+    end
+  end
+
+  attribute :days_since_board_intake do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]
+
+    if serialize_attribute?(params, columns)
+      object.calculated_duration_from_board_intake
     end
   end
 
@@ -336,10 +352,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :closed_at do
-    nil
-  end
-
-  attribute :instructions do
     nil
   end
 
