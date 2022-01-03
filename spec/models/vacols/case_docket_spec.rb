@@ -664,4 +664,71 @@ describe VACOLS::CaseDocket, :all_dbs do
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
+
+  # mawagner: This probably goes somewhere else.
+  context "caseflow-2669" do
+    # Set up a realistic example or two
+    let(:docket_id) { "12345" }
+
+    # Prod: Docket 1852360
+    # 3329667 Original (99)
+    # 4056018 Post Remand (99)
+    # 4082934 CAVC Complete (99)
+    # 4151027 CAVC Active
+
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:attorney) { create(:user, :with_vacols_attorney_record) }
+    let(:original_case) do
+      create(:case, :type_original, :assigned, :tied_to_judge, tied_judge: judge, docket_number: docket_id)
+      #      create(:case, :type_original, :status_complete, bfcurloc: "99", docket_number: docket_id)
+    end
+    let(:original_appeal) { create(:legacy_appeal, vacols_case: original_case) }
+    # let(:decision) do
+    #   create(:decass, )
+    # end
+
+    let(:post_remand_case) do
+      create(:case, :type_post_remand, :status_complete, bfcurloc: "99", docket_number: docket_id)
+    end
+    let(:post_remand_appeal) { create(:legacy_appeal, vacols_case: post_remand_case) }
+
+    let(:cavc_remand_case) do
+      create(:case, :type_cavc_remand, :ready_for_distribution, docket_number: docket_id) # 4151027
+    end
+    let(:cavc_remand_appeal) { create(:legacy_appeal, vacols_case: cavc_remand_case) }
+
+    before do
+      QueueRepository.update_location_to_judge(original_appeal.vacols_id, judge)
+
+      QueueRepository.assign_case_to_attorney!(
+        assigned_by: judge,
+        judge: judge,
+        attorney: attorney,
+        vacols_id: original_appeal.vacols_id
+      )
+
+      QueueRepository.sign_decision_or_create_omo!(
+        vacols_id: original_appeal.vacols_id,
+        created_in_vacols_date: 1.week.ago,
+        location: "CASEFLOW",
+        decass_attrs: {}
+      )
+    end
+
+    it "maybe runs a little" do
+
+      # Make sure docket passes along
+      expect(original_appeal.docket_number).to eq docket_id
+      expect(post_remand_appeal.docket_number).to eq docket_id
+      expect(cavc_remand_appeal.docket_number).to eq docket_id
+
+      expect(original_appeal.status).to eq "Complete"
+      expect(post_remand_appeal.status).to eq "Complete"
+      expect(cavc_remand_appeal.status).to eq "Active"
+
+      # This returns nil. We need
+      # VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+      expect(original_appeal.judge_case_review.judge.full_name).to eq "Lauren Roth"
+    end
+  end
 end
