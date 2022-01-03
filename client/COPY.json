@@ -180,6 +180,9 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select a valid date for the court's decision",
+  "CAVC_DECISION_DATE_PAST": "Court's decision date cannot be before 01/01/2018",
+  "CAVC_JUDGEMENT_DATE_PAST": "Court's judgement date cannot be before 01/01/2018",
+  "CAVC_MANDATE_DATE_PAST": "Court's mandate date cannot be before 01/01/2018",
   "CC_BADGE_DOCKET_TOOLTIP": "This is a Contested Claim. Please ensure\nproper notice is sent to all parties.",
   "CC_BADGE_TOOLTIP_LONG": "This is a Contested Claim and needs to be processed by the Specialty\nCase team. Please include all parties and POA in correspondence.",
   "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
@@ -285,6 +288,7 @@
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On Hold",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed",
 
+  "VHA_ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION": "Cases that are in progress:",
   "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION": "Cases in progress in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TASKS_DESCRIPTION": "Cases ready for review in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
