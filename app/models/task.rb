@@ -636,7 +636,7 @@ class Task < CaseflowRecord
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
     # We reload the new_appeal_stream to ensure we are always working off an updated snapshot of task tree
-    existing_new_parent = new_appeal_stream.reload.tasks.find { |task| task.type == parent.type }
+    existing_new_parent = new_appeal_stream.reload.tasks.find { |task| task.id == parent_id }
     new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
 
     # Do not copy orphaned branches
