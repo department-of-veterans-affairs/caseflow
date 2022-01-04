@@ -17,13 +17,12 @@ import {
   boardIntakeColumn,
   completedToNameColumn,
   daysOnHoldColumn,
-  daysSinceLastColumn,
+  daysSinceLastActionColumn,
   daysSinceIntakeColumn,
   daysWaitingColumn,
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
-  // lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
@@ -32,7 +31,6 @@ import {
   taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  // taskOwnerColumn,
   vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -97,7 +95,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
         requireDasRecord
       ),
-      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]: daysSinceLastColumn(
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name]: daysSinceLastActionColumn(
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
@@ -130,10 +128,6 @@ class QueueTableBuilder extends React.PureComponent {
         tasks,
         filterOptions
       ),
-      // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
       [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
         tasks,
         filterOptions
@@ -146,7 +140,6 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
-      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord)
     };
 
