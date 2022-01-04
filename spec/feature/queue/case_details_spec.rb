@@ -7,7 +7,7 @@ def wait_for_page_render
 end
 
 RSpec.feature "Case details", :all_dbs do
-  let!(:frontend_time){ Time.zone.now } # The frontend does not abide by Timecop's time
+  let!(:frontend_time) { Time.zone.now } # The frontend does not abide by Timecop's time
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
