@@ -409,6 +409,10 @@ class Task < CaseflowRecord
     (Time.zone.today - updated_at&.to_date)&.to_i
   end
 
+  def calculated_duration_from_board_intake
+    (Time.zone.today - created_at&.to_date)&.to_i
+  end
+
   def update_task_type(params)
     multi_transaction do
       new_branch_task = first_ancestor_of_type.create_twin_of_type(params)

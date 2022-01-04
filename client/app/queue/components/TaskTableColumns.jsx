@@ -14,7 +14,7 @@ import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
-import { DateString } from '../../util/DateUtil';
+import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
@@ -120,18 +120,16 @@ export const boardIntakeColumn = (requireDasRecord) => {
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
-      const daysSinceAssigned = moment().startOf('day').
-          diff(moment(task.assignedOn), 'days'),
-        daysSincePlacedOnHold = moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days');
+      const assignedDays = daysSinceAssigned(task);
+      const onHoldDays = daysSincePlacedOnHold(task);
 
       return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
         <div className={boardIntakeStyle}>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
-            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)} ago
+            {assignedDays} {pluralize('day', assignedDays)} ago
           </span>
           { taskHasCompletedHold(task) &&
-          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
+          <ContinuousProgressBar level={onHoldDays} limit={task.onHoldDuration} warning /> }
         </div>
       </IhpDaysWaitingTooltip>;
     },
@@ -148,7 +146,7 @@ export const lastActionColumn = (requireDasRecord) => {
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
-    valueFunction: (task) => `${task.daysSinceLastSatusChange} days ago`,
+    valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };
@@ -327,18 +325,16 @@ export const daysWaitingColumn = (requireDasRecord) => {
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
-      const daysSinceAssigned = moment().startOf('day').
-          diff(moment(task.assignedOn), 'days'),
-        daysSincePlacedOnHold = moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days');
+      const assignedDays = daysSinceAssigned(task);
+      const onHoldDays = daysSincePlacedOnHold(task);
 
       return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask} taskId={task.uniqueId}>
         <div className={daysWaitingStyle}>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
-            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+            {assignedDays} {pluralize('day', assignedDays)}
           </span>
           { taskHasCompletedHold(task) &&
-          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
+          <ContinuousProgressBar level={onHoldDays} limit={task.onHoldDuration} warning /> }
         </div>
       </IhpDaysWaitingTooltip>;
     },
