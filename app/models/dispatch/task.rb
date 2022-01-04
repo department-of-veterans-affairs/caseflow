@@ -36,6 +36,9 @@ class Dispatch::Task < CaseflowRecord
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
+  # Prevents log message "Creating scope :open. Overwriting existing method Dispatch::Task.open"
+  # See https://github.com/rails/rails/issues/31234
+  singleton_class.undef_method :open # hide Kernel.open, avoiding a warning when defining scope :open
   scope :open, -> { where.not(aasm_state: "completed") }
 
   class << self

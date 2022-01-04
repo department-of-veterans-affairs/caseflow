@@ -259,6 +259,13 @@ class Hearing < CaseflowRecord
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
   end
+
+  # Also see weekend_and_holiday in legacy_hearing.rb
+  def weekend_and_holiday(day)
+    holiday = Holidays.on(day, :federal_reserve, :observed).any?
+    weekend = day.saturday? || day.sunday?
+    [weekend, holiday]
+  end
 end
 
 # (This section is updated by the annotate gem)
