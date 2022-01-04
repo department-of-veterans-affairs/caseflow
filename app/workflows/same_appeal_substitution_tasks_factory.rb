@@ -63,6 +63,15 @@ class SameAppealSubstitutionTasksFactory
     end.flatten
   end
 
+  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
+                                          status closed_at placed_on_hold_at].freeze
+
+  def copy_task(task)
+    new_task_attributes = task.attributes
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY)
+    Task.create!(new_task_attributes)
+  end
+
   def create_task_from(source_task, creation_params)
     case source_task.type
     when "EvidenceSubmissionWindowTask"
@@ -71,17 +80,17 @@ class SameAppealSubstitutionTasksFactory
       distribution_task = @appeal.tasks.open.find_by(type: :DistributionTask)
       ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
     else
-      excluded_attrs = %w[status closed_at placed_on_hold_at]
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+      copy_task(source_task)
     end
   end
 
   def reopen_decision_tasks
-    excluded_attrs = %w[status closed_at placed_on_hold_at]
     if @appeal.tasks.of_type(:AttorneyTask)&.open&.empty? &&
        @appeal.tasks.of_type(:JudgeDecisionReviewTask)&.open&.empty?
       attorney_task = @appeal.tasks.of_type(:AttorneyTask).cancelled.order(:id).last
-      attorney_task&.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
+      if attorney_task
+        copy_task(attorney_task)
+      end
     end
   end
 
