@@ -60,7 +60,7 @@ class WorkQueue::AppealSerializer
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
     associated_hearings = []
 
-    if object.substitution_appeal?
+    if object.separate_appeal_substitution?
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
     end
 
