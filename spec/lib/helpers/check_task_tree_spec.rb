@@ -6,6 +6,15 @@ describe "CheckTaskTree" do
   let(:errors) { CheckTaskTree.call(appeal, verbose: false).first }
   let(:appeal) { create(:appeal) }
 
+  context "when run against a legacy appeal" do
+    let(:legacy_appeal) { create(:legacy_appeal) }
+    subject { CheckTaskTree.new(legacy_appeal).check }
+    it "aborts with message and returns nil" do
+      expect { subject }.to output(/This checker is only for AMA appeals/).to_stdout
+      expect(subject).to eq nil
+    end
+  end
+
   describe "CheckTaskTree#patch_classes" do
     before do
       CheckTaskTree.patch_classes
