@@ -3,53 +3,70 @@
 class Fakes::MPIService
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
                          ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
-    fail MPI::NotFoundError if [first_name, last_name] == ["Not", "Found"]
-    fail MPI::QueryResultError if [first_name, last_name] == ["Too", "Vague"]
-    fail MPI::ApplicationError if [first_name, last_name] == ["Database", "Down"]
-    fail Savon::SOAPFault.new(nil, Nori.new, '<?xml version="1.0" ?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><env:Fault><faultcode>env:Client</faultcode><faultstring>Internal Error</faultstring></env:Fault></env:Body></env:Envelope>') if [first_name, last_name] == ["System", "Unreachable"]
+    name = "#{first_name} #{last_name}"
+    fail MPI::NotFoundError if name == "Not Found"
+    fail MPI::QueryResultError if name == "Too Vague"
+    fail MPI::ApplicationError if name == "Database Down"
+    fail Savon::SOAPFault.new(nil, Nori.new, '<?xml version="1.0" ?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><env:Fault><faultcode>env:Client</faultcode><faultstring>Internal Error</faultstring></env:Fault></env:Body></env:Envelope>') if name == "System Unreachable"
 
-    [{:registration_event=>
-   {:id=>{:@null_flavor=>"NA"},
-    :status_code=>{:@code=>"active"},
-    :subject1=>
-     {:patient=>
-       {:id=>
-         [{:@extension=>"1200028056V759470^NI^200M^USVHA^P", :@root=>"2.16.840.1.113883.4.349"},
-          {:@extension=>"6005638^PN^200EDR^USDVA^A", :@root=>"2.16.840.1.113883.4.349"}],
-        :status_code=>{:@code=>"active"},
-        :patient_person=>
-         {:name=>{:given=>["MADISON", "I"], :family=>"WESTBROOK", :@use=>"L"},
-          :administrative_gender_code=>{:@code=>"F"},
-          :birth_time=>{:@value=>"19930126"},
-          :as_other_i_ds=>
-           [{:id=>{:@extension=>"627014691", :@root=>"2.16.840.1.113883.4.1"},
-             :status_code=>{:@code=>"4"},
-             :scoping_organization=>
-              {:id=>{:@root=>"1.2.840.114350.1.13.99997.2.3412"},
-               :@class_code=>"ORG",
-               :@determiner_code=>"INSTANCE"},
-             :@class_code=>"SSN"},
-            {:id=>{:@extension=>"6005638^PN^200EDR^USDVA^A", :@root=>"2.16.840.1.113883.4.349"},
-             :scoping_organization=>
-              {:id=>{:@root=>"2.16.840.1.113883.4.349"},
-               :@class_code=>"ORG",
-               :@determiner_code=>"INSTANCE"},
-             :@class_code=>"PAT"}],
-          :birth_place=>{:addr=>{:city=>"BOISE", :state=>"ID", :country=>"USA"}}},
-        :subject_of1=>
-         {:query_match_observation=>
-           {:code=>{:@code=>"IHE_PDQ"},
-            :value=>{:"@xsi:type"=>"INT", :@value=>"100"},
-            :@class_code=>"COND",
-            :@mood_code=>"EVN"}},
-        :@class_code=>"PAT"},
-      :@type_code=>"SBJ"},
-    :custodian=>
-     {:assigned_entity=>{:id=>{:@root=>"2.16.840.1.113883.4.349"}, :@class_code=>"ASSIGNED"},
-      :@type_code=>"CST"},
-    :@class_code=>"REG",
-    :@mood_code=>"EVN"},
-  :@type_code=>"SUBJ"}
+    [{
+      :registration_event => {
+        :id => {:@null_flavor => "NA"},
+        :status_code => {:@code => "active"},
+        :subject1 => {
+          :patient => {
+            :id => [
+              {:@extension=>"1200028056V759470^NI^200M^USVHA^P", :@root=>"2.16.840.1.113883.4.349"},
+              {:@extension=>"6005638^PN^200EDR^USDVA^A", :@root=>"2.16.840.1.113883.4.349"}
+            ],
+            :status_code => {:@code => "active"},
+            :patient_person => {
+              :name => {:given => ["MADISON", "I"], :family => "WESTBROOK", :@use => "L"},
+              :administrative_gender_code => {:@code => "F"},
+              :birth_time => {:@value => "19930126"},
+              :as_other_i_ds => [
+                {
+                  :id => {:@extension=>"627014691", :@root=>"2.16.840.1.113883.4.1"},
+                  :status_code => {:@code=>"4"},
+                  :scoping_organization => {
+                    :id => {:@root=>"1.2.840.114350.1.13.99997.2.3412"},
+                    :@class_code => "ORG",
+                    :@determiner_code => "INSTANCE"
+                  },
+                  :@class_code => "SSN"
+                },
+                {
+                  :id => {:@extension=>"6005638^PN^200EDR^USDVA^A", :@root=>"2.16.840.1.113883.4.349"},
+                  :scoping_organization => {
+                    :id => {:@root=>"2.16.840.1.113883.4.349"},
+                    :@class_code => "ORG",
+                    :@determiner_code=>"INSTANCE"
+                  },
+                  :@class_code=>"PAT"
+                }
+              ],
+              :birth_place => {:addr=>{:city=>"BOISE", :state=>"ID", :country=>"USA"}}
+            },
+            :subject_of1 => {
+              :query_match_observation => {
+                :code => {:@code=>"IHE_PDQ"},
+                :value => {:"@xsi:type"=>"INT", :@value=>"100"},
+                :@class_code => "COND",
+                :@mood_code => "EVN"
+              }
+            },
+            :@class_code=>"PAT"
+          },
+          :@type_code=>"SBJ"
+        },
+        :custodian => {
+          :assigned_entity => {:id=>{:@root=>"2.16.840.1.113883.4.349"}, :@class_code=>"ASSIGNED"},
+          :@type_code=>"CST"
+        },
+        :@class_code => "REG",
+        :@mood_code => "EVN"},
+        :@type_code => "SUBJ"
+      }
     ]
   end
 end
