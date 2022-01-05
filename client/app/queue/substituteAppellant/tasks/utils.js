@@ -58,7 +58,7 @@ export const nonAutomatedTasksToHide = [
 
 export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
 // This may be refined after user testing...
-export const openTasksToHide = [...nonAutomatedTasksToHide];
+export const openTasksToHide = [...nonAutomatedTasksToHide, ...automatedTasks];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
