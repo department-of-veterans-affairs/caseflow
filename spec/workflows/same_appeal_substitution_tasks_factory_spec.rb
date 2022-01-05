@@ -194,6 +194,43 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             end
           end
         end
+
+        context "when the user selects an evidence submission window task" do
+          let(:live_veteran) { create(:veteran, file_number: "12121212") }
+          let(:appeal) do
+            create(:appeal, :hearing_docket, :with_post_intake_tasks,
+                   veteran_file_number: live_veteran.file_number)
+          end
+          let(:hearing_task) { appeal.tasks.find_by(type: "HearingTask") }
+          let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
+          let(:assign_hearing_disposition_task) do
+            create(:assign_hearing_disposition_task, parent: hearing_task,
+                                                     assigned_by: nil, instructions: ["tweedledee"])
+          end
+          let!(:transcription_task) do
+            create(:transcription_task, parent: assign_hearing_disposition_task,
+                                        assigned_by: nil)
+          end
+          let!(:evidence_submission_window_task) do
+            create(:evidence_submission_window_task, parent: assign_hearing_disposition_task, assigned_by: nil,
+                                                     instructions: ["tweedledum"])
+          end
+          # see what the above would look like when locally testing
+          before do
+            evidence_submission_window_task.cancelled!
+            transcription_task.cancelled!
+            schedule_hearing_task.cancelled!
+          end
+          it "copies the evidence submission window task and its ancestors" do
+            binding.pry
+            subject
+            binding.pry
+            # TK - assertions
+          end
+          it "cancels decision tasks with a cancellation reason of substitution" do
+            # TK - assertions
+          end
+        end
       end
 
       context "when an appeal has not been distributed" do
