@@ -2,9 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import HearingSchedule from 'app/hearings/components/HearingSchedule';
-import { dateSearchStyles } from 'app/hearings/components/HearingSchedule/DateRangeFilter';
 import {
   onViewStartDateChange,
   onViewEndDateChange,
@@ -22,10 +20,6 @@ import {
   setNotes,
 } from '../actions/dailyDocketActions';
 import { bindActionCreators } from 'redux';
-import { css } from 'glamor';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Alert from '../../components/Alert';
-import COPY from '../../../COPY';
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
@@ -33,17 +27,12 @@ import QueueCaseSearchBar from '../../queue/SearchBar';
 import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
-import UserAlerts from '../../components/UserAlerts';
-import Pagination from '../../components/Pagination/Pagination';
 import { formatTableData } from 'app/hearings/utils';
+import { HearingScheduleAlerts } from 'app/hearings/components/HearingSchedule/Alerts';
 
 import { LIST_SCHEDULE_VIEWS, ENDPOINT_NAMES } from '../constants';
 
 const dateFormatString = 'YYYY-MM-DD';
-
-const actionButtonsStyling = css({
-  marginRight: '25px',
-});
 
 export class ListScheduleContainer extends React.Component {
   constructor(props) {
@@ -59,13 +48,15 @@ export class ListScheduleContainer extends React.Component {
       // This will hold a reference to the button that opens the modal in order to preserve
       // page flow when the modal is closed
       modalButton: null,
-      currentPage: 0,
-      totalCases: 0,
-      currentCases: 0,
-      totalPages: 0,
-      pageSize: 0,
       queries: {},
       loading: false,
+      pagination: {
+        currentPage: 0,
+        totalCases: 0,
+        currentCases: 0,
+        totalPages: 0,
+        pageSize: 0,
+      }
     };
   }
 
@@ -74,7 +65,7 @@ export class ListScheduleContainer extends React.Component {
   };
 
   componentDidMount = () => {
-    this.loadHearingSchedule(this.state.currentPage);
+    this.loadHearingSchedule(this.state.pagination.currentPage);
     this.props.onSelectedHearingDayChange('');
   };
 
@@ -140,11 +131,13 @@ export class ListScheduleContainer extends React.Component {
         schedule: formatTableData({ ...resp.hearings, ...this.props }),
         loaded: true,
         loading: false,
-        currentPage: resp.pagination.page,
-        totalCases: resp.pagination.count,
-        currentCases: resp.pagination.items,
-        totalPages: resp.pagination.pages,
-        pageSize: resp.pagination.in,
+        pagination: {
+          currentPage: resp.pagination.page,
+          totalCases: resp.pagination.count,
+          currentCases: resp.pagination.items,
+          totalPages: resp.pagination.pages,
+          pageSize: resp.pagination.in,
+        },
         filterOptions: resp.filterOptions,
       });
     });
@@ -184,70 +177,6 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  getAlertTitle = () => {
-    if (this.props.successfulHearingDayDelete) {
-      return `You have successfully removed Hearing Day ${formatDateStr(
-        this.props.successfulHearingDayDelete
-      )}`;
-    }
-
-    if (
-      ['Saturday', 'Sunday'].includes(
-        moment(this.props.selectedHearingDay).format('dddd')
-      )
-    ) {
-      return `The Hearing day you created for ${formatDateStr(
-        this.props.selectedHearingDay
-      )} is a Saturday or Sunday.`;
-    }
-
-    return `You have successfully added Hearing Day ${formatDateStr(
-      this.props.successfulHearingDayCreate
-    )}`;
-  };
-
-  getAlertMessage = () => {
-    if (this.props.successfulHearingDayDelete) {
-      return '';
-    }
-
-    if (
-      ['Saturday', 'Sunday'].includes(
-        moment(this.props.selectedHearingDay).format('dddd')
-      )
-    ) {
-      return 'If this was done in error, please remove hearing day from Hearing Schedule.';
-    }
-
-    return <p>To add Veterans to this date, click Schedule Veterans</p>;
-  };
-
-  getAlertType = () => {
-    if (
-      ['Saturday', 'Sunday'].includes(
-        moment(this.props.selectedHearingDay).format('dddd')
-      )
-    ) {
-      return 'warning';
-    }
-
-    return 'success';
-  };
-
-  getHeader = () => {
-    const { user } = this.props;
-
-    if (user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule) {
-      return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
-    } else if (user.userHasHearingPrepRole) {
-      return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
-        COPY.HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER :
-        COPY.HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER;
-    }
-
-    return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
-  };
-
   render() {
     const user = this.props.user;
 
@@ -257,55 +186,23 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         {!addHearingDay && <QueueCaseSearchBar />}
-        <UserAlerts />
-        {(this.props.successfulHearingDayCreate || this.props.successfulHearingDayDelete) && (
-          <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false} >
-            {this.getAlertMessage()}
-          </Alert>
-        )}
-        {this.props.invalidDates && <Alert type="error" title="Please enter valid dates." />}
+        <HearingScheduleAlerts {...this.props} />
         {addHearingDay ? (
           <AddHearingDay cancelModal={this.cancelModal} user={user} />
         ) : (
-          <AppSegment filledBackground>
-            <h1 className="cf-push-left">{this.getHeader()}</h1>
-            <div className="cf-push-right">
-              {user.userCanAssignHearingSchedule && (
-                <span className="cf-push-left" {...actionButtonsStyling}>
-                  <Link button="primary" to="/schedule/assign">
-                    Schedule Veterans
-                  </Link>
-                </span>
-              )}
-              {user.userCanBuildHearingSchedule && (
-                <span className="cf-push-left">
-                  <Link button="secondary" to="/schedule/build">
-                    Build Schedule
-                  </Link>
-                </span>
-              )}
-            </div>
-            <div className="cf-help-divider" {...dateSearchStyles} />
-            <HearingSchedule
-              loaded={this.state.loaded}
-              fetching={this.state.loading}
-              hearingSchedule={this.state.schedule}
-              fetchHearings={this.loadHearingSchedule}
-              user={user}
-              view={this.state.view}
-              switchListView={this.switchListView}
-              filterOptions={this.state.filterOptions}
-              updateQueries={this.updateQueries}
-            />
-            <Pagination
-              pageSize={this.state.pageSize}
-              currentPage={this.state.currentPage}
-              currentCases={this.state.currentCases}
-              totalPages={this.state.totalPages}
-              totalCases={this.state.totalCases}
-              updatePage={(index) => this.loadHearingSchedule(index)}
-            />
-          </AppSegment>
+          <HearingSchedule
+            pagination={this.state.pagination}
+            updatePage={(index) => this.loadHearingSchedule(index)}
+            loaded={this.state.loaded}
+            fetching={this.state.loading}
+            hearingSchedule={this.state.schedule}
+            fetchHearings={this.loadHearingSchedule}
+            user={user}
+            view={this.state.view}
+            switchListView={this.switchListView}
+            filterOptions={this.state.filterOptions}
+            updateQueries={this.updateQueries}
+          />
         )}
       </React.Fragment>
     );

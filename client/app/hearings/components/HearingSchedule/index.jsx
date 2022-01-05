@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
-import { css } from 'glamor';
-import { CSVLink } from 'react-csv';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import Button from 'app/components/Button';
 import { formatTableData } from 'app/hearings/utils';
 import {
   toggleTypeFilterVisibility,
@@ -17,41 +15,9 @@ import {
   onViewEndDateChange,
   onResetDeleteSuccessful
 } from 'app/hearings/actions/hearingScheduleActions';
-import { LIST_SCHEDULE_VIEWS } from 'app/hearings/constants';
-import DateRangeFilter from 'app/hearings/components/HearingSchedule/DateRangeFilter';
-import { SwitchViewDropdown } from 'app/hearings/components/HearingSchedule/SwitchView';
-import { ListTable } from 'app/hearings/components/HearingSchedule/ListTable';
-
-const downloadButtonStyling = css({
-  marginTop: '60px'
-});
-
-const inlineFormStyling = css({
-  '> div': {
-    ' & .cf-inline-form': {
-      lineHeight: '2em',
-      marginTop: '20px'
-    },
-    '& .question-label': {
-      paddingLeft: 0
-    },
-    '& .cf-form-textinput': {
-      marginTop: 0,
-      marginRight: 30
-    },
-    '& input': {
-      marginRight: 0
-    }
-  }
-});
-
-const clearfix = css({
-  '::after': {
-    content: ' ',
-    clear: 'both',
-    display: 'block'
-  }
-});
+import { HearingScheduleHeader } from 'app/hearings/components/HearingSchedule/Header';
+import QueueTable from 'app/queue/QueueTable';
+import Pagination from 'app/components/Pagination/Pagination';
 
 const formatState = (props) => ({
   ...formatTableData(props),
@@ -117,43 +83,24 @@ const HearingSchedule = (props) => {
     props.updateQueries(queries);
   };
 
-  const tableKey = !props.user.userHasHearingPrepRole || props.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
-    `hearings${state.dateRangeKey}` :
-    `allHearings${state.dateRangeKey}`;
-
   const fileName = `HearingSchedule ${props.startDate}-${props.endDate}.csv`;
 
   return (
-    <React.Fragment>
-      <div {...clearfix}>
-        <div className="cf-push-left" {...inlineFormStyling} >
-          <DateRangeFilter
-            startDateValue={props.startDate}
-            startDateChange={props.onViewStartDateChange}
-            endDateValue={props.endDate}
-            endDateChange={props.onViewEndDateChange}
-            onApply={setDateRangeKey}
-          />
-        </div>
-        <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
-          {props.user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={props.switchListView} />}
-          <CSVLink data={state.rows} headers={state.headers} target="_blank" filename={fileName} >
-            <Button classNames={['usa-button-secondary']}>Download current view</Button>
-          </CSVLink>
-        </div>
-      </div>
+    <AppSegment filledBackground>
+      <HearingScheduleHeader {...props} fileName={fileName} setDateRangeKey={setDateRangeKey} />
       <div className="section-hearings-list">
-        <ListTable
+        <QueueTable
           fetching={!props.loaded || props.fetching}
-          history={history}
-          key={tableKey}
-          user={props.user}
-          hearingScheduleRows={props.hearingSchedule?.rows || []}
-          hearingScheduleColumns={props.hearingSchedule?.columns || []}
-          onQueryUpdate={onQueryUpdate}
+          columns={props.hearingSchedule?.columns || []}
+          rowObjects={props.hearingSchedule?.rows || []}
+          returnQueries={onQueryUpdate}
+          summary="hearing-schedule"
+          slowReRendersAreOk
+          useHearingsApi
         />
+        <Pagination {...props.pagination} updatePage={props.updatePage} />
       </div>
-    </React.Fragment>
+    </AppSegment>
   );
 };
 

@@ -40,6 +40,7 @@ import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { formatDateStr, getMinutesToMilliseconds } from 'app/util/DateUtil';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -1148,13 +1149,19 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
     // { value: 'someText', displayText: 'Some Text (1)' }
     // plus additional property of `queryValue` (specific to Hearings)
     const columnNames = Object.keys(filterOptions);
-    columns.map(col => {
-      const foundCol = columnNames.find(name => { return name === col.columnName });
+
+    columns.map((col) => {
+      const foundCol = columnNames.find((name) => {
+        return name === col.columnName;
+      });
+
       if (foundCol) {
         col.filterOptions = [];
         const options = Object.keys(filterOptions[foundCol]);
-        options.forEach(option => {
+
+        options.forEach((option) => {
           const values = filterOptions[foundCol][option];
+
           col.filterOptions.push({
             value: option,
             displayText: `${option} (${values.count})`,
@@ -1163,7 +1170,7 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
         });
       }
     });
-  };
+  }
 
   const exportHeaders = [
     { label: 'ID',
@@ -1187,6 +1194,29 @@ export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
   const headers = headersforUser(user, exportHeaders);
 
   return { headers, rows, columns };
+};
+
+export const getAlert = ({ successfulHearingDayDelete, selectedHearingDay, successfulHearingDayCreate }) => {
+  let title = `You have successfully added Hearing Day ${formatDateStr(successfulHearingDayCreate)}`;
+  let message = <p>To add Veterans to this date, click Schedule Veterans</p>;
+  let type = 'success';
+
+  if (successfulHearingDayDelete) {
+    title = `You have successfully removed Hearing Day ${formatDateStr(successfulHearingDayDelete)}`;
+    message = '';
+  }
+
+  if (['Saturday', 'Sunday'].includes(moment(selectedHearingDay).format('dddd'))) {
+    title = `The Hearing day you created for ${formatDateStr(selectedHearingDay)} is a Saturday or Sunday.`;
+    message = 'If this was done in error, please remove hearing day from Hearing Schedule.';
+    type = 'warning';
+  }
+
+  return {
+    title,
+    message,
+    type,
+  };
 };
 
 /* eslint-enable camelcase */
