@@ -515,7 +515,7 @@
   "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
   "NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR": "Can only reschedule NoShowHearingTasks",
   "HEARING_TASK_ASSOCIATION_NOT_UNIQUE_MESSAGE": "that is not closed already exists for %s %s",
-  "HEARING_TASK_ASSOCIATION_MISSING_MESASAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
+  "HEARING_TASK_ASSOCIATION_MISSING_MESSAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
   "OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE": "There's already an open hearing task on this appeal.",
 

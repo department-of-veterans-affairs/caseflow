@@ -7,6 +7,7 @@ def wait_for_page_render
 end
 
 RSpec.feature "Case details", :all_dbs do
+  let!(:frontend_time) { Time.zone.now } # The frontend does not abide by Timecop's time
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
@@ -1745,7 +1746,7 @@ RSpec.feature "Case details", :all_dbs do
 
         let(:veteran_full_name) { veteran.first_name + veteran.last_name }
         let(:nod_date) { "11/11/2020" }
-        let(:later_nod_date) { Time.zone.now.next_year(2).mdY }
+        let(:later_nod_date) { (frontend_time + 2.days).mdY }
         let(:before_earliest_date) { "12/31/2017" }
         before { FeatureToggle.enable!(:edit_nod_date) }
         after { FeatureToggle.disable!(:edit_nod_date) }
