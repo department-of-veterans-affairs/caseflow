@@ -63,12 +63,8 @@ const HearingSchedule = (props) => {
   const [state, setState] = useState(formatState(props));
 
   useEffect(() => {
-    if (props.loaded) {
-      setState(formatState(props));
-    }
-
     return props.onResetDeleteSuccessful;
-  }, [props.loaded]);
+  }, []);
 
   const setDateRangeKey = () => {
     setState({ ...state, dateRangeKey: `${props.startDate}->${props.endDate}` });
@@ -127,8 +123,6 @@ const HearingSchedule = (props) => {
 
   const fileName = `HearingSchedule ${props.startDate}-${props.endDate}.csv`;
 
-  console.log('STATE: ', state);
-
   return (
     <React.Fragment>
       <div {...clearfix}>
@@ -154,8 +148,8 @@ const HearingSchedule = (props) => {
           history={history}
           key={tableKey}
           user={props.user}
-          hearingScheduleRows={state.rows}
-          hearingScheduleColumns={state.columns}
+          hearingScheduleRows={props.hearingSchedule?.rows || []}
+          hearingScheduleColumns={props.hearingSchedule?.columns || []}
           onQueryUpdate={onQueryUpdate}
         />
       </div>
@@ -164,16 +158,12 @@ const HearingSchedule = (props) => {
 };
 
 HearingSchedule.propTypes = {
+  loaded: PropTypes.bool,
+  fetching: PropTypes.bool,
   endDate: PropTypes.string,
   hearingSchedule: PropTypes.shape({
-    scheduledFor: PropTypes.string,
-    readableRequestType: PropTypes.string,
-    regionalOffice: PropTypes.string,
-    room: PropTypes.string,
-    judgeId: PropTypes.string,
-    judgeName: PropTypes.string,
-    updatedOn: PropTypes.string,
-    updatedBy: PropTypes.string
+    rows: PropTypes.array,
+    columns: PropTypes.array,
   }),
   fetchHearings: PropTypes.func.isRequired,
   updateQueries: PropTypes.func.isRequired,
@@ -194,7 +184,6 @@ const mapStateToProps = (state) => ({
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
   endDate: state.hearingSchedule.viewEndDate,
-  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
