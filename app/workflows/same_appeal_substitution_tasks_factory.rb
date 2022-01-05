@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
-  def initialize(appeal, selected_task_ids, created_by, task_params)
+  def initialize(appeal, task_ids, created_by, task_params)
     @appeal = appeal
-    @selected_task_ids = selected_task_ids
+    @task_ids = task_ids
     @created_by = created_by
     @task_params = task_params
   end
@@ -14,6 +14,7 @@ class SameAppealSubstitutionTasksFactory
     else
       create_selected_tasks
     end
+    cancel_unselected_tasks
   end
 
   def create_tasks_for_distributed_appeal
@@ -25,11 +26,11 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def no_tasks_selected?
-    @selected_task_ids.empty?
+    @task_ids[:selected].empty?
   end
 
   def selected_tasks_include_hearing_tasks?
-    selected_tasks = Task.where(id: @selected_task_ids).order(:id)
+    selected_tasks = Task.where(id: @task_ids[:selected]).order(:id)
     task_types = [:ScheduleHearingTask, :AssignHearingDispositionTask, :ChangeHearingDispositionTask,
                   :ScheduleHearingColocatedTask, :NoShowHearingTask]
     !selected_tasks.of_type(task_types).empty?
@@ -50,7 +51,7 @@ class SameAppealSubstitutionTasksFactory
   def create_selected_tasks
     return if no_tasks_selected?
 
-    source_tasks = Task.where(id: @selected_task_ids).order(:id)
+    source_tasks = Task.where(id: @task_ids[:selected]).order(:id)
 
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
@@ -85,6 +86,18 @@ class SameAppealSubstitutionTasksFactory
     end
   end
 
+  def cancel_unselected_tasks
+    cancel_tasks = Task.where(id: @task_ids[:cancelled])
+    cancel_tasks.each do |task|
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    end
+  end
+
   # Called if a `ScheduleHearingTask` is selected to be reopened
   # :reek:FeatureEnvy
   def cancel_defunct_hearing_tasks
@@ -98,7 +111,9 @@ class SameAppealSubstitutionTasksFactory
     tasks_to_cancel.each do |task|
       task.update!(
         status: Constants.TASK_STATUSES.cancelled,
-        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
       )
     end
   end
