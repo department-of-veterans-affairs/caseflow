@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 # rubocop:disable Style/WordArray
 class Fakes::MPIService
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
@@ -23,7 +24,7 @@ class Fakes::MPIService
               ],
               status_code: {:@code => "active"},
               patient_person: {
-                name: {given: ["MADISON", "I"], family: "WESTBROOK", :@use: "L"},
+                name: {given: ["MADISON", "I"], family: "WESTBROOK", :@use => "L"},
                 administrative_gender_code: {:@code => "F"},
                 birth_time: {:@value => "19930126"},
                 as_other_i_ds: [
@@ -79,3 +80,4 @@ class Fakes::MPIService
   end
 end
 # rubocop:enable Style/WordArray
+# rubocop:enable Layout/LineLength
