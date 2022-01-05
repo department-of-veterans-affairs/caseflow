@@ -233,8 +233,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               jdr_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).first
               expect(jdr_task.status).to eq(Constants.TASK_STATUSES.cancelled)
               expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
-              expect(appeal.tasks.of_type([:JudgeDecisionReviewTask, :AttorneyTask]).cancellation_reason).to
-              eq("substitution")
+              judge_atty_tasks = [:JudgeDecisionReviewTask, :AttorneyTask]
+              expect(appeal.tasks.of_type(judge_atty_tasks).pluck(:cancellation_reason).uniq).to eq(["substitution"])
             end
           end
           context "for an appeal at the judge assign step" do
@@ -265,12 +265,13 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             end
 
             it "cancels the JudgeAssignTask that was active with a cancellation reason of substitution" do
-              active_task = appeal.tasks.open.of_type(:JudgeAssignTask).first
+              task_id = appeal.tasks.open.of_type(:JudgeAssignTask).first.id
 
               subject
 
-              expect(active_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-              expect(active_task.cancellation_reason).to eq("substitution")
+              task = Task.find(task_id)
+              expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(task.cancellation_reason).to eq("substitution")
             end
 
             it "leaves the cancellation reason of the previously cancelled JudgeAssignTask unchanged" do

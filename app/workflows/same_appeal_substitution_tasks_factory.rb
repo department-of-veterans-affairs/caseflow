@@ -54,7 +54,9 @@ class SameAppealSubstitutionTasksFactory
     # TODO: figure out if i need to consider cases where there are multiple cancelled esw tasks. do i need a test for this?
     esw_task = @appeal.tasks.of_type(:EvidenceSubmissionWindowTask).cancelled.order(:id).last
     copy_task_with_ancestors(esw_task)
-    # cancel judge/atty tasks
+    decision_tasks = [:JudgeAssignTask, :AttorneyTask, :JudgeDecisionReviewTask]
+    @appeal.tasks.of_type(decision_tasks).each { |task| task.update!(cancellation_reason: "substitution") }
+    @appeal.tasks.of_type(decision_tasks).open.each(&:cancelled!)
   end
 
   def no_tasks_selected?
