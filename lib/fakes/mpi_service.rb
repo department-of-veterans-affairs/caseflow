@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Layout/LineLength
+# rubocop:disable Metrics/MethodLength
 # rubocop:disable Style/WordArray
 class Fakes::MPIService
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
@@ -14,34 +15,34 @@ class Fakes::MPIService
     [
       {
         registration_event: {
-          id: {:@null_flavor => "NA"},
-          status_code: {:@code => "active"},
+          id: { :@null_flavor => "NA" },
+          status_code: { :@code => "active" },
           subject1: {
             patient: {
               id: [
-                {:@extension => "1200028056V759470^NI^200M^USVHA^P", :@root => "2.16.840.1.113883.4.349"},
-                {:@extension => "6005638^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349"}
+                { :@extension => "1200028056V759470^NI^200M^USVHA^P", :@root => "2.16.840.1.113883.4.349" },
+                { :@extension => "6005638^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349" }
               ],
-              status_code: {:@code => "active"},
+              status_code: { :@code => "active" },
               patient_person: {
-                name: {given: ["MADISON", "I"], family: "WESTBROOK", :@use => "L"},
-                administrative_gender_code: {:@code => "F"},
-                birth_time: {:@value => "19930126"},
+                name: { given: ["MADISON", "I"], family: "WESTBROOK", :@use => "L" },
+                administrative_gender_code: { :@code => "F" },
+                birth_time: { :@value => "19930126" },
                 as_other_i_ds: [
                   {
-                    id: {:@extension => "627014691", :@root => "2.16.840.1.113883.4.1"},
-                    status_code: {:@code => "4"},
+                    id: { :@extension => "627014691", :@root => "2.16.840.1.113883.4.1" },
+                    status_code: { :@code => "4" },
                     scoping_organization: {
-                      id: {:@root => "1.2.840.114350.1.13.99997.2.3412"},
+                      id: { :@root => "1.2.840.114350.1.13.99997.2.3412" },
                       :@class_code => "ORG",
                       :@determiner_code => "INSTANCE"
                     },
                     :@class_code => "SSN"
                   },
                   {
-                    id: {:@extension => "6005638^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349"},
+                    id: { :@extension => "6005638^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349" },
                     scoping_organization: {
-                      id: {:@root => "2.16.840.1.113883.4.349"},
+                      id: { :@root => "2.16.840.1.113883.4.349" },
                       :@class_code => "ORG",
                       :@determiner_code => "INSTANCE"
                     },
@@ -49,13 +50,13 @@ class Fakes::MPIService
                   }
                 ],
                 birth_place: {
-                  addr: {city: "BOISE", state: "ID", country: "USA"}
+                  addr: { city: "BOISE", state: "ID", country: "USA" }
                 }
               },
               subject_of1: {
                 query_match_observation: {
-                  code: {:@code => "IHE_PDQ"},
-                  value: {:"@xsi:type" => "INT", :@value => "100"},
+                  code: { :@code => "IHE_PDQ" },
+                  value: { :"@xsi:type" => "INT", :@value => "100" },
                   :@class_code => "COND",
                   :@mood_code => "EVN"
                 }
@@ -66,7 +67,7 @@ class Fakes::MPIService
           },
           custodian: {
             assigned_entity: {
-              id: {:@root => "2.16.840.1.113883.4.349"},
+              id: { :@root => "2.16.840.1.113883.4.349" },
               :@class_code => "ASSIGNED"
             },
             :@type_code => "CST"
@@ -80,4 +81,5 @@ class Fakes::MPIService
   end
 end
 # rubocop:enable Style/WordArray
+# rubocop:enable Metrics/MethodLength
 # rubocop:enable Layout/LineLength
