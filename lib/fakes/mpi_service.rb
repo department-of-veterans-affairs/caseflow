@@ -2,8 +2,11 @@
 
 # rubocop:disable Layout/LineLength
 # rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/ParameterLists
 # rubocop:disable Style/WordArray
 class Fakes::MPIService
+  # :reek:LongParameterList
+  # :reek:UnusedParameters
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
                          ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
     name = "#{first_name} #{last_name}"
@@ -81,5 +84,6 @@ class Fakes::MPIService
   end
 end
 # rubocop:enable Style/WordArray
+# rubocop:enable Metrics/ParameterLists
 # rubocop:enable Metrics/MethodLength
 # rubocop:enable Layout/LineLength
