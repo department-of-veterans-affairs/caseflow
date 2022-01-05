@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 class StuckJobsReporter
   ASYNC_CLASSES = [
     SupplementalClaim,
     HigherLevelReview,
-    #RequestIssue,
+    # RequestIssue,
     RequestIssuesUpdate,
     DecisionDocument,
     BoardGrantEffectuation
-  ]
+  ].freeze
 
   SNIPPETS = [
     "DuplicateEp",
@@ -70,7 +71,7 @@ class StuckJobsReporter
     "PromulgatedRating::BackfilledRatingError",
     "TUX-20306 - An unexpected error was encountered",
     "AppealDTAPayeeCodeError"
-  ]
+  ].freeze
 
   class << self
     def run
@@ -79,18 +80,23 @@ class StuckJobsReporter
       CSV.generate do |csv|
         all_jobs = ASYNC_CLASSES.map { |klass| klass.with_error.where(klass.canceled_at_column => nil) }.flatten
         all_jobs.map do |job|
-          error = job[job.class.error_column]
-          error_category = SNIPPETS.find{ |snippet| error.match?(snippet) }
-          csv << [
-            job.class.name,
-            job.id,
-            job.veteran&.id,
-            job[job.class.submitted_at_column].to_s,
-            job[job.class.processed_at_column].to_s,
-            error_category
-          ]
+          csv << generate_row(job)
         end
       end
     end
+
+    def generate_row(job)
+      error = job[job.class.error_column]
+      error_category = SNIPPETS.find { |snippet| error.match?(snippet) }
+      [
+        job.class.name,
+        job.id,
+        job.veteran&.id,
+        job[job.class.submitted_at_column].to_s,
+        job[job.class.processed_at_column].to_s,
+        error_category
+      ]
+    end
   end
 end
+# rubocop:enable Layout/LineLength
