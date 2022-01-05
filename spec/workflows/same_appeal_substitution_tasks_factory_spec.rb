@@ -197,38 +197,85 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
         context "when the user selects an evidence submission window task" do
           let(:live_veteran) { create(:veteran, file_number: "12121212") }
-          let(:appeal) do
-            create(:appeal, :hearing_docket, :with_post_intake_tasks,
-                   veteran_file_number: live_veteran.file_number)
-          end
-          let(:hearing_task) { appeal.tasks.find_by(type: "HearingTask") }
-          let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
-          let(:assign_hearing_disposition_task) do
-            create(:assign_hearing_disposition_task, parent: hearing_task,
-                                                     assigned_by: nil, instructions: ["tweedledee"])
-          end
-          let!(:transcription_task) do
-            create(:transcription_task, parent: assign_hearing_disposition_task,
-                                        assigned_by: nil)
-          end
-          let!(:evidence_submission_window_task) do
-            create(:evidence_submission_window_task, parent: assign_hearing_disposition_task, assigned_by: nil,
-                                                     instructions: ["tweedledum"])
-          end
-          # see what the above would look like when locally testing
           before do
-            evidence_submission_window_task.cancelled!
-            transcription_task.cancelled!
-            schedule_hearing_task.cancelled!
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
           end
-          it "copies the evidence submission window task and its ancestors" do
-            binding.pry
-            subject
-            binding.pry
-            # TK - assertions
+          context "for an appeal at the attorney drafting step" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :at_attorney_drafting, associated_judge: judge, associated_attorney: attorney,
+                                            veteran_file_number: live_veteran.file_number)
+            end
+
+            it "copies the evidence submission window task and makes it a child of a new distribution task" do
+              subject
+
+              active_esw_tasks = appeal.tasks.active.of_type(:EvidenceSubmissionWindowTask)
+              expect(active_esw_tasks.count).to eq(1)
+              expect(active_esw_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
+              expect(active_esw_tasks.first.instructions).to
+              eq(appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first.instructions)
+              expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+              expect(appeal.tasks.open.of_type(:DistributionTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(active_esw_tasks.parent.type).to eq("DistributionTask")
+              expect(active_esw_tasks.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+            end
+            it "cancels decision tasks with a cancellation reason of substitution" do
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.assigned)
+
+              subject
+
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to
+              eq(Constants.TASK_STATUSES.cancelled)
+              expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(appeal.tasks.of_type([:JudgeDecisionReviewTask, :AttorneyTask]).cancellation_reason).to
+              eq("substitution")
+            end
           end
-          it "cancels decision tasks with a cancellation reason of substitution" do
-            # TK - assertions
+          context "for an appeal at the judge assign step" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :assigned_to_judge, associated_judge: judge, veteran_file_number: live_veteran.file_number)
+            end
+
+            it "cancels the JudgeAssignTask with a cancellation reason of substitution" do
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.status).to eq(Constants.TASK_STATUSES.assigned)
+              subject
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.cancellation_reason).to eq("substitution")
+            end
+          end
+          context "for an appeal with one cancelled and one active JudgeAssignTask" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :assigned_to_judge, associated_judge: judge, veteran_file_number: live_veteran.file_number)
+            end
+            let(:judge2) { create(:user, :judge) }
+
+            before do
+              appeal.tasks.open.of_type(:JudgeAssignTask).first.update(cancellation_reason: "poa_change")
+              appeal.tasks.open.of_type(:JudgeAssignTask).first.cancelled!
+              create(:ama_judge_assign_task, appeal: appeal, assigned_to: judge2,
+                                             parent: appeal.tasks.of_type(:DistributionTask).first)
+            end
+
+            it "cancels the JudgeAssignTask that was active with a cancellation reason of substitution" do
+              active_task = appeal.tasks.open.of_type(:JudgeAssignTask).first
+
+              subject
+
+              expect(active_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(active_task.cancellation_reason).to eq("substitution")
+            end
+
+            it "leaves the cancellation reason of the previously cancelled JudgeAssignTask unchanged" do
+              task = appeal.tasks.cancelled.of_type(:JudgeAssignTask).first
+
+              subject
+
+              expect(task.cancellation_reason).to eq("poa_change")
+            end
           end
         end
       end
