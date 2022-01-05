@@ -1,19 +1,16 @@
 import React from 'react';
-import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
-import InlineForm from '../../components/InlineForm';
+import PropTypes from 'prop-types';
+import BasicDateRangeSelector from 'app/components/BasicDateRangeSelector';
+import InlineForm from 'app/components/InlineForm';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import COPY from '../../../COPY.json';
+import COPY from '../../../../COPY.json';
 import { css } from 'glamor';
 
-export const hearingSchedStyling = css({
+export const dateSearchStyles = css({
   marginTop: '50px'
 });
 
-const ListScheduleDateSearch = ({
-  startDateChange, endDateChange,
-  startDateValue, endDateValue,
-  onApply
-}) => (
+const DateRangeFilter = ({ startDateChange, endDateChange, startDateValue, endDateValue, onApply }) => (
   <InlineForm>
     <BasicDateRangeSelector
       startDateName="fromDate"
@@ -25,7 +22,7 @@ const ListScheduleDateSearch = ({
       onStartDateChange={startDateChange}
       onEndDateChange={endDateChange}
     />
-    <div {...hearingSchedStyling}>
+    <div {...dateSearchStyles}>
       <Link
         name="apply"
         to="/schedule"
@@ -36,4 +33,12 @@ const ListScheduleDateSearch = ({
   </InlineForm>
 );
 
-export default ListScheduleDateSearch;
+DateRangeFilter.propTypes = {
+  startDateChange: PropTypes.func,
+  endDateChange: PropTypes.func,
+  startDateValue: PropTypes.func,
+  endDateValue: PropTypes.func,
+  onApply: PropTypes.func,
+};
+
+export default DateRangeFilter;

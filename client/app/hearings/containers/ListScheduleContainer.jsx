@@ -3,8 +3,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import ListSchedule from '../components/ListSchedule';
-import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
+import HearingSchedule from 'app/hearings/components/HearingSchedule';
+import { dateSearchStyles } from 'app/hearings/components/HearingSchedule/DateRangeFilter';
 import {
   onViewStartDateChange,
   onViewEndDateChange,
@@ -132,6 +132,7 @@ export class ListScheduleContainer extends React.Component {
       this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));
 
       this.setState({
+        loaded: true,
         loading: false,
         currentPage: resp.pagination.page,
         totalCases: resp.pagination.count,
@@ -259,14 +260,10 @@ export class ListScheduleContainer extends React.Component {
             </span>
               }
             </div>
-            <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-            {this.state.loading &&
-              <LoadingScreen
-                spinnerColor = {LOGO_COLORS.HEARINGS.ACCENT}
-                message = "Loading the hearing schedule..."
-              />
-            }
-            <ListSchedule
+            <div className="cf-help-divider" {...dateSearchStyles} ></div>
+            <HearingSchedule
+              loaded={this.state.loaded}
+              fetching={this.state.loading}
               hearingSchedule={this.props.hearingSchedule}
               fetchHearings={this.loadHearingSchedule}
               user={user}

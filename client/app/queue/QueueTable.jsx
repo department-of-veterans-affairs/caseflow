@@ -240,14 +240,28 @@ export class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
+    const Rows = () => rowObjects && rowObjects.map((object, rowNumber) => {
+      const key = getKeyForRow(rowNumber, object);
+
+      return <Row rowObject={object} columns={columns} rowClassNames={rowClassNames} key={key} rowId={key} />;
+    });
+
+    const loadProps = this.props.useHearingsApi ? {
+      spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+      message: 'Loading the hearing schedule...'
+    } : {
+      spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+    };
+
     return (
       <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
-        {rowObjects &&
-          rowObjects.map((object, rowNumber) => {
-            const key = getKeyForRow(rowNumber, object);
-
-            return <Row rowObject={object} columns={columns} rowClassNames={rowClassNames} key={key} rowId={key} />;
-          })}
+        {this.props.fetching ? (
+          <tr role="row">
+            <td colSpan={columns.length} >
+              <LoadingScreen {...loadProps} />
+            </td>
+          </tr>
+        ) : <Rows />}
       </tbody>
     );
   }
@@ -563,7 +577,8 @@ export default class QueueTable extends React.PureComponent {
       bodyStyling,
       enablePagination,
       useTaskPagesApi,
-      useHearingsApi
+      useHearingsApi,
+      fetching
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
@@ -684,6 +699,8 @@ export default class QueueTable extends React.PureComponent {
           bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
+          fetching={fetching}
+          useHearingsApi={useHearingsApi}
           {...this.state}
         />
         <FooterRow rowObjects={[]} columns={columns} />
@@ -747,7 +764,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
     onPageLoaded: PropTypes.func
-  })
+  }),
+  fetching: PropTypes.bool,
 };
 
 /* eslint-enable max-lines */
