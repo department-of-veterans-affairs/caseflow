@@ -12,7 +12,6 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
-  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
   "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
   "PENDING_TASKS_TAB_NAME": "pending",
   "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
@@ -55,9 +54,7 @@
       "sorting_columns": ["assigned_at"]
     },
     "LAST_ACTION": {
-      "name": "lastActionColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["updated_at"]
+      "name": "lastActionColumn"
     },
     "DOCKET_NUMBER": {
       "filterable": true,
@@ -123,7 +120,7 @@
     "TASK_OWNER": {
       "name": "taskOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     },
     "TASK_TYPE": {
       "filterable": true,
@@ -134,7 +131,7 @@
     "VAMC_OWNER": {
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     }
   },
 
