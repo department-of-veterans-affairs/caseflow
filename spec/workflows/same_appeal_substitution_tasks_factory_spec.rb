@@ -196,6 +196,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
         end
 
         context "when the user selects an evidence submission window task" do
+          let(:selected_task) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first }
+          let(:selected_task_ids) { [selected_task.id] }
           let(:live_veteran) { create(:veteran, file_number: "12121212") }
           before do
             appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
@@ -213,12 +215,14 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               active_esw_tasks = appeal.tasks.active.of_type(:EvidenceSubmissionWindowTask)
               expect(active_esw_tasks.count).to eq(1)
               expect(active_esw_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
-              expect(active_esw_tasks.first.instructions).to
-              eq(appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first.instructions)
+
+              closed_esw_task = appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first
+              expect(active_esw_tasks.first.instructions).to eq(closed_esw_task.instructions)
               expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
               expect(appeal.tasks.open.of_type(:DistributionTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
-              expect(active_esw_tasks.parent.type).to eq("DistributionTask")
-              expect(active_esw_tasks.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(active_esw_tasks.first.parent.type).to eq("HearingTask")
+              expect(active_esw_tasks.first.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
             end
             it "cancels decision tasks with a cancellation reason of substitution" do
               expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
@@ -226,8 +230,8 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
               subject
 
-              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to
-              eq(Constants.TASK_STATUSES.cancelled)
+              jdr_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).first
+              expect(jdr_task.status).to eq(Constants.TASK_STATUSES.cancelled)
               expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
               expect(appeal.tasks.of_type([:JudgeDecisionReviewTask, :AttorneyTask]).cancellation_reason).to
               eq("substitution")

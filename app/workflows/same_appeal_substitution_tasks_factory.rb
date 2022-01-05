@@ -19,9 +19,42 @@ class SameAppealSubstitutionTasksFactory
   def create_tasks_for_distributed_appeal
     if @appeal.docket_type == Constants.AMA_DOCKETS.hearing && selected_tasks_include_hearing_tasks?
       send_hearing_appeal_back_to_distribution
+    elsif evidence_submission_task_selected?
+      resume_evidence_submission
     elsif no_tasks_selected?
       reopen_decision_tasks
     end
+  end
+
+  def evidence_submission_task_selected?
+    selected_tasks = Task.where(id: @selected_task_ids).order(:id)
+    !selected_tasks.of_type(:EvidenceSubmissionWindowTask).empty?
+  end
+
+  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
+                                          status closed_at placed_on_hold_at].freeze
+
+  def copy_task_with_ancestors(task)
+    return unless task.parent
+
+    new_task_attributes = task
+      .attributes
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, ["parent_id"])
+
+    existing_new_parent = @appeal.reload.tasks.open.find { |t| t.type == task.parent.type }
+    new_parent = existing_new_parent || copy_task_with_ancestors(task.parent)
+
+    return unless new_parent
+
+    new_task_attributes["parent_id"] = new_parent.id
+    Task.create!(new_task_attributes)
+  end
+
+  def resume_evidence_submission
+    # TODO: figure out if i need to consider cases where there are multiple cancelled esw tasks. do i need a test for this?
+    esw_task = @appeal.tasks.of_type(:EvidenceSubmissionWindowTask).cancelled.order(:id).last
+    copy_task_with_ancestors(esw_task)
+    # cancel judge/atty tasks
   end
 
   def no_tasks_selected?
@@ -62,9 +95,6 @@ class SameAppealSubstitutionTasksFactory
       create_task_from(source_task, creation_params)
     end.flatten
   end
-
-  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
-                                          status closed_at placed_on_hold_at].freeze
 
   def copy_task(task)
     new_task_attributes = task.attributes
