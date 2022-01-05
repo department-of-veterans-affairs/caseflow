@@ -24,6 +24,27 @@ module Seeds
       30.days.ago
     end
 
+    def create_tasks(appeal)
+      colocated_user = User.find_by_css_id("BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      root_task = appeal.root_task
+
+      FoiaRequestMailTask.create!(appeal: appeal, parent: root_task, assigned_to: attorney)
+      foia_parent_task = appeal.tasks.of_type(:FoiaRequestMailTask).first
+      FoiaRequestMailTask.create!(appeal: appeal, parent: foia_parent_task, assigned_to: attorney)
+      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: root_task, assigned_to: attorney)
+      # create translation task
+      create(:colocated_task,
+             :translation,
+             appeal: appeal,
+             assigned_to: colocated_user,
+             assigned_by: attorney,
+             parent: root_task)
+      AddressChangeMailTask.create!(appeal: appeal, parent: root_task, assigned_to: attorney)
+      address_parent_task = appeal.tasks.of_type(:AddressChangeMailTask).first
+      AddressChangeMailTask.create!(appeal: appeal, parent: address_parent_task, assigned_to: attorney)
+    end
+
     def create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: "direct_review")
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
@@ -46,7 +67,7 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      create(
+      appeal = create(
         :appeal,
         :at_attorney_drafting,
         number_of_claimants: 1,
@@ -57,6 +78,7 @@ module Seeds
         associated_judge: judge,
         associated_attorney: attorney
       )
+      create_tasks(appeal)
     end
 
     def create_deceased_vet_and_dismissed_appeals
