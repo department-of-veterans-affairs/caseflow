@@ -207,6 +207,10 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
           end
           context "for an appeal at the attorney drafting step" do
+            let(:esw_end) { "2022-10-22" }
+            let(:task_params) { { hold_end_date: esw_end } }
+            let(:esw_end_date) { Time.zone.parse(esw_end) }
+
             let!(:appeal) do
               create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
                      :at_attorney_drafting, associated_judge: judge, associated_attorney: attorney,
@@ -227,6 +231,16 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
               expect(active_esw_tasks.first.parent.type).to eq("HearingTask")
               expect(active_esw_tasks.first.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
               expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+            end
+
+            it "allots all remaining time in the evidence submission window task to the substitute appellant" do
+              subject
+
+              esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
+              expect(esw_task.timer_ends_at).to be_between(
+                esw_end_date - 1.day,
+                esw_end_date + 1.day
+              )
             end
             it "cancels decision tasks with a cancellation reason of substitution" do
               expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
