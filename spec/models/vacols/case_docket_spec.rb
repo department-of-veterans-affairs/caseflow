@@ -665,69 +665,83 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  # mawagner: This isn't a good top-level group; this is currently mostly for setting up realistic data to build on.
-  context "caseflow-2669" do
-    # Set up a realistic example or two
-    let(:docket_id) { "12345" }
+   context "caseflow-2669" do
+    let(:vbms_id) { 12345 }
+    let(:docket_number) { "2468" }
+    let(:first_judge) { create(:user, :with_vacols_judge_record) }
+    let(:first_judge_id) { first_judge.vacols_attorney_id }
 
-    # Prod: Docket 1852360
-    # 3329667 Original (99)
-    # 4056018 Post Remand (99)
-    # 4082934 CAVC Complete (99)
-    # 4151027 CAVC Active
-
-    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
-    let(:attorney) { create(:user, :with_vacols_attorney_record) }
-    let(:original_case) do
-      create(:case, :type_original, :assigned, :tied_to_judge, tied_judge: judge, docket_number: docket_id)
-    end
-    let(:original_appeal) { create(:legacy_appeal, vacols_case: original_case) }
-    # let(:decision) do
-    #   create(:decass, )
-    # end
-
-    let(:post_remand_case) do
-      create(:case, :type_post_remand, :status_complete, bfcurloc: "99", docket_number: docket_id)
-    end
-    let(:post_remand_appeal) { create(:legacy_appeal, vacols_case: post_remand_case) }
-
-    let(:cavc_remand_case) do
-      create(:case, :type_cavc_remand, :ready_for_distribution, docket_number: docket_id) # 4151027
-    end
-    let(:cavc_remand_appeal) { create(:legacy_appeal, vacols_case: cavc_remand_case) }
-
-    before do
-      QueueRepository.update_location_to_judge(original_appeal.vacols_id, judge)
-
-      QueueRepository.assign_case_to_attorney!(
-        assigned_by: judge,
-        judge: judge,
-        attorney: attorney,
-        vacols_id: original_appeal.vacols_id
-      )
-
-      QueueRepository.sign_decision_or_create_omo!(
-        vacols_id: original_appeal.vacols_id,
-        created_in_vacols_date: 1.week.ago,
-        location: "CASEFLOW",
-        decass_attrs: {}
-      )
+    let(:original_appeal) do
+      create(:legacy_appeal, vacols_case: create(
+        :case,
+        :assigned,
+        :type_original,
+        :status_complete,
+        bfcorlid: vbms_id,
+        bfkey: "7654321",
+        # Per https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-1001572022
+        # bfmemid is the deciding judge.
+        # This maps to VACOLS::Staff's sattyid
+        bfmemid: first_judge_id,
+        docket_number: docket_number,
+        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+      ))
     end
 
-    it "sets up some working data" do
+    # Lifted from  spec/feature/api/v2/appeals_spec.rb
+    # This stuff should probably be pulled out into a factory and cleaned up.
+    # And DRYed up!
+    let(:post_remand_appeal) do
+      create(:legacy_appeal, vacols_case: create(
+        :case,
+        :assigned,
+        :type_post_remand,
+        :status_complete,
+        bfcorlid: vbms_id,
+        bfkey: "7654322",
+        docket_number: docket_number,
+        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+      ))
+    end
 
-      # Make sure docket passes along
-      expect(original_appeal.docket_number).to eq docket_id
-      expect(post_remand_appeal.docket_number).to eq docket_id
-      expect(cavc_remand_appeal.docket_number).to eq docket_id
+    let(:cavc_remand_appeal) do
+      create(:legacy_appeal, vacols_case: create(
+        :case,
+        :assigned,
+        :type_cavc_remand,
+        :ready_for_distribution,
+        bfcorlid: vbms_id,
+        bfkey: "7654323",
+        docket_number: docket_number,
+        # Do we need these case_issues? They're currently copypasta.
+        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+      ))
+    end
 
+    it "loads data without error" do
       expect(original_appeal.status).to eq "Complete"
       expect(post_remand_appeal.status).to eq "Complete"
       expect(cavc_remand_appeal.status).to eq "Active"
 
-      # This returns nil. We need
-      # VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
-      expect(original_appeal.judge_case_review.judge.full_name).to eq "Lauren Roth"
+      [original_appeal, post_remand_appeal, cavc_remand_appeal].each do |appeal|
+        expect(appeal.docket_number).to eq docket_number
+        # This also implicitly tests that a folder is created, but this is the same thing as above
+        expect(appeal.vacols_case.folder.tinum).to eq docket_number
+        #appeal.treee
+      end
+
+      # This isn't a useful test because it's literally what we set, but to cement
+      # my understanding...
+      expect(original_appeal.vacols_case.bfmemid).to eq(first_judge.vacols_attorney_id)
+
+      expect(VACOLS::CaseDocket.priority_ready_appeal_vacols_ids).to include(cavc_remand_appeal.vacols_id)
+      expect(VACOLS::CaseDocket.original_judge_for_appeal(cavc_remand_appeal)).to eq first_judge.vacols_attorney_id
+      #expect(VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(first_judge)).to be > 0
+
+      expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(original_appeal.vacols_case)).to be_falsey
+      expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(cavc_remand_appeal.vacols_case)).to be_truthy
+
+
     end
   end
 end

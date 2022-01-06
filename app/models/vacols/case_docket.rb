@@ -107,6 +107,34 @@ class VACOLS::CaseDocket < VACOLS::Record
       )
   "
 
+  # This doesn't go here, but is to help me get the query logic right and tested for now.
+  # Oh, I think we _will_ need PriorLoc to get the date -- see #3 on
+  # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-988407919
+  def self.original_judge_for_appeal(appeal)
+    # Find the appeal with the same docket number and bfac=1
+    # (Per Jed, there should only ever be one.)
+    # Join to folder with tinum
+    # Return appeals' bfmemid
+    docket_number = appeal.docket_number # This join on a few tables seemingly
+    original_appeal = VACOLS::Case.joins(:folder)
+                                  .where(bfac: 1)
+                                  .where("folder.tinum = ?", docket_number)
+                                  .first
+    original_appeal.bfmemid
+  end
+
+  def self.case_is_ready_cavc_remand?(vacols_case)
+    vacols_case.bfac == "7" &&
+      vacols_case.bfmpro == "ACT" &&
+      vacols_case.bfcurloc == "81"
+  end
+
+  def self.case_in_cavc_affinity?(vacols_case)
+    return false unless case_is_ready_cavc_remand?(vacols_case)
+    # Look at PriorLoc.locdout for transition to caseflow
+    # Validate it's within 21 days
+  end
+
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
@@ -269,6 +297,18 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.nonpriority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
+      where (VLJ = ?)
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    connection.exec_query(fmtd_query).count
+  end
+
+  # mattw: This is only for my own sake right now; we probably dont' need it.
+  # It exposes that VLJ isn't present in the join if there's not a hearing.
+  def self.priority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
       where (VLJ = ?)
     SQL
 
