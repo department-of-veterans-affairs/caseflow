@@ -23,6 +23,7 @@ import {
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
+  lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
@@ -125,11 +126,13 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
         tasks,
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
-        tasks,
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
