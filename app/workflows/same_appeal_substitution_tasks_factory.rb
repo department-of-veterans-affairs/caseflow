@@ -28,7 +28,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def evidence_submission_task_selected?
-    selected_tasks = Task.where(id: @selected_task_ids).order(:id)
+    selected_tasks = Task.where(id: @task_ids[:selected]).order(:id)
     !selected_tasks.of_type(:EvidenceSubmissionWindowTask).empty?
   end
 
