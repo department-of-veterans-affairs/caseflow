@@ -380,7 +380,7 @@ ActiveRecord::Schema.define(version: 2022_01_06_201637) do
     t.string "email_ro_id"
     t.string "ep_code"
     t.datetime "outcoding_date"
-    t.integer "task_id"
+    t.integer "task_id", comment: "references dispatch_tasks"
     t.datetime "updated_at", null: false
     t.index ["task_id"], name: "index_claim_establishments_on_task_id"
     t.index ["updated_at"], name: "index_claim_establishments_on_updated_at"
