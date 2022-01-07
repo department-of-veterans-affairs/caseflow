@@ -22,7 +22,7 @@ appeals,created_at,datetime ∗,x,,,,x,Creation timestamp for the ETL record
 appeals,decision_status_sort_key,integer ∗,x,,,,x,Integer for sorting status in display order
 appeals,docket_number,string (50) ∗,x,,,,,Docket number
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
-appeals,docket_type,string (50) ∗,x,,,,x,Docket type
+appeals,docket_type,string (50),,,,,x,Docket type
 appeals,established_at,datetime ∗,x,,,,,Timestamp for when the appeal was intaken successfully
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
