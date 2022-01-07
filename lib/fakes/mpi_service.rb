@@ -79,7 +79,61 @@ class Fakes::MPIService
           :@mood_code => "EVN"
         },
         :@type_code => "SUBJ"
-      }
+      },
+      { :registration_event =>
+        { :id => { :@null_flavor => "NA" },
+          :status_code => { :@code => "active" },
+          :subject1 =>
+          { :patient =>
+            { :id =>
+              [{ :@extension => "1200028054V494652^NI^200M^USVHA^P", :@root => "2.16.840.1.113883.4.349" },
+               { :@extension => "6005636^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349" }],
+              :status_code => { :@code => "active" },
+              :patient_person =>
+              { :name => { :given => ["MADISON", "G"], :family => "WESTBROOK", :@use => "L" },
+                :administrative_gender_code => { :@code => "F" },
+                :birth_time => { :@value => "19930125" },
+                :as_other_i_ds =>
+                [{ :id => { :@extension => "627014689", :@root => "2.16.840.1.113883.4.1" },
+                   :status_code => { :@code => "4" },
+                   :scoping_organization =>
+                   { :id => { :@root => "1.2.840.114350.1.13.99997.2.3412" },
+                     :@class_code => "ORG",
+                     :@determiner_code => "INSTANCE" },
+                   :@class_code => "SSN" },
+                 { :id => { :@extension => "6005636^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349" },
+                   :scoping_organization =>
+                   { :id => { :@root => "2.16.840.1.113883.4.349" },
+                     :@class_code => "ORG",
+                     :@determiner_code => "INSTANCE" },
+                   :@class_code => "PAT" }],
+                :birth_place => { :addr => { :city => "MARIETTA", :state => "GA", :country => "USA" } } },
+              :subject_of1 =>
+              { :query_match_observation =>
+                { :code => { :@code => "IHE_PDQ" },
+                  :value => { :"@xsi:type" => "INT", :@value => "135" },
+                  :@class_code => "COND",
+                  :@mood_code => "EVN" } },
+              :subject_of2 =>
+              { :administrative_observation =>
+                { :code =>
+                  { :@code => "PERSON_TYPE",
+                    :@code_system => "2.16.840.1.113883.4.349",
+                    :@display_name => "Person Type" },
+                  :value =>
+                  { :@code => "EMP~HPT~VET",
+                    :"@xsi:type" => "CD",
+                    :@display_name => "Employee, Unknown, Veteran" },
+                  :@class_code => "VERIF" },
+                :@type_code => "SBJ" },
+              :@class_code => "PAT" },
+            :@type_code => "SBJ" },
+          :custodian =>
+          { :assigned_entity => { :id => { :@root => "2.16.840.1.113883.4.349" }, :@class_code => "ASSIGNED" },
+            :@type_code => "CST" },
+          :@class_code => "REG",
+          :@mood_code => "EVN" },
+        :@type_code => "SUBJ" }
     ]
   end
 end
