@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 2021_08_18_172716) do
     t.integer "decision_status_sort_key", null: false, comment: "Integer for sorting status in display order"
     t.string "docket_number", limit: 50, null: false, comment: "Docket number"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
-    t.string "docket_type", limit: 50, null: false, comment: "Docket type"
+    t.string "docket_type", limit: 50, comment: "Docket type"
     t.datetime "established_at", null: false, comment: "Timestamp for when the appeal was intaken successfully"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "poa_participant_id", limit: 20, comment: "Used to identify the power of attorney (POA)"
