@@ -24,6 +24,7 @@ module Seeds
       30.days.ago
     end
 
+    # :reek:FeatureEnvy
     def create_tasks_for_pending_appeals(appeal)
       colocated_user = User.find_by_css_id("BVAAABSHIRE")
       cob_user = User.find_by_css_id("BVATCOBB")
@@ -81,7 +82,7 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      appeal = create(
+      pending_appeal = create(
         :appeal,
         :at_attorney_drafting,
         number_of_claimants: 1,
@@ -92,7 +93,7 @@ module Seeds
         associated_judge: judge,
         associated_attorney: attorney
       )
-      create_tasks_for_pending_appeals(appeal)
+      create_tasks_for_pending_appeals(pending_appeal)
     end
 
     def create_deceased_vet_and_dismissed_appeals
