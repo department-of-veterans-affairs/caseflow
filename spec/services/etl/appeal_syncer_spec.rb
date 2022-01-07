@@ -85,9 +85,9 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
     end
 
     context "Appeal is predocket" do
-      # An appeal is "established" when all issues have been added and 
+      # An appeal is "established" when all issues have been added and
       # not necessarily docketed (so it's still "pre-docket")
-      let!(:appeal) { create(:appeal).tap{|appeal| appeal.update(docket_type: nil)} }
+      let!(:appeal) { create(:appeal).tap { |appeal| appeal.update(docket_type: nil) } }
 
       it "syncs" do
         expect(appeal.docket_type).to eq nil
