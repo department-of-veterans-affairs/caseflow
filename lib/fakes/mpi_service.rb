@@ -90,10 +90,10 @@ class Fakes::MPIService
                { :@extension => "6005636^PN^200EDR^USDVA^A", :@root => "2.16.840.1.113883.4.349" }],
               :status_code => { :@code => "active" },
               :patient_person =>
-              { :name => { :given => ["MADISON", "G"], :family => "WESTBROOK", :@use => "L" },
-                :administrative_gender_code => { :@code => "F" },
-                :birth_time => { :@value => "19930125" },
-                :as_other_i_ds =>
+              { name: { :given => ["MADISON", "G"], :family => "WESTBROOK", :@use => "L" },
+                administrative_gender_code: { :@code => "F" },
+                birth_time: { :@value => "19930125" },
+                as_other_i_ds:
                 [{ :id => { :@extension => "627014689", :@root => "2.16.840.1.113883.4.1" },
                    :status_code => { :@code => "4" },
                    :scoping_organization =>
@@ -107,9 +107,9 @@ class Fakes::MPIService
                      :@class_code => "ORG",
                      :@determiner_code => "INSTANCE" },
                    :@class_code => "PAT" }],
-                :birth_place => { :addr => { :city => "MARIETTA", :state => "GA", :country => "USA" } } },
+                birth_place: { addr: { city: "MARIETTA", state: "GA", country: "USA" } } },
               :subject_of1 =>
-              { :query_match_observation =>
+              { query_match_observation:
                 { :code => { :@code => "IHE_PDQ" },
                   :value => { :"@xsi:type" => "INT", :@value => "135" },
                   :@class_code => "COND",
