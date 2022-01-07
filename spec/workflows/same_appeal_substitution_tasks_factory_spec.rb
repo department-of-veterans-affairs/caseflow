@@ -199,49 +199,94 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           end
         end
 
-        context "when the user selects an evidence submission window task" do
-          let(:selected_task) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first }
-          let(:selected_task_ids) { [selected_task.id] }
+        context "when the user selects an evidence submission window task - new trait used" do
+          let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
+          let(:selected_task_ids) { [selected_task_id] }
+          # The veteran must be alive when the appeal is created, or FactoryBot won't make all the required tasks.
+          # The veteran is later made deceased in order to mimic a substitution scenario.
           let(:live_veteran) { create(:veteran, file_number: "12121212") }
+          let!(:esw_end) { "2022-10-22" }
+          let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
+          let(:esw_end_date) { Time.zone.parse(esw_end) }
+          let!(:appeal) do
+            create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task_set_date,
+                   end_date: esw_end, veteran_file_number: live_veteran.file_number)
+          end
+          let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+
           before do
             appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+            live_veteran.update!(date_of_death: 1.day.ago)
           end
-          context "for an appeal at the attorney drafting step" do
-            let(:esw_end) { "2022-10-22" }
-            let(:task_params) { { hold_end_date: esw_end } }
-            let(:esw_end_date) { Time.zone.parse(esw_end) }
 
+          it "allots all remaining time in the evidence submission window task to the substitute appellant" do
+            subject
+
+            esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
+            expect(esw_task.timer_ends_at).to be_between(
+              esw_end_date - 1.day,
+              esw_end_date + 1.day
+            )
+          end
+        end
+
+        context "when the user selects an evidence submission window task" do
+          let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
+          let(:selected_task_ids) { [selected_task_id] }
+          # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the required task.  The veteran is later made deceased in order to mimic a substitution scenario.
+          let(:live_veteran) { create(:veteran, file_number: "12121212") }
+          let(:esw_end) { "2022-10-22" }
+          let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
+          let(:esw_end_date) { Time.zone.parse(esw_end) }
+          let!(:appeal) do
+            create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran_file_number: live_veteran.file_number)
+          end
+          let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+
+          before do
+            EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: hearing_task, end_date: esw_end_date)
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+            live_veteran.update!(date_of_death: 1.day.ago)
+          end
+
+          it "copies the evidence submission window task and makes it a descendant of a new distribution task" do
+            subject
+
+            active_esw_tasks = appeal.tasks.active.of_type(:EvidenceSubmissionWindowTask)
+            expect(active_esw_tasks.count).to eq(1)
+            expect(active_esw_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
+
+            closed_esw_task = appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first
+            expect(active_esw_tasks.first.instructions).to eq(closed_esw_task.instructions)
+            expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+            expect(appeal.tasks.open.of_type(:DistributionTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
+            expect(active_esw_tasks.first.parent.type).to eq("HearingTask")
+            expect(active_esw_tasks.first.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+            expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+          end
+
+          it "allots all remaining time in the evidence submission window task to the substitute appellant" do
+            subject
+
+            esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
+            expect(esw_task.timer_ends_at).to be_between(
+              esw_end_date - 1.day,
+              esw_end_date + 1.day
+            )
+          end
+
+          context "for an appeal at the attorney drafting step" do
             let!(:appeal) do
               create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
                      :at_attorney_drafting, associated_judge: judge, associated_attorney: attorney,
                                             veteran_file_number: live_veteran.file_number)
             end
 
-            it "copies the evidence submission window task and makes it a child of a new distribution task" do
-              subject
-
-              active_esw_tasks = appeal.tasks.active.of_type(:EvidenceSubmissionWindowTask)
-              expect(active_esw_tasks.count).to eq(1)
-              expect(active_esw_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
-
-              closed_esw_task = appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first
-              expect(active_esw_tasks.first.instructions).to eq(closed_esw_task.instructions)
-              expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
-              expect(appeal.tasks.open.of_type(:DistributionTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
-              expect(active_esw_tasks.first.parent.type).to eq("HearingTask")
-              expect(active_esw_tasks.first.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
-              expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+            before do
+              appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+              live_veteran.update!(date_of_death: 1.day.ago)
             end
 
-            it "allots all remaining time in the evidence submission window task to the substitute appellant" do
-              subject
-
-              esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
-              expect(esw_task.timer_ends_at).to be_between(
-                esw_end_date - 1.day,
-                esw_end_date + 1.day
-              )
-            end
             it "cancels decision tasks with a cancellation reason of substitution" do
               expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
               expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.assigned)

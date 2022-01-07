@@ -54,7 +54,24 @@ class SameAppealSubstitutionTasksFactory
 
   def resume_evidence_submission
     esw_task = @appeal.tasks.of_type(:EvidenceSubmissionWindowTask).cancelled.order(:id).last
-    copy_esw_task_with_ancestors(esw_task)
+    esw_task_params = @task_params[esw_task.id.to_s]
+    unless esw_task_params["hold_end_date"]
+      fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{esw_task.id}"
+    end
+
+    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(esw_task_params["hold_end_date"])
+
+    if @appeal.docket_type == "hearing"
+      new_task = copy_esw_task_with_ancestors(esw_task)
+      EvidenceSubmissionWindowTask.create_timer(new_task)
+    else
+      EvidenceSubmissionWindowTask.create!(
+        appeal: @appeal,
+        parent: distribution_task,
+        end_date: evidence_submission_hold_end_date
+      )
+    end
+
     decision_tasks = [:JudgeAssignTask, :AttorneyTask, :JudgeDecisionReviewTask]
     @appeal.tasks.of_type(decision_tasks).each { |task| task.update!(cancellation_reason: "substitution") }
     @appeal.tasks.of_type(decision_tasks).open.each(&:cancelled!)
@@ -137,6 +154,11 @@ class SameAppealSubstitutionTasksFactory
         closed_at: Time.zone.now
       )
     end
+  end
+
+  def distribution_task
+    @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
+                           DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
   # Called if a `ScheduleHearingTask` is selected to be reopened
