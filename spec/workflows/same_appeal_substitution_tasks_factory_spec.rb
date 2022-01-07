@@ -199,37 +199,6 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           end
         end
 
-        context "when the user selects an evidence submission window task - new trait used" do
-          let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
-          let(:selected_task_ids) { [selected_task_id] }
-          # The veteran must be alive when the appeal is created, or FactoryBot won't make all the required tasks.
-          # The veteran is later made deceased in order to mimic a substitution scenario.
-          let(:live_veteran) { create(:veteran, file_number: "12121212") }
-          let!(:esw_end) { "2022-10-22" }
-          let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
-          let(:esw_end_date) { Time.zone.parse(esw_end) }
-          let!(:appeal) do
-            create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task_set_date,
-                   end_date: esw_end, veteran_file_number: live_veteran.file_number)
-          end
-          let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
-
-          before do
-            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
-            live_veteran.update!(date_of_death: 1.day.ago)
-          end
-
-          it "allots all remaining time in the evidence submission window task to the substitute appellant" do
-            subject
-
-            esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
-            expect(esw_task.timer_ends_at).to be_between(
-              esw_end_date - 1.day,
-              esw_end_date + 1.day
-            )
-          end
-        end
-
         context "when the user selects an evidence submission window task" do
           let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
           let(:selected_task_ids) { [selected_task_id] }
@@ -239,12 +208,12 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
           let(:esw_end_date) { Time.zone.parse(esw_end) }
           let!(:appeal) do
-            create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran_file_number: live_veteran.file_number)
+            create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+              veteran_file_number: live_veteran.file_number)
           end
           let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
 
           before do
-            EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: hearing_task, end_date: esw_end_date)
             appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
             live_veteran.update!(date_of_death: 1.day.ago)
           end

@@ -54,7 +54,7 @@ class SameAppealSubstitutionTasksFactory
 
   def resume_evidence_submission
     esw_task = @appeal.tasks.of_type(:EvidenceSubmissionWindowTask).cancelled.order(:id).last
-    esw_task_params = @task_params[esw_task.id.to_s]
+    esw_task_params = @task_params[esw_task.id]
     unless esw_task_params["hold_end_date"]
       fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{esw_task.id}"
     end
@@ -111,7 +111,7 @@ class SameAppealSubstitutionTasksFactory
     cancel_defunct_hearing_tasks if source_tasks.any? { |task| task.is_a?(ScheduleHearingTask) }
 
     source_tasks.each do |source_task|
-      creation_params = @task_params[source_task.id.to_s]
+      creation_params = @task_params[source_task.id]
       create_task_from(source_task, creation_params)
     end.flatten
   end
