@@ -18,6 +18,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @genpop_distributions = distribute_genpop_priority_appeals
     send_job_report
   rescue StandardError => error
+    start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
     slack_msg = "[ERROR] after running for #{duration}: #{error.message}"
     slack_service.send_notification(slack_msg, self.class.name, "#appeals-echo")

@@ -2681,6 +2681,14 @@
       "updated_at": "2019-02-28 17:04:46 UTC"
     },
     {
+      "id": 994,
+      "organization_id": 121,
+      "user_id": 1212,
+      "admin": false,
+      "created_at": "2018-12-05 19:17:55 UTC",
+      "updated_at": "2018-12-05 19:17:55 UTC"
+    },
+    {
       "id": 3504,
       "organization_id": 24,
       "user_id": 2173,
@@ -6192,6 +6200,21 @@
       "status": "active",
       "status_updated_at": null,
       "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 121,
+      "type": "JudgeTeam",
+      "name": "BVAJWILLS",
+      "role": null,
+      "url": "bvajwills",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2021-12-01 14:45:34 UTC",
+      "status": "inactive",
+      "status_updated_at": "2021-12-01 14:45:34 UTC",
+      "accepts_priority_pushed_cases": false,
       "ama_only_push": false,
       "ama_only_request": false
     },
