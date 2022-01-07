@@ -84,6 +84,19 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       end
     end
 
+    context "Appeal is predocket" do
+      # An appeal is "established" when all issues have been added and 
+      # not necessarily docketed (so it's still "pre-docket")
+      let!(:appeal) { create(:appeal).tap{|appeal| appeal.update(docket_type: nil)} }
+
+      it "syncs" do
+        expect(appeal.docket_type).to eq nil
+        expect { subject }.to_not raise_error
+
+        expect(ETL::Appeal.count).to eq(15)
+      end
+    end
+
     context "decision issue is deleted" do
       let(:appeal) { Appeal.last }
       let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
