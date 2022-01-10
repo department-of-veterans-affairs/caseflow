@@ -671,6 +671,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:first_judge) { create(:user, :with_vacols_judge_record) }
     let(:first_judge_id) { first_judge.vacols_attorney_id }
 
+    # We can DRY this up after we're done making tweaks
     let(:original_appeal) do
       create(:legacy_appeal, vacols_case: create(
         :case,
@@ -688,9 +689,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       ))
     end
 
-    # Lifted from  spec/feature/api/v2/appeals_spec.rb
-    # This stuff should probably be pulled out into a factory and cleaned up.
-    # And DRYed up!
     let(:post_remand_appeal) do
       create(:legacy_appeal, vacols_case: create(
         :case,
@@ -727,16 +725,14 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(appeal.docket_number).to eq docket_number
         # This also implicitly tests that a folder is created, but this is the same thing as above
         expect(appeal.vacols_case.folder.tinum).to eq docket_number
-        #appeal.treee
       end
 
-      # This isn't a useful test because it's literally what we set, but to cement
-      # my understanding...
+      # This isn't a useful test because it's literally what we set, but it exists
+      # to illustrate the less-than-intuitive relationship:
       expect(original_appeal.vacols_case.bfmemid).to eq(first_judge.vacols_attorney_id)
 
       expect(VACOLS::CaseDocket.priority_ready_appeal_vacols_ids).to include(cavc_remand_appeal.vacols_id)
       expect(VACOLS::CaseDocket.original_judge_for_appeal(cavc_remand_appeal)).to eq first_judge.vacols_attorney_id
-      #expect(VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(first_judge)).to be > 0
 
       expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(original_appeal.vacols_case)).to be_falsey
       expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(cavc_remand_appeal.vacols_case)).to be_truthy

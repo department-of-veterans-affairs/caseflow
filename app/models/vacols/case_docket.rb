@@ -107,6 +107,33 @@ class VACOLS::CaseDocket < VACOLS::Record
       )
   "
 
+  JOIN_ASSOCIATED_VLJS_BY_ORIGINAL_APPEAL = "
+      left join (
+        select BFMEMID from BRIEFF
+          inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+        -- fill in with join based on docket number, getting the one where bfac = 1
+      ) VLJ_ORIG_APPEAL
+        on VLJ_ORIG_APPEAL.SOMETHING = BRIEFF.BFKEY
+  "
+
+  FILTERED_TO_ORIGINAL_APPEAL_FOR_CAVC_REMAND = "
+    -- join brieff to folder
+    -- where brieff.bfac=1 and bfmpro == act and bfcurloc == 81
+    -- join brieff to priorloc on bfkey == lockey
+    -- on the *new* appeal, where locstto=81 and locstrcv == issuing judge's CSS ID?
+    -- I don't think there's an index on lockey
+    -- brieff.bfmemid is deciding judge
+  "
+
+  # Do we have to strftime this or will ActiveRecord do it correctly?
+  WITH_CAVC_AFFINITY = "
+    SELECT * from 'BRIEFF'
+    JOIN PRIORLOC ON PRIORLOC.LOCKEY = BRIEFF.BFKEY
+    WHERE PRIORLOC.LOCSTTO = 'CASEFLOW'
+    AND BRIEFF.BFAC = '7'
+    AND PRIORLOC.LOCDOUT > '#{21.days.ago}'
+  "
+
   # This doesn't go here, but is to help me get the query logic right and tested for now.
   # Oh, I think we _will_ need PriorLoc to get the date -- see #3 on
   # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-988407919
