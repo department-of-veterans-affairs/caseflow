@@ -237,31 +237,33 @@ export class Row extends React.PureComponent {
 }
 
 export class BodyRows extends React.PureComponent {
+  Rows = (props) => props.rowObjects && props.rowObjects.map((object, rowNumber) => {
+    const key = props.getKeyForRow(rowNumber, object);
+
+    return (
+      <Row rowObject={object} columns={props.columns} rowClassNames={props.rowClassNames} key={key} rowId={key} />
+    );
+  });
+
+  loadProps = this.props.useHearingsApi ? {
+    spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+    message: 'Loading the hearing schedule...'
+  } : {
+    spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+  };
+
   render() {
-    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
-
-    const Rows = () => rowObjects && rowObjects.map((object, rowNumber) => {
-      const key = getKeyForRow(rowNumber, object);
-
-      return <Row rowObject={object} columns={columns} rowClassNames={rowClassNames} key={key} rowId={key} />;
-    });
-
-    const loadProps = this.props.useHearingsApi ? {
-      spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-      message: 'Loading the hearing schedule...'
-    } : {
-      spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-    };
+    const { bodyClassName, columns, tbodyRef, id, bodyStyling } = this.props;
 
     return (
       <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
         {this.props.fetching ? (
           <tr role="row">
             <td colSpan={columns.length} >
-              <LoadingScreen {...loadProps} />
+              <LoadingScreen {...this.loadProps} />
             </td>
           </tr>
-        ) : <Rows />}
+        ) : <this.Rows {...this.props} />}
       </tbody>
     );
   }
@@ -384,8 +386,9 @@ export default class QueueTable extends React.PureComponent {
     }
 
     const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
+    const sorted = _.orderBy(rowObjects, (row) => columnToSortBy.getSortValue(row), sortAscending ? 'asc' : 'desc');
 
-    return _.orderBy(rowObjects, (row) => columnToSortBy.getSortValue(row), sortAscending ? 'asc' : 'desc');
+    return sorted;
   };
 
   updateFilteredByList = (newList) => {
@@ -454,8 +457,21 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   };
 
-  setColumnSortOrder = (colName) =>
-    this.setState({ sortColName: colName, sortAscending: !this.state.sortAscending }, this.requestTasks);
+  setColumnSortOrder = (colName) => {
+    const sort = { sortColName: colName, sortAscending: !this.state.sortAscending };
+
+    this.setState(sort, this.requestTasks);
+
+    if (this.props.fetchPaginatedData) {
+      const columnToSortBy = getColumns(this.props).find((column) => colName === column.name);
+      const paginatedSort = {
+        sortParamName: columnToSortBy.sortParamName,
+        sortAscending: sort.sortAscending,
+      };
+
+      return this.props.fetchPaginatedData(this.state.currentPage, paginatedSort, this.state.filteredByList);
+    }
+  }
 
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage }, this.requestTasks);
@@ -602,17 +618,6 @@ export default class QueueTable extends React.PureComponent {
           this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
         }
       }
-    } else if (useHearingsApi) {
-      // For the Hearings Schedule table, back-end handles pagination, sorting and filtering
-      // so send sorting and filtering selections back to ListSchedule
-      const { sortColName, sortAscending, filteredByList } = this.state;
-      const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
-      const params = {
-        filter: _.isEmpty(filteredByList) ? {} : filteredByList,
-        sort: sortColName ? { sortCol: columnToSortBy, ascending: sortAscending } : {}
-      };
-
-      this.props.returnQueries(params);
     } else {
       // Steps to calculate table data to display:
       // 1. Sort data

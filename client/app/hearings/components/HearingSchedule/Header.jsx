@@ -11,6 +11,7 @@ import { SwitchViewDropdown } from 'app/hearings/components/HearingSchedule/Swit
 import Button from 'app/components/Button';
 
 const inlineFormStyling = css({
+  marginBottom: 20,
   display: 'flex',
   alignItems: 'flex-end',
   '> div': {
@@ -77,9 +78,14 @@ export const HearingScheduleHeader = ({
           </span>
         )}
         {user.userCanBuildHearingSchedule && (
-          <span className="cf-push-left">
-            <Link button="secondary" to="/schedule/build">Build Schedule</Link>
-          </span>
+          <React.Fragment>
+            <span className="cf-push-left" {...actionButtonsStyling}>
+              <Link button="secondary" to="/schedule/add_hearing_day">Add Hearing Day</Link>
+            </span>
+            <span className="cf-push-left">
+              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
+            </span>
+          </React.Fragment>
         )}
       </div>
       <div className="cf-help-divider" {...dateSearchStyles} />
@@ -101,9 +107,9 @@ export const HearingScheduleHeader = ({
           </CSVLink>
         </div>
       </div>
-      {user.userCanBuildHearingSchedule && (
+      {/* {user.userCanBuildHearingSchedule && (
         <Button linkStyling onClick={() => history.push('/schedule/add_hearing_day')}>Add Hearing Day</Button>
-      )}
+      )} */}
     </React.Fragment>
   );
 };

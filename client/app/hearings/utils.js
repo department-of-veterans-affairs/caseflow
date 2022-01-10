@@ -1053,8 +1053,8 @@ export const formatVljName = (lastName, firstName) => {
   }
 };
 
-export const formatTableData = ({ hearingSchedule, user, filterOptions }) => {
-  const rows = orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
+export const formatTableData = ({ hearings, user, filterOptions }) => {
+  const rows = orderBy(hearings, (hearingDay) => hearingDay.scheduledFor, 'asc').
     map((hearingDay) => ({
       id: hearingDay.id,
       scheduledFor: hearingDay.scheduledFor,

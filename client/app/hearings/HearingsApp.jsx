@@ -67,8 +67,13 @@ export default class HearingsApp extends React.PureComponent {
     });
   };
 
-  routeForListScheduleContainer = ({ location, history }) =>
-    <ListScheduleContainer location={location} history={history} user={this.userPermissionProps()} />;
+  routeForListScheduleContainer = (component) => ({ location, history }) =>
+    <ListScheduleContainer
+      component={component}
+      location={location}
+      history={history}
+      user={this.userPermissionProps()}
+    />;
 
   routeForAssignHearingsContainer = () => (
     // Also remove where this gets set in the view. (#11757)
@@ -145,13 +150,13 @@ export default class HearingsApp extends React.PureComponent {
               exact
               path="/schedule"
               title="Scheduled Hearings"
-              render={this.routeForListScheduleContainer}
+              render={this.routeForListScheduleContainer('schedule')}
             />
             <PageRoute
               exact
               path="/schedule/add_hearing_day"
               title="Add Hearing Day"
-              render={this.routeForListScheduleContainer}
+              render={this.routeForListScheduleContainer('addHearingDay')}
             />
             <PageRoute
               exact

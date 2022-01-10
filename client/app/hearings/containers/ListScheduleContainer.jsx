@@ -39,9 +39,9 @@ export class ListScheduleContainer extends React.Component {
     super(props);
 
     this.state = {
+      addHearingDay: props.component === 'addHearingDay',
       prevQueries: JSON.stringify({ sort: {}, filter: {} }),
       schedule: formatTableData(props),
-      dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
       showModalAlert: false,
       view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW,
@@ -69,22 +69,7 @@ export class ListScheduleContainer extends React.Component {
     this.props.onSelectedHearingDayChange('');
   };
 
-  componentDidUpdate = (prevProps) => {
-    if (
-      !(
-        (_.isNil(prevProps.invalidDates) && this.props.invalidDates) ||
-        _.isNil(this.props.invalidDates)
-      )
-    ) {
-      this.props.onResetInvalidDates();
-    }
-  };
-
-  updateQueries = (newQueries) => {
-    this.setState({ queries: newQueries }, () => this.loadHearingSchedule(0));
-  };
-
-  loadHearingSchedule = (index) => {
+  loadHearingSchedule = (index, sort, filter) => {
     this.setState({
       loading: true,
     });
@@ -102,17 +87,18 @@ export class ListScheduleContainer extends React.Component {
       requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
     }
 
-    if (this.state.queries.sort) {
+    if (sort) {
       // append sort criteria
-      requestUrl += `&query[${this.state.queries.sort.column}]=${this.state.queries.sort.direction}`;
+      requestUrl += `&query[${sort.sortParamName}]=${sort.sortAscending ? 'asc' : 'desc'}`;
     }
+    console.log('SORT: ', sort);
 
-    if (this.state.queries.filter) {
+    if (filter) {
       // append filter criteria
-      const filterKeys = Object.keys(this.state.queries.filter);
+      const filterKeys = Object.keys(filter);
 
-      filterKeys.forEach((filter) => {
-        requestUrl += `&query[${filter}]=${Object.values(this.state.queries.filter[filter]).join(',')}`;
+      filterKeys.forEach((key) => {
+        requestUrl += `&query[${key}]=${Object.values(filter[key]).join(',')}`;
       });
     }
 
@@ -123,12 +109,14 @@ export class ListScheduleContainer extends React.Component {
     return ApiUtil.get(requestUrl, requestOptions, ENDPOINT_NAMES.HEARINGS_SCHEDULE).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
-      this.props.onReceiveHearingSchedule(resp.hearings);
+      console.log(resp.hearings);
+
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
       this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));
-
       this.setState({
-        schedule: formatTableData({ ...resp.hearings, ...this.props }),
+        sort,
+        filter,
+        schedule: formatTableData({ ...this.props, ...resp }),
         loaded: true,
         loading: false,
         pagination: {
@@ -178,32 +166,26 @@ export class ListScheduleContainer extends React.Component {
   };
 
   render() {
-    const user = this.props.user;
-
-    // Determine the path to render the correct component
-    const addHearingDay = (/add_hearing_day/).test(this.props.location.pathname);
-
-    return (
+    return this.state.addHearingDay ? (
+      <AddHearingDay cancelModal={this.cancelModal} user={this.props.user} />
+    ) : (
       <React.Fragment>
-        {!addHearingDay && <QueueCaseSearchBar />}
+        <QueueCaseSearchBar />
         <HearingScheduleAlerts {...this.props} />
-        {addHearingDay ? (
-          <AddHearingDay cancelModal={this.cancelModal} user={user} />
-        ) : (
-          <HearingSchedule
-            pagination={this.state.pagination}
-            updatePage={(index) => this.loadHearingSchedule(index)}
-            loaded={this.state.loaded}
-            fetching={this.state.loading}
-            hearingSchedule={this.state.schedule}
-            fetchHearings={this.loadHearingSchedule}
-            user={user}
-            view={this.state.view}
-            switchListView={this.switchListView}
-            filterOptions={this.state.filterOptions}
-            updateQueries={this.updateQueries}
-          />
-        )}
+        <HearingSchedule
+          startDate={this.props.startDate}
+          endDate={this.props.endDate}
+          pagination={this.state.pagination}
+          updatePage={(index) => this.loadHearingSchedule(index, this.state.sort, this.state.filter)}
+          loaded={this.state.loaded}
+          fetching={this.state.loading}
+          hearingSchedule={this.state.schedule}
+          fetchHearings={this.loadHearingSchedule}
+          user={this.props.user}
+          view={this.state.view}
+          switchListView={this.switchListView}
+          filterOptions={this.state.filterOptions}
+        />
       </React.Fragment>
     );
   }
@@ -247,6 +229,7 @@ const mapDispatchToProps = (dispatch) =>
 
 ListScheduleContainer.propTypes = {
   endDate: PropTypes.string,
+  component: PropTypes.string,
   hearingSchedule: PropTypes.object,
   invalidDates: PropTypes.bool,
   onAssignHearingRoom: PropTypes.func,

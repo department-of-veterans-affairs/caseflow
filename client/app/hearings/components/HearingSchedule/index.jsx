@@ -33,10 +33,10 @@ const HearingSchedule = (props) => {
   }, []);
 
   const setDateRangeKey = () => {
-    setState({ ...state, dateRangeKey: `${props.startDate}->${props.endDate}` });
+    // setState({ ...state, dateRangeKey: `${props.startDate}->${props.endDate}` });
 
     // show first page by default by sending index of 0
-    props.fetchHearings(0);
+    // props.fetchHearings(0);
   };
 
   const onQueryUpdate = (params) => {
@@ -89,14 +89,14 @@ const HearingSchedule = (props) => {
     <AppSegment filledBackground>
       <HearingScheduleHeader {...props} fileName={fileName} setDateRangeKey={setDateRangeKey} />
       <div className="section-hearings-list">
+        <Pagination {...props.pagination} updatePage={props.updatePage} />
         <QueueTable
           fetching={!props.loaded || props.fetching}
           columns={props.hearingSchedule?.columns || []}
           rowObjects={props.hearingSchedule?.rows || []}
-          returnQueries={onQueryUpdate}
           summary="hearing-schedule"
           slowReRendersAreOk
-          useHearingsApi
+          fetchPaginatedData={props.fetchHearings}
         />
         <Pagination {...props.pagination} updatePage={props.updatePage} />
       </div>
@@ -113,7 +113,6 @@ HearingSchedule.propTypes = {
     columns: PropTypes.array,
   }),
   fetchHearings: PropTypes.func.isRequired,
-  updateQueries: PropTypes.func.isRequired,
   onResetDeleteSuccessful: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,
@@ -129,8 +128,6 @@ const mapStateToProps = (state) => ({
   filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
   filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
-  startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
