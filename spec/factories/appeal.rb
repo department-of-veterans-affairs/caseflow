@@ -64,10 +64,6 @@ FactoryBot.define do
     end
 
     transient do
-      esw_end { "2022-10-22" }
-    end
-
-    transient do
       active_task_assigned_at { Time.zone.now }
     end
 
@@ -259,17 +255,6 @@ FactoryBot.define do
         parent = appeal.tasks.open.find_by(type: "HearingTask") if appeal.docket_type == Constants.AMA_DOCKETS.hearing
 
         EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent)
-      end
-    end
-
-    trait :with_evidence_submission_window_task_set_date do
-      after(:create) do |appeal, _evaluator|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        parent = root_task
-        parent = appeal.tasks.open.find_by(type: "HearingTask") if appeal.docket_type == Constants.AMA_DOCKETS.hearing
-
-        esw_end_date = Time.zone.parse(evaluator.esw_end)
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent, end_date: esw_end_date)
       end
     end
 
