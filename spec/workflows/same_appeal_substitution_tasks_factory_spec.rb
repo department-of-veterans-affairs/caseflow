@@ -202,14 +202,15 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
         context "when the user selects an evidence submission window task" do
           let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
           let(:selected_task_ids) { [selected_task_id] }
-          # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the required task.  The veteran is later made deceased in order to mimic a substitution scenario.
+          # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the
+          # required tasks. The veteran is later made deceased in order to mimic a substitution scenario.
           let(:live_veteran) { create(:veteran, file_number: "12121212") }
           let(:esw_end) { "2022-10-22" }
           let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
           let(:esw_end_date) { Time.zone.parse(esw_end) }
           let!(:appeal) do
             create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
-              veteran_file_number: live_veteran.file_number)
+                   veteran_file_number: live_veteran.file_number)
           end
           let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
 
