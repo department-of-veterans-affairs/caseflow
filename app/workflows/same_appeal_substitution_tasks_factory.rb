@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SameAppealSubstitutionTasksFactory
+  include EvidenceSubmissionWindowTaskConcern
+
   def initialize(appeal, task_ids, created_by, task_params)
     @appeal = appeal
     @task_ids = task_ids
@@ -125,7 +127,7 @@ class SameAppealSubstitutionTasksFactory
   def create_task_from(source_task, creation_params)
     case source_task.type
     when "EvidenceSubmissionWindowTask"
-      InitialTasksFactory.new(@appeal).evidence_submission_window_task(source_task, creation_params)
+      evidence_submission_window_task(@appeal, source_task, creation_params)
     when "ScheduleHearingTask"
       distribution_task = @appeal.tasks.open.find_by(type: :DistributionTask)
       ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
