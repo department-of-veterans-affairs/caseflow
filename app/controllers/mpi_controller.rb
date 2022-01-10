@@ -23,8 +23,8 @@ class MpiController < ApplicationController
     results.each { |res| formatted_results.push(print_patient(res[:registration_event][:subject1][:patient])) }
 
     render json: formatted_results
-  rescue MPI::QueryError, Savon::SOAPFault => err
-    render json: {error: err.class.name}, status: :unprocessable_entity
+  rescue MPI::QueryError, Savon::SOAPFault => error
+    render json: { error: error.class.name }, status: :unprocessable_entity
   end
 
   # From Lib helpers
@@ -63,15 +63,15 @@ class MpiController < ApplicationController
 
   def format_ssn(person)
     other_ids = [person[:as_other_i_ds]].flatten
-    ssns = other_ids.select { |other_id| other_id[:@class_code] == "SSN" }.
-    map { |other_id| other_id.dig(:id, :@extension) }.compact
+    ssns = other_ids.select { |other_id| other_id[:@class_code] == "SSN" }
+      .map { |other_id| other_id.dig(:id, :@extension) }.compact
     ssn = ssns[0].dup
     ssn.gsub("SSN: ", "").to_s if ssns.any?
   end
 
   def format_birthtime(person)
     value = person&.dig(:birthtime, :@value)
-    value.to_s  if value.present?
+    value.to_s if value.present?
   end
 
   def format_address(person)
@@ -90,6 +90,6 @@ class MpiController < ApplicationController
   end
 
   def date_of_birth_param
-    params[:date_of_birth][0..9].gsub("-", "")
+    params[:date_of_birth][0..9].delete("-")
   end
 end

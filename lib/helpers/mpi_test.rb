@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MpiTest
   attr_accessor :last_results
 
@@ -25,7 +27,7 @@ class MpiTest
       format_status(hash),
       format_phone(person),
       format_birthtime(person),
-      format_address(person),
+      format_address(person)
     ].compact.each { |line| puts line }
   end
 
@@ -51,7 +53,9 @@ class MpiTest
 
   def format_ssn(person)
     other_ids = [person[:as_other_i_ds]].flatten
-    ssns = other_ids.select { |other_id| other_id[:@class_code] == "SSN" }.map { |other_id| other_id.dig(:id, :@extension) }.compact
+    ssns = other_ids.select { |other_id| other_id[:@class_code] == "SSN" }
+      .map { |other_id| other_id.dig(:id, :@extension) }
+      .compact
     "SSN: #{ssns[0]}" if ssns.any?
   end
 
