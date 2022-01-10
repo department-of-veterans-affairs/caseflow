@@ -49,7 +49,12 @@ class CheckTaskTree
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def check(verbose: true)
-    puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
+    unless @appeal.is_a?(Appeal)
+      puts "This checker is only for AMA appeals"
+      return
+    end
+
+    puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{status} ..." if verbose
 
     check_task_attributes
     check_parent_child_tasks

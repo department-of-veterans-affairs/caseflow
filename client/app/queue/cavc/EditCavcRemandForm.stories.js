@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, sub } from 'date-fns';
+import { add, format, sub } from 'date-fns';
 
 import { EditCavcRemandForm } from './EditCavcRemandForm';
 
@@ -74,6 +74,25 @@ EditingDismissal.args = {
     decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
     judgementDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
     mandateDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
+    issueIds: [2, 3],
+    instructions: 'Lorem ipsum dolor sit amet'
+  },
+};
+
+export const EditingInvalidDates = Template.bind({});
+EditingInvalidDates.storyName = 'Editing (Invalid Dates)';
+EditingInvalidDates.args = {
+  existingValues: {
+    docketNumber: '12-3333',
+    attorney: 'yes',
+    judge: 'Panel',
+    decisionType: 'death_dismissal',
+    remandType: null,
+    remandDatesProvided: 'yes',
+    decisionDate: format(add(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+    judgementDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
+    mandateDate: format(new Date(2017, 5, 12), 'yyyy-MM-dd'),
+    mandateSame: false,
     issueIds: [2, 3],
     instructions: 'Lorem ipsum dolor sit amet'
   },
