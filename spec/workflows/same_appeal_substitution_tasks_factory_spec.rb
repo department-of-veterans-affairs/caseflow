@@ -206,7 +206,7 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
           # required tasks. The veteran is later made deceased in order to mimic a substitution scenario.
           let(:live_veteran) { create(:veteran, file_number: "12121212") }
           let(:esw_end) { "2022-10-22" }
-          let!(:task_params) { { selected_task_id => { "hold_end_date" => esw_end } } }
+          let!(:task_params) { { selected_task_id.to_s => { "hold_end_date" => esw_end } } }
           let(:esw_end_date) { Time.zone.parse(esw_end) }
           let!(:appeal) do
             create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
