@@ -29,8 +29,6 @@ class InitialTasksFactory
     maybe_create_translation_task
   end
 
-
-
   private
 
   def create_vso_tracking_tasks
@@ -41,7 +39,7 @@ class InitialTasksFactory
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
 
@@ -65,7 +63,7 @@ class InitialTasksFactory
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
