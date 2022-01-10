@@ -25,11 +25,11 @@ class AppealsForPOA
     [
       appeals.select do |appeal|
         appeal.claimants.any? do |claimant|
-          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+          poa_participant_ids.include?(poas.dig(claimant[:participant_id], :participant_id))
         end
       end,
       legacy_appeals.select do |legacy_appeal|
-        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
+        poa_participant_ids.include?(poas.dig(legacy_appeal.veteran.participant_id, :participant_id))
       end
     ].flatten
   end
