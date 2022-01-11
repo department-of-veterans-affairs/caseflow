@@ -58,6 +58,10 @@ table {
 .cf-printed-worksheet {
   width: 980px;
   margin: 20px auto;
+
+  .cf-hearings-worksheet-data-cell:last-child {
+    margin-bottom: 1.765em;
+  }
 }
 
 .cf-hearings-worksheet-data {

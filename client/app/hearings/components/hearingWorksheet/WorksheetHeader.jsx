@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import PropTypes from 'prop-types';
-import { ClipboardIcon } from '../../../components/RenderFunctions';
+import { ClipboardIcon } from '../../../components/icons/ClipboardIcon';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
 import { css } from 'glamor';
@@ -59,6 +59,15 @@ const secondColumnStyling = css({
 
 const secondRowStyling = css({
   flex: '100%'
+});
+
+const breakRow = css({
+  flexBasis: '100%',
+  marginBottom: '1.765em'
+});
+
+const printBreakRow = css({
+  flexBasis: '100%'
 });
 
 class WorksheetHeader extends React.PureComponent {
@@ -118,10 +127,6 @@ class WorksheetHeader extends React.PureComponent {
           <h4>{this.props.print ? 'R.O.' : 'REGIONAL OFFICE'}</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>DATE</h4>
-          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
-        </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
             <h4>{this.props.print ? 'HEAR. DISP.' : 'HEARING DISPOSITION'}</h4>
@@ -130,6 +135,15 @@ class WorksheetHeader extends React.PureComponent {
             </div>
           </div>
         }
+        {this.props.print ? <div {...printBreakRow} /> : <div {...breakRow} />}
+        <div className="cf-hearings-worksheet-data-cell">
+          <h4>{this.props.print ? 'HEAR. DATE' : 'HEARING DATE'}</h4>
+          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h4>+ 90 DAYS</h4>
+          <div className="cf-hearings-headers">{moment(worksheet.submission_window_end).format('ddd l')}</div>
+        </div>
       </div>
 
       <div className="cf-hearings-worksheet-data">
@@ -257,6 +271,7 @@ WorksheetHeader.propTypes = {
     representative: PropTypes.string,
     representative_name: PropTypes.string,
     scheduled_for: PropTypes.string,
+    submission_window_end: PropTypes.string,
     veteran_age: PropTypes.number,
     veteran_file_number: PropTypes.string,
     veteran_first_name: PropTypes.string,

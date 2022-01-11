@@ -31,7 +31,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotHeld < StandardError; end
   class HearingAssociationMissing < StandardError
     def initialize(hearing_task_id)
-      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task_id))
+      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task_id))
     end
   end
 
