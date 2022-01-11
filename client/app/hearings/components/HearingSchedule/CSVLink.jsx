@@ -13,6 +13,7 @@ export const CSVButton = ({ startDate, endDate, view, headers, fileName }) => {
   const downloadView = async (event, done) => {
     done(false);
     setLoading(true);
+
     const url = `/hearings/hearing_day.csv?start_date=${startDate}&end_date=${endDate}&show_all=${view}`;
     const data = await ApiUtil.get(url);
     const { hearings } = JSON.parse(data?.text);

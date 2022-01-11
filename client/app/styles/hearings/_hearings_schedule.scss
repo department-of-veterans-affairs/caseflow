@@ -1,6 +1,15 @@
 .section-hearings-list {
+  .cf-pagination {
+    display: flex;
+  }
+
   .cf-pagination-pages {
-    margin-bottom: 44px;
+    margin-bottom: 0;
+  }
+
+  .cf-pagination-summary {
+    width: 100%;
+    margin-bottom: 0;
   }
 
   .loading-text {

@@ -106,9 +106,6 @@ export const HearingScheduleHeader = ({
         <div {...viewButtonStyling}>
           {user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={switchListView} />}
           <CSVButton view={view} startDate={startDate} endDate={endDate} fileName={fileName} headers={headers} />
-          {/* <CSVLink data={[]} headers={[]} target="_blank"  >
-            <Button classNames={['usa-button-secondary']}>Download current view</Button>
-          </CSVLink> */}
         </div>
       </div>
     </React.Fragment>

@@ -125,9 +125,9 @@ export class ListScheduleContainer extends React.Component {
         pagination: {
           currentPage: resp.pagination.page,
           totalCases: resp.pagination.count,
-          currentCases: resp.pagination.items,
+          currentCases: resp.pagination.in,
           totalPages: resp.pagination.pages,
-          pageSize: resp.pagination.in,
+          pageSize: resp.pagination.items,
         },
         filterOptions: resp.filterOptions,
       });
