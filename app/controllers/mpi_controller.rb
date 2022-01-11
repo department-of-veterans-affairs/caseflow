@@ -52,13 +52,13 @@ class MpiController < ApplicationController
   end
 
   def format_phone(person)
-    value = person&.dig(:telecom, :@value)
-    value.to_s if value.present?
+    phone = person&.dig(:telecom, :@value)
+    phone.to_s if phone.present?
   end
 
   def format_gender(person)
-    value = person&.dig(:administrative_gender_code, :@code)
-    value.to_s  if value.present?
+    gender = person&.dig(:administrative_gender_code, :@code)
+    gender.to_s if gender.present?
   end
 
   def format_ssn(person)
@@ -70,13 +70,13 @@ class MpiController < ApplicationController
   end
 
   def format_birthtime(person)
-    value = person&.dig(:birthtime, :@value)
-    value.to_s if value.present?
+    birthtime = person&.dig(:birthtime, :@value)
+    birthtime.to_s if birthtime.present?
   end
 
   def format_address(person)
-    value = person&.dig(:addr)
-    "#{value[:street_address_line]}, #{value[:city]} #{value[:state]} #{value[:postal_code]}" if value.present?
+    address = person&.dig(:addr)
+    "#{value[:street_address_line]}, #{address[:city]} #{value[:state]} #{address[:postal_code]}" if address.present?
   end
 
   def address_param
