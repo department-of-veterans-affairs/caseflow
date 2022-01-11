@@ -15,6 +15,7 @@ class ExternalApi::MPIService
   end
 
   # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
                          ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
     DBService.release_db_connections
@@ -44,6 +45,7 @@ class ExternalApi::MPIService
     mpi_info || {}
   end
   # rubocop:enable Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_person_info(icn)
     DBService.release_db_connections
