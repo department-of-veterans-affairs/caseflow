@@ -27,7 +27,7 @@ const HearingSchedule = (props) => {
 
   return (
     <AppSegment filledBackground>
-      <HearingScheduleHeader {...props} fileName={fileName} />
+      <HearingScheduleHeader {...props} headers={props.hearingSchedule?.headers} fileName={fileName} />
       <div className="section-hearings-list">
         <Pagination {...props.pagination} updatePage={props.updatePage} />
         <QueueTable

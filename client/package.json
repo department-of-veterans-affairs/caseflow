@@ -102,7 +102,7 @@
     "rc-collapse": "^1.11.8",
     "react": "^16.13.1",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-csv": "^1.1.1",
+    "react-csv": "^2.2.1",
     "react-dom": "^16.13.1",
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",

@@ -1053,19 +1053,20 @@ export const formatVljName = (lastName, firstName) => {
   }
 };
 
-export const formatTableData = ({ hearings, user, filterOptions }) => {
-  const rows = orderBy(hearings, (hearingDay) => hearingDay.scheduledFor, 'asc').
-    map((hearingDay) => ({
-      id: hearingDay.id,
-      scheduledFor: hearingDay.scheduledFor,
-      readableRequestType: hearingDay.readableRequestType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.room,
-      judgeCssId: hearingDay.judgeCssId,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
-      hearingsScheduled: hearingDay.filledSlots
-    }));
+export const parseCSVData = (hearings) => orderBy(hearings, (hearingDay) => hearingDay.scheduledFor, 'asc').
+  map((hearingDay) => ({
+    id: hearingDay.id,
+    scheduledFor: hearingDay.scheduledFor,
+    readableRequestType: hearingDay.readableRequestType,
+    regionalOffice: hearingDay.regionalOffice,
+    room: hearingDay.room,
+    judgeCssId: hearingDay.judgeCssId,
+    vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
+    hearingsScheduled: hearingDay.filledSlots
+  }));
 
+export const formatTableData = ({ hearings, user, filterOptions }) => {
+  const rows = parseCSVData(hearings);
   const columnData = [
     {
       header: 'Date',

@@ -13,6 +13,19 @@ class Hearings::HearingDayController < HearingsApplicationController
   # show schedule days for date range provided
   def index
     respond_to do |format|
+      format.csv do
+        if hearing_day_range.valid?
+          hearing_days = hearing_day_range.hearing_days
+          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
+            hearing_days, paginated_docket_queries
+          )
+
+          render json: { hearings: serialized_hearing_days }
+        else
+          hearing_day_range_invalid
+        end
+      end
+
       format.html do
         render "hearings/index"
       end
@@ -46,7 +59,7 @@ class Hearings::HearingDayController < HearingsApplicationController
       hearing_days = hearing_day_range.all_hearing_days
 
       serialized_hearing_days = ::HearingDaySerializer.serialize_collection(
-        hearing_days, hearing_days.docket_queries
+        hearing_days, hearing_days.paginated_docket_queries
       )
 
       render json: { hearing_days: serialized_hearing_days }

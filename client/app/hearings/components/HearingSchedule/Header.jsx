@@ -59,7 +59,8 @@ export const HearingScheduleHeader = ({
   endDate,
   onViewEndDateChange,
   setDateRange,
-  fileName
+  fileName,
+  headers
 }) => {
   let title = COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
 
@@ -104,7 +105,7 @@ export const HearingScheduleHeader = ({
         </div>
         <div {...viewButtonStyling}>
           {user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={switchListView} />}
-          <CSVButton view={view} startDate={startDate} endDate={endDate} filename={fileName} />
+          <CSVButton view={view} startDate={startDate} endDate={endDate} fileName={fileName} headers={headers} />
           {/* <CSVLink data={[]} headers={[]} target="_blank"  >
             <Button classNames={['usa-button-secondary']}>Download current view</Button>
           </CSVLink> */}
