@@ -848,7 +848,6 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                     }
                   >
                     <Link
-                      disabled={false}
                       href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                       target="_blank"
                     >
