@@ -87,18 +87,20 @@ export class ListScheduleContainer extends React.Component {
       requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
     }
 
-    if (sort) {
+    if (sort?.sortParamName) {
       // append sort criteria
       requestUrl += `&query[${sort.sortParamName}]=${sort.sortAscending ? 'asc' : 'desc'}`;
     }
-    console.log('SORT: ', sort);
 
     if (filter) {
       // append filter criteria
       const filterKeys = Object.keys(filter);
 
       filterKeys.forEach((key) => {
-        requestUrl += `&query[${key}]=${Object.values(filter[key]).join(',')}`;
+        const { filterOptions, filterParamName } = this.state.schedule?.columns.find((col) => col.columnName === key);
+        const values = Object.values(filter[key]).map((value) => filterOptions.find((opt) => opt.value === value));
+
+        requestUrl += `&query[${filterParamName}]=${values.map((value) => value.queryValue).join(',')}`;
       });
     }
 
@@ -108,8 +110,6 @@ export class ListScheduleContainer extends React.Component {
 
     return ApiUtil.get(requestUrl, requestOptions, ENDPOINT_NAMES.HEARINGS_SCHEDULE).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
-
-      console.log(resp.hearings);
 
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
       this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));

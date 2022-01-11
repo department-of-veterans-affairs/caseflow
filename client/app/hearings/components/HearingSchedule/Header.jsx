@@ -11,7 +11,7 @@ import { SwitchViewDropdown } from 'app/hearings/components/HearingSchedule/Swit
 import Button from 'app/components/Button';
 
 const inlineFormStyling = css({
-  marginBottom: 20,
+  marginBottom: 44,
   display: 'flex',
   alignItems: 'flex-end',
   '> div': {
@@ -37,17 +37,21 @@ const inlineFormStyling = css({
   }
 });
 
-const viewButtonStyling = css({
+const dateRangeStyling = css({
   display: 'flex',
   flex: 1
 });
 
+const viewButtonStyling = css({
+  marginBottom: 5
+});
+
 const actionButtonsStyling = css({
-  marginRight: '25px',
+  marginLeft: 25,
+  marginRight: 0
 });
 
 export const HearingScheduleHeader = ({
-  history,
   user,
   view,
   switchListView,
@@ -72,25 +76,25 @@ export const HearingScheduleHeader = ({
     <React.Fragment>
       <h1 className="cf-push-left">{title}</h1>
       <div className="cf-push-right">
-        {user.userCanAssignHearingSchedule && (
-          <span className="cf-push-left" {...actionButtonsStyling}>
-            <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
-          </span>
-        )}
         {user.userCanBuildHearingSchedule && (
           <React.Fragment>
-            <span className="cf-push-left" {...actionButtonsStyling}>
+            <span className="cf-push-left">
               <Link button="secondary" to="/schedule/add_hearing_day">Add Hearing Day</Link>
             </span>
-            <span className="cf-push-left">
+            <span className="cf-push-left" {...actionButtonsStyling}>
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
           </React.Fragment>
         )}
+        {user.userCanAssignHearingSchedule && (
+          <span {...actionButtonsStyling}>
+            <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
+          </span>
+        )}
       </div>
       <div className="cf-help-divider" {...dateSearchStyles} />
       <div {...inlineFormStyling} >
-        <div {...viewButtonStyling}>
+        <div {...dateRangeStyling}>
           <DateRangeFilter
             startDateValue={startDate}
             startDateChange={onViewStartDateChange}
@@ -99,17 +103,13 @@ export const HearingScheduleHeader = ({
             onApply={setDateRangeKey}
           />
         </div>
-        <div>
+        <div {...viewButtonStyling}>
           {user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={switchListView} />}
-          <SwitchViewDropdown onSwitchView={switchListView} />
           <CSVLink data={[]} headers={[]} target="_blank" filename={fileName} >
             <Button classNames={['usa-button-secondary']}>Download current view</Button>
           </CSVLink>
         </div>
       </div>
-      {/* {user.userCanBuildHearingSchedule && (
-        <Button linkStyling onClick={() => history.push('/schedule/add_hearing_day')}>Add Hearing Day</Button>
-      )} */}
     </React.Fragment>
   );
 };

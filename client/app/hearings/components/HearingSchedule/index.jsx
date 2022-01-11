@@ -96,7 +96,9 @@ const HearingSchedule = (props) => {
           rowObjects={props.hearingSchedule?.rows || []}
           summary="hearing-schedule"
           slowReRendersAreOk
+          useHearingsApi
           fetchPaginatedData={props.fetchHearings}
+          className="hearings-schedule-table"
         />
         <Pagination {...props.pagination} updatePage={props.updatePage} />
       </div>

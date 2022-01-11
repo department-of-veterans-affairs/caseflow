@@ -1,4 +1,8 @@
 .section-hearings-list {
+  .cf-pagination-pages {
+    margin-bottom: 44px;
+  }
+
   .loading-text {
     font-style: italic;
   }
@@ -95,3 +99,7 @@
   }
 }
 
+.hearings-schedule-table {
+  margin-top: 44px;
+  margin-bottom: 33px;
+}

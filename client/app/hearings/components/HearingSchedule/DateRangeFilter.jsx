@@ -10,6 +10,10 @@ export const dateSearchStyles = css({
   marginTop: '50px'
 });
 
+export const dateLinkStyles = css({
+  marginTop: 37
+});
+
 const DateRangeFilter = ({ startDateChange, endDateChange, startDateValue, endDateValue, onApply }) => (
   <InlineForm>
     <BasicDateRangeSelector
@@ -22,7 +26,7 @@ const DateRangeFilter = ({ startDateChange, endDateChange, startDateValue, endDa
       onStartDateChange={startDateChange}
       onEndDateChange={endDateChange}
     />
-    <div {...dateSearchStyles}>
+    <div {...dateLinkStyles}>
       <Link
         name="apply"
         to="/schedule"

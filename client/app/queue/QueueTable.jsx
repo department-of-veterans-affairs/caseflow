@@ -397,6 +397,10 @@ export default class QueueTable extends React.PureComponent {
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
     this.updateCurrentPage(0);
+
+    if (this.props.fetchPaginatedData) {
+      this.updatePaginatedData(this.state, newList);
+    }
   };
 
   filterTableData = (data) => {
@@ -457,19 +461,22 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   };
 
+  updatePaginatedData = (sort, filter) => {
+    const columnToSortBy = getColumns(this.props).find((column) => sort.sortColName === column.name);
+    const paginatedSort = {
+      sortParamName: columnToSortBy?.sortParamName,
+      sortAscending: sort?.sortAscending,
+    };
+
+    return this.props.fetchPaginatedData(this.state.currentPage, paginatedSort, filter);
+  }
+
   setColumnSortOrder = (colName) => {
     const sort = { sortColName: colName, sortAscending: !this.state.sortAscending };
 
     this.setState(sort, this.requestTasks);
-
     if (this.props.fetchPaginatedData) {
-      const columnToSortBy = getColumns(this.props).find((column) => colName === column.name);
-      const paginatedSort = {
-        sortParamName: columnToSortBy.sortParamName,
-        sortAscending: sort.sortAscending,
-      };
-
-      return this.props.fetchPaginatedData(this.state.currentPage, paginatedSort, this.state.filteredByList);
+      this.updatePaginatedData(sort, this.state.filteredByList);
     }
   }
 
