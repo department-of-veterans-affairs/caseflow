@@ -732,11 +732,13 @@ describe VACOLS::CaseDocket, :all_dbs do
       expect(original_appeal.vacols_case.bfmemid).to eq(first_judge.vacols_attorney_id)
 
       expect(VACOLS::CaseDocket.priority_ready_appeal_vacols_ids).to include(cavc_remand_appeal.vacols_id)
-      expect(VACOLS::CaseDocket.original_judge_for_appeal(cavc_remand_appeal)).to eq first_judge.vacols_attorney_id
 
-      expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(original_appeal.vacols_case)).to be_falsey
-      expect(VACOLS::CaseDocket.case_is_ready_cavc_remand?(cavc_remand_appeal.vacols_case)).to be_truthy
-
+      expect(VACOLS::CaseDocket.date_21_days_ago).to eq "21-DEC-2021"
+      expect(VACOLS::CaseDocket.remand_appeals_in_affinity.count).to eq 1
+      # TODO: Match id and judge id in this, but getting hung up on:
+      # no implicit conversion of String into Integer
+      # just calling .to_hash for some reason; need to look in AM with fresh eyes.
+      # expect(VACOLS::CaseDocket.remand_appeals_in_affinity.to_hash).to eq
 
     end
   end

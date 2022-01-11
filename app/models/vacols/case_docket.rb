@@ -61,7 +61,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     on DIARYKEY = BFKEY
   "
 
-  # We might want to plug into here...
   SELECT_READY_APPEALS = "
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
@@ -78,7 +77,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
 
-  # ...or here. This is used in SELECT_PRIORITY_APPEALS below.
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
       select distinct TITRNUM, TINUM,
@@ -107,61 +105,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       )
   "
 
-  JOIN_ASSOCIATED_VLJS_BY_ORIGINAL_APPEAL = "
-      left join (
-        select BFMEMID from BRIEFF
-          inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-        -- fill in with join based on docket number, getting the one where bfac = 1
-      ) VLJ_ORIG_APPEAL
-        on VLJ_ORIG_APPEAL.SOMETHING = BRIEFF.BFKEY
-  "
-
-  FILTERED_TO_ORIGINAL_APPEAL_FOR_CAVC_REMAND = "
-    -- join brieff to folder
-    -- where brieff.bfac=1 and bfmpro == act and bfcurloc == 81
-    -- join brieff to priorloc on bfkey == lockey
-    -- on the *new* appeal, where locstto=81 and locstrcv == issuing judge's CSS ID?
-    -- I don't think there's an index on lockey
-    -- brieff.bfmemid is deciding judge
-  "
-
-  # Do we have to strftime this or will ActiveRecord do it correctly?
-  WITH_CAVC_AFFINITY = "
-    SELECT * from 'BRIEFF'
-    JOIN PRIORLOC ON PRIORLOC.LOCKEY = BRIEFF.BFKEY
-    WHERE PRIORLOC.LOCSTTO = 'CASEFLOW'
-    AND BRIEFF.BFAC = '7'
-    AND PRIORLOC.LOCDOUT > '#{21.days.ago}'
-  "
-
-  # This doesn't go here, but is to help me get the query logic right and tested for now.
-  # Oh, I think we _will_ need PriorLoc to get the date -- see #3 on
-  # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-988407919
-  def self.original_judge_for_appeal(appeal)
-    # Find the appeal with the same docket number and bfac=1
-    # (Per Jed, there should only ever be one.)
-    # Join to folder with tinum
-    # Return appeals' bfmemid
-    docket_number = appeal.docket_number # This join on a few tables seemingly
-    original_appeal = VACOLS::Case.joins(:folder)
-                                  .where(bfac: 1)
-                                  .where("folder.tinum = ?", docket_number)
-                                  .first
-    original_appeal.bfmemid
-  end
-
-  def self.case_is_ready_cavc_remand?(vacols_case)
-    vacols_case.bfac == "7" &&
-      vacols_case.bfmpro == "ACT" &&
-      vacols_case.bfcurloc == "81"
-  end
-
-  def self.case_in_cavc_affinity?(vacols_case)
-    return false unless case_is_ready_cavc_remand?(vacols_case)
-    # Look at PriorLoc.locdout for transition to caseflow
-    # Validate it's within 21 days
-  end
-
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
@@ -175,6 +118,51 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
     )
   "
+
+  SELECT_CAVC_REMAND_CASES = <<~SQL
+    SELECT brieff.bfkey,
+      BRIEFF.BFDLOOUT,
+      orig_appeal.bfmemid "VLJ"
+    FROM brieff
+
+  -- Join to Folder so we can find all appeals with the same docket number.
+  INNER JOIN folder
+    on brieff.bfkey = folder.ticknum
+
+  -- Join back to folder on the docket number so we can then join to the brieff for the original appeal.
+  INNER JOIN folder orig_folder
+    on folder.tinum = orig_folder.tinum
+
+  -- Join from the Folder to the original appeal using the docket number from the folder.
+  INNER JOIN brieff orig_appeal
+    on orig_appeal.bfkey = orig_folder.ticknum
+    and orig_appeal.bfac = 1
+
+  WHERE BRIEFF.BFAC = '7' -- CAVC remand
+    AND BRIEFF.BFMPRO = 'ACT' -- "Active" case status
+    AND BRIEFF.BFCURLOC = '81' -- Central case storage (AKA awaiting distribution)
+  SQL
+
+  def self.date_21_days_ago
+    21.days.ago.strftime("%v")
+  end
+
+  SELECT_CAVC_REMAND_CASES_IN_AFFINITY = <<~SQL
+    #{SELECT_CAVC_REMAND_CASES}
+    AND BRIEFF.BFDLOOUT > '#{date_21_days_ago}'
+  SQL
+
+
+
+  def self.remand_appeals_in_affinity(judge: nil)
+    # SELECT_CAVC_REMAND_CASES_IN_AFFINITY
+    query = SELECT_CAVC_REMAND_CASES_IN_AFFINITY
+    query << "AND BRIEFF.BFMEMID = ?" if judge
+
+    fmtd_query = sanitize_sql_array([query, judge&.vacols_attorney_id])
+
+    connection.exec_query(fmtd_query)
+  end
 
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
@@ -386,7 +374,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    # Do we want to add logic here or in the queries above?
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
