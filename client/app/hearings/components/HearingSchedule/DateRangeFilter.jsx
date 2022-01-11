@@ -27,10 +27,7 @@ const DateRangeFilter = ({ startDateChange, endDateChange, startDateValue, endDa
       onEndDateChange={endDateChange}
     />
     <div {...dateLinkStyles}>
-      <Link
-        name="apply"
-        to="/schedule"
-        onClick={onApply}>
+      <Link name="apply" to="/schedule" onClick={onApply}>
         {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
       </Link>
     </div>
@@ -40,8 +37,8 @@ const DateRangeFilter = ({ startDateChange, endDateChange, startDateValue, endDa
 DateRangeFilter.propTypes = {
   startDateChange: PropTypes.func,
   endDateChange: PropTypes.func,
-  startDateValue: PropTypes.func,
-  endDateValue: PropTypes.func,
+  startDateValue: PropTypes.string,
+  endDateValue: PropTypes.string,
   onApply: PropTypes.func,
 };
 

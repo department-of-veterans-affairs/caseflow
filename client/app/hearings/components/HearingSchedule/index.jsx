@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import { formatTableData } from 'app/hearings/utils';
 import {
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
@@ -19,75 +18,16 @@ import { HearingScheduleHeader } from 'app/hearings/components/HearingSchedule/H
 import QueueTable from 'app/queue/QueueTable';
 import Pagination from 'app/components/Pagination/Pagination';
 
-const formatState = (props) => ({
-  ...formatTableData(props),
-  dateRangeKey: `${props.startDate}->${props.endDate}`,
-  prevQueries: JSON.stringify({ sort: {}, filter: {} })
-});
-
 const HearingSchedule = (props) => {
-  const [state, setState] = useState(formatState(props));
-
   useEffect(() => {
     return props.onResetDeleteSuccessful;
   }, []);
-
-  const setDateRangeKey = () => {
-    // setState({ ...state, dateRangeKey: `${props.startDate}->${props.endDate}` });
-
-    // show first page by default by sending index of 0
-    // props.fetchHearings(0);
-  };
-
-  const onQueryUpdate = (params) => {
-    if (JSON.stringify(params) === state.prevQueries) {
-      return;
-    }
-
-    setState({ ...state, prevQueries: JSON.stringify(params) });
-
-    let queries = { sort: null, filter: null };
-
-    if (params.sort?.sortCol) {
-      const sortDirection = params.sort.ascending ? 'asc' : 'desc';
-
-      queries.sort = { column: params.sort.sortCol?.sortParamName, direction: sortDirection };
-    }
-
-    const filterKeys = Object.keys(params.filter);
-
-    if (filterKeys.length > 0) {
-      // Find column in order to translate filter[key] into queryValue,
-      // which are properties in column.filterOptions
-      // ex: translate filter[key] "Anchorage, AK" into queryValue "RO63"
-      let filters = {};
-
-      filterKeys.forEach((key) => {
-        const column = state.columns.find((col) => col.columnName === key);
-        const labels = params.filter[key];
-        const values = [];
-
-        column.filterOptions?.map((option) => {
-          if (labels.includes(option.value)) {
-            values.push(option.queryValue);
-          }
-        });
-        if (values.length > 0) {
-          filters[column.filterParamName] = values;
-        }
-      });
-      queries.filter = filters;
-    }
-
-    // Note: coordinate handling of "blank" selections for Judge and Regional Office with back-end
-    props.updateQueries(queries);
-  };
 
   const fileName = `HearingSchedule ${props.startDate}-${props.endDate}.csv`;
 
   return (
     <AppSegment filledBackground>
-      <HearingScheduleHeader {...props} fileName={fileName} setDateRangeKey={setDateRangeKey} />
+      <HearingScheduleHeader {...props} fileName={fileName} />
       <div className="section-hearings-list">
         <Pagination {...props.pagination} updatePage={props.updatePage} />
         <QueueTable

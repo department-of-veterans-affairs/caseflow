@@ -69,22 +69,22 @@ export class ListScheduleContainer extends React.Component {
     this.props.onSelectedHearingDayChange('');
   };
 
-  loadHearingSchedule = (index, sort, filter) => {
+  loadHearingSchedule = (index, sort, filter, dateRange) => {
     this.setState({
       loading: true,
     });
 
     let requestUrl = `/hearings/hearing_day.json?page=${index + 1}`;
 
-    if (this.props.startDate && this.props.endDate) {
-      if (
-        !moment(this.props.startDate, dateFormatString, true).isValid() ||
-        !moment(this.props.endDate, dateFormatString, true).isValid()
-      ) {
+    if (dateRange) {
+      const start = moment(dateRange.startDate, dateFormatString, true);
+      const end = moment(dateRange.endDate, dateFormatString, true);
+
+      if (!start.isValid() || !end.isValid() || start.isAfter(end) || end.isBefore(start)) {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${this.state.view}`;
+      requestUrl += `?start_date=${dateRange.startDate}&end_date=${dateRange.endDate}&show_all=${this.state.view}`;
     }
 
     if (sort?.sortParamName) {
@@ -110,13 +110,16 @@ export class ListScheduleContainer extends React.Component {
 
     return ApiUtil.get(requestUrl, requestOptions, ENDPOINT_NAMES.HEARINGS_SCHEDULE).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
+      const startDate = dateRange?.startDate || resp.startDate;
+      const endDate = dateRange?.endDate || resp.endDate;
 
-      this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
-      this.props.onViewEndDateChange(formatDateStr(resp.endDate, dateFormatString, dateFormatString));
+      this.props.onViewStartDateChange(formatDateStr(startDate, dateFormatString, dateFormatString));
+      this.props.onViewEndDateChange(formatDateStr(endDate, dateFormatString, dateFormatString));
       this.setState({
         sort,
         filter,
-        schedule: formatTableData({ ...this.props, ...resp }),
+        dateRange,
+        schedule: formatTableData({ ...resp, ...this.props }),
         loaded: true,
         loading: false,
         pagination: {
@@ -173,10 +176,14 @@ export class ListScheduleContainer extends React.Component {
         <QueueCaseSearchBar />
         <HearingScheduleAlerts {...this.props} />
         <HearingSchedule
+          setDateRange={() => this.loadHearingSchedule(0, this.state.sort, this.state.filter, {
+            startDate: this.props.startDate,
+            endDate: this.props.endDate,
+          })}
           startDate={this.props.startDate}
           endDate={this.props.endDate}
           pagination={this.state.pagination}
-          updatePage={(index) => this.loadHearingSchedule(index, this.state.sort, this.state.filter)}
+          updatePage={(index) => this.loadHearingSchedule(index, this.state.sort, this.state.filter, this.state.dateRange)}
           loaded={this.state.loaded}
           fetching={this.state.loading}
           hearingSchedule={this.state.schedule}

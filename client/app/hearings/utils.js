@@ -1164,8 +1164,8 @@ export const formatTableData = ({ hearings, user, filterOptions }) => {
 
           col.filterOptions.push({
             value: option,
-            displayText: `${option} (${values.count})`,
-            queryValue: values.queryValue
+            displayText: `${option} (${values?.count})`,
+            queryValue: values?.queryValue
           });
         });
       }

@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { CSVLink } from 'react-csv';
 
 import COPY from '../../../../COPY.json';
 import { LIST_SCHEDULE_VIEWS } from 'app/hearings/constants';
 import DateRangeFilter, { dateSearchStyles } from 'app/hearings/components/HearingSchedule/DateRangeFilter';
 import { SwitchViewDropdown } from 'app/hearings/components/HearingSchedule/SwitchView';
-import Button from 'app/components/Button';
+import { CSVButton } from 'app/hearings/components/HearingSchedule/CSVLink';
 
 const inlineFormStyling = css({
   marginBottom: 44,
@@ -59,7 +58,7 @@ export const HearingScheduleHeader = ({
   onViewStartDateChange,
   endDate,
   onViewEndDateChange,
-  setDateRangeKey,
+  setDateRange,
   fileName
 }) => {
   let title = COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
@@ -100,14 +99,15 @@ export const HearingScheduleHeader = ({
             startDateChange={onViewStartDateChange}
             endDateValue={endDate}
             endDateChange={onViewEndDateChange}
-            onApply={setDateRangeKey}
+            onApply={setDateRange}
           />
         </div>
         <div {...viewButtonStyling}>
           {user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={switchListView} />}
-          <CSVLink data={[]} headers={[]} target="_blank" filename={fileName} >
+          <CSVButton view={view} startDate={startDate} endDate={endDate} filename={fileName} />
+          {/* <CSVLink data={[]} headers={[]} target="_blank"  >
             <Button classNames={['usa-button-secondary']}>Download current view</Button>
-          </CSVLink>
+          </CSVLink> */}
         </div>
       </div>
     </React.Fragment>
@@ -123,5 +123,5 @@ HearingScheduleHeader.propTypes = {
   onViewStartDateChange: PropTypes.func,
   endDate: PropTypes.string,
   onViewEndDateChange: PropTypes.func,
-  setDateRangeKey: PropTypes.func
+  setDateRange: PropTypes.func
 };
