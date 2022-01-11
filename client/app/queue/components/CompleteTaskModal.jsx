@@ -123,6 +123,7 @@ const sendToBoardOpts = [
 ];
 
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
+
   const taskConfiguration = taskActionData(props);
 
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
@@ -132,6 +133,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
+      {programOfficeInstructions && <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
       {programOfficeInstructions.map((text) => (
         <React.Fragment>
           <div>
@@ -142,6 +144,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
+          <hr style= {{ marginBottom: '1.5em' }} />
           <RadioField
             name="sendToBoardIntakeOptions"
             id="sendToBoardIntakeOptions"
