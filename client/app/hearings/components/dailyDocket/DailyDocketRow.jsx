@@ -367,7 +367,7 @@ class DailyDocketRow extends React.Component {
           cancelUpdate={this.cancelUpdate}
           saveHearing={this.saveThenUpdateDisposition}
           openDispositionModal={openDispositionModal}
-          readOnly={readOnly || (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted)}
+          readOnly={readOnly}
         />
         {user.userHasHearingPrepRole && this.isAmaHearing() && <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
