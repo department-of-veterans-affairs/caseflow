@@ -378,9 +378,17 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
+  def any_or_not_genpop?(genpop)
+    (genpop == "any" || genpop == "not_genpop") ? 1 : 0
+  end
+
+  def any_or_only_genpop?(genpop)
+    (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+  end
+
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    remand_appeals_tied_to_other_judges = VACOLS::CaseDocket.
-      remand_appeals_in_affinity_for_other_judges(judge: judge)
+    remand_appeals_tied_to_other_judges = VACOLS::CaseDocket
+      .remand_appeals_in_affinity_for_other_judges(judge: judge)
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
@@ -389,12 +397,11 @@ class VACOLS::CaseDocket < VACOLS::Record
       AND (1 = ? AND bfkey NOT IN (?))
     SQL
 
-
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
-                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                      any_or_not_genpop?(genpop),
+                                      any_or_only_genpop?(genpop),
                                       limit,
                                       limit.nil? ? 1 : 0,
                                       remand_appeals_tied_to_other_judges.any? ? 1 : 0,
