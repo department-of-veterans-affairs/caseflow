@@ -665,8 +665,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-   context "caseflow-2669" do
-    let(:vbms_id) { 12345 }
+  context "caseflow-2669" do
+    let(:vbms_id) { 12_345 }
     let(:docket_number) { "2468" }
     let(:first_judge) { create(:user, :with_vacols_judge_record) }
     let(:first_judge_id) { first_judge.vacols_attorney_id }

@@ -143,18 +143,18 @@ class VACOLS::CaseDocket < VACOLS::Record
       AND BRIEFF.BFCURLOC = '81' -- Central case storage (AKA awaiting distribution)
   SQL
 
-  SELECT_CAVC_REMAND_CASES_IN_AFFINITY = <<~SQL
-    #{SELECT_CAVC_REMAND_CASES}
-    AND BRIEFF.BFDLOOUT > '#{21.days.ago.strftime("%v")}'
-  SQL
+  # SELECT_CAVC_REMAND_CASES_IN_AFFINITY = <<~SQL
+  #   #{SELECT_CAVC_REMAND_CASES}
+  #   AND BRIEFF.BFDLOOUT > '#{21.days.ago.strftime("%v")}'
+  # SQL
 
   def self.remand_appeals_in_affinity
     # The total number of distributable remand cases is generally small; a few hundred.
     # Rather than running the semi-slow query for every judge, just get them all, cache them,
     # and filter them in memory for each judge.
     Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
-      query = SELECT_CAVC_REMAND_CASES_IN_AFFINITY
-      connection.exec_query(query)
+      query = "#{SELECT_CAVC_REMAND_CASES} AND brieff.bfdloout > ?"
+      connection.exec_query(sanitize_sql_array([query, 21.days.ago.strftime("%v")]))
     end
   end
 
@@ -164,7 +164,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals = []
     judge_id = judge.vacols_attorney_id
     remand_appeals_in_affinity.to_hash.each do |result|
-      appeals << result['bfkey'] if result['vlj'] != judge_id
+      appeals << result["bfkey"] if result["vlj"] != judge_id
     end
     appeals
   end
@@ -379,12 +379,16 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+    remand_appeals_tied_to_other_judges = VACOLS::CaseDocket.
+      remand_appeals_in_affinity_for_other_judges(judge: judge)
+
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
       and (rownum <= ? or 1 = ?)
-      AND bfkey NOT IN (#{VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge)})
+      AND (1 = ? AND bfkey NOT IN (?))
     SQL
+
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -392,7 +396,9 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       limit,
-                                      limit.nil? ? 1 : 0
+                                      limit.nil? ? 1 : 0,
+                                      remand_appeals_tied_to_other_judges.any? ? 1 : 0,
+                                      remand_appeals_tied_to_other_judges
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)
