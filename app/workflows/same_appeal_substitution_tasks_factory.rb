@@ -32,8 +32,25 @@ class SameAppealSubstitutionTasksFactory
     end
   end
 
+  def hearing_task_selected?
+    selected_tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.hearing).any?
+  end
+
   def evidence_submission_task_selected?
     selected_tasks.of_type(:EvidenceSubmissionWindowTask).any?
+  end
+
+  def no_tasks_selected?
+    @task_ids[:selected].empty?
+  end
+
+  def send_hearing_appeal_back_to_distribution
+    @appeal.root_task.in_progress!
+    @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).open.each(&:cancelled!)
+
+    params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
+               type: DistributionTask.name }
+    DistributionTask.create_child_task(@appeal.root_task, @created_by, params)
   end
 
   def resume_evidence_submission
@@ -46,23 +63,6 @@ class SameAppealSubstitutionTasksFactory
       task.update!(cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution)
     end
     @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).open.each(&:cancelled!)
-  end
-
-  def no_tasks_selected?
-    @task_ids[:selected].empty?
-  end
-
-  def hearing_task_selected?
-    selected_tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.hearing).any?
-  end
-
-  def send_hearing_appeal_back_to_distribution
-    @appeal.root_task.in_progress!
-    @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).open.each(&:cancelled!)
-
-    params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
-               type: DistributionTask.name }
-    DistributionTask.create_child_task(@appeal.root_task, @created_by, params)
   end
 
   private
