@@ -431,13 +431,53 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
     end
   end
 
-  describe "#selected_tasks_include_hearing_tasks?" do
+  describe "#resume_evidence_submission" do
+    let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
+    let(:selected_task_ids) { [selected_task_id] }
+    let(:task_ids) { {} }
+    # i wish there were a factory for this
+    let(:created_by) { create(:user) }
+    # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the
+    # required tasks. The veteran is later made deceased in order to mimic a substitution scenario.
+    let(:live_veteran) { create(:veteran, file_number: "12121212") }
+    let(:esw_end) { "sOMETHing nOT vaLId" }
+    let!(:task_params) { { selected_task_id.to_s => { "hold_end_date" => esw_end } } }
+    let!(:appeal) do
+      create(:appeal, :with_post_intake_tasks, :with_evidence_submission_window_task,
+             veteran_file_number: live_veteran.file_number)
+    end
+
+    subject do
+      task_ids[:selected] = selected_task_ids
+      task_ids[:cancelled] = nil
+      SameAppealSubstitutionTasksFactory.new(appeal,
+                                             task_ids,
+                                             created_by,
+                                             task_params).resume_evidence_submission
+    end
+    before do
+      OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
+      appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+      live_veteran.update!(date_of_death: 1.day.ago)
+    end
+    context "when esw_task_params['hold_end_date'] is not a valid value" do
+      it "throws an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::InvalidParameter)
+          expect(error.code).to eq 400
+          expect(error.message).to eq("Invalid parameter 'hold_end_date'")
+        end
+      end
+    end
+  end
+
+  describe "#hearing_task_selected?" do
     let(:cancelled_task_ids) { [] }
     subject do
       task_ids[:selected] = selected_task_ids
       task_ids[:cancelled] = cancelled_task_ids
       SameAppealSubstitutionTasksFactory.new(appeal, task_ids, created_by, task_params)
-        .selected_tasks_include_hearing_tasks?
+        .hearing_task_selected?
     end
 
     context "when hearing tasks are selected" do

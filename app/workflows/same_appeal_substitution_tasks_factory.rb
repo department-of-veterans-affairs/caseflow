@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# A same appeal substitution is a pending appeal substitution.
+# It means that after the appellant substitution occurs, a separate appeal is not created,
+# i.e., the appellant substitution occurs on the same appeal.
 class SameAppealSubstitutionTasksFactory
   include EvidenceSubmissionWindowTaskConcern
 
@@ -20,7 +23,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def create_tasks_for_distributed_appeal
-    if @appeal.docket_type == Constants.AMA_DOCKETS.hearing && selected_tasks_include_hearing_tasks?
+    if @appeal.hearing_docket? && hearing_task_selected?
       send_hearing_appeal_back_to_distribution
     elsif evidence_submission_task_selected?
       resume_evidence_submission
@@ -30,8 +33,7 @@ class SameAppealSubstitutionTasksFactory
   end
 
   def evidence_submission_task_selected?
-    selected_tasks = Task.where(id: @task_ids[:selected]).order(:id)
-    !selected_tasks.of_type(:EvidenceSubmissionWindowTask).empty?
+    selected_tasks.of_type(:EvidenceSubmissionWindowTask).any?
   end
 
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
@@ -41,14 +43,14 @@ class SameAppealSubstitutionTasksFactory
     parent = task.parent
     return unless parent
 
-    new_task_attributes = task
-      .attributes
-      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, ["parent_id"])
-
-    existing_new_parent = @appeal.reload.tasks.open.find { |option| option.type == parent.type }
+    existing_new_parent = @appeal.reload.tasks.open.of_type(parent.type).first
     new_parent = existing_new_parent || copy_esw_task_with_ancestors(parent)
 
     return unless new_parent
+
+    new_task_attributes = task
+      .attributes
+      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, ["parent_id"])
 
     new_task_attributes["parent_id"] = new_parent.id
     Task.create!(new_task_attributes)
@@ -62,8 +64,9 @@ class SameAppealSubstitutionTasksFactory
     end
 
     evidence_submission_hold_end_date = Time.find_zone("UTC").parse(esw_task_params["hold_end_date"])
+    fail Caseflow::Error::InvalidParameter, parameter: "hold_end_date" if evidence_submission_hold_end_date.nil?
 
-    if @appeal.docket_type == "hearing"
+    if @appeal.hearing_docket?
       new_task = copy_esw_task_with_ancestors(esw_task)
       EvidenceSubmissionWindowTask.create_timer(new_task)
     else
@@ -74,26 +77,23 @@ class SameAppealSubstitutionTasksFactory
       )
     end
 
-    decision_tasks = [:JudgeAssignTask, :AttorneyTask, :JudgeDecisionReviewTask]
-    @appeal.tasks.of_type(decision_tasks).each { |task| task.update!(cancellation_reason: "substitution") }
-    @appeal.tasks.of_type(decision_tasks).open.each(&:cancelled!)
+    @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).each do |task|
+      task.update!(cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution)
+    end
+    @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).open.each(&:cancelled!)
   end
 
   def no_tasks_selected?
     @task_ids[:selected].empty?
   end
 
-  def selected_tasks_include_hearing_tasks?
-    selected_tasks = Task.where(id: @task_ids[:selected]).order(:id)
-    task_types = [:ScheduleHearingTask, :AssignHearingDispositionTask, :ChangeHearingDispositionTask,
-                  :ScheduleHearingColocatedTask, :NoShowHearingTask]
-    !selected_tasks.of_type(task_types).empty?
+  def hearing_task_selected?
+    selected_tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.hearing).any?
   end
 
   def send_hearing_appeal_back_to_distribution
     @appeal.root_task.in_progress!
-    decision_tasks = [:JudgeAssignTask, :JudgeDecisionReviewTask, :AttorneyTask]
-    @appeal.tasks.of_type(decision_tasks).open.each(&:cancelled!)
+    @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).open.each(&:cancelled!)
 
     params = { assigned_to: Bva.singleton, appeal: @appeal, parent_id: @appeal.root_task.id,
                type: DistributionTask.name }
@@ -102,11 +102,14 @@ class SameAppealSubstitutionTasksFactory
 
   private
 
+  def selected_tasks
+    Task.where(id: @task_ids[:selected]).order(:id)
+  end
+
   def create_selected_tasks
     return if no_tasks_selected?
 
-    source_tasks = Task.where(id: @task_ids[:selected]).order(:id)
-
+    source_tasks = selected_tasks
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
     # We need to clean up existing tree if starting fresh for hearings
