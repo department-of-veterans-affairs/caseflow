@@ -907,18 +907,18 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
 
       LegacyAppeal.all.each do |la|
-        if la.location_code == judge.vacols_uniq_id && la.reassigned_to_judge_date.present?
-          task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(la.vacols_case_review.created_at)}"
+        next unless la.location_code == judge.vacols_uniq_id && la.reassigned_to_judge_date.present?
 
-          create(
-            :attorney_case_review,
-            appeal: la,
-            reviewing_judge: judge,
-            attorney: attorney,
-            task_id: task_id,
-            note: Faker::Lorem.sentence
-          )
-        end
+        task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(la.vacols_case_review.created_at)}"
+
+        create(
+          :attorney_case_review,
+          appeal: la,
+          reviewing_judge: judge,
+          attorney: attorney,
+          task_id: task_id,
+          note: Faker::Lorem.sentence
+        )
       end
     end
   end

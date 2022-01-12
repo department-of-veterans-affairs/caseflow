@@ -104,7 +104,7 @@ class WorkQueue::LegacyTaskSerializer
 
   attribute :instructions do |object|
     return nil unless object.class == JudgeLegacyDecisionReviewTask
-    
+
     [object.appeal.attorney_case_review&.note].compact
   end
 end
