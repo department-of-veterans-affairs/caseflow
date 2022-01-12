@@ -4,7 +4,7 @@
 # Factory to create tasks for a new appeal based on appeal characteristics.
 
 class InitialTasksFactory
-  include EvidenceSubmissionWindowTaskConcern
+  include TasksFactoryConcern
 
   def initialize(appeal)
     @appeal = appeal
@@ -96,7 +96,7 @@ class InitialTasksFactory
     when "DistributionTask"
       distribution_task
     when "EvidenceSubmissionWindowTask"
-      evidence_submission_window_task(@appeal, source_task, creation_params)
+      create_evidence_submission_window_task(@appeal, source_task, creation_params)
     when "InformalHearingPresentationTask"
       handle_substitution_ihp_task_and_poa
     when "ScheduleHearingTask"

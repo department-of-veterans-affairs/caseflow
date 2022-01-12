@@ -4,7 +4,7 @@
 # It means that after the appellant substitution occurs, a separate appeal is not created,
 # i.e., the appellant substitution occurs on the same appeal.
 class SameAppealSubstitutionTasksFactory
-  include EvidenceSubmissionWindowTaskConcern
+  include TasksFactoryConcern
 
   def initialize(appeal, task_ids, created_by, task_params)
     @appeal = appeal
@@ -36,46 +36,11 @@ class SameAppealSubstitutionTasksFactory
     selected_tasks.of_type(:EvidenceSubmissionWindowTask).any?
   end
 
-  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
-                                          status closed_at placed_on_hold_at].freeze
-
-  def copy_esw_task_with_ancestors(task)
-    parent = task.parent
-    return unless parent
-
-    existing_new_parent = @appeal.reload.tasks.open.of_type(parent.type).first
-    new_parent = existing_new_parent || copy_esw_task_with_ancestors(parent)
-
-    return unless new_parent
-
-    new_task_attributes = task
-      .attributes
-      .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, ["parent_id"])
-
-    new_task_attributes["parent_id"] = new_parent.id
-    Task.create!(new_task_attributes)
-  end
-
   def resume_evidence_submission
     esw_task = @appeal.tasks.of_type(:EvidenceSubmissionWindowTask).closed.order(:id).last
     esw_task_params = @task_params[esw_task.id.to_s]
-    unless esw_task_params["hold_end_date"]
-      fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{esw_task.id}"
-    end
 
-    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(esw_task_params["hold_end_date"])
-    fail Caseflow::Error::InvalidParameter, parameter: "hold_end_date" if evidence_submission_hold_end_date.nil?
-
-    if @appeal.hearing_docket?
-      new_task = copy_esw_task_with_ancestors(esw_task)
-      EvidenceSubmissionWindowTask.create_timer(new_task)
-    else
-      EvidenceSubmissionWindowTask.create!(
-        appeal: @appeal,
-        parent: distribution_task,
-        end_date: evidence_submission_hold_end_date
-      )
-    end
+    create_evidence_submission_window_task(@appeal, esw_task, esw_task_params)
 
     @appeal.tasks.of_type(Constants.TASKS_FOR_APPELLANT_SUBSTITUTION.decision).each do |task|
       task.update!(cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution)
@@ -121,6 +86,9 @@ class SameAppealSubstitutionTasksFactory
     end.flatten
   end
 
+  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
+                                          status closed_at placed_on_hold_at].freeze
+
   def copy_task(task)
     new_task_attributes = task.attributes
       .except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY)
@@ -130,7 +98,7 @@ class SameAppealSubstitutionTasksFactory
   def create_task_from(source_task, creation_params)
     case source_task.type
     when "EvidenceSubmissionWindowTask"
-      evidence_submission_window_task(@appeal, source_task, creation_params)
+      create_evidence_submission_window_task(@appeal, source_task, creation_params)
     when "ScheduleHearingTask"
       distribution_task = @appeal.tasks.open.find_by(type: :DistributionTask)
       ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
