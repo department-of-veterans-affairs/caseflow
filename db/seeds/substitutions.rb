@@ -53,9 +53,35 @@ module Seeds
       aod_parent = appeal.tasks.of_type(:AodMotionMailTask).first
       AodMotionMailTask.create!(appeal: appeal, parent: aod_parent, assigned_to: AodTeam.singleton,
                                 assigned_by: cob_user)
+      PrivacyActRequestMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      privacy_parent = appeal.tasks.of_type(:PrivacyActRequestMailTask).first
+      PrivacyActRequestMailTask.create!(appeal: appeal, parent: privacy_parent, assigned_to: PrivacyTeam.singleton,
+                                        assigned_by: cob_user)
     end
 
-    def create_cancel_tasks(appeal)
+    def create_completed_tasks_for_pending_appeal(appeal)
+      cob_user = User.find_by_css_id("BVATCOBB")
+      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
+      evidence_task.update!(status: "completed")
+      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      motion_parent = appeal.tasks.of_type(:ReconsiderationMotionMailTask).first
+      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: motion_parent,
+                                            assigned_to: LitigationSupport.singleton, assigned_by: cob_user)
+      motion_child = appeal.tasks.of_type(:ReconsiderationMotionMailTask).last
+      motion_parent.update!(status: "completed")
+      motion_child.update!(status: "completed")
+    end
+
+    def create_completed_tasks_for_dispatched_appeal(appeal)
+      cob_user = User.find_by_css_id("BVATCOBB")
+      StatusInquiryMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      status_parent = appeal.tasks.of_type(:StatusInquiryMailTask).first
+      StatusInquiryMailTask.create!(appeal: appeal, parent: status_parent, assigned_to: LitigationSupport.singleton,
+                                    assigned_by: cob_user)
+      status_child = appeal.tasks.of_type(:StatusInquiryMailTask).last
+      status_parent.update!(status: "completed")
+      status_child.update!(status: "completed")
       EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
       evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
       evidence_task.update!(status: "completed")
@@ -78,6 +104,7 @@ module Seeds
         associated_attorney: attorney
       )
       create_tasks_for_dispatched_appeals(appeal)
+      create_completed_tasks_for_dispatched_appeal(appeal)
     end
 
     def create_pending_appeal(veteran: deceased_vet, docket_type: "direct_review")
@@ -96,6 +123,7 @@ module Seeds
         associated_attorney: attorney
       )
       create_tasks_for_pending_appeals(appeal)
+      create_completed_tasks_for_pending_appeal(appeal)
     end
 
     def create_deceased_vet_and_dismissed_appeals
