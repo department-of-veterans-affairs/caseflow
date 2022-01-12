@@ -11,16 +11,12 @@ export default {
   argTypes: {
     color: { control: { type: 'color' } },
     size: { control: { type: 'number' } },
-    className: { control: { type: 'text' } },
-    title: { control: { type: 'text' } },
-    desc: { control: { type: 'text' } }
+    className: { control: { type: 'text' } }
   },
   args: {
     size: ICON_SIZES.SMALL,
     color: COLORS.GREY_DARK,
-    className: '',
-    title: 'Arrow Right Icon',
-    desc: 'This is a right arrow icon.'
+    className: ''
   }
 };
 
