@@ -70,7 +70,7 @@ export const ClaimantForm = ({
   const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
 
-  const isOrgPartyType = watchPartyType === 'organzation';
+  const isOrgPartyType = watchPartyType === 'organization';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
