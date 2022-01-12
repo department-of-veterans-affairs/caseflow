@@ -13,8 +13,8 @@ class StuckInvalidPoaReporter
         [HigherLevelReview, /^03\d$/],
         [SupplementalClaim, /^04\d$/]
       ].map { |klass, pattern| collect_jobs(klass, pattern) }
-      .flatten
-      .map { |job| generate_row(job) }
+        .flatten
+        .map { |job| generate_row(job) }
 
       CSV.generate do |csv|
         csv << [
@@ -36,10 +36,10 @@ class StuckInvalidPoaReporter
     end
 
     def generate_row(review)
-      epe = review.end_product_establishments.find { |epe| epe.reference_id.nil? }
+      unestablished = review.end_product_establishments.find { |epe| epe.reference_id.nil? }
       [
         review.veteran_file_number,
-        epe.code,
+        unestablished.code,
         review.claimant.type,
         review.claimant.participant_id,
         review.claimant.representative_name.present?
