@@ -671,6 +671,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:first_judge) { create(:user, :with_vacols_judge_record) }
     let(:first_judge_id) { first_judge.vacols_attorney_id }
 
+    let(:other_judge) { create(:user, :with_vacols_judge_record) }
+
     # We can DRY this up after we're done making tweaks
     let(:original_appeal) do
       create(:legacy_appeal, vacols_case: create(
@@ -733,13 +735,29 @@ describe VACOLS::CaseDocket, :all_dbs do
 
       expect(VACOLS::CaseDocket.priority_ready_appeal_vacols_ids).to include(cavc_remand_appeal.vacols_id)
 
-      expect(VACOLS::CaseDocket.date_21_days_ago).to eq "21-DEC-2021"
-      expect(VACOLS::CaseDocket.remand_appeals_in_affinity.count).to eq 1
-      # TODO: Match id and judge id in this, but getting hung up on:
-      # no implicit conversion of String into Integer
-      # just calling .to_hash for some reason; need to look in AM with fresh eyes.
-      # expect(VACOLS::CaseDocket.remand_appeals_in_affinity.to_hash).to eq
+      # # With no judge specified
+      # expect(VACOLS::CaseDocket.remand_appeals_in_affinity.count).to eq 1
+      # remand_appeals = VACOLS::CaseDocket.remand_appeals_in_affinity.to_hash
+      # expect(remand_appeals.first['bfkey']).to eq cavc_remand_appeal.vacols_id
+      # expect(remand_appeals.first['vlj']).to eq first_judge_id
+      #
+      # # With the judge in affinity specified
+      # remand_appeals_for_judge = VACOLS::CaseDocket.remand_appeals_in_affinity(judge: first_judge).to_hash
+      # expect(remand_appeals_for_judge.first['bfkey']).to eq cavc_remand_appeal.vacols_id
+      # expect(remand_appeals_for_judge.first['vlj']).to eq first_judge_id
+      #
+      # # With a judge with nothing in affinity specified
+      # remand_appeals_for_other_judge = VACOLS::CaseDocket.remand_appeals_in_affinity(judge: other_judge).to_hash
+      # expect(remand_appeals_for_other_judge).to eq []
 
+      # This is basically a list of cases to _exclude_ from the list, so for other_judge,
+      # it should return the case with an affinity for first_judge:
+      case_ids = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: other_judge)
+      expect(case_ids).to eq [cavc_remand_appeal.vacols_id]
+
+      # When called for first_judge, the list of exclusions should be empty:
+      case_ids = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: first_judge)
+      expect(case_ids).to eq []
     end
   end
 end

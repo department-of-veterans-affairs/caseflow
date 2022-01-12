@@ -120,48 +120,53 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_CAVC_REMAND_CASES = <<~SQL
-    SELECT brieff.bfkey,
-      BRIEFF.BFDLOOUT,
-      orig_appeal.bfmemid "VLJ"
-    FROM brieff
+      SELECT brieff.bfkey,
+        BRIEFF.BFDLOOUT,
+        orig_appeal.bfmemid "VLJ"
+      FROM brieff
 
-  -- Join to Folder so we can find all appeals with the same docket number.
-  INNER JOIN folder
-    on brieff.bfkey = folder.ticknum
+    -- Join to Folder so we can find all appeals with the same docket number.
+    INNER JOIN folder
+      on brieff.bfkey = folder.ticknum
 
-  -- Join back to folder on the docket number so we can then join to the brieff for the original appeal.
-  INNER JOIN folder orig_folder
-    on folder.tinum = orig_folder.tinum
+    -- Join back to folder on the docket number so we can then join to the brieff for the original appeal.
+    INNER JOIN folder orig_folder
+      on folder.tinum = orig_folder.tinum
 
-  -- Join from the Folder to the original appeal using the docket number from the folder.
-  INNER JOIN brieff orig_appeal
-    on orig_appeal.bfkey = orig_folder.ticknum
-    and orig_appeal.bfac = 1
+    -- Join from the Folder to the original appeal using the docket number from the folder.
+    INNER JOIN brieff orig_appeal
+      on orig_appeal.bfkey = orig_folder.ticknum
+      and orig_appeal.bfac = 1
 
-  WHERE BRIEFF.BFAC = '7' -- CAVC remand
-    AND BRIEFF.BFMPRO = 'ACT' -- "Active" case status
-    AND BRIEFF.BFCURLOC = '81' -- Central case storage (AKA awaiting distribution)
+    WHERE BRIEFF.BFAC = '7' -- CAVC remand
+      AND BRIEFF.BFMPRO = 'ACT' -- "Active" case status
+      AND BRIEFF.BFCURLOC = '81' -- Central case storage (AKA awaiting distribution)
   SQL
-
-  def self.date_21_days_ago
-    21.days.ago.strftime("%v")
-  end
 
   SELECT_CAVC_REMAND_CASES_IN_AFFINITY = <<~SQL
     #{SELECT_CAVC_REMAND_CASES}
-    AND BRIEFF.BFDLOOUT > '#{date_21_days_ago}'
+    AND BRIEFF.BFDLOOUT > '#{21.days.ago.strftime("%v")}'
   SQL
 
+  def self.remand_appeals_in_affinity
+    # The total number of distributable remand cases is generally small; a few hundred.
+    # Rather than running the semi-slow query for every judge, just get them all, cache them,
+    # and filter them in memory for each judge.
+    Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
+      query = SELECT_CAVC_REMAND_CASES_IN_AFFINITY
+      connection.exec_query(query)
+    end
+  end
 
-
-  def self.remand_appeals_in_affinity(judge: nil)
-    # SELECT_CAVC_REMAND_CASES_IN_AFFINITY
-    query = SELECT_CAVC_REMAND_CASES_IN_AFFINITY
-    query << "AND BRIEFF.BFMEMID = ?" if judge
-
-    fmtd_query = sanitize_sql_array([query, judge&.vacols_attorney_id])
-
-    connection.exec_query(fmtd_query)
+  # This returns cases that should NOT be distributed to `judge`
+  # because they have an affinity to another judge
+  def self.remand_appeals_in_affinity_for_other_judges(judge:)
+    appeals = []
+    judge_id = judge.vacols_attorney_id
+    remand_appeals_in_affinity.to_hash.each do |result|
+      appeals << result['bfkey'] if result['vlj'] != judge_id
+    end
+    appeals
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -378,6 +383,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{SELECT_PRIORITY_APPEALS}
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
       and (rownum <= ? or 1 = ?)
+      AND bfkey NOT IN (#{VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge)})
     SQL
 
     fmtd_query = sanitize_sql_array([
