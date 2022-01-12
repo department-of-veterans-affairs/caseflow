@@ -130,7 +130,7 @@ export const AddPoaPage = () => {
   const showPartyType = attorneyNotListed;
   const showAdditionalFields = watchPartyType && showPartyType;
 
-  const isOrgPartyType = watchPartyType === 'organzation';
+  const isOrgPartyType = watchPartyType === 'organization';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {

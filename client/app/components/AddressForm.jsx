@@ -89,7 +89,6 @@ AddressForm.propTypes = {
   register: PropTypes.func,
   watch: PropTypes.func,
   isOrgPartyType: PropTypes.bool
-  // setValue: PropTypes.func,
 };
 
 const CityState = styled.div`
