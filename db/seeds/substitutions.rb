@@ -31,9 +31,6 @@ module Seeds
       foia_parent_task = appeal.tasks.of_type(:FoiaRequestMailTask).first
       FoiaRequestMailTask.create!(appeal: appeal,
                                   parent: foia_parent_task, assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
-      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
-      evidence_task.update!(status: "completed")
       create(:colocated_task,
              :translation,
              appeal: appeal,
@@ -56,6 +53,12 @@ module Seeds
       aod_parent = appeal.tasks.of_type(:AodMotionMailTask).first
       AodMotionMailTask.create!(appeal: appeal, parent: aod_parent, assigned_to: AodTeam.singleton,
                                 assigned_by: cob_user)
+    end
+
+    def create_cancel_tasks(appeal)
+      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
+      evidence_task.update!(status: "completed")
     end
 
     def create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: "direct_review")

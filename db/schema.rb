@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_13_180551) do
+ActiveRecord::Schema.define(version: 2022_01_06_205609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -380,8 +380,9 @@ ActiveRecord::Schema.define(version: 2021_12_13_180551) do
     t.string "email_ro_id"
     t.string "ep_code"
     t.datetime "outcoding_date"
-    t.integer "task_id"
+    t.integer "task_id", comment: "references dispatch_tasks"
     t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_claim_establishments_on_task_id"
     t.index ["updated_at"], name: "index_claim_establishments_on_updated_at"
   end
 
@@ -490,6 +491,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_180551) do
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
+    t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
   end
 

@@ -51,6 +51,11 @@ RSpec.shared_examples "contestable issues index requests" do
       let(:claim_id) { "12345" }
       let(:rating_issue_reference_id) { "99999" }
 
+      let(:higher_level_review) do
+        create(:higher_level_review, veteran_file_number: veteran.file_number, same_office: true)
+      end
+      let(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: veteran.file_number) }
+
       let(:end_product_establishment) do
         create(
           :end_product_establishment,
@@ -227,7 +232,8 @@ RSpec.shared_examples "contestable issues index requests" do
       end
 
       it "should have titleOfActiveReview attribute" do
-        decision_review = create(:supplemental_claim, veteran_file_number: veteran.file_number)
+        decision_review = (decision_review_type == :supplemental_claim) ? higher_level_review : supplemental_claim
+
         create(
           :request_issue,
           decision_review: decision_review,

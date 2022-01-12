@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
@@ -5,8 +6,9 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 export const GreenCheckmarkIcon = (props) => {
   const { size, color, className, strokeColor } = props;
 
-  return <svg height={size} viewBox="0 0 40 40" version="1.1">
-    <g className={className} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+  return <svg height={size} viewBox="0 0 40 40" version="1.1" role="img" className={className} aria-labelledby="green-checkmark-title">
+    <title id="green-checkmark-title">Green check: Completed</title>
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g id="750-copy-12" transform="translate(-120.000000, -725.000000)">
         <g id="Group-11" transform="translate(124.000000, 729.000000)">
           <rect id="Background" stroke={strokeColor} strokeWidth="4" fill={color} x="-2" y="-2"

@@ -20,7 +20,7 @@ const VirtualHearingLink = ({
   }
 
   return (
-    <Link href={link} target={newWindow ? '_blank' : '_self'} disabled={!virtualHearing.jobCompleted}>
+    <Link href={link} target={newWindow ? '_blank' : '_self'}>
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
