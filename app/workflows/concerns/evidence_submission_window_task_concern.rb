@@ -11,7 +11,7 @@ module EvidenceSubmissionWindowTaskConcern
     # Ensure we properly handle time zone of submitted end date
     evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
 
-    if appeal.docket_type == "hearing"
+    if appeal.hearing_docket?
       excluded_attrs = %w[status closed_at placed_on_hold_at]
       new_task = source_task.copy_with_ancestors_to_stream(
         appeal,
