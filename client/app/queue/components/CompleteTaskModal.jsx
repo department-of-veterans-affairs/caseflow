@@ -292,29 +292,34 @@ class CompleteTaskModal extends React.Component {
     let formattedInstructions = instructions;
     let reviewNotes;
 
-    if (this.getTaskAssignedToType() === 'VhaProgramOffice') {
-      reviewNotes = 'Program Office';
-    } else if (this.getTaskAssignedToType() === 'VhaRegionalOffice') {
-      reviewNotes = 'VISN';
-    } else if (this.getTaskAssignedToType() === 'VhaCamo') {
-      reviewNotes = 'CAMO';
-    }
+    const previousInstructions = this.props.tasks.map((task) => {
+      if (task.assignedTo.type === 'VhaProgramOffice') {
+        reviewNotes = 'Program Office';
 
-    // should change "radio" to instead check for either the ready_for_review or vha_send_to_board_intake modal types to
-    // 1. determine which displayText to use i.e. locationTypeOpts or sendToBoardOpts
-    // 2. if instructions should be formatted
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+        reviewNotes = 'VISN';
+
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaCamo') {
+        reviewNotes = 'CAMO';
+
+        return task && task.instructions[1];
+      }
+
+      return reviewNotes = null;
+    });
+
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
-      const camoRadio = radio;
 
-      console.log('CAMO Radio =============>', camoRadio);
+      if (reviewNotes) {
+        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
+        \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
+      }
 
-      const statusText = `\n\n**Status:** ${locationLabel}\n\n`;
-      const programOfficeNotes = `\n\n**${reviewNotes} Notes:** Documents for this appeal are stored in ${location}.`;
-
-      formattedInstructions = statusText + programOfficeNotes;
       if (instructions) {
-        const instructionsDetail = `\n\n${instructions}`;
+        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
 
         formattedInstructions += instructionsDetail;
       }
