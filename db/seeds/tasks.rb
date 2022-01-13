@@ -19,6 +19,7 @@ module Seeds
       create_ama_appeals
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
+      create_attorney_case_review_for_legacy_appeals
     end
 
     private
@@ -907,7 +908,7 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
 
       LegacyAppeal.all.each do |la|
-        next unless la.location_code == judge.vacols_uniq_id && la.reassigned_to_judge_date.present?
+        next unless la.location_code == judge.vacols_uniq_id
 
         task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(la.vacols_case_review.created_at)}"
 
