@@ -1,0 +1,4 @@
+{"hearing": ["ScheduleHearingTask", "AssignHearingDispositionTask", "ChangeHearingDispositionTask", "ScheduleHearingColocatedTask", "NoShowHearingTask"],
+"decision": ["JudgeAssignTask", "AttorneyTask", "JudgeDecisionReviewTask"]}
+
+
