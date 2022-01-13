@@ -87,6 +87,7 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
       end
     end
   end
+
   context "Hearing prep deprecation" do
     let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
 

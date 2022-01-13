@@ -15,4 +15,27 @@ RSpec.feature "List Schedule for Edit HearSched", :all_dbs do
       expect(page).to_not have_content("Add Hearing Day")
     end
   end
+
+  context "Paginates with more than 20 records" do
+    it "can filter by Request Type" do
+    end
+
+    it "can filter by Regional Office" do
+    end
+
+    it "can filter by Judge" do
+    end
+
+    it "can sort by room" do
+    end
+
+    it "can sort by Date" do
+    end
+  end
+
+  context "No pagination with 20 or fewer records" do
+  end
+
+  context "Download CSV returns all dockets in range" do
+  end
 end
