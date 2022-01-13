@@ -24,6 +24,7 @@ module Seeds
       30.days.ago
     end
 
+    # :reek:FeatureEnvy
     def create_tasks_for_pending_appeals(appeal)
       colocated_user = User.find_by_css_id("BVAAABSHIRE")
       cob_user = User.find_by_css_id("BVATCOBB")
