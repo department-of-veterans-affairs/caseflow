@@ -378,11 +378,11 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
-  def any_or_not_genpop?(genpop)
+  def self.any_or_not_genpop?(genpop)
     (genpop == "any" || genpop == "not_genpop") ? 1 : 0
   end
 
-  def any_or_only_genpop?(genpop)
+  def self.any_or_only_genpop?(genpop)
     (genpop == "any" || genpop == "only_genpop") ? 1 : 0
   end
 
