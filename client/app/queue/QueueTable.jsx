@@ -785,6 +785,7 @@ HeaderRow.propTypes = FooterRow.propTypes = BodyRows.propTypes = QueueTable.prop
     onPageLoaded: PropTypes.func
   }),
   fetching: PropTypes.bool,
+  fetchPaginatedData: PropTypes.func,
 };
 
 /* eslint-enable max-lines */

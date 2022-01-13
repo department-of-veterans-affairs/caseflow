@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import BasicDateRangeSelector from 'app/components/BasicDateRangeSelector';
 import InlineForm from 'app/components/InlineForm';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import { css } from 'glamor';
 
 export const dateSearchStyles = css({

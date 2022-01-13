@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
 
 import ApiUtil from 'app/util/ApiUtil';
@@ -34,4 +35,12 @@ export const CSVButton = ({ startDate, endDate, view, headers, fileName }) => {
       <CSVLink ref={ref} filename={fileName} headers={headers} data={values} />
     </React.Fragment>
   );
+};
+
+CSVButton.propTypes = {
+  view: PropTypes.string,
+  headers: PropTypes.object,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  fileName: PropTypes.string,
 };

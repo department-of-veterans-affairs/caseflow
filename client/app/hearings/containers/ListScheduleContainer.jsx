@@ -1,7 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import HearingSchedule from 'app/hearings/components/HearingSchedule';
 import {
   onViewStartDateChange,
@@ -186,7 +185,8 @@ export class ListScheduleContainer extends React.Component {
           startDate={this.props.startDate}
           endDate={this.props.endDate}
           pagination={this.state.pagination}
-          updatePage={(index) => this.loadHearingSchedule(index, this.state.sort, this.state.filter, this.state.dateRange)}
+          updatePage={(index) =>
+            this.loadHearingSchedule(index, this.state.sort, this.state.filter, this.state.dateRange)}
           loaded={this.state.loaded}
           fetching={this.state.loading}
           hearingSchedule={this.state.schedule}

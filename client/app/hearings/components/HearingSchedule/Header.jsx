@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import { LIST_SCHEDULE_VIEWS } from 'app/hearings/constants';
 import DateRangeFilter, { dateSearchStyles } from 'app/hearings/components/HearingSchedule/DateRangeFilter';
 import { SwitchViewDropdown } from 'app/hearings/components/HearingSchedule/SwitchView';
@@ -115,7 +115,9 @@ export const HearingScheduleHeader = ({
 HearingScheduleHeader.propTypes = {
   history: PropTypes.object,
   user: PropTypes.object,
+  headers: PropTypes.object,
   view: PropTypes.string,
+  fileName: PropTypes.string,
   switchListView: PropTypes.func,
   startDate: PropTypes.string,
   onViewStartDateChange: PropTypes.func,
