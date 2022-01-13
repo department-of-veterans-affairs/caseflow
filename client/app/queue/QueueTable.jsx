@@ -236,6 +236,13 @@ export class Row extends React.PureComponent {
   }
 }
 
+Row.propTypes = {
+  footer: PropTypes.string,
+  rowObject: PropTypes.object,
+  rowId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  rowClassNames: PropTypes.func,
+};
+
 export class BodyRows extends React.PureComponent {
   Rows = (props) => props.rowObjects && props.rowObjects.map((object, rowNumber) => {
     const key = props.getKeyForRow(rowNumber, object);
@@ -378,17 +385,10 @@ export default class QueueTable extends React.PureComponent {
   defaultRowClassNames = () => '';
 
   sortRowObjects = () => {
-    const { rowObjects, useHearingsApi } = this.props;
+    const { rowObjects } = this.props;
     const { sortColName, sortAscending } = this.state;
 
     if (sortColName === null) {
-      if (useHearingsApi) {
-        this.setState({
-          sortColName: 'Date',
-          sortAscending: true
-        });
-      }
-
       return rowObjects;
     }
 
@@ -745,7 +745,7 @@ export default class QueueTable extends React.PureComponent {
   }
 }
 
-HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
+HeaderRow.propTypes = FooterRow.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.object), PropTypes.func]).isRequired,

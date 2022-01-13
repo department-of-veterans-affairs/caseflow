@@ -25,14 +25,16 @@ const HearingSchedule = (props) => {
 
   const fileName = `HearingSchedule ${props.startDate}-${props.endDate}.csv`;
 
-  console.log(props);
-
   return (
     <AppSegment filledBackground>
       <HearingScheduleHeader {...props} headers={props.hearingSchedule?.headers} fileName={fileName} />
       <div className="section-hearings-list">
         <Pagination {...props.pagination} updatePage={props.updatePage} />
         <QueueTable
+          defaultSort={{
+            sortColName: 'Date',
+            sortAscending: true
+          }}
           fetching={!props.loaded || props.fetching}
           columns={props.hearingSchedule?.columns || []}
           rowObjects={props.hearingSchedule?.rows || []}
@@ -49,6 +51,8 @@ const HearingSchedule = (props) => {
 };
 
 HearingSchedule.propTypes = {
+  pagination: PropTypes.object,
+  updatePage: PropTypes.func,
   loaded: PropTypes.bool,
   fetching: PropTypes.bool,
   endDate: PropTypes.string,
