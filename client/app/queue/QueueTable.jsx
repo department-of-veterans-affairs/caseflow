@@ -244,14 +244,6 @@ Row.propTypes = {
 };
 
 export class BodyRows extends React.PureComponent {
-  Rows = (props) => props.rowObjects && props.rowObjects.map((object, rowNumber) => {
-    const key = props.getKeyForRow(rowNumber, object);
-
-    return (
-      <Row rowObject={object} columns={props.columns} rowClassNames={props.rowClassNames} key={key} rowId={key} />
-    );
-  });
-
   loadProps = this.props.useHearingsApi ? {
     spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
     message: 'Loading the hearing schedule...'
@@ -270,7 +262,19 @@ export class BodyRows extends React.PureComponent {
               <LoadingScreen {...this.loadProps} />
             </td>
           </tr>
-        ) : <this.Rows {...this.props} />}
+        ) : this.props.rowObjects && this.props.rowObjects.map((object, rowNumber) => {
+          const key = this.props.getKeyForRow(rowNumber, object);
+
+          return (
+            <Row
+              rowObject={object}
+              columns={this.props.columns}
+              rowClassNames={this.props.rowClassNames}
+              key={key}
+              rowId={key}
+            />
+          );
+        })}
       </tbody>
     );
   }
