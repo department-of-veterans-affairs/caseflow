@@ -296,21 +296,36 @@ class CompleteTaskModal extends React.Component {
       reviewNotes = 'Program Office';
     } else if (this.getTaskAssignedToType() === 'VhaRegionalOffice') {
       reviewNotes = 'VISN';
-    } else if (this.getTaskAssignedToType() === 'CAMO') {
+    } else if (this.getTaskAssignedToType() === 'VhaCamo') {
       reviewNotes = 'CAMO';
     }
 
     // should change "radio" to instead check for either the ready_for_review or vha_send_to_board_intake modal types to
     // 1. determine which displayText to use i.e. locationTypeOpts or sendToBoardOpts
     // 2. if instructions should be formatted
-    if (radio) {
+    if (this.props.modalType === 'vha_send_to_board_intake') {
+      const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
+      const camoRadio = radio;
+
+      console.log('CAMO Radio =============>', camoRadio);
+
+      const statusText = `\n\n**Status:** ${locationLabel}\n\n`;
+      const programOfficeNotes = `\n\n**${reviewNotes} Notes:** Documents for this appeal are stored in ${location}.`;
+
+      formattedInstructions = statusText + programOfficeNotes;
+      if (instructions) {
+        const instructionsDetail = `\n\n${instructions}`;
+
+        formattedInstructions += instructionsDetail;
+      }
+    } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
-      const location = (radio === 'other') ? otherInstructions : locationLabel;
-      const docLocationText = `\n\n**${reviewNotes} Notes:**\n\n Documents for this appeal are stored in ${location}.`;
+      const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
+        locationLabel}.`;
 
       formattedInstructions = docLocationText;
       if (instructions) {
-        const instructionsDetail = `\n\n**Details:**\n\n${instructions}`;
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
 
         formattedInstructions += instructionsDetail;
       }
