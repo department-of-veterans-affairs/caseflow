@@ -378,10 +378,17 @@ export default class QueueTable extends React.PureComponent {
   defaultRowClassNames = () => '';
 
   sortRowObjects = () => {
-    const { rowObjects } = this.props;
+    const { rowObjects, useHearingsApi } = this.props;
     const { sortColName, sortAscending } = this.state;
 
     if (sortColName === null) {
+      if (useHearingsApi) {
+        this.setState({
+          sortColName: 'Date',
+          sortAscending: true
+        });
+      }
+
       return rowObjects;
     }
 

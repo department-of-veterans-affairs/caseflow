@@ -39,8 +39,11 @@ export class ListScheduleContainer extends React.Component {
     super(props);
 
     this.state = {
+      sort: {
+        sortParamName: 'sort_by_scheduled_for',
+        sortAscending: true,
+      },
       addHearingDay: props.component === 'addHearingDay',
-      prevQueries: JSON.stringify({ sort: {}, filter: {} }),
       schedule: formatTableData(props),
       modalOpen: false,
       showModalAlert: false,
@@ -84,7 +87,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl += `?start_date=${dateRange.startDate}&end_date=${dateRange.endDate}&show_all=${this.state.view}`;
+      requestUrl += `&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}&show_all=${this.state.view}`;
     }
 
     if (sort?.sortParamName) {

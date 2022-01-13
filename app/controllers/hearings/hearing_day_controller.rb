@@ -247,7 +247,12 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def set_pagination
-    @pagy, @paginated_dockets = pagy(filtered_dockets)
+    dockets = params[:query]&.include?(:sort_by_room) ? dockets_by_room : filtered_dockets
+    @pagy, @paginated_dockets = pagy(dockets)
+  end
+
+  def dockets_by_room
+    filtered_dockets.order(room: params[:query][:sort_by_room])
   end
 
   def filtered_dockets

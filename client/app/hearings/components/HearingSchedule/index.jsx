@@ -25,6 +25,8 @@ const HearingSchedule = (props) => {
 
   const fileName = `HearingSchedule ${props.startDate}-${props.endDate}.csv`;
 
+  console.log(props);
+
   return (
     <AppSegment filledBackground>
       <HearingScheduleHeader {...props} headers={props.hearingSchedule?.headers} fileName={fileName} />
