@@ -355,7 +355,7 @@ class Appeal < DecisionReview
   end
 
   # Determine if we are on a separate substitution appeal (used in serializer)
-  def substitution_appeal?
+  def separate_appeal_substitution?
     appellant_substitution && id != appellant_substitution.source_appeal.id
   end
 
