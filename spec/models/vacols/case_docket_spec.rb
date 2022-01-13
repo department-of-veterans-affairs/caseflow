@@ -627,12 +627,8 @@ describe VACOLS::CaseDocket, :all_dbs do
             let(:genpop) { "not_genpop" }
 
             it "distributes the case" do
-              #binding.pry
               expect(tied_judge_id).to eq(judge.vacols_attorney_id)
               expect(tied_judge_id).to eq(postcavc_original_case.bfmemid)
-              #expect(cavc_ready_date).to eq(2.days.ago)
-              #expect(postcavc_ready_case.bfdloout).to eq(cavc_ready_date)
-              #binding.pry
               expect(subject.count).to eq(1) # the cavc remand case
             end
           end
@@ -687,7 +683,6 @@ describe VACOLS::CaseDocket, :all_dbs do
             let(:genpop) { "only_genpop" }
 
             it "distributes the case" do
-              #binding.pry
               expect(subject.count).to eq(2) # both the cavc and aod_ready_case
             end
           end
@@ -707,8 +702,10 @@ describe VACOLS::CaseDocket, :all_dbs do
           context "when genpop is yes" do
             let(:genpop) { "only_genpop" }
 
-            it "distributes the case" do # failing
-              expect(subject.count).to eq(2) # both cavc and aod-ready cases
+            it "distributes the case" do
+              # both cavc and aod-ready cases
+              expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.collect{ |c| c['bfkey'] }).to match_array(expected_case_ids)
             end
           end
         end

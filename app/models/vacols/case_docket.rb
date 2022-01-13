@@ -153,8 +153,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     # Rather than running the semi-slow query for every judge, just get them all, cache them,
     # and filter them in memory for each judge.
     #Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
-      query = "#{SELECT_CAVC_REMAND_CASES} AND brieff.bfdloout > ?"
-      connection.exec_query(sanitize_sql_array([query, 21.days.ago.strftime("%v")]))
+      days_ago = Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+      query = "#{SELECT_CAVC_REMAND_CASES} AND brieff.bfdloout > DATE ?"
+    #binding.pry
+    # 2022-1-4, 12:00 AM
+    # "%Y-%-m-%-d, 12:00 AM"
+    # was %v
+      connection.exec_query(sanitize_sql_array([query, days_ago.strftime("%F")]))
     #end
   end
 
@@ -407,20 +412,16 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.is_tied_via_hearing(judge, genpop)
     attorney_id = judge.vacols_attorney_id
-    jfc = []
-    jfc << "(VLJ = #{attorney_id})" if any_or_not_genpop?(genpop)
-    jfc << "(VLJ is null)" if any_or_only_genpop?(genpop)
-    puts jfc.join(' or ')
-    "#{jfc.join(' or ')}"
+    fragments = []
+    fragments << "(VLJ = #{attorney_id})" if any_or_not_genpop?(genpop)
+    fragments << "(VLJ is null)" if any_or_only_genpop?(genpop)
+    "#{fragments.join(' or ')}"
   end
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    #puts "judge: #{judge.vacols_attorney_id} / #{judge.id}"
 
     remand_appeals_tied_to_other_judges = VACOLS::CaseDocket
       .remand_appeals_in_affinity_for_other_judges(judge: judge)
-
-    #binding.pry
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
@@ -428,20 +429,12 @@ class VACOLS::CaseDocket < VACOLS::Record
       and (rownum <= ? or 1 = ?)
       #{exclude_remands_something(remand_appeals_tied_to_other_judges)}
     SQL
-    #       -- where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?)) #{or_tied_to_judge(judge)}
-
-    #binding.pry
 
     fmtd_query = sanitize_sql_array([
                                       query,
-                                      # judge.vacols_attorney_id,
-                                      # any_or_not_genpop?(genpop),
-                                      # any_or_only_genpop?(genpop),
                                       limit,
                                       limit.nil? ? 1 : 0
                                     ])
-
-    #binding.pry
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
