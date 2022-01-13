@@ -81,14 +81,15 @@ describe VACOLS::CaseDocket, :all_dbs do
   end
 
   let(:postcavc_ready_case_docket_number) { "1801004" }
+  let(:cavc_ready_date) { 2.days.ago }
   let!(:postcavc_ready_case) do
     create(:case,
            :aod,
            bfd19: 1.year.ago,
            bfac: "7",
            bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 2.days.ago,
+           bfcurloc: "83", # should this be 81?
+           bfdloout: cavc_ready_date,
            folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -602,6 +603,119 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
       end
     end
+
+
+    context "when looking at cavc affinity" do
+      let(:tied_judge_id) { judge.vacols_attorney_id }
+      let!(:postcavc_original_case) do
+        create(:case,
+               :aod,
+               bfd19: 1.year.ago,
+               bfac: "1",
+               bfmpro: "HIS", # ??, seems to go along with being closed
+               bfcurloc: "99", # closed
+               bfdloout: 60.days.ago,
+               bfmemid: tied_judge_id,
+               folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "223456789S"))
+      end
+
+      context "when a cavc case is still within affinity" do
+
+        context "when tied to distribution judge" do
+          # should be distributed to current judge
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "distributes the case" do
+              #binding.pry
+              expect(tied_judge_id).to eq(judge.vacols_attorney_id)
+              expect(tied_judge_id).to eq(postcavc_original_case.bfmemid)
+              #expect(cavc_ready_date).to eq(2.days.ago)
+              #expect(postcavc_ready_case.bfdloout).to eq(cavc_ready_date)
+              #binding.pry
+              expect(subject.count).to eq(1) # the cavc remand case
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "does not distribute the case (sort of...)" do
+              # This is incidentally returning the CAVC appeal because it's AOD
+              expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.collect{|x| x['bfkey']}).to match_array(expected_case_ids)
+            end
+          end
+        end
+
+        context "when tied to a different judge" do
+          let(:tied_judge_id) { another_judge.vacols_attorney_id }
+          # should not be distributed
+
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0)
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(1) # just the (non-cavc) aod_ready_case
+            end
+          end
+        end
+      end
+
+      context "when a cavc case is outside affinity" do
+        let(:cavc_ready_date) { (Constants.DISTRIBUTION.cavc_affinity_days + 2).days.ago } # exceeds affinity
+
+        context "when it was tied to distribution judge" do
+          # should be distributed to current judge
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0) # since case is no longer tied, shouldn't come up in not_genpop
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "distributes the case" do
+              #binding.pry
+              expect(subject.count).to eq(2) # both the cavc and aod_ready_case
+            end
+          end
+        end
+
+        context "when it was tied to a different judge" do
+          let(:tied_judge_id) { another_judge.vacols_attorney_id }
+
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0)
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "distributes the case" do # failing
+              expect(subject.count).to eq(2) # both cavc and aod-ready cases
+            end
+          end
+        end
+      end
+    end
+
+
 
     context "when the case is set aside for a specialty case team" do
       let(:aod_ready_case_bfbox) { "01" }

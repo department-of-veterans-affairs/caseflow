@@ -140,7 +140,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     WHERE BRIEFF.BFAC = '7' -- CAVC remand
       AND BRIEFF.BFMPRO = 'ACT' -- "Active" case status
-      AND BRIEFF.BFCURLOC = '81' -- Central case storage (AKA awaiting distribution)
+      AND BRIEFF.BFCURLOC IN ('81', '83') -- Central case storage (AKA awaiting distribution)
   SQL
 
   # SELECT_CAVC_REMAND_CASES_IN_AFFINITY = <<~SQL
@@ -152,10 +152,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     # The total number of distributable remand cases is generally small; a few hundred.
     # Rather than running the semi-slow query for every judge, just get them all, cache them,
     # and filter them in memory for each judge.
-    Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
+    #Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
       query = "#{SELECT_CAVC_REMAND_CASES} AND brieff.bfdloout > ?"
       connection.exec_query(sanitize_sql_array([query, 21.days.ago.strftime("%v")]))
-    end
+    #end
   end
 
   # This returns cases that should NOT be distributed to `judge`
@@ -165,6 +165,15 @@ class VACOLS::CaseDocket < VACOLS::Record
     judge_id = judge.vacols_attorney_id
     remand_appeals_in_affinity.to_hash.each do |result|
       appeals << result["bfkey"] if result["vlj"] != judge_id
+    end
+    appeals
+  end
+
+  def self.remand_appeals_in_affinity_for_judge(judge:)
+    appeals = []
+    judge_id = judge.vacols_attorney_id
+    remand_appeals_in_affinity.to_hash.each do |result|
+      appeals << result["bfkey"] if result["vlj"] == judge_id
     end
     appeals
   end
@@ -379,34 +388,60 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.any_or_not_genpop?(genpop)
-    (genpop == "any" || genpop == "not_genpop") ? 1 : 0
+    (genpop == "any" || genpop == "not_genpop")# ? 1 : 0
   end
 
   def self.any_or_only_genpop?(genpop)
-    (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+    (genpop == "any" || genpop == "only_genpop")# ? 1 : 0
+  end
+
+  def self.exclude_remands_something(remand_appeals_tied_to_other_judges)
+    "AND BFKEY NOT IN (#{remand_appeals_tied_to_other_judges.join(', ')})" if remand_appeals_tied_to_other_judges.any?
+  end
+
+  def self.or_tied_via_cavc(judge, genpop)
+    return "" if genpop == "only_genpop"
+    tied_appeals = remand_appeals_in_affinity_for_judge(judge: judge)
+    "or bfkey in (#{tied_appeals.join(', ')})" if tied_appeals.any?
+  end
+
+  def self.is_tied_via_hearing(judge, genpop)
+    attorney_id = judge.vacols_attorney_id
+    jfc = []
+    jfc << "(VLJ = #{attorney_id})" if any_or_not_genpop?(genpop)
+    jfc << "(VLJ is null)" if any_or_only_genpop?(genpop)
+    puts jfc.join(' or ')
+    "#{jfc.join(' or ')}"
   end
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+    #puts "judge: #{judge.vacols_attorney_id} / #{judge.id}"
+
     remand_appeals_tied_to_other_judges = VACOLS::CaseDocket
       .remand_appeals_in_affinity_for_other_judges(judge: judge)
 
+    #binding.pry
+
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+      where #{is_tied_via_hearing(judge, genpop)} #{or_tied_via_cavc(judge, genpop)}
       and (rownum <= ? or 1 = ?)
-      AND (1 = ? AND bfkey NOT IN (?))
+      #{exclude_remands_something(remand_appeals_tied_to_other_judges)}
     SQL
+    #       -- where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?)) #{or_tied_to_judge(judge)}
+
+    #binding.pry
 
     fmtd_query = sanitize_sql_array([
                                       query,
-                                      judge.vacols_attorney_id,
-                                      any_or_not_genpop?(genpop),
-                                      any_or_only_genpop?(genpop),
+                                      # judge.vacols_attorney_id,
+                                      # any_or_not_genpop?(genpop),
+                                      # any_or_only_genpop?(genpop),
                                       limit,
-                                      limit.nil? ? 1 : 0,
-                                      remand_appeals_tied_to_other_judges.any? ? 1 : 0,
-                                      remand_appeals_tied_to_other_judges
+                                      limit.nil? ? 1 : 0
                                     ])
+
+    #binding.pry
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
