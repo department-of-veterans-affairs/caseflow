@@ -251,7 +251,7 @@ class SanitizedJsonImporter
       # Don't search using the unique index if the values are nil
       next nil if uniq_attributes.compact.blank?
 
-      klass.find_by(uniq_attributes)
+      klass.unscoped.find_by(uniq_attributes)
     end.compact.uniq
 
     return nil if found_records.blank?

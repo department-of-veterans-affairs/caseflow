@@ -131,8 +131,8 @@ jobs:
         id: compare_docs
         env:
           WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
-          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
-          WIKI_COMMIT_USER_NAME: 'yoomlam'
+          WIKI_COMMIT_USER_EMAIL: 'Quillman_Samantha@bah.com'
+          WIKI_COMMIT_USER_NAME: 'samantha-quillman'
         run: |
           cd main-gh-pages_checkout
 
@@ -168,7 +168,7 @@ jobs:
           title: "GH Action: update DB documentation"
           body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
           labels: "Type: Documentation"
-          reviewers: yoomlam
+          reviewers: samantha-quillman
           assignees: ${{ github.event.commits[0].committer.username }}
       - name: PR info
         if: steps.create_pr.outcome == 'success'
