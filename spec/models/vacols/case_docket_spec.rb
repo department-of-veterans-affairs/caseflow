@@ -626,8 +626,7 @@ describe VACOLS::CaseDocket, :all_dbs do
             it "distributes the case to the current judge" do
               expect(tied_judge_id).to eq(judge.vacols_attorney_id)
               expect(tied_judge_id).to eq(postcavc_original_case.bfmemid)
-              expect(subject.count).to eq(1)
-              expect(subject.first["bfkey"]).to eq postcavc_ready_case.bfkey
+              expect(subject.map { |x| x["bfkey"] }).to match_array([postcavc_ready_case.bfkey])
             end
           end
 
@@ -637,7 +636,7 @@ describe VACOLS::CaseDocket, :all_dbs do
             it "does not distribute the case (sort of...)" do
               # This is incidentally returning the CAVC appeal because it's AOD
               expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
-              expect(subject.collect { |x| x["bfkey"] }).to match_array(expected_case_ids)
+              expect(subject.map { |x| x["bfkey"] }).to match_array(expected_case_ids)
             end
           end
         end
@@ -658,7 +657,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
             it "does not distribute the case" do
               # just the (non-cavc) aod_ready_case
-              expect(subject.count).to eq(1)
+              expect(subject.map { |x| x["bfkey"] }).to match_array([aod_ready_case.bfkey])
             end
           end
         end
@@ -682,7 +681,8 @@ describe VACOLS::CaseDocket, :all_dbs do
 
             it "distributes the case" do
               # both the cavc and aod_ready_case
-              expect(subject.count).to eq(2)
+              expected_cases = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.map { |x| x["bfkey"] }).to match_array(expected_cases)
             end
           end
         end
@@ -704,7 +704,7 @@ describe VACOLS::CaseDocket, :all_dbs do
             it "distributes the case" do
               # both cavc and aod-ready cases
               expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
-              expect(subject.collect { |c| c["bfkey"] }).to match_array(expected_case_ids)
+              expect(subject.map { |c| c["bfkey"] }).to match_array(expected_case_ids)
             end
           end
         end
@@ -770,56 +770,6 @@ describe VACOLS::CaseDocket, :all_dbs do
     it "sets the case location to 'CASEFLOW'" do
       VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
-  end
-
-  context "caseflow-2669" do
-    let(:vbms_id) { 12_345 }
-    let(:docket_number) { "2468" }
-    let(:first_judge) { create(:user, :with_vacols_judge_record) }
-    let(:first_judge_id) { first_judge.vacols_attorney_id }
-
-    let(:other_judge) { create(:user, :with_vacols_judge_record) }
-
-    # We can DRY this up after we're done making tweaks
-    let(:original_appeal) do
-      create(:legacy_appeal, vacols_case: create(
-        :case,
-        :assigned,
-        :type_original,
-        :status_complete,
-        bfcorlid: vbms_id,
-        bfkey: "7654321",
-        # Per https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-1001572022
-        # bfmemid is the deciding judge.
-        # This maps to VACOLS::Staff's sattyid
-        bfmemid: first_judge_id,
-        docket_number: docket_number
-      ))
-    end
-
-    let(:post_remand_appeal) do
-      create(:legacy_appeal, vacols_case: create(
-        :case,
-        :assigned,
-        :type_post_remand,
-        :status_complete,
-        bfcorlid: vbms_id,
-        bfkey: "7654322",
-        docket_number: docket_number
-      ))
-    end
-
-    let(:cavc_remand_appeal) do
-      create(:legacy_appeal, vacols_case: create(
-        :case,
-        :assigned,
-        :type_cavc_remand,
-        :ready_for_distribution,
-        bfcorlid: vbms_id,
-        bfkey: "7654323",
-        docket_number: docket_number
-      ))
     end
   end
 end

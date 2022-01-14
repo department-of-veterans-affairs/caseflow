@@ -385,6 +385,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.exclude_remands_tied_to_other_judges(judge)
     appeals_to_exclude = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: judge)
+
     "AND BFKEY NOT IN (#{appeals_to_exclude.join(', ')})" if appeals_to_exclude.any?
   end
 
