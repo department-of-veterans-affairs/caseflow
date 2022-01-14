@@ -133,7 +133,8 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
-      {programOfficeInstructions && <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+      {programOfficeInstructions.some((i) => i) &&
+        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
       {programOfficeInstructions.map((text) => (
         <React.Fragment>
           <div>
@@ -385,6 +386,7 @@ CompleteTaskModal.propTypes = {
   modalType: PropTypes.string,
   onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
+  tasks: PropTypes.array,
   task: PropTypes.shape({
     assignedBy: PropTypes.shape({
       firstName: PropTypes.string,
