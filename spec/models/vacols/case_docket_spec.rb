@@ -604,7 +604,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
     end
 
-
     context "when looking at cavc affinity" do
       let(:tied_judge_id) { judge.vacols_attorney_id }
       let!(:postcavc_original_case) do
@@ -620,7 +619,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       context "when a cavc case is still within affinity" do
-
         context "when tied to distribution judge" do
           # should be distributed to current judge
           context "when genpop is no" do
@@ -639,7 +637,7 @@ describe VACOLS::CaseDocket, :all_dbs do
             it "does not distribute the case (sort of...)" do
               # This is incidentally returning the CAVC appeal because it's AOD
               expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
-              expect(subject.collect{|x| x['bfkey']}).to match_array(expected_case_ids)
+              expect(subject.collect { |x| x["bfkey"] }).to match_array(expected_case_ids)
             end
           end
         end
@@ -705,14 +703,12 @@ describe VACOLS::CaseDocket, :all_dbs do
             it "distributes the case" do
               # both cavc and aod-ready cases
               expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
-              expect(subject.collect{ |c| c['bfkey'] }).to match_array(expected_case_ids)
+              expect(subject.collect { |c| c["bfkey"] }).to match_array(expected_case_ids)
             end
           end
         end
       end
     end
-
-
 
     context "when the case is set aside for a specialty case team" do
       let(:aod_ready_case_bfbox) { "01" }
@@ -797,8 +793,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         # bfmemid is the deciding judge.
         # This maps to VACOLS::Staff's sattyid
         bfmemid: first_judge_id,
-        docket_number: docket_number,
-        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+        docket_number: docket_number
       ))
     end
 
@@ -810,8 +805,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         :status_complete,
         bfcorlid: vbms_id,
         bfkey: "7654322",
-        docket_number: docket_number,
-        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+        docket_number: docket_number
       ))
     end
 
@@ -823,9 +817,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         :ready_for_distribution,
         bfcorlid: vbms_id,
         bfkey: "7654323",
-        docket_number: docket_number,
-        # Do we need these case_issues? They're currently copypasta.
-        case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+        docket_number: docket_number
       ))
     end
 
