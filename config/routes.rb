@@ -366,4 +366,7 @@ Rails.application.routes.draw do
   # :nocov:
 
   get "/route_docs", to: "route_docs#index"
+
+  get "/mpi", to: "mpi#index"
+  post "/mpi/search", to: "mpi#search"
 end
