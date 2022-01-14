@@ -88,7 +88,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfd19: 1.year.ago,
            bfac: "7",
            bfmpro: "ACT",
-           bfcurloc: "83", # should this be 81?
+           bfcurloc: "83",
            bfdloout: cavc_ready_date,
            folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
@@ -611,7 +611,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :aod,
                bfd19: 1.year.ago,
                bfac: "1",
-               bfmpro: "HIS", # ??, seems to go along with being closed
+               bfmpro: "HIS", # history
                bfcurloc: "99", # closed
                bfdloout: 60.days.ago,
                bfmemid: tied_judge_id,
@@ -620,14 +620,14 @@ describe VACOLS::CaseDocket, :all_dbs do
 
       context "when a cavc case is still within affinity" do
         context "when tied to distribution judge" do
-          # should be distributed to current judge
           context "when genpop is no" do
             let(:genpop) { "not_genpop" }
 
-            it "distributes the case" do
+            it "distributes the case to the current judge" do
               expect(tied_judge_id).to eq(judge.vacols_attorney_id)
               expect(tied_judge_id).to eq(postcavc_original_case.bfmemid)
-              expect(subject.count).to eq(1) # the cavc remand case
+              expect(subject.count).to eq(1)
+              expect(subject.first["bfkey"]).to eq postcavc_ready_case.bfkey
             end
           end
 
@@ -644,7 +644,6 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         context "when tied to a different judge" do
           let(:tied_judge_id) { another_judge.vacols_attorney_id }
-          # should not be distributed
 
           context "when genpop is no" do
             let(:genpop) { "not_genpop" }
@@ -658,7 +657,8 @@ describe VACOLS::CaseDocket, :all_dbs do
             let(:genpop) { "only_genpop" }
 
             it "does not distribute the case" do
-              expect(subject.count).to eq(1) # just the (non-cavc) aod_ready_case
+              # just the (non-cavc) aod_ready_case
+              expect(subject.count).to eq(1)
             end
           end
         end
@@ -667,13 +667,13 @@ describe VACOLS::CaseDocket, :all_dbs do
       context "when a cavc case is outside affinity" do
         let(:cavc_ready_date) { (Constants.DISTRIBUTION.cavc_affinity_days + 2).days.ago } # exceeds affinity
 
-        context "when it was tied to distribution judge" do
-          # should be distributed to current judge
+        context "when it was previously tied to distribution judge" do
           context "when genpop is no" do
             let(:genpop) { "not_genpop" }
 
             it "does not distribute the case" do
-              expect(subject.count).to eq(0) # since case is no longer tied, shouldn't come up in not_genpop
+              # since case is no longer tied, shouldn't come up in not_genpop
+              expect(subject.count).to eq(0)
             end
           end
 
@@ -681,7 +681,8 @@ describe VACOLS::CaseDocket, :all_dbs do
             let(:genpop) { "only_genpop" }
 
             it "distributes the case" do
-              expect(subject.count).to eq(2) # both the cavc and aod_ready_case
+              # both the cavc and aod_ready_case
+              expect(subject.count).to eq(2)
             end
           end
         end
@@ -819,48 +820,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         bfkey: "7654323",
         docket_number: docket_number
       ))
-    end
-
-    it "loads data without error" do
-      expect(original_appeal.status).to eq "Complete"
-      expect(post_remand_appeal.status).to eq "Complete"
-      expect(cavc_remand_appeal.status).to eq "Active"
-
-      [original_appeal, post_remand_appeal, cavc_remand_appeal].each do |appeal|
-        expect(appeal.docket_number).to eq docket_number
-        # This also implicitly tests that a folder is created, but this is the same thing as above
-        expect(appeal.vacols_case.folder.tinum).to eq docket_number
-      end
-
-      # This isn't a useful test because it's literally what we set, but it exists
-      # to illustrate the less-than-intuitive relationship:
-      expect(original_appeal.vacols_case.bfmemid).to eq(first_judge.vacols_attorney_id)
-
-      expect(VACOLS::CaseDocket.priority_ready_appeal_vacols_ids).to include(cavc_remand_appeal.vacols_id)
-
-      # # With no judge specified
-      # expect(VACOLS::CaseDocket.remand_appeals_in_affinity.count).to eq 1
-      # remand_appeals = VACOLS::CaseDocket.remand_appeals_in_affinity.to_hash
-      # expect(remand_appeals.first['bfkey']).to eq cavc_remand_appeal.vacols_id
-      # expect(remand_appeals.first['vlj']).to eq first_judge_id
-      #
-      # # With the judge in affinity specified
-      # remand_appeals_for_judge = VACOLS::CaseDocket.remand_appeals_in_affinity(judge: first_judge).to_hash
-      # expect(remand_appeals_for_judge.first['bfkey']).to eq cavc_remand_appeal.vacols_id
-      # expect(remand_appeals_for_judge.first['vlj']).to eq first_judge_id
-      #
-      # # With a judge with nothing in affinity specified
-      # remand_appeals_for_other_judge = VACOLS::CaseDocket.remand_appeals_in_affinity(judge: other_judge).to_hash
-      # expect(remand_appeals_for_other_judge).to eq []
-
-      # This is basically a list of cases to _exclude_ from the list, so for other_judge,
-      # it should return the case with an affinity for first_judge:
-      case_ids = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: other_judge)
-      expect(case_ids).to eq [cavc_remand_appeal.vacols_id]
-
-      # When called for first_judge, the list of exclusions should be empty:
-      case_ids = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: first_judge)
-      expect(case_ids).to eq []
     end
   end
 end

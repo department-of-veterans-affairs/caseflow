@@ -396,6 +396,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     fragments.join(" or ").to_s
   end
 
+  # :reek:ControlParameter
   def self.or_tied_via_cavc(judge, genpop)
     return "" if genpop == "only_genpop"
 
