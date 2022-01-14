@@ -908,9 +908,11 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
 
       LegacyAppeal.all.each do |la|
-        next unless la.location_code == judge.vacols_uniq_id
+        created_at = la.vacols_case_review&.created_at
 
-        task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(la.vacols_case_review.created_at)}"
+        next unless la.location_code == judge.vacols_uniq_id && created_at.present?
+
+        task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(created_at)}"
 
         create(
           :attorney_case_review,
