@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
 RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
+  include IntakeHelpers
+
   let(:camo_org) { VhaCamo.singleton }
   let(:camo_user) { create(:user, full_name: "Camo User", css_id: "CAMOUSER") }
-  let(:bva_org) { BvaIntake.singleton }
-  let(:bva_user) { create(:user) }
+  let(:bva_intake_org) { BvaIntake.singleton }
+  let!(:bva_intake_user) { create(:intake_user) }
   let!(:task) do
     create(
       :vha_document_search_task,
       :assigned,
       assigned_to: camo_org,
-      appeal: create(:appeal)
+      parent: create(:pre_docket_task,
+                     appeal: create(:appeal, :with_vha_issue),
+                     assigned_to: bva_intake_org)
     )
   end
   let!(:appeal) { Appeal.find(task.appeal_id) }
@@ -20,7 +24,7 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_irregular_appeals)
     camo_org.add_user(camo_user)
-    bva_org.add_user(bva_user)
+    bva_intake_org.add_user(bva_intake_user)
   end
 
   after do
@@ -29,7 +33,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     FeatureToggle.disable!(:vha_irregular_appeals)
   end
 
-  # Assign to BVA intake
   context "CAMO user can assign a case to BVA intake, recommending cancellation" do
     before do
       User.authenticate!(user: camo_user)
@@ -42,8 +45,8 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
         expect(page).to have_content(appeal.veteran_full_name.to_s)
       end
       step "perform send to board intake action" do
-        safe_click ".cf-select"
-        click_dropdown(text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
@@ -56,13 +59,13 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     end
   end
 
-  # Confirm in BVA queue
   context "BVA Intake user has appeal in queue" do
     before do
-      User.authenticate!(user: bva_user)
+      User.authenticate!(user: bva_intake_user)
     end
     scenario "navigate to queue and confirm appeal is there" do
-      visit bva_org.path
+      visit bva_intake_org.path
+      # binding.pry
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
   end
