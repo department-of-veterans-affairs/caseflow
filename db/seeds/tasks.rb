@@ -903,6 +903,9 @@ module Seeds
       UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals
     end
 
+    # TODO: This seed method is only creating an attorney_case_review for the first
+    # LegacyAppeal in that satisfies the condition investigate why this is happening
+    # and fix it.
     def create_attorney_case_review_for_legacy_appeals
       judge = User.find_by_css_id("BVAAABSHIRE")
       attorney = User.find_by_css_id("BVASCASPER1")

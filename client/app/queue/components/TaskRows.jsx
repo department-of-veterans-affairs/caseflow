@@ -292,7 +292,9 @@ class TaskRows extends React.PureComponent {
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
-            <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
+            <dd style={{ width: '100%' }}>
+              {this.taskInstructionsWithLineBreaks(task)}
+            </dd>
           </React.Fragment>
         )}
         <Button
