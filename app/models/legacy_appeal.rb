@@ -31,7 +31,6 @@ class LegacyAppeal < CaseflowRecord
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
-  has_one :vacols_case, class_name: "VACOLS::Case", foreign_key: :bfkey, primary_key: :vacols_id
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
     not_cancelled
