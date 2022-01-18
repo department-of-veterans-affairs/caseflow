@@ -155,6 +155,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             value={state.radio}
             options={sendToBoardOpts}
           />
+          <div style= {{ color: ' #cc0000' }}>{state.errors.sendToBoardIntakeOptions}</div>
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
             name="instructions"
@@ -164,6 +165,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           />
+          <div style= {{ color: ' #cc0000' }}>{state.errors.instructions}</div>
         </div>
       )}
     </React.Fragment>
@@ -246,7 +248,8 @@ class CompleteTaskModal extends React.Component {
     this.state = {
       instructions: '',
       radio: '',
-      otherInstructions: ''
+      otherInstructions: '',
+      errors: {}
     };
   }
 
@@ -339,8 +342,33 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions;
   };
 
+  validateForm = () => {
+    const { instructions, radio } = this.state;
+    const errors = {};
+
+    if (radio === '') {
+      errors.sendToBoardIntakeOptions = '*Please select an option.';
+    }
+
+    if (instructions === '') {
+      errors.instructions = '*Textfield cannot be blank.';
+    }
+
+    this.setState({
+      errors
+    });
+
+    if (radio === '' || instructions === '') {
+      return false;
+    }
+
+    this.submit();
+
+  }
+
   submit = () => {
     const { task, appeal } = this.props;
+
     const payload = {
       data: {
         task: {
@@ -357,6 +385,7 @@ class CompleteTaskModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
     });
+
   };
 
   render = () => {
@@ -366,7 +395,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
-        submit={this.submit}
+        submit={this.validateForm()}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
