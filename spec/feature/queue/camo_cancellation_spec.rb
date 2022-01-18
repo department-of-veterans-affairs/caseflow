@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
-  include IntakeHelpers
-
   let(:camo_org) { VhaCamo.singleton }
   let(:camo_user) { create(:user, full_name: "Camo User", css_id: "CAMOUSER") }
   let(:bva_intake_org) { BvaIntake.singleton }
@@ -50,11 +48,13 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
-        # TODO: fill out and submit
+
+        find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click
+        fill_in("Provide additional context and/or documents:", with: "This should be cancelled.")
+        find("button", class: "usa-button", text: "Submit").click
       end
       step "redirect and confirmation" do
-        # TODO: check for redirect to assign tab of team queue
-        # TODO: check for success message
+        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
       end
     end
   end
@@ -65,7 +65,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     end
     scenario "navigate to queue and confirm appeal is there" do
       visit bva_intake_org.path
-      # binding.pry
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
   end
