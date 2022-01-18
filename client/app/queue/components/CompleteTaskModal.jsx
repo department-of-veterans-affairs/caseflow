@@ -131,9 +131,18 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
     return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
   });
 
+  let filteredSendToBoardOpts = sendToBoardOpts;
+
+  if (!props.featureToggles.vha_irregular_appeals) {
+    filteredSendToBoardOpts = sendToBoardOpts.filter((opt) => {
+      return opt.displayText === COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS;
+    });
+  }
+
   return (
     <React.Fragment>
-      {programOfficeInstructions && <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+      {programOfficeInstructions.some((i) => i) &&
+        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
       {programOfficeInstructions.map((text) => (
         <React.Fragment>
           <div>
@@ -153,7 +162,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             vertical
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
-            options={sendToBoardOpts}
+            options={filteredSendToBoardOpts}
           />
           <div style= {{ color: ' #cc0000' }}>{state.errors.sendToBoardIntakeOptions}</div>
           <TextareaField
@@ -177,7 +186,8 @@ SendToBoardIntakeModal.propTypes = {
   tasks: PropTypes.array,
   setState: PropTypes.func,
   state: PropTypes.object,
-  register: PropTypes.func
+  register: PropTypes.func,
+  featureToggles: PropTypes.array
 };
 
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
@@ -414,6 +424,7 @@ CompleteTaskModal.propTypes = {
   modalType: PropTypes.string,
   onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
+  tasks: PropTypes.array,
   task: PropTypes.shape({
     assignedBy: PropTypes.shape({
       firstName: PropTypes.string,
@@ -424,14 +435,16 @@ CompleteTaskModal.propTypes = {
     }),
     label: PropTypes.string,
     taskId: PropTypes.string
-  })
+  }),
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   tasks: getAllTasksForAppeal(state, ownProps),
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
+  saveState: state.ui.saveState.savePending,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) =>
