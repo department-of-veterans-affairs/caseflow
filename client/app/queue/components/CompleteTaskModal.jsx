@@ -131,6 +131,14 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
     return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
   });
 
+  let filteredSendToBoardOpts = sendToBoardOpts;
+
+  if (!props.featureToggles.vha_irregular_appeals) {
+    filteredSendToBoardOpts = sendToBoardOpts.filter((opt) => {
+      return opt.displayText === COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS;
+    });
+  }
+
   return (
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
@@ -154,7 +162,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             vertical
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
-            options={sendToBoardOpts}
+            options={filteredSendToBoardOpts}
           />
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
@@ -176,7 +184,8 @@ SendToBoardIntakeModal.propTypes = {
   tasks: PropTypes.array,
   setState: PropTypes.func,
   state: PropTypes.object,
-  register: PropTypes.func
+  register: PropTypes.func,
+  featureToggles: PropTypes.array
 };
 
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
@@ -397,14 +406,16 @@ CompleteTaskModal.propTypes = {
     }),
     label: PropTypes.string,
     taskId: PropTypes.string
-  })
+  }),
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   tasks: getAllTasksForAppeal(state, ownProps),
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
+  saveState: state.ui.saveState.savePending,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) =>
