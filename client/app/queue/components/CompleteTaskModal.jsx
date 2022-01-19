@@ -10,12 +10,10 @@ import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constant
 import TextareaField from 'app/components/TextareaField';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
-
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-
 import QueueFlowModal from './QueueFlowModal';
 
 const validRadio = (radio) => {
