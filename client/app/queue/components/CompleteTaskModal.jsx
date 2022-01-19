@@ -18,6 +18,14 @@ import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
 
+const validRadio = (radio) => {
+  return radio?.length > 0;
+};
+
+const validInstructions = (instructions) => {
+  return instructions?.length > 0;
+};
+
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -82,6 +90,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={handleRadioChange}
             value={state.radio}
             options={locationTypeOpts}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? 'Please select an option.' : null}
           />
           {state.radio === 'other' &&
             <TextareaField
@@ -92,6 +101,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               value={state.otherInstructions}
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
+              errorMessage={props.highlightInvalid && !validInstructions(state.otherInstructions) ? 'Text field cannot be blank.' : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -101,6 +111,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? 'Text field cannot be blank.' : null}
           />
         </div>
       )}
@@ -113,6 +124,7 @@ ReadyForReviewModal.propTypes = {
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
+  highlightInvalid: PropTypes.bool
 };
 
 const sendToBoardOpts = [
@@ -163,8 +175,8 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
             options={filteredSendToBoardOpts}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? 'Please select an option.' : null}
           />
-          <div style= {{ color: ' #cc0000' }}>{state.errors.sendToBoardIntakeOptions}</div>
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
             name="instructions"
@@ -173,8 +185,8 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? 'Text field cannot be blank.' : null}
           />
-          <div style= {{ color: ' #cc0000' }}>{state.errors.instructions}</div>
         </div>
       )}
     </React.Fragment>
@@ -187,7 +199,8 @@ SendToBoardIntakeModal.propTypes = {
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
-  featureToggles: PropTypes.array
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
 };
 
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
@@ -354,25 +367,13 @@ class CompleteTaskModal extends React.Component {
 
   validateForm = () => {
     const { instructions, radio } = this.state;
-    const errors = {};
+    const modalType = this.props.modalType;
 
-    if (radio === '') {
-      errors.sendToBoardIntakeOptions = '*Please select an option.';
+    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+      return validInstructions(instructions) && validRadio(radio);
     }
 
-    if (instructions === '') {
-      errors.instructions = '*Textfield cannot be blank.';
-    }
-
-    this.setState({
-      errors
-    });
-
-    if (radio === '' || instructions === '') {
-      return false;
-    }
-
-    this.submit();
+    return true;
 
   }
 
@@ -405,7 +406,8 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
-        submit={this.validateForm()}
+        validateForm={this.validateForm}
+        submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
@@ -436,7 +438,8 @@ CompleteTaskModal.propTypes = {
     label: PropTypes.string,
     taskId: PropTypes.string
   }),
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  highlightInvalid: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -444,7 +447,8 @@ const mapStateToProps = (state, ownProps) => ({
   tasks: getAllTasksForAppeal(state, ownProps),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
-  featureToggles: state.ui.featureToggles
+  featureToggles: state.ui.featureToggles,
+  highlightInvalid: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) =>
