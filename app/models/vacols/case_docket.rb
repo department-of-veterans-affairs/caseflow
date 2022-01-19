@@ -90,6 +90,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
 
+  # BFAC:7 is how we know it's a CAVC remand. Being a remand or AOD constitutes priority.
+
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
       from (
@@ -117,6 +119,64 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
     )
   "
+
+  # This is discussed in some detail at
+  # https://github.com/department-of-veterans-affairs/dsva-vacols/issues/254#issuecomment-1010430614
+
+  SELECT_CAVC_REMAND_CASES = <<~SQL
+    SELECT brieff.bfkey,
+        BRIEFF.BFDLOOUT,
+        orig_appeal.bfmemid "VLJ"
+      FROM brieff
+
+    -- Join to Folder so we can find all appeals with the same docket number.
+    INNER JOIN folder
+      on brieff.bfkey = folder.ticknum
+
+    -- Join back to folder on the docket number so we can then join to the brieff for the original appeal.
+    INNER JOIN folder orig_folder
+      on folder.tinum = orig_folder.tinum
+
+    -- Join from the Folder to the original appeal using the docket number from the folder.
+    INNER JOIN brieff orig_appeal
+      on orig_appeal.bfkey = orig_folder.ticknum
+      and orig_appeal.bfac = 1
+
+    WHERE BRIEFF.BFAC = '7' -- CAVC remand
+      AND BRIEFF.BFMPRO = 'ACT' -- "Active" case status
+      AND BRIEFF.BFCURLOC IN ('81', '83') -- Central case storage (AKA awaiting distribution)
+  SQL
+
+  def self.remand_appeals_in_affinity
+    # The total number of distributable remand cases is generally small; a few hundred.
+    # Rather than running this semi-slow query for every judge, just get them all, cache them,
+    # and filter them in memory for each judge.
+    Rails.cache.fetch("cavc_remand_appeals_in_affinity", expires_in: 1.hour) do
+      days_ago = Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+      query = "#{SELECT_CAVC_REMAND_CASES} AND brieff.bfdloout > DATE ?"
+      connection.exec_query(sanitize_sql_array([query, days_ago.strftime("%F")]))
+    end
+  end
+
+  # This returns cases that should NOT be distributed to `judge`
+  # because they have an affinity to another judge
+  def self.remand_appeals_in_affinity_for_other_judges(judge:)
+    appeals = []
+    judge_id = judge.vacols_attorney_id
+    remand_appeals_in_affinity.to_hash.each do |result|
+      appeals << result["bfkey"] if result["vlj"] != judge_id
+    end
+    appeals
+  end
+
+  def self.remand_appeals_in_affinity_for_judge(judge:)
+    appeals = []
+    judge_id = judge.vacols_attorney_id
+    remand_appeals_in_affinity.to_hash.each do |result|
+      appeals << result["bfkey"] if result["vlj"] == judge_id
+    end
+    appeals
+  end
 
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
@@ -315,23 +375,49 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
+  def self.any_or_not_genpop?(genpop)
+    genpop == "any" || genpop == "not_genpop"
+  end
+
+  def self.any_or_only_genpop?(genpop)
+    genpop == "any" || genpop == "only_genpop"
+  end
+
+  def self.exclude_remands_tied_to_other_judges(judge)
+    appeals_to_exclude = VACOLS::CaseDocket.remand_appeals_in_affinity_for_other_judges(judge: judge)
+
+    "AND BFKEY NOT IN (#{appeals_to_exclude.join(', ')})" if appeals_to_exclude.any?
+  end
+
+  def self.tied_via_hearing(judge, genpop)
+    attorney_id = judge.vacols_attorney_id
+    fragments = []
+    fragments << "(VLJ = #{attorney_id})" if any_or_not_genpop?(genpop)
+    fragments << "(VLJ is null)" if any_or_only_genpop?(genpop)
+    fragments.join(" or ").to_s
+  end
+
+  # :reek:ControlParameter
+  def self.or_tied_via_cavc(judge, genpop)
+    return "" if genpop == "only_genpop"
+
+    tied_appeals = remand_appeals_in_affinity_for_judge(judge: judge)
+    "or bfkey in (#{tied_appeals.join(', ')})" if tied_appeals.any?
+  end
+
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+      where #{tied_via_hearing(judge, genpop)} #{or_tied_via_cavc(judge, genpop)}
       and (rownum <= ? or 1 = ?)
+      #{exclude_remands_tied_to_other_judges(judge)}
     SQL
 
-    fmtd_query = sanitize_sql_array([
-                                      query,
-                                      judge.vacols_attorney_id,
-                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                      limit,
-                                      limit.nil? ? 1 : 0
-                                    ])
-
-    distribute_appeals(fmtd_query, judge, dry_run)
+    distribute_appeals(
+      sanitize_sql_array([query, limit, limit.nil? ? 1 : 0]),
+      judge,
+      dry_run
+    )
   end
 
   # :nocov:
