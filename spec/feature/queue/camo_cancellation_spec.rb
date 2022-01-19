@@ -42,13 +42,19 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(page).to have_content(appeal.veteran_full_name.to_s)
       end
-      step "perform send to board intake action" do
+      step "trigger send to board intake modal" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
-
+      end
+      step "trigger error state" do
+        find("button", class: "usa-button", text: "Submit").click
+        expect(page).to have_content(COPY::VHA_SELECT_RADIO_ERROR)
+        expect(page).to have_content(COPY::VHA_EMPTY_INSTRUCTIONS_ERROR)
+      end
+      step "submit valid form" do
         find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click
         fill_in("Provide additional context and/or documents:", with: "This should be cancelled.")
         find("button", class: "usa-button", text: "Submit").click

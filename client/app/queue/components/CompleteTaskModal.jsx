@@ -90,7 +90,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={handleRadioChange}
             value={state.radio}
             options={locationTypeOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? 'Please select an option.' : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
           />
           {state.radio === 'other' &&
             <TextareaField
@@ -101,7 +101,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               value={state.otherInstructions}
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
-              errorMessage={props.highlightInvalid && !validInstructions(state.otherInstructions) ? 'Text field cannot be blank.' : null}
+              errorMessage={props.highlightInvalid && !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -111,7 +111,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? 'Text field cannot be blank.' : null}
+            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -175,7 +175,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
             options={filteredSendToBoardOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? 'Please select an option.' : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
           />
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
@@ -185,7 +185,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? 'Text field cannot be blank.' : null}
+            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
