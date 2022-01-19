@@ -31,7 +31,8 @@ services:
     environment:
       - SERVICES=sqs
     volumes:
-      - ./local/sqs/conf:/conf
+      - sqsconf:/conf
 
 volumes:
   postgresdata:
+  sqsconf:
