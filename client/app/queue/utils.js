@@ -250,6 +250,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+      instructions: task.attributes.instructions,
       latestInformalHearingPresentationTask: {
         requestedAt:
           task.attributes.latest_informal_hearing_presentation_task
