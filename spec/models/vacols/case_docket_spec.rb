@@ -81,6 +81,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   end
 
   let(:postcavc_ready_case_docket_number) { "1801004" }
+  let(:cavc_ready_date) { 2.days.ago }
   let!(:postcavc_ready_case) do
     create(:case,
            :aod,
@@ -88,7 +89,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfac: "7",
            bfmpro: "ACT",
            bfcurloc: "83",
-           bfdloout: 2.days.ago,
+           bfdloout: cavc_ready_date,
            folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -598,6 +599,113 @@ describe VACOLS::CaseDocket, :all_dbs do
           it "distributes the case" do
             subject
             expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
+        end
+      end
+    end
+
+    context "when looking at cavc affinity" do
+      let(:tied_judge_id) { judge.vacols_attorney_id }
+      let!(:postcavc_original_case) do
+        create(:case,
+               :aod,
+               bfd19: 1.year.ago,
+               bfac: "1",
+               bfmpro: "HIS", # history
+               bfcurloc: "99", # closed
+               bfdloout: 60.days.ago,
+               bfmemid: tied_judge_id,
+               folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "223456789S"))
+      end
+
+      context "when a cavc case is still within affinity" do
+        context "when tied to distribution judge" do
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "distributes the case to the current judge" do
+              expect(tied_judge_id).to eq(judge.vacols_attorney_id)
+              expect(tied_judge_id).to eq(postcavc_original_case.bfmemid)
+              expect(subject.map { |x| x["bfkey"] }).to match_array([postcavc_ready_case.bfkey])
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "does not distribute the case (sort of...)" do
+              # This is incidentally returning the CAVC appeal because it's AOD
+              expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.map { |x| x["bfkey"] }).to match_array(expected_case_ids)
+            end
+          end
+        end
+
+        context "when tied to a different judge" do
+          let(:tied_judge_id) { another_judge.vacols_attorney_id }
+
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0)
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "does not distribute the case" do
+              # just the (non-cavc) aod_ready_case
+              expect(subject.map { |x| x["bfkey"] }).to match_array([aod_ready_case.bfkey])
+            end
+          end
+        end
+      end
+
+      context "when a cavc case is outside affinity" do
+        let(:cavc_ready_date) { (Constants.DISTRIBUTION.cavc_affinity_days + 2).days.ago } # exceeds affinity
+
+        context "when it was previously tied to distribution judge" do
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              # since case is no longer tied, shouldn't come up in not_genpop
+              expect(subject.count).to eq(0)
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "distributes the case" do
+              # both the cavc and aod_ready_case
+              expected_cases = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.map { |x| x["bfkey"] }).to match_array(expected_cases)
+            end
+          end
+        end
+
+        context "when it was tied to a different judge" do
+          let(:tied_judge_id) { another_judge.vacols_attorney_id }
+
+          context "when genpop is no" do
+            let(:genpop) { "not_genpop" }
+
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0)
+            end
+          end
+
+          context "when genpop is yes" do
+            let(:genpop) { "only_genpop" }
+
+            it "distributes the case" do
+              # both cavc and aod-ready cases
+              expected_case_ids = [aod_ready_case.bfkey, postcavc_ready_case.bfkey]
+              expect(subject.map { |c| c["bfkey"] }).to match_array(expected_case_ids)
+            end
           end
         end
       end
