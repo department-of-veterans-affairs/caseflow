@@ -101,7 +101,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               value={state.otherInstructions}
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
-              errorMessage={props.highlightInvalid && !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -111,7 +112,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -135,9 +137,7 @@ const sendToBoardOpts = [
 ];
 
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
-
   const taskConfiguration = taskActionData(props);
-
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
     return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
@@ -185,7 +185,8 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid && !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -317,7 +318,6 @@ class CompleteTaskModal extends React.Component {
     const { instructions, radio, otherInstructions } = this.state;
     let formattedInstructions = instructions;
     let reviewNotes;
-
     const previousInstructions = this.props.tasks.map((task) => {
       if (task.assignedTo.type === 'VhaProgramOffice') {
         reviewNotes = 'Program Office';
@@ -379,7 +379,6 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
-
     const payload = {
       data: {
         task: {
