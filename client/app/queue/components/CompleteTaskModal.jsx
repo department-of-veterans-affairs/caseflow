@@ -63,7 +63,6 @@ const locationTypeOpts = [
 
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
