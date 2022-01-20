@@ -1130,7 +1130,6 @@ describe ClaimReview, :postgres do
 
     before do
       claim_review.create_issues!([rating_request_issue])
-      # claim_review.establish!
     end
 
     subject { claim_review.sync_end_product_establishments! }
