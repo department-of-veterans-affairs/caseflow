@@ -1121,18 +1121,27 @@ describe ClaimReview, :postgres do
     let!(:veteran) { create(:veteran) }
     let!(:claim_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
     let!(:end_product_establishment) do
-      create(:end_product_establishment, source: claim_review, veteran_file_number: veteran.file_number)
+      create(:end_product_establishment, :active, source: claim_review, veteran_file_number: veteran.file_number)
+    end
+
+    let!(:epe_not_established) do
+      create( :end_product_establishment, :canceled, source: claim_review, veteran_file_number: veteran.file_number)
     end
 
     before do
       claim_review.create_issues!([rating_request_issue])
-      claim_review.establish!
+      # claim_review.establish!
     end
 
-    it "syncs all EPEs" do
-      expect(claim_review.end_product_establishments.first.last_synced_at).to be_nil
-      claim_review.reload.sync_end_product_establishments!
-      expect(claim_review.end_product_establishments.first.last_synced_at).to_not be_nil
+    subject { claim_review.sync_end_product_establishments! }
+
+    it "syncs established EPEs" do
+      expect(claim_review.end_product_establishments.any?(&:last_synced_at)).to be_falsey
+
+      subject
+
+      expect(end_product_establishment.reload.last_synced_at).to_not be_nil
+      expect(epe_not_established.reload.last_synced_at).to be_nil
     end
   end
 end
