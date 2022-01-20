@@ -265,5 +265,21 @@ describe('EditCavcRemandForm', () => {
         expect(screen.getByText(/mandate date cannot be before/i)).toBeInTheDocument();
       });
     });
+
+    it('handles fix for remand/mandate dates might have incorrectly have been stored for MDR remand type', async () => {
+      // scenario indicates a bug allowed incongruous data to be stored, but code now added to account for it
+      setup({
+        existingValues: {
+          ...existingValues,
+          judgementDate: '2021-06-01',
+          mandateDate: '2021-04-01',
+          remandType: 'mdr'
+        }
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/what is the court's judgement date/i)).not.toBeInTheDocument();
+      });
+    });
   });
 });

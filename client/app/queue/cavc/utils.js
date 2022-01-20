@@ -58,10 +58,9 @@ export const generateSchema = ({ maxIssues }) => {
         required('Please specify the type of remand').
         oneOf(allRemandTypeOpts.map((opt) => opt.value)),
     }),
-    remandDatesProvided: yup.string().when('remandType', {
-      is: (val) => val !== CAVC_REMAND_SUBTYPES.mdr,
-      then: yup.string(),
-      otherwise: yup.string().required('Choose one'),
+    remandDatesProvided: yup.string().when('decisionType', {
+      is: (val) => val !== 'remand',
+      then: yup.string().required('Choose one'),
     }),
     decisionDate: yup.
       date().

@@ -38,7 +38,6 @@ export const EditCavcRemandView = () => {
       mandateDate: cavcRemand.mandate_date,
       remandType: cavcRemand.remand_subtype,
       attorney: cavcRemand.represented_by_attorney ? 'yes' : 'no',
-      remandDatesProvided: (cavcRemand.judgement_date || cavcRemand.mandate_date) ? 'yes' : 'no',
       remand_appeal_id: cavcRemand.remand_appeal_uuid,
     };
   }, [cavcRemand]);
