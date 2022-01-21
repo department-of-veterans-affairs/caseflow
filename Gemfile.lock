@@ -25,8 +25,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect-mpi.git
-  revision: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
-  ref: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  revision: 71c8f3419ae66c6a56ec18b7c2e5d6ccc8f4d5f2
+  ref: 71c8f3419ae66c6a56ec18b7c2e5d6ccc8f4d5f2
   specs:
     connect_mpi (0.1)
       httpclient

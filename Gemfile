@@ -15,7 +15,7 @@ gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
-gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
+gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "71c8f3419ae66c6a56ec18b7c2e5d6ccc8f4d5f2"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "049b3c5068fa6c6d1cae0b58654529316b84be57"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
