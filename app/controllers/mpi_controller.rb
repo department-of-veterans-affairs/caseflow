@@ -75,7 +75,7 @@ class MpiController < ApplicationController
 
     def format_address(person)
       address = person&.dig(:addr)
-      "#{value[:street_address_line]}, #{address[:city]} #{value[:state]} #{address[:postal_code]}" if address.present?
+      "#{address[:street_address_line]}, #{address[:city]} #{address[:state]} #{address[:postal_code]}" if address.present?
     end
   end
 
