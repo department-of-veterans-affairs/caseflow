@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -458,3 +459,4 @@ EditCavcRemandForm.propTypes = {
   supportedRemandTypes: PropTypes.arrayOf(PropTypes.string),
   readOnly: PropTypes.bool,
 };
+/* eslint-enable max-lines */
