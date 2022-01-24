@@ -70,6 +70,8 @@ export const ClaimantForm = ({
   const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
 
+  const isOrgPartyType = watchPartyType === 'organization';
+
   const asyncFn = useCallback(
     debounce((search, callback) => {
       getAttorneyClaimantOpts(search, onAttorneySearch).then((res) =>
@@ -216,7 +218,10 @@ export const ClaimantForm = ({
         )}
         {partyType && (
           <>
-            <AddressForm {...methods} />
+            <AddressForm
+              {...methods}
+              isOrgPartyType={isOrgPartyType}
+            />
             <FieldDiv>
               <TextField
                 validationError={emailValidationError}

@@ -32,9 +32,6 @@ module Seeds
       foia_parent_task = appeal.tasks.of_type(:FoiaRequestMailTask).first
       FoiaRequestMailTask.create!(appeal: appeal,
                                   parent: foia_parent_task, assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
-      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
-      evidence_task.update!(status: "completed")
       create(:colocated_task,
              :translation,
              appeal: appeal,
@@ -47,23 +44,34 @@ module Seeds
                                     assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
     end
 
-    def create_tasks_for_dispatched_appeals(appeal)
+    def create_completed_tasks_for_pending_appeal(appeal)
       cob_user = User.find_by_css_id("BVATCOBB")
-      CongressionalInterestMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      congressional_parent_task = appeal.tasks.of_type(:CongressionalInterestMailTask).first
-      CongressionalInterestMailTask.create!(appeal: appeal, parent: congressional_parent_task,
+      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
+      evidence_task.update!(status: "completed")
+      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      motion_parent = appeal.tasks.of_type(:ReconsiderationMotionMailTask).first
+      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: motion_parent,
                                             assigned_to: LitigationSupport.singleton, assigned_by: cob_user)
-      AodMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      aod_parent = appeal.tasks.of_type(:AodMotionMailTask).first
-      AodMotionMailTask.create!(appeal: appeal, parent: aod_parent, assigned_to: AodTeam.singleton,
-                                assigned_by: cob_user)
+      motion_child = appeal.tasks.of_type(:ReconsiderationMotionMailTask).last
+      motion_parent.update!(status: "completed")
+      motion_child.update!(status: "completed")
+    end
+
+    def create_cancelled_tasks(appeal)
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      evidence_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+      evidence_task.update!(status: "cancelled")
+      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+      hearing_task = appeal.tasks.of_type(:ScheduleHearingTask).first
+      hearing_task.update!(status: "cancelled")
     end
 
     def create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: "direct_review")
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      appeal = create(
+      create(
         :appeal,
         :with_decision_issue, :dispatched, # trait order matters to ensure correct `closed_status` on RI
         disposition: "dismissed_death",
@@ -75,14 +83,13 @@ module Seeds
         associated_judge: judge,
         associated_attorney: attorney
       )
-      create_tasks_for_dispatched_appeals(appeal)
     end
 
     def create_pending_appeal(veteran: deceased_vet, docket_type: "direct_review")
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      pending_appeal = create(
+      appeal = create(
         :appeal,
         :at_attorney_drafting,
         number_of_claimants: 1,
@@ -93,7 +100,9 @@ module Seeds
         associated_judge: judge,
         associated_attorney: attorney
       )
-      create_tasks_for_pending_appeals(pending_appeal)
+      create_tasks_for_pending_appeals(appeal)
+      create_completed_tasks_for_pending_appeal(appeal)
+      create_cancelled_tasks(appeal)
     end
 
     def create_deceased_vet_and_dismissed_appeals

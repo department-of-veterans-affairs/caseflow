@@ -1,4 +1,6 @@
+/* eslint-disable max-lines */
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -9,13 +11,19 @@ import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constant
 import TextareaField from 'app/components/TextareaField';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
-
-import { taskById, appealWithDetailSelector } from '../selectors';
+import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-
 import QueueFlowModal from './QueueFlowModal';
+
+const validRadio = (radio) => {
+  return radio?.length > 0;
+};
+
+const validInstructions = (instructions) => {
+  return instructions?.length > 0;
+};
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
@@ -56,7 +64,6 @@ const locationTypeOpts = [
 
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
@@ -81,6 +88,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={handleRadioChange}
             value={state.radio}
             options={locationTypeOpts}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
           />
           {state.radio === 'other' &&
             <TextareaField
@@ -91,6 +99,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               value={state.otherInstructions}
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -100,6 +110,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -112,6 +124,82 @@ ReadyForReviewModal.propTypes = {
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
+  highlightInvalid: PropTypes.bool
+};
+
+const sendToBoardOpts = [
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS, value: 'correct documents' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE, value: 'not appealable' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION, value: 'no vha decision' },
+  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
+];
+
+const SendToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
+  const programOfficeInstructions = props.tasks.map((task) => {
+    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
+  });
+
+  let filteredSendToBoardOpts = sendToBoardOpts;
+
+  if (!props.featureToggles.vha_irregular_appeals) {
+    filteredSendToBoardOpts = sendToBoardOpts.filter((opt) => {
+      return opt.displayText === COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS;
+    });
+  }
+
+  return (
+    <React.Fragment>
+      {programOfficeInstructions.some((i) => i) &&
+        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+      {programOfficeInstructions.map((text) => (
+        <React.Fragment>
+          <div>
+            <ReactMarkdown>{text}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+      ))}
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <hr style= {{ marginBottom: '1.5em' }} />
+          <RadioField
+            name="sendToBoardIntakeOptions"
+            id="sendToBoardIntakeOptions"
+            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL}
+            inputRef={props.register}
+            vertical
+            onChange={(value) => setState({ radio: value })}
+            value={state.radio}
+            options={filteredSendToBoardOpts}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
+          />
+          <TextareaField
+            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
+            name="instructions"
+            id="vhaSendToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+SendToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
 };
 
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
@@ -171,7 +259,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: MarkTaskCompleteModal,
+    getContent: SendToBoardIntakeModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   }
 };
@@ -182,7 +270,8 @@ class CompleteTaskModal extends React.Component {
     this.state = {
       instructions: '',
       radio: '',
-      otherInstructions: ''
+      otherInstructions: '',
+      errors: {}
     };
   }
 
@@ -226,8 +315,39 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     let formattedInstructions = instructions;
+    let reviewNotes;
+    const previousInstructions = this.props.tasks.map((task) => {
+      if (task.assignedTo.type === 'VhaProgramOffice') {
+        reviewNotes = 'Program Office';
 
-    if (radio) {
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+        reviewNotes = 'VISN';
+
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaCamo') {
+        reviewNotes = 'CAMO';
+
+        return task && task.instructions[1];
+      }
+
+      return reviewNotes = null;
+    });
+
+    if (this.props.modalType === 'vha_send_to_board_intake') {
+      const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
+
+      if (reviewNotes) {
+        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
+        \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
+      }
+
+      if (instructions) {
+        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+
+        formattedInstructions += instructionsDetail;
+      }
+    } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
@@ -242,6 +362,18 @@ class CompleteTaskModal extends React.Component {
 
     return formattedInstructions;
   };
+
+  validateForm = () => {
+    const { instructions, radio } = this.state;
+    const modalType = this.props.modalType;
+
+    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+      return validInstructions(instructions) && validRadio(radio);
+    }
+
+    return true;
+
+  }
 
   submit = () => {
     const { task, appeal } = this.props;
@@ -261,6 +393,7 @@ class CompleteTaskModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
     });
+
   };
 
   render = () => {
@@ -270,6 +403,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
+        validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
@@ -289,6 +423,7 @@ CompleteTaskModal.propTypes = {
   modalType: PropTypes.string,
   onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
+  tasks: PropTypes.array,
   task: PropTypes.shape({
     assignedBy: PropTypes.shape({
       firstName: PropTypes.string,
@@ -299,13 +434,18 @@ CompleteTaskModal.propTypes = {
     }),
     label: PropTypes.string,
     taskId: PropTypes.string
-  })
+  }),
+  featureToggles: PropTypes.object,
+  highlightInvalid: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
+  tasks: getAllTasksForAppeal(state, ownProps),
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
+  saveState: state.ui.saveState.savePending,
+  featureToggles: state.ui.featureToggles,
+  highlightInvalid: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) =>
