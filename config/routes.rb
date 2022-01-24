@@ -69,6 +69,9 @@ Rails.application.routes.draw do
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
       end
+      namespace :v2 do
+        get 'appeals', to: 'appeals#details'
+      end
     end
   end
 
