@@ -44,7 +44,6 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  # Allows overriding Legacy distributions to AMA-only teams
   def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
