@@ -337,8 +337,8 @@ class BaseHearingUpdateForm
       )
     end
 
-    hearing.representative_recipient&.unset_email_address!
     if representative_email.present?
+      hearing.representative_recipient&.unset_email_address!
       hearing.create_or_update_recipients(
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email,
@@ -346,8 +346,8 @@ class BaseHearingUpdateForm
       )
     end
 
-    hearing.judge_recipient&.unset_email_address!
     if judge_email.present?
+      hearing.judge_recipient&.unset_email_address!
       hearing.create_or_update_recipients(
         type: JudgeHearingEmailRecipient,
         email_address: judge_email,
