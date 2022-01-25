@@ -8,16 +8,16 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     case_search = request.headers["HTTP_CASE_SEARCH"]
 
     result = if docket_number?(case_search)
-        CaseSearchResultsForDocketNumber.new(
-          docket_number: case_search, user: current_user
-        ).call
-      else
-        CaseSearchResultsForVeteranFileNumber.new(
-          file_number_or_ssn: case_search, user: current_user
-        ).call
-      end
+               CaseSearchResultsForDocketNumber.new(
+                 docket_number: case_search, user: current_user
+               ).call
+             else
+               CaseSearchResultsForVeteranFileNumber.new(
+                 file_number_or_ssn: case_search, user: current_user
+               ).call
+             end
 
-      render_search_results_as_json(result)
+    render_search_results_as_json(result)
   end
 
   private
@@ -35,5 +35,4 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
-  
 end
