@@ -71,6 +71,7 @@ Rails.application.routes.draw do
       end
       namespace :v2 do
         get 'appeals', to: 'appeals#details'
+        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
       end
     end
   end

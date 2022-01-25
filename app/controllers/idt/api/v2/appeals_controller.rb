@@ -20,6 +20,15 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     render_search_results_as_json(result)
   end
 
+  def reader_appeal
+    MetricsService.record("VACOLS: Get appeal information for #{appeal_id}",
+                          name: "Reader::AppealController.show") do
+      render json: {
+        appeal: json_appeal(appeal)
+      }
+    end
+  end
+
   private
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
@@ -32,7 +41,21 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     end
   end
 
-  def docket_number?(search)
-    !search.nil? && search.match?(/\d{6}-{1}\d+$/)
+  # :reek:FeatureEnvy
+  def json_appeal(appeal)
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user })
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal)
+    end
+  end
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+  end
+  helper_method :appeal
+
+  def appeal_id
+    params[:appeal_id]
   end
 end
