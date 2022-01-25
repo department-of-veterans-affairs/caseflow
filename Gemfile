@@ -92,7 +92,6 @@ group :test, :development, :demo do
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
   gem "database_cleaner"
-  gem "debase"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
@@ -112,12 +111,10 @@ group :test, :development, :demo do
   gem "rubocop", "= 0.79", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
-  gem "ruby-debug-ide"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
-  gem "solargraph"
   gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
@@ -127,12 +124,15 @@ end
 group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
+  gem "debase"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
+  gem "ruby-debug-ide"
   gem "ruby-prof", "~> 1.4"
+  gem "solargraph"
 end
 
 group :test do
