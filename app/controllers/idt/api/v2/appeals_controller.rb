@@ -42,7 +42,17 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeals_single_document
-    render json: documents.select { |doc| doc["id"] == document_id.to_i }
+    if params[:download]
+      document = Document.find(document_id)
+      document_disposition = "attachment; filename='#{current_document[0]['type']}-#{document_id}.pdf'"
+      send_file(
+        document.serve,
+        type: "application/pdf",
+        disposition: document_disposition
+      )
+    else
+      render json: current_document
+    end
   end
 
   private
@@ -89,6 +99,10 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def document_ids
     @document_ids ||= appeal.document_fetcher.find_or_create_documents!.pluck(:id)
+  end
+
+  def current_document
+    documents.select { |doc| doc["id"] == document_id.to_i }
   end
 
   delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
