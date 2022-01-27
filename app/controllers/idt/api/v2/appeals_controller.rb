@@ -30,7 +30,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeal_documents
-    AppealView.find_by(appeal: appeal, user: current_user).update!(last_viewed_at: Time.zone.now)
+    AppealView.find_or_create_by(appeal: appeal, user: current_user).update!(last_viewed_at: Time.zone.now)
     MetricsService.record "Get appeal #{appeal_id} document data" do
       render json: {
         appealDocuments: documents,
