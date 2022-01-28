@@ -733,7 +733,7 @@ DEPENDENCIES
   moment_timezone-rails
   multiverse
   newrelic_rpm
-  nokogiri (>= 1.11.4)
+  nokogiri (>= 1.11.0.rc4)
   paper_trail (~> 10)
   parallel
   paranoia (~> 2.2)
