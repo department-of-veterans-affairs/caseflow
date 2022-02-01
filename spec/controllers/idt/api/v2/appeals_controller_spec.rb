@@ -1,3 +1,4 @@
+SingleCov.covered!
 # frozen_string_literal: true
 
 RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :controller do
@@ -480,6 +481,14 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         expect(response.status).to eq 200
         expect(response_body.size).to eq 1
         expect(response_body[0]["id"]).to eq doc_id
+      end
+
+      it "downloads a file" do
+        get :appeal_documents, params: params
+        response_body = JSON.parse(response.body)
+        doc_id = response_body["appealDocuments"][0]["id"]
+        get :appeals_single_document, params: { appeal_id: appeal.uuid, document_id: doc_id.to_s, download: true }
+        expect(response.status).to eq 200
       end
     end
   end
