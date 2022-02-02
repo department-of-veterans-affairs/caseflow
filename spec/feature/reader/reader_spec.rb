@@ -509,7 +509,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".comment-container")
     end
 
-    context "when comment box contains only whitespace characters" do
+    context "when comment box contains only whitespace characters", skip "flake" do
       scenario "save button is disabled" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         add_comment_without_clicking_save(random_whitespace_no_tab)
@@ -1073,7 +1073,7 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    context "Tags" do
+    context "Tags", skip: "flake" do
       let(:new_tag_text) { "Foo" }
 
       scenario "adding and deleting tags" do
