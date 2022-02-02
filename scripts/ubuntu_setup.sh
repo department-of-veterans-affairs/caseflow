@@ -10,7 +10,6 @@ cd "${SCRIPT_DIR}/.."
 echo -e "\n\n${C}==> Ubuntu setup${NC}\n\n"
 sudo apt-get update
 sudo apt-get install -y curl unzip wget ca-certificates gnupg lsb-release libv8-dev libaio1
-touch ~/.bash_profile
 
 # install nodejs
 echo -e "\n\n${C}==> Installing nodejs${NC}\n\n"
@@ -18,9 +17,8 @@ if which nvm > /dev/null; then
   echo "nvm is already installed. Skipping installation."
 else
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
-    echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bash_profile
-    source ~/.bash_profile
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bashrc
     source ~/.bashrc
 fi
 nvm install $(cat .nvmrc)
@@ -35,8 +33,8 @@ else
     sudo apt install -y libssl-dev libreadline-dev zlib1g-dev autoconf bison build-essential libyaml-dev libreadline-dev libncurses5-dev libffi-dev libgdbm-dev
     curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"' >> ~/.bash_profile
-    source ~/.bash_profile
+eval "$(rbenv init -)"' >> ~/.bashrc
+    source ~/.bashrc
 fi
 
 # Install yarn
@@ -44,7 +42,7 @@ echo -e "\n\n${C}==> Installing yarn${NC}\n\n"
 if which yarn > /dev/null; then
   echo "yarn is already installed. Skipping installation."
 else
-    source ~/.bash_profile
+    source ~/.bashrc
     npm install --global yarn
 fi
 
@@ -61,12 +59,12 @@ fi
 # Install PostgreSQL
 echo -e "\n\n${C}==> Installing PostgreSQL${NC}\n\n"
 sudo apt install -y postgresql-client-12 postgresql-contrib libpq-dev
-if ! grep -q POSTGRES ~/.bash_profile; then
+if ! grep -q POSTGRES ~/.bashrc; then
 	echo 'export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
-export NLS_LANG=AMERICAN_AMERICA.UTF8' >> ~/.bash_profile
-    source ~/.bash_profile
+export NLS_LANG=AMERICAN_AMERICA.UTF8' >> ~/.bashrc
+    source ~/.bashrc
 fi
 
 # Install Docker
@@ -76,13 +74,18 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 sudo usermod -aG docker $USER
-if ! grep -q HOME/.local/bin ~/.bash_profile; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile
-    source ~/.bash_profile
+if ! grep -q HOME/.local/bin ~/.bashrc; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
 fi 
-if ! grep -q DOCKER ~/.bash_profile; then
-    echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bash_profile
-    source ~/.bash_profile
+if ! grep -q "Start Docker daemon automatically" ~/.bashrc; then
+    echo '# Start Docker daemon automatically when logging in if not running.' >> ~/.bashrc
+    echo 'RUNNING=`ps aux | grep dockerd | grep -v grep`' >> ~/.bashrc
+    echo 'if [ -z "$RUNNING" ]; then' >> ~/.bashrc
+    echo '    sudo dockerd > /dev/null 2>&1 &' >> ~/.bashrc
+    echo '    disown' >> ~/.bashrc
+    echo 'fi' >> ~/.bashrc
+    source ~/.bashrc
 fi
 
 # Install chromedriver
@@ -135,7 +138,7 @@ those will need to be done before running the app.
 "
 else 
     # Install oracle instantclient
-    if ! grep -q instantclient ~/.bash_profile; then
+    if ! grep -q instantclient ~/.bashrc; then
         echo -e "\n\n${C}==> Installing oracle instantclient${NC}\n\n"
         sudo mkdir /opt/oracle
         sudo chown $USER /opt/oracle
@@ -144,8 +147,8 @@ else
         unzip local/vacols/build_facols/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /opt/oracle
         ln -s /opt/oracle/instantclient_12_2/libclntsh.so.12.1 /opt/oracle/instantclient_12_2/libclntsh.so
         echo 'export PATH="/opt/oracle/instantclient_12_2:$PATH"
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2' >> ~/.bash_profile
-        source ~/.bash_profile
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2' >> ~/.bashrc
+        source ~/.bashrc
     fi
 
     # Setup FACOLS
