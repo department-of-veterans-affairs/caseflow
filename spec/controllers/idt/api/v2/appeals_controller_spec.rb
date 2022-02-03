@@ -4,7 +4,11 @@ SingleCov.covered!
 RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :controller do
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand, bfregoff: "RO13", folder: create(:folder, tinum: "13 11-265"))) }
+    let(:appeal) do
+      create(:legacy_appeal,
+             vacols_case: create(:case, :aod, :type_cavc_remand, bfregoff: "RO13",
+                                                                 folder: create(:folder, tinum: "13 11-265")))
+    end
     let(:options) { { format: :json } }
     let(:veteran_id) { appeal.sanitized_vbms_id }
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
@@ -193,7 +197,11 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
 
   describe "GET appeals/:appeal_id" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand, bfregoff: "RO13", folder: create(:folder, tinum: "13 11-265"))) }
+    let(:appeal) do
+      create(:legacy_appeal,
+             vacols_case: create(:case, :aod, :type_cavc_remand, bfregoff: "RO13",
+                                                                 folder: create(:folder, tinum: "13 11-265")))
+    end
     let(:options) { { format: :json } }
     let(:veteran_id) { appeal.sanitized_vbms_id }
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }

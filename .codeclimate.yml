@@ -53,6 +53,7 @@ plugins:
     exclude_patterns:
     - 'db/migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
+    - 'spec/controllers/idt/api/v2/appeals_controller.rb'
   eslint:
     enabled: true
   fixme:
