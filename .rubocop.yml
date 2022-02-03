@@ -14,6 +14,7 @@ AllCops:
     - './.simplecov'
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
+    - 'app/controllers/idt/api/v2/appeal_controller.rb'
   TargetRailsVersion: 5.1
   TargetRubyVersion: 2.5
   UseCache: true
