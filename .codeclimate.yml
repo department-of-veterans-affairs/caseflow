@@ -54,6 +54,7 @@ plugins:
     - 'db/migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
     - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
+    - 'spec/controllers/idt/api/appeals_controller_spec.rb'
   eslint:
     enabled: true
   fixme:
