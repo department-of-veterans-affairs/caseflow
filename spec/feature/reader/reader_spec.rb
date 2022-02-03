@@ -1264,7 +1264,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(search_input.value).to eq("")
     end
 
-    scenario "Navigate Search Results with Keyboard" do
+    scenario "Navigate Search Results with Keyboard", skip: true do
       open_search_bar
 
       internal_text = find("#search-internal-text")
