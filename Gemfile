@@ -124,12 +124,15 @@ end
 group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
+  gem "debase"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
+  gem "ruby-debug-ide"
   gem "ruby-prof", "~> 1.4"
+  gem "solargraph"
 end
 
 group :test do
