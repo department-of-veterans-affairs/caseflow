@@ -69,6 +69,12 @@ Rails.application.routes.draw do
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
       end
+      namespace :v2 do
+        get 'appeals', to: 'appeals#details'
+        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
+        get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
+        get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+      end
     end
   end
 
