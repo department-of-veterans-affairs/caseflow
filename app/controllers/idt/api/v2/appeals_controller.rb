@@ -4,6 +4,8 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  skip_before_action :verify_authenticity_token, only: [:outcode]
+
   def details
     case_search = request.headers["HTTP_CASE_SEARCH"]
 
@@ -18,6 +20,20 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
              end
 
     render_search_results_as_json(result)
+  end
+
+  def outcode
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user)
+
+    if result.success?
+      if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user)
+        send_outcode_email(appeal)
+      end
+
+      return render json: { message: "Success!" }
+    end
+
+    render json: { message: result.errors[0] }, status: :bad_request
   end
 
   def reader_appeal
@@ -135,4 +151,18 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     end
     tags_by_doc_id
   end
+
+  def outcode_params
+    params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
+  end
+
+  def send_outcode_email(appeal)
+    if appeal.is_a?(Appeal)
+      email_address = appeal.power_of_attorney.representative_email_address
+    elsif appeal.is_a?(LegacyAppeal)
+      email_address = appeal.power_of_attorney.bgs_representative_email_address
+    end
+    DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
+  end
+
 end

@@ -1,4 +1,3 @@
-SingleCov.covered!
 # frozen_string_literal: true
 
 describe DispatchMailer do

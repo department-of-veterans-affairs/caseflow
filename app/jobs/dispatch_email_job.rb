@@ -31,6 +31,30 @@ class DispatchEmailJob < CaseflowJob
     end
   end
 
+  # :nocov:
+  def external_message_id(msg)
+    if msg.is_a?(GovDelivery::TMS::EmailMessage)
+      response = msg.response
+      response_external_url = response.body.dig("_links", "self")
+
+      DataDogService.increment_counter(
+        app_name: Constants.DATADOG_METRICS.DISPATCH.APP_NAME,
+        metric_group: Constants.DATADOG_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
+        metric_name: "email.sent",
+        attrs: {
+          email_type: type
+        }
+      )
+
+      Rails.logger.info(
+        "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
+      )
+
+      response_external_url
+    end
+  end
+  # :nocov:
+
   def send_email(email)
     # Why are we using `deliver_now!`? The documentation mentions that it ignores the flags:
     #
@@ -58,7 +82,7 @@ class DispatchEmailJob < CaseflowJob
     return false if email.nil?
 
     Rails.logger.info("Sending email to #{email_address}...")
-    email.deliver_now!
+    msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
@@ -68,7 +92,8 @@ class DispatchEmailJob < CaseflowJob
 
     false
   else
-    Rails.logger.info("Sent #{type} email to #{email_address}!")
+    message_id = external_message_id(msg)
+    Rails.logger.info("Sent #{type} email to #{email_address}. #{message_id}")
 
     true
   end
