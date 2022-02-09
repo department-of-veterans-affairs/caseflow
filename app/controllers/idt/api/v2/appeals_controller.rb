@@ -164,5 +164,4 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     end
     DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
   end
-
 end
