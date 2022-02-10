@@ -26,6 +26,7 @@ class CreateHearingEmailRecipient < Caseflow::Migration
                    comment: "Indicates if a notification email was sent to the recipient."
 
       t.timestamps
+      t.integer "appeal_id", null: false, comment: "ID of the associated Appeal"
     end
   end
 end
