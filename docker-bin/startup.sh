@@ -33,8 +33,8 @@ rake local:vacols:seed
 echo "Seeding DB in PG"
 rake db:seed
 
-echo "Performing DB Migrate for any new migrates"
-rake db:migrate RAILS_ENV=development
+#echo "Performing DB Migrate for any new migrates"
+#rake db:migrate RAILS_ENV=development
 
 echo "Enabling Feature Flags"
 bundle exec rails runner scripts/enable_features_dev.rb
