@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_12_170007) do
+ActiveRecord::Schema.define(version: 2022_02_11_061558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1731,6 +1731,7 @@ ActiveRecord::Schema.define(version: 2022_01_12_170007) do
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
+  add_foreign_key "hearing_email_recipients", "appeals"
   add_foreign_key "hearing_issue_notes", "hearings"
   add_foreign_key "hearing_issue_notes", "request_issues"
   add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
