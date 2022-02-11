@@ -98,6 +98,7 @@ group :test, :development, :demo do
   gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
+  gem 'meta_request'
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
