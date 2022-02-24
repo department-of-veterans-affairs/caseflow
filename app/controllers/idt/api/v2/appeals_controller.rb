@@ -26,7 +26,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = BvaDispatchTask.outcode(appeal, outcode_params, user)
 
     if result.success?
-      if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user)
+      if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user) && appeal.power_of_attorney.present?
         send_outcode_email(appeal)
       end
 

@@ -46,9 +46,12 @@ class DispatchEmailJob < CaseflowJob
         }
       )
 
-      Rails.logger.info(
-        "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
+      log = log_message.merge(
+        status: response.status,
+        gov_delivery_id: response_external_url,
+        message: "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
+      Rails.logger.info("DispatchEmailJobLog #{log}")
 
       response_external_url
     end
@@ -81,20 +84,36 @@ class DispatchEmailJob < CaseflowJob
 
     return false if email.nil?
 
-    Rails.logger.info("Sending email to #{email_address}...")
+    log = log_message.merge(status: "info", message: "Sending email to #{email_address} ...")
+    Rails.logger.info("DispatchEmailJobLog #{log}")
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
 
-    Rails.logger.warn("Failed to send #{type} email to #{email_address}: #{error}")
+    log = log_message.merge(status: "error", message: "Failed to send email to #{email_address} : #{error}")
+    Rails.logger.warn("DispatchEmailJobLog #{log}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
     false
   else
     message_id = external_message_id(msg)
-    Rails.logger.info("Sent #{type} email to #{email_address}. #{message_id}")
+    log = log_message.merge(
+      status: "success",
+      gov_delivery_id: message_id,
+      message: "Requested GovDelivery to send email to #{email_address} - #{message_id}"
+    )
+    Rails.logger.info("DispatchEmailJobLog #{log}")
 
     true
+  end
+
+  def log_message
+    {
+      class: self.class,
+      appeal_id: @appeal.id,
+      email_address: @email_address,
+      email_type: @type
+    }
   end
 end
