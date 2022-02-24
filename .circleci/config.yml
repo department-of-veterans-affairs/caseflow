@@ -13,7 +13,6 @@ commands:
           command: |
             echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
             source $BASH_ENV
-            rm Gemfile.lock
             gem install bundler
             
       - restore_cache:
@@ -23,6 +22,7 @@ commands:
       - run:
           name: Bundle install
           command: |
+             rm Gemfile.lock
              bundle config set --local path 'vendor/bundle'
              bundle install 
 
