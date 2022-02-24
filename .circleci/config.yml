@@ -21,7 +21,9 @@ commands:
 
       - run:
           name: Bundle install
-          command: bundle install --path vendor/bundle
+          command: |
+             bundle config set --local path 'vendor/bundle'
+             bundle install 
 
       - save_cache:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
