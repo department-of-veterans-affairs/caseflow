@@ -10,6 +10,8 @@
 class DispatchEmailJob < CaseflowJob
   attr_reader :appeal, :type, :email_address
 
+  LOG_PREFIX = "BVADispatchEmail"
+
   def initialize(appeal: nil, type:, email_address:)
     @appeal = appeal
     @type = type.to_s
@@ -51,7 +53,7 @@ class DispatchEmailJob < CaseflowJob
         gov_delivery_id: response_external_url,
         message: "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
-      Rails.logger.info("DispatchEmailJobLog #{log}")
+      Rails.logger.info("#{LOG_PREFIX} #{log}")
 
       response_external_url
     end
@@ -85,14 +87,14 @@ class DispatchEmailJob < CaseflowJob
     return false if email.nil?
 
     log = log_message.merge(status: "info", message: "Sending email to #{email_address} ...")
-    Rails.logger.info("DispatchEmailJobLog #{log}")
+    Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
 
     log = log_message.merge(status: "error", message: "Failed to send email to #{email_address} : #{error}")
-    Rails.logger.warn("DispatchEmailJobLog #{log}")
+    Rails.logger.warn("#{LOG_PREFIX} #{log}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
     false
@@ -103,7 +105,7 @@ class DispatchEmailJob < CaseflowJob
       gov_delivery_id: message_id,
       message: "Requested GovDelivery to send email to #{email_address} - #{message_id}"
     )
-    Rails.logger.info("DispatchEmailJobLog #{log}")
+    Rails.logger.info("#{LOG_PREFIX} #{log}")
 
     true
   end

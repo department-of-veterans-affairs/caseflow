@@ -26,8 +26,13 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = BvaDispatchTask.outcode(appeal, outcode_params, user)
 
     if result.success?
-      if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user) && appeal.power_of_attorney.present?
-        send_outcode_email(appeal)
+      if appeal.power_of_attorney.present?
+        if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user)
+          send_outcode_email(appeal)
+        end
+      else
+        log = { class: self.class, appeal_id: appeal.id, message: "No email was sent because no POA is defined" }
+        Rails.logger.warn("BVADispatchEmail #{log}")
       end
 
       return render json: { message: "Success!" }
