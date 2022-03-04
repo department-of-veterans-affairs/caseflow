@@ -72,6 +72,7 @@ Rails.application.routes.draw do
       namespace :v2 do
         get 'appeals', to: 'appeals#details'
         get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
       end
