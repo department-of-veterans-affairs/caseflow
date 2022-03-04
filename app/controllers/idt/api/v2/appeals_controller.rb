@@ -31,7 +31,8 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
           send_outcode_email(appeal)
         end
       else
-        log = { class: self.class, appeal_id: appeal.id, message: "No email was sent because no POA is defined" }
+        message = "No BVA Dispatch POA notification email was sent because no POA is defined"
+        log = { class: self.class, appeal_id: appeal.id, message: message }
         Rails.logger.warn("BVADispatchEmail #{log}")
       end
 
