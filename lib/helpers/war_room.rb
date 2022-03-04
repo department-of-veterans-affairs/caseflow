@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class WarRoomScript
+class WarRoom
   class Outcode
     def run(uuid_pass_in)
       # set current user
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
-      # create_log("test")
+     
       uuid = uuid_pass_in
       # set appeal parameter
       appeal = Appeal.find_by_uuid(uuid)
