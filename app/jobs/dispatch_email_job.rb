@@ -101,8 +101,9 @@ class DispatchEmailJob < CaseflowJob
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
     false
   else
+    message_id = external_message_id(msg)
     message = "Requested GovDelivery to send #{TYPE_LABEL} to #{email_address} - #{message_id}"
-    log = log_message.merge(status: "success", gov_delivery_id: external_message_id(msg), message: message)
+    log = log_message.merge(status: "success", gov_delivery_id: message_id, message: message)
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     true
   end
