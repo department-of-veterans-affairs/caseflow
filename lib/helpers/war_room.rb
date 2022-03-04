@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WarRoom
+module WarRoom
   class Outcode
     def run(uuid_pass_in)
       # set current user
