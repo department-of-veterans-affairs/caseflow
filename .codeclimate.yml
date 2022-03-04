@@ -78,6 +78,8 @@ plugins:
         enabled: false
     exclude_patterns:
     - 'db/migrate/*'
+    - 'app/jobs/dispatch_email_job.rb'
+    - 'app/mailers/dispatch_mailer.rb'
   rubocop:
     enabled: true
     channel: rubocop-0-79
