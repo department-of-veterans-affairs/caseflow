@@ -79,6 +79,14 @@ const formFieldMapping = (props) => {
     return renderBooleanValue('filedByVaGov');
   };
 
+  const hearingTypeDropdown = 
+    <SearchableDropdown
+    label="Please Select Hearing Type"
+    name="label"
+    onChange={function noRefCheck(){}}
+    options={hearingTypeOptions}
+  />
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type':
@@ -95,12 +103,7 @@ const formFieldMapping = (props) => {
         inputRef={props.register}
       />
     </div>,
-    'hearing-type': <SearchableDropdown
-      label="Please Select Hearing Type"
-      name="label"
-      onChange={function noRefCheck(){}}
-      options={hearingTypeOptions}
-    />,
+    'hearing-type': props.docketType === 'hearing' ? hearingTypeDropdown : null,
     'legacy-opt-in': <LegacyOptInApproved
       value={props.legacyOptInApproved}
       onChange={props.setLegacyOptInApproved}
