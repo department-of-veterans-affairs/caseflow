@@ -29,6 +29,7 @@ import ErrorAlert from '../components/ErrorAlert';
 import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 
 const docketTypeRadioOptions = [
   { value: 'direct_review',
@@ -82,6 +83,29 @@ const formFieldMapping = (props) => {
         inputRef={props.register}
       />
     </div>,
+    'hearing-type': <SearchableDropdown
+      label="Please Select Hearing Type"
+      name="label"
+      onChange={function noRefCheck(){}}
+      options={[
+        {
+          label: 'Option 1',
+          value: 'value1'
+        },
+        {
+          label: 'Option 2',
+          value: 'value2'
+        },
+        {
+          label: 'Option 3',
+          value: 'value3'
+        },
+        {
+          label: 'Option 4',
+          value: 'value4'
+        }
+      ]}
+    />,
     'legacy-opt-in': <LegacyOptInApproved
       value={props.legacyOptInApproved}
       onChange={props.setLegacyOptInApproved}
