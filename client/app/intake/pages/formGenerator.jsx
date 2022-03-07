@@ -40,6 +40,18 @@ const docketTypeRadioOptions = [
     displayText: 'Hearing' }
 ];
 
+const hearingTypeOptions = [
+  { label: 'Central Office Hearing',
+    value: 'central_office_hearing',
+  },
+  { label: 'Videoconference Hearing',
+    value: 'videoconference_hearing',
+  },
+  { label: 'Virtual Telehearing',
+    value: 'virtual_telehearing',
+  }
+];
+
 const rampElectionReviewOptions = reject(REVIEW_OPTIONS, REVIEW_OPTIONS.APPEAL);
 
 const rampRefilingRadioOptions = map(REVIEW_OPTIONS, (option) => ({
@@ -87,24 +99,7 @@ const formFieldMapping = (props) => {
       label="Please Select Hearing Type"
       name="label"
       onChange={function noRefCheck(){}}
-      options={[
-        {
-          label: 'Option 1',
-          value: 'value1'
-        },
-        {
-          label: 'Option 2',
-          value: 'value2'
-        },
-        {
-          label: 'Option 3',
-          value: 'value3'
-        },
-        {
-          label: 'Option 4',
-          value: 'value4'
-        }
-      ]}
+      options={hearingTypeOptions}
     />,
     'legacy-opt-in': <LegacyOptInApproved
       value={props.legacyOptInApproved}
