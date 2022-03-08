@@ -37,6 +37,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     filedByVaGovError: null,
     docketType: null,
     docketTypeError: null,
+    hearingType: null,
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
