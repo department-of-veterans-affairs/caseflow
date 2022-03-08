@@ -18,9 +18,10 @@ const validReviewAppealData = {
   'receipt-date': AFTER_AMA_DATE,
   'docket-type': 'docket',
   'docket-type': 'type',
+  'hearing-type': null,
   'legacy-opt-in': 'true',
   'different-claimant-option': 'false',
-  'filed-by-va-gov': 'false'
+  'filed-by-va-gov': 'false',
 } 
 
 describe('schema', () => {
