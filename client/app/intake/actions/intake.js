@@ -92,6 +92,13 @@ export const setReceiptDateError = (receiptDateError) => ({
   }
 });
 
+export const setHearingType = (hearingType) => ({
+  type: ACTIONS.SET_HEARING_TYPE,
+  payload: {
+    hearingType
+  }
+});
+
 export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
   payload: {

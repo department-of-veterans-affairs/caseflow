@@ -122,6 +122,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDateError
       }
     });
+  case ACTIONS.SET_HEARING_TYPE:
+    return update(state, {
+      hearingType: {
+        $set: action.payload.hearingType
+      }
+    });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
       veteranIsNotClaimant: {

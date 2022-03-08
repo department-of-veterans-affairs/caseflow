@@ -6,7 +6,7 @@ import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
-import { setReceiptDate, setOptionSelected } from '../actions/intake';
+import { setReceiptDate, setOptionSelected, setHearingType } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
@@ -83,7 +83,7 @@ const formFieldMapping = (props) => {
     <SearchableDropdown
       label="Please Select Hearing Type"
       name="label"
-      onChange={function noRefCheck(){}}
+      onChange={({ value }) => props.setHearingType(value)}
       options={hearingTypeOptions}
     />;
 
@@ -271,6 +271,8 @@ FormGenerator.propTypes = {
   reviewIntakeError: PropTypes.object,
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
+  setHearingType: PropTypes.func,
+  hearingType: PropTypes.string,
   setLegacyOptInApproved: PropTypes.func,
   appealStatus: PropTypes.string,
   intakeStatus: PropTypes.string,
@@ -297,6 +299,7 @@ export default connect(
     filedByVaGovError: state[props.formName].filedByVaGovError,
     docketType: state[props.formName].docketType,
     docketTypeError: state[props.formName].docketTypeError,
+    hearingType: state[props.formName].hearingType,
     legacyOptInApproved: state[props.formName].legacyOptInApproved,
     legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
     benefitType: state[props.formName].benefitType,
@@ -318,6 +321,7 @@ export default connect(
   (dispatch) => bindActionCreators({
     setDocketType,
     setReceiptDate,
+    setHearingType,
     setLegacyOptInApproved,
     setInformalConference,
     setSameOffice,
