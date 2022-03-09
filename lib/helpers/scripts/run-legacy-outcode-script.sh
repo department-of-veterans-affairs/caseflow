@@ -1,5 +1,5 @@
 rails c << DONETOKEN
 x = WarRoom::Outcode.new
-x.run("$1")
+x.legacy_run("$1")
 DONETOKEN
 
