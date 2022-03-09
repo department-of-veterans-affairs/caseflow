@@ -17,6 +17,7 @@ class IntakesSchemas
         date :receipt_date
         string :benefit_type, optional: true, doc: "not applicable to Appeals"
         string :docket_type, optional: true, included_in?: DOCKET_OPTIONS, doc: "Appeals only"
+        string :original_hearing_request_type, optional: true
         string :claimant, optional: true, nullable: true
         string :claimant_type, optional: true, included_in?: %w[veteran dependent attorney other]
         string :payee_code, optional: true, nullable: true

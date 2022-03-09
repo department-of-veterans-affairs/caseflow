@@ -180,6 +180,7 @@ export const REVIEW_OPTIONS = {
 export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
+    original_hearing_request_type: {key: 'hearingType', required: false },
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
