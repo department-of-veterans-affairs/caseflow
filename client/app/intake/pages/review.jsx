@@ -91,6 +91,7 @@ const Review = (props) => {
 
   const submitReview = () => {
     if (selectedForm.category === 'decisionReview') {
+      console.log(intakeData)
       return props.submitDecisionReview(props.intakeId, intakeData, selectedForm.formName);
     }
 

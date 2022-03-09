@@ -6,7 +6,7 @@ import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
-import { setReceiptDate, setOptionSelected, setHearingType } from '../actions/intake';
+import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
@@ -16,7 +16,8 @@ import {
   setPayeeCode,
   setLegacyOptInApproved,
   setBenefitType,
-  setFiledByVaGov
+  setFiledByVaGov,
+  setHearingType
 } from '../actions/decisionReview';
 import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
@@ -42,13 +43,13 @@ const docketTypeRadioOptions = [
 
 const hearingTypeOptions = [
   { label: 'Central Office Hearing',
-    value: 'central_office_hearing',
+    value: 'central',
   },
   { label: 'Videoconference Hearing',
-    value: 'videoconference_hearing',
+    value: 'video',
   },
   { label: 'Virtual Telehearing',
-    value: 'virtual_telehearing',
+    value: 'virtual',
   }
 ];
 
@@ -82,6 +83,7 @@ const formFieldMapping = (props) => {
   const hearingTypeDropdown =
     <SearchableDropdown
       label="Please Select Hearing Type"
+      strongLabel
       name="label"
       onChange={({ value }) => props.setHearingType(value)}
       options={hearingTypeOptions}
@@ -97,7 +99,12 @@ const formFieldMapping = (props) => {
         strongLabel
         vertical
         options={docketTypeRadioOptions}
-        onChange={props.setDocketType}
+        onChange={(value) => {
+          if (value !== 'hearing') {
+            props.setHearingType(null);
+          }
+          props.setDocketType(value);
+        }}
         errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
         value={props.docketType}
         inputRef={props.register}
