@@ -18,6 +18,23 @@ class DuplicateVeteranChecker
     check_by_duplicate_veteran_file_number(a.veteran.file_number)
   end
 
+  def run_remediation_by_ama_appeal_uuid(appeal_uuid)
+    a = Appeal.find_by_uuid(appeal_uuid)
+
+    if a.nil?
+      puts("Appeal was not found. Aborting")
+      fail Interrupt
+    elsif a.veteran.nil?
+      puts("veteran is not assiciated to this appeal. Aborting...")
+      fail Interrupt
+    elsif a.veteran.file_number.empty?
+      puts("Veteran tied to appeal does not have a file_number. Aborting..")
+      fail Interrupt
+    end
+
+    run_remediation(a.veteran.file_number)
+  end
+
   def check_by_legacy_appeal_vacols_id(legacy_appeal_vacols_id)
     la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
 
@@ -35,42 +52,96 @@ class DuplicateVeteranChecker
     check_by_duplicate_veteran_file_number(la.veteran.file_number)
   end
 
+  def run_remediation_by_vacols_id(vacols_id)
+    la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
+
+    if la.nil?
+      puts("Legacy Appeal was not found for that vacols id. Aborting..")
+      fail Interrupt
+    elsif la.veteran.nil?
+      puts("veteran is not associated with this legacy appeal. Aborting..")
+      fail Interrupt
+    elsif la.veteran.file_number.empty?
+      puts("veteran tied to legacy appeal does not have a file_number. Aborting..")
+      fail Interrupt
+    end
+
+    run_remediation(la.veteran.file_number)
+  end
+
   def check_by_duplicate_veteran_file_number(duplicate_veteran_file_number)
     # check if only one vet has the old file number
     vets = Veteran.where(file_number: duplicate_veteran_file_number)
 
+    # Check that only oen vet has the bad file number
     if vets.nil? || vets.count > 1
       puts("More than on vet with the duplicate veteran file number exists. Aborting..")
       fail Interrupt
     end
 
+    # Get the duplicate veteran into memory
     v = Veteran.find_by_file_number(duplicate_veteran_file_number)
 
+    # Set variable to hold old file_number (file number on duplicate veteran)
+    old_file_number = v.file_number
+
+    # Check if veteran is not found
     if v.nil?
-      puts("No veteran found. Aborting..")
+      puts("No veteran found. Aborting.")
       fail Interrupt
     end
 
-    ssn = v.ssn
+    # Check if there in fact duplicate veterans. Can be duplicated with 
+    # same partipant id or ssn
+    dupe_vets = Veteran.where("ssn = ? or participant_id = ?", v.ssn, v.participant_id)
 
-    dupe_vets = Veteran.where(ssn: v.ssn)
+    v2 = nil
 
+    vet_ssn = v.ssn
+    # checks if we get no vets or les sthan 2 vets}
     if dupe_vets.nil? || dupe_vets.count < 2
       puts("No duplicate veteran found")
       fail Interrupt
-    elsif dupe_vets.count > 2
+    elsif dupe_vets.count > 2 # check if we get more than 2 vets back
       puts("More than two veterans found. Aborting")
       fail Interrupt
+    else
+      other_v = dupe_vets.first # grab first of the dupilicates and check if the duplicate veteran}
+      if other_v.file_number == old_file_number
+        other_v = dupe_vets.last # First is duplicate veteran so get 2nd
+      end
+      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
+        puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+        fail Interrupt
+      elsif v.ssn.empty? && !other_v.ssn.empty?
+        vet_ssn = other_v.ssn
+      elsif v.ssn.empty? && other_v.ssn.empty?
+        puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+        fail Interrupt
+      elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
+        puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+        fail Interrupt
+      else
+        vet_ssn = v.ssn
+      end
+      v2 = other_v
     end
 
     duplicate_relations = ""
+    
+    # Get the correct file number from a BGS call out
+    file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
-    file_number = BGSService.new.fetch_file_number_by_ssn(v.ssn)
+    if file_number != v2.file_number
+      puts("File number from BGS does not match correct veteran record. Aborting...")
+      fail Interrupt
+    end
 
-    old_file_number = v.file_number
-
+    # The following code runs through all possible relations 
+    # to the duplicat evetran by file number or veteran id
+    # collects all counts and displays all relations
     as = Appeal.where(veteran_file_number: old_file_number)
-
+    
     as_count = as.count
 
     duplicate_relations += as_count.to_s + " Appeals\n"
@@ -80,77 +151,76 @@ class DuplicateVeteranChecker
     las_count = las.count
 
     duplicate_relations += las_count.to_s + " LegacyAppeals\n"
-
+    
     ahls = AvailableHearingLocations.where(veteran_file_number: old_file_number)
-
+    
     ahls_count = ahls.count
 
     duplicate_relations += ahls_count.to_s + " Avialable Hearing Locations\n"
-
+    
     bpoas = BgsPowerOfAttorney.where(file_number: old_file_number)
-
+    
     bpoas_count = bpoas.count
 
     duplicate_relations += bpoas_count.to_s + " BgsPowerOfAAttorneys\n"
-
+    
     ds = Document.where(file_number: old_file_number)
-
+    
     ds_count = ds.count
 
     duplicate_relations += ds_count.to_s + " Documents\n"
 
     epes = EndProductEstablishment.where(veteran_file_number: old_file_number)
-
+    
     epes_count = epes.count
 
     duplicate_relations += epes_count.to_s + " EndProductEstablishment\n"
 
     f8s = Form8.where(file_number: convert_file_number_to_legacy(old_file_number))
-
+    
     f8s_count = f8s.count
 
     duplicate_relations += f8s_count.to_s + " Form8\n"
-
+    
     hlrs = HigherLevelReview.where(veteran_file_number: old_file_number)
-
+    
     hlrs_count = hlrs.count
 
     duplicate_relations += hlrs_count.to_s + " HigherLevelReview\n"
-
+    
     is_fn = Intake.where(veteran_file_number: old_file_number)
-
+    
     is_fn_count = is_fn.count
 
     duplicate_relations += is_fn_count.to_s + " Intakes related by file number\n"
-
+    
     is_vi = Intake.where(veteran_id: v.id)
-
+    
     is_vi_count = is_vi.count
 
     duplicate_relations += is_vi_count.to_s + " Intakes related by veteran id\n"
-
+    
     res = RampElection.where(veteran_file_number: old_file_number)
-
+    
     res_count = res.count
 
     duplicate_relations += res_count.to_s + " RampElection\n"
-
+    
     rrs = RampRefiling.where(veteran_file_number: old_file_number)
-
+    
     rrs_count = rrs.count
 
     duplicate_relations += rrs_count.to_s + " RampRefiling\n"
-
+    
     scs = SupplementalClaim.where(veteran_file_number: old_file_number)
-
+    
     scs_count = scs.count
 
     duplicate_relations += scs_count.to_s + " SupplementalClaim\n"
 
     puts("Duplicate Veteran Relations:\n" + duplicate_relations)
 
-    #Get relationships for correct veteran
-    v2 = Veteran.find_by(file_number: file_number)
+    # Get relationship list for correct veteran
 
     correct_relations = ""
 
@@ -208,7 +278,7 @@ class DuplicateVeteranChecker
 
     correct_relations += is_fn2_count.to_s + " Intakes related by file number\n"
 
-    is_vi2 = Intake.where(veteran_id: v2.id)
+    is_vi2 = Intake.where(veteran_id: v.id)
 
     is_vi2_count = is_vi2.count
 
@@ -239,34 +309,73 @@ class DuplicateVeteranChecker
     # check if only one vet has the old file number
     vets = Veteran.where(file_number: duplicate_veteran_file_number)
 
+    # Check that only oen vet has the bad file number
     if vets.nil? || vets.count > 1
       puts("More than on vet with the duplicate veteran file number exists. Aborting..")
       fail Interrupt
     end
 
+    # Get the duplicate veteran into memory
     v = Veteran.find_by_file_number(duplicate_veteran_file_number)
 
+    # Set variable to hold old file_number (file number on duplicate veteran)
+    old_file_number = v.file_number
+
+    # Check if veteran is not found
     if v.nil?
       puts("No veteran found. Aborting.")
       fail Interrupt
     end
 
-    dupe_vets = Veteran.where(ssn: v.ssn)
+    # Check if there in fact duplicate veterans. Can be duplicated with 
+    # same partipant id or ssn
+    dupe_vets = Veteran.where("ssn = ? or participant_id = ?", v.ssn, v.participant_id)
 
+    v2 = nil
+
+    vet_ssn = v.ssn
+    # checks if we get no vets or les sthan 2 vets}
     if dupe_vets.nil? || dupe_vets.count < 2
       puts("No duplicate veteran found")
       fail Interrupt
-    elsif dupe_vets.count > 2
+    elsif dupe_vets.count > 2 # check if we get more than 2 vets back
       puts("More than two veterans found. Aborting")
       fail Interrupt
+    else
+      other_v = dupe_vets.first # grab first of the dupilicates and check if the duplicate veteran}
+      if other_v.file_number == old_file_number
+        other_v = dupe_vets.last # First is duplicate veteran so get 2nd
+      end
+      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
+        puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+        fail Interrupt
+      elsif v.ssn.empty? && !other_v.ssn.empty?
+        vet_ssn = other_v.ssn
+      elsif v.ssn.empty? && other_v.ssn.empty?
+        puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+        fail Interrupt
+      elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
+        puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+        fail Interrupt
+      else
+        vet_ssn = v.ssn
+      end
+      v2 = other_v
     end
 
     duplicate_relations = ""
     
-    file_number = BGSService.new.fetch_file_number_by_ssn(v.ssn)
-    
-    old_file_number = v.file_number
-    
+    # Get the correct file number from a BGS call out
+    file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
+
+    if file_number != v2.file_number
+      puts("File number from BGS does not match correct veteran record. Aborting...")
+      fail Interrupt
+    end
+
+    # The following code runs through all possible relations 
+    # to the duplicat evetran by file number or veteran id
+    # collects all counts and displays all relations
     as = Appeal.where(veteran_file_number: old_file_number)
     
     as_count = as.count
@@ -346,9 +455,8 @@ class DuplicateVeteranChecker
     duplicate_relations += scs_count.to_s + " SupplementalClaim\n"
 
     puts("Duplicate Veteran Relations:\n" + duplicate_relations)
-    
-    # Get relationships for correct veteran
-    v2 = Veteran.find_by(file_number: file_number)
+
+    # Get relationship list for correct veteran
 
     correct_relations = ""
 

@@ -20,4 +20,37 @@ module WarRoom
       #need to do y or q
     end
   end
+
+  class OutcodeWithDuplicateVeteran
+    def run_check_by_ama_uuid(uuid)
+      dvc = DuplicateVeteranChecker.new
+      dvc.check_by_ama_appeal_uuid(uuid)
+    end
+
+    def run_check_by_vacols_id(vacols_id)
+      dvc = DuplicateVeteranChecker.new
+      dvc.check_by_legacy_appeal_vacols_id(vacols_id)
+    end
+
+    def run_check_by_duplicate_veteran_file_number(duplicate_veteran_file_number)
+      dvc = DuplicateVeteranChecker.new
+      dvc.check_by_duplicate_veteran_file_number(duplicate_veteran_file_number)
+    end
+
+    def run_remediation_by_duplicate_veteran_file_number(duplicate_veteran_file_number)
+      dvc = DuplicateVeteranChecker.new
+      dvc.run_remediation(duplicate_veteran_file_number)
+    end
+
+    def run_remediation_by_ama_appeals_uuid(uuid)
+      dvc = DuplicateVeteranChecker.new
+      dvc.run_remediation_by_ama_appeal_uuid(uuid)
+    end
+
+    def run_remediation_by_vacols_id(vacols_id)
+      dvc = DuplicateVeteranChecker.new
+
+      dvc.run_remediation_by_vacols_id(vacols_id)
+    end
+  end
 end
