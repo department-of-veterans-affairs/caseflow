@@ -78,8 +78,59 @@ module WarRoom
     end
   end
 
-  class DuplicateEPSupplementalClaim
-    def run_by_claim_id(claim_id) 
+  class DuplicateEPEstablishmentError
+    def higher_level_review_duplicate_ep(uuid)
+
+      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+
+      hlr = HigherLevelReview.find(uuid)
+      # Set Veteran for this Higher Level Review
+      v = hlr.veteran
+      puts v
+
+      # Use the file_number from the v output to look up the Veteran claims in Caseflow
+      # get user input for the search results
+      # v_claim = gets
+
+      # Validate if there are any existing modifiers already associated with the Veteran
+      v.end_products.map(&:modifier)
+
+    # FIXME need to check what the output looks like!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      # If the above output does not show all ten options for the 030 then proceed with below
+      # Set the End Product Establishments Parameter
+      epes = hlr.end_product_establishments
+      puts epes.count
+
+      # If there was only one, which is usually the case, we will only do the below first command.
+      # If there was more than one, we will repeat the below command for the subsequent EPES and all subsequent epe steps will need to be duplicated
+      # ie second, third, etc
+
+      epe = epes.first
+
+      ep2e = epe.send(:end_product_to_establish)
+
+      epmf = EndProductModifierFinder.new(epe,v)
+      taken = epmf.send(:taken_modifiers)
+
+      epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
+
+      ep2e.modifier=epmf.find
+
+      epe.instance_variable_set(:@end_product_to_establish, ep2e)
+
+      if !(epe.establish!)
+        exit
+      # If the output from the above step is => true, then the end product establishment has succeeded. Proceed with Step 17.
+      # If the output from the above step is the DuplicateEP error then we do not have the next available modifier. This Higher Level Review needs sent over to Martin Menchey for remediation.
+      puts hlr.end_product_establishments.count
+      hlr.end_product_establishments.each{|epe| epe.reload}
+      DecisionReviewProcessJob.new.perform(hlr).
+      hlr.reload
+      puts hlr.establishment_error
+    end
+
+    def supplemental_claim_duplicate_ep(claim_id) 
       # set current user
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
 
@@ -119,6 +170,4 @@ module WarRoom
       epes.count
     end
   end 
-
-
 end
