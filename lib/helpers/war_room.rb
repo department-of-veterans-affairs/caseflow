@@ -77,4 +77,46 @@ module WarRoom
       dvc.run_remediation_by_vacols_id(vacols_id)
     end
   end
+
+  class DuplicateEPSupplementalClaim(claim_id)
+    # set current user
+    RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+
+    sc=SupplementalClaim.find(claim_id)
+
+    if sc.nil? 
+      puts("No supplemental claim was found for the following id " + sc)
+    end
+
+    # Validate that DuplicateEP is the error on this claim
+    sc.establishment_error
+
+    # Set Veteran for this Supplemental Claim
+    v=sc.veteran
+
+    # Use the file_number from the v output to look up the Veteran claims in Caseflow :  https://appeals.cf.ds.va.gov/search
+
+    # Validate if there are any existing 030 or 040 claims for this veteran in Caseflow
+    ###3/2/22 This POA Validation step need re-evaluated. Returning 'True' from the below command does not mean that the Claim can't be established. 
+    ###If the only claim is the current unestablished claim that we are investigating this may be a POA issue. Continue with the below step, otherwise continue on with Step 6.
+
+                ###sc.claimant.representative_name.present?
+
+    #Triage:
+    #Remediation:
+
+    ###If the above output is => false then there are no POAs associated with this Veteran and we can proceed with the rest of the remediation steps
+    ###If the above output is => true then there are POAs associated with this Veteran and the duplicateEP is caused by the known POA issue. This Supplemental Claim needs sent over to Martin Menchey for remediation.
+
+    # Validate if there are any existing modifiers already associated with the Veteran 
+    v.end_products.map(&:modifier)
+
+    ## If the above output shows all ten options for the 040 modifier, then all available modifiers are taken. This Supplemental Claim needs sent over to Martin Menchey for remediation.
+    ##If the above output does not show all ten options for the 040 then proceed with Step 7.
+    
+    # Set the End Product Establishments Parameter
+    epes.count
+   end 
+
+
 end
