@@ -78,12 +78,16 @@ module WarRoom
     end
   end
 
-  class DuplicateEPEstablishmentError
+  class OutcodeWithDuplicateEP
     def higher_level_review_duplicate_ep(uuid)
 
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
 
       hlr = HigherLevelReview.find(uuid)
+      if hlr.nil?
+        puts("No Higher Level Review was found. Aborting...")
+        fail Interrupt
+      end
       # Set Veteran for this Higher Level Review
       v = hlr.veteran
       puts v
