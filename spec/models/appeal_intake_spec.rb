@@ -79,6 +79,8 @@ describe AppealIntake, :all_dbs do
     let(:claimant_type) { "veteran" }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
+    # set hearing type
+    let(:original_hearing_request_type) { "virtual" }
 
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
@@ -89,7 +91,8 @@ describe AppealIntake, :all_dbs do
         claimant: claimant,
         claimant_type: claimant_type,
         payee_code: payee_code,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        original_hearing_request_type: original_hearing_request_type
       )
     end
 
@@ -100,7 +103,8 @@ describe AppealIntake, :all_dbs do
         receipt_date: Date.new(2018, 5, 25),
         docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
-        veteran_is_not_claimant: false
+        veteran_is_not_claimant: false,
+        original_hearing_request_type: "virtual"
       )
     end
 
@@ -170,6 +174,16 @@ describe AppealIntake, :all_dbs do
       let(:docket_type) { nil }
 
       it { is_expected.to be_falsey }
+    end
+
+    context "docket type is changed" do
+      let (:docket_type) { Constants.AMA_DOCKETS.hearing }
+      let (:original_hearing_request_type) { "central" }
+      let (:docket_type) { Constants.AMA_DOCKETS.direct_review }
+
+      it "resets hearing request type to nil" do
+        expect(intake.detail.original_hearing_request_type).to be_nil
+      end
     end
 
     context "Claimant is different than Veteran" do
