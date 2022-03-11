@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module WarRoom
+  def self.user
+    @@user ||= OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+  end
+
   class Outcode
     def ama_run(uuid_pass_in)
       # set current user
