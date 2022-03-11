@@ -98,6 +98,7 @@
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "2.5.207",
     "pluralize": "^7.0.0",
+    "prismjs": "^1.21.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.11.8",
     "react": "^16.13.1",
@@ -174,7 +175,7 @@
     "sinon": "^2.1.0",
     "weak-napi": "^2.0.2",
     "webpack-bundle-analyzer": "^4.4.2",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^4.0.0"
   },
   "resolutions": {
     "kind-of": ">=6.0.3",
