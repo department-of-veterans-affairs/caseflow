@@ -28,7 +28,6 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
     (response) => {
-      console.log(data)
       dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
         payload: {
