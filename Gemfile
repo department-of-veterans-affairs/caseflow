@@ -34,7 +34,7 @@ gem "moment_timezone-rails"
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
 gem "newrelic_rpm"
-gem "nokogiri", ">= 1.13.2"
+gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
