@@ -94,11 +94,6 @@ module WarRoom
       end
       # Set Veteran for this Higher Level Review
       v = hlr.veteran
-      puts v
-
-      # Use the file_number from the v output to look up the Veteran claims in Caseflow
-      # get user input for the search results
-      # v_claim = gets
 
       # Validate if there are any existing modifiers already associated with the Veteran
       v.end_products.map(&:modifier)
@@ -123,18 +118,27 @@ module WarRoom
 
       epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
 
-      ep2e.modifier=epmf.find
+      ep2e.modifier = epmf.find
 
       epe.instance_variable_set(:@end_product_to_establish, ep2e)
 
-      if !(epe.establish!)
-        exit
       # If the output from the above step is => true, then the end product establishment has succeeded. Proceed with Step 17.
       # If the output from the above step is the DuplicateEP error then we do not have the next available modifier. This Higher Level Review needs sent over to Martin Menchey for remediation.
+      if !epe.establish!
+        abort("Duplicate EP. Needs remediation.")
+      end
+
+      # Check the End Product Establishments count
       puts hlr.end_product_establishments.count
+
+      # Reload the End Product Establishments
       hlr.end_product_establishments.each{|epe| epe.reload}
-      DecisionReviewProcessJob.new.perform(hlr).
+
+      # Run the Decision Review Process Job
+      DecisionReviewProcessJob.new.perform(hlr)
+
       hlr.reload
+      # Check the Establishment Error on the Higher Level Review
       puts hlr.establishment_error
     end
 
@@ -154,20 +158,6 @@ module WarRoom
       # Set Veteran for this Supplemental Claim
       v=sc.veteran
 
-      # Use the file_number from the v output to look up the Veteran claims in Caseflow :  https://appeals.cf.ds.va.gov/search
-
-      # Validate if there are any existing 030 or 040 claims for this veteran in Caseflow
-      ###3/2/22 This POA Validation step need re-evaluated. Returning 'True' from the below command does not mean that the Claim can't be established. 
-      ###If the only claim is the current unestablished claim that we are investigating this may be a POA issue. Continue with the below step, otherwise continue on with Step 6.
-
-                  ###sc.claimant.representative_name.present?
-
-      #Triage:
-      #Remediation:
-
-      ###If the above output is => false then there are no POAs associated with this Veteran and we can proceed with the rest of the remediation steps
-      ###If the above output is => true then there are POAs associated with this Veteran and the duplicateEP is caused by the known POA issue. This Supplemental Claim needs sent over to Martin Menchey for remediation.
-
       # Validate if there are any existing modifiers already associated with the Veteran 
       v.end_products.map(&:modifier)
 
@@ -176,6 +166,42 @@ module WarRoom
       
       # Set the End Product Establishments Parameter
       epes.count
+
+      # Set the End Product Modifier Parameter by Claim and Veteran
+      epmf = EndProductModifierFinder.new(epe, v)
+
+      # Setting the End Product Modifiers already taken parameter
+      taken=epmf.send(:taken_modifiers)
+
+      # Mark the modifier place for the new establishment to begin trying
+      epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
+
+      # Set the new establishment modifier
+      ep2e.modifier=epmf.find
+
+      # Set the new End Product Establishment object
+      epe.instance_variable_set(:@end_product_to_establish, ep2e)
+
+      # Attempt to establish the End Product Establishment
+      if !epe.establish!
+        abort("Duplicate EP. Needs remediation.")
+      end
+
+      # Check the End Product Establishments count
+      puts sc.end_product_establishments.count
+
+      # Reload the End Product Establishments
+      sc.end_product_establishments.each{|epe| epe.reload}
+
+      # Run the Decision Review Process Job
+      DecisionReviewProcessJob.new.perform(sc)
+
+      # Reload the Supplemental Claim
+      sc.reload
+
+      # Check the Establishment Error on the Supplemental Claim
+      sc.establishment_error
+
     end
   end 
 end
