@@ -177,9 +177,9 @@ describe AppealIntake, :all_dbs do
     end
 
     context "docket type is changed" do
-      let (:docket_type) { Constants.AMA_DOCKETS.hearing }
-      let (:original_hearing_request_type) { "central" }
-      let (:docket_type) { Constants.AMA_DOCKETS.direct_review }
+      let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+      let(:original_hearing_request_type) { "central" }
+      let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
 
       it "resets hearing request type to nil" do
         expect(intake.detail.original_hearing_request_type).to be_nil
