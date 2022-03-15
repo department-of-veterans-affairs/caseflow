@@ -471,7 +471,6 @@ class TaskActionRepository
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-        modal_body: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
@@ -522,6 +521,22 @@ class TaskActionRepository
         message_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def bva_intake_return_to_camo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      camo = VhaCamo.singleton
+      {
+        selected: camo,
+        options: [{ label: camo.name, value: camo.id }],
+        modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
+        modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
+        message_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
     end

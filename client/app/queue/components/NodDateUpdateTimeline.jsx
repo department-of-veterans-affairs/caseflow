@@ -6,7 +6,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import { changeReasons } from './EditNodDateModal';
 
 import COPY from 'app/../COPY';
-import { GreenCheckmark } from '../../components/RenderFunctions';
+import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
 import { COLORS } from '../../constants/AppConstants';
 import { grayLineTimelineStyling } from './TaskRows';
 import { useSelector } from 'react-redux';
@@ -46,7 +46,7 @@ export const NodDateUpdateTimeline = (props) => {
         </div>
       </td>
       <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-        <GreenCheckmark />
+        <GreenCheckmarkIcon />
         <div {...grayLineTimelineStyling} />
       </td>
       <td className="taskContainerStyling taskInformationTimelineContainerStyling">

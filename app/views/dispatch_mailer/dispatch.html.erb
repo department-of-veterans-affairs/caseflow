@@ -1,0 +1,21 @@
+<%= content_for :intro do %>
+  <p>
+    Dear Power of Attorney,
+  </p>
+<% end %>
+
+<%= content_for :content do %>
+  <p>
+    A decision has been dispatched for <%= @appellant_name %>. 
+  </p>
+  <p>
+    <%= external_link caseflow_url(@appeal), display_text: "View the Case Details" %> for additional decision information. (Note: You must be logged into the VA network to access case details).
+  </p>
+<% end %>
+
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>
+    The Board of Veterans' Appeals
+  </p>
+<% end %>

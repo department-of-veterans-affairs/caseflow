@@ -14,7 +14,7 @@ import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
-import { DateString } from '../../util/DateUtil';
+import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
@@ -110,19 +110,60 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
-export const boardIntakeColumn = (tasks, filterOptions) => {
+export const boardIntakeColumn = (requireDasRecord) => {
+  const boardIntakeStyle = css({ display: 'inline-block' });
+
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => {
+      const assignedDays = daysSinceAssigned(task);
+      const onHoldDays = daysSincePlacedOnHold(task);
+
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
+        <div className={boardIntakeStyle}>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+            {assignedDays} {pluralize('day', assignedDays)} ago
+          </span>
+          { taskHasCompletedHold(task) &&
+          <ContinuousProgressBar level={onHoldDays} limit={task.onHoldDuration} warning /> }
+        </div>
+      </IhpDaysWaitingTooltip>;
+    },
     backendCanSort: true,
-    enableFilter: true,
+    getSortValue: (task) => moment().startOf('day').
+      diff(moment(task.assignedOn), 'days')
+  };
+};
+
+export const lastActionColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
+    backendCanSort: true,
+    getSortValue: (task) => numDaysOnHold(task)
+  };
+};
+
+export const taskOwnerColumn = (tasks, filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_TASK_OWNER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
     tableData: tasks,
-    columnName: 'assignedAt.name',
-    anyFiltersAreSet: true,
+    columnName: 'label',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
     filterOptions,
-    label: 'Filter by Board Intake',
-    valueFunction: (task) => task.assignedAt.name,
-    getSortValue: (task) => task.assignedAt.name
+    label: 'Filter by owner',
+    valueName: 'label',
+    valueFunction: (task) => task.ownedBy,
+    getSortValue: (task) => task.label
   };
 };
 
@@ -130,15 +171,14 @@ export const vamcOwnerColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_VAMC_OWNER_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
-    backendCanSort: true,
-    enableFilter: true,
     tableData: tasks,
-    columnName: 'assignedTo.name',
-    anyFiltersAreSet: true,
+    columnName: 'label',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
     filterOptions,
-    label: 'Filter by VAMC Owner',
-    valueFunction: (task) => task.assignedTo.name,
-    getSortValue: (task) => task.assignedTo.name
+    label: 'Filter by owner',
+    valueName: 'label',
+    valueFunction: (task) => task.ownedBy,
+    getSortValue: (task) => task.label
   };
 };
 
@@ -166,21 +206,6 @@ export const taskColumn = (tasks, filterOptions) => {
       </TranscriptionTaskTooltip>;
     },
     backendCanSort: true,
-    getSortValue: (task) => task.label
-  };
-};
-
-export const taskOwnerColumn = (tasks, filterOptions) => {
-  return {
-    header: COPY.CASE_LIST_TABLE_TASKS_OWNER_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    tableData: tasks,
-    columnName: 'label',
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    filterOptions,
-    label: 'Filter by owner',
-    valueName: 'label',
-    valueFunction: (task) => task.ownedBy,
     getSortValue: (task) => task.label
   };
 };
@@ -300,18 +325,16 @@ export const daysWaitingColumn = (requireDasRecord) => {
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
-      const daysSinceAssigned = moment().startOf('day').
-          diff(moment(task.assignedOn), 'days'),
-        daysSincePlacedOnHold = moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days');
+      const assignedDays = daysSinceAssigned(task);
+      const onHoldDays = daysSincePlacedOnHold(task);
 
       return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask} taskId={task.uniqueId}>
         <div className={daysWaitingStyle}>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
-            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+            {assignedDays} {pluralize('day', assignedDays)}
           </span>
           { taskHasCompletedHold(task) &&
-          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
+          <ContinuousProgressBar level={onHoldDays} limit={task.onHoldDuration} warning /> }
         </div>
       </IhpDaysWaitingTooltip>;
     },
@@ -355,14 +378,14 @@ export const daysOnHoldColumn = (requireDasRecord) => {
   };
 };
 
-export const daysSinceLastColumn = (requireDasRecord) => {
+export const daysSinceLastActionColumn = (requireDasRecord) => {
   return {
-    header: COPY.CASE_LIST_TABLE_DAYS_SINCE_LAST_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name,
+    header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
-    valueFunction: (task) => `${task.daysSinceLastSatusChange} days ago`,
+    valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
     backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };

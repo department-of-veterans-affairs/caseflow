@@ -19,6 +19,7 @@ module Seeds
       create_ama_appeals
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
+      create_attorney_case_review_for_legacy_appeals
     end
 
     private
@@ -900,6 +901,31 @@ module Seeds
 
       # Once everything is created, refresh the cache or they won't appear in the UI
       UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals
+    end
+
+    # TODO: This seed method is only creating an attorney_case_review for the first
+    # LegacyAppeal in that satisfies the condition investigate why this is happening
+    # and fix it.
+    def create_attorney_case_review_for_legacy_appeals
+      judge = User.find_by_css_id("BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+
+      LegacyAppeal.all.each do |la|
+        created_at = la.vacols_case_review&.created_at
+
+        next unless la.location_code == judge.vacols_uniq_id && created_at.present?
+
+        task_id = "#{la.vacols_id}-#{VacolsHelper.day_only_str(created_at)}"
+
+        create(
+          :attorney_case_review,
+          appeal: la,
+          reviewing_judge: judge,
+          attorney: attorney,
+          task_id: task_id,
+          note: Faker::Lorem.sentence
+        )
+      end
     end
   end
   # rubocop:enable Metrics/ClassLength

@@ -37,7 +37,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
-import EmailModalConfirmation from './EmailModalConfirmation';
+import EmailConfirmationModal from './EmailConfirmationModal';
 import COPY from '../../../COPY';
 import { VIRTUAL_HEARING_LABEL } from '../constants';
 
@@ -64,8 +64,8 @@ const HearingDetails = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [virtualHearingErrors, setVirtualHearingErrors] = useState({});
-  const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
-  const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
+  const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
+  const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -90,12 +90,12 @@ const HearingDetails = (props) => {
   // Create an effect to remove stale alerts on unmount
   useEffect(() => () => props.clearAlerts(), []);
 
-  const openVirtualHearingModal = ({ type }) => {
-    setVirtualHearingModalOpen(true);
-    setVirtualHearingModalType(type);
+  const openEmailConfirmationModal = ({ type }) => {
+    setEmailConfirmationModalOpen(true);
+    setEmailConfirmationModalType(type);
   };
 
-  const closeVirtualHearingModal = () => setVirtualHearingModalOpen(false);
+  const closeEmailConfirmationModal = () => setEmailConfirmationModalOpen(false);
 
   const getEditedEmailsAndTz = () => {
     const changes = deepDiff(
@@ -129,8 +129,9 @@ const HearingDetails = (props) => {
       );
       const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
       const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
+      const virtualHearingCheck = hearing.isVirtual || convertingToVirtual;
 
-      if (errors && hearing.isVirtual) {
+      if (errors && virtualHearingCheck) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noAppellantEmail && 'appellantEmailAddress']: `${appellantTitle} email is required`,
@@ -141,7 +142,7 @@ const HearingDetails = (props) => {
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
       } else if ((emailUpdated || timezoneUpdated) && !converting && hearing.isVirtual) {
-        return openVirtualHearingModal({ type: 'change_email_or_timezone' });
+        return openEmailConfirmationModal({ type: 'change_email_or_timezone' });
       }
 
       // Only send updated properties
@@ -203,22 +204,11 @@ const HearingDetails = (props) => {
 
       // email validations should be thrown inline
       if (code === 1002) {
-        // API errors from the server need to be bubbled up to the VirtualHearingModal so it can
-        // update the email components with the validation error messages.
-        const changingFromVideoToVirtualWithModalFlow = (
-          hearing?.readableRequestType === 'Video' && !hearing.isVirtual
-        );
+        const errors = parseVirtualHearingErrors(msg);
 
-        if (changingFromVideoToVirtualWithModalFlow) {
-          // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
-          throw respError;
-        } else {
-          const errors = parseVirtualHearingErrors(msg);
+        document.getElementById('email-section').scrollIntoView();
 
-          document.getElementById('email-section').scrollIntoView();
-
-          setVirtualHearingErrors(errors);
-        }
+        setVirtualHearingErrors(errors);
       } else {
         setError(msg);
       }
@@ -334,15 +324,15 @@ const HearingDetails = (props) => {
           </Button>
         </span>
       </div>
-      {virtualHearingModalOpen && (
-        <EmailModalConfirmation
+      {emailConfirmationModalOpen && (
+        <EmailConfirmationModal
           hearing={hearing}
           virtualHearing={hearing?.virtualHearing}
           update={updateHearing}
           submit={submit}
-          closeModal={closeVirtualHearingModal}
+          closeModal={closeEmailConfirmationModal}
           reset={() => resetState(initialHearing)}
-          type={virtualHearingModalType}
+          type={emailConfirmationModalType}
           {...editedEmailsAndTz}
         />
       )}

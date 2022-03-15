@@ -13,15 +13,20 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
   let(:created_by) { create(:user) }
   let(:task_params) { {} }
 
+  let(:task_ids) { {} }
+
   describe "#create_substitute_tasks!" do
     context "when created_by is a COB admin" do
       before do
         OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
       end
       let(:selected_task_ids) { [] }
+      let(:cancelled_task_ids) { [] }
       subject do
+        task_ids[:selected] = selected_task_ids
+        task_ids[:cancelled] = cancelled_task_ids
         SameAppealSubstitutionTasksFactory.new(appeal,
-                                               selected_task_ids,
+                                               task_ids,
                                                created_by,
                                                task_params).create_substitute_tasks!
       end
@@ -130,7 +135,6 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             it "reopens the most recently created AttorneyTask and JudgeDecisionReviewTask" do
               recent_attorney_task = appeal.tasks.of_type(:AttorneyTask).cancelled.order(:id).last
               recent_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).cancelled.order(:id).last
-
               subject
               open_attorney_task = appeal.tasks.of_type(:AttorneyTask).open.first
               open_judge_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).open.first
@@ -194,6 +198,130 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             end
           end
         end
+
+        context "when the user selects an evidence submission window task" do
+          let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
+          let(:selected_task_ids) { [selected_task_id] }
+          # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the
+          # required tasks. The veteran is later made deceased in order to mimic a substitution scenario.
+          let(:live_veteran) { create(:veteran, file_number: "12121212") }
+          let(:esw_end) { "2022-10-22" }
+          let!(:task_params) { { selected_task_id.to_s => { "hold_end_date" => esw_end } } }
+          let(:esw_end_date) { Time.zone.parse(esw_end) }
+          let!(:appeal) do
+            create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                   veteran_file_number: live_veteran.file_number)
+          end
+          let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+
+          before do
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+            live_veteran.update!(date_of_death: 1.day.ago)
+          end
+
+          it "copies the evidence submission window task and makes it a descendant of a new distribution task" do
+            subject
+
+            active_esw_tasks = appeal.tasks.active.of_type(:EvidenceSubmissionWindowTask)
+            expect(active_esw_tasks.count).to eq(1)
+            expect(active_esw_tasks.first.status).to eq(Constants.TASK_STATUSES.assigned)
+
+            closed_esw_task = appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first
+            expect(active_esw_tasks.first.instructions).to eq(closed_esw_task.instructions)
+            expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+            expect(appeal.tasks.open.of_type(:DistributionTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
+            expect(active_esw_tasks.first.parent.type).to eq("HearingTask")
+            expect(active_esw_tasks.first.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+            expect(appeal.tasks.open.of_type(:DistributionTask).count).to eq(1)
+          end
+
+          it "allots all remaining time in the evidence submission window task to the substitute appellant" do
+            subject
+
+            esw_task = appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first
+            expect(esw_task.timer_ends_at).to be_between(
+              esw_end_date - 1.day,
+              esw_end_date + 1.day
+            )
+          end
+
+          context "for an appeal at the attorney drafting step" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :at_attorney_drafting, associated_judge: judge, associated_attorney: attorney,
+                                            veteran_file_number: live_veteran.file_number)
+            end
+
+            before do
+              appeal.tasks.closed.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+              live_veteran.update!(date_of_death: 1.day.ago)
+            end
+
+            it "cancels decision tasks with a cancellation reason of substitution" do
+              expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq(Constants.TASK_STATUSES.on_hold)
+              expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.assigned)
+
+              subject
+
+              jdr_task = appeal.tasks.of_type(:JudgeDecisionReviewTask).first
+              expect(jdr_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
+              judge_atty_tasks = [:JudgeDecisionReviewTask, :AttorneyTask]
+              expect(appeal.tasks.of_type(judge_atty_tasks).pluck(:cancellation_reason).uniq).to eq(
+                [Constants.TASK_CANCELLATION_REASONS.substitution]
+              )
+            end
+          end
+          context "for an appeal at the judge assign step" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :assigned_to_judge, associated_judge: judge, veteran_file_number: live_veteran.file_number)
+            end
+
+            it "cancels the JudgeAssignTask with a cancellation reason of substitution" do
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.status).to eq(Constants.TASK_STATUSES.assigned)
+              subject
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(appeal.tasks.of_type(:JudgeAssignTask).first.cancellation_reason).to eq(
+                Constants.TASK_CANCELLATION_REASONS.substitution
+              )
+            end
+          end
+          context "for an appeal with one cancelled and one active JudgeAssignTask" do
+            let!(:appeal) do
+              create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_evidence_submission_window_task,
+                     :assigned_to_judge, associated_judge: judge, veteran_file_number: live_veteran.file_number)
+            end
+            let(:judge2) { create(:user, :judge) }
+
+            before do
+              appeal.tasks.open.of_type(:JudgeAssignTask).first.update(
+                cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change
+              )
+              appeal.tasks.open.of_type(:JudgeAssignTask).first.cancelled!
+              create(:ama_judge_assign_task, appeal: appeal, assigned_to: judge2,
+                                             parent: appeal.tasks.of_type(:DistributionTask).first)
+            end
+
+            it "cancels the JudgeAssignTask that was active with a cancellation reason of substitution" do
+              task_id = appeal.tasks.open.of_type(:JudgeAssignTask).first.id
+
+              subject
+
+              task = Task.find(task_id)
+              expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+              expect(task.cancellation_reason).to eq(Constants.TASK_CANCELLATION_REASONS.substitution)
+            end
+
+            it "leaves the cancellation reason of the previously cancelled JudgeAssignTask unchanged" do
+              task = appeal.tasks.cancelled.of_type(:JudgeAssignTask).first
+
+              subject
+
+              expect(task.cancellation_reason).to eq(Constants.TASK_CANCELLATION_REASONS.poa_change)
+            end
+          end
+        end
       end
 
       context "when an appeal has not been distributed" do
@@ -207,6 +335,35 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
 
             expect(appeal.tasks.count).to eq(task_count)
             expect(appeal.tasks.open.count).to eq(open_task_count)
+          end
+          context "when there are active tasks" do
+            before do
+              # Create active tasks that are visible to the user for selection
+              EvidenceOrArgumentMailTask.create!(parent: appeal.root_task,
+                                                 appeal: appeal,
+                                                 assigned_to: User.system_user)
+              HearingTask.create!(parent: appeal.root_task, appeal: appeal, assigned_to: User.system_user)
+            end
+            let(:evidence_task) { appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first }
+            let(:hearing_task) { appeal.tasks.of_type(:HearingTask).first }
+            let!(:trans_task) { create(:ama_colocated_task, :translation, appeal: appeal, parent: appeal.root_task) }
+            let(:cancelled_task_ids) { [evidence_task.id, hearing_task.id] }
+            it "cancels active tasks" do
+              active_tasks = [
+                evidence_task,
+                hearing_task
+              ]
+
+              subject
+              trans_task.reload
+              expect(trans_task.cancelled? &&
+                trans_task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)).to be false
+              expect(
+                active_tasks.map(&:reload).all? do |task|
+                  task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)
+                end
+              ).to be true
+            end
           end
         end
         context "when the user selects a task assigned to an individual" do
@@ -237,14 +394,90 @@ describe SameAppealSubstitutionTasksFactory, :postgres do
             expect(second_translation_task.status).to eq(Constants.TASK_STATUSES.assigned)
           end
         end
+
+        context "with additional hearing tasks and ScheduleHearingTask selected for reopening" do
+          let(:appeal) { create(:appeal, :hearing_docket, :with_post_intake_tasks) }
+          let(:hearing_task) { appeal.tasks.find_by(type: "HearingTask") }
+          let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
+          let(:assign_hearing_disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
+          let!(:transcription_task) { create(:transcription_task, parent: assign_hearing_disposition_task) }
+          let!(:evidence_submission_window_task) do
+            create(:evidence_submission_window_task, parent: assign_hearing_disposition_task)
+          end
+
+          let(:selected_task_ids) { [schedule_hearing_task.id] }
+
+          it "cancels related hearing tasks" do
+            types_to_cancel = [
+              AssignHearingDispositionTask.name,
+              ChangeHearingDispositionTask.name,
+              EvidenceSubmissionWindowTask.name,
+              TranscriptionTask.name
+            ]
+            tasks_to_cancel = appeal.tasks.select { |task| types_to_cancel.include?(task.type) }
+
+            expect(tasks_to_cancel.all?(&:open?)).to be true
+
+            subject
+
+            expect(
+              tasks_to_cancel.map(&:reload).all? do |task|
+                task.cancelled? && task.cancellation_reason.eql?(Constants.TASK_CANCELLATION_REASONS.substitution)
+              end
+            ).to be true
+          end
+        end
       end
     end
   end
 
-  describe "#selected_tasks_include_hearing_tasks?" do
+  describe "#resume_evidence_submission" do
+    let(:selected_task_id) { appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.id }
+    let(:selected_task_ids) { [selected_task_id] }
+    let(:task_ids) { {} }
+    # i wish there were a factory for this
+    let(:created_by) { create(:user) }
+    # The veteran must initially be alive when the appeal is created, or FactoryBot won't make all of the
+    # required tasks. The veteran is later made deceased in order to mimic a substitution scenario.
+    let(:live_veteran) { create(:veteran, file_number: "12121212") }
+    let(:esw_end) { "sOMETHing nOT vaLId" }
+    let!(:task_params) { { selected_task_id.to_s => { "hold_end_date" => esw_end } } }
+    let!(:appeal) do
+      create(:appeal, :with_post_intake_tasks, :with_evidence_submission_window_task,
+             veteran_file_number: live_veteran.file_number)
+    end
+
     subject do
-      SameAppealSubstitutionTasksFactory.new(appeal, selected_task_ids, created_by, task_params)
-        .selected_tasks_include_hearing_tasks?
+      task_ids[:selected] = selected_task_ids
+      task_ids[:cancelled] = nil
+      SameAppealSubstitutionTasksFactory.new(appeal,
+                                             task_ids,
+                                             created_by,
+                                             task_params).resume_evidence_submission
+    end
+    before do
+      OrganizationsUser.make_user_admin(created_by, ClerkOfTheBoard.singleton)
+      appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.cancelled!
+      live_veteran.update!(date_of_death: 1.day.ago)
+    end
+    context "when esw_task_params['hold_end_date'] is not a valid value" do
+      it "throws an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::InvalidParameter)
+          expect(error.code).to eq 400
+          expect(error.message).to eq("Invalid parameter 'hold_end_date'")
+        end
+      end
+    end
+  end
+
+  describe "#hearing_task_selected?" do
+    let(:cancelled_task_ids) { [] }
+    subject do
+      task_ids[:selected] = selected_task_ids
+      task_ids[:cancelled] = cancelled_task_ids
+      SameAppealSubstitutionTasksFactory.new(appeal, task_ids, created_by, task_params)
+        .hearing_task_selected?
     end
 
     context "when hearing tasks are selected" do

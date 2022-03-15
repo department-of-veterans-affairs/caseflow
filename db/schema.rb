@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_06_223908) do
+ActiveRecord::Schema.define(version: 2022_03_07_213343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2021_12_06_223908) do
     t.string "reason", comment: "VLJ's rationale for their decision on motion to AOD."
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_aod_motion_on_appeal_id_and_appeal_type"
     t.index ["granted"], name: "index_advance_on_docket_motions_on_granted"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
     t.index ["updated_at"], name: "index_advance_on_docket_motions_on_updated_at"
@@ -110,6 +111,7 @@ ActiveRecord::Schema.define(version: 2021_12_06_223908) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
+    t.boolean "homelessness", default: false, null: false, comment: "Indicates whether or not a veteran is experiencing homelessness"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
@@ -379,8 +381,9 @@ ActiveRecord::Schema.define(version: 2021_12_06_223908) do
     t.string "email_ro_id"
     t.string "ep_code"
     t.datetime "outcoding_date"
-    t.integer "task_id"
+    t.integer "task_id", comment: "references dispatch_tasks"
     t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_claim_establishments_on_task_id"
     t.index ["updated_at"], name: "index_claim_establishments_on_updated_at"
   end
 
@@ -489,6 +492,7 @@ ActiveRecord::Schema.define(version: 2021_12_06_223908) do
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
+    t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
   end
 

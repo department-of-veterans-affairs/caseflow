@@ -82,7 +82,7 @@ class AssignToView extends React.Component {
     };
 
     const assignTaskSuccessMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      title: taskActionData(this.props).message_title || sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail
     };
 

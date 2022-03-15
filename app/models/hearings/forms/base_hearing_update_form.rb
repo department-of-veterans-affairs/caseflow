@@ -329,14 +329,16 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_email_recipients
-    hearing.create_or_update_recipients(
-      type: AppellantHearingEmailRecipient,
-      email_address: appellant_email,
-      timezone: appellant_timezone
-    )
+    if appellant_email.present?
+      hearing.create_or_update_recipients(
+        type: AppellantHearingEmailRecipient,
+        email_address: appellant_email,
+        timezone: appellant_timezone
+      )
+    end
 
-    hearing.representative_recipient&.unset_email_address!
     if representative_email.present?
+      hearing.representative_recipient&.unset_email_address!
       hearing.create_or_update_recipients(
         type: RepresentativeHearingEmailRecipient,
         email_address: representative_email,
@@ -344,8 +346,8 @@ class BaseHearingUpdateForm
       )
     end
 
-    hearing.judge_recipient&.unset_email_address!
     if judge_email.present?
+      hearing.judge_recipient&.unset_email_address!
       hearing.create_or_update_recipients(
         type: JudgeHearingEmailRecipient,
         email_address: judge_email,

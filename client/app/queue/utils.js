@@ -155,7 +155,7 @@ const taskAttributesFromRawTask = (task) => {
       notes: task.attributes.unscheduled_hearing_notes?.notes
     },
     ownedBy: task.attributes.owned_by,
-    daysSinceLastSatusChange: task.attributes.days_since_last_status_change,
+    daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
   };
 };
@@ -250,6 +250,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+      instructions: task.attributes.instructions,
       latestInformalHearingPresentationTask: {
         requestedAt:
           task.attributes.latest_informal_hearing_presentation_task

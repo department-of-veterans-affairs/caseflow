@@ -83,7 +83,7 @@ export const OrgRow = React.memo((props) => {
   const handleRequestedCaseDistribution = ({ value }) => {
     setRequestedCaseDistribution(value);
     const payload = {
-      ama_only_request: ['all', 'amaOnly'].includes(value),
+      ama_only_request: ['amaOnly'].includes(value),
     };
 
     props.onUpdate?.(props.id, payload);

@@ -5,7 +5,9 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
-import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
+import { CancelIcon } from '../../components/icons/CancelIcon';
+import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
+import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
@@ -36,7 +38,7 @@ export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
 const greyDotAndlineStyling = css({ top: '25px' });
 
 const closedAtIcon = (task, timeline) => {
-  return (task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot />);
+  return (task.closedAt && timeline ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />);
 };
 
 const taskContainerStyling = css({
@@ -290,7 +292,9 @@ class TaskRows extends React.PureComponent {
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
-            <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
+            <dd style={{ width: '100%' }}>
+              {this.taskInstructionsWithLineBreaks(task)}
+            </dd>
           </React.Fragment>
         )}
         <Button
@@ -496,7 +500,7 @@ class TaskRows extends React.PureComponent {
               {...taskInfoWithIconTimelineContainer}
               className={appeal.form9Date ? '' : 'greyDotStyling'}
             >
-              {appeal.form9Date ? <GreenCheckmark /> : <GrayDot />}
+              {appeal.form9Date ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />}
               {appeal.nodDate && (
                 <div className="grayLineStyling grayLineTimelineStyling" />
               )}
@@ -514,7 +518,7 @@ class TaskRows extends React.PureComponent {
               {moment(appeal.nodDate).format('MM/DD/YYYY')}
             </td>
             <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-              <GreenCheckmark />
+              <GreenCheckmarkIcon />
             </td>
             <td className="taskContainerStyling taskInformationTimelineContainerStyling">
               {COPY.CASE_TIMELINE_NOD_RECEIVED} <br />

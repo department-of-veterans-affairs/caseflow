@@ -79,7 +79,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content("Assess Documentation")
+        expect(page).to have_content("Review Documentation")
 
         created_task_types = Set.new(appeal.tasks.map(&:type))
         pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
@@ -99,7 +99,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "CAMO user assigns to Program Office" do
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content(COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content(COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -231,7 +231,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
 
-        fill_in("Instructions:", with: "This appeal is ready to be docketed.")
+        find("label", text: "Correct documents have been successfully added").click
+        fill_in("Provide additional context and/or documents:", with: "This appeal is ready to be docketed.")
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))

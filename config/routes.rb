@@ -36,6 +36,9 @@ Rails.application.routes.draw do
           get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
         end
         resources :higher_level_reviews, only: [:create, :show]
+        namespace :supplemental_claims do
+          get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
+        end
         resources :supplemental_claims, only: [:create, :show]
         namespace :appeals do
           get 'contestable_issues', to: "contestable_issues#index"
@@ -65,6 +68,13 @@ Rails.application.routes.draw do
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+      end
+      namespace :v2 do
+        get 'appeals', to: 'appeals#details'
+        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
+        get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
       end
     end
   end
@@ -363,4 +373,7 @@ Rails.application.routes.draw do
   # :nocov:
 
   get "/route_docs", to: "route_docs#index"
+
+  get "/mpi", to: "mpi#index"
+  post "/mpi/search", to: "mpi#search"
 end
