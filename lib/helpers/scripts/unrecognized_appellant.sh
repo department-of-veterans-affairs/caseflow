@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 if [ -z "$1" ]
   then
     echo "Expecting argument representing the dispatch task id of the task with unrecognized appellant"
