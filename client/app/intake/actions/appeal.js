@@ -11,3 +11,16 @@ export const setDocketType = (docketType) => ({
     }
   }
 });
+
+
+export const setHomelessnessType = (homelessness) => ({
+  type: ACTIONS.SET_HOMELESSNESS_TYPE,
+  payload: {
+    homelessness
+  },
+  meta: {
+    analytics: {
+      label:  homelessness
+    }
+  }
+});
