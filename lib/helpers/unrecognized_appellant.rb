@@ -6,9 +6,9 @@ module WarRoom
             ec = EstablishClaim.find(dispatch_task_id)
             la = ec.appeal
 
-            
+
             return false unless la.veteran.nil?
-            
+
             # Issues are printed for ticketing information
             iss = la.issues
             puts "===============ISSUES==============="
@@ -31,4 +31,3 @@ module WarRoom
         end
     end
 end
-
