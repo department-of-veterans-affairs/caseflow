@@ -21,6 +21,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     ...commonState,
     docketType: {
       $set: serverIntake.docketType
+    },
+    homelessness: {
+      $set: serverIntake.homelessness
     }
   });
 };
@@ -62,6 +65,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     veteranValid: null,
+    homelessness: null,
     veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -155,6 +159,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.legacyOptInApproved
       }
     });
+   case ACTIONS.SET_HOMELESSNESS_TYPE:
+      return update(state, {
+        homelessness: {
+          $set: action.payload.homelessness
+        }
+      });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
