@@ -67,11 +67,6 @@ const formFieldMapping = (props) => {
   };
   const renderHomelessnessValue = () => {
     // eslint-disable-next-line no-undefined
-    /*
-    if (isAppeal && (props.homelessness === null || props.homelessness === undefined)) {
-      return 'false';
-    }
-    */
 
     return renderBooleanValue('homelessness');
   };
