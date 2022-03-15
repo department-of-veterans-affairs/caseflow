@@ -14,10 +14,13 @@ RSpec.configure do |config|
   # IMPORTANT that in all these hook defs, the "caseflow" connection comes last.
 
   config.before(:suite) do
-    DatabaseCleaner[:active_record, { connection: etl }].clean_with(:truncation)
-    DatabaseCleaner[:active_record, { connection: vacols }]
+    #DatabaseCleaner[:active_record, { connection: etl }].clean_with(:truncation)
+    DatabaseCleaner[:active_record, db: :etl].clean_with(:truncation)
+    #DatabaseCleaner[:active_record, { connection: vacols }]
+    DatabaseCleaner[:active_record, db: :vacols]
       .clean_with(:deletion, except: vacols_tables_to_preserve)
-    DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
+    DatabaseCleaner[:active_record, db: :caseflow].clean_with(:truncation)
+    #DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
   end
 
   config.before(:each) do
