@@ -154,7 +154,8 @@ export const ACTIONS = {
   COMPLETE_INTAKE_STEPS_NOT_CONFIRMED: 'COMPLETE_INTAKE_STEPS_NOT_CONFIRMED',
   PROCESS_FINISH_ERROR: 'PROCESS_FINISH_ERROR',
   NO_ISSUES_SELECTED_ERROR: 'NO_ISSUES_SELECTED_ERROR',
-  SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT'
+  SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT',
+  SET_HOMELESSNESS_TYPE: 'SET_HOMELESSNESS_TYPE',
 };
 
 export const REVIEW_OPTIONS = {
@@ -187,6 +188,7 @@ export const REVIEW_DATA_FIELDS = {
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
+    homelessness: { key: 'homelessness', required: false }
   },
   supplementalClaim: {
     benefit_type: { key: 'benefitType', required: true },
