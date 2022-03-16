@@ -104,7 +104,7 @@ group :test, :development, :demo do
   gem "pry-byebug", "~> 3.9"
   gem "rails-erd"
   gem "rb-readline"
-  gem "rspec"
+  gem "rspec", "3.9.0"
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
