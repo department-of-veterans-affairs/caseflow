@@ -320,14 +320,14 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
-
-    // If a field is to be conditionally rendered set field = null to have it not show
-    fields = fields.filter((field) => field !== null);
     break;
 
   default:
     fields = [];
   }
+
+  // If a field is to be conditionally rendered set field = null to have it not show
+  fields = fields.filter((field) => field !== null);
 
   let claimantField = getClaimantField(veteran, intakeData);
 
