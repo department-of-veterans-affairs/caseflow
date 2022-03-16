@@ -5,13 +5,13 @@ class DuplicateVeteranChecker
     a = Appeal.find_by_uuid(appeal_uuid)
 
     if a.nil?
-      puts("Appeal was not found. Aborting")
+      puts("Appeal was not found. Aborting...")
       fail Interrupt
     elsif a.veteran.nil?
-      puts("veteran is not assiciated to this appeal. Aborting...")
+      puts("No veteran is associated with this appeal. Aborting...")
       fail Interrupt
     elsif a.veteran.file_number.empty?
-      puts("Veteran tied to appeal does not have a file_number. Aborting..")
+      puts("Veteran tied to appeal does not have a file_number. Aborting...")
       fail Interrupt
     end
 
@@ -22,13 +22,13 @@ class DuplicateVeteranChecker
     a = Appeal.find_by_uuid(appeal_uuid)
 
     if a.nil?
-      puts("Appeal was not found. Aborting")
+      puts("Appeal was not found. Aborting...")
       fail Interrupt
     elsif a.veteran.nil?
-      puts("veteran is not assiciated to this appeal. Aborting...")
+      puts("No veteran is associated with this appeal. Aborting...")
       fail Interrupt
     elsif a.veteran.file_number.empty?
-      puts("Veteran tied to appeal does not have a file_number. Aborting..")
+      puts("Veteran tied to appeal does not have a file_number. Aborting...")
       fail Interrupt
     end
 
@@ -39,13 +39,13 @@ class DuplicateVeteranChecker
     la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
 
     if la.nil?
-      puts("Legacy Appeal was not found for that vacols id. Aborting..")
+      puts("Legacy Appeal was not found for that vacols id. Aborting...")
       fail Interrupt
     elsif la.veteran.nil?
-      puts("veteran is not associated with this legacy appeal. Aborting..")
+      puts("No veteran is associated with this appeal. Aborting...")
       fail Interrupt
     elsif la.veteran.file_number.empty?
-      puts("veteran tied to legacy appeal does not have a file_number. Aborting..")
+      puts("Veteran tied to legacy appeal does not have a file_number. Aborting...")
       fail Interrupt
     end
 
@@ -53,16 +53,16 @@ class DuplicateVeteranChecker
   end
 
   def run_remediation_by_vacols_id(vacols_id)
-    la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
+    la = LegacyAppeal.find_by_vacols_id(vacols_id)
 
     if la.nil?
-      puts("Legacy Appeal was not found for that vacols id. Aborting..")
+      puts("Legacy Appeal was not found for that vacols id. Aborting...")
       fail Interrupt
     elsif la.veteran.nil?
-      puts("veteran is not associated with this legacy appeal. Aborting..")
+      puts("No veteran is associated with this appeal. Aborting...")
       fail Interrupt
     elsif la.veteran.file_number.empty?
-      puts("veteran tied to legacy appeal does not have a file_number. Aborting..")
+      puts("Veteran tied to legacy appeal does not have a file_number. Aborting...")
       fail Interrupt
     end
 
@@ -73,9 +73,13 @@ class DuplicateVeteranChecker
     # check if only one vet has the old file number
     vets = Veteran.where(file_number: duplicate_veteran_file_number)
 
-    # Check that only oen vet has the bad file number
-    if vets.nil? || vets.count > 1
-      puts("More than on vet with the duplicate veteran file number exists. Aborting..")
+    # Check that only one vet has the bad file number
+    if vets.count > 1 
+      puts("More than one vet with the duplicate veteran file number exists. Aborting...")
+      fail Interrupt
+    # Check if no vet has the bad file number
+    elsif vets.nil? || vets.count == 0
+      puts("No vets have this veteran file number.  Aborting...")
       fail Interrupt
     end
 
@@ -310,8 +314,12 @@ class DuplicateVeteranChecker
     vets = Veteran.where(file_number: duplicate_veteran_file_number)
 
     # Check that only oen vet has the bad file number
-    if vets.nil? || vets.count > 1
-      puts("More than on vet with the duplicate veteran file number exists. Aborting..")
+    if vets.count > 1
+      puts("More than on vet with the duplicate veteran file number exists. Aborting...")
+      fail Interrupt
+    #
+    elsif vets.nil? || vets.count == 0
+      puts("No vets have this veteran file number.  Aborting...")
       fail Interrupt
     end
 
@@ -323,7 +331,7 @@ class DuplicateVeteranChecker
 
     # Check if veteran is not found
     if v.nil?
-      puts("No veteran found. Aborting.")
+      puts("No veteran found. Aborting...")
       fail Interrupt
     end
 
@@ -346,16 +354,17 @@ class DuplicateVeteranChecker
       if other_v.file_number == old_file_number
         other_v = dupe_vets.last # First is duplicate veteran so get 2nd
       end
-      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
-        puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+      if other_v.file_number.empty? || other_v.file_number == old_file_number 
+        #if correct veteran has wrong file number
+        puts("Both veterans have the same file_number or no file_number on the correct veteran. Aborting...")
         fail Interrupt
       elsif v.ssn.empty? && !other_v.ssn.empty?
         vet_ssn = other_v.ssn
       elsif v.ssn.empty? && other_v.ssn.empty?
-        puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+        puts("Neither veteran has a SSN and a SSN is needed to check the BGS file number. Aborting...")
         fail Interrupt
       elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
-        puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+        puts("Veterans do not have the same SSN and a correct SSN needs to be chosen. Aborting...")
         fail Interrupt
       else
         vet_ssn = v.ssn
