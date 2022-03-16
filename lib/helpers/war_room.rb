@@ -83,37 +83,11 @@ module WarRoom
   end
 
   class OutcodeWithDuplicateEP
-    def higher_level_review_duplicate_ep(uuid)
-
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
-
-      hlr = HigherLevelReview.find(uuid)
-      if hlr.nil?
-        puts("No Higher Level Review was found. Aborting...")
-        fail Interrupt
-      end
-      # Set Veteran for this Higher Level Review
-      v = hlr.veteran
-
-      # Validate if there are any existing modifiers already associated with the Veteran
-      v.end_products.map(&:modifier)
-
-    # FIXME need to check what the output looks like!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      # If the above output does not show all ten options for the 030 then proceed with below
-      # Set the End Product Establishments Parameter
-      epes = hlr.end_product_establishments
-      puts epes.count
-
-      # If there was only one, which is usually the case, we will only do the below first command.
-      # If there was more than one, we will repeat the below command for the subsequent EPES and all subsequent epe steps will need to be duplicated
-      # ie second, third, etc
-
-      epe = epes.first
-
+    # method for all the epe steps in case there's multiple
+    def load_epe(epe, claim_type)
       ep2e = epe.send(:end_product_to_establish)
 
-      epmf = EndProductModifierFinder.new(epe,v)
+      epmf = EndProductModifierFinder.new(epe, v)
       taken = epmf.send(:taken_modifiers)
 
       epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
@@ -129,10 +103,36 @@ module WarRoom
       end
 
       # Check the End Product Establishments count
-      puts hlr.end_product_establishments.count
+      puts claim_type.end_product_establishments.count
 
       # Reload the End Product Establishments
-      hlr.end_product_establishments.each{|epe| epe.reload}
+      claim_type.end_product_establishments.each{ |epe| epe.reload }
+    end
+
+    def higher_level_review_duplicate_ep(uuid)
+      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+
+      hlr = HigherLevelReview.find(uuid)
+      if hlr.nil?
+        puts("No Higher Level Review was found. Aborting...")
+        fail Interrupt
+      end
+      # Set Veteran for this Higher Level Review
+      v = hlr.veteran
+
+      # If the output shows all ten options for the 030 modifier, then all available modifiers are taken. This Higher Level Review needs sent over to Martin Menchey for remediation.
+      if v.end_products.map(&:modifier).count == 10
+        abort("All available modifiers are taken. Needs to be sent for remdiation.")
+      end
+
+      # If the above output does not show all ten options for the 030 then proceed with below
+      # Set the End Product Establishments Parameter
+      epes = hlr.end_product_establishments
+
+      # If there was only one, which is usually the case, we will only do the below first command.
+      # If there was more than one, we will repeat the below command for the subsequent EPES and all subsequent epe steps will need to be duplicated
+      # ie second, third, etc
+      epes.each { |epe| load_epe(epe, hlr) }
 
       # Run the Decision Review Process Job
       DecisionReviewProcessJob.new.perform(hlr)
@@ -142,13 +142,13 @@ module WarRoom
       puts hlr.establishment_error
     end
 
-    def supplemental_claim_duplicate_ep(claim_id) 
+    def supplemental_claim_duplicate_ep(claim_id)
       # set current user
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
 
-      sc=SupplementalClaim.find(claim_id)
+      sc = SupplementalClaim.find(claim_id)
 
-      if sc.nil? 
+      if sc.nil?
         puts("No supplemental claim was found for the following id " + sc)
       end
 
@@ -156,42 +156,17 @@ module WarRoom
       sc.establishment_error
 
       # Set Veteran for this Supplemental Claim
-      v=sc.veteran
+      v = sc.veteran
 
-      # Validate if there are any existing modifiers already associated with the Veteran 
-      v.end_products.map(&:modifier)
-
-      ## If the above output shows all ten options for the 040 modifier, then all available modifiers are taken. This Supplemental Claim needs sent over to Martin Menchey for remediation.
-      ##If the above output does not show all ten options for the 040 then proceed with Step 7.
-      
-      # Set the End Product Establishments Parameter
-      epes.count
-
-      # Set the End Product Modifier Parameter by Claim and Veteran
-      epmf = EndProductModifierFinder.new(epe, v)
-
-      # Setting the End Product Modifiers already taken parameter
-      taken=epmf.send(:taken_modifiers)
-
-      # Mark the modifier place for the new establishment to begin trying
-      epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
-
-      # Set the new establishment modifier
-      ep2e.modifier=epmf.find
-
-      # Set the new End Product Establishment object
-      epe.instance_variable_set(:@end_product_to_establish, ep2e)
-
-      # Attempt to establish the End Product Establishment
-      if !epe.establish!
-        abort("Duplicate EP. Needs remediation.")
+      # If the above output shows all ten options for the 040 modifier, then all available modifiers are taken. This Supplemental Claim needs sent over to Martin Menchey for remediation.
+      if v.end_products.map(&:modifier).count == 10
+        abort("All available modifiers are taken. Needs to be sent for remdiation.")
       end
 
-      # Check the End Product Establishments count
-      puts sc.end_product_establishments.count
+      # Set the End Product Establishments Parameter
+      epes = sc.end_product_establishments
 
-      # Reload the End Product Establishments
-      sc.end_product_establishments.each{|epe| epe.reload}
+      epes.each { |epe| load_epe(epe, hlr) }
 
       # Run the Decision Review Process Job
       DecisionReviewProcessJob.new.perform(sc)
