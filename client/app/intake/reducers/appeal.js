@@ -20,8 +20,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     docketType: {
       $set: serverIntake.docketType
     },
-    originalHearingRequestType: {
-      $set: serverIntake.originalHearingRequestType
+    hearingType: {
+      $set: serverIntake.hearingType
     }
   });
 };
