@@ -304,15 +304,10 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     ];
     break;
   case 'appeal':
-    // creating a hearing 
+    // creating a variable to check if appeal is a hearing
     let isHearing;
-    if (intakeData.docketType == 'hearing'){
-      isHearing = true
-    }
-    else {
-      isHearing = false
-    }
-// First possible way of implementing hearing type field
+    (intakeData.docketType === 'hearing' && intakeData.hearingType) ? isHearing = true : isHearing = false;
+
     fields = [
       { field: 'Veteran',
         content: veteranInfo },
@@ -320,30 +315,16 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
-        //if statement to be added somehow
-      //{ field: 'Hearing Type',
-      //  content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
       isHearing ? { field: 'Hearing Type',
         content: 'Test Data'} : null,
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
-// 1st way requires a removal of the null field
-  // If a field is to be conditionally rendered set field = null to have it not show
-  fields = fields.filter((field) => field !== null);
 
-// Second possible way of adding in the hearing type field
-  // If the docket type is a hearing docket, then the field "hearing type" will be added
-    // if (intakeData.docketType === 'hearing') {
-
-    //   fields.splice(
-    //     fields.findIndex((entry) => entry.field === 'Review option') + 1,
-    //     0,
-    //     { field: 'Hearing type',
-    //       content: _.startCase(intakeData.originalHearingRequestType.split('_').join(' ')) }
-    //   );
-    // }
+    // If a field is to be conditionally rendered set field = null to have it not show
+    fields = fields.filter((field) => field !== null);
     break;
+
   default:
     fields = [];
   }
