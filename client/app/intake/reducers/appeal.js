@@ -66,6 +66,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     completeIntakeErrorData: null,
     veteranValid: null,
     homelessness: null,
+    homelessnessError: null,
     veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -193,6 +194,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       isReviewed: {
         $set: true
       },
+      homelessnessError: {
+        $set: null
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -215,6 +219,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      homelessnessError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'homelessness')
       },
       requestStatus: {
         submitReview: {
