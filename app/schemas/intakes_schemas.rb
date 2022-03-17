@@ -24,6 +24,7 @@ class IntakesSchemas
         bool :informal_conference, optional: true, doc: "HLRs only"
         bool :same_office, optional: true, nullable: true, doc: "HLRs only"
         bool :legacy_opt_in_approved, optional: true
+        bool :homelessness, optional: true, doc: "Appeals only"
 
         # RAMP-specific fields
         string :option_selected,
