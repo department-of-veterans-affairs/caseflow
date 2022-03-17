@@ -266,6 +266,8 @@ export const formatIssues = (state) => {
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
+  // Display 'Hearing type' field on addIssuesPage based on review form selections.
+  let displayHearingType = (intakeData.docketType === 'hearing' && intakeData.originalHearingRequestType);
   const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
   const selectedForm = _.find(FORM_TYPES, { key: formType });
 
@@ -303,9 +305,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     ];
     break;
   case 'appeal':
-    // Display 'Hearing type' field on addIssuesPage based on review form selections.
-    let displayHearingType = (intakeData.docketType === 'hearing' && intakeData.originalHearingRequestType);
-
     fields = [
       { field: 'Veteran',
         content: veteranInfo },
