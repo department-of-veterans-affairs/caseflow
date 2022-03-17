@@ -80,6 +80,7 @@ class Appeal < DecisionReview
     validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
+    validates :homelessness, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 
@@ -142,7 +143,7 @@ class Appeal < DecisionReview
         :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :veteran_is_not_claimant
+        :veteran_is_not_claimant,
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
