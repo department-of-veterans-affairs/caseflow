@@ -18,7 +18,7 @@ const validReviewAppealData = {
   'receipt-date': AFTER_AMA_DATE,
   'docket-type': 'docket',
   'docket-type': 'type',
-  'hearing-type': 'video',
+  'orginal-hearing-request-type': 'video',
   'legacy-opt-in': 'true',
   'different-claimant-option': 'false',
   'filed-by-va-gov': 'false',
@@ -30,7 +30,7 @@ describe('schema', () => {
     it('null hearing type is valid', async () => {
       const validSchema = validReviewAppealData;
 
-      validSchema['hearing-type'] = null;
+      validSchema['orginal-hearing-request-type'] = null;
       await assertValidSchema(reviewAppealSchema, validSchema, true, true);
     });
   });

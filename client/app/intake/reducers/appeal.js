@@ -37,7 +37,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     filedByVaGovError: null,
     docketType: null,
     docketTypeError: null,
-    hearingType: null,
+    originalHearingRequestType: null,
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
@@ -125,8 +125,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     });
   case ACTIONS.SET_HEARING_TYPE:
     return update(state, {
-      hearingType: {
-        $set: action.payload.hearingType
+      originalHearingRequestType: {
+        $set: action.payload.originalHearingRequestType
       }
     });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:

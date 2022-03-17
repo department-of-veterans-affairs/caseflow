@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType } from '../actions/appeal';
+import { setDocketType, setOriginalHearingRequestType } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import {
   setAppealDocket,
@@ -20,7 +20,6 @@ import {
   setLegacyOptInApproved,
   setBenefitType,
   setFiledByVaGov,
-  setHearingType,
 } from '../actions/decisionReview';
 import {
   setInformalConference,
@@ -94,8 +93,8 @@ const formFieldMapping = (props) => {
     <SearchableDropdown
       label="Please Select Hearing Type"
       strongLabel
-      name="hearing-type"
-      onChange={({ value }) => props.setHearingType(value)}
+      name="orginal-hearing-request-type"
+      onChange={({ value }) => props.setOriginalHearingRequestType(value)}
       options={hearingTypeOptions}
     />
   );
@@ -110,12 +109,7 @@ const formFieldMapping = (props) => {
           strongLabel
           vertical
           options={docketTypeRadioOptions}
-          onChange={(value) => {
-            if (value !== 'hearing') {
-              props.setHearingType(null);
-            }
-            props.setDocketType(value);
-          }}
+          onChange={props.setDocketType}
           errorMessage={
             props.docketTypeError || props.errors?.['docket-type']?.message
           }
@@ -124,7 +118,7 @@ const formFieldMapping = (props) => {
         />
       </div>
     ),
-    'hearing-type':
+    'orginal-hearing-request-type':
     props.docketType === 'hearing' ? hearingTypeDropdown : <></>,
     'legacy-opt-in': (
       <LegacyOptInApproved
@@ -344,8 +338,8 @@ FormGenerator.propTypes = {
   reviewIntakeError: PropTypes.object,
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
-  setHearingType: PropTypes.func,
-  hearingType: PropTypes.string,
+  setOriginalHearingRequestType: PropTypes.func,
+  originalHearingRequestType: PropTypes.string,
   setLegacyOptInApproved: PropTypes.func,
   appealStatus: PropTypes.string,
   intakeStatus: PropTypes.string,
@@ -372,7 +366,7 @@ export default connect(
     filedByVaGovError: state[props.formName].filedByVaGovError,
     docketType: state[props.formName].docketType,
     docketTypeError: state[props.formName].docketTypeError,
-    hearingType: state[props.formName].hearingType,
+    originalHearingRequestType: state[props.formName].originalHearingRequestType,
     legacyOptInApproved: state[props.formName].legacyOptInApproved,
     legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
     benefitType: state[props.formName].benefitType,
@@ -396,7 +390,7 @@ export default connect(
       {
         setDocketType,
         setReceiptDate,
-        setHearingType,
+        setOriginalHearingRequestType,
         setLegacyOptInApproved,
         setInformalConference,
         setSameOffice,

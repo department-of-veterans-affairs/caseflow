@@ -11,3 +11,11 @@ export const setDocketType = (docketType) => ({
     }
   }
 });
+
+
+export const setOriginalHearingRequestType = (originalHearingRequestType) => ({
+  type: ACTIONS.SET_HEARING_TYPE,
+  payload: {
+    originalHearingRequestType
+  }
+});
