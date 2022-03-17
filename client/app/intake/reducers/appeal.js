@@ -123,7 +123,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDateError
       }
     });
-  case ACTIONS.SET_HEARING_TYPE:
+  case ACTIONS.SET_ORIGINAL_HEARING_REQUEST_TYPE:
     return update(state, {
       originalHearingRequestType: {
         $set: action.payload.originalHearingRequestType

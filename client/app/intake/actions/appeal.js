@@ -14,7 +14,7 @@ export const setDocketType = (docketType) => ({
 
 
 export const setOriginalHearingRequestType = (originalHearingRequestType) => ({
-  type: ACTIONS.SET_HEARING_TYPE,
+  type: ACTIONS.SET_ORIGINAL_HEARING_REQUEST_TYPE,
   payload: {
     originalHearingRequestType
   }
