@@ -109,10 +109,10 @@ module WarRoom
       claim_type.end_product_establishments.each{ |epe| epe.reload }
     end
 
-    def higher_level_review_duplicate_ep(uuid)
+    def higher_level_review_duplicate_ep(claim_id)
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
 
-      hlr = HigherLevelReview.find(uuid)
+      hlr = HigherLevelReview.find(claim_id)
       if hlr.nil?
         puts("No Higher Level Review was found. Aborting...")
         fail Interrupt
@@ -176,7 +176,6 @@ module WarRoom
 
       # Check the Establishment Error on the Supplemental Claim
       sc.establishment_error
-
     end
-  end 
+  end
 end
