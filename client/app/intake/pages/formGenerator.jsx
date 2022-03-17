@@ -10,6 +10,7 @@ import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
+import Homelessness from '../components/Homelessness'; 
 import {
   setVeteranIsNotClaimant,
   setClaimant,
@@ -64,11 +65,6 @@ const formFieldMapping = (props) => {
     }
 
     return renderBooleanValue('filedByVaGov');
-  };
-  const renderHomelessnessValue = () => {
-    // eslint-disable-next-line no-undefined
-
-    return renderBooleanValue('homelessness');
   };
 
   return ({
@@ -145,18 +141,12 @@ const formFieldMapping = (props) => {
       value={renderVaGovValue()}
       inputRef={props.register}
     />,
-    'homelessness': <RadioField
-      name="homelessness"
-      label={<span><b>Did the claimant check the "I am experiencing homelessness" box on the form?</b><i> (Optional)</i></span>}
-      vertical
-      options={BOOLEAN_RADIO_OPTIONS}
-      onChange= {(value) => {
-        props.setHomelessnessType(convertStringToBoolean(value));
-      }}
-      value={renderHomelessnessValue()}
-      inputRef={props.register}
-
-     />,
+     'homelessness': <Homelessness
+     value={props.Homelessness}
+     onChange={props.setHomelessnessType}
+     errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
+     register={props.register}
+   />,
     'opt-in-election': <Fragment>
       <RadioField
         name="opt-in-election"
@@ -280,7 +270,8 @@ FormGenerator.propTypes = {
   errors: PropTypes.array,
   intakeId: PropTypes.string,
   homelessness: PropTypes.string,
-  setHomelessnessType: PropTypes.func
+  setHomelessnessType: PropTypes.func,
+  homelessnessError: PropTypes.string
 };
 
 export default connect(
@@ -311,7 +302,8 @@ export default connect(
     veteranInvalidFields: state[props.formName].veteranInvalidFields,
     hasInvalidOption: state[props.formName].hasInvalidOption,
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
-    homelessness: state[props.formName].homelessness
+    homelessness: state[props.formName].homelessness,
+    homelessnessError: state[props.formName].homelessnessError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
