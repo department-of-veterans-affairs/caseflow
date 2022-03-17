@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
-import { convertStringToBoolean } from '.';
 
 const getClaimantField = (veteran, intakeData) => {
   const {
