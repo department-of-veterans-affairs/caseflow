@@ -8,7 +8,7 @@ class Intake::AppealIntakeSerializer < Intake::DecisionReviewIntakeSerializer
     object.detail.docket_type
   end
 
-  attribute :hearing_type do |object|
+  attribute :original_hearing_request_type do |object|
     object.detail.original_hearing_request_type
   end
 end

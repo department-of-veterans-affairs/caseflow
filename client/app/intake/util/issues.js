@@ -304,7 +304,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     break;
   case 'appeal':
     // Display 'Hearing type' field on addIssuesPage based on review form selections.
-    let displayHearingType = (intakeData.docketType === 'hearing' && intakeData.hearingType);
+    let displayHearingType = (intakeData.docketType === 'hearing' && intakeData.originalHearingRequestType);
 
     fields = [
       { field: 'Veteran',
@@ -314,7 +314,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Review option',
         content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
       displayHearingType ? { field: 'Hearing type',
-        content: intakeData.hearingType } : null,
+        content: intakeData.originalHearingRequestType } : null,
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
