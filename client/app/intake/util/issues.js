@@ -313,7 +313,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Review option',
         content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
       displayHearingType ? { field: 'Hearing type',
-        content: intakeData.originalHearingRequestType } : null,
+        content: _.startCase(intakeData.originalHearingRequestType.split('_').join(' ')) } : null,
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
