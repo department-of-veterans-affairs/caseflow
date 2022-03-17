@@ -304,9 +304,7 @@ class AddIssuesPage extends React.Component {
         field: 'Claimant\'s POA',
         content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
       });
-
     }
-    
 
     let additionalRowClasses = () => {
       // no-op unless the issue banner needs to be displayed

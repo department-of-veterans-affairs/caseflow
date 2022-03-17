@@ -323,7 +323,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
-
   default:
     fields = [];
   }
