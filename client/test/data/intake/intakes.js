@@ -42,7 +42,7 @@ export const getAddIssuesFieldsSamples = [
     payeeCode: null,
     legacyOptInApproved: false,
     docketType: 'direct_review',
-    hearingType: null
+    originalHearingRequestType: null
   },
   {
     id: 72,
@@ -87,7 +87,7 @@ export const getAddIssuesFieldsSamples = [
     payeeCode: null,
     legacyOptInApproved: false,
     docketType: 'hearing',
-    hearingType: null
+    originalHearingRequestType: null
   },
   {
     id: 72,
@@ -132,6 +132,6 @@ export const getAddIssuesFieldsSamples = [
     payeeCode: null,
     legacyOptInApproved: false,
     docketType: 'hearing',
-    hearingType: 'video',
+    originalHearingRequestType: 'video',
   }
 ];
