@@ -102,12 +102,12 @@ const formFieldMapping = (props) => {
 		/>
 	);
 
-	const setDocketType = (e) => {
+	const updateDocketType = (event) => {
 		// reset hearing type if switching to a non-hearing docket type
 		if (props.docketType === 'hearing') {
 			props.setOriginalHearingRequestType(null);
 		}
-		props.setDocketType(e);
+		props.setDocketType(event);
 	};
 
 	return {
@@ -121,7 +121,7 @@ const formFieldMapping = (props) => {
 					vertical
 					options={docketTypeRadioOptions}
 					onChange={(value) => {
-						setDocketType(value);
+						updateDocketType(value);
 					}}
 					errorMessage={
 						props.docketTypeError || props.errors?.['docket-type']?.message
