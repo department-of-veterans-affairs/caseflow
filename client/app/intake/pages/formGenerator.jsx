@@ -93,7 +93,7 @@ const formFieldMapping = (props) => {
     <SearchableDropdown
       label="Please Select Hearing Type"
       strongLabel
-      name="orginal-hearing-request-type"
+      name="original-hearing-request-type"
       onChange={({ value }) => props.setOriginalHearingRequestType(value)}
       options={hearingTypeOptions}
     />
@@ -118,7 +118,7 @@ const formFieldMapping = (props) => {
         />
       </div>
     ),
-    'orginal-hearing-request-type':
+    'original-hearing-request-type':
     props.docketType === 'hearing' ? hearingTypeDropdown : <></>,
     'legacy-opt-in': (
       <LegacyOptInApproved
