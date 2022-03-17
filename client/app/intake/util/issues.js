@@ -304,9 +304,11 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     ];
     break;
   case 'appeal':
-    // creating a variable to check if appeal is a hearing
-    let isHearing;
-    (intakeData.docketType === 'hearing' && intakeData.hearingType) ? isHearing = true : isHearing = false;
+    // Display 'Hearing type' field on addIssuesPage based on review form selections.
+    let displayHearingType;
+    (intakeData.docketType === 'hearing' && intakeData.hearingType) 
+      ? displayHearingType = true 
+      : displayHearingType = false;
 
     fields = [
       { field: 'Veteran',
@@ -315,7 +317,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
-      isHearing ? { field: 'Hearing type',
+      displayHearingType ? { field: 'Hearing type',
         content: intakeData.hearingType } : null,
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
@@ -326,7 +328,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     fields = [];
   }
 
-  // If a field is to be conditionally rendered set field = null to have it not show
+  // If a field is to be conditionally rendered, set field = null to have it not show.
   fields = fields.filter((field) => field !== null);
 
   let claimantField = getClaimantField(veteran, intakeData);
