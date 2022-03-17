@@ -102,12 +102,12 @@ const formFieldMapping = (props) => {
     />
   );
 
-  const updateDocketType = (value) => {
+  const updateDocketType = (event) => {
     // reset hearing type if switching to a non-hearing docket type
     if (props.docketType === 'hearing') {
       props.setOriginalHearingRequestType(null);
     }
-    props.setDocketType(value);
+    props.setDocketType(event);
   };
 
   return {
