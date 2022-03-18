@@ -17,7 +17,7 @@ module WarRoom
 
             # Temporarily unblock the user by unassigning the task from the user and putting it back to the bottom of the queue of dispatch tasks to get assigned
             # by setting the created_at time to now we put the task to the end of the queue because the tasks are sorted oldest to newest
-            ec.update!(user_id: nil, assigned_at: nil, started_at: nil, created_at: Time.now, aasm_state: "unassigned")
+            ec.update!(user_id: nil, assigned_at: nil, started_at: nil, created_at: Time.now, aasm_state: "completed", comment: "Task has been completed by Caseflow dev team as per instruction by OAR")
 
             # Get information about the appeal for the dispatch task and pass it along to OAR
             # This information is sent to Jennifer.Schleicher@va.gov in an encrypted email
