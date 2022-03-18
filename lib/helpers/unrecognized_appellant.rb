@@ -47,8 +47,9 @@ module WarRoom
 
             return "User id was not nil." unless ec.user_id.nil?
 
-            # Unblock the user by completing the task 
-            ec.update!(aasm_state: "completed", comment: "Task has been completed by Caseflow dev team as per instruction by OAR")
+            # Unblock the user by completing the task
+            ec.update!(aasm_state: "completed", 
+                comment: "Task has been completed by Caseflow dev team as per instruction by OAR")
 
             # Get information about the appeal for the dispatch task and pass it along to OAR
             # This information is sent to Jennifer.Schleicher@va.gov in an encrypted email
