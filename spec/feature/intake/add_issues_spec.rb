@@ -624,7 +624,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
 
-      expect(page).to have_content("Hearing type:")
+      expect(page).to have_content("Hearing type")
     end
 
     scenario "check that hearing type field is missing because docket type is not hearing" do
@@ -633,7 +633,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
 
-      expect(page).to_not have_content("Hearing type:")
+      expect(page).to_not have_content("Hearing type")
     end
 
     scenario "check that hearing type field is missing because hearing type is nil" do
@@ -642,7 +642,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
 
-      expect(page).to_not have_content("Hearing type:")
+      expect(page).to_not have_content("Hearing type")
     end
   end
 end
