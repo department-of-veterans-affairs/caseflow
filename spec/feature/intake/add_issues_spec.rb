@@ -617,7 +617,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
-  context "on an appeal with updatedAppealsForm FeatureToggle enabled" do
+  context "on an appeal" do
     scenario "check that hearing type field is present because docket type is hearing and hearing type is not nil" do
       start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing, original_hearing_request_type: "video")
       visit "/intake"
