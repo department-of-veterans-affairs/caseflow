@@ -104,7 +104,7 @@ const formFieldMapping = (props) => {
 
   const updateDocketType = (event) => {
     // reset hearing type if switching to a non-hearing docket type
-    if (props.docketType === 'hearing') {
+    if (props.docketType === 'hearing' && props.featureToggles.updatedAppealForm) {
       props.setOriginalHearingRequestType(null);
     }
     props.setDocketType(event);
@@ -132,7 +132,7 @@ const formFieldMapping = (props) => {
       </div>
     ),
     'original-hearing-request-type':
-    props.docketType === 'hearing' ? hearingTypeDropdown : <></>,
+     props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <></>,
     'legacy-opt-in': (
       <LegacyOptInApproved
         value={props.legacyOptInApproved}
