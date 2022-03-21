@@ -442,7 +442,7 @@ class Appeal < DecisionReview
     if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
       PreDocketTasksFactory.new(self).call_vha
     # TODO: add conditional check below for the checkbox from education PreDocket modal
-    elsif edu_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+    elsif edu_has_issues?
       PreDocketTasksFactory.new(self).call_edu
     else
       InitialTasksFactory.new(self).create_root_and_sub_tasks!

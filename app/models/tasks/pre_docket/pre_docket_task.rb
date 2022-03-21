@@ -32,8 +32,7 @@ class PreDocketTask < Task
     # elsif child_task.task_is_assigned_to_organization?(EMO.singleton)
     #   task_actions.concat(EDU_ACTIONS)
     end 
-
-    task_actions.concat(EDU_ACTIONS)
+    
     task_actions
   end
 
