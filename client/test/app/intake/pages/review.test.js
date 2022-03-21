@@ -4,8 +4,8 @@ import { subDays, addDays } from 'date-fns';
 
 const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isValid) => {
   await schema.
-    isValid(testSchema, { context: { useAmaActivationDate } }).
-    then((valid) => expect(valid).toBe(isValid));
+    isValid(testSchema, { context: { useAmaActivationDate } })
+    .then((valid) => expect(valid).toBe(isValid));
 };
 
 const BEFORE_AMA_DATE = subDays(new Date(DATES.AMA_ACTIVATION), 1);
