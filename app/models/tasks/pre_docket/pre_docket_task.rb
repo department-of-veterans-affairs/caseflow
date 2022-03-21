@@ -24,7 +24,6 @@ class PreDocketTask < Task
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
     
     task_actions = Array.new(TASK_ACTIONS)
-
     child_task = self.children.first
 
     if child_task.task_is_assigned_to_organization?(VhaCamo.singleton)
