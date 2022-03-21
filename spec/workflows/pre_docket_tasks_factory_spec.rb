@@ -10,7 +10,7 @@ describe PreDocketTasksFactory, :postgres do
 
     let(:appeal) { create(:appeal, intake: create(:intake, user: bva_intake_user)) }
 
-    subject { PreDocketTasksFactory.new(appeal).call }
+    subject { PreDocketTasksFactory.new(appeal).call_vha}
 
     it "creates a PreDocket task and child CAMO task" do
       expect(appeal.tasks.count).to eq 0
