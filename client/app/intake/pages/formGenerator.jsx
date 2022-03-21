@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -10,7 +11,7 @@ import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
-import {setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov } from '../actions/decisionReview';
+import { setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov } from '../actions/decisionReview';
 import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
@@ -55,8 +56,7 @@ const formFieldMapping = (props) => {
   };
   const renderVaGovValue = () => {
     // eslint-disable-next-line no-undefined
-    if ( isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) 
-    {
+    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
 
@@ -70,6 +70,7 @@ const formFieldMapping = (props) => {
       name="original-hearing-request-type"
       onChange={({ value }) => props.setOriginalHearingRequestType(value)}
       options={hearingTypeOptions}
+      optional
     />
   );
 
@@ -294,10 +295,10 @@ const SelectClaimantConnected = connect(
   },
   (dispatch) =>
     bindActionCreators({
-        setVeteranIsNotClaimant,
-        setClaimant,
-        setPayeeCode,
-      }, dispatch)
+      setVeteranIsNotClaimant,
+      setClaimant,
+      setPayeeCode,
+    }, dispatch)
 )(SelectClaimant);
 
 FormGenerator.propTypes = {
@@ -362,16 +363,16 @@ export default connect(
   }),
   (dispatch) =>
     bindActionCreators({
-        setDocketType,
-        setReceiptDate,
-        setOriginalHearingRequestType,
-        setLegacyOptInApproved,
-        setInformalConference,
-        setSameOffice,
-        setBenefitType,
-        setAppealDocket,
-        confirmIneligibleForm,
-        setOptionSelected,
-        setFiledByVaGov,
-      }, dispatch)
+      setDocketType,
+      setReceiptDate,
+      setOriginalHearingRequestType,
+      setLegacyOptInApproved,
+      setInformalConference,
+      setSameOffice,
+      setBenefitType,
+      setAppealDocket,
+      confirmIneligibleForm,
+      setOptionSelected,
+      setFiledByVaGov,
+    }, dispatch)
 )(FormGenerator);
