@@ -4,6 +4,7 @@ import { INTAKE_HOMELESSNESS_MESSAGE } from '../../../COPY';
 import { convertStringToBoolean } from '../util';
 import PropTypes from 'prop-types';
 
+//const RadioOptions
 const radioOptions = [
   { value: 'false',
     displayText: 'No' },
