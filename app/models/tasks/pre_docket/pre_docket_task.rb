@@ -20,6 +20,7 @@ class PreDocketTask < Task
   ].freeze
 
   def available_actions(user)
+    # TODO: modify feature toggles
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
     
     task_actions = Array.new(TASK_ACTIONS)
