@@ -5,6 +5,6 @@ if [ -z "$1" ]
     exit 1
 fi
 
- cd ~/appeals/caseflow; bin/rails c << DONETOKEN
+ cd /opt/caseflow-certification/src; bin/rails c << DONETOKEN
   WarRoom::UnrecognizedAppellant.run_complete("$1")
 DONETOKEN
