@@ -1,6 +1,5 @@
 #! /bin/bash
 cd /opt/caseflow-certification/src; bin/rails c << DONETOKEN
-x = WarRoom::Outcode.new
-x.ama_run("$1")
+x = WarRoom::PayeeCodeUpdate.new
+x.run("$1", "$2")
 DONETOKEN
-
