@@ -143,7 +143,7 @@ class Appeal < DecisionReview
         :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :veteran_is_not_claimant,
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
