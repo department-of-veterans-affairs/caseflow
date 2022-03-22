@@ -628,7 +628,8 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     scenario "check that hearing type field is missing because docket type is not hearing" do
-      start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      # docket_type defaults to 'evidence_submission'
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
@@ -637,7 +638,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     scenario "check that hearing type field is missing because hearing type is nil" do
-      start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing, original_hearing_request_type: nil)
+      start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
       visit "/intake"
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
