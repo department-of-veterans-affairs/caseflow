@@ -16,6 +16,19 @@ module WarRoom
             #Sets the variable End Product Establishment by the reference_id/Claim ID
             epe=EndProductEstablishment.find_by(reference_id: reference_id)
 
+            if epe.nil?
+                puts("Unable to find EPE for that reference id. Aborting...")
+                fail Interrupt
+            end
+
+            source = epe.source
+            if source.nil?
+                puts("Could not find a source for the orgional EPE. Aborting...")
+                fail Interrupt
+            end
+
+            claimant = source.claimant
+
             #Re establish new end product with the correct payee code and origine EPE source information.
             epe2=EndProductEstablishment.create(
                 source_type: epe.source_type,
@@ -24,7 +37,7 @@ module WarRoom
                 claim_date: epe.claim_date,
                 code: epe.code,
                 station: epe.station,
-                claimant_participant_id: epe.claimant_participant_id,
+                claimant_participant_id: !claimant.nil? ? claimant.participant_id : epe.claimant_participant_id,
                 payee_code: correct_payee_code,
                 doc_reference_id: epe.doc_reference_id,
                 development_item_reference_id: epe.development_item_reference_id,
