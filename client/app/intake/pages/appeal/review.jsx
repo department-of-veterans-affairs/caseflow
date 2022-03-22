@@ -14,7 +14,7 @@ const reviewAppealSchema = yup.object().shape({
   'docket-type': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'homelessness': yup.string(),
+  'homelessness-applicable': yup.string(),
   ...selectClaimantValidations()
 });
 

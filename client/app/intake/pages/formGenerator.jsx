@@ -10,7 +10,7 @@ import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
-import Homelessness from '../components/Homelessness'; 
+import Homelessness from '../components/Homelessness';
 import {
   setVeteranIsNotClaimant,
   setClaimant,
@@ -141,12 +141,12 @@ const formFieldMapping = (props) => {
       value={renderVaGovValue()}
       inputRef={props.register}
     />,
-     'homelessness': <Homelessness
-     value={props.Homelessness}
-     onChange={props.setHomelessnessType}
-     errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
-     register={props.register}
-   />,
+    'homelessness-applicable': <Homelessness
+      value={props.Homelessness}
+      onChange={props.setHomelessnessType}
+      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
+      register={props.register}
+    />,
     'opt-in-election': <Fragment>
       <RadioField
         name="opt-in-election"
