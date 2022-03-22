@@ -146,6 +146,7 @@ const formFieldMapping = (props) => {
      onChange={props.setHomelessnessType}
      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
      register={props.register}
+     featureToggles={props.featureToggles.updatedAppealform ? 'homelessness' : <></>}
    />,
     'opt-in-election': <Fragment>
       <RadioField
