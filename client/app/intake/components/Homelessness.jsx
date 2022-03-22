@@ -23,7 +23,7 @@ export default class Homelessness extends React.PureComponent {
     return <div className="cf-homelessness" style={{ marginTop: '10px' }}>
       <RadioField
         name="homelessness"
-        label={<span><b>Did the claimant check the "I am experiencing homelessness" box on the form?</b>
+        label={<span><b>{INTAKE_HOMELESSNESS_MESSAGE}</b>
           <i> (Optional)</i></span>}
         vertical
         options={radioOptions}
