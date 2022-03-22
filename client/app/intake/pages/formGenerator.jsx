@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -5,42 +6,18 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import {
-  setDocketType,
-  setOriginalHearingRequestType,
-} from '../actions/appeal';
+import { setDocketType, setOriginalHearingRequestType } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
-import {
-  setAppealDocket,
-  confirmIneligibleForm,
-} from '../actions/rampRefiling';
+import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
-import {
-  setVeteranIsNotClaimant,
-  setClaimant,
-  setPayeeCode,
-  setLegacyOptInApproved,
-  setBenefitType,
-  setFiledByVaGov,
-} from '../actions/decisionReview';
-import {
-  setInformalConference,
-  setSameOffice,
-} from '../actions/higherLevelReview';
+import { setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov } from '../actions/decisionReview';
+import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
-import {
-  BOOLEAN_RADIO_OPTIONS,
-  FORM_TYPES,
-  INTAKE_STATES,
-  PAGE_PATHS,
-  REQUEST_STATE,
-  REVIEW_OPTIONS,
-  VBMS_BENEFIT_TYPES,
-} from '../constants';
+import { BOOLEAN_RADIO_OPTIONS, FORM_TYPES, INTAKE_STATES, PAGE_PATHS, REQUEST_STATE, REVIEW_OPTIONS, VBMS_BENEFIT_TYPES } from '../constants';
 import ErrorAlert from '../components/ErrorAlert';
 import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
@@ -75,17 +52,11 @@ const formFieldMapping = (props) => {
   const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
   const renderBooleanValue = (propKey) => {
     // eslint-disable-next-line no-undefined
-    return props[propKey] === null || props[propKey] === undefined ?
-      null :
-      props[propKey].toString();
+    return props[propKey] === null || props[propKey] === undefined ? null : props[propKey].toString();
   };
   const renderVaGovValue = () => {
     // eslint-disable-next-line no-undefined
-    if (
-      isAppeal &&
-      // eslint-disable-next-line no-undefined
-      (props.filedByVaGov === null || props.filedByVaGov === undefined)
-    ) {
+    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
 
@@ -99,6 +70,7 @@ const formFieldMapping = (props) => {
       name="original-hearing-request-type"
       onChange={({ value }) => props.setOriginalHearingRequestType(value)}
       options={hearingTypeOptions}
+      optional
     />
   );
 
@@ -272,13 +244,11 @@ const FormGenerator = (props) => {
     props.confirmIneligibleForm(props.intakeId);
   };
 
-  const showInvalidVeteranError =
-    !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
+  const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
   return (
     <div>
       <h1>{props.formHeader(props.veteranName)}</h1>
-
       {toggleIneligibleError(props.hasInvalidOption, props.optionSelected) && (
         <Alert title="Ineligible for Higher-Level Review" type="error">
           {COPY.INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT} <br />
@@ -300,10 +270,7 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
-
-      {Object.keys(props.schema.fields).map(
-        (field) => formFieldMapping(props)[field]
-      )}
+      {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );
 };
@@ -327,14 +294,11 @@ const SelectClaimantConnected = connect(
     };
   },
   (dispatch) =>
-    bindActionCreators(
-      {
-        setVeteranIsNotClaimant,
-        setClaimant,
-        setPayeeCode,
-      },
-      dispatch
-    )
+    bindActionCreators({
+      setVeteranIsNotClaimant,
+      setClaimant,
+      setPayeeCode,
+    }, dispatch)
 )(SelectClaimant);
 
 FormGenerator.propTypes = {
@@ -398,20 +362,17 @@ export default connect(
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
   }),
   (dispatch) =>
-    bindActionCreators(
-      {
-        setDocketType,
-        setReceiptDate,
-        setOriginalHearingRequestType,
-        setLegacyOptInApproved,
-        setInformalConference,
-        setSameOffice,
-        setBenefitType,
-        setAppealDocket,
-        confirmIneligibleForm,
-        setOptionSelected,
-        setFiledByVaGov,
-      },
-      dispatch
-    )
+    bindActionCreators({
+      setDocketType,
+      setReceiptDate,
+      setOriginalHearingRequestType,
+      setLegacyOptInApproved,
+      setInformalConference,
+      setSameOffice,
+      setBenefitType,
+      setAppealDocket,
+      confirmIneligibleForm,
+      setOptionSelected,
+      setFiledByVaGov,
+    }, dispatch)
 )(FormGenerator);
