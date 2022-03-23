@@ -372,8 +372,8 @@
   },
   "BVA_INTAKE_RETURN_TO_EMO": {
     "label": "Return appeal to Education Service",
-    "value": "modal/bva_intake_return_to_camo",
-    "func": "bva_intake_return_to_camo"
+    "value": "modal/bva_intake_return_to_emo",
+    "func": "bva_intake_return_to_emo"
   },
   "READY_TO_DOCKET": {
     "label": "Ready to Docket",

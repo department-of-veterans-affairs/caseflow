@@ -541,6 +541,23 @@ class TaskActionRepository
       }
     end
 
+    def bva_intake_return_to_emo(task, _user)
+      # TODO: create model for EMO & replace type with Edu DocumentSearchTask 
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      camo = VhaCamo.singleton
+      {
+        selected: camo,
+        options: [{ label: camo.name, value: camo.id }],
+        modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
+        modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
+        message_title: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE,
+        message_detail: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_DETAIL,
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
