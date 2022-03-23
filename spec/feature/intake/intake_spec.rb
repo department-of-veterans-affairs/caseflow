@@ -730,7 +730,7 @@ feature "Intake", :all_dbs do
 
           fill_in search_bar_title, with: "123456789"
           click_on "Search"
-          
+
           expect(page).to have_current_path("/intake/review_request")
           expect(page).to have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
         end
