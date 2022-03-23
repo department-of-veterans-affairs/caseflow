@@ -717,6 +717,29 @@ feature "Intake", :all_dbs do
           )
         end
       end
+
+      context "Homelessness field" do
+        scenario "is visible due to FeatureToggle being enabled" do
+          before { FeatureToggle.enable!(:updated_appeal_form) }
+          after { FeatureToggle.disable!(:updated_appeal_form) }
+
+          start_appeal(veteran)
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+          expect(page).to have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+        end
+
+        scenario "is not visible due to FeatureToggle being disabled" do
+          before { FeatureToggle.disable!(:updated_appeal_form) }
+
+          start_appeal(veteran)
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+          expect(page).to_not have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+        end
+      end
     end
   end
 end

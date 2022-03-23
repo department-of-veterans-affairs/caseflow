@@ -10,5 +10,5 @@ class Intake::AppealIntakeSerializer < Intake::DecisionReviewIntakeSerializer
 
   attribute :homelessness do |object|
     object.detail.homelessness
-  end 
+  end
 end
