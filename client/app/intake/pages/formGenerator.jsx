@@ -67,6 +67,15 @@ const formFieldMapping = (props) => {
     return renderBooleanValue('filedByVaGov');
   };
 
+  const homelessnessRadioField = (
+    <Homelessness
+      value={props.Homelessness}
+      onChange={props.setHomelessnessType}
+      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
+      register={props.register}
+    />
+  );
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type':
@@ -141,12 +150,7 @@ const formFieldMapping = (props) => {
       value={renderVaGovValue()}
       inputRef={props.register}
     />,
-    'homelessness-applicable': <Homelessness
-      value={props.Homelessness}
-      onChange={props.setHomelessnessType}
-      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
-      register={props.register}
-    />,
+    'homelessness-applicable': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
     'opt-in-election': <Fragment>
       <RadioField
         name="opt-in-election"
