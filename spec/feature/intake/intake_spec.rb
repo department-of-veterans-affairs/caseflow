@@ -723,18 +723,27 @@ feature "Intake", :all_dbs do
           before { FeatureToggle.enable!(:updated_appeal_form) }
           after { FeatureToggle.disable!(:updated_appeal_form) }
 
-          start_appeal(veteran)
           visit "/intake"
 
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123456789"
+          click_on "Search"
+          
           expect(page).to have_current_path("/intake/review_request")
           expect(page).to have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
         end
 
         scenario "is not visible due to FeatureToggle being disabled" do
           before { FeatureToggle.disable!(:updated_appeal_form) }
-
-          start_appeal(veteran)
           visit "/intake"
+
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "123456789"
+          click_on "Search"
 
           expect(page).to have_current_path("/intake/review_request")
           expect(page).to_not have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
