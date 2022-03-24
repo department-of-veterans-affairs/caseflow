@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
 
 import BenefitType from '../components/BenefitType';
+import PreDocketRadioField from '../components/PreDocketRadioField';
 import Modal from 'app/components/Modal';
 import RadioField from 'app/components/RadioField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -274,23 +275,8 @@ class NonratingRequestIssueModal extends React.Component {
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
 
-    const preDocketRadioFields = (
-      <div className="cf-is-predocket" style={{ marginTop: '10px' }}>
-        <RadioField
-          name="pre-docket"
-          label={<span><b>Is pre-docketing needed for this issue?</b></span>}
-          options={[{
-            value: 'true',
-            displayText: 'Yes'
-          }, {
-            value: 'false',
-            displayText: 'No'
-          }]}
-          onChange={this.isPreDocketOnChange}
-          value={isPreDocket}
-        />
-      </div>
-    );
+    const preDocketRadioFields =
+      formType === 'appeal' ? <PreDocketRadioField value={isPreDocket} onChange={this.isPreDocketOnChange} /> : null;
 
     return (
       <div className="intake-add-issues">
