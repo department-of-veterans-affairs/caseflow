@@ -720,6 +720,9 @@ feature "Intake", :all_dbs do
     end
 
     context "Veteran requests Hearing" do
+      before { FeatureToggle.enable!(:updated_appeal_form) }
+      after { FeatureToggle.disable!(:updated_appeal_form) }
+
       scenario "Hearing is selected as docket type but Hearing Type is left unselected" do
         visit "/intake"
 

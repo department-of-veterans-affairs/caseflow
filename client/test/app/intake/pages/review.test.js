@@ -33,6 +33,11 @@ describe('schema', () => {
       validSchema['original-hearing-request-type'] = null;
       await assertValidSchema(reviewAppealSchema, validSchema, true, true);
     });
+    it('hearing type is valid', async () => {
+      const validSchema = validReviewAppealData;
+
+      await assertValidSchema(reviewAppealSchema, validSchema, true, true);
+    });
   });
   describe('useAmaActivationDate', () => {
     // eslint-disable-next-line jest/expect-expect
