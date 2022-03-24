@@ -247,7 +247,8 @@ const formatNonratingRequestIssues = (state) => {
         ineligible_reason: issue.ineligibleReason,
         edited_description: issue.editedDescription,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        isPreDocket: issue.isPreDocket
       };
     });
 };
