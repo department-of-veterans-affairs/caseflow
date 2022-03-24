@@ -729,7 +729,7 @@ feature "Intake", :all_dbs do
             select_form(Constants.INTAKE_FORM_NAMES.appeal)
             safe_click ".cf-submit.usa-button"
 
-            fill_in search_bar_title, with: "123456789"
+            fill_in search_bar_title, with: "12341234"
             click_on "Search"
 
             expect(page).to have_current_path("/intake/review_request")
@@ -746,7 +746,7 @@ feature "Intake", :all_dbs do
             select_form(Constants.INTAKE_FORM_NAMES.appeal)
             safe_click ".cf-submit.usa-button"
 
-            fill_in search_bar_title, with: "123456789"
+            fill_in search_bar_title, with: "12341234"
             click_on "Search"
 
             expect(page).to have_current_path("/intake/review_request")
