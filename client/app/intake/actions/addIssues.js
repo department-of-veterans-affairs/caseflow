@@ -139,6 +139,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       ineligibleReason: args.ineligibleReason,
       decisionReviewTitle: args.decisionReviewTitle,
       correctionType: args.correctionType,
+      isPreDocket: args.isPreDocket,
       editable: true
     }
   });
