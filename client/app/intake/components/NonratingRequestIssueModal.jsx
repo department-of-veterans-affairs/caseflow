@@ -45,6 +45,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
+      isPreDocket: null,
       dateError: ''
     };
   }
@@ -53,6 +54,12 @@ class NonratingRequestIssueModal extends React.Component {
     this.setState({
       benefitType: benType.value,
       category: ''
+    });
+  };
+
+  isPreDocketOnChange = (isPreDocket) => {
+    this.setState({
+      isPreDocket
     });
   };
 
@@ -122,7 +129,8 @@ class NonratingRequestIssueModal extends React.Component {
       decisionDate,
       ineligibleDueToId,
       ineligibleReason,
-      decisionReviewTitle
+      decisionReviewTitle,
+      isPreDocket,
     } = this.state;
 
     const currentIssue = {
@@ -133,6 +141,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId,
       ineligibleReason,
       decisionReviewTitle,
+      isPreDocket,
       isRating: false,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
@@ -243,8 +252,9 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
-    const { benefitType, category, selectedNonratingIssueId } = this.state;
+    const { benefitType, category, selectedNonratingIssueId, isPreDocket } = this.state;
     const vhaPreDocketAppeals = featureToggles.vhaPreDocketAppeals;
+    const emoPreDocketAppeals = featureToggles.emoPreDocketAppeals;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -256,12 +266,31 @@ class NonratingRequestIssueModal extends React.Component {
         null;
 
     const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal' && vhaPreDocketAppeals;
+    const showPreDocketSelection = benefitType === 'education' && formType === 'appeal' && emoPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
 
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
+
+    const preDocketRadioFields = (
+      <div className="cf-is-predocket" style={{ marginTop: '10px' }}>
+        <RadioField
+          name="pre-docket"
+          label={<span><b>Is pre-docketing needed for this issue?</b></span>}
+          options={[{
+            value: 'true',
+            displayText: 'Yes'
+          }, {
+            value: 'false',
+            displayText: 'No'
+          }]}
+          onChange={this.isPreDocketOnChange}
+          value={isPreDocket}
+        />
+      </div>
+    );
 
     return (
       <div className="intake-add-issues">
@@ -275,6 +304,7 @@ class NonratingRequestIssueModal extends React.Component {
             <h2>Does issue {issueNumber} match any of these non-rating issue categories?</h2>
             <div className="add-nonrating-request-issue">
               {benefitTypeElement}
+              {showPreDocketSelection && preDocketRadioFields}
               <SearchableDropdown
                 name="issue-category"
                 label="Issue category"
