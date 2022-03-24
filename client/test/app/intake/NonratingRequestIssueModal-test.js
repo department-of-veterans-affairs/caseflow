@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
+import PreDocketRadioField from '../../../app/intake/components/PreDocketRadioField';
 import { sample1 } from './testData';
 
 describe('NonratingRequestIssueModal', () => {
@@ -75,6 +76,29 @@ describe('NonratingRequestIssueModal', () => {
       });
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+    });
+  });
+
+  describe('on appeal, with EMO Pre-Docket', () => {
+    const featureTogglesEMOPreDocket = { vhaPreDocketAppeals: false, emoPreDocketAppeals: true };
+
+    it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
+      const wrapper = mount(
+        <NonratingRequestIssueModal
+          formType="appeal"
+          intakeData={intakeData}
+          featureToggles={featureTogglesEMOPreDocket} />
+      );
+
+      // Benefit type isn't education, so it should not be rendered
+      expect(wrapper.find('.cf-is-predocket')).toHaveLength(0);
+
+      wrapper.setState({
+        benefitType: 'education'
+      });
+
+      // Benefit type is now education, so it should be rendered
+      expect(wrapper.find('.cf-is-predocket')).toHaveLength(1);
     });
   });
 });
