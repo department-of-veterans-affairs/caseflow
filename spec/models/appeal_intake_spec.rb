@@ -251,7 +251,9 @@ describe AppealIntake, :all_dbs do
         { decision_text: "nonrating request issue decision text",
           nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
-          decision_date: "2018-12-25" }
+          decision_date: "2018-12-25",
+          is_predocket: false
+         }
       ]
     end
 
