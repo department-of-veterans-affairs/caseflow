@@ -724,7 +724,6 @@ feature "Intake", :all_dbs do
           after { FeatureToggle.disable!(:updated_appeal_form) }
 
           scenario "Homelessness field is visible" do
-
             visit "/intake"
 
             select_form(Constants.INTAKE_FORM_NAMES.appeal)
@@ -742,7 +741,6 @@ feature "Intake", :all_dbs do
           before { FeatureToggle.disable!(:updated_appeal_form) }
 
           scenario "Homelessness field is not visible" do
-
             visit "/intake"
 
             select_form(Constants.INTAKE_FORM_NAMES.appeal)
