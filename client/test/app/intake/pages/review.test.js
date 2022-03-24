@@ -20,7 +20,7 @@ const validReviewAppealData = {
   'docket-type': 'docket',
   'docket-type': 'type',
   'original-hearing-request-type': 'video',
-    'homelessness-applicable': 'false',
+  'homelessness-applicable': 'false',
   'legacy-opt-in': 'true',
   'different-claimant-option': 'false',
   'filed-by-va-gov': 'false',
