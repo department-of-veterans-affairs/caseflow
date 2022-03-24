@@ -7,16 +7,16 @@ import { sample1 } from './testData';
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
-  const featureToggles = { vhaPreDocketAppeals: false }
+  const featureToggles = { vhaPreDocketAppeals: false };
 
   describe('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
-        formType={formType}
-        intakeData={intakeData}
-        featureToggles={featureToggles}
-        onSkip={() => null} />
+          formType={formType}
+          intakeData={intakeData}
+          featureToggles={featureToggles}
+          onSkip={() => null} />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
@@ -40,11 +40,11 @@ describe('NonratingRequestIssueModal', () => {
 
     it('skip button only with onSkip prop', () => {
       const wrapper = mount(
-       <NonratingRequestIssueModal
-       formType={formType}
-       intakeData={intakeData}
-       featureToggles={featureToggles}
-       />);
+        <NonratingRequestIssueModal
+          formType={formType}
+          intakeData={intakeData}
+          featureToggles={featureToggles}
+        />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
 
@@ -55,10 +55,10 @@ describe('NonratingRequestIssueModal', () => {
     it('disables button when nothing selected', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
-        formType={formType}
-        intakeData={intakeData}
-        featureToggles={featureToggles} />
-        );
+          formType={formType}
+          intakeData={intakeData}
+          featureToggles={featureToggles} />
+      );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 
