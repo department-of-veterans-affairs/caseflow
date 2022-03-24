@@ -720,9 +720,10 @@ feature "Intake", :all_dbs do
 
       context "Homelessness field" do
         context "updatedAppealForm FeatureToggle is enabled" do
+          before { FeatureToggle.enable!(:updated_appeal_form) }
+          after { FeatureToggle.disable!(:updated_appeal_form) }
+
           scenario "Homelessness field is visible" do
-            before { FeatureToggle.enable!(:updated_appeal_form) }
-            after { FeatureToggle.disable!(:updated_appeal_form) }
 
             visit "/intake"
 
@@ -738,8 +739,10 @@ feature "Intake", :all_dbs do
         end
 
         context "updatedAppealForm FeatureToggle is disabled" do
+          before { FeatureToggle.disable!(:updated_appeal_form) }
+
           scenario "Homelessness field is not visible" do
-            before { FeatureToggle.disable!(:updated_appeal_form) }
+
             visit "/intake"
 
             select_form(Constants.INTAKE_FORM_NAMES.appeal)
