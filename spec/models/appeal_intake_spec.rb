@@ -81,6 +81,7 @@ describe AppealIntake, :all_dbs do
     let(:legacy_opt_in_approved) { true }
     # set hearing type
     let(:original_hearing_request_type) { "virtual" }
+    let(:homelessness) { false }
 
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
@@ -93,6 +94,7 @@ describe AppealIntake, :all_dbs do
         payee_code: payee_code,
         legacy_opt_in_approved: legacy_opt_in_approved,
         original_hearing_request_type: original_hearing_request_type
+        homelessness: homelessness
       )
     end
 
@@ -105,6 +107,7 @@ describe AppealIntake, :all_dbs do
         legacy_opt_in_approved: true,
         veteran_is_not_claimant: false,
         original_hearing_request_type: "virtual"
+        homelessness: false
       )
     end
 

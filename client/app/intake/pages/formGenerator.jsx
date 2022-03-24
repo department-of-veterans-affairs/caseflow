@@ -6,12 +6,20 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType, setOriginalHearingRequestType } from '../actions/appeal';
+import { setDocketType, setOriginalHearingRequestType, setHomelessnessType } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
-import { setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov } from '../actions/decisionReview';
+import Homelessness from '../components/Homelessness';
+import {
+  setVeteranIsNotClaimant,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved,
+  setBenefitType,
+  setFiledByVaGov
+} from '../actions/decisionReview';
 import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
@@ -82,7 +90,16 @@ const formFieldMapping = (props) => {
     props.setDocketType(event);
   };
 
-  return {
+  const homelessnessRadioField = (
+    <Homelessness
+      value={props.Homelessness}
+      onChange={props.setHomelessnessType}
+      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
+      register={props.register}
+    />
+  );
+
+  return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type': (
       <div className="cf-docket-type" style={{ marginTop: '10px' }}>
@@ -192,6 +209,7 @@ const formFieldMapping = (props) => {
         inputRef={props.register}
       />
     ),
+    'homelessness-applicable': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
     'opt-in-election': (
       <Fragment>
         <RadioField
@@ -228,7 +246,7 @@ const formFieldMapping = (props) => {
         )}
       </Fragment>
     ),
-  };
+  });
 };
 
 const FormGenerator = (props) => {
@@ -329,6 +347,9 @@ FormGenerator.propTypes = {
   register: PropTypes.func,
   errors: PropTypes.array,
   intakeId: PropTypes.string,
+  homelessness: PropTypes.string,
+  setHomelessnessType: PropTypes.func,
+  homelessnessError: PropTypes.string
 };
 
 export default connect(
@@ -360,19 +381,21 @@ export default connect(
     veteranInvalidFields: state[props.formName].veteranInvalidFields,
     hasInvalidOption: state[props.formName].hasInvalidOption,
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
+    homelessness: state[props.formName].homelessness,
+    homelessnessError: state[props.formName].homelessnessError
   }),
-  (dispatch) =>
-    bindActionCreators({
-      setDocketType,
-      setReceiptDate,
-      setOriginalHearingRequestType,
-      setLegacyOptInApproved,
-      setInformalConference,
-      setSameOffice,
-      setBenefitType,
-      setAppealDocket,
-      confirmIneligibleForm,
-      setOptionSelected,
-      setFiledByVaGov,
-    }, dispatch)
+  (dispatch) => bindActionCreators({
+    setDocketType,
+    setReceiptDate,
+    setLegacyOptInApproved,
+    setInformalConference,
+    setOriginalHearingRequestType,
+    setSameOffice,
+    setBenefitType,
+    setAppealDocket,
+    confirmIneligibleForm,
+    setOptionSelected,
+    setFiledByVaGov,
+    setHomelessnessType
+  }, dispatch)
 )(FormGenerator);

@@ -3,10 +3,11 @@ import DATES from '../../../../constants/DATES';
 import { subDays, addDays } from 'date-fns';
 
 const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isValid) => {
-  await schema.
-    isValid(testSchema, { context: { useAmaActivationDate } }).
-    then((valid) => expect(valid).toBe(isValid));
-};
+
+  await schema
+    .isValid(testSchema, { context: { useAmaActivationDate } })
+    .then((valid) => expect(valid).toBe(isValid));
+}
 
 const BEFORE_AMA_DATE = subDays(new Date(DATES.AMA_ACTIVATION), 1);
 const AFTER_AMA_DATE = addDays(new Date(DATES.AMA_ACTIVATION), 1);
@@ -19,6 +20,7 @@ const validReviewAppealData = {
   'docket-type': 'docket',
   'docket-type': 'type',
   'original-hearing-request-type': 'video',
+    'homelessness-applicable': 'false',
   'legacy-opt-in': 'true',
   'different-claimant-option': 'false',
   'filed-by-va-gov': 'false',
@@ -37,6 +39,11 @@ describe('schema', () => {
       const validSchema = validReviewAppealData;
 
       await assertValidSchema(reviewAppealSchema, validSchema, true, true);
+    });
+  });
+  describe('homelessness-applicable', () => {
+    it(' field is valid', async () => {
+      await assertValidSchema(reviewAppealSchema, validReviewAppealData, true, true);
     });
   });
   describe('useAmaActivationDate', () => {

@@ -22,6 +22,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     originalHearingRequestType: {
       $set: serverIntake.originalHearingRequestType
+    },
+    homelessness: {
+      $set: serverIntake.homelessness
     }
   });
 };
@@ -64,6 +67,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     veteranValid: null,
+    homelessness: null,
+    homelessnessError: null,
     veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -163,6 +168,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.legacyOptInApproved
       }
     });
+  case ACTIONS.SET_HOMELESSNESS_TYPE:
+    return update(state, {
+      homelessness: {
+        $set: action.payload.homelessness
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -191,6 +202,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       isReviewed: {
         $set: true
       },
+      homelessnessError: {
+        $set: null
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -213,6 +227,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      homelessnessError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'homelessness')
       },
       requestStatus: {
         submitReview: {
