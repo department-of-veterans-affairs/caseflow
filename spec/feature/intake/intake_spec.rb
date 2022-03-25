@@ -718,5 +718,60 @@ feature "Intake", :all_dbs do
         end
       end
     end
+
+    context "Education Issue on Appeal" do
+      context "emoPreDocketAppeals FeatureToggle is enabled" do
+        before { FeatureToggle.enable!(:updated_appeal_form) }
+        after { FeatureToggle.disable!(:updated_appeal_form) }
+
+        scenario "pre-docket selection is available with education issue in add issues modal" do
+          start_appeal(veteran, Constants.AMA_DOCKETS.appeal)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to have_content("Is pre-docketing needed for this issue?")
+        end
+
+        scenario "pre-docket select is not available with compensation issue in add issues modal" do
+          start_appeal(veteran, Constants.AMA_DOCKETS.appeal)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Compensation")
+
+          expect(page).to have_content("Is pre-docketing needed for this issue?")
+        end
+      end
+
+      context "emoPreDocketAppeals FeatureToggle is disabled" do
+        before { FeatureToggle.disable!(:updated_appeal_form) }
+
+        scenario "pre-docket selection is  notavailable with education issue in add issues modal" do
+          start_appeal(veteran, Constants.AMA_DOCKETS.appeal)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to_not have_content("Is pre-docketing needed for this issue?")
+        end
+      end
   end
 end
