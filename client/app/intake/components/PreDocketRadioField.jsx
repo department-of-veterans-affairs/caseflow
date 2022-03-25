@@ -1,5 +1,6 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
+import { convertStringToBoolean } from '../util';
 import PropTypes from 'prop-types';
 
 const radioOptions = [
@@ -27,9 +28,9 @@ export default class PreDocketRadioField extends React.PureComponent {
         label={<span><b>Is pre-docketing needed for this issue?</b></span>}
         options={radioOptions}
         onChange={(newValue) => {
-          onChange(newValue);
+          onChange(convertStringToBoolean(newValue))
         }}
-        value={value}
+        value={ value === null ? null : value?.toString()}
         inputRef={register}
       />
     </div>;
