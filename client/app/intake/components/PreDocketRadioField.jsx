@@ -1,6 +1,5 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
-import { convertStringToBoolean } from '../util';
 import PropTypes from 'prop-types';
 
 const radioOptions = [
