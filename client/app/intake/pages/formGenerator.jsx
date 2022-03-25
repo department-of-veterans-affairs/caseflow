@@ -6,7 +6,12 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType, setOriginalHearingRequestType, setHomelessnessType } from '../actions/appeal';
+import {
+  setDocketType,
+  setOriginalHearingRequestType,
+  setHomelessnessType,
+  setHomelessnessUserInteraction
+} from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
@@ -90,11 +95,20 @@ const formFieldMapping = (props) => {
     props.setDocketType(event);
   };
 
+  const homelessnessFieldValue = () => {
+    return props.homelessnessUserInteraction ? props.homelessness : null;
+  };
+
+  const updateHomelessnessValues = (value) => {
+    props.setHomelessnessType(value);
+    props.setHomelessnessUserInteraction(true);
+  };
+
   const homelessnessRadioField = (
     <Homelessness
-      value={props.Homelessness}
-      onChange={props.setHomelessnessType}
-      errorMessage={props.HomelessnessError || props.errors?.['homelessness']?.message}
+      value={homelessnessFieldValue()}
+      onChange={updateHomelessnessValues}
+      errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
       register={props.register}
     />
   );
@@ -382,7 +396,8 @@ export default connect(
     hasInvalidOption: state[props.formName].hasInvalidOption,
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
     homelessness: state[props.formName].homelessness,
-    homelessnessError: state[props.formName].homelessnessError
+    homelessnessError: state[props.formName].homelessnessError,
+    homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
@@ -396,6 +411,7 @@ export default connect(
     confirmIneligibleForm,
     setOptionSelected,
     setFiledByVaGov,
-    setHomelessnessType
+    setHomelessnessType,
+    setHomelessnessUserInteraction
   }, dispatch)
 )(FormGenerator);
