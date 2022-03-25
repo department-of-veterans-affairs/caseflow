@@ -8,6 +8,8 @@ import StringUtil from '../util/StringUtil';
 
 import { helpText } from './RadioField.module.scss';
 
+import { FormLabel } from './FormLabel';
+
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
 
@@ -43,6 +45,7 @@ export const RadioField = (props) => {
     hideLabel,
     styling,
     vertical,
+    optional
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -60,9 +63,17 @@ export const RadioField = (props) => {
   const idPart = StringUtil.html5CompliantId(id || name);
 
   const labelContents = (
+    /*
     <span>
       {label || name} {required && <RequiredIndicator />}
     </span>
+    */
+    <FormLabel
+        label={label}
+        name={label || name}
+        required={required}
+        optional={optional}
+    />
   );
 
   const handleChange = (event) => onChange?.(event.target.value);
