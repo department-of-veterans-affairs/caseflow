@@ -122,7 +122,7 @@ module IntakeHelpers
     legacy_opt_in_approved: false,
     no_claimant: false,
     intake_user: User.authenticate!(roles: ["Mail Intake"]),
-    docket_type: Constants.AMA_DOCKETS.evidence_submissio
+    docket_type: Constants.AMA_DOCKETS.evidence_submission
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
