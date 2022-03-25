@@ -67,6 +67,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     veteranValid: null,
     homelessness: null,
     homelessnessError: null,
+    homelessnessUserInteraction: false,
     veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -160,12 +161,18 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.legacyOptInApproved
       }
     });
-   case ACTIONS.SET_HOMELESSNESS_TYPE:
-      return update(state, {
-        homelessness: {
-          $set: action.payload.homelessness
-        }
-      });
+  case ACTIONS.SET_HOMELESSNESS_TYPE:
+    return update(state, {
+      homelessness: {
+        $set: action.payload.homelessness
+      }
+    });
+  case ACTIONS.SET_HOMELESSNESS_USER_INTERACTION:
+    return update(state, {
+      homelessnessUserInteraction: {
+        $set: action.payload.homelessnessUserInteraction
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
