@@ -24,7 +24,7 @@ export default class Homelessness extends React.PureComponent {
       <RadioField
         name="homelessness"
         label={<span><b>{INTAKE_HOMELESSNESS_MESSAGE}</b>
-          <i> (Optional)</i></span>}
+          <b><i> (Optional)</i></b></span>}
         vertical
         options={radioOptions}
         onChange={(newValue) => {
