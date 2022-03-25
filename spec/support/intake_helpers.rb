@@ -121,12 +121,13 @@ module IntakeHelpers
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
     no_claimant: false,
-    intake_user: User.authenticate!(roles: ["Mail Intake"])
+    intake_user: User.authenticate!(roles: ["Mail Intake"]),
+    docket_type: Constants.AMA_DOCKETS.evidence_submissio
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: Constants.AMA_DOCKETS.evidence_submission,
+      docket_type: docket_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?,
       filed_by_va_gov: false
@@ -260,6 +261,13 @@ module IntakeHelpers
 
   def get_claim_id(claim_review)
     EndProductEstablishment.find_by(source: claim_review).reference_id
+  end
+
+  def select_intake_nonrating_benefit_type(benefit_type)
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
   end
 
   def add_intake_nonrating_issue(
