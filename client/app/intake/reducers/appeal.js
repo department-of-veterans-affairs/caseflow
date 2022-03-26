@@ -165,12 +165,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       homelessness: {
         $set: action.payload.homelessness
-      }
-    });
-  case ACTIONS.SET_HOMELESSNESS_USER_INTERACTION:
-    return update(state, {
+      },
       homelessnessUserInteraction: {
-        $set: action.payload.homelessnessUserInteraction
+        $set: true
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
