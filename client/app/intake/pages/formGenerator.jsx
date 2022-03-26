@@ -9,8 +9,7 @@ import ReceiptDateInput from './receiptDateInput';
 import {
   setDocketType,
   setOriginalHearingRequestType,
-  setHomelessnessType,
-  setHomelessnessUserInteraction
+  setHomelessnessType
 } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
@@ -99,15 +98,10 @@ const formFieldMapping = (props) => {
     return props.homelessnessUserInteraction ? props.homelessness : null;
   };
 
-  const updateHomelessnessValues = (value) => {
-    props.setHomelessnessType(value);
-    props.setHomelessnessUserInteraction(true);
-  };
-
   const homelessnessRadioField = (
     <Homelessness
       value={homelessnessFieldValue()}
-      onChange={updateHomelessnessValues}
+      onChange={setHomelessnessType}
       errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
       register={props.register}
     />
@@ -411,7 +405,6 @@ export default connect(
     confirmIneligibleForm,
     setOptionSelected,
     setFiledByVaGov,
-    setHomelessnessType,
-    setHomelessnessUserInteraction
+    setHomelessnessType
   }, dispatch)
 )(FormGenerator);

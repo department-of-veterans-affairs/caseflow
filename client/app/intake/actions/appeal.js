@@ -30,15 +30,3 @@ export const setHomelessnessType = (homelessness) => ({
     }
   }
 });
-
-export const setHomelessnessUserInteraction = (homelessnessUserInteraction) => ({
-  type: ACTIONS.SET_HOMELESSNESS_USER_INTERACTION,
-  payload: {
-    homelessnessUserInteraction
-  },
-  meta: {
-    analytics: {
-      label: homelessnessUserInteraction
-    }
-  }
-});
