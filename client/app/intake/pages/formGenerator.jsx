@@ -74,7 +74,7 @@ const formFieldMapping = (props) => {
   const homelessnessRadioField = (
     <Homelessness
       value={homelessnessFieldValue()}
-      onChange={setHomelessnessType}
+      onChange={props.setHomelessnessType}
       errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
       register={props.register}
     />
