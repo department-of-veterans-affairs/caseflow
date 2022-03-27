@@ -19,14 +19,14 @@ const validReviewAppealData = {
   'receipt-date': AFTER_AMA_DATE,
   'docket-type': 'docket',
   'docket-type': 'type',
-  'homelessness-applicable': 'false',
+  'homelessness-type': 'false',
   'legacy-opt-in': 'true',
   'different-claimant-option': 'false',
   'filed-by-va-gov': 'false'
 };
 
 describe('schema', () => {
-  describe('homelessness-applicable', () => {
+  describe('homelessness-type', () => {
     it(' field is valid', async () => {
       await assertValidSchema(reviewAppealSchema, validReviewAppealData, true, true);
     });

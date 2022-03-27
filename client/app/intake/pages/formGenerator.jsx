@@ -156,7 +156,7 @@ const formFieldMapping = (props) => {
       value={renderVaGovValue()}
       inputRef={props.register}
     />,
-    'homelessness-applicable': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
+    'homelessness-type': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
     'opt-in-election': <Fragment>
       <RadioField
         name="opt-in-election"
