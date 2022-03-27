@@ -68,7 +68,9 @@ const formFieldMapping = (props) => {
   };
 
   const homelessnessFieldValue = () => {
-    return props.homelessnessUserInteraction ? props.homelessness : null;
+    return (props.homelessnessUserInteraction || props.isReviewed) ?
+      props.homelessness :
+      null;
   };
 
   const homelessnessRadioField = (
@@ -279,7 +281,8 @@ FormGenerator.propTypes = {
   intakeId: PropTypes.string,
   homelessness: PropTypes.string,
   setHomelessnessType: PropTypes.func,
-  homelessnessError: PropTypes.string
+  homelessnessError: PropTypes.string,
+  isReviewed: PropTypes.bool
 };
 
 export default connect(
@@ -312,7 +315,8 @@ export default connect(
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
     homelessness: state[props.formName].homelessness,
     homelessnessError: state[props.formName].homelessnessError,
-    homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction
+    homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
+    isReviewed: state[props.formName].isReviewed,
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
