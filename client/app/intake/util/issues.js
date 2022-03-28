@@ -259,6 +259,7 @@ export const formatIssues = (state) => {
   const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {
+    is_predocket: true,
     request_issues: _.concat(ratingData, nonRatingData, unidentifiedData)
   };
 

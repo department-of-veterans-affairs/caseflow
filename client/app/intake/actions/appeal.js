@@ -11,3 +11,15 @@ export const setDocketType = (docketType) => ({
     }
   }
 });
+
+export const setIsPreDocket = (isPreDocket) => ({
+  type: ACTIONS.SET_IS_PREDOCKET,
+  payload: {
+    isPreDocket
+  },
+  meta: {
+    analytics: {
+      label: isPreDocket
+    }
+  }
+});
