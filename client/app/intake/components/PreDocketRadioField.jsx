@@ -22,18 +22,27 @@ export default class PreDocketRadioField extends React.PureComponent {
       register
     } = this.props;
 
-    return <div className="cf-is-predocket" style={{ height: '4em', marginTop: '10px' }}>
-      <RadioField
-        name="pre-docket"
-        label={<span><b>Is pre-docketing needed for this issue?</b></span>}
-        options={radioOptions}
-        onChange={(newValue) => {
-          onChange(convertStringToBoolean(newValue));
-        }}
-        value={value === null ? null : value?.toString()}
-        inputRef={register}
-      />
-    </div>;
+    return (
+      <div
+        className="cf-is-predocket"
+        style={{ height: '4em', marginTop: '10px' }}
+      >
+        <RadioField
+          name="pre-docket"
+          label={
+            <span>
+              <b>Is pre-docketing needed for this issue?</b>
+            </span>
+          }
+          options={radioOptions}
+          onChange={(newValue) => {
+            onChange(newValue);
+          }}
+          value={value}
+          inputRef={register}
+        />
+      </div>
+    );
   }
 }
 
