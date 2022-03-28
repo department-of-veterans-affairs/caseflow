@@ -15,7 +15,7 @@ const reviewAppealSchema = yup.object().shape({
   'original-hearing-request-type': yup.string().nullable(true),
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'homelessness-applicable': yup.string(),
+  'homelessness-type': yup.string(),
   ...selectClaimantValidations()
 });
 
