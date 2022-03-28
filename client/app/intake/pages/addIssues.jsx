@@ -80,8 +80,6 @@ class AddIssuesPage extends React.Component {
       } else {
         this.props.removeIssue(index);
 
-        console.log(this.props);
-
         // Look at remaining issues and see if isPreDocket needs to be changed
         const noPreDocket = (this.props.intakeForms[this.props.formType].requestIssues).every((ri) => {
           if (ri.isPreDocket) {
@@ -90,8 +88,6 @@ class AddIssuesPage extends React.Component {
 
           return true;
         });
-
-        console.log(noPreDocket);
 
         if (noPreDocket) {
           this.props.setIsPreDocket(false);
