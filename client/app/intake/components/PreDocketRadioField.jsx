@@ -28,9 +28,9 @@ export default class PreDocketRadioField extends React.PureComponent {
         label={<span><b>Is pre-docketing needed for this issue?</b></span>}
         options={radioOptions}
         onChange={(newValue) => {
-          onChange(convertStringToBoolean(newValue))
+          onChange(convertStringToBoolean(newValue));
         }}
-        value={ value === null ? null : value?.toString()}
+        value={value === null ? null : value?.toString()}
         inputRef={register}
       />
     </div>;

@@ -39,6 +39,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
+import { setIsPreDocket } from '../actions/appeal';
 import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
@@ -78,6 +79,23 @@ class AddIssuesPage extends React.Component {
         this.props.toggleIssueRemoveModal();
       } else {
         this.props.removeIssue(index);
+
+        console.log(this.props);
+
+        // Look at remaining issues and see if isPreDocket needs to be changed
+        const noPreDocket = (this.props.intakeForms[this.props.formType].requestIssues).every((ri) => {
+          if (ri.isPreDocket) {
+            return false;
+          }
+
+          return true;
+        });
+
+        console.log(noPreDocket);
+
+        if (noPreDocket) {
+          this.props.setIsPreDocket(false);
+        }
       }
       break;
     case 'withdraw':
@@ -510,7 +528,8 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool
+  userCanWithdrawIssues: PropTypes.bool,
+  setIsPreDocket: PropTypes.func
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -536,7 +555,8 @@ export const IntakeAddIssuesPage = connect(
         toggleLegacyOptInModal,
         removeIssue,
         withdrawIssue,
-        setIssueWithdrawalDate
+        setIssueWithdrawalDate,
+        setIsPreDocket
       },
       dispatch
     )
@@ -573,6 +593,7 @@ export const EditAddIssuesPage = connect(
         undoCorrection,
         toggleUnidentifiedIssuesModal,
         editEpClaimLabel,
+        setIsPreDocket
       },
       dispatch
     )

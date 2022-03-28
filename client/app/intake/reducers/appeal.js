@@ -63,6 +63,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     completeIntakeErrorData: null,
     veteranValid: null,
     veteranInvalidFields: null,
+    isPreDocket: false,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -312,6 +313,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             $set: action.payload.benefitType
           }
         }
+      }
+    });
+  case ACTIONS.SET_IS_PREDOCKET:
+    return update(state, {
+      isPreDocket: {
+        $set: action.payload.isPreDocket
       }
     });
   default:
