@@ -720,7 +720,7 @@ feature "Intake", :all_dbs do
     end
 
     context "Education Issue on Appeal" do
-      context "emoPreDocketAppeals FeatureToggle is enabled" do
+      context "educationPreDocketAppeals FeatureToggle is enabled" do
         before { FeatureToggle.enable!(:updated_appeal_form) }
         after { FeatureToggle.disable!(:updated_appeal_form) }
 
@@ -755,7 +755,7 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "emoPreDocketAppeals FeatureToggle is disabled" do
+      context "educationPreDocketAppeals FeatureToggle is disabled" do
         before { FeatureToggle.disable!(:updated_appeal_form) }
 
         scenario "pre-docket selection is  notavailable with education issue in add issues modal" do

@@ -110,7 +110,7 @@ class IntakesController < ApplicationController
         filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
         vhaPreDocketAppeals: FeatureToggle.enabled?(:vha_predocket_appeals, user: current_user),
         updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
-        emoPreDocketAppeals: FeatureToggle.enabled?(:emo_predocket_appeals, user: current_user)
+        educationPreDocketAppeals: FeatureToggle.enabled?(:education_predocket_appeals, user: current_user)
       }
     }
   rescue StandardError => error
