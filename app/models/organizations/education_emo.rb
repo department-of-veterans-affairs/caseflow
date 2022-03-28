@@ -4,6 +4,6 @@
 
 class EducationEmo < Organization
   def self.singleton
-    EducationEmo.first || EducationEmo.create(name: "EXECUTIVE MANAGEMENT OFFICE", url: "edu-emo")
+    EducationEmo.first || EducationEmo.create(name: "Executive Management Office", url: "edu-emo")
   end
 end
