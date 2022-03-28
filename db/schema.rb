@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_07_213343) do
+ActiveRecord::Schema.define(version: 2022_02_11_061558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -754,6 +754,7 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
   end
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "ID of the associated Appeal"
     t.datetime "created_at", null: false
     t.string "email_address", comment: "PII. The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
@@ -1731,6 +1732,7 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
+  add_foreign_key "hearing_email_recipients", "appeals"
   add_foreign_key "hearing_issue_notes", "hearings"
   add_foreign_key "hearing_issue_notes", "request_issues"
   add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
