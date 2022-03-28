@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_11_061558) do
+ActiveRecord::Schema.define(version: 2022_03_28_180019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -755,6 +755,7 @@ ActiveRecord::Schema.define(version: 2022_02_11_061558) do
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
     t.integer "appeal_id", null: false, comment: "ID of the associated Appeal"
+    t.string "appeal_type", null: false
     t.datetime "created_at", null: false
     t.string "email_address", comment: "PII. The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."

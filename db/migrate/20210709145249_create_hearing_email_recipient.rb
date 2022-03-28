@@ -27,6 +27,7 @@ class CreateHearingEmailRecipient < Caseflow::Migration
 
       t.timestamps
       t.integer "appeal_id", null: false, comment: "Appeal ID; use as FK to appeals"
+      t.string "appeal_type", null: false, comment: "Whether appeal_id is for AMA or legacy appeals"
     end
   end
 end
