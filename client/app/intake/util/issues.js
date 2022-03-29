@@ -248,7 +248,7 @@ const formatNonratingRequestIssues = (state) => {
         edited_description: issue.editedDescription,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
         correction_type: issue.correctionType,
-        is_predocket: issue.isPreDocket
+        is_predocket_needed: issue.isPreDocketNeeded
       };
     });
 };
@@ -259,7 +259,6 @@ export const formatIssues = (state) => {
   const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {
-    is_predocket: state.isPreDocket,
     request_issues: _.concat(ratingData, nonRatingData, unidentifiedData)
   };
 

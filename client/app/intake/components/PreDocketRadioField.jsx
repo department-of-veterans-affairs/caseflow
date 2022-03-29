@@ -24,11 +24,11 @@ export default class PreDocketRadioField extends React.PureComponent {
 
     return (
       <div
-        className="cf-is-predocket"
+        className="cf-is-predocket-needed"
         style={{ height: '4em', marginTop: '10px' }}
       >
         <RadioField
-          name="pre-docket"
+          name="pre-docket-needed"
           label={
             <span>
               <b>Is pre-docketing needed for this issue?</b>
