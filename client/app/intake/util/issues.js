@@ -144,7 +144,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
-      verifiedUnidentifiedIssue: issue.verified_unidentified_issue
+      verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
+      isPreDocketNeeded: issue.is_predocket_needed
     };
   }
   );
