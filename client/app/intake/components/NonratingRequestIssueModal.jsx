@@ -46,7 +46,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
-      isPreDocket: null,
+      isPreDocketNeeded: null,
       dateError: ''
     };
   }
@@ -58,9 +58,9 @@ class NonratingRequestIssueModal extends React.Component {
     });
   };
 
-  isPreDocketOnChange = (isPreDocket) => {
+  isPreDocketNeededOnChange = (isPreDocketNeeded) => {
     this.setState({
-      isPreDocket
+      isPreDocketNeeded
     });
   };
 
@@ -131,7 +131,6 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId,
       ineligibleReason,
       decisionReviewTitle,
-      isPreDocket,
     } = this.state;
 
     const currentIssue = {
@@ -142,7 +141,6 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId,
       ineligibleReason,
       decisionReviewTitle,
-      isPreDocket,
       isRating: false,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
@@ -253,7 +251,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
-    const { benefitType, category, selectedNonratingIssueId, isPreDocket } = this.state;
+    const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const vhaPreDocketAppeals = featureToggles.vhaPreDocketAppeals;
     const educationPreDocketAppeals = featureToggles.educationPreDocketAppeals;
 
@@ -276,7 +274,7 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
 
     const preDocketRadioFields =
-      formType === 'appeal' ? <PreDocketRadioField value={isPreDocket} onChange={this.isPreDocketOnChange} /> : null;
+      formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded} onChange={this.isPreDocketNeededOnChange} /> : null;
 
     return (
       <div className="intake-add-issues">

@@ -114,7 +114,6 @@ export const ACTIONS = {
   SET_LEGACY_OPT_IN_APPROVED: 'SET_LEGACY_OPT_IN_APPROVED',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
-  SET_IS_PREDOCKET: 'SET_IS_PREDOCKET',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   TOGGLE_ADDING_ISSUE: 'TOGGLE_ADDING_ISSUE',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
@@ -188,7 +187,7 @@ export const REVIEW_DATA_FIELDS = {
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
-    is_predocket: { key: 'isPreDocket', required: true },
+    is_predocket_needed: { key: 'isPreDocketNeeded', required: true },
   },
   supplementalClaim: {
     benefit_type: { key: 'benefitType', required: true },

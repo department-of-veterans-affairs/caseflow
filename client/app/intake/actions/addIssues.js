@@ -78,15 +78,6 @@ export const setEditContentionText = (issueIdx, editedDescription) => ({
 });
 
 export const addIssue = (currentIssue) => (dispatch) => {
-  if (currentIssue.isPreDocket) {
-    dispatch({
-      type: ACTIONS.SET_IS_PREDOCKET,
-      payload: {
-        isPreDocket: true
-      }
-    });
-  }
-
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
