@@ -187,7 +187,6 @@ export const REVIEW_DATA_FIELDS = {
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
-    is_predocket_needed: { key: 'isPreDocketNeeded', required: true },
   },
   supplementalClaim: {
     benefit_type: { key: 'benefitType', required: true },
