@@ -152,9 +152,21 @@ class NonratingRequestIssueModal extends React.Component {
 
   requiredFieldsMissing() {
     const { formType } = this.props;
-    const { description, category, decisionDate, benefitType } = this.state;
+    const {
+      description,
+      category,
+      decisionDate,
+      benefitType,
+      isPreDocketNeeded,
+    } = this.state;
 
-    return !description || !category || !decisionDate || (formType === 'appeal' && !benefitType);
+    return (
+      !description ||
+      !category ||
+      !decisionDate ||
+      (formType === 'appeal' && !benefitType) ||
+      (benefitType === 'education' && !isPreDocketNeeded)
+    );
   }
 
   getModalButtons() {
