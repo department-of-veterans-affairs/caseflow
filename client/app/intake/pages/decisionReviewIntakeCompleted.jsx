@@ -27,6 +27,10 @@ const checkIssuesForVha = (requestIssues) => {
   return hasVhaIssues;
 };
 
+const checkIfPredocketed = (requestIssues) => {
+  return requestIssues.some((ri) => ri.isPreDocketNeeded === true);
+};
+
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
@@ -169,11 +173,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = 'Intake completed';
-
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
-      title = 'Appeal recorded in pre-docket queue';
-    }
+    let title = checkIfPredocketed(requestIssues) || checkIssuesForVha(requestIssues) ?
+      'Appeal recorded in pre-docket queue' :
+      'Intake completed';
 
     const deceasedVeteranAlert = () => {
       return (
