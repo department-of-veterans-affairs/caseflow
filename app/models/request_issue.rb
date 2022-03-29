@@ -199,7 +199,8 @@ class RequestIssue < CaseflowRecord
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
-        verified_unidentified_issue: data[:verified_unidentified_issue]
+        verified_unidentified_issue: data[:verified_unidentified_issue],
+        is_predocket_needed: data[:is_predocket_needed]
       }
     end
     # rubocop:enable Metrics/MethodLength
