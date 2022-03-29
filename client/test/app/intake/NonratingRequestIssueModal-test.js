@@ -91,14 +91,14 @@ describe('NonratingRequestIssueModal', () => {
       );
 
       // Benefit type isn't education, so it should not be rendered
-      expect(wrapper.find('.cf-is-predocket')).toHaveLength(0);
+      expect(wrapper.find('.cf-is-predocket-needed')).toHaveLength(0);
 
       wrapper.setState({
         benefitType: 'education'
       });
 
       // Benefit type is now education, so it should be rendered
-      expect(wrapper.find('.cf-is-predocket')).toHaveLength(1);
+      expect(wrapper.find('.cf-is-predocket-needed')).toHaveLength(1);
     });
   });
 });
