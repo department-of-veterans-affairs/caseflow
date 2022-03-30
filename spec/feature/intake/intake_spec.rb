@@ -773,5 +773,6 @@ feature "Intake", :all_dbs do
           expect(page).to_not have_content("Is pre-docketing needed for this issue?")
         end
       end
+    end
   end
 end
