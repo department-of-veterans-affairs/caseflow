@@ -287,11 +287,11 @@ module IntakeHelpers
     if page.has_css?("#issue-benefit-type", wait: 0)
       fill_in "Benefit type", with: benefit_type
       find("#issue-benefit-type").send_keys :enter
+    end
 
-      if page.has_css?(".cf-is-predocket-needed")
-        within_fieldset("Is pre-docketing needed for this issue?") do
-          find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
-        end
+    if page.has_css?("div.cf-is-predocket-needed")
+      within_fieldset("Is pre-docketing needed for this issue?") do
+        find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
       end
     end
 
