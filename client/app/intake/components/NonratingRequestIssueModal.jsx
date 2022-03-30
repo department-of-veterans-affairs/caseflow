@@ -288,7 +288,8 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
 
     const preDocketRadioFields =
-      formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded} onChange={this.isPreDocketNeededOnChange} /> : null;
+      formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
+        onChange={this.isPreDocketNeededOnChange} /> : null;
 
     return (
       <div className="intake-add-issues">
