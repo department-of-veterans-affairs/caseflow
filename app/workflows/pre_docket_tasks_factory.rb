@@ -30,7 +30,7 @@ class PreDocketTasksFactory
     VhaDocumentSearchTask.create!(
       appeal: @appeal,
       assigned_by: @appeal.intake.user,
-      assigned_to: EMO.singleton,
+      assigned_to: EducationEmo.singleton,
       parent: pre_docket_task
     )
   end

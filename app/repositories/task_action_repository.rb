@@ -545,10 +545,10 @@ class TaskActionRepository
       # TODO: create model for EMO & replace type with Edu DocumentSearchTask 
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
-      camo = VhaCamo.singleton
+      emo = EducationEmo.singleton
       {
-        selected: camo,
-        options: [{ label: camo.name, value: camo.id }],
+        selected: emo,
+        options: [{ label: emo.name, value: emo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
         message_title: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE,
