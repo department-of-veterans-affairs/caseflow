@@ -725,8 +725,6 @@ feature "Intake", :all_dbs do
         after { FeatureToggle.disable!(:updated_appeal_form) }
 
         scenario "pre-docket selection is available with education issue in add issues modal" do
-          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
-
           visit "/intake"
 
           select_form(Constants.INTAKE_FORM_NAMES.appeal)
