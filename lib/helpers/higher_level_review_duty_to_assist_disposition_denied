@@ -14,20 +14,29 @@ module WarRoom
 
       # Count decision issues
       dis.count
-
-      if dis.count > 3
+ 
+      if dis.count == 0
+        puts("There are no decision issues associated with the claim id. Aborting...")
+        fail Interrupt
+      elsif dis.count > 3
         puts("There are too many decision issues to run this script. Aborting...")
         fail Interrupt
       end
 
       # Check for one or many decision issues with 'disposition: "Denied"'
       index = -1
+      checker = 0
       denied_at = Array.new
       dis.each do |x|
         index += 1
         if x.disposition != nil && x.disposition == "Denied"
           denied_at.push(index)
+          checker += 1
         end
+      end
+      if checker == 0
+        puts("There are no decision issues with disposition: Denied. Aborting...")
+        fail Interrupt
       end
 
       # Run helper method to update dispositions
