@@ -106,7 +106,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType="appeal"
           intakeData={intakeData}
-          featureToggles={featureToggles} />
+          featureToggles={featureTogglesEMOPreDocket} />
       );
 
       // Switch to an Education issue, but don't fill in pre-docket field
