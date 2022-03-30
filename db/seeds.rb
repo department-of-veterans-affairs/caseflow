@@ -48,6 +48,7 @@ class SeedDB
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
+    call_and_log_seed_step Seeds::Education # new line added to Seeds file necessary?
   end
 end
 
