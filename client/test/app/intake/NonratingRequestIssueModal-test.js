@@ -100,5 +100,39 @@ describe('NonratingRequestIssueModal', () => {
       // Benefit type is now education, so it should be rendered
       expect(wrapper.find('.cf-is-predocket-needed')).toHaveLength(1);
     });
+
+    it('submit button is disabled with Education benefit_type if pre-docket selection is empty', () => {
+      const wrapper = mount(
+        <NonratingRequestIssueModal
+          formType="appeal"
+          intakeData={intakeData}
+          featureToggles={featureToggles} />
+      );
+
+      // Switch to an Education issue, but don't fill in pre-docket field
+      wrapper.setState({
+        benefitType: 'education',
+        category: {
+          label: 'accrued',
+          value: 'accrued'
+        },
+        decisionDate: '03/30/2022',
+        dateError: false,
+        description: 'thing',
+        isPreDocketNeeded: null
+      });
+
+      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+
+      expect(submitBtn.prop('disabled')).toBe(true);
+
+      // Fill in pre-docket field to make sure the submit button gets enabled
+      // Note that the radio field values are strings.
+      wrapper.setState({
+        isPreDocketNeeded: 'false'
+      });
+
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+    });
   });
 });
