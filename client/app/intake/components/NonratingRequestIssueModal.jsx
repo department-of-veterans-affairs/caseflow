@@ -165,7 +165,7 @@ class NonratingRequestIssueModal extends React.Component {
       !category ||
       !decisionDate ||
       (formType === 'appeal' && !benefitType) ||
-      (benefitType === 'education' && !isPreDocketNeeded)
+      (formType === 'appeal' && benefitType === 'education' && !isPreDocketNeeded)
     );
   }
 

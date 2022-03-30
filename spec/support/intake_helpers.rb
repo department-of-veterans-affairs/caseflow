@@ -275,7 +275,8 @@ module IntakeHelpers
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
-    legacy_issues: false
+    legacy_issues: false,
+    is_predocket_needed: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
@@ -286,6 +287,12 @@ module IntakeHelpers
     if page.has_css?("#issue-benefit-type", wait: 0)
       fill_in "Benefit type", with: benefit_type
       find("#issue-benefit-type").send_keys :enter
+
+      if page.has_field?("is-predocket-needed")
+        within_fieldset("is-predocket-needed") do
+          find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
+        end
+      end
     end
 
     fill_in "Issue category", with: category
