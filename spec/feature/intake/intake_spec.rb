@@ -725,7 +725,7 @@ feature "Intake", :all_dbs do
         after { FeatureToggle.disable!(:updated_appeal_form) }
 
         scenario "pre-docket selection is available with education issue in add issues modal" do
-          start_appeal(veteran, Constants.AMA_DOCKETS.hearing)
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
 
           visit "/intake"
           click_intake_continue
@@ -740,7 +740,7 @@ feature "Intake", :all_dbs do
         end
 
         scenario "pre-docket select is not available with compensation issue in add issues modal" do
-          start_appeal(veteran, Constants.AMA_DOCKETS.hearing)
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
 
           visit "/intake"
           click_intake_continue
@@ -759,7 +759,7 @@ feature "Intake", :all_dbs do
         before { FeatureToggle.disable!(:updated_appeal_form) }
 
         scenario "pre-docket selection is not available with education issue in add issues modal" do
-          start_appeal(veteran, Constants.AMA_DOCKETS.hearing)
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
 
           visit "/intake"
           click_intake_continue
