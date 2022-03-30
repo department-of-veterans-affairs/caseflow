@@ -728,6 +728,29 @@ feature "Intake", :all_dbs do
           start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
 
           visit "/intake"
+
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+
+          fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+          within_fieldset("Was this form submitted through VA.gov?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
+          within_fieldset("Which review option did the Veteran request?") do
+            find("label", text: "Hearing", match: :prefer_exact).click
+          end
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "No", match: :prefer_exact).click
+          end
+          within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
+            find("label", text: "N/A", match: :prefer_exact).click
+          end
+
           click_intake_continue
 
           expect(page).to have_current_path("/intake/add_issues")
