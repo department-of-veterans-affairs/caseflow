@@ -288,8 +288,8 @@ module IntakeHelpers
       fill_in "Benefit type", with: benefit_type
       find("#issue-benefit-type").send_keys :enter
 
-      if page.has_field?("is-predocket-needed")
-        within_fieldset("is-predocket-needed") do
+      if page.has_css?(".cf-is-predocket-needed")
+        within_fieldset("Is pre-docketing needed for this issue?") do
           find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
         end
       end
