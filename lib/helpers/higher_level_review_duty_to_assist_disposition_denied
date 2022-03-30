@@ -1,0 +1,92 @@
+# frozen_string_literal: true
+
+module WarRoom
+  class HigherLevelReviewDutyToAssistDispositionDenied
+    def run(claim_id)
+      # Set current user
+      RequestStore[:current_user] = User.system_user
+
+      # Get EPE from claim id
+      epe = EndProductEstablishment.find_by(reference_id: claim_id)
+
+      # Get decision issues
+      dis = epe.source.decision_issues
+
+      # Count decision issues
+      dis.count
+
+      if dis.count > 3
+        puts("There are too many decision issues to run this script. Aborting...")
+        fail Interrupt
+      end
+
+      # Check for one or many decision issues with 'disposition: "Denied"'
+      index = -1
+      denied_at = Array.new
+      dis.each do |x|
+        index += 1
+        if x.disposition != nil && x.disposition == "Denied"
+          denied_at.push(index)
+        end
+      end
+
+      # Run helper method to update dispositions
+      denied_at.each do |i|
+        update_dispositions(claim_id, epe, i)
+      end
+    end
+
+    def update_dispositions(claim_id, epe, x)
+      dis = epe.source.decision_issues
+
+      # Set the veteran and ratings
+      v = epe.veteran
+      ratings = v.ratings
+
+      # Verify the most recent rating matches the promulgation date of the decision issue
+      ratings_promulgation = ratings.map(&:promulgation_date)
+      index = -1
+      ratings_promulgation.each do |y|
+        index += 1
+        if y == dis[x].rating_promulgation_date
+          break
+        end
+      end
+
+      if ratings_promulgation[index] != dis[x].rating_promulgation_date
+        puts("The rating does not match the promulgation date of the decision issue. Aborting...")
+        fail Interrupt
+      end
+      decision_rating = ratings[index]
+
+      # Confirm claim id matches
+      dis_epe = decision_rating.issues.map(&:associated_end_products)
+      s = dis_epe[0].to_s
+      s_split = s.split('=')[1].split(',')[0]
+      dis_claim_id = s_split[1...-1]
+      if dis_claim_id != claim_id
+        puts("The claim id of the decision issue does not match the claim id of the epe. Aborting...")
+        fail Interrupt
+      end
+
+      # Confirm the decision was a DTA error (1 or more issues should say
+      # "A duty to assist error has been identified during the higher-level review")
+      decision_text = decision_rating.issues.map(&:decision_text)
+      checker = 0
+      decision_text.each do |i|
+        if i[0..21] == "A duty to assist error"
+          checker += 1
+        end
+      end
+      if checker == 0
+        puts("A DTA error cannot be confirmed in the decision text of the associated rating. Aborting...")
+        fail Interrupt
+      end
+
+      # Update the disposition of issue with DTA error
+      dis_to_update = dis[x]
+      dis_to_update.update!(disposition: "DTA Error")
+      epe.source.create_remand_supplemental_claims!
+    end
+  end
+end
