@@ -114,6 +114,7 @@ export const ACTIONS = {
   SET_LEGACY_OPT_IN_APPROVED: 'SET_LEGACY_OPT_IN_APPROVED',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
+  SET_ORIGINAL_HEARING_REQUEST_TYPE: 'SET_ORIGINAL_HEARING_REQUEST_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   TOGGLE_ADDING_ISSUE: 'TOGGLE_ADDING_ISSUE',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
@@ -179,6 +180,7 @@ export const REVIEW_OPTIONS = {
 export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
+    original_hearing_request_type: { key: 'originalHearingRequestType', required: false },
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
