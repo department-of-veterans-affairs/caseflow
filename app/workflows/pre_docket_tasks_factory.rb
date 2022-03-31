@@ -26,8 +26,7 @@ class PreDocketTasksFactory
       assigned_to: BvaIntake.singleton,
       parent: @root_task
     )
-    # TODO: create Edu DocumentSearchTask for EMO organization
-    VhaDocumentSearchTask.create!(
+    EducationDocumentSearchTask.create!(
       appeal: @appeal,
       assigned_by: @appeal.intake.user,
       assigned_to: EducationEmo.singleton,
