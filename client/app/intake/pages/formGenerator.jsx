@@ -57,6 +57,7 @@ const formFieldMapping = (props) => {
     if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
+
     return renderBooleanValue('filedByVaGov');
   };
   const hearingTypeDropdown = (
@@ -89,6 +90,7 @@ const formFieldMapping = (props) => {
       register={props.register}
     />
   );
+
   return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type': (
@@ -250,6 +252,7 @@ const FormGenerator = (props) => {
     props.confirmIneligibleForm(props.intakeId);
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
+
   return (
     <div>
       <h1>{props.formHeader(props.veteranName)}</h1>
@@ -280,6 +283,7 @@ const FormGenerator = (props) => {
 const SelectClaimantConnected = connect(
   (state, props) => {
     const { featureToggles } = state;
+
     return {
       isVeteranDeceased: state.intake.veteran.isDeceased,
       veteranIsNotClaimant: state[props.formName].veteranIsNotClaimant,
@@ -301,6 +305,7 @@ const SelectClaimantConnected = connect(
       setPayeeCode,
     }, dispatch)
 )(SelectClaimant);
+
 FormGenerator.propTypes = {
   schema: PropTypes.object.isRequired,
   formHeader: PropTypes.func.isRequired,
