@@ -1,12 +1,10 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
-  convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
   getPageError,
-  formatRelationships
 } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -21,6 +19,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     ...commonState,
     docketType: {
       $set: serverIntake.docketType
+    },
+    originalHearingRequestType: {
+      $set: serverIntake.originalHearingRequestType
     }
   });
 };
