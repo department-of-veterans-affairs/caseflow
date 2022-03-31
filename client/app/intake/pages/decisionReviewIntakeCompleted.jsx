@@ -16,18 +16,10 @@ import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
 const checkIssuesForVha = (requestIssues) => {
-  let hasVhaIssues = false;
-
-  requestIssues.forEach((ri) => {
-    if (ri.benefitType === 'vha') {
-      hasVhaIssues = true;
-    }
-  });
-
-  return hasVhaIssues;
+  return requestIssues.some((ri) => ri.benefitType === 'vha');
 };
 
-const checkIfPredocketed = (requestIssues) => {
+const checkIfPreDocketed = (requestIssues) => {
   return requestIssues.some((ri) => ri.isPreDocketNeeded === true);
 };
 
@@ -173,7 +165,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = checkIfPredocketed(requestIssues) || checkIssuesForVha(requestIssues) ?
+    let title = checkIfPreDocketed(requestIssues) ?
       'Appeal recorded in pre-docket queue' :
       'Intake completed';
 
