@@ -24,8 +24,8 @@ module Seeds
       def setup_regional_processing_offices!
         REGIONAL_PROCESSING_OFFICES.each { |name| EduRegionalProcessingOffice.create!(name: name, url: name) }
   
-        regular_user = create(:user, full_name: "Stevie EduRPOUser Amana", css_id: "VHAPOUSER") # Need CSSID from Stakeholders, unsure about user naming conventions? See line
-        admin_user = create(:user, full_name: "Channing EduRPOAdmin Katz", css_id: "VHAPOADMIN") # Need CSSID from Stakeholders, unure about admin naming conventions? See line
+        regular_user = create(:user, full_name: "Peter EDURPOUSER Campbell", css_id: "EDURPOUSER") 
+        admin_user = create(:user, full_name: "Samuel EDURPOADMIN Clemens", css_id: "EDURPOADMIN") 
   
         EduRegionalProcessingOffice.all.each do |org|
           org.add_user(regular_user)
