@@ -566,9 +566,9 @@ class QueueApp extends React.PureComponent {
   );
 
   queueName = () =>
-    this.props.userRole === USER_ROLE_TYPES.attorney
-      ? 'Your Queue'
-      : 'Review Cases';
+    this.props.userRole === USER_ROLE_TYPES.attorney ?
+      'Your Queue' :
+      'Review Cases';
 
   propsForQueueLoadingScreen = () => {
     const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
@@ -585,9 +585,9 @@ class QueueApp extends React.PureComponent {
     <NavigationBar
       wideApp
       defaultUrl={
-        this.props.caseSearchHomePage || this.props.hasCaseDetailsRole
-          ? '/search'
-          : '/queue'
+        this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
+          '/search' :
+          '/queue'
       }
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
@@ -661,15 +661,15 @@ class QueueApp extends React.PureComponent {
 
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
-                  case DECISION_TYPES.OMO_REQUEST:
-                    reviewActionType = 'OMO';
-                    break;
-                  case DECISION_TYPES.DRAFT_DECISION:
-                    reviewActionType = 'Draft Decision';
-                    break;
-                  case DECISION_TYPES.DISPATCH:
-                    reviewActionType = 'to Dispatch';
-                    break;
+                case DECISION_TYPES.OMO_REQUEST:
+                  reviewActionType = 'OMO';
+                  break;
+                case DECISION_TYPES.DRAFT_DECISION:
+                  reviewActionType = 'Draft Decision';
+                  break;
+                case DECISION_TYPES.DISPATCH:
+                  reviewActionType = 'to Dispatch';
+                  break;
                 }
 
                 return `Draft Decision | Submit ${reviewActionType}`;
@@ -1066,8 +1066,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS
-                  .CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                TASK_ACTIONS.
+                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
               }`}
               title="Cancel Task and Assign Regional Office | Caseflow"
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
