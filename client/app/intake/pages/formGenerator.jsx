@@ -6,12 +6,16 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType, setOriginalHearingRequestType } from '../actions/appeal';
+import { setDocketType, setOriginalHearingRequestType, setHomelessnessType
+} from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
 import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
-import { setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov } from '../actions/decisionReview';
+import Homelessness from '../components/Homelessness';
+import {
+  setVeteranIsNotClaimant, setClaimant, setPayeeCode, setLegacyOptInApproved, setBenefitType, setFiledByVaGov
+} from '../actions/decisionReview';
 import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
@@ -23,31 +27,25 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-
 const docketTypeRadioOptions = [
   { value: 'direct_review', displayText: 'Direct Review' },
   { value: 'evidence_submission', displayText: 'Evidence Submission' },
   { value: 'hearing', displayText: 'Hearing' },
 ];
-
 const hearingTypeOptions = [
   { label: 'Central Office Hearing', value: 'central' },
   { label: 'Videoconference Hearing', value: 'video' },
   { label: 'Virtual Telehearing', value: 'virtual' },
 ];
-
 const rampElectionReviewOptions = reject(REVIEW_OPTIONS, REVIEW_OPTIONS.APPEAL);
-
 const rampRefilingRadioOptions = map(REVIEW_OPTIONS, (option) => ({
   value: option.key,
   displayText: option.name,
 }));
-
 const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
   value: option.key,
   displayText: option.name,
 }));
-
 const formFieldMapping = (props) => {
   const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
   const renderBooleanValue = (propKey) => {
@@ -62,7 +60,6 @@ const formFieldMapping = (props) => {
 
     return renderBooleanValue('filedByVaGov');
   };
-
   const hearingTypeDropdown = (
     <SearchableDropdown
       label="Please Select Hearing Type"
@@ -73,7 +70,6 @@ const formFieldMapping = (props) => {
       optional
     />
   );
-
   const updateDocketType = (event) => {
     // reset hearing type if switching to a non-hearing docket type
     if (props.docketType === 'hearing' && props.featureToggles.updatedAppealForm) {
@@ -81,8 +77,21 @@ const formFieldMapping = (props) => {
     }
     props.setDocketType(event);
   };
+  const homelessnessFieldValue = () => {
+    return (props.homelessnessUserInteraction || props.isReviewed) ?
+      props.homelessness :
+      null;
+  };
+  const homelessnessRadioField = (
+    <Homelessness
+      value={homelessnessFieldValue()}
+      onChange={props.setHomelessnessType}
+      errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
+      register={props.register}
+    />
+  );
 
-  return {
+  return ({
     'receipt-date': <ReceiptDateInput {...props} />,
     'docket-type': (
       <div className="cf-docket-type" style={{ marginTop: '10px' }}>
@@ -192,6 +201,7 @@ const formFieldMapping = (props) => {
         inputRef={props.register}
       />
     ),
+    'homelessness-type': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
     'opt-in-election': (
       <Fragment>
         <RadioField
@@ -228,9 +238,8 @@ const formFieldMapping = (props) => {
         )}
       </Fragment>
     ),
-  };
+  });
 };
-
 const FormGenerator = (props) => {
   switch (props.intakeStatus) {
   case INTAKE_STATES.NONE:
@@ -239,11 +248,9 @@ const FormGenerator = (props) => {
     return <Redirect to={PAGE_PATHS.COMPLETED} />;
   default:
   }
-
   const beginNextIntake = () => {
     props.confirmIneligibleForm(props.intakeId);
   };
-
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
   return (
@@ -262,7 +269,6 @@ const FormGenerator = (props) => {
           </Button>
         </Alert>
       )}
-
       {props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} />}
       {showInvalidVeteranError && (
         <ErrorAlert
@@ -274,7 +280,6 @@ const FormGenerator = (props) => {
     </div>
   );
 };
-
 const SelectClaimantConnected = connect(
   (state, props) => {
     const { featureToggles } = state;
@@ -329,8 +334,11 @@ FormGenerator.propTypes = {
   register: PropTypes.func,
   errors: PropTypes.array,
   intakeId: PropTypes.string,
+  homelessness: PropTypes.string,
+  setHomelessnessType: PropTypes.func,
+  homelessnessError: PropTypes.string,
+  isReviewed: PropTypes.bool
 };
-
 export default connect(
   (state, props) => ({
     veteranName: state.intake.veteran.name,
@@ -360,19 +368,23 @@ export default connect(
     veteranInvalidFields: state[props.formName].veteranInvalidFields,
     hasInvalidOption: state[props.formName].hasInvalidOption,
     confirmIneligibleForm: state[props.formName].confirmIneligibleForm,
+    homelessness: state[props.formName].homelessness,
+    homelessnessError: state[props.formName].homelessnessError,
+    homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
+    isReviewed: state[props.formName].isReviewed,
   }),
-  (dispatch) =>
-    bindActionCreators({
-      setDocketType,
-      setReceiptDate,
-      setOriginalHearingRequestType,
-      setLegacyOptInApproved,
-      setInformalConference,
-      setSameOffice,
-      setBenefitType,
-      setAppealDocket,
-      confirmIneligibleForm,
-      setOptionSelected,
-      setFiledByVaGov,
-    }, dispatch)
+  (dispatch) => bindActionCreators({
+    setDocketType,
+    setReceiptDate,
+    setLegacyOptInApproved,
+    setInformalConference,
+    setOriginalHearingRequestType,
+    setSameOffice,
+    setBenefitType,
+    setAppealDocket,
+    confirmIneligibleForm,
+    setOptionSelected,
+    setFiledByVaGov,
+    setHomelessnessType
+  }, dispatch)
 )(FormGenerator);

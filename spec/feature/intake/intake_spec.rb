@@ -717,6 +717,43 @@ feature "Intake", :all_dbs do
           )
         end
       end
+
+      context "Homelessness field" do
+        context "updatedAppealForm FeatureToggle is enabled" do
+          before { FeatureToggle.enable!(:updated_appeal_form) }
+          after { FeatureToggle.disable!(:updated_appeal_form) }
+
+          scenario "Homelessness field is visible" do
+            visit "/intake"
+
+            select_form(Constants.INTAKE_FORM_NAMES.appeal)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "12341234"
+            click_on "Search"
+
+            expect(page).to have_current_path("/intake/review_request")
+            expect(page).to have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+          end
+        end
+
+        context "updatedAppealForm FeatureToggle is disabled" do
+          before { FeatureToggle.disable!(:updated_appeal_form) }
+
+          scenario "Homelessness field is not visible" do
+            visit "/intake"
+
+            select_form(Constants.INTAKE_FORM_NAMES.appeal)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "12341234"
+            click_on "Search"
+
+            expect(page).to have_current_path("/intake/review_request")
+            expect(page).to_not have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+          end
+        end
+      end
     end
 
     context "Veteran requests Hearing" do

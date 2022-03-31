@@ -79,6 +79,7 @@ describe AppealIntake, :all_dbs do
     let(:claimant_type) { "veteran" }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
+    let(:homelessness) { false }
     # set hearing type
     let(:original_hearing_request_type) { "virtual" }
 
@@ -92,6 +93,7 @@ describe AppealIntake, :all_dbs do
         claimant_type: claimant_type,
         payee_code: payee_code,
         legacy_opt_in_approved: legacy_opt_in_approved,
+        homelessness: homelessness,
         original_hearing_request_type: original_hearing_request_type
       )
     end
@@ -104,6 +106,7 @@ describe AppealIntake, :all_dbs do
         docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
         veteran_is_not_claimant: false,
+        homelessness: false,
         original_hearing_request_type: "virtual"
       )
     end

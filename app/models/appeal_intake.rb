@@ -43,6 +43,6 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def review_param_keys
-    %w[receipt_date docket_type legacy_opt_in_approved filed_by_va_gov original_hearing_request_type]
+    %w[receipt_date docket_type legacy_opt_in_approved filed_by_va_gov homelessness original_hearing_request_type]
   end
 end
