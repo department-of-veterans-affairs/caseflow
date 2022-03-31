@@ -52,6 +52,10 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   benefitTypeOnChange = (benType) => {
+    if (benType.value === 'vha') {
+      this.isPreDocketNeededOnChange('true');
+    }
+
     this.setState({
       benefitType: benType.value,
       category: ''
