@@ -99,7 +99,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "CAMO user assigns to Program Office" do
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content(COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click

@@ -1199,7 +1199,7 @@
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
   "DOCKET_APPEAL_INSTRUCTIONS_NOTE": "This appeal has been docketed, and this task is no longer necessary.",
   "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
-  "VHA_REVIEW_DOCUMENTATION_TASK_LABEL": "Review Documentation",
+  "REVIEW_DOCUMENTATION_TASK_LABEL": "Review Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
   "VHA_MODAL_BODY": "Provide instructions and context for this action.",
@@ -1235,7 +1235,5 @@
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
-  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
-
-  "EDUCATION_REVIEW_DOCUMENTATION_TASK_LABEL": "Review Documentation"
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue"
 }

@@ -9,7 +9,7 @@ describe EducationDocumentSearchTask, :postgres do
 
   describe ".label" do
     it "uses a friendly label" do 
-      expect(task.class.label).to eq COPY::EDUCATION_REVIEW_DOCUMENTATION_TASK_LABEL
+      expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
     end
   end
 

@@ -20,6 +20,6 @@ class EducationDocumentSearchTask < Task
   ].freeze
 
   def self.label
-    COPY::EDUCATION_REVIEW_DOCUMENTATION_TASK_LABEL
+    COPY::REVIEW_DOCUMENTATION_TASK_LABEL
   end
 end
