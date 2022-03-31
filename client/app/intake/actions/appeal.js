@@ -12,7 +12,6 @@ export const setDocketType = (docketType) => ({
   }
 });
 
-
 export const setHomelessnessType = (homelessness) => ({
   type: ACTIONS.SET_HOMELESSNESS_TYPE,
   payload: {
@@ -22,5 +21,12 @@ export const setHomelessnessType = (homelessness) => ({
     analytics: {
       label: homelessness
     }
+  }
+});
+
+export const setOriginalHearingRequestType = (originalHearingRequestType) => ({
+  type: ACTIONS.SET_ORIGINAL_HEARING_REQUEST_TYPE,
+  payload: {
+    originalHearingRequestType
   }
 });
