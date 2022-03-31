@@ -286,7 +286,7 @@ class NonratingRequestIssueModal extends React.Component {
         null;
 
     const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal' && vhaPreDocketAppeals;
-    const showPreDocketSelection = benefitType === 'education' && formType === 'appeal' && educationPreDocketAppeals;
+    const showPreDocketField = benefitType === 'education' && formType === 'appeal' && educationPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
@@ -310,7 +310,7 @@ class NonratingRequestIssueModal extends React.Component {
             <h2>Does issue {issueNumber} match any of these non-rating issue categories?</h2>
             <div className="add-nonrating-request-issue">
               {benefitTypeElement}
-              {showPreDocketSelection && preDocketRadioFields}
+              {showPreDocketField && preDocketRadioFields}
               <SearchableDropdown
                 name="issue-category"
                 label="Issue category"
