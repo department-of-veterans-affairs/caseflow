@@ -24,7 +24,7 @@ export default class PreDocketRadioField extends React.PureComponent {
     return (
       <div
         className="cf-is-predocket-needed"
-        style={{ height: '4em', marginTop: '10px' }}
+        style={{ height: '4em', marginTop: '20px' }}
       >
         <RadioField
           name="is-predocket-needed"

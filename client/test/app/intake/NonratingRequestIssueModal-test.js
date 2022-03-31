@@ -2,7 +2,6 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
-import PreDocketRadioField from '../../../app/intake/components/PreDocketRadioField';
 import { sample1 } from './testData';
 
 describe('NonratingRequestIssueModal', () => {
