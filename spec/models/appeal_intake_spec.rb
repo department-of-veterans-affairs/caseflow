@@ -252,7 +252,7 @@ describe AppealIntake, :all_dbs do
           nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
           decision_date: "2018-12-25",
-          is_predocket: false
+          is_predocket_needed: false
          }
       ]
     end
@@ -280,7 +280,8 @@ describe AppealIntake, :all_dbs do
       expect(intake.detail.request_issues.second).to have_attributes(
         nonrating_issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
-        nonrating_issue_description: "nonrating request issue decision text"
+        nonrating_issue_description: "nonrating request issue decision text",
+        is_predocket_needed: false
       )
       expect(intake.detail.tasks.count).to eq 2
       expect(intake.detail.submitted?).to eq true
