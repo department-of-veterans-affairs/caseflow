@@ -4,5 +4,9 @@
     "VIRTUAL_HEARINGS_GROUP_NAME": "virtual_hearings",
     "REMINDER_EMAILS_GROUP_NAME": "hearing_reminders",
     "STATUS_EMAILS_GROUP_NAME": "send_status_emails"
+  },
+  "DISPATCH": {
+    "APP_NAME": "dispatch",
+    "OUTCODE_GROUP_NAME": "outcode"
   }
 }
