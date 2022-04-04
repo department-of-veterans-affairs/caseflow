@@ -1,6 +1,0 @@
----
-plugins:
-  rubocop:
-    enabled: true
-  fixme:
-    enabled: true

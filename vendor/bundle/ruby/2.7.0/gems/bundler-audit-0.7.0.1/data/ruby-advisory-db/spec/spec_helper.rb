@@ -1,2 +1,0 @@
-require 'kwalify'
-require 'rspec'

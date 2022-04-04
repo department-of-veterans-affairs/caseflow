@@ -1,2 +1,0 @@
-#define RUBY_REVISION "fb4df44d16"
-#define RUBY_FULL_REVISION "fb4df44d1670e9d25aef6b235a7281199a177edb"
