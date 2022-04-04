@@ -19,6 +19,7 @@ class Appeal < DecisionReview
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :hearings
+  has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
@@ -80,6 +81,7 @@ class Appeal < DecisionReview
     validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
+    validates :homelessness, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 

@@ -24,6 +24,9 @@ class HearingEmailRecipient < CaseflowRecord
 
   include BelongsToPolymorphicHearingConcern
   belongs_to_polymorphic_hearing(:hearing)
+  include HasAppealUpdatedSince
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal(:appeal)
 
   def reminder_sent_at
     email_events
