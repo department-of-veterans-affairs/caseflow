@@ -23,6 +23,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     educationPreDocketAppeals: {
       $set: Boolean(featureToggles.educationPreDocketAppeals)
     },
+    updatedAppealForm: {
+      $set: Boolean(featureToggles.updatedAppealForm)
+    }
   });
 };
 
@@ -34,7 +37,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       correctClaimReviews: false,
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
-      educationPreDocketAppeals: true,
+      educationPreDocketAppeals: false,
+      updatedAppealForm: false
     },
     data.featureToggles
   );

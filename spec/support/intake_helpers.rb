@@ -122,12 +122,14 @@ module IntakeHelpers
     legacy_opt_in_approved: false,
     no_claimant: false,
     intake_user: User.authenticate!(roles: ["Mail Intake"]),
-    docket_type: Constants.AMA_DOCKETS.evidence_submission
+    docket_type: Constants.AMA_DOCKETS.evidence_submission,
+    original_hearing_request_type: nil
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       docket_type: docket_type,
+      original_hearing_request_type: original_hearing_request_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?,
       filed_by_va_gov: false
