@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:www.example.com,2005:/tv_shows</id>
+  <link rel="alternate" type="text/html" href="http://www.example.com"/>
+  <link rel="self" type="application/atom+xml" href="http://www.example.com/tv_shows.atom"/>
+  <title>TV Shows</title>
+  <updated>2011-07-08T13:47:01Z</updated>
+  <entry>
+    <id>tag:www.example.com,2005:TvShow/17</id>
+    <published>2011-07-08T13:47:01Z</published>
+    <updated>2011-07-08T13:47:01Z</updated>
+    <link rel="alternate" type="text/html" href="http://www.example.com/sources/channel-twenty-seven/tv_shows/name-goes-here.atom"/>
+    <title>Name goes here</title>
+    <content type="html">Name goes here (0 episodes)</content>
+    <author>
+      <name>Source URL goes here</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ambigous>
+  <my-items>
+    <item>
+      <name>My first item</name>
+      <item><name>My first internal item</name></item>
+    </item>
+    <item>
+      <name>My second item</name>
+      <item><name>My second internal item</name></item>
+    </item>
+    <item>
+      <name>My third item</name>
+      <item><name>My third internal item</name></item>
+    </item>
+  </my-items>
+  <others-items>
+    <item>
+      <name>Other item</name>
+    </item>
+  </others-items>
+</ambigous>

@@ -1,0 +1,194 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'optparse'
+require "ostruct"
+if RUBY_VERSION < "1.9"
+  require 'ruby-debug-ide'
+else
+  require_relative '../lib/ruby-debug-ide'
+end
+
+$stdout.sync=true
+
+options = OpenStruct.new(
+    'frame_bind'  => false,
+    'host'        => nil,
+    'load_mode'   => false,
+    'port'        => 1234,
+    'stop'        => false,
+    'tracing'     => false,
+    'skip_wait_for_start' => false,
+    'int_handler' => true,
+    'dispatcher_port' => -1,
+    'evaluation_timeout' => 10,
+    'trace_to_s' => false,
+    'debugger_memory_limit' => 10,
+    'inspect_time_limit' => 100,
+    'rm_protocol_extensions' => false,
+    'catchpoint_deleted_event' => false,
+    'value_as_nested_element' => false,
+    'attach_mode' => false,
+    'cli_debug' => false,
+    'key_value_mode' => false,
+    'socket_path' => nil
+)
+
+opts = OptionParser.new do |opts|
+  opts.banner = <<EOB
+Using ruby-debug-base #{Debugger::VERSION}
+Usage: rdebug-ide is supposed to be called from RDT, NetBeans, RubyMine, or
+       the IntelliJ IDEA Ruby plugin.  The command line interface to
+       ruby-debug is rdebug.
+EOB
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-h", "--host HOST", "Host name used for remote debugging") {|host| options.host = host}
+  opts.on("-p", "--port PORT", Integer, "Port used for remote debugging") {|port| options.port = port}
+  opts.on("--dispatcher-port PORT", Integer, "Port used for multi-process debugging dispatcher") do |dp|
+    options.dispatcher_port = dp
+  end
+  opts.on('--evaluation-timeout TIMEOUT', Integer,'evaluation timeout in seconds (default: 10)') do |timeout|
+    options.evaluation_timeout = timeout
+  end
+  opts.on("--evaluation-control", "trace to_s evaluation") {options.trace_to_s = true}
+
+  opts.on("-m", "--memory-limit LIMIT", Integer, "evaluation memory limit in mb (default: 10)") do |limit|
+    if defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0'
+      $stderr.puts "Evaluation memory limit is ineffective in JRuby and MRI < 2.0"
+      limit = 0
+    end
+    options.debugger_memory_limit = limit
+    options.trace_to_s ||= limit > 0
+  end
+
+  opts.on("-t", "--time-limit LIMIT", Integer, "evaluation time limit in milliseconds (default: 100)") do |limit|
+    options.inspect_time_limit = limit
+    options.trace_to_s ||= limit > 0
+  end
+
+  opts.on('--stop', 'stop when the script is loaded') {options.stop = true}
+  opts.on("-x", "--trace", "turn on line tracing") {options.tracing = true}
+  opts.on("--skip_wait_for_start", "skip wait for 'start' command") {options.skip_wait_for_start = true}
+  opts.on("-l", "--load-mode", "load mode (experimental)") {options.load_mode = true}
+  opts.on("-d", "--debug", "Debug self - prints information for debugging ruby-debug itself") do
+    Debugger.cli_debug = true
+    options.cli_debug = true
+  end
+  opts.on("--xml-debug", "Debug self - sends information <message>s for debugging ruby-debug itself") do
+    Debugger.xml_debug = true
+  end
+  opts.on("-I", "--include PATH", String, "Add PATH to $LOAD_PATH") do |path|
+    $LOAD_PATH.unshift(path)
+  end
+  opts.on("--attach-mode", "Tells that rdebug-ide is working in attach mode") do
+    options.attach_mode = true
+  end
+  opts.on("--key-value", "Key/Value presentation of hash items") do
+    options.key_value_mode = true
+  end
+  opts.on("--ignore-port", "Generate another port") do
+    options.ignore_port = true
+  end
+  opts.on("--keep-frame-binding", "Keep frame bindings") {options.frame_bind = true}
+  opts.on("--disable-int-handler", "Disables interrupt signal handler") {options.int_handler = false}
+  opts.on("--rubymine-protocol-extensions", "Enable all RubyMine-specific incompatible protocol extensions") do
+    options.rm_protocol_extensions = true
+  end
+  opts.on("--catchpoint-deleted-event", "Enable chatchpointDeleted event") do
+    options.catchpoint_deleted_event = true
+  end
+  opts.on("--value-as-nested-element", "Allow to pass variable's value as nested element instead of attribute") do
+    options.value_as_nested_element = true
+  end
+  opts.on("--socket-path PATH", "Listen for debugger on the given UNIX domain socket path") do |path|
+    options.socket_path = path
+  end
+  opts.separator ""
+  opts.separator "Common options:"
+  opts.on_tail("-v", "--version", "Show version") do
+    puts "Using ruby-debug-base #{Debugger::VERSION}"
+    exit
+  end
+end
+
+begin
+  Debugger::ARGV = ARGV.clone
+  rdebug_path = File.expand_path($0)
+  if RUBY_PLATFORM =~ /mswin/
+    rdebug_path += ".cmd" unless rdebug_path =~ /\.cmd$/i
+  end
+  Debugger::RDEBUG_SCRIPT = rdebug_path
+  opts.parse! ARGV
+rescue StandardError => e
+  puts opts
+  puts
+  puts e.message
+  exit(1)
+end
+
+if ARGV.empty? && !options.attach_mode
+  puts opts
+  puts
+  puts "Must specify a script to run"
+  exit(1)
+end
+
+# save script name
+if !options.attach_mode
+  Debugger::PROG_SCRIPT = ARGV.shift
+else
+  Debugger::PROG_SCRIPT = $0
+end
+
+if options.dispatcher_port != -1
+  ENV['IDE_PROCESS_DISPATCHER'] = options.dispatcher_port.to_s
+  if RUBY_VERSION < "1.9"
+    lib_path = File.expand_path(File.dirname(__FILE__) + "/../lib/")
+    $: << lib_path unless $:.include? lib_path
+    require 'ruby-debug-ide/multiprocess'
+  else
+    require_relative '../lib/ruby-debug-ide/multiprocess'
+  end
+  Debugger::MultiProcess.do_monkey
+
+  ENV['DEBUGGER_STORED_RUBYLIB'] = ENV['RUBYLIB']
+  old_opts = ENV['RUBYOPT'] || ''
+  starter = "-r#{File.expand_path(File.dirname(__FILE__))}/../lib/ruby-debug-ide/multiprocess/starter"
+  unless old_opts.include? starter
+    ENV['RUBYOPT'] = starter
+    ENV['RUBYOPT'] += " #{old_opts}" if old_opts != ''
+  end
+  ENV['DEBUGGER_CLI_DEBUG'] = Debugger.cli_debug.to_s
+end
+
+if options.int_handler
+  # install interruption handler
+  trap('INT') { Debugger.interrupt_last }
+end
+
+# set options
+Debugger.keep_frame_binding = options.frame_bind
+Debugger.tracing = options.tracing
+Debugger.evaluation_timeout = options.evaluation_timeout
+Debugger.trace_to_s = options.trace_to_s && (options.debugger_memory_limit > 0 || options.inspect_time_limit > 0)
+Debugger.debugger_memory_limit = options.debugger_memory_limit
+Debugger.inspect_time_limit = options.inspect_time_limit
+Debugger.catchpoint_deleted_event = options.catchpoint_deleted_event || options.rm_protocol_extensions
+Debugger.value_as_nested_element = options.value_as_nested_element || options.rm_protocol_extensions
+Debugger.key_value_mode = options.key_value_mode
+
+if options.attach_mode
+  if Debugger::FRONT_END == "debase"
+    Debugger.init_variables
+  end
+
+  Debugger::MultiProcess::pre_child(options)
+
+  if Debugger::FRONT_END == "debase"
+    Debugger.setup_tracepoints
+    Debugger.prepare_context
+  end
+else
+  Debugger.debug_program(options)
+end

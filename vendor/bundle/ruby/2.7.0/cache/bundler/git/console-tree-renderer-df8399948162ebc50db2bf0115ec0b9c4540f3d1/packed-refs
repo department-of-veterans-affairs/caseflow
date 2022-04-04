@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+4394c068ac4eefde11a65ea41d99982cf4863c3b refs/heads/master
+9c531f90db676f3f5ff740d2483515eff6c95331 refs/heads/proper_gem
+7f196fc1094400480cea3bc8b4c21720cd25a166 refs/tags/v0.1.0
+f0db3565b74d28af3b27f960463e280b4296cafe refs/tags/v0.1.1

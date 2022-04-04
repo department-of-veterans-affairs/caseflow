@@ -1,0 +1,61 @@
+/* -*- c-file-style: "ruby"; indent-tabs-mode: nil -*- */
+<%= header_comment
+# This file is processed by apiwrap.rb.
+%>
+#ifndef APIWRAP_H
+#define APIWRAP_H 1
+#include <oci8.h>
+
+#if defined RUNTIME_API_CHECK
+void Init_oci8_apiwrap(void);
+extern int oracle_client_version;
+#else
+#define oracle_client_version ORACLE_CLIENT_VERSION
+#endif
+<%
+funcs.each do |f|
+  if f.remote
+%>
+/*
+ * <%=f.name%>
+ *   version: <%=f.version_str%>
+ *   remote:  true
+ */
+<%=f.ret%> oci8_<%=f.name%>_nb(oci8_svcctx_t *svcctx, <%=f.args.collect {|arg| arg.dcl}.join(', ')%>, const char *file, int line);
+#define <%=f.name%>_nb(svcctx, <%=f.args.collect do |a| a.name; end.join(', ')%>) \
+      oci8_<%=f.name%>_nb(svcctx, <%=f.args.collect do |a| a.name; end.join(', ')%>, __FILE__, __LINE__)
+#if defined RUNTIME_API_CHECK
+extern int oci8_have_<%=f.name%>_nb;
+#define have_<%=f.name%>_nb oci8_have_<%=f.name%>_nb
+#elif ORACLE_CLIENT_VERSION >= <%=f.version_num%>
+#define have_<%=f.name%>_nb (1)
+#else
+#define have_<%=f.name%>_nb (0)
+#endif
+<%
+  else
+%>
+/*
+ * <%=f.name%>
+ *   version: <%=f.version_str%>
+ *   remote:  false
+ */
+<%=f.ret%> oci8_<%=f.name%>(<%=f.args.collect {|arg| arg.dcl}.join(', ')%>, const char *file, int line);
+#ifndef API_WRAP_C
+#undef <%=f.name%>
+#define <%=f.name%>(<%=f.args.collect do |a| a.name; end.join(', ')%>) \
+      oci8_<%=f.name%>(<%=f.args.collect do |a| a.name; end.join(', ')%>, __FILE__, __LINE__)
+#endif
+#if defined RUNTIME_API_CHECK
+extern int oci8_have_<%=f.name%>;
+#define have_<%=f.name%> oci8_have_<%=f.name%>
+#elif ORACLE_CLIENT_VERSION >= <%=f.version_num%>
+#define have_<%=f.name%> (1)
+#else
+#define have_<%=f.name%> (0)
+#endif
+<%
+  end
+end # funcs.each
+%>
+#endif /* APIWRAP_H */

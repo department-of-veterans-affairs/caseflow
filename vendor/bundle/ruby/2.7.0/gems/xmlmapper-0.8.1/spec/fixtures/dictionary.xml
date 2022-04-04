@@ -1,0 +1,20 @@
+<dictionary>
+  <record id="000035426">
+    <head>sulphur-crested cockatoo</head>
+    <pron>
+      <prn>.sxlf7-kr8st7d k6k7'tu</prn>
+    </pron>
+    <body>
+      <chunk>
+        <pos>noun</pos>
+        <def id="915">
+          <dtext>a large common parrot, <bn>Cacatua galerita</bn>, predominantly white, with yellow on the undersides of wings and tail and a forward curving yellow crest, found in Australia, New Guinea and nearby islands.</dtext>
+        </def>
+      </chunk>
+      <variants>
+        <var>white <tag>cockatoo</tag></var>
+        <var><tag>white</tag> cockatoo</var>
+      </variants>
+    </body>
+  </record>
+</dictionary>

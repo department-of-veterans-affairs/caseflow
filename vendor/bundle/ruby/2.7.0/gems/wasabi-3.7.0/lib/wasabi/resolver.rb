@@ -1,0 +1,57 @@
+# frozen_string_literal: true
+
+require "httpi"
+
+module Wasabi
+
+  # = Wasabi::Resolver
+  #
+  # Resolves local and remote WSDL documents.
+  class Resolver
+
+    class HTTPError < StandardError
+      def initialize(message, response=nil)
+        super(message)
+        @response = response
+      end
+      attr_reader :response
+    end
+
+    URL = /^http[s]?:/
+    XML = /^</
+
+    def initialize(document, request = nil, adapter = nil)
+      @document = document
+      @request  = request || HTTPI::Request.new
+      @adapter  = adapter
+    end
+
+    attr_reader :document, :request, :adapter
+
+    def resolve
+      raise ArgumentError, "Unable to resolve: #{document.inspect}" unless document
+
+      case document
+        when URL then load_from_remote
+        when XML then document
+        else          load_from_disc
+      end
+    end
+
+    private
+
+    def load_from_remote
+      request.url = document
+      response = HTTPI.get(request, adapter)
+
+      raise HTTPError.new("Error: #{response.code} for url #{request.url}", response) if response.error?
+
+      response.body
+    end
+
+    def load_from_disc
+      File.read(document)
+    end
+
+  end
+end

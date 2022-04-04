@@ -1,0 +1,127 @@
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:dxp='http://schemas.google.com/analytics/2009' xmlns:openSearch='http://a9.com/-/spec/opensearch/1.1/' xmlns:gd='http://schemas.google.com/g/2005' gd:etag='W/&quot;CU4CSXo_cCp7I2A9Wx9RGU0.&quot;' gd:kind='analytics#accounts'>
+       <id>http://www.google.com/analytics/feeds/accounts/someuser@gmail.com</id>
+       <updated>2010-12-20T19:59:28.448-08:00</updated>
+       <title>Profile list for someuser@gmail.com</title>
+       <link rel='self' type='application/atom+xml' href='https://www.google.com/analytics/feeds/accounts/default'/>
+       <author>
+               <name>Google Analytics</name>
+       </author>
+       <generator version='1.0'>Google Analytics</generator>
+       <openSearch:totalResults>9</openSearch:totalResults>
+       <openSearch:startIndex>1</openSearch:startIndex>
+       <openSearch:itemsPerPage>9</openSearch:itemsPerPage>
+       <dxp:segment id='gaid::-1' name='All Visits'>
+               <dxp:definition> </dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-2' name='New Visitors'>
+               <dxp:definition>ga:visitorType==New Visitor</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-3' name='Returning Visitors'>
+               <dxp:definition>ga:visitorType==Returning Visitor</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-4' name='Paid Search Traffic'>
+               <dxp:definition>ga:medium==cpa,ga:medium==cpc,ga:medium==cpm,ga:medium==cpp,ga:medium==cpv,ga:medium==ppc</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-5' name='Non-paid Search Traffic'>
+               <dxp:definition>ga:medium==organic</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-6' name='Search Traffic'>
+               <dxp:definition>ga:medium==cpa,ga:medium==cpc,ga:medium==cpm,ga:medium==cpp,ga:medium==cpv,ga:medium==organic,ga:medium==ppc</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-7' name='Direct Traffic'>
+               <dxp:definition>ga:medium==(none)</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-8' name='Referral Traffic'>
+               <dxp:definition>ga:medium==referral</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-9' name='Visits with Conversions'>
+               <dxp:definition>ga:goalCompletionsAll&gt;0</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-10' name='Visits with Transactions'>
+               <dxp:definition>ga:transactions&gt;0</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-11' name='Mobile Traffic'>
+               <dxp:definition>ga:isMobile==Yes</dxp:definition>
+       </dxp:segment>
+       <dxp:segment id='gaid::-12' name='Non-bounce Visits'>
+               <dxp:definition>ga:bounces==0</dxp:definition>
+       </dxp:segment>
+       <entry gd:etag='W/&quot;CkENQXs9fip7I2A9Wx5SE0w.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:123456</id>
+               <updated>2010-08-08T16:38:10.566-07:00</updated>
+               <title>www.homedepot.com</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='254087'/>
+               <dxp:property name='ga:accountName' value='www.homechefdepot.com'/>
+               <dxp:property name='ga:profileId' value='123456'/>
+               <dxp:property name='ga:webPropertyId' value='UA-254087-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:123456</dxp:tableId>
+       </entry>
+       <entry gd:etag='W/&quot;C0YESXcyfyp7I2A9Wx9SFkU.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:8575980</id>
+               <updated>2010-12-06T16:18:28.997-08:00</updated>
+               <title>www.pda.org</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='4277553'/>
+               <dxp:property name='ga:accountName' value='www.pdma.org'/>
+               <dxp:property name='ga:profileId' value='8575980'/>
+               <dxp:property name='ga:webPropertyId' value='UA-4277553-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:8575980</dxp:tableId>
+       </entry>
+       <entry gd:etag='W/&quot;CU4CSXo_cCp7I2A9Wx9RGU0.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:25620226</id>
+               <updated>2010-12-20T19:59:28.448-08:00</updated>
+               <title>business.com</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='12312214'/>
+               <dxp:property name='ga:accountName' value='business.com'/>
+               <dxp:property name='ga:profileId' value='25620226'/>
+               <dxp:property name='ga:webPropertyId' value='UA-12312214-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:25620226</dxp:tableId>
+       </entry>
+       <entry gd:etag='W/&quot;CU4CSX0yfCp7I2A9Wx9RGU0.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:12123131</id>
+               <updated>2010-12-20T19:59:28.394-08:00</updated>
+               <title>blog.com</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='12312214'/>
+               <dxp:property name='ga:accountName' value='business.com'/>
+               <dxp:property name='ga:profileId' value='12123131'/>
+               <dxp:property name='ga:webPropertyId' value='UA-12345678-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:12123131</dxp:tableId>
+       </entry>
+       <entry gd:etag='W/&quot;DUMNQHk_fSp7I2A9Wx5bEE4.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:37685582</id>
+               <updated>2010-10-25T13:11:31.745-07:00</updated>
+               <title>The Social</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='12312214'/>
+               <dxp:property name='ga:accountName' value='business.com'/>
+               <dxp:property name='ga:profileId' value='37685582'/>
+               <dxp:property name='ga:webPropertyId' value='UA-12312214-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:37685582</dxp:tableId>
+       </entry>
+       <entry gd:etag='W/&quot;DE8HR3o4eCp7I2A9Wx5UF0w.&quot;' gd:kind='analytics#account'>
+               <id>http://www.google.com/analytics/feeds/accounts/ga:38132423</id>
+               <updated>2010-10-21T20:07:16.430-07:00</updated>
+               <title>Skyline</title>
+               <link rel='alternate' type='text/html' href='http://www.google.com/analytics'/>
+               <dxp:property name='ga:accountId' value='12312214'/>
+               <dxp:property name='ga:accountName' value='business.com'/>
+               <dxp:property name='ga:profileId' value='38132423'/>
+               <dxp:property name='ga:webPropertyId' value='UA-12312214-1'/>
+               <dxp:property name='ga:currency' value='USD'/>
+               <dxp:property name='ga:timezone' value='America/Los_Angeles'/>
+               <dxp:tableId>ga:38132423</dxp:tableId>
+       </entry>
+</feed>

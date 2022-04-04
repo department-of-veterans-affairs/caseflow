@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'thread'
+require 'ostruct'
+
+$stdout.sync = true
+$stderr.sync = true
+
+options = OpenStruct.new(
+    'pid' => nil,
+    'sdk_path' => nil,
+    'uid' => nil,
+    'gems_to_include' => []
+)
+
+module DebugPrinter
+
+  class << self
+    attr_accessor :cli_debug
+
+    def print_debug(msg)
+      if DebugPrinter.cli_debug
+        $stderr.puts msg
+      end
+    end
+  end
+
+end
+
+DebugPrinter.cli_debug = ARGV.include? '--debug'
+
+opts = OptionParser.new do |opts|
+  # TODO need some banner
+  opts.banner = <<EOB
+Some useful banner.
+EOB
+
+  opts.on('--pid PID', 'pid of process you want to attach to for debugging') do |pid|
+    options.pid = pid
+  end
+
+  opts.on('--ruby-path RUBY_PATH', 'path to ruby interpreter') do |ruby_path|
+    options.ruby_path = ruby_path
+  end
+
+  opts.on('--uid UID', 'uid which this process should set after executing gdb attach') do |uid|
+    options.uid = uid
+  end
+
+  opts.on('--include-gem GEM_LIB_PATH', 'lib of gem to include') do |gem_lib_path|
+    options.gems_to_include << gem_lib_path
+  end
+end
+
+opts.parse! ARGV
+
+unless options.pid
+  $stderr.puts 'You should specify PID of process you want to attach to'
+  exit 1
+end
+
+unless options.ruby_path
+  $stderr.puts 'You should specify path to the ruby interpreter'
+  exit 1
+end
+
+argv = '["' + ARGV * '", "' + '"]'
+child_argv = '["' + ARGV * '", "' + "', '--ignore-port" + '"]'
+debugger_loader_path = File.expand_path(File.dirname(__FILE__)) + '/../lib/ruby-debug-ide/attach/debugger_loader'
+
+options.gems_to_include.each do |gem_path|
+  $LOAD_PATH.unshift(gem_path) unless $LOAD_PATH.include?(gem_path)
+end
+
+require 'ruby-debug-ide/greeter'
+Debugger::print_greeting_msg($stdout, nil, nil)
+
+require 'ruby-debug-ide/attach/util'
+require 'ruby-debug-ide/attach/native_debugger'
+require 'ruby-debug-ide/attach/process_thread'
+
+
+child_pids = get_child_pids(options.pid.to_s)
+attach_threads = Array.new
+attach_threads << attach_and_return_thread(options, options.pid, debugger_loader_path, argv)
+
+attach_threads << child_pids.map {|pid| attach_and_return_thread(options, pid, debugger_loader_path, child_argv)}
+
+
+attach_threads.each {|thread| thread.join}
+if options.uid
+  DebugPrinter.print_debug("changing current uid from #{Process.uid} to #{options.uid}")
+  Process::Sys.setuid(options.uid.to_i)
+end
+sleep

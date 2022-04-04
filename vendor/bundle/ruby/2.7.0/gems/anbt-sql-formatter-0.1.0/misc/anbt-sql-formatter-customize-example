@@ -1,0 +1,65 @@
+#! /usr/bin/ruby
+# -*- coding: utf-8 -*-
+
+require "pp"
+
+require "anbt-sql-formatter/formatter"
+
+=begin
+rule のプロパティを修正するだけではなく
+さらに踏み込んでカスタマイズしたい場合は
+formatter.rb 内の AnbtSql::Formatter#format_list_main_loop 
+などをオーバーライドすると良いでしょう。
+
+Ruby に詳しくない場合は「Ruby オープンクラス」
+「Ruby モンキーパッチ」で検索してみてください。
+
+継承の方が分かりやすいという場合は
+継承でも良いと思います。
+=end
+
+# class AnbtSql::Formatter
+#   def format_list_main_loop(tokens)
+#     # メソッドの処理を書き換える
+#   end
+# end
+
+
+if $0 == __FILE__
+  src = ""
+  while line = gets
+    src << line
+  end
+
+  rule = AnbtSql::Rule.new
+
+  # rule のプロパティを修正することで
+  # 動作をカスタマイズします。
+  # 詳細については rule.rb をご覧ください。
+
+  # キーワードを大文字・小文字に変換しない
+  rule.keyword = AnbtSql::Rule::KEYWORD_NONE
+  
+  # 複数単語のキーワードを登録
+  rule.kw_multi_words << "INNER JOIN"
+  rule.kw_nl_x << "INNER JOIN"
+
+  # "THEN" の前で改行するのをやめさせる
+  rule.kw_nl_x -= ["THEN"]
+  # "WHEN" の前で改行させるようにする
+  rule.kw_nl_x << "WHEN"
+
+  # User defined additional functions:
+  # ユーザ定義関数の追加: 
+  %w(count sum substr date).each{|func_name|
+    rule.function_names << func_name.upcase
+  }
+
+  #rule.indent_string = "    "
+  #rule.indent_string = "('-')"
+  rule.indent_string = "|   "
+  
+  formatter = AnbtSql::Formatter.new(rule)
+  result = formatter.format(src)
+  print result
+end

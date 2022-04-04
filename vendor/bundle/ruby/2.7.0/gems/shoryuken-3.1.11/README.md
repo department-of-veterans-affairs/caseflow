@@ -1,0 +1,58 @@
+# Shoryuken
+
+![Shoryuken](shoryuken.jpg)
+
+Shoryuken _sho-ryu-ken_ is a super-efficient [Amazon SQS](https://aws.amazon.com/sqs/) thread-based message processor.
+
+[![Build Status](https://travis-ci.org/phstc/shoryuken.svg)](https://travis-ci.org/phstc/shoryuken)
+[![Code Climate](https://codeclimate.com/github/phstc/shoryuken/badges/gpa.svg)](https://codeclimate.com/github/phstc/shoryuken)
+
+## Key features
+
+- [Rails Active Job](https://github.com/phstc/shoryuken/wiki/Rails-Integration-Active-Job)
+- [Queue Load balancing](https://github.com/phstc/shoryuken/wiki/Shoryuken-options#load-balancing)
+- [Concurrency per queue](https://github.com/phstc/shoryuken/wiki/Processing-Groups)
+- [Long Polling](https://github.com/phstc/shoryuken/wiki/Long-Polling)
+- [Batch processing](https://github.com/phstc/shoryuken/wiki/Worker-options#batch)
+- [Auto extend visibility timeout](https://github.com/phstc/shoryuken/wiki/Worker-options#auto_visibility_timeout)
+- [Exponential backoff](https://github.com/phstc/shoryuken/wiki/Worker-options#retry_intervals)
+- [Middleware support](https://github.com/phstc/shoryuken/wiki/Middleware)
+- Amazon SQS CLI. See `shoryuken help sqs`
+
+## Requirements
+
+Ruby 2.0 or greater.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'shoryuken'
+```
+
+And then execute:
+
+```shell
+$ bundle
+```
+
+## Usage
+
+Check the [Getting Started](https://github.com/phstc/shoryuken/wiki/Getting-Started) page.
+
+## More Information
+
+For more information check the [wiki page](https://github.com/phstc/shoryuken/wiki).
+
+## Credits
+
+[Mike Perham](https://github.com/mperham), creator of [Sidekiq](https://github.com/mperham/sidekiq), and [everybody who contributed to it](https://github.com/mperham/sidekiq/graphs/contributors). Shoryuken wouldn't exist as it is without those contributions.
+
+## Contributing
+
+1. Fork it ( https://github.com/phstc/shoryuken/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request

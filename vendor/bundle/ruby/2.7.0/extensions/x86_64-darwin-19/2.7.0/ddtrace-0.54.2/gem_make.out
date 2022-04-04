@@ -1,0 +1,40 @@
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ddtrace-0.54.2/ext/ddtrace_profiling_native_extension
+/Users/612638/.rbenv/versions/2.7.3/bin/ruby -I /Users/612638/.rbenv/versions/2.7.3/lib/ruby/2.7.0 -r ./siteconf20220404-86005-134bi8j.rb extconf.rb
+
++------------------------------------------------------------------------------+
+| ** Preparing to build the ddtrace native extension... **                     |
+|                                                                              |
+| If you run into any failures during this step, you can set the               |
+| `DD_PROFILING_NO_EXTENSION` environment variable to `true` e.g.              |
+| `$ DD_PROFILING_NO_EXTENSION=true bundle install` to skip this step.         |
+|                                                                              |
+| Disabling the extension will lead to the ddtrace profiling features not      |
+| working in future releases.                                                  |
+| If you needed to use this, please tell us why on                             |
+| <https://github.com/DataDog/dd-trace-rb/issues/new> so we can fix it :)      |
+|                                                                              |
+| Thanks for using ddtrace! You rock!                                          |
++------------------------------------------------------------------------------+
+
+extconf.rb:138: warning: already initialized constant MakeMakefile::COMMON_HEADERS
+/Users/612638/.rbenv/versions/2.7.3/lib/ruby/2.7.0/mkmf.rb:2684: warning: previous definition of COMMON_HEADERS was here
+checking for RUBY_MJIT_H in rb_mjit_min_header-2.7.3.h... yes
+extconf.rb:155: warning: already initialized constant MakeMakefile::COMMON_HEADERS
+extconf.rb:138: warning: previous definition of COMMON_HEADERS was here
+creating extconf.h
+creating Makefile
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ddtrace-0.54.2/ext/ddtrace_profiling_native_extension
+make "DESTDIR=" clean
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ddtrace-0.54.2/ext/ddtrace_profiling_native_extension
+make "DESTDIR="
+compiling clock_id_from_pthread.c
+compiling clock_id_noop.c
+compiling private_vm_api_access.c
+compiling profiling.c
+linking shared-object ddtrace_profiling_native_extension.2.7.3_x86_64-darwin19.bundle
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ddtrace-0.54.2/ext/ddtrace_profiling_native_extension
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 ddtrace_profiling_native_extension.2.7.3_x86_64-darwin19.bundle ./.gem.20220404-86005-1mhr04p

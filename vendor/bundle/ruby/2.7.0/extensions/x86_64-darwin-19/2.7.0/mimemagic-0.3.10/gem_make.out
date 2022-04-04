@@ -1,0 +1,4 @@
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/mimemagic-0.3.10/ext/mimemagic
+/Users/612638/.rbenv/versions/2.7.3/bin/ruby -I/Users/612638/.rbenv/versions/2.7.3/lib/ruby/2.7.0/rubygems -rrubygems /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/rake-13.0.6/exe/rake RUBYARCHDIR\=/Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/extensions/x86_64-darwin-19/2.7.0/mimemagic-0.3.10 RUBYLIBDIR\=/Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/extensions/x86_64-darwin-19/2.7.0/mimemagic-0.3.10
+Ignoring debase-0.2.4.1 because its extensions are not built. Try: gem pristine debase --version 0.2.4.1
+mkdir -p /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/extensions/x86_64-darwin-19/2.7.0/mimemagic-0.3.10/mimemagic

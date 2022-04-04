@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<familytree xmlns="http://api.familysearch.org/familytree/v1" xmlns:fsapi-v1="http://api.familysearch.org/v1" version="1.0.20071213.942" statusMessage="OK" statusCode="200">
+	<persons>
+		<person version="1199378491000" modified="2008-01-03T09:41:31-07:00" id="KWQS-BBQ">
+      <information>
+        <alternateIds>
+          <id>gedcom.1B5E3087E36D814FA9CBE0BE5B3721EA</id>
+          <id>KWQS-BB3</id>
+          <id>KWQS-W23</id>
+          <id>KWQS-W2S</id>
+          <id>KWQS-W29</id>
+          <id>KWQM-MMM</id>
+          <id>KWQS-W2Q</id>
+          <id>KWQS-BBQ</id>
+        </alternateIds>
+        <gender>Male</gender>
+        <living>false</living>
+      </information>
+		</person>
+	</persons>
+</familytree>

@@ -1,0 +1,99 @@
+{
+  "name": "react-on-rails",
+  "version": "11.3.0",
+  "description": "react-on-rails JavaScript for react_on_rails Ruby gem",
+  "main": "node_package/lib/ReactOnRails.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/types": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "babel-tape-runner": "^3.0.0",
+    "babelify": "^10.0.0",
+    "blue-tape": "^1.0.0",
+    "create-react-class": "^15.6.0",
+    "eslint": "^5.7.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-config-shakacode": "^16.0.1",
+    "eslint-plugin-import": "^2.6.1",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.1.0",
+    "flow-bin": "^0.83.0",
+    "jsdom": "^11.1.0",
+    "nps": "^5.9.3",
+    "prettier": "^1.14.3",
+    "prettier-eslint-cli": "^4.7.1",
+    "prop-types": "^15.5.10",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-transform-hmr": "^1.0.4",
+    "redux": "^4.0.1",
+    "release-it": "^8.2.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.7.0",
+    "webpack": "^3.4.1",
+    "webpack-manifest-plugin": "^1.2.1"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.0.0"
+  },
+  "peerDependencies": {
+    "js-yaml": ">= 3.0.0",
+    "react": ">= 0.14",
+    "react-dom": ">= 0.14"
+  },
+  "files": [
+    "node_package/lib",
+    "webpackConfigLoader.js"
+  ],
+  "scripts": {
+    "test": "babel-tape-runner -r node_package/tests/helpers/test_helper.js node_package/tests/*.js | tap-spec",
+    "clean": "rm -rf node_package/lib",
+    "prepare": "yarn run build",
+    "prepublish": "npm run prepare",
+    "babel": "babel --out-dir node_package/lib node_package/src",
+    "build": "yarn run clean && yarn run babel",
+    "build-watch": "babel --watch --out-dir node_package/lib node_package/src",
+    "eslint": "eslint .",
+    "flow": "flow check node_package",
+    "lint": "yarn run eslint && yarn run flow",
+    "check": "yarn run lint && yarn run flow && yarn run test",
+    "prerelease": "yarn run check && yarn run clean && yarn run build",
+    "release:patch": "node_package/scripts/release patch",
+    "release:minor": "node_package/scripts/release minor",
+    "release:major": "node_package/scripts/release major",
+    "dummy:install": "rake dummy_apps",
+    "dummy:spec": "rake run_rspec:dummy",
+    "install-react-on-rails": "yarn link"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shakacode/react_on_rails.git"
+  },
+  "keywords": [
+    "react",
+    "webpack",
+    "JavaScript",
+    "Ruby",
+    "on",
+    "Rails"
+  ],
+  "author": "justin.gordon@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shakacode/react_on_rails/issues"
+  },
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/"
+  },
+  "homepage": "https://github.com/shakacode/react_on_rails#readme"
+}

@@ -1,0 +1,7 @@
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ruby-debug-ide-0.7.3/ext
+/Users/612638/.rbenv/versions/2.7.3/bin/ruby mkrf_conf.rb
+Installing base gem
+Building native extensions. This could take a while...
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/ruby-debug-ide-0.7.3/ext
+/Users/612638/.rbenv/versions/2.7.3/bin/ruby -I/Users/612638/.rbenv/versions/2.7.3/lib/ruby/2.7.0/rubygems -rrubygems /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/rake-13.0.6/exe/rake RUBYARCHDIR\=/Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/extensions/x86_64-darwin-19/2.7.0/ruby-debug-ide-0.7.3 RUBYLIBDIR\=/Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/extensions/x86_64-darwin-19/2.7.0/ruby-debug-ide-0.7.3

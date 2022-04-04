@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<game>
+  <details>
+    <quarter>1</quarter>
+    <round>22</round>
+  </details>
+  <q1>
+    <start>4:40:15 PM</start>
+  </q1>
+  <q2>
+    <start>5:18:53 PM</start>
+  </q2>
+  <q3>
+    <start>6:06:17 PM</start>
+  </q3>
+  <q4>
+    <start>6:41:49 PM</start>
+  </q4>
+</game>

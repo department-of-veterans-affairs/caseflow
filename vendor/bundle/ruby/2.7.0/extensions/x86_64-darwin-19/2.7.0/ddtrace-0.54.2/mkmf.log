@@ -1,0 +1,32 @@
+have_macro: checking for RUBY_MJIT_H in rb_mjit_min_header-2.7.3.h... -------------------- yes
+
+"clang -o conftest -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0/x86_64-darwin19 -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0/ruby/backward -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0 -I. -I/Users/612638/.rbenv/versions/2.7.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wmissing-noreturn -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens  -fno-common -pipe -Wno-unused-function -Wno-declaration-after-statement -Werror-implicit-function-declaration conftest.c  -L. -L/Users/612638/.rbenv/versions/2.7.3/lib -L. -L/Users/612638/.rbenv/versions/2.7.3/lib  -fstack-protector-strong -L/usr/local/lib     -lruby.2.7   "
+checked program was:
+/* begin */
+1: int main(int argc, char **argv)
+2: {
+3:   return !!argv[argc];
+4: }
+/* end */
+
+"clang -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0/x86_64-darwin19 -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0/ruby/backward -I/Users/612638/.rbenv/versions/2.7.3/include/ruby-2.7.0 -I. -I/Users/612638/.rbenv/versions/2.7.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wmissing-noreturn -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens  -fno-common -pipe -Wno-unused-function -Wno-declaration-after-statement -Werror-implicit-function-declaration   -c conftest.c"
+checked program was:
+/* begin */
+1: #include <rb_mjit_min_header-2.7.3.h>
+2: /*top*/
+3: #ifndef RUBY_MJIT_H
+4: # error
+5: |:/ === RUBY_MJIT_H undefined === /:|
+6: #endif
+/* end */
+
+--------------------
+
+extconf.h is:
+/* begin */
+1: #ifndef EXTCONF_H
+2: #define EXTCONF_H
+3: #define USE_MJIT_HEADER 1
+4: #endif
+/* end */
+

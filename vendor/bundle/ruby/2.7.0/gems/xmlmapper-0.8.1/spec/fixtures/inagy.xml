@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<CatalogTree code="NLD" xmlns="urn:eventis:prodis:onlineapi:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Node vodBackOfficeId="69fcb5eb-1020-4053-8fce-6bce030cac5b">
+        <Name>Parent 1</Name>
+        <Description>
+            111#111#120#NPO-BrowseMode.jpg#NPO-ExtendedMode.jpg
+        </Description>
+        <Translations>
+            <Translation Language="en-GB">
+                <Name>Parent 1 en</Name>
+            </Translation>
+            <Translation Language="de-DE">
+                <Name>Parent 1 de</Name>
+            </Translation>
+        </Translations>
+        <Rating>0</Rating>
+        <Adult>false</Adult>
+        <CatalogCode>NLD</CatalogCode>
+        <Position>1</Position>
+        <SubNodes>
+            <Node vodBackOfficeId="27feedad-dead-4721-ba61-c3f9f17d0956">
+                <Name>First</Name>
+                <Translations>
+                    <Translation Language="en-GB">
+                        <Name>First en</Name>
+                    </Translation>
+                </Translations>
+                <Rating>0</Rating>
+                <Adult>false</Adult>
+                <CatalogCode>NLD</CatalogCode>
+                <ParentId>69fcb5eb-1020-4053-8fce-6bce030cac5b</ParentId>
+                <Position>0</Position>
+                <SubNodes>
+                    <Node vodBackOfficeId="7edbcc13-2d03-4254-aaf6-307ba553d4fd">
+                        <Name>Second</Name>
+                        <Translations>
+                            <Translation Language="en-GB">
+                                <Name>Second en</Name>
+                            </Translation>
+                        </Translations>
+                        <Rating>0</Rating>
+                        <Adult>false</Adult>
+                        <CatalogCode>NLD</CatalogCode>
+                        <ParentId>b17dd22b-c028-44ad-8e75-e676e2619ceb</ParentId>
+                        <Position>0</Position>
+                        <SubNodes>
+                            <Node vodBackOfficeId="27feedad-dead-4721-ba61-c3f9f17d1111">
+                                <Name>Third</Name>
+                                <Translations>
+                                    <Translation Language="en-GB">
+                                        <Name>Third en</Name>
+                                    </Translation>
+                                </Translations>
+                                <Rating>0</Rating>
+                                <Adult>false</Adult>
+                                <CatalogCode>NLD</CatalogCode>
+                                <ParentId>69fcb5eb-1020-4053-8fce-6bce030cac5b</ParentId>
+                                <Position>0</Position>
+                            </Node>
+                        </SubNodes>
+                    </Node>
+                </SubNodes>
+            </Node>
+        </SubNodes>
+    </Node>
+    <Node vodBackOfficeId="69fcb5eb-1020-4053-8fce-12312312312">
+        <Name>Parent 2</Name>
+        <Description>
+            111#111#120#NPO-BrowseMode.jpg#NPO-ExtendedMode.jpg
+        </Description>
+        <Translations>
+            <Translation Language="en-GB">
+                <Name>Parent 2 en</Name>
+            </Translation>
+            <Translation Language="de-DE">
+                <Name>Parent 2 de</Name>
+            </Translation>
+        </Translations>
+        <Rating>0</Rating>
+        <Adult>false</Adult>
+        <CatalogCode>NLD</CatalogCode>
+        <Position>1</Position>
+        <SubNodes/>
+    </Node>
+</CatalogTree>

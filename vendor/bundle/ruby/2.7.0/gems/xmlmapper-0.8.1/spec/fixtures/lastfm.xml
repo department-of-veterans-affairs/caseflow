@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lfm status="ok">
+<results for="Koko" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+<opensearch:Query role="request" searchTerms="Koko" startPage="1" />
+<opensearch:totalResults>37</opensearch:totalResults>
+<opensearch:startIndex>0</opensearch:startIndex>
+<opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+<venuematches>
+    <venue>
+       <id>8777134</id>
+    <name>Koko</name>
+    <location>
+      <city>London</city>
+      <country>United Kingdom</country>
+      <street>1a Camden High Street, Camden</street>
+      <postalcode>NW1 7JE</postalcode>
+      <geo:point>
+         <geo:lat>51.53469</geo:lat>
+         <geo:long>-0.138434</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8777134</url>
+  </venue>
+    <venue>
+       <id>8839165</id>
+    <name>koko</name>
+    <location>
+      <city>Layer de la Haye</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.888862</geo:lat>
+         <geo:long>0.895354</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8839165</url>
+  </venue>
+    <venue>
+       <id>8923849</id>
+    <name>Koko's</name>
+    <location>
+      <city>Burnley</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>53.787316</geo:lat>
+         <geo:long>-2.2437</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8923849</url>
+  </venue>
+    <venue>
+       <id>8965110</id>
+    <name>koko</name>
+    <location>
+      <city>London</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.53469</geo:lat>
+         <geo:long>-0.138434</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8965110</url>
+  </venue>
+    <venue>
+       <id>8971623</id>
+    <name>Koko</name>
+    <location>
+      <city>Castelletto Cervo-Biella</city>
+      <country>Italy</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>45.467809</geo:lat>
+         <geo:long>8.460168</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8971623</url>
+  </venue>
+    <venue>
+       <id>8989111</id>
+    <name>Koko</name>
+    <location>
+      <city>Camden, London</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.53469</geo:lat>
+         <geo:long>-0.138434</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8989111</url>
+  </venue>
+    <venue>
+       <id>8997379</id>
+    <name>koko</name>
+    <location>
+      <city>Castelletto</city>
+      <country>Italy</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>45.5833333</geo:lat>
+         <geo:long>8.5833333</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8997379</url>
+  </venue>
+    <venue>
+       <id>8877867</id>
+    <name>Koko Teatteri</name>
+    <location>
+      <city>Helsinki</city>
+      <country>Finland</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>60.175745</geo:lat>
+         <geo:long>24.950355</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8877867</url>
+  </venue>
+    <venue>
+       <id>8906962</id>
+    <name>Koko Gorilaz</name>
+    <location>
+      <city>Cardiff</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.480283</geo:lat>
+         <geo:long>-3.173233</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8906962</url>
+  </venue>
+    <venue>
+       <id>8913762</id>
+    <name>Koko Cocktails</name>
+    <location>
+      <city>San Francisco, CA</city>
+      <country>United States</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>37.785804</geo:lat>
+         <geo:long>-122.420718</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8913762</url>
+  </venue>
+    <venue>
+       <id>8960307</id>
+    <name>koko, camden</name>
+    <location>
+      <city>london</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.53469</geo:lat>
+         <geo:long>-0.138434</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8960307</url>
+  </venue>
+    <venue>
+       <id>8972179</id>
+    <name>koko club</name>
+    <location>
+      <city>Castelletto Cervo (Biella)</city>
+      <country>Italy</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>45.5833333</geo:lat>
+         <geo:long>8.5833333</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8972179</url>
+  </venue>
+    <venue>
+       <id>8987071</id>
+    <name>Koko Club</name>
+    <location>
+      <city>London</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.53469</geo:lat>
+         <geo:long>-0.138434</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8987071</url>
+  </venue>
+    <venue>
+       <id>8996214</id>
+    <name>Koko Gorillaz</name>
+    <location>
+      <city>Roath, Cardiff</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.485545</geo:lat>
+         <geo:long>-3.193589</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8996214</url>
+  </venue>
+    <venue>
+       <id>9011083</id>
+    <name>Koko Club</name>
+    <location>
+      <city>Castelletto (BI)</city>
+      <country>Italy</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>45.4</geo:lat>
+         <geo:long>8.9333333</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/9011083</url>
+  </venue>
+    <venue>
+       <id>9011085</id>
+    <name>Koko Club</name>
+    <location>
+      <city>Castelletto Cervo (BI)</city>
+      <country>Italy</country>
+      <street>VIA PER COSSATO / A4 USCITA BALOCCO</street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>45.5833333</geo:lat>
+         <geo:long>8.5833333</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/9011085</url>
+  </venue>
+    <venue>
+       <id>9016513</id>
+    <name>KOKO Bar</name>
+    <location>
+      <city>Katowice</city>
+      <country>Poland</country>
+      <street>ul. 3go Maja 23</street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>50.2302967966042</geo:lat>
+         <geo:long>19.0139007568359</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/9016513</url>
+  </venue>
+    <venue>
+       <id>8870061</id>
+    <name>KokoTeatteri</name>
+    <location>
+      <city>Helsinki</city>
+      <country>Finland</country>
+      <street>Siltavuorenranta 18</street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>60.175745</geo:lat>
+         <geo:long>24.950355</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8870061</url>
+  </venue>
+    <venue>
+       <id>8877869</id>
+    <name>KokoTeatteri</name>
+    <location>
+      <city>Helsinki</city>
+      <country>Finland</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>60.175745</geo:lat>
+         <geo:long>24.950355</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8877869</url>
+  </venue>
+    <venue>
+       <id>8951971</id>
+    <name>Bajka/Koko-Bongo</name>
+    <location>
+      <city>Mielno</city>
+      <country>Poland</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>54.3</geo:lat>
+         <geo:long>17.1166667</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8951971</url>
+  </venue>
+    <venue>
+       <id>8958085</id>
+    <name>Bajka/Koko-Bongo</name>
+    <location>
+      <city>Mielno</city>
+      <country>Poland</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>54.2666667</geo:lat>
+         <geo:long>16.05</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8958085</url>
+  </venue>
+    <venue>
+       <id>9017902</id>
+    <name>Klub Bajka/Koko-Bongo</name>
+    <location>
+      <city>Mielno</city>
+      <country>Poland</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>54.2666667</geo:lat>
+         <geo:long>16.05</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/9017902</url>
+  </venue>
+    <venue>
+       <id>8965534</id>
+    <name>KOKO, 1a Camden High Street</name>
+    <location>
+      <city>London</city>
+      <country>United Kingdom</country>
+      <street></street>
+      <postalcode></postalcode>
+      <geo:point>
+         <geo:lat>51.541474</geo:lat>
+         <geo:long>-0.145325</geo:long>
+      </geo:point>
+    </location>
+    <url>http://www.last.fm/venue/8965534</url>
+  </venue>
+</venuematches>
+</results></lfm>

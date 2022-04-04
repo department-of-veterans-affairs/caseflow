@@ -1,0 +1,16 @@
+# pack-refs with: peeled fully-peeled sorted 
+7ef776ed7aebc5bb0445c8524af12b6402ff6ead refs/heads/axe
+6b477097c21e8ef97a44fd5297c68fcb349e556b refs/heads/bump-version
+5875c92f9c41aca1a568fecfa3d112b8f72d47c4 refs/heads/contributing-doc
+cbee7c17009ae168c813d662e0a12e6891e4e282 refs/heads/document-phantomjs-opt
+a02c2ac935c585e09c926c1da24c17c80ddfeabf refs/heads/issue#1
+f17c318d254b06b819364abea17598e5ce59cb37 refs/heads/issue#4
+df7d6f6b82bb6c1517c3e6c094fbd0fe462ac76a refs/heads/issue#5
+77637ac34346f3123f33e3a6c7bec26fa436a116 refs/heads/lowell/axe
+6a6fc145835da48c191630dcccc8ed62773bbcfc refs/heads/lowell/test_for_efolder_travis
+bcd5cb8e6dcb595dd111da5b0758f807d8c7525a refs/heads/master
+45a537252d60c12f76dc58924f12e47bac260fc8 refs/heads/mb-update-capybara-click
+d514f7876385cd014a66bfb957b2aa9dd18ceb8a refs/heads/selenium
+82f09d1375cf6fda6b9c08e4bd03efebc6becd78 refs/heads/travis-dispatch
+385f65c0f0474c429a122dadf184a6800f6d87ae refs/heads/update-axe-1
+b1ba40e060db24848bfefe544802b37a96f95505 refs/heads/update-readme

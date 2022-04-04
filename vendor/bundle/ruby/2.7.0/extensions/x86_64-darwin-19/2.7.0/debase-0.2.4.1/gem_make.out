@@ -1,0 +1,29 @@
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/debase-0.2.4.1/ext/attach
+/Users/612638/.rbenv/versions/2.7.3/bin/ruby -I /Users/612638/.rbenv/versions/2.7.3/lib/ruby/2.7.0 -r ./siteconf20220404-86005-1rz2pxr.rb extconf.rb
+Ignoring debase-0.2.4.1 because its extensions are not built. Try: gem pristine debase --version 0.2.4.1
+checking for vm_core.h... no
+checking for vm_core.h... no
+**************************************************************************
+No source for ruby-2.7.3-p183 (revision 6847ee089d7655b2a0eea4fee3133aeacd4cc7cc) provided with
+debase-ruby_core_source gem. Falling back to ruby-2.7.0-p0.
+**************************************************************************
+checking for vm_core.h... yes
+checking for iseq.h... yes
+checking for version.h... yes
+checking for vm_core.h... yes
+checking for vm_insnhelper.h... yes
+checking for vm_core.h... yes
+checking for method.h... yes
+creating Makefile
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/debase-0.2.4.1/ext/attach
+make "DESTDIR=" clean
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/debase-0.2.4.1/ext/attach
+make "DESTDIR="
+compiling attach.c
+linking shared-object attach.bundle
+
+current directory: /Users/612638/Documents/va/caseflow/vendor/bundle/ruby/2.7.0/gems/debase-0.2.4.1/ext/attach
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 attach.bundle ./.gem.20220404-86005-s3459k
