@@ -13,6 +13,7 @@ describe AddressMapper do
     let(:state) { "DC" }
     let(:zip_code) { "20500" }
     let(:country) { "USA" }
+    let(:email_addrs) { "jamie.fakerton@caseflowdemo.com" }
 
     let(:bgs_address_template) do
       {
@@ -23,6 +24,7 @@ describe AddressMapper do
         postal_cd: state,
         zip_prefix_nbr: zip_code,
         cntry_nm: country,
+        email_addrs_txt: email_addrs,
         ptcpnt_addrs_type_nm: "Mailing"
       }
     end
@@ -37,6 +39,7 @@ describe AddressMapper do
         country: country,
         state: state,
         zip: zip_code,
+        email_addrs: email_addrs,
         type: "Mailing"
       }
     end

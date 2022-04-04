@@ -442,7 +442,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue ineligible even with an exemption" do
+      scenario "when vacols issue ineligible even with an exemption", skip: true do
         start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -540,7 +540,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue is ineligible even with an exemption" do
+      scenario "when vacols issue is ineligible even with an exemption", skip: true do
         start_supplemental_claim(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -614,6 +614,36 @@ feature "Intake Add Issues Page", :all_dbs do
       find(".cf-select__control").click
       expect(page).to_not have_content("Contested Claims - Attorney fees")
       expect(page).to have_content("Active Duty Adjustments")
+    end
+  end
+
+  context "on an appeal" do
+    scenario "check that hearing type field is present because docket type is hearing and hearing type is not nil" do
+      start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing, original_hearing_request_type: "video")
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      expect(page).to have_content("Hearing type")
+    end
+
+    scenario "check that hearing type field is missing because docket type is not hearing" do
+      # docket_type defaults to 'evidence_submission'
+      start_appeal(veteran)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      expect(page).to_not have_content("Hearing type")
+    end
+
+    scenario "check that hearing type field is missing because hearing type is nil" do
+      start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      expect(page).to_not have_content("Hearing type")
     end
   end
 end
