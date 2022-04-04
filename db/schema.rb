@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_07_213343) do
+ActiveRecord::Schema.define(version: 2022_04_04_11_54_30) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1689,6 +1689,22 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
     t.index ["updated_at"], name: "index_worksheet_issues_on_updated_at"
   end
 
+  create_table "conference_link" force: :cascade do |t|
+    t.bigint "id", null: false
+    t.string "alias"              
+    t.string "alias_with_host" 
+    t.boolean "conference_deleted", default: false, null: false
+    t.integer "conference_id"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false  
+    t.bigint "hearing_day_id", null: false 
+    t.string "host_hearing_link", null: false  
+    t.integer "host_pin", null: false
+    t.string "host_pin_long", limit: 8, null: false 
+    t.datetime "updated_at", 
+    t.bigint "update_by_id", null: false
+  end
+
   add_foreign_key "advance_on_docket_motions", "people"
   add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "allocations", "schedule_periods"
@@ -1712,6 +1728,10 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "conference_link", "hearing_day"
+  add_foreign_key "conference_link", "users", column: "created_by_id"
+  add_foreign_key "conference_link", "hearing_day", column: "hearing_day_id"
+  add_foreign_key "conference_link", "users", column: "update_by_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
