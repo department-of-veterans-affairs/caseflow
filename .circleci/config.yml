@@ -340,7 +340,7 @@ jobs:
       - run:
           name: Install python-2 as a node-gyp@3.8.0 dependency
           command: |
-            sudo apt-get update
+            sudo apt-get --allow-releaseinfo-change-suite update
             sudo apt-get install -y python2
 
       - install_node_dependencies
