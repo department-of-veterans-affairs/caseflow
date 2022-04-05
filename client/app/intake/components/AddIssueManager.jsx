@@ -141,7 +141,6 @@ class AddIssueManager extends React.Component {
               this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
             } else {
               this.props.addIssue(currentIssue);
-
               this.props.onComplete();
             }
           });
