@@ -2,7 +2,7 @@
 
 require "rainbow"
 
-CODE_COVERAGE_THRESHOLD ||= 84
+CODE_COVERAGE_THRESHOLD ||= 90
 
 task(:default).clear
 task default: ["ci:warning", :spec, "ci:other"]
