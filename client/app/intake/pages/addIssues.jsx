@@ -510,7 +510,7 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool,
+  userCanWithdrawIssues: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -536,7 +536,7 @@ export const IntakeAddIssuesPage = connect(
         toggleLegacyOptInModal,
         removeIssue,
         withdrawIssue,
-        setIssueWithdrawalDate,
+        setIssueWithdrawalDate
       },
       dispatch
     )
