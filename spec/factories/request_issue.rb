@@ -55,6 +55,10 @@ FactoryBot.define do
       closed_status { :withdrawn }
     end
 
+    trait :is_predocket_needed do
+      false
+    end
+
     trait :requires_processing do
       decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
       decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
@@ -97,7 +101,8 @@ FactoryBot.define do
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "nonrating decision issue",
           end_product_last_action_date: request_issue.decision_date,
-          disposition: "nonrating decision issue dispositon"
+          disposition: "nonrating decision issue dispositon",
+          is_predocket_needed: request_issue.is_predocket_needed
         )
 
         request_issue.update!(
