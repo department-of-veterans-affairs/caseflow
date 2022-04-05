@@ -1,6 +1,6 @@
 class CreateConferenceLink < ActiveRecord::Migration[5.2]
     def change
-        create_table :conference_link do |t|
+        create_table :conference_link, id: false do |t|
             t.belongs_to :hearing_day
             t.bigint     :id, null: false
             t.string     :alias
@@ -13,7 +13,7 @@ class CreateConferenceLink < ActiveRecord::Migration[5.2]
             t.string     :host_hearing_link, null: false 
             t.integer    :host_pin, null: false
             t.string     :host_pin_long, limit: 8, null: false  
-            t.datetime   :updated_at,
+            t.datetime   :updated_at
             t.bigint     :update_by_id, null: false
         end
     end
