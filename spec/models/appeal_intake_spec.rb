@@ -255,12 +255,13 @@ describe AppealIntake, :all_dbs do
           rating_issue_reference_id: "reference-id",
           decision_text: "decision text"
         },
-        { decision_text: "nonrating request issue decision text",
+        {
+          decision_text: "nonrating request issue decision text",
           nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
           decision_date: "2018-12-25",
           is_predocket_needed: false
-         }
+        }
       ]
     end
 
@@ -294,6 +295,48 @@ describe AppealIntake, :all_dbs do
       expect(intake.detail.submitted?).to eq true
       expect(intake.detail.attempted?).to eq true
       expect(intake.detail.processed?).to eq true
+    end
+
+    context "when appeal has education benefit type and will be pre-docketed" do
+      let(:issue_data) do
+        [
+          {
+            rating_issue_reference_id: "reference-id",
+            decision_text: "decision text"
+          },
+          {
+            decision_text: "nonrating request issue decision text",
+            nonrating_issue_category: "test issue category",
+            benefit_type: "education",
+            decision_date: "2022-04-01",
+            is_predocket_needed: true
+          }
+        ]
+      end
+
+      it "establish appeal" do
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail.established_at).to_not be_nil
+        expect(intake.detail.request_issues.count).to eq 2
+        expect(intake.detail.target_decision_date).to_not be_nil
+        expect(intake.detail.request_issues.first).to have_attributes(
+          contested_rating_issue_reference_id: "reference-id",
+          contested_issue_description: "decision text"
+        )
+        expect(intake.detail.request_issues.second).to have_attributes(
+          nonrating_issue_category: "test issue category",
+          decision_date: Date.new(2022, 04, 01),
+          nonrating_issue_description: "nonrating request issue decision text",
+          is_predocket_needed: true
+        )
+        # We will have 3 tasks: Root, PreDocket, and EducationDocumentSearch task
+        expect(intake.detail.tasks.count).to eq 3
+        expect(intake.detail.submitted?).to eq true
+        expect(intake.detail.attempted?).to eq true
+        expect(intake.detail.processed?).to eq true
+      end
     end
 
     context "when a legacy VACOLS opt-in occurs" do
