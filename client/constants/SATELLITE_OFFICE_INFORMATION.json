@@ -1,11 +1,4 @@
 {
-  "SO62": {
-    "label": "San Antonio satellite office",
-    "city": "San Antonio",
-    "state": "TX",
-    "timezone": "America/Chicago",
-    "regional_office": "RO62"
-  },
   "SO06": {
     "label": "Albany satellite office",
     "city": "Albany",

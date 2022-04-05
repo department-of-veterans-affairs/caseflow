@@ -1151,15 +1151,6 @@
       "zip" : "83814-2531",
       "timezone" : "America/Boise"
    },
-   "vha_671BY" : {
-      "address_1" : "5788 Eckert Road",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "San Antonio",
-      "state" : "TX",
-      "zip" : "78240-3900",
-      "timezone" : "America/Chicago"
-   },
    "vha_676" : {
       "address_1" : "500 East Veterans Street",
       "address_2" : null,
