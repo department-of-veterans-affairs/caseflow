@@ -107,7 +107,7 @@ class TeamManagementController < ApplicationController
       vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
       vha_program_offices: VhaProgramOffice.order(:name).map { |vpo| serialize_org(vpo) },
       vha_regional_offices: VhaRegionalOffice.order(:name).map { |vro| serialize_org(vro) },
-      edu_rpo_offices: EduRegionalProcessingOffice.order(:name).map { |edu| serialize_org(edu) },
+      edu_regional_processing_offices: EduRegionalProcessingOffice.order(:name).map { |erpo| serialize_org(erpo) },
       other_orgs: other_orgs.map { |org| serialize_org(org) }
     )
   end
