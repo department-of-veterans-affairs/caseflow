@@ -161,6 +161,10 @@ class RequestIssue < CaseflowRecord
       )
     end
 
+    def is_predocket_needed
+      active.where(is_predocket_needed: true)
+    end
+
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)

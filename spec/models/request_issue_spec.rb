@@ -673,6 +673,34 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context ".is_predocket_needed" do
+    subject { RequestIssue.is_predocket_needed }
+
+    context "is_predocket_needed is true" do
+      let!(:request_issue) { create(:request_issue, is_predocket_needed: true) }
+
+      it "retrieves issues marked for pre-docketing" do
+        expect(subject.find_by(id: request_issue.id)).to_not be_nil
+      end
+    end
+
+    context "is_predocket_needed is false" do
+      let!(:request_issue) { create(:request_issue, is_predocket_needed: false) }
+
+      it "filters out entries where is_predocket_needed is false" do
+        expect(subject.find_by(id: request_issue.id)).to be_nil
+      end
+    end
+
+    context "is_predocket_needed is nil" do
+      let!(:request_issue) { create(:request_issue, is_predocket_needed: nil) }
+
+      it "filters out entries where is_predocket_needed is nil" do
+        expect(subject.find_by(id: request_issue.id)).to be_nil
+      end
+    end
+  end
+
   context "#original_contention_ids" do
     subject { rating_request_issue.original_contention_ids }
 
@@ -966,8 +994,7 @@ describe RequestIssue, :all_dbs do
         is_expected.to have_attributes(
           is_predocket_needed: true,
           contested_issue_description: nil,
-          nonrating_issue_description: nil,
-          unidentified_issue_text: "decision text"
+          nonrating_issue_description: nil
         )
       end
     end
