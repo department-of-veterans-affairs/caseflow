@@ -509,6 +509,34 @@ describe RequestIssue, :all_dbs do
         expect(nonrating_request_issue.requires_record_request_task?).to eq true
       end
     end
+
+    context "issue benefit type is education" do
+      let(:benefit_type) { "education" }
+
+      let!(:request_issues_pre_docket) { create(:request_issue, is_predocket_needed: true, benefit_type: benefit_type) }
+      let!(:request_issues_not_pre_docket) { create(:request_issue, is_predocket_needed: false, benefit_type: benefit_type) }
+
+      context "education pre-docketing is enabled" do
+        before { FeatureToggle.enable!(:education_predocket_appeals) }
+        after { FeatureToggle.disable!(:education_predocket_appeals) }
+
+        it "does require a record request task when is_predocket_needed is false" do
+          expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true
+        end
+
+        it "does not require a record request task when is_predocket_needed is true" do
+          expect(request_issues_pre_docket.requires_record_request_task?).to eq false
+        end
+      end
+
+      context "education pre-docketing is disabled" do
+        before { FeatureToggle.disable!(:education_predocket_appeals) }
+
+        it "does require a record request task " do
+          expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true
+        end
+      end
+    end
   end
 
   context ".requires_processing" do
