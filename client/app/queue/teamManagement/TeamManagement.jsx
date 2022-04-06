@@ -45,6 +45,7 @@ export const TeamManagement = React.memo(({
   privateBars,
   vhaProgramOffices,
   vhaRegionalOffices,
+  eduRegionalProccessingOffices,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -136,6 +137,11 @@ export const TeamManagement = React.memo(({
             <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
           </OrgSection> }
 
+          { eduRegionalProccessingOffices && <OrgSection>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDU_REGIONAL_PROCESSING_OFFICE_TEAM_LABEL}</OrgHeader>
+            <OrgList orgs={eduRegionalProccessingOffices} statuses={statuses} />
+          </OrgSection> }
+
           { otherOrgs && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={otherOrgs} statuses={statuses} />
@@ -166,6 +172,7 @@ TeamManagement.propTypes = {
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
   onOrgUpdate: PropTypes.func,
+  eduRegionalProccessingOffices: PropTypes.array,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
       loading: PropTypes.object,
