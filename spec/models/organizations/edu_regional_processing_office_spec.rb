@@ -14,7 +14,7 @@ describe EduRegionalProcessingOffice, :postgres do
       let(:appeal) { create(:appeal) }
       let(:doc_task) { create(:education_document_search_task, appeal: appeal) }
   
-      it "returns false because program offices should not have vha document search tasks assigned to them" do
+      it "returns false because program offices should not have edu document search tasks assigned to them" do
         expect(regional_processing_office.can_receive_task?(doc_task)).to eq(false)
       end
     end
