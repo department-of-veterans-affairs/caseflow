@@ -122,7 +122,7 @@ describe Appeal, :all_dbs do
     context "when the appeal has only vha issues" do
       let(:request_issues) do
         [
-          create(:request_issue, benefit_type: "vha")
+          create(:request_issue, benefit_type: "vha", is_predocket_needed: true)
         ]
       end
 
@@ -144,7 +144,7 @@ describe Appeal, :all_dbs do
     context "when the appeal has vha and non-vha issues" do
       let(:request_issues) do
         [
-          create(:request_issue, benefit_type: "vha"),
+          create(:request_issue, benefit_type: "vha", is_predocket_needed: true),
           create(:request_issue, benefit_type: "education")
         ]
       end
