@@ -26,6 +26,7 @@ describe RequestIssue, :all_dbs do
   let(:ineligible_reason) { nil }
   let(:edited_description) { nil }
   let(:covid_timeliness_exempt) { nil }
+  let(:is_predocket_needed) { false }
 
   let(:review) do
     create(
@@ -99,7 +100,8 @@ describe RequestIssue, :all_dbs do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description,
-      covid_timeliness_exempt: covid_timeliness_exempt
+      covid_timeliness_exempt: covid_timeliness_exempt,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -117,7 +119,8 @@ describe RequestIssue, :all_dbs do
       closed_at: closed_at,
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
-      edited_description: edited_description
+      edited_description: edited_description,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -132,7 +135,8 @@ describe RequestIssue, :all_dbs do
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -877,7 +881,8 @@ describe RequestIssue, :all_dbs do
         contested_decision_issue_id: contested_decision_issue_id,
         ineligible_reason: "untimely",
         ineligible_due_to_id: 345,
-        rating_issue_diagnostic_code: "2222"
+        rating_issue_diagnostic_code: "2222",
+        is_predocket_needed: is_predocket_needed
       }
     end
 
@@ -950,6 +955,16 @@ describe RequestIssue, :all_dbs do
           contested_issue_description: nil,
           nonrating_issue_description: nil,
           unidentified_issue_text: "decision text"
+        )
+      end
+    end
+
+    context "when is_predocket_needed is set" do
+      let(:is_predocket_needed) { true }
+
+      it do
+        is_expected.to have_attributes(
+          is_predocket_needed: true
         )
       end
     end
