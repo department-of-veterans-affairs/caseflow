@@ -43,7 +43,8 @@ class TasksController < ApplicationController
     Task: Task, # Consider for removal, after cleaning up occurrences in prod
     TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask,
-    VhaDocumentSearchTask: VhaDocumentSearchTask
+    VhaDocumentSearchTask: VhaDocumentSearchTask,
+    EducationDocumentSearchTask: EducationDocumentSearchTask
   }.freeze
 
   def set_application
