@@ -1731,7 +1731,7 @@ ActiveRecord::Schema.define(version: 2022_04_04_115430) do
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "conference_link", "hearing_days"
   add_foreign_key "conference_link", "users", column: "created_by_id"
-  add_foreign_key "conference_link", "hearing_day", column: "hearing_day_id"
+  add_foreign_key "conference_link", "hearing_days", column: "hearing_day_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
