@@ -56,7 +56,7 @@ FactoryBot.define do
     end
 
     trait :is_predocket_needed do
-      false
+      is_predocket_needed { false }
     end
 
     trait :requires_processing do
@@ -101,8 +101,7 @@ FactoryBot.define do
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "nonrating decision issue",
           end_product_last_action_date: request_issue.decision_date,
-          disposition: "nonrating decision issue dispositon",
-          is_predocket_needed: request_issue.is_predocket_needed
+          disposition: "nonrating decision issue dispositon"
         )
 
         request_issue.update!(
