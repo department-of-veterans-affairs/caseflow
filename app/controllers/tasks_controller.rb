@@ -26,6 +26,7 @@ class TasksController < ApplicationController
     DocketSwitchRulingTask: DocketSwitchRulingTask,
     DocketSwitchDeniedTask: DocketSwitchDeniedTask,
     DocketSwitchGrantedTask: DocketSwitchGrantedTask,
+    EducationDocumentSearchTask: EducationDocumentSearchTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
@@ -43,8 +44,7 @@ class TasksController < ApplicationController
     Task: Task, # Consider for removal, after cleaning up occurrences in prod
     TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask,
-    VhaDocumentSearchTask: VhaDocumentSearchTask,
-    EducationDocumentSearchTask: EducationDocumentSearchTask
+    VhaDocumentSearchTask: VhaDocumentSearchTask
   }.freeze
 
   def set_application
