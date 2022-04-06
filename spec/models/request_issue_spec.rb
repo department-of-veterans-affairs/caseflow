@@ -964,7 +964,10 @@ describe RequestIssue, :all_dbs do
 
       it do
         is_expected.to have_attributes(
-          is_predocket_needed: true
+          is_predocket_needed: true,
+          contested_issue_description: nil,
+          nonrating_issue_description: nil,
+          unidentified_issue_text: "decision text"
         )
       end
     end
