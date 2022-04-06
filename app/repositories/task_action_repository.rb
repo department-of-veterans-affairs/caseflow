@@ -541,6 +541,22 @@ class TaskActionRepository
       }
     end
 
+    def bva_intake_return_to_emo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      emo = EducationEmo.singleton
+      {
+        selected: emo,
+        options: [{ label: emo.name, value: emo.id }],
+        modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
+        modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
+        message_title: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE,
+        message_detail: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_DETAIL,
+        type: EducationDocumentSearchTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url

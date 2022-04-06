@@ -344,7 +344,7 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
 
-  routedBvaIntakeReturnToCamo = (props) => (
+  routedBvaIntakeReturnToOrg = (props) => (
     <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />
   );
 
@@ -880,7 +880,13 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value
                 }`}
-              render={this.routedBvaIntakeReturnToCamo}
+              render={this.routedBvaIntakeReturnToOrg}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value
+                }`}
+              render={this.routedBvaIntakeReturnToOrg}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Task tracking work searching for decision documents related to VHA issues.
+# Task tracking work searching for decision documents related to Education issues.
 
 class EducationDocumentSearchTask < Task
   validates :parent, presence: true
