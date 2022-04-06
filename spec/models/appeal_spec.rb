@@ -145,7 +145,7 @@ describe Appeal, :all_dbs do
       let(:request_issues) do
         [
           create(:request_issue, benefit_type: "vha", is_predocket_needed: true),
-          create(:request_issue, benefit_type: "education")
+          create(:request_issue, benefit_type: "nca")
         ]
       end
 
@@ -157,7 +157,51 @@ describe Appeal, :all_dbs do
         FeatureToggle.disable!(:vha_predocket_appeals)
       end
 
+      it "does create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has a pre-docket education issue" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "education", is_predocket_needed: true)
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:education_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:education_predocket_appeals)
+      end
+
       it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has a non pre-docket education issue" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "education", is_predocket_needed: false)
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:education_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:education_predocket_appeals)
+      end
+
+      it "does create business line tasks" do
         expect(VeteranRecordRequest).to receive(:create!)
 
         subject
