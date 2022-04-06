@@ -107,7 +107,8 @@ FactoryBot.define do
 
         request_issue.update!(
           contested_decision_issue_id: decision_issue.id,
-          contested_issue_description: decision_issue.description
+          contested_issue_description: decision_issue.description,
+          is_predocket_needed: evaluator.is_predocket_needed
         )
       end
     end
