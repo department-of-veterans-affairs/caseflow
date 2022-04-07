@@ -368,27 +368,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find("#submit-search-searchBarEmptyList").click
         expect(page).to have_content("Pre Docketed")
       end
-
-      step "EMO has appeal in queue with EducationDocumentSearchTask assigned" do
-        appeal = Appeal.last
-        User.authenticate!(user: emo_user)
-        visit "/organizations/education-emo?tab=emo_assigned"
-        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
-
-        created_task_types = Set.new(appeal.tasks.map(&:type))
-        pre_docket_tasks = Set.new %w[RootTask PreDocketTask EducationDocumentSearchTask]
-
-        docket_tasks = Set.new %w[
-          DistributionTask
-          TrackVeteranTask
-          InformalHearingPresentationTask
-          EvidenceSubmissionWindowTask
-          TranslationTask
-        ]
-
-        expect(pre_docket_tasks.subset?(created_task_types)).to be true
-        expect(docket_tasks.subset?(created_task_types)).to be false
-      end
     end
   end
 end
