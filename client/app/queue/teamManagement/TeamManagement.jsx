@@ -132,6 +132,10 @@ export const TeamManagement = React.memo(({
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
+          { vhaRegionalOffices && <OrgSection>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
+            <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
+          </OrgSection> }
 
           { eduRegionalProcessingOffices && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL}</OrgHeader>
