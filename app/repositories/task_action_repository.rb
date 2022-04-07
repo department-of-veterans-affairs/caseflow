@@ -561,9 +561,9 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
-        message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
-        message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        modal_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
+        message_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
+        message_detail: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
         type: EduAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
