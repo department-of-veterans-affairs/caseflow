@@ -389,5 +389,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(pre_docket_tasks.subset?(created_task_types)).to be true
         expect(docket_tasks.subset?(created_task_types)).to be false
       end
+    end
   end
 end
