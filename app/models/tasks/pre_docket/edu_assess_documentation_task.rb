@@ -15,7 +15,7 @@ class EduAssessDocumentationTask < Task
     ].freeze
   
     RPO_ACTIONS = [
-      Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
+      Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
     ].freeze
   
     # RO_ACTIONS = [
@@ -27,16 +27,16 @@ class EduAssessDocumentationTask < Task
   
       task_actions = Array.new(DEFAULT_ACTIONS)
   
-      if assigned_to.is_a?(VhaProgramOffice)
-        if FeatureToggle.enabled?(:visn_predocket_workflow, user: user)
-          task_actions.concat([Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h].freeze)
-        end
-        task_actions.concat(PO_ACTIONS)
-      end
+      # if assigned_to.is_a?(VhaProgramOffice)
+      #   if FeatureToggle.enabled?(:visn_predocket_workflow, user: user)
+      #     task_actions.concat([Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h].freeze)
+      #   end
+      #   task_actions.concat(PO_ACTIONS)
+      # end
   
-    #   if assigned_to.is_a?(VhaRegionalOffice)
-    #     task_actions.concat(RO_ACTIONS)
-    #   end
+      if assigned_to.is_a?(EduRegionalProcessingOffice)
+        task_actions.concat(RPO_ACTIONS)
+      end
   
       if appeal.tasks.in_progress.none? { |task| task.is_a?(EduAssessDocumentationTask) }
         task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)

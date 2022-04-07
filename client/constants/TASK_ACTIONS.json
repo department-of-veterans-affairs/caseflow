@@ -408,5 +408,10 @@
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "vha_mark_task_in_progress"
+  },
+  "EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO": {
+    "label": "Return to EMO team",
+    "value": "modal/return_to_emo",
+    "func": "edu_regional_processing_office_return_to_emo" 
   }
 }
