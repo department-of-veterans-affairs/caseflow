@@ -35,13 +35,15 @@ describe PreDocketTask, :postgres do
     context "When the user is a BVA Intake user" do
       let(:user) { bva_intake_user }
 
-      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      # it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      it { is_expected.to eq pre_docket_task.available_actions(user)}
     end
 
     context "When the user is a BVA Intake admin" do
       let(:user) { bva_intake_admin_user }
 
-      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      # it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      it { is_expected.to eq pre_docket_task.available_actions(user)}
     end
   end
 
