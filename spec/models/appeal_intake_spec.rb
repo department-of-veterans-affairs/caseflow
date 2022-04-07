@@ -297,13 +297,51 @@ describe AppealIntake, :all_dbs do
       expect(intake.detail.processed?).to eq true
     end
 
-    context "when appeal has education benefit type and will be pre-docketed" do
+    context "when appeal has pre-docket and non pre-docket education issues" do
+      before { FeatureToggle.enable!(:education_predocket_appeals) }
+      after { FeatureToggle.disable!(:education_predocket_appeals) }
+
       let(:issue_data) do
         [
           {
-            rating_issue_reference_id: "reference-id",
-            decision_text: "decision text"
+            decision_text: "decision text",
+            benefit_type: "education",
+            decision_date: "2022-04-01",
+            nonrating_issue_category: "test issue category not predocket",
+            is_predocket_needed: false
           },
+          {
+            decision_text: "nonrating request issue decision text",
+            nonrating_issue_category: "test issue category is predocket",
+            benefit_type: "education",
+            decision_date: "2022-04-01",
+            is_predocket_needed: true
+          },
+        ]
+      end
+
+      it "creates 4 tasks" do
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail.established_at).to_not be_nil
+        expect(intake.detail.request_issues.count).to eq 2
+        expect(intake.detail.target_decision_date).to_not be_nil
+
+        # We will have 4 tasks: Root, PreDocket, and EducationDocumentSearch, and VeteranRecordRequest task
+        expect(intake.detail.tasks.count).to eq 4
+        expect(intake.detail.submitted?).to eq true
+        expect(intake.detail.attempted?).to eq true
+        expect(intake.detail.processed?).to eq true
+      end
+    end
+
+    context "when appeal solely has an issue with an education benefit type and will be pre-docketed" do
+      before { FeatureToggle.enable!(:education_predocket_appeals) }
+      after { FeatureToggle.disable!(:education_predocket_appeals) }
+
+      let(:issue_data) do
+        [
           {
             decision_text: "nonrating request issue decision text",
             nonrating_issue_category: "test issue category",
@@ -314,24 +352,20 @@ describe AppealIntake, :all_dbs do
         ]
       end
 
-      it "establish appeal" do
+      it "creates 3 tasks" do
         subject
 
         expect(intake.reload).to be_success
         expect(intake.detail.established_at).to_not be_nil
-        expect(intake.detail.request_issues.count).to eq 2
+        expect(intake.detail.request_issues.count).to eq 1
         expect(intake.detail.target_decision_date).to_not be_nil
         expect(intake.detail.request_issues.first).to have_attributes(
-          contested_rating_issue_reference_id: "reference-id",
-          contested_issue_description: "decision text"
-        )
-        expect(intake.detail.request_issues.second).to have_attributes(
           nonrating_issue_category: "test issue category",
           decision_date: Date.new(2022, 04, 01),
           nonrating_issue_description: "nonrating request issue decision text",
           is_predocket_needed: true
         )
-        # We will have 3 tasks: Root, PreDocket, and EducationDocumentSearch task
+        # We will have 4 tasks: Root, PreDocket, and EducationDocumentSearch task
         expect(intake.detail.tasks.count).to eq 3
         expect(intake.detail.submitted?).to eq true
         expect(intake.detail.attempted?).to eq true
