@@ -21,7 +21,10 @@ class PreDocketTask < Task
 
   def available_actions(user)
     # TODO: modify feature toggles
-    return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
+    return [] unless assigned_to.user_has_access?(user) && (
+      FeatureToggle.enabled?(:docket_vha_appeals, user: user) ||
+      FeatureToggle.enabled?(:docket_emo_appeals, user: user)
+    )
     
     task_actions = Array.new(TASK_ACTIONS)
     child_task = self.children.first
