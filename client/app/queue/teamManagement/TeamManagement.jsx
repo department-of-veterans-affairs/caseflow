@@ -27,7 +27,7 @@ import {
   TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
-  TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL,
+  TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
 import { clearStatus, fetchTeamManagement, updateOrg } from './teamManagement.slice';
@@ -138,7 +138,7 @@ export const TeamManagement = React.memo(({
           </OrgSection> }
 
           { eduRegionalProcessingOffices && <OrgSection>
-            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL}</OrgHeader>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_LABEL}</OrgHeader>
             <OrgList orgs={eduRegionalProcessingOffices} statuses={statuses} />
           </OrgSection> }
 
