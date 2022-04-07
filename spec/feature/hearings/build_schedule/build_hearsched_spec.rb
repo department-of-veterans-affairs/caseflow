@@ -25,7 +25,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     # Ensure the page has the expected content
     expect(page).to have_content("We have assigned your hearings days", wait: 30)
     expect(SchedulePeriod.count).to eq(1)
-    expect(Allocation.count).to eq(56)
+    expect(Allocation.count).to eq(57)
 
     # Confirm the assignments and upload the document
     click_on "Confirm assignments"
