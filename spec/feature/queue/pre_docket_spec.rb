@@ -353,6 +353,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
            is_predocket_needed: true
         )
 
+        expect(page).to have_button("Submit appeal")
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
