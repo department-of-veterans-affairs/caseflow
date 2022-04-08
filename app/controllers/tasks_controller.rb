@@ -26,6 +26,7 @@ class TasksController < ApplicationController
     DocketSwitchRulingTask: DocketSwitchRulingTask,
     DocketSwitchDeniedTask: DocketSwitchDeniedTask,
     DocketSwitchGrantedTask: DocketSwitchGrantedTask,
+    EduAssessDocumentationTask: EduAssessDocumentationTask,
     EducationDocumentSearchTask: EducationDocumentSearchTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,

@@ -17,39 +17,30 @@ class EduAssessDocumentationTask < Task
     RPO_ACTIONS = [
       Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
     ].freeze
-  
-    # RO_ACTIONS = [
-    #   Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h
-    # ].freeze
-  
+
     def available_actions(user)
       return [] unless assigned_to.user_has_access?(user)
   
       task_actions = Array.new(DEFAULT_ACTIONS)
   
-      # if assigned_to.is_a?(VhaProgramOffice)
-      #   if FeatureToggle.enabled?(:visn_predocket_workflow, user: user)
-      #     task_actions.concat([Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h].freeze)
-      #   end
-      #   task_actions.concat(PO_ACTIONS)
-      # end
   
       if assigned_to.is_a?(EduRegionalProcessingOffice)
         task_actions.concat(RPO_ACTIONS)
       end
   
-      if appeal.tasks.in_progress.none? { |task| task.is_a?(EduAssessDocumentationTask) }
-        task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
-      end
+      ## TODO: create "mark task in progress" action
+      # if appeal.tasks.in_progress.none? { |task| task.is_a?(EduAssessDocumentationTask) }
+        # task_actions.concat([Constants.TASK_ACTIONS.EDU_MARK_TASK_IN_PROGRESS.to_h].freeze)
+      # end
   
       task_actions
     end
   
-    def when_child_task_completed(child_task)
-      append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
+    # def when_child_task_completed(child_task)
+    #   append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
   
-      super
-    end
+    #   super
+    # end
   
     def self.label
       COPY::ASSESS_DOCUMENTATION_TASK_LABEL
