@@ -4,7 +4,12 @@ describe Seeds::VeteransHealthAdministration do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
-    it "creates all kinds of decision reviews" do
+    it "creates the CAMO Office" do
+      expect { subject }.to_not raise_error
+      expect(VhaCamo.count).to eq(1)
+    end
+
+    it "creates all Program Offices" do
       expect { subject }.to_not raise_error
       expect(VhaProgramOffice.count).to eq(6)
     end
