@@ -13,9 +13,11 @@ describe EduAssessDocumentationTask, :postgres do
         subject { regional_processing_office_task.available_actions(user) }
   
         available_actions = [
-          Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-          Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
-          Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
+        #   Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        #   Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
+          Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h,
+          Constants.TASK_ACTIONS.EDU_READY_FOR_REVIEW.to_h,
+          Constants.TASK_ACTIONS.EDU_MARK_TASK_IN_PROGRESS.to_h
         ]
   
         it { is_expected.to eq available_actions }

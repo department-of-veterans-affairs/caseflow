@@ -10,12 +10,13 @@ class EduAssessDocumentationTask < Task
   
     # Actions that can be taken on both organization and user tasks
     DEFAULT_ACTIONS = [
-      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-      Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h
+      # Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+      # Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h
     ].freeze
   
     RPO_ACTIONS = [
-      Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
+      Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h,
+      Constants.TASK_ACTIONS.EDU_READY_FOR_REVIEW.to_h
     ].freeze
 
     def available_actions(user)
@@ -28,10 +29,10 @@ class EduAssessDocumentationTask < Task
         task_actions.concat(RPO_ACTIONS)
       end
   
-      ## TODO: create "mark task in progress" action
-      # if appeal.tasks.in_progress.none? { |task| task.is_a?(EduAssessDocumentationTask) }
-        # task_actions.concat([Constants.TASK_ACTIONS.EDU_MARK_TASK_IN_PROGRESS.to_h].freeze)
-      # end
+      ## TODO: create "mark task in progress" task action function
+      if appeal.tasks.in_progress.none? { |task| task.is_a?(EduAssessDocumentationTask) }
+        task_actions.concat([Constants.TASK_ACTIONS.EDU_MARK_TASK_IN_PROGRESS.to_h].freeze)
+      end
   
       task_actions
     end

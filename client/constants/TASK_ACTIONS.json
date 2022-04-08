@@ -409,9 +409,22 @@
     "value": "modal/mark_task_in_progress",
     "func": "vha_mark_task_in_progress"
   },
+  "EDU_ASSIGN_TO_RPO": {
+    "label": "Assign to Regional Processing Office",
+    "value": "modal/assign_to_program_office",
+    "func": "edu_assign_to_regional_processing_office_data"
+  },
   "EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO": {
-    "label": "Return to EMO team",
+    "label": "Return to Executive Management Office",
     "value": "modal/return_to_emo",
     "func": "edu_regional_processing_office_return_to_emo" 
+  },
+  "EDU_READY_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/ready_for_review"
+  },
+  "EDU_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress"
   }
 }
