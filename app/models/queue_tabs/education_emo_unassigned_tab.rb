@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+class VhaCamoAssignedTasksTab < QueueTab
+  validate :assignee_is_organization
+
+  attr_accessor :show_reader_link_column, :allow_bulk_assign
+
+  def label
+    COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+  end
+
+  def self.tab_name
+    Constants.QUEUE_CONFIG.EDUCATION_ASSIGNED_TASKS_TAB_NAME
+  end
+
+  def description
+    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+  end
+
+  def tasks
+    #Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes).visible_in_queue_table_view.where(education_document_search_task.on_hold).active
+    
+  end
+
+  # Column names defined in each tab in education predocket due to different columns needed
+  # Actual names found in QUEUE_CONFIG.json file
+  def column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      show_reader_link_column ? Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name : nil
+    ].compact
+  end
+end
