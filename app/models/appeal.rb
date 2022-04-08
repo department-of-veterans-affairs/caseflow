@@ -81,6 +81,7 @@ class Appeal < DecisionReview
     validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
+    validates :homelessness, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 
