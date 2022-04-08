@@ -557,13 +557,24 @@ class TaskActionRepository
       }
     end
 
+    # def edu_assign_to_regional_processing_office_data(*)
+    #   {
+    #     options: organizations_to_options(EduRegionalProcessingOffice.all),
+    #     modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
+    #     modal_body: COPY::VHA_MODAL_BODY,
+    #     modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
+    #     type: EduAssessDocumentationTask.name,
+    #     redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+    #   }
+    # end
+
     def edu_regional_processing_office_return_to_emo(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
-        message_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
-        message_detail: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        modal_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE,
+        message_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_CONFIRMATION_TITLE,
+        message_detail: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_CONFIRMATION_DETAIL,
         type: EduAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
