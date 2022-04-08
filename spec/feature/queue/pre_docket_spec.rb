@@ -324,12 +324,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     before do
       OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
       FeatureToggle.enable!(:education_predocket_appeals)
-      FeatureToggle.enable!(:docket_emo_appeals)
+      FeatureToggle.enable!(:docket_edu_appeals)
     end
 
     after do
       FeatureToggle.disable!(:education_predocket_appeals)
-      FeatureToggle.disable!(:docket_emo_appeals)
+      FeatureToggle.disable!(:docket_edu_appeals)
     end
 
     it "intaking Education issues and opting for pre-docket

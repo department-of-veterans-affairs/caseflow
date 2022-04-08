@@ -47,14 +47,14 @@ describe PreDocketTask, :postgres do
       it { is_expected.to eq pre_docket_task.available_actions(user)}
     end
 
-    context "When an admin user has the docket_emo_appeals FeatureToggle enabled" do
+    context "When an admin user has the docket_edu_appeals FeatureToggle enabled" do
       before do
-        FeatureToggle.enable!(:docket_emo_appeals)
+        FeatureToggle.enable!(:docket_edu_appeals)
         FeatureToggle.disable!(:docket_vha_appeals)
       end
 
       after do
-        FeatureToggle.disable!(:docket_emo_appeals)
+        FeatureToggle.disable!(:docket_edu_appeals)
         FeatureToggle.enable!(:docket_vha_appeals)
       end
 
@@ -70,14 +70,14 @@ describe PreDocketTask, :postgres do
     end
   end
 
-  context "#docket_appeal with docket_emo_appeals FeatureToggle enabled" do
+  context "#docket_appeal with docket_edu_appeals FeatureToggle enabled" do
     before do
-      FeatureToggle.enable!(:docket_emo_appeals)
+      FeatureToggle.enable!(:docket_edu_appeals)
       FeatureToggle.disable!(:docket_vha_appeals)
     end
 
     after do
-      FeatureToggle.disable!(:docket_emo_appeals)
+      FeatureToggle.disable!(:docket_edu_appeals)
       FeatureToggle.enable!(:docket_vha_appeals)
     end
 
