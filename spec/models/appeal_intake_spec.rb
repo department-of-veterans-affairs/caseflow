@@ -298,8 +298,8 @@ describe AppealIntake, :all_dbs do
     end
 
     context "when appeal has pre-docket and non pre-docket education issues" do
-      before { FeatureToggle.enable!(:education_predocket_appeals) }
-      after { FeatureToggle.disable!(:education_predocket_appeals) }
+      before { FeatureToggle.enable!(:edu_predocket_appeals) }
+      after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
       let(:issue_data) do
         [
@@ -337,8 +337,8 @@ describe AppealIntake, :all_dbs do
     end
 
     context "when appeal solely has an issue with an education benefit type and will be pre-docketed" do
-      before { FeatureToggle.enable!(:education_predocket_appeals) }
-      after { FeatureToggle.disable!(:education_predocket_appeals) }
+      before { FeatureToggle.enable!(:edu_predocket_appeals) }
+      after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
       let(:issue_data) do
         [

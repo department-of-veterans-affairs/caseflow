@@ -517,8 +517,8 @@ describe RequestIssue, :all_dbs do
       let!(:request_issues_not_pre_docket) { create(:request_issue, is_predocket_needed: false, benefit_type: benefit_type) }
 
       context "education pre-docketing is enabled" do
-        before { FeatureToggle.enable!(:education_predocket_appeals) }
-        after { FeatureToggle.disable!(:education_predocket_appeals) }
+        before { FeatureToggle.enable!(:edu_predocket_appeals) }
+        after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
         it "does require a record request task when is_predocket_needed is false" do
           expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true
@@ -530,7 +530,7 @@ describe RequestIssue, :all_dbs do
       end
 
       context "education pre-docketing is disabled" do
-        before { FeatureToggle.disable!(:education_predocket_appeals) }
+        before { FeatureToggle.disable!(:edu_predocket_appeals) }
 
         it "does require a record request task " do
           expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true

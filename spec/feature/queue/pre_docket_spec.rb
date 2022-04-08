@@ -323,12 +323,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   context "when an EMO case goes through intake to be pre-docketed" do
     before do
       OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
-      FeatureToggle.enable!(:education_predocket_appeals)
+      FeatureToggle.enable!(:edu_predocket_appeals)
       FeatureToggle.enable!(:docket_edu_appeals)
     end
 
     after do
-      FeatureToggle.disable!(:education_predocket_appeals)
+      FeatureToggle.disable!(:edu_predocket_appeals)
       FeatureToggle.disable!(:docket_edu_appeals)
     end
 

@@ -172,11 +172,11 @@ describe Appeal, :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:education_predocket_appeals)
+        FeatureToggle.enable!(:edu_predocket_appeals)
       end
 
       after do
-        FeatureToggle.disable!(:education_predocket_appeals)
+        FeatureToggle.disable!(:edu_predocket_appeals)
       end
 
       it "does not create business line tasks" do
@@ -194,11 +194,11 @@ describe Appeal, :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:education_predocket_appeals)
+        FeatureToggle.enable!(:edu_predocket_appeals)
       end
 
       after do
-        FeatureToggle.disable!(:education_predocket_appeals)
+        FeatureToggle.disable!(:edu_predocket_appeals)
       end
 
       it "does create business line tasks" do

@@ -522,7 +522,7 @@ class RequestIssue < CaseflowRecord
 
     return false if is_predocket_needed? && (
       benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
-      benefit_type == "education" && FeatureToggle.enabled?(:education_predocket_appeals, user: user)
+      benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
     )
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
