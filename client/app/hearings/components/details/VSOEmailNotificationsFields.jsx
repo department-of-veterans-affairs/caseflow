@@ -1,15 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import React from "react";
+import classNames from "classnames";
+import PropTypes from "prop-types";
 
-import { marginTop, input8px } from '../details/style';
-import { VSOHearingEmail } from './VSOHearingEmail';
-import { EmailNotificationHistory } from './EmailNotificationHistory';
-import { Timezone } from '../VirtualHearings/Timezone';
-import { HelperText } from '../VirtualHearings/HelperText';
-import { ContentSection } from '../../../components/ContentSection';
-import COPY from '../../../../COPY';
-import { getAppellantTitle, readOnlyEmails } from '../../utils';
+import { marginTop, input8px } from "../details/style";
+import { VSOHearingEmail } from "./VSOHearingEmail";
+import { EmailNotificationHistory } from "./EmailNotificationHistory";
+import { Timezone } from "../VirtualHearings/Timezone";
+import { HelperText } from "../VirtualHearings/HelperText";
+import COPY from "../../../../COPY";
+import { getAppellantTitle, readOnlyEmails } from "../../utils";
 
 export const VSOEmailNotificationsFields = ({
   errors,
@@ -18,106 +17,53 @@ export const VSOEmailNotificationsFields = ({
   readOnly,
   update,
   time,
-  veteran,
   roTimezone,
-  header
+  header,
 }) => {
-
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   return (
-     veteran ? (
-      <React.Fragment>
-        <div id="email-section" className="usa-grid">
-          <div className="usa-width-one-third">
-            <VSOHearingEmail
-              required={true}
-              disabled={disableField}
-              label={`${appellantTitle} Email`}
-              emailType="appellantEmailAddress"
-              email={hearing?.appellantEmailAddress}
-              error={errors?.appellantEmailAddress}
-              update={update}
-            />
-            <HelperText label={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO} />
-          </div>
-          
-          <div className="usa-width-one-third">
-            <VSOHearingEmail
-              required={true}
-              disabled={disableField}
-              label={`Confirm ${appellantTitle} Email`}
-              emailType="appellantEmailAddress"
-              email={hearing?.appellantEmailAddress}
-              error={errors?.appellantEmailAddress}
-              update={update}
-            />
-          </div>
-          <div className="usa-width-one-third" {...input8px}>
-            <Timezone
-              required={true}
-              errorMessage={errors?.appellantTz}
-              value={hearing?.appellantTz}
-              onChange={(appellantTz) => update('hearing', { appellantTz })}
-              readOnly={disableField}
-              time={time}
-              roTimezone={roTimezone}
-              name="appellantTz"
-              label={`${getAppellantTitle(hearing?.appellantIsNotVeteran)} Timezone`}
-            />
-            <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-          </div>
-        
+    <React.Fragment>
+      <div id="email-section" className="usa-grid">
+        <VSOHearingEmail
+          required={true}
+          disabled={disableField}
+          label={`${appellantTitle} Email`}
+          emailType="appellantEmailAddress"
+          email={hearing?.appellantEmailAddress}
+          error={errors?.appellantEmailAddress}
+          update={update}
+        />
+        <HelperText label={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO} />
+        <VSOHearingEmail
+          required={true}
+          disabled={disableField}
+          label={`Confirm ${appellantTitle} Email`}
+          emailType="appellantEmailAddress"
+          email={hearing?.appellantEmailAddress}
+          error={errors?.appellantEmailAddress}
+          update={update}
+        />
+        <p></p>
+        <div {...input8px}>
+          <Timezone
+            required={true}
+            errorMessage={errors?.appellantTz}
+            value={hearing?.appellantTz}
+            onChange={(appellantTz) => update("hearing", { appellantTz })}
+            readOnly={disableField}
+            time={time}
+            roTimezone={roTimezone}
+            name="appellantTz"
+            label={`${getAppellantTitle(
+              hearing?.appellantIsNotVeteran
+            )} Timezone`}
+          />
+          <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
-        </React.Fragment>
-        ) : (
-        <React.Fragment>
-        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className="usa-width-one-third" {...input8px}>
-            <Timezone
-              required={Boolean(hearing?.representativeEmailAddress)}
-              optional={!hearing?.representativeEmailAddress}
-              errorMessage={errors?.representativeTz}
-              value={hearing?.representativeTz}
-              onChange={(representativeTz) => update('hearing', { representativeTz })}
-              readOnly={disableField || !hearing?.representativeEmailAddress}
-              time={time}
-              roTimezone={roTimezone}
-              name="representativeTz"
-              label="POA/Representative Timezone"
-            />
-            <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-          </div>
-          <div className="usa-width-one-third">
-            <VSOHearingEmail
-              optional
-              disabled={disableField}
-              label="POA/Representative Email"
-              emailType="representativeEmailAddress"
-              email={hearing?.representativeEmailAddress}
-              error={errors?.representativeEmailAddress}
-              update={(key, value) => {
-                // Switch the representative timezone back to the initial value if the
-                // representative email is changed to null. This should prevent `deepDiff``
-                // from trying to send any changes to the representative timezone if the
-                // representative email is being removed.
-                if (!value.representativeEmailAddress) {
-                  value.representativeTz = initialRepresentativeTz;
-                }
-
-                update(key, value);
-              }}
-            />
-          </div>
-        </div>
-        
-        {hearing?.emailEvents?.length > 0 && (
-          <EmailNotificationHistory rows={hearing?.emailEvents} />
-        )}
-      </React.Fragment>)
-    
-    
+      </div>
+    </React.Fragment>
   );
 };
 
@@ -127,10 +73,9 @@ VSOEmailNotificationsFields.propTypes = {
   roTimezone: PropTypes.string.isRequired,
   appellantTitle: PropTypes.string.isRequired,
   readOnly: PropTypes.bool,
-  veteran: PropTypes.bool,
   update: PropTypes.func,
   hearing: PropTypes.object,
   errors: PropTypes.object,
   initialRepresentativeTz: PropTypes.string,
-  header: PropTypes.string
+  header: PropTypes.string,
 };

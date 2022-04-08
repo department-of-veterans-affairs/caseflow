@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import COPY from '../../../../COPY';
-import Checkbox from '../../../components/Checkbox';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
@@ -79,26 +78,6 @@ export const VSORepresentativeSection = ({
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
       </div>
-
-      <Checkbox
-            label="I affirm that I have the Veteran / Appellant's permisson to opt-in to a virtual hearing."
-            name="affirmPermission"
-            value
-            onChange
-        />
-      <Checkbox
-            label={
-                <div>
-                    <span>I affirm that the Veteran / Appellant and POA / Representative will have access to a computer, tablet, or mobile device with a reliable internet connection, a camera, and a microphone on the day of the virtual hearing.</span>
-                    <a href="https://www.google.com" style={{textDecoration: "underline"}}> Learn more</a>
-                </div> 
-            }
-            name="affirmAccess"
-            value
-            onChange
-        />
-      
-
   </VirtualHearingSection>
 );
 

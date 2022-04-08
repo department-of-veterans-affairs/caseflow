@@ -1095,6 +1095,8 @@
   "CONVERT_HEARING_TYPE_SUCCESS_DETAIL": "The hearing request is in the scheduling queue for the %s",
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE": "Cancel convert hearing to virtual",
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
+  "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION": "I affirm that I have the Veteran / Appellant's permisson to opt-in to a virtual hearing",
+  "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS": "I affirm that the Veteran / Appellant and POA / Representative will have access to a computer, tablet, or mobile device with a reliable internet connection, a camera, and a microphone on the day of the virtual hearing.",
 
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",

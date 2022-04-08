@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
-import { HelperText } from './VirtualHearings/HelperText';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { getAppellantTitle } from '../utils';
 import { marginTop, saveButton, cancelButton } from './details/style';
+import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 
@@ -62,9 +62,28 @@ export const VSOHearingTypeConversionForm = ({
     <React.Fragment>
       <AppSegment filledBackground>
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
-        <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_3} />
+        <p>{COPY.CONVERT_HEARING_TYPE_SUBTITLE_3}</p>
         <VSOAppellantSection {...sectionProps} />
         <VSORepresentativeSection {...sectionProps} showDivider />
+        <p></p>
+        <Checkbox
+            label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
+            name="affirmPermission"
+            value
+            onChange
+        />
+        <div></div>
+        <Checkbox
+            label={
+                <div>
+                    <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+                    <a href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf" style={{textDecoration: "underline"}}> Learn more</a>
+                </div> 
+            }
+            name="affirmAccess"
+            value
+            onChange
+        />
       </AppSegment>
       <div {...marginTop(30)}>
         <Button

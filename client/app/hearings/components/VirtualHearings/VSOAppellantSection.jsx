@@ -51,7 +51,7 @@ export const VSOAppellantSection = ({
               label={`${appellantTitle} Name`}
               text={appellantName}
         />
-        <VSOEmailNotificationsFields veteran={true}/>
+        <VSOEmailNotificationsFields/>
       </React.Fragment>
     </VirtualHearingSection>
   );
