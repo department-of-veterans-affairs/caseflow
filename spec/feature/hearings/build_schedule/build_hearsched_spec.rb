@@ -59,7 +59,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
 
       # Check the allocation for hearing days without rooms
       allocation_with_room_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_with_room_count).to eq(343)
+      expect(allocation_with_room_count).to eq(347)
 
       # Check the allocation for hearing days with rooms
       allocation_without_room_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
