@@ -21,7 +21,7 @@ export X_AUTH_TOKEN=$(credstash -t appeals-credstash get caseflow.prod.govdelive
 
 # Set the csv file initial header - TODO: Expand to include the gov delivery items
 
-export HEADER='"request_id","date ET","class","appeal_id","email_address","email_type","gov_delivery_id","total","new","sending","inconclusive","blacklisted","canceled","sent","failed"'
+export HEADER='"request_id","date ET","class","appeal_id","email_address","gov_delivery_id","total","new","sending","inconclusive","blacklisted","canceled","sent","failed"'
 
 
 
@@ -73,7 +73,7 @@ echo "Parsing the Cloud Watch Query Results to /tmp/output.tmp" ;
 
 echo ${RESULTS} | jq .results | jq -c '.[][].value' | while read i; do
 
-  echo ${i} | grep appeals | grep -v success | sed 's/"//g' | sed 's/\[//g'| sed 's/\]//g' | sed 's/{//g' | sed 's/}//g' |sed 's/=>/ /g' | sed 's/,//g' | sed 's/\/messages\/email\///g'| awk '{ print $2","$4" "$5","$9","$11","$13","$15","$19 }' >> /tmp/output.tmp ;
+  echo ${i} | grep appeals | grep -v success | sed 's/"//g' | sed 's/\[//g'| sed 's/\]//g' | sed 's/{//g' | sed 's/}//g' |sed 's/=>/ /g' | sed 's/,//g' | sed 's/\/messages\/email\///g'| awk '{ print $2","$4" "$5","$9","$11","$13","$19 }' >> /tmp/output.tmp ;
 
 done
 
@@ -87,7 +87,7 @@ echo "Call govdelivery API with gov_delivery_id" ;
 
 cat /tmp/output.tmp | grep -v "request_id" | while read i; do
 
-  export APPEAL_URL=`echo ${i} | awk -F"," '{ print "https://tms.govdelivery.com/messages/email/"$7 }'` ;
+  export APPEAL_URL=`echo ${i} | awk -F"," '{ print "https://tms.govdelivery.com/messages/email/"$6 }'` ;
 
   export RESPONSE=$(curl -sS -k "$APPEAL_URL" -H "X-Auth-Token: ${X_AUTH_TOKEN}") ;
 
