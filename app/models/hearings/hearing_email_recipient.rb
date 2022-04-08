@@ -9,12 +9,12 @@ class HearingEmailRecipient < CaseflowRecord
     appellant: "appellant",
     veteran: "veteran",
     representative: "representative",
-    judge: "judge"
+    judge: "judge",
+    vso: "VSO"
   }.freeze
 
-
   ATTRIBUTES = [
-    :id, :timezone, :email_address, :type 
+    :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
   ].freeze
 
   RECIPIENT_TITLES = RECIPIENT_ROLES.map { |key, role| [key, role.capitalize] }.to_h.freeze
