@@ -63,11 +63,6 @@ class ChangeHearingRequestTypeTask < Task
       update_appeal_and_self(payload_values, params)
 
       [self]
-
-      # hearing email recipients
-      update_hearing_email_recipients(payload_values, params)
-
-      [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       cancel_self_and_hearing_task_parents_without_callbacks
     else
@@ -104,33 +99,38 @@ class ChangeHearingRequestTypeTask < Task
       update!(params)
     end
 
-    def update_hearing_email_recipients(payload_values, params)
-      # do we need to save the original appellant and poa info?
+    perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
+  end
 
-      # FIX ME: the payload values depend on what the front end named them
-      # THESE VALUES WILL MOST LIKELY HAVE TO BE CHANGED
-
-      # create HER object for appellant
-      AppellantHearingEmailRecipient.create!(
-        email_address: payload_values[:veteran_email_address],
-        timezone: payload_values[:veteran_timezone],
-        type: "AppellantHearingEmailRecipient",
-        appeal_id: appeal.uuid,
-        appeal_type: "deadass idk"
-      )
-      # create HER object for poa
-      RepresentativeHearingEmailRecipient.create!(
-        email_address: "test@email.com",
-        timezone: representative_tz,
-        type: "RepresentativeHearingEmailRecipient",
-        appeal_id: appeal.uuid,
-        appeal_type: "deadass idk"
-      )
-      # idk if this is needed
-      # update!(params)
+  # gets id based on the appeal type
+  def get_appeal_id(appeal)
+    if appeal.is_a?(LegacyAppeal)
+      return appeal.vacols_id
     end
 
-    perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
+    appeal.uuid
+  end
+
+  def update_hearing_email_recipients(payload_values, params)
+    # do we need to save the original appellant and poa info?
+    # create HER object for appellant
+    AppellantHearingEmailRecipient.create!(
+      email_address: payload_values[:email_address],
+      timezone: payload_values[:timezone],
+      type: "AppellantHearingEmailRecipient",
+      appeal_id: appeal.uuid,
+      appeal_type: get_appeal_id(appeal)
+    )
+    # create HER object for poa
+    RepresentativeHearingEmailRecipient.create!(
+      email_address: business_payloads[:email_address],
+      timezone: payload_values[:timezone],
+      type: "RepresentativeHearingEmailRecipient",
+      appeal_id: appeal.uuid,
+      appeal_type: get_appeal_id(appeal)
+    )
+    # idk if this is needed
+    update!(params)
   end
 
   def set_assignee
