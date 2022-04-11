@@ -356,11 +356,6 @@ class QueueApp extends React.PureComponent {
     <CancelTaskModal {...props.match.params} />
   );
 
-
-  routedReturnToEmo = (props) => (
-    <CancelTaskModal {...props.match.params} />
-  );
-
   routedCancelTaskModal = (props) => (
     <CancelTaskModal {...props.match.params} />
   );
@@ -910,12 +905,6 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
                 }`}
               render={this.routedReturnToCamo}
-            />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
-                }`}
-              render={this.routedReturnToEmo}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
