@@ -51,7 +51,15 @@ describe ChangeHearingRequestTypeTask do
                 "business_payloads": {
                   "values": {
                     "changed_hearing_request_type": "V",
-                    "closest_regional_office": nil
+                    "closest_regional_office": nil,
+                    "appellant_email_address": "veteran@va.gov",
+                    "appellant_timezone": "?",
+                    "appellant_type": "AppellantHearingEmailRecipient",
+                    "email_address": "poa@va.gov",
+                    "timezone": "?",
+                    "type": "RepresentativeHearingEmailRecipient",
+                    "appeal_id": "1231234",
+                    "appeal_type": "LegacyAppeal"
                   }
                 }
               }

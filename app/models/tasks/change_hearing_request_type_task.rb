@@ -61,7 +61,9 @@ class ChangeHearingRequestTypeTask < Task
 
     if payload_values&.[](:changed_hearing_request_type).present?
       update_appeal_and_self(payload_values, params)
-
+      if user.can?("VSO")
+        update_hearing_email_recipients(payload_values, params)
+      end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       cancel_self_and_hearing_task_parents_without_callbacks
@@ -114,20 +116,30 @@ class ChangeHearingRequestTypeTask < Task
   def update_hearing_email_recipients(payload_values, params)
     # do we need to save the original appellant and poa info?
     # create HER object for appellant
+    appeal_id_temp = 0
+    appeal_type_temp = " "
+    if appeal.is_a?(LegacyAppeal)
+      appeal_id_temp = appeal.vacols_id
+      appeal_type_temp = "LegacyAppeal"
+    else
+      appeal_id_temp = appeal.uuid
+      appeal_type_temp = "Appeal"
+    end
+    # create HER object for appellant
     AppellantHearingEmailRecipient.create!(
       email_address: payload_values[:email_address],
       timezone: payload_values[:timezone],
       type: "AppellantHearingEmailRecipient",
-      appeal_id: appeal.uuid,
-      appeal_type: get_appeal_id(appeal)
+      appeal_id: appeal_id_temp,
+      appeal_type: appeal_type_temp
     )
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
       email_address: business_payloads[:email_address],
       timezone: payload_values[:timezone],
       type: "RepresentativeHearingEmailRecipient",
-      appeal_id: appeal.uuid,
-      appeal_type: get_appeal_id(appeal)
+      appeal_id: appeal_id_temp,
+      appeal_type: appeal_type_temp
     )
     # idk if this is needed
     update!(params)
