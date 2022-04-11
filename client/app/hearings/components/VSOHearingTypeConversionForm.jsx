@@ -64,9 +64,11 @@ export const VSOHearingTypeConversionForm = ({
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
         <p>{COPY.CONVERT_HEARING_TYPE_SUBTITLE_3}</p>
         <VSOAppellantSection {...sectionProps} />
-        <VSORepresentativeSection {...sectionProps} showDivider />
-        <p></p>
-        <Checkbox
+        <VSORepresentativeSection 
+        {...sectionProps} 
+        showDivider
+        />
+        <Checkbox 
             label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
             name="affirmPermission"
             value

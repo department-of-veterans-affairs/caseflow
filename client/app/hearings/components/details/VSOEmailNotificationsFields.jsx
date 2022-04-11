@@ -45,8 +45,7 @@ export const VSOEmailNotificationsFields = ({
           error={errors?.appellantEmailAddress}
           update={update}
         />
-        <p></p>
-        <div {...input8px}>
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}{...input8px}>
           <Timezone
             required={true}
             errorMessage={errors?.appellantTz}
