@@ -1,15 +1,15 @@
-import { sprintf } from "sprintf-js";
-import AppSegment from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment";
-import PropTypes from "prop-types";
-import React from "react";
+import { sprintf } from 'sprintf-js';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import { VSOAppellantSection } from "./VirtualHearings/VSOAppellantSection";
-import { VSORepresentativeSection } from "./VirtualHearings/VSORepresentativeSection";
-import { getAppellantTitle } from "../utils";
-import { marginTop, saveButton, cancelButton } from "./details/style";
-import Checkbox from "../../components/Checkbox";
-import Button from "../../components/Button";
-import COPY from "../../../COPY";
+import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
+import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
+import { getAppellantTitle } from '../utils';
+import { marginTop, saveButton, cancelButton } from './details/style';
+import Checkbox from '../../components/Checkbox';
+import Button from '../../components/Button';
+import COPY from '../../../COPY';
 
 export const VSOHearingTypeConversionForm = ({
   appeal,
@@ -72,7 +72,7 @@ export const VSOHearingTypeConversionForm = ({
               <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
               <a
                 href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                style={{ textDecoration: "underline" }}
+                style={{ textDecoration: 'underline' }}
               >
                 Learn more
               </a>
@@ -113,7 +113,7 @@ VSOHearingTypeConversionForm.defaultProps = {
 
 VSOHearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
-  type: PropTypes.oneOf(["Virtual"]),
+  type: PropTypes.oneOf(['Virtual']),
   isLoading: PropTypes.bool,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,

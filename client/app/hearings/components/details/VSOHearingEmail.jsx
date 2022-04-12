@@ -1,11 +1,11 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { isEmpty } from "lodash";
-import classnames from "classnames";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { isEmpty } from 'lodash';
+import classnames from 'classnames';
 
-import { ReadOnly } from "../details/ReadOnly";
-import { enablePadding } from "../details/style";
-import TextField from "../../../components/TextField";
+import { ReadOnly } from '../details/ReadOnly';
+import { enablePadding } from '../details/style';
+import TextField from '../../../components/TextField';
 
 export const VSOHearingEmail = ({
   email,
@@ -19,7 +19,7 @@ export const VSOHearingEmail = ({
   optional,
 }) =>
   readOnly ? (
-    <ReadOnly label={label} text={email ?? "None"} />
+    <ReadOnly label={label} text={email ?? 'None'} />
   ) : (
     <React.Fragment>
       <TextField
@@ -31,12 +31,12 @@ export const VSOHearingEmail = ({
         required={!disabled && required}
         strongLabel
         className={[
-          classnames("cf-form-textinput", "cf-inline-field", {
+          classnames('cf-form-textinput', 'cf-inline-field', {
             [enablePadding]: error,
           }),
         ]}
         onChange={(newEmail) =>
-          update("hearing", {
+          update('hearing', {
             [emailType]: isEmpty(newEmail) ? null : newEmail,
           })
         }
