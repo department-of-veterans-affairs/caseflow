@@ -83,8 +83,8 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
-  # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Necessary vars needed to create virtual hearing links & conference link links
+  # Used by VirtualHearings::LinkService & ConferenceLinks::LinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"

@@ -97,6 +97,7 @@ class HearingSerializer
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+      #{}ConferenceLinkSerializer.new(object.conference_link).serializable_hash[:data][:attributes]
     end
   end
   attribute :email_events, if: for_full, &:serialized_email_events
