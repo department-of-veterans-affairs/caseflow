@@ -82,7 +82,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <RadioField
             name="vhaCompleteTaskDocLocation"
             id="vhaCompleteTaskDocLocation"
-            label={COPY.COMPLETE_TASK_MODAL_TITLE}
+            label={COPY.VHA_COMPLETE_TASK_MODAL_TITLE}
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
