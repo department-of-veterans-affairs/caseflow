@@ -19,7 +19,7 @@ class EducationAssignedTasksTab < QueueTab
 
     def tasks
       # TODO: Adjust to meet AC
-      assigned_tasks
+      on_hold_task_children_and_timed_hold_parents
     end
 
     def column_names
