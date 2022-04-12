@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
-import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields.jsx';
+import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields';
 
 export const VSOAppellantSection = ({
   hearing,
