@@ -61,6 +61,7 @@ class ChangeHearingRequestTypeTask < Task
 
     if payload_values&.[](:changed_hearing_request_type).present?
       update_appeal_and_self(payload_values, params)
+      # FIX ME make sure task is actually assigned to the user as well
       if user.can?("VSO")
         update_hearing_email_recipients(payload_values, params)
       end
@@ -104,41 +105,23 @@ class ChangeHearingRequestTypeTask < Task
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
-  # gets id based on the appeal type
-  def get_appeal_id(appeal)
-    if appeal.is_a?(LegacyAppeal)
-      return appeal.vacols_id
-    end
-
-    appeal.uuid
-  end
-
   def update_hearing_email_recipients(payload_values, params)
-    # get the id and type values based on if the appeal is legacy or ama
-    appeal_id_temp = 0
-    appeal_type_temp = " "
-    if appeal.is_a?(LegacyAppeal)
-      appeal_id_temp = appeal.vacols_id
-      appeal_type_temp = "LegacyAppeal"
-    else
-      appeal_id_temp = appeal.uuid
-      appeal_type_temp = "Appeal"
-    end
+    # FIX ME: do we need to clear the appeal's HERs beforehand?
     # create HER object for appellant
     AppellantHearingEmailRecipient.create!(
       email_address: payload_values[:appellant_email_address],
       timezone: payload_values[:appellant_timezone],
       type: "AppellantHearingEmailRecipient",
-      appeal_id: appeal_id_temp,
-      appeal_type: appeal_type_temp
+      appeal_id: appeal.id,
+      appeal_type: appeal.class.name
     )
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
       email_address: "",
       timezone: payload_values[:poa_timezone],
       type: "RepresentativeHearingEmailRecipient",
-      appeal_id: appeal_id_temp,
-      appeal_type: appeal_type_temp
+      appeal_id: appeal.id,
+      appeal_type: appeal.class.name
     )
     # idk if this is needed
     update!(params)
