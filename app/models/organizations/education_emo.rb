@@ -6,4 +6,8 @@ class EducationEmo < Organization
   def self.singleton
     EducationEmo.first || EducationEmo.create(name: "Executive Management Office", url: "edu-emo")
   end
+
+  def assigned_tasks_tab
+    ::EMOAssignedTasksTab.new(assignee: self)
+  end
 end
