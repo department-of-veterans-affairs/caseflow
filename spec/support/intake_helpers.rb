@@ -265,12 +265,20 @@ module IntakeHelpers
     EndProductEstablishment.find_by(source: claim_review).reference_id
   end
 
+  def select_intake_nonrating_benefit_type(benefit_type)
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+  end
+
   def add_intake_nonrating_issue(
     benefit_type: "Compensation",
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
-    legacy_issues: false
+    legacy_issues: false,
+    is_predocket_needed: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
@@ -281,6 +289,12 @@ module IntakeHelpers
     if page.has_css?("#issue-benefit-type", wait: 0)
       fill_in "Benefit type", with: benefit_type
       find("#issue-benefit-type").send_keys :enter
+    end
+
+    if page.has_css?("div.cf-is-predocket-needed", wait: 1)
+      within_fieldset("Is pre-docketing needed for this issue?") do
+        find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
+      end
     end
 
     fill_in "Issue category", with: category

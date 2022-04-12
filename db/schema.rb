@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_07_213343) do
+ActiveRecord::Schema.define(version: 2022_03_29_163603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1262,6 +1262,7 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
     t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
     t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+    t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"

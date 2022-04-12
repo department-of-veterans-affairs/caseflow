@@ -1204,7 +1204,7 @@
   "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
   "DOCKET_APPEAL_INSTRUCTIONS_NOTE": "This appeal has been docketed, and this task is no longer necessary.",
-  "VHA_ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
+  "ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "REVIEW_DOCUMENTATION_TASK_LABEL": "Review Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
