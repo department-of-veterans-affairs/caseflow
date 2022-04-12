@@ -1,3 +1,4 @@
+SingleCov.covered!
 # frozen_string_literal: true
 
 describe DispatchEmailJob do
@@ -7,6 +8,14 @@ describe DispatchEmailJob do
 
   let(:send_email_job) do
     DispatchEmailJob.new(appeal: appeal, type: type, email_address: email_address)
+  end
+
+  let(:error) do
+    StandardError.new("Error")
+  end
+
+  before do
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
   end
 
   describe "#call" do
@@ -67,6 +76,14 @@ describe DispatchEmailJob do
 
       it "returns false, doesn't send the email" do
         expect(subject).to eq(false)
+      end
+    end
+
+    context "an error is thrown" do
+      it "rescues error and logs to sentry" do
+        allow_any_instance_of(DispatchMailer).to receive(:dispatch).and_raise(error)
+        send_email_job.call
+        expect(@raven_called).to eq(true)
       end
     end
   end
