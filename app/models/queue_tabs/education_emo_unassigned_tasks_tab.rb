@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VhaCamoAssignedTasksTab < QueueTab
+class EducationEmoUnassignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   attr_accessor :show_reader_link_column, :allow_bulk_assign
@@ -10,7 +10,7 @@ class VhaCamoAssignedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.EDUCATION_ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.EDUCATION_UNASSIGNED_TASKS_TAB_NAME
   end
 
   def description
@@ -19,8 +19,8 @@ class VhaCamoAssignedTasksTab < QueueTab
 
   # In each case, if the EMO task is assigned, then it should meet each use case for the unassigned tab
   def tasks
-    #Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
-    Task.includes(*task_includes).visible_in_queue_table_view.where(education_document_search_task.assigned)
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    #Task.includes(*task_includes).visible_in_queue_table_view.where(education_document_search_task.assigned)
     
   end
 
