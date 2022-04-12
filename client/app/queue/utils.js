@@ -364,6 +364,7 @@ export const prepareAppealForStore = (appeals) => {
 
     accumulator[appeal.attributes.external_id] = {
       id: appeal.id,
+      email_recipients: appeal.attributes.email_recipients,
       externalId: appeal.attributes.external_id,
       docketName: appeal.attributes.docket_name,
       withdrawn: appeal.attributes.withdrawn,

@@ -6,6 +6,8 @@ class WorkQueue::AppealSerializer
 
   attribute :assigned_attorney
   attribute :assigned_judge
+ 
+  attribute :email_recipients
 
   attribute :contested_claim, &:contested_claim?
 
