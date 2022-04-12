@@ -25,7 +25,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     # Ensure the page has the expected content
     expect(page).to have_content("We have assigned your hearings days", wait: 30)
     expect(SchedulePeriod.count).to eq(1)
-    expect(Allocation.count).to eq(56)
+    expect(Allocation.count).to eq(57)
 
     # Confirm the assignments and upload the document
     click_on "Confirm assignments"
@@ -43,7 +43,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
   context "Build RO Hearing Schedule" do
     scenario "RO assignment process" do
       assignment_process("validRoSpreadsheet.xlsx", "01/01/2018", "05/31/2018")
-      expect(RoNonAvailability.count).to eq(216)
+      expect(RoNonAvailability.count).to eq(220)
       expect(CoNonAvailability.count).to eq(4)
 
       # Compare the Central Office hearing days
@@ -59,11 +59,11 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
 
       # Check the allocation for hearing days without rooms
       allocation_with_room_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_with_room_count).to eq(343)
+      expect(allocation_with_room_count).to eq(347)
 
       # Check the allocation for hearing days with rooms
       allocation_without_room_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
-      expect(allocation_without_room_count).to eq(605)
+      expect(allocation_without_room_count).to eq(609)
 
       # Compare the Video hearing days
       video_hearing_days = HearingDay.where(request_type: "V")
@@ -91,7 +91,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
 
       # Check the allocation virtual count
       allocation_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
-      expect(allocation_count).to eq(2101)
+      expect(allocation_count).to eq(2116)
 
       # Validate that all days with no rooms have been created
       expect(virtual_hearing_days.count).to eq(allocation_count)
