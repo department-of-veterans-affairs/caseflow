@@ -117,7 +117,7 @@ class ChangeHearingRequestTypeTask < Task
     )
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
-      email_address: "",
+      email_address: "attorney@law.com",
       timezone: payload_values[:email_recipients][:representative_tz],
       type: "RepresentativeHearingEmailRecipient",
       appeal_id: appeal.id,
