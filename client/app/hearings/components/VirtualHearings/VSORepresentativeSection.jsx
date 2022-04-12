@@ -19,10 +19,8 @@ export const VSORepresentativeSection = ({
   fullWidth,
   update,
   appellantTitle,
-  showTimezoneField,
   showDivider,
   formFieldsOnly,
-  representativeEmailAddress,
   representativeTimezone,
   representativeEmailType
 }) => (
@@ -45,7 +43,7 @@ export const VSORepresentativeSection = ({
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    
+
     <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
       <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
         <HearingEmail

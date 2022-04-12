@@ -83,7 +83,7 @@ export const HearingTypeConversion = ({
   };
 
   return (
-    <HearingTypeConversionForm
+    <VSOHearingTypeConversionForm
       appeal={appeal}
       history={history}
       isLoading={loading}

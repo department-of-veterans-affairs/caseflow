@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import { marginTop, input8px } from "../details/style";
 import { VSOHearingEmail } from "./VSOHearingEmail";
-import { EmailNotificationHistory } from "./EmailNotificationHistory";
 import { Timezone } from "../VirtualHearings/Timezone";
 import { HelperText } from "../VirtualHearings/HelperText";
 import COPY from "../../../../COPY";
@@ -12,13 +11,11 @@ import { getAppellantTitle, readOnlyEmails } from "../../utils";
 
 export const VSOEmailNotificationsFields = ({
   errors,
-  initialRepresentativeTz,
   hearing,
   readOnly,
   update,
   time,
   roTimezone,
-  header,
 }) => {
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);

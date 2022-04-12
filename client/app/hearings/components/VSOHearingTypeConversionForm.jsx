@@ -51,12 +51,6 @@ export const VSOHearingTypeConversionForm = ({
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
-  const convertSubtitle = sprintf(
-    COPY.CONVERT_HEARING_TYPE_SUBTITLE,
-    appeal?.closestRegionalOfficeLabel ?
-      `<strong>${appeal.closestRegionalOfficeLabel}</strong>` :
-      COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
-  );
 
   return (
     <React.Fragment>
