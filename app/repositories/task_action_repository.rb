@@ -327,6 +327,17 @@ class TaskActionRepository
       }
     end
 
+    def edu_complete_data(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        instructions: [],
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     def schedule_veteran_data(_task, _user = nil)
       {
         selected: nil,

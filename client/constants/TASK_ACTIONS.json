@@ -408,5 +408,10 @@
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "vha_mark_task_in_progress"
+  },
+  "EDUCATION_READY_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/ready_for_review",
+    "func": "edu_complete_data"
   }
 }
