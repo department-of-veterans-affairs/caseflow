@@ -3,6 +3,7 @@ SingleCov.covered!
 describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
+  let(:vso_user) { create(:user, roles: ["VSO"]) }
 
   describe "#update_from_params" do
     subject { task.update_from_params(payload, user) }
@@ -126,6 +127,40 @@ describe ChangeHearingRequestTypeTask do
             end
           end
         end
+      end
+    end
+  end
+  # section for testing update_from_params as a VSO user
+  describe("#update_from_params as a VSO user") do
+    subject { task.update_from_params(payload, vso_user) }
+
+    context "a VSO user tries to convert an appellant to virtual from video" do
+      let(:vacols_case) { create(:case, :video_hearing_requested) }
+      let(:payload) do
+        {
+          "status": "completed",
+          "business_payloads": {
+            "values": {
+              "changed_hearing_request_type": "R",
+              "closest_regional_office": "RO17", 
+              "email_recipients": {
+                "appellant_tz": "America/New_York",
+                "representative_tz": "America/Los_Angeles",
+                "appellant_email": "asjkfjdkjfd@va.gov"
+              }
+            }
+          }
+        }
+      end
+
+      it "updates the hearing request type in VACOLS" do
+        expect(vacols_case.bfhr).to eq "2"
+        expect(vacols_case.bfdocind).to eq "V"
+
+        #subject
+
+        #expect(vacols_case.reload.bfhr).to eq "2"
+        #expect(vacols_case.reload.bfdocind).to eq "V"
       end
     end
   end
