@@ -14,6 +14,6 @@ class EducationEmo < Organization
   end
 
   def assigned_tasks_tab
-    ::EMOAssignedTasksTab.new(assignee: self)
+    ::EducationAssignedTasksTab.new(assignee: self)
   end
 end

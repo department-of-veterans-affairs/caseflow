@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EMOAssignedTasksTab < QueueTab
+class EducationAssignedTasksTab < QueueTab
     validate :assignee_is_organization
 
     attr_accessor :show_reader_link_column, :allow_bulk_assign
@@ -10,7 +10,7 @@ class EMOAssignedTasksTab < QueueTab
     end
 
     def self.tab_name
-      Constants.QUEUE_CONFIG.EMO_ASSIGNED_TASKS_TAB_NAME
+      Constants.QUEUE_CONFIG.EDUCATION_ASSIGNED_TASKS_TAB_NAME
     end
 
     def description
