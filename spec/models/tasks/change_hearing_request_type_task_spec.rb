@@ -104,7 +104,12 @@ describe ChangeHearingRequestTypeTask do
                 "business_payloads": {
                   "values": {
                     "changed_hearing_request_type": "R",
-                    "closest_regional_office": "RO17"
+                    "closest_regional_office": "RO17", 
+                    "email_recipients": {
+                      "appellant_tz": "America/New_York",
+                      "representative_tz": "America/Los_Angeles",
+                      "appellant_email": "asjkfjdkjfd@va.gov"
+                    }
                   }
                 }
               }

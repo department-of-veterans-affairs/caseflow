@@ -109,8 +109,8 @@ class ChangeHearingRequestTypeTask < Task
     # FIX ME: do we need to clear the appeal's HERs beforehand?
     # create HER object for appellant
     AppellantHearingEmailRecipient.create!(
-      email_address: payload_values[:appellant_email_address],
-      timezone: payload_values[:appellant_timezone],
+      email_address: payload_values[:email_recipients][:appellant_email],
+      timezone: payload_values[:email_recipients][:appellant_tz],
       type: "AppellantHearingEmailRecipient",
       appeal_id: appeal.id,
       appeal_type: appeal.class.name
@@ -118,7 +118,7 @@ class ChangeHearingRequestTypeTask < Task
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
       email_address: "",
-      timezone: payload_values[:poa_timezone],
+      timezone: payload_values[:email_recipients][:representative_tz],
       type: "RepresentativeHearingEmailRecipient",
       appeal_id: appeal.id,
       appeal_type: appeal.class.name
