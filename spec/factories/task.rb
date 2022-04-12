@@ -510,6 +510,11 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :education_assess_documentation_task, class: EducationAssessDocumentationTask do
+        parent { create(:education_document_search_task, appeal: appeal) }
+        assigned_by { nil }
+      end
+
       factory :aod_motion_mail_task, class: AodMotionMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
