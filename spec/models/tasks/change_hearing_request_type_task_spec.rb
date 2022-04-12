@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+SingleCov.covered!
 describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
@@ -54,12 +54,7 @@ describe ChangeHearingRequestTypeTask do
                     "closest_regional_office": nil,
                     "appellant_email_address": "veteran@va.gov",
                     "appellant_timezone": "?",
-                    "appellant_type": "AppellantHearingEmailRecipient",
-                    "email_address": "poa@va.gov",
-                    "timezone": "?",
-                    "type": "RepresentativeHearingEmailRecipient",
-                    "appeal_id": "1231234",
-                    "appeal_type": "LegacyAppeal"
+                    "poa_timezone": "?"
                   }
                 }
               }

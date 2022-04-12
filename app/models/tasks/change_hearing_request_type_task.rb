@@ -114,8 +114,7 @@ class ChangeHearingRequestTypeTask < Task
   end
 
   def update_hearing_email_recipients(payload_values, params)
-    # do we need to save the original appellant and poa info?
-    # create HER object for appellant
+    # get the id and type values based on if the appeal is legacy or ama
     appeal_id_temp = 0
     appeal_type_temp = " "
     if appeal.is_a?(LegacyAppeal)
@@ -127,16 +126,16 @@ class ChangeHearingRequestTypeTask < Task
     end
     # create HER object for appellant
     AppellantHearingEmailRecipient.create!(
-      email_address: payload_values[:email_address],
-      timezone: payload_values[:timezone],
+      email_address: payload_values[:appellant_email_address],
+      timezone: payload_values[:appellant_timezone],
       type: "AppellantHearingEmailRecipient",
       appeal_id: appeal_id_temp,
       appeal_type: appeal_type_temp
     )
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
-      email_address: business_payloads[:email_address],
-      timezone: payload_values[:timezone],
+      email_address: "",
+      timezone: payload_values[:poa_timezone],
       type: "RepresentativeHearingEmailRecipient",
       appeal_id: appeal_id_temp,
       appeal_type: appeal_type_temp
