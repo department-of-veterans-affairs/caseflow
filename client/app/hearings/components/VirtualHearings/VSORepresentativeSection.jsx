@@ -1,15 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
-import COPY from '../../../../COPY';
-import { AddressLine } from '../details/Address';
-import { VirtualHearingSection } from './Section';
-import { ReadOnly } from '../details/ReadOnly';
-import { HelperText } from './HelperText';
-import { HearingEmail } from '../details/HearingEmail';
-import { Timezone } from './Timezone';
-import { marginTop } from '../details/style';
+import COPY from "../../../../COPY";
+import { AddressLine } from "../details/Address";
+import { VirtualHearingSection } from "./Section";
+import { ReadOnly } from "../details/ReadOnly";
+import { HelperText } from "./HelperText";
+import { HearingEmail } from "../details/HearingEmail";
+import { Timezone } from "./Timezone";
+import { marginTop } from "../details/style";
 
 export const VSORepresentativeSection = ({
   hearing,
@@ -22,13 +22,20 @@ export const VSORepresentativeSection = ({
   showDivider,
   formFieldsOnly,
   representativeTimezone,
-  representativeEmailType
+  representativeEmailType,
 }) => (
-  <VirtualHearingSection formFieldsOnly={formFieldsOnly} label="Power of Attorney (POA)" showDivider={showDivider}>
+  <VirtualHearingSection
+    formFieldsOnly={formFieldsOnly}
+    label="Power of Attorney (POA)"
+    showDivider={showDivider}
+  >
     {hearing?.representative ? (
       <React.Fragment>
         {formFieldsOnly ? (
-          <ReadOnly label={hearing?.representativeType} text={hearing?.representativeName || hearing?.representative} />
+          <ReadOnly
+            label={hearing?.representativeType}
+            text={hearing?.representativeName || hearing?.representative}
+          />
         ) : (
           <AddressLine
             label={hearing?.representativeType}
@@ -41,11 +48,17 @@ export const VSORepresentativeSection = ({
         )}
       </React.Fragment>
     ) : (
-      <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
+      <ReadOnly
+        text={`The ${appellantTitle} does not have a representative recorded in VBMS`}
+      />
     )}
 
-    <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-      <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
+    <div className={classNames("usa-grid", { [marginTop(30)]: true })}>
+      <div
+        className={classNames(
+          fullWidth ? "usa-width-one-whole" : "usa-width-one-half"
+        )}
+      >
         <HearingEmail
           optional
           readOnly={readOnly}
@@ -59,29 +72,33 @@ export const VSORepresentativeSection = ({
       </div>
     </div>
 
-    <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
-          <Timezone
-            errorMessage={errors?.representativeTz}
-            required={true}
-            value={representativeTimezone}
-            onChange={(representativeTz) =>
-              update('hearing', { representativeTz })
-            }
-            time={hearing.scheduledTimeString}
-            roTimezone={hearing?.regionalOfficeTimezone}
-            label="POA/Representative Timezone"
-            name="representativeTz"
-          />
-          <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-        </div>
+    <div className={classNames("usa-grid", { [marginTop(30)]: true })}>
+      <div
+        className={classNames(
+          fullWidth ? "usa-width-one-whole" : "usa-width-one-half"
+        )}
+      >
+        <Timezone
+          errorMessage={errors?.representativeTz}
+          required={true}
+          value={representativeTimezone}
+          onChange={(representativeTz) =>
+            update("hearing", { representativeTz })
+          }
+          time={hearing.scheduledTimeString}
+          roTimezone={hearing?.regionalOfficeTimezone}
+          label="POA/Representative Timezone"
+          name="representativeTz"
+        />
+        <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
       </div>
+    </div>
   </VirtualHearingSection>
 );
 
 VSORepresentativeSection.defaultProps = {
   schedulingToVirtual: true,
-  formFieldsOnly: false
+  formFieldsOnly: false,
 };
 
 VSORepresentativeSection.propTypes = {
@@ -99,5 +116,5 @@ VSORepresentativeSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
-  representativeEmailType: PropTypes.string
+  representativeEmailType: PropTypes.string,
 };

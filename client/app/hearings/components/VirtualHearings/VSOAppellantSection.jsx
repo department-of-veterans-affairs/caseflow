@@ -1,10 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-
-import { VirtualHearingSection } from './Section';
-import { ReadOnly } from '../details/ReadOnly';
-import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields.jsx'; 
+import { VirtualHearingSection } from "./Section";
+import { ReadOnly } from "../details/ReadOnly";
+import { VSOEmailNotificationsFields } from "../details/VSOEmailNotificationsFields.jsx";
 
 export const VSOAppellantSection = ({
   hearing,
@@ -14,25 +13,28 @@ export const VSOAppellantSection = ({
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
-  const appellantName = hearing?.appellantIsNotVeteran ?
-    (hearing?.appellantFullName || `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`) :
-    (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
+  const appellantName = hearing?.appellantIsNotVeteran
+    ? hearing?.appellantFullName ||
+      `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`
+    : hearing?.veteranFullName ||
+      `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
 
   return (
-    <VirtualHearingSection formFieldsOnly={formFieldsOnly} label={appellantTitle} showDivider={showDivider}>
+    <VirtualHearingSection
+      formFieldsOnly={formFieldsOnly}
+      label={appellantTitle}
+      showDivider={showDivider}
+    >
       <React.Fragment>
-        <ReadOnly
-              label={`${appellantTitle} Name`}
-              text={appellantName}
-        />
-        <VSOEmailNotificationsFields/>
+        <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
+        <VSOEmailNotificationsFields />
       </React.Fragment>
     </VirtualHearingSection>
   );
 };
 
 VSOAppellantSection.defaultProps = {
-  schedulingToVirtual: true
+  schedulingToVirtual: true,
 };
 
 VSOAppellantSection.propTypes = {
@@ -53,5 +55,5 @@ VSOAppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string
+  appellantEmailType: PropTypes.string,
 };
