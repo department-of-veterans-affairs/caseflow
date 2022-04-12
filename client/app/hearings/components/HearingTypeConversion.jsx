@@ -6,7 +6,6 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 import { appealWithDetailSelector, taskById } from '../../queue/selectors';
 import { deleteAppeal } from '../../queue/QueueActions';
@@ -83,7 +82,7 @@ export const HearingTypeConversion = ({
   };
 
   return (
-    <VSOHearingTypeConversionForm
+    <HearingTypeConversionForm
       appeal={appeal}
       history={history}
       isLoading={loading}
