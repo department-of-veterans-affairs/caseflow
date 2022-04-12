@@ -510,7 +510,7 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
-      factory :edu_assess_documentation_task, class: EduAssessDocumentationTask do
+      factory :education_assess_documentation_task, class: EducationAssessDocumentationTask do
         parent { create(:education_document_search_task, appeal: appeal) }
         assigned_by { nil }
       end

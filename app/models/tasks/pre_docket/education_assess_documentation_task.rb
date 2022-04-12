@@ -4,7 +4,7 @@
 # Task that is assigned to a EduRegionalProcessingOffice organization for them to locate
 # the appropriate documents for an appeal. 
 
-class EduAssessDocumentationTask < Task
+class EducationAssessDocumentationTask < Task
     validates :parent, presence: true,
                        on: :create
   

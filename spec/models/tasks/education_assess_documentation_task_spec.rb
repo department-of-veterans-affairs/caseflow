@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe EduAssessDocumentationTask, :postgres do
+describe EducationAssessDocumentationTask, :postgres do
     let(:user) { create(:user) }
   
     context "#available_actions" do
       describe "for regional processing office user" do
         let(:regional_processing_office) { EduRegionalProcessingOffice.create!(name: "Regional Processing Office", url: "Regional Processing Office") }
-        let(:regional_processing_office_task) { create(:edu_assess_documentation_task, assigned_to: regional_processing_office) }
+        let(:regional_processing_office_task) { create(:education_assess_documentation_task, assigned_to: regional_processing_office) }
         
         it "task should be assigned to RPO" do
            expect(regional_processing_office_task.assigned_to).to eq(regional_processing_office)
