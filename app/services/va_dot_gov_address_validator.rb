@@ -135,8 +135,8 @@ class VaDotGovAddressValidator
     # facility ID to the Houston RO.
     if veteran_lives_in_texas?
       facility_ids << "vha_671GS" # include San Antonio facility id
-      facility_ids << "vba_349i" # include el paso given san antonio is closer to the Houston RO than Waco (which el paso is an AHL for Waco)
-    end 
+      facility_ids << "vba_349i" # include el paso
+    end
 
     facility_ids
   end
