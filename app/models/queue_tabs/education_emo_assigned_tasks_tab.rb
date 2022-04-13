@@ -17,7 +17,7 @@ class EducationEmoAssignedTasksTab < QueueTab
     format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
-  def assigned_tasks_ids_where_parent_has_been_docketed
+  def task_ids_where_parent_has_been_docketed
     closed_tasks
       .select { |task| task.parent.status == Constants.TASK_STATUSES.completed }
       .pluck(:id)
@@ -29,7 +29,7 @@ class EducationEmoAssignedTasksTab < QueueTab
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (tasks_emo_sent_elsewhere - assigned_tasks_ids_where_parent_has_been_docketed)
+      id: (tasks_emo_sent_elsewhere - task_ids_where_parent_has_been_docketed)
     )
   end
 
