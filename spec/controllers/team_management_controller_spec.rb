@@ -46,7 +46,7 @@ describe TeamManagementController, :postgres, type: :controller do
           expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["private_bars"].first["accepts_priority_pushed_cases"]).to be nil
           expect(response_body["other_orgs"].length).to eq(other_org_count)
-          expect(response_body["edu_regional_processing_office"].length).to eq(edu_regional_processing_office_count)
+          expect(response_body["edu_regional_processing_offices"].length).to eq(rpos.count)
         end
       end
 
