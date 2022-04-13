@@ -53,9 +53,6 @@ describe ChangeHearingRequestTypeTask do
                   "values": {
                     "changed_hearing_request_type": "V",
                     "closest_regional_office": nil,
-                    "appellant_email_address": "veteran@va.gov",
-                    "appellant_timezone": "?",
-                    "poa_timezone": "?"
                   }
                 }
               }
@@ -105,12 +102,7 @@ describe ChangeHearingRequestTypeTask do
                 "business_payloads": {
                   "values": {
                     "changed_hearing_request_type": "R",
-                    "closest_regional_office": "RO17", 
-                    "email_recipients": {
-                      "appellant_tz": "America/New_York",
-                      "representative_tz": "America/Los_Angeles",
-                      "appellant_email": "asjkfjdkjfd@va.gov"
-                    }
+                    "closest_regional_office": "RO17"
                   }
                 }
               }
@@ -131,10 +123,24 @@ describe ChangeHearingRequestTypeTask do
     end
   end
   # section for testing update_from_params as a VSO user
-  describe("#update_from_params as a VSO user") do
+  describe "#update_from_params as a VSO user" do
     subject { task.update_from_params(payload, vso_user) }
 
-    context "a VSO user tries to convert an appellant to virtual from video" do
+    let(:loc_schedule_hearing) { LegacyAppeal::LOCATION_CODES[:schedule_hearing] }
+    let(:vacols_case) { create(:case, :travel_board_hearing, bfcurloc: loc_schedule_hearing) }
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:root_task) { create(:root_task, appeal: legacy_appeal) }
+    let(:hearing_task) { create(:hearing_task, appeal: legacy_appeal, parent: root_task) }
+    let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal, parent: hearing_task) }
+    let!(:task) { create(:change_hearing_request_type_task, appeal: legacy_appeal, parent: schedule_hearing_task) }
+    #------LEGACY APPEAL ^-------------AMA APPEAL v------------------------------------------------------
+    let!(:appeal) { create(:appeal) }
+    let(:root_task1) { create(:root_task, appeal: appeal) }
+    let(:hearing_task1) { create(:hearing_task, appeal: appeal, parent: root_task1) }
+    let(:schedule_hearing_task1) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task1) }
+    let!(:task1) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task1) }
+
+    context "Legacy a VSO user tries to convert an appellant to virtual from video" do
       let(:vacols_case) { create(:case, :video_hearing_requested) }
       let(:payload) do
         {
@@ -153,14 +159,45 @@ describe ChangeHearingRequestTypeTask do
         }
       end
 
-      it "updates the hearing request type in VACOLS" do
-        expect(vacols_case.bfhr).to eq "2"
-        expect(vacols_case.bfdocind).to eq "V"
+      it "creates the email recipients with the correct info (Legacy)" do
+        subject
 
-        #subject
+        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
+        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
 
-        #expect(vacols_case.reload.bfhr).to eq "2"
-        #expect(vacols_case.reload.bfdocind).to eq "V"
+        expect(new_her_a.email_address).to_eq("asjkfjdkjfd@va.gov")
+        expect(new_her_a.timezone).to_eq("America/New_York")
+        expect(new_her_r.timezone).to_eq("America/Los_Angeles")
+      end
+    end
+    context "AMA a VSO user tries to convert an appellant to virtual from video" do
+      let(:vacols_case) { create(:case, :video_hearing_requested) }
+      let(:payload) do
+        {
+          "status": "completed",
+          "business_payloads": {
+            "values": {
+              "changed_hearing_request_type": "R",
+              "closest_regional_office": "RO17", 
+              "email_recipients": {
+                "appellant_tz": "America/New_York",
+                "representative_tz": "America/Los_Angeles",
+                "appellant_email": "asjkfjdkjfd@va.gov"
+              }
+            }
+          }
+        }
+      end
+
+      it "creates the email recipients with the correct info(AMA)" do
+        subject
+
+        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
+        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
+
+        expect(new_her_a.email_address).to_eq("asjkfjdkjfd@va.gov")
+        expect(new_her_a.timezone).to_eq("America/New_York")
+        expect(new_her_r.timezone).to_eq("America/Los_Angeles")
       end
     end
   end
