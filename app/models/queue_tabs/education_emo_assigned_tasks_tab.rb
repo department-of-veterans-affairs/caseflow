@@ -24,7 +24,7 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def tasks_emo_sent_elsewhere
-    on_hold_tasks.map(&:id) + closed_tasks.completed.map(&:id)
+    on_hold_tasks.map(&:id) + closed_tasks.map(&:id)
   end
 
   def tasks
