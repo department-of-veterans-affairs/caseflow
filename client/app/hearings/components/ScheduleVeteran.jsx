@@ -160,14 +160,25 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (!hearing?.virtualHearing?.appellantTz || !hearing.virtualHearing?.representativeTz) {
+    if (
+      !hearing?.virtualHearing?.appellantTz ||
+      !hearing?.virtualHearing?.representativeTz ||
+      !hearing?.virtualHearing?.appellantEmailAddress ||
+      !hearing?.virtualHearing?.representativeEmailAddress
+    ) {
+
+      const appellantTz = appeal?.appellant_hearing_email_recipient?.timezone;
+      const representativeTz = appeal?.representative_hearing_email_recipient?.timezone;
+
       props.onChangeFormData(
         'assignHearing',
         {
           virtualHearing: {
             status: 'pending',
-            appellantTz: appeal?.appellantTz,
-            representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
+            appellantTz: appellantTz || appeal?.appellantTz,
+            representativeTz: representativeTz || appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz,
+            appellantEmailAddress: appeal?.appellant_hearing_email_recipient?.email_address,
+            representativeEmailAddress: appeal?.appellant_hearing_email_recipient?.email_address
           }
         }
       );

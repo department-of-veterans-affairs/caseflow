@@ -71,8 +71,8 @@ export const ScheduleVeteranForm = ({
     appellantTimezone: hearing?.virtualHearing?.appellantTz,
     representativeEmailAddress: hearing?.virtualHearing?.representativeEmailAddress,
     representativeTimezone: hearing?.virtualHearing?.representativeTz,
-    appellantEmailType: 'appellantEmail',
-    representativeEmailType: 'representativeEmail',
+    appellantEmailType: 'appellantEmailAddress',
+    representativeEmailType: 'representativeEmailAddress',
     update: (_, virtualHearing) =>
       props.onChange('virtualHearing', {
         ...hearing?.virtualHearing,
