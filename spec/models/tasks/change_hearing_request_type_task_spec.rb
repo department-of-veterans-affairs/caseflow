@@ -157,16 +157,12 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
-      it "should call update_hearing_email_recipients" do
-        expect(subject).to receive(:update_hearing_email_recipients).with(payload, vso_user)
-        @subject.update_from_params # method_b is called in method
-      end
+
       it "creates the email recipients with the correct info (Legacy)" do
         subject
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
-        expect(new_her_r).to eq('r')
         expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
@@ -189,17 +185,12 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
-      it "should call update_hearing_email_recipients" do
-        expect(payload).to eq('R')
-        expect(subject).to receive(:update_hearing_email_recipients)
-        @subject.update_from_params(:payload) # method_b is called in method
-      end
+
       it "creates the email recipients with the correct info(AMA)" do
         subject
 
-        new_her1_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
+        new_her1_a = AppellantHearingEmailRecipient.find_by(email_address: "gdkfkdjfkdjf@va.gov")
         new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
-
         expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
         expect(new_her1_a.timezone).to eq("America/New_York")
         expect(new_her1_r.timezone).to eq("America/Los_Angeles")
