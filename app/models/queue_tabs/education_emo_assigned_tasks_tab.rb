@@ -18,9 +18,7 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def task_ids_where_parent_has_been_docketed
-    closed_tasks
-      .select { |task| task.parent.status == Constants.TASK_STATUSES.completed }
-      .pluck(:id)
+    closed_tasks.select { |task| task.parent.completed? }.pluck(:id)
   end
 
   def tasks_emo_sent_elsewhere
