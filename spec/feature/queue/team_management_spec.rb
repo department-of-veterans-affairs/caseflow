@@ -42,6 +42,7 @@ RSpec.feature "Team management page", :postgres do
         expect(page).to have_content("Private Bar")
         expect(page).to have_content("VHA Program Offices")
         expect(page).to have_content("VISNs")
+        expect(page).to have_content("EduRegionalProcessingOffices")
         expect(page).to have_content("Other teams")
       end
 

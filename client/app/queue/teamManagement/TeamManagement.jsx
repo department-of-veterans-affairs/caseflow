@@ -138,7 +138,7 @@ export const TeamManagement = React.memo(({
           </OrgSection> }
 
           { eduRegionalProcessingOffices && <OrgSection>
-            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_LABEL}</OrgHeader>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL}</OrgHeader>
             <OrgList orgs={eduRegionalProcessingOffices} statuses={statuses} />
           </OrgSection> }
 
@@ -192,6 +192,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    eduRegionalProcessingOffices,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -224,6 +225,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    eduRegionalProcessingOffices,
     otherOrgs,
     success,
     error,
