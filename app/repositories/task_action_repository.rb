@@ -327,17 +327,6 @@ class TaskActionRepository
       }
     end
 
-    def edu_complete_data(task, _user)
-      org = Organization.find(task.assigned_to_id)
-      queue_url = org.url
-      {
-        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
-        instructions: [],
-        type: EducationAssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
-      }
-    end
-
     def schedule_veteran_data(_task, _user = nil)
       {
         selected: nil,
@@ -484,6 +473,15 @@ class TaskActionRepository
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+      }
+    end
+
+    def emo_send_to_board_intake_for_review(*)
+      {
+        modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        modal_body: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY,
+        type: EducationDocumentSearchTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
     end
 

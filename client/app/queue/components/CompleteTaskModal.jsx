@@ -261,7 +261,15 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: SendToBoardIntakeModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
-  }
+  },
+  emo_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
 };
 
 class CompleteTaskModal extends React.Component {
