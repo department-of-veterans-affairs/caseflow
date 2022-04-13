@@ -23,13 +23,13 @@ class EducationEmoAssignedTasksTab < QueueTab
       .pluck(:id)
   end
 
-  def tasks_emo_assigned_elsewhere
+  def tasks_emo_sent_elsewhere
     on_hold_tasks.map(&:id) + closed_tasks.completed.map(&:id)
   end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (tasks_emo_assigned_elsewhere - assigned_tasks_ids_where_parent_has_been_docketed)
+      id: (tasks_emo_sent_elsewhere - assigned_tasks_ids_where_parent_has_been_docketed)
     )
   end
 
