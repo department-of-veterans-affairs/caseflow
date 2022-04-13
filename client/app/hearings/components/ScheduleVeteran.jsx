@@ -293,7 +293,7 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || virtual ? null : 'Please select a Regional Office '
       };
 
-      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmailAddress;
       const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailOrTzErrors = virtual && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
