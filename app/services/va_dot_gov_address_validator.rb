@@ -67,6 +67,11 @@ class VaDotGovAddressValidator
     @closest_regional_office ||= begin
       return unless closest_ro_response.success?
 
+      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
+      # as a valid RO for any veteran living in Texas.
+      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
+      return "RO49" if closest_regional_office_facility_id_is_el_paso?
+
       RegionalOffice
         .cities
         .detect do |ro|
@@ -120,7 +125,20 @@ class VaDotGovAddressValidator
       return RegionalOffice.ro_facility_ids - ["vba_372"]
     end
 
-    RegionalOffice.ro_facility_ids_for_state(state_code)
+    facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
+
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+    #
+    # Note: In the logic to determine the closest RO, there is logic that maps this
+    # facility ID to the Houston RO.
+    if veteran_lives_in_texas?
+      facility_ids << "vha_671GS" # include San Antonio facility id
+      facility_ids << "vba_349i" # include el paso given san antonio is closer to the Houston RO than Waco (which el paso is an AHL for Waco)
+    end 
+
+    facility_ids
   end
 
   private
