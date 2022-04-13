@@ -129,12 +129,14 @@ describe ChangeHearingRequestTypeTask do
     let(:loc_schedule_hearing) { LegacyAppeal::LOCATION_CODES[:schedule_hearing] }
     let(:vacols_case) { create(:case, :travel_board_hearing, bfcurloc: loc_schedule_hearing) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:params) { { format: :json, appeal_id: legacy_appeal.id } }
     let(:root_task) { create(:root_task, appeal: legacy_appeal) }
     let(:hearing_task) { create(:hearing_task, appeal: legacy_appeal, parent: root_task) }
     let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal, parent: hearing_task) }
     let!(:task) { create(:change_hearing_request_type_task, appeal: legacy_appeal, parent: schedule_hearing_task) }
     #------LEGACY APPEAL ^-------------AMA APPEAL v------------------------------------------------------
     let!(:appeal) { create(:appeal) }
+    let(:params) { { format: :json, appeal_id: "jfs03fj9sjefe9sjek" } }
     let(:root_task1) { create(:root_task, appeal: appeal) }
     let(:hearing_task1) { create(:hearing_task, appeal: appeal, parent: root_task1) }
     let(:schedule_hearing_task1) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task1) }
@@ -150,7 +152,7 @@ describe ChangeHearingRequestTypeTask do
               "changed_hearing_request_type": "R",
               "closest_regional_office": "RO17", 
               "email_recipients": {
-                "appellant_tz": "America/New_York",
+                "appellant_tz": "America/Los_Angeles",
                 "representative_tz": "America/Los_Angeles",
                 "appellant_email": "asjkfjdkjfd@va.gov"
               }
@@ -158,7 +160,10 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
-
+      it "should call update_hearing_email_recipients" do
+        expect(subject).to receive(:update_hearing_email_recipients)
+        @subject.update_from_params(:payload) # method_b is called in method
+      end
       it "creates the email recipients with the correct info (Legacy)" do
         subject
 
@@ -182,7 +187,8 @@ describe ChangeHearingRequestTypeTask do
               "email_recipients": {
                 "appellant_tz": "America/New_York",
                 "representative_tz": "America/Los_Angeles",
-                "appellant_email": "asjkfjdkjfd@va.gov"
+                "appellant_email": "asjkfjdkjfd@va.gov",
+                "poa_email": "awifjelsijfesjfdifjdl@va.gov"
               }
             }
           }
