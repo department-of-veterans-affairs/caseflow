@@ -57,7 +57,6 @@ FactoryBot.define do
       type { EduRegionalProcessingOffice.name }
     end
 
-   
     factory :business_line, class: BusinessLine do
       type { "BusinessLine" }
     end
