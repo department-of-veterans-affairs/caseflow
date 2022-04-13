@@ -171,7 +171,7 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
-  eduRegionalProcessingOffices: PropTypes.array,    
+  eduRegionalProcessingOffices: PropTypes.array,
   onOrgUpdate: PropTypes.func,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
