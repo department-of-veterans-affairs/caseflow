@@ -52,7 +52,7 @@ describe ChangeHearingRequestTypeTask do
                 "business_payloads": {
                   "values": {
                     "changed_hearing_request_type": "V",
-                    "closest_regional_office": nil,
+                    "closest_regional_office": nil
                   }
                 }
               }
@@ -125,11 +125,9 @@ describe ChangeHearingRequestTypeTask do
   # section for testing update_from_params as a VSO user
   describe "#update_from_params as a VSO user" do
     subject { task.update_from_params(payload, vso_user) }
-
     let(:loc_schedule_hearing) { LegacyAppeal::LOCATION_CODES[:schedule_hearing] }
     let(:vacols_case) { create(:case, :travel_board_hearing, bfcurloc: loc_schedule_hearing) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-    let(:params) { { format: :json, appeal_id: legacy_appeal.id } }
     let(:root_task) { create(:root_task, appeal: legacy_appeal) }
     let(:hearing_task) { create(:hearing_task, appeal: legacy_appeal, parent: root_task) }
     let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal, parent: hearing_task) }
@@ -143,14 +141,13 @@ describe ChangeHearingRequestTypeTask do
     let!(:task1) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task1) }
 
     context "Legacy a VSO user tries to convert an appellant to virtual from video" do
-      let(:vacols_case) { create(:case, :video_hearing_requested) }
       let(:payload) do
         {
           "status": "completed",
           "business_payloads": {
             "values": {
               "changed_hearing_request_type": "R",
-              "closest_regional_office": "RO17", 
+              "closest_regional_office": "RO17",
               "email_recipients": {
                 "appellant_tz": "America/Los_Angeles",
                 "representative_tz": "America/Los_Angeles",
@@ -161,49 +158,51 @@ describe ChangeHearingRequestTypeTask do
         }
       end
       it "should call update_hearing_email_recipients" do
-        expect(subject).to receive(:update_hearing_email_recipients)
-        @subject.update_from_params(:payload) # method_b is called in method
+        expect(subject).to receive(:update_hearing_email_recipients).with(payload, vso_user)
+        @subject.update_from_params # method_b is called in method
       end
       it "creates the email recipients with the correct info (Legacy)" do
         subject
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
-
-        expect(new_her_a.email_address).to_eq("asjkfjdkjfd@va.gov")
-        expect(new_her_a.timezone).to_eq("America/New_York")
-        expect(new_her_r.timezone).to_eq("America/Los_Angeles")
+        expect(new_her_r).to eq('r')
+        expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
+        expect(new_her_a.timezone).to eq("America/Los_Angeles")
+        expect(new_her_r.timezone).to eq("America/Los_Angeles")
       end
     end
     context "AMA a VSO user tries to convert an appellant to virtual from video" do
-      let(:vacols_case) { create(:case, :video_hearing_requested) }
       let(:payload) do
         {
           "status": "completed",
           "business_payloads": {
             "values": {
               "changed_hearing_request_type": "R",
-              "closest_regional_office": "RO17", 
+              "closest_regional_office": "RO17",
               "email_recipients": {
                 "appellant_tz": "America/New_York",
                 "representative_tz": "America/Los_Angeles",
-                "appellant_email": "asjkfjdkjfd@va.gov",
-                "poa_email": "awifjelsijfesjfdifjdl@va.gov"
+                "appellant_email": "gdkfkdjfkdjf@va.gov"
               }
             }
           }
         }
       end
-
+      it "should call update_hearing_email_recipients" do
+        expect(payload).to eq('R')
+        expect(subject).to receive(:update_hearing_email_recipients)
+        @subject.update_from_params(:payload) # method_b is called in method
+      end
       it "creates the email recipients with the correct info(AMA)" do
         subject
 
-        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
-        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
+        new_her1_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
+        new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
 
-        expect(new_her_a.email_address).to_eq("asjkfjdkjfd@va.gov")
-        expect(new_her_a.timezone).to_eq("America/New_York")
-        expect(new_her_r.timezone).to_eq("America/Los_Angeles")
+        expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
+        expect(new_her1_a.timezone).to eq("America/New_York")
+        expect(new_her1_r.timezone).to eq("America/Los_Angeles")
       end
     end
   end
