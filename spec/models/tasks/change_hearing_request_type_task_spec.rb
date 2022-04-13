@@ -185,6 +185,15 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
+      it "creates the email recipients with the correct info(AMA)" do
+        subject
+
+        new_her1_a = AppellantHearingEmailRecipient.find_by(email_address: "gdkfkdjfkdjf@va.gov")
+        new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
+        expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
+        expect(new_her1_a.timezone).to eq("America/New_York")
+        expect(new_her1_r.timezone).to eq("America/Los_Angeles")
+      end
 
       it "returns true that the update_hearing_email_recipients method has been run" do
         subject
