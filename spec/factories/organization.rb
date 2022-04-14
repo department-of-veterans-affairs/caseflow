@@ -57,10 +57,6 @@ FactoryBot.define do
       type { EducationEmo.name }
     end
 
-    factory :edu_regional_processing_office do
-      type { EduRegionalProcessingOffice.name }
-    end
-
     factory :business_line, class: BusinessLine do
       type { "BusinessLine" }
     end
