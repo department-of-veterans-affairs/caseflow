@@ -22,6 +22,7 @@ class EducationEmo < Organization
     Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
   ].compact
 end

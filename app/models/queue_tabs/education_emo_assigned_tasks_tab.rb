@@ -32,6 +32,6 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def column_names
-    EducationEmo::COLUMN_NAMES.append(Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name)
+    EducationEmo::COLUMN_NAMES
   end
 end
