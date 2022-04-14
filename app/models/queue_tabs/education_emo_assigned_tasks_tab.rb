@@ -21,13 +21,13 @@ class EducationEmoAssignedTasksTab < QueueTab
     closed_tasks.select { |task| task.parent.closed? }.pluck(:id)
   end
 
-  def tasks_emo_sent_elsewhere
+  def task_ids_emo_sent_elsewhere
     on_hold_tasks.map(&:id) + closed_tasks.map(&:id)
   end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (tasks_emo_sent_elsewhere - task_ids_where_parent_has_been_closed)
+      id: (task_ids_emo_sent_elsewhere - task_ids_where_parent_has_been_closed)
     )
   end
 
