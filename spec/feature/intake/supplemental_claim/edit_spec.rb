@@ -32,6 +32,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
+  let(:is_predocket_needed) { false}
 
   let!(:supplemental_claim) do
     SupplementalClaim.create!(
@@ -86,7 +87,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
@@ -116,7 +118,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
@@ -677,7 +680,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
