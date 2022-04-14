@@ -150,15 +150,10 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
-      it "prints out legacy appeal" do
-        expect(legacy_appeal).to eq('r')
-      end
       it "creates the email recipients with the correct info (Legacy)" do
         subject
-
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
-        expect(new_her_a).to eq('r')
         expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
@@ -168,10 +163,10 @@ describe ChangeHearingRequestTypeTask do
   describe "#update_from_params as a VSO user AMA" do
     subject { task.update_from_params(payload, vso_user) }
     let!(:appeal) { create(:appeal) }
-    let(:root_task1) { create(:root_task, appeal: appeal) }
-    let(:hearing_task1) { create(:hearing_task, appeal: appeal, parent: root_task1) }
-    let(:schedule_hearing_task1) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task1) }
-    let!(:task1) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task1) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
+    let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
+    let!(:task) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task) }
     context "a VSO user tries to convert an appellant to virtual from video" do
       let(:payload) do
         {
@@ -189,16 +184,12 @@ describe ChangeHearingRequestTypeTask do
           }
         }
       end
-      it "prints out ama appeal" do
-        expect(appeal).to eq('r')
-      end
 
       it "creates the email recipients with the correct info(AMA)" do
         subject
 
         new_her1_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
         new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
-        expect(new_her1_a).to eq("r")
         expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
         expect(new_her1_a.timezone).to eq("America/New_York")
         expect(new_her1_r.timezone).to eq("America/Los_Angeles")

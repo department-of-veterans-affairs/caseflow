@@ -107,21 +107,18 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_hearing_email_recipients(payload_values, params)
     # FIX ME: do we need to clear the appeal's HERs beforehand?
+    recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
     # create HER object for appellant
     AppellantHearingEmailRecipient.create!(
       email_address: payload_values[:email_recipients][:appellant_email],
       timezone: payload_values[:email_recipients][:appellant_tz],
-      type: "AppellantHearingEmailRecipient",
-      appeal_id: appeal.id,
-      appeal_type: appeal.class.name
+      appeal: appeal
     )
     # create HER object for poa
     RepresentativeHearingEmailRecipient.create!(
       email_address: "attorney@law.com",
       timezone: payload_values[:email_recipients][:representative_tz],
-      type: "RepresentativeHearingEmailRecipient",
-      appeal_id: appeal.id,
-      appeal_type: appeal.class.name
+      appeal: appeal
     )
     # idk if this is needed
     update!(params)
