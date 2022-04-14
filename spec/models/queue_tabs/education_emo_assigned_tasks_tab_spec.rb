@@ -8,6 +8,9 @@ describe EducationEmoAssignedTasksTab, :postgres do
     }
   end
   let(:assignee) { create(:education_emo) }
+  let(:regional_processing_office) do
+    EduRegionalProcessingOffice.create!(name: "Regional Processing Office", url: "Regional Processing Office")
+  end
 
   describe ".column_names" do
     subject { tab.column_names }
@@ -52,7 +55,12 @@ describe EducationEmoAssignedTasksTab, :postgres do
       end
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create(:education_assess_documentation_task, :in_progress, parent: task)
+          create(
+            :education_assess_documentation_task,
+            :in_progress,
+            parent: task,
+            assigned_to: regional_processing_office
+          )
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children
         end.flatten
