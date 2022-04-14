@@ -63,8 +63,7 @@ class ChangeHearingRequestTypeTask < Task
       update_appeal_and_self(payload_values, params)
       # FIX ME make sure task is actually assigned to the user as well
       if user.can?("VSO")
-        # returns true if the method has been run for testing
-        return update_hearing_email_recipients(payload_values, params)
+        update_hearing_email_recipients(payload_values, params)
       end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
@@ -126,9 +125,6 @@ class ChangeHearingRequestTypeTask < Task
     )
     # idk if this is needed
     update!(params)
-
-    # returns true for testing
-    return "Appellant and Representative HearingEmailRecipient created"
   end
 
   def set_assignee
