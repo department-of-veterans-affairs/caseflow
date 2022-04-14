@@ -221,7 +221,7 @@ describe ChangeHearingRequestTypeTask do
               "changed_hearing_request_type": "R",
               "closest_regional_office": "RO17",
               "email_recipients": {
-                "appellant_tz": "America/New_York",
+                "appellant_tz": "America/Los_Angeles",
                 "representative_tz": "America/Los_Angeles",
                 "appellant_email": "gdkfkdjfkdjf@va.gov"
               }
@@ -236,8 +236,52 @@ describe ChangeHearingRequestTypeTask do
         new_her1_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
         new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
         expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
-        expect(new_her1_a.timezone).to eq("America/New_York")
+        expect(new_her1_a.timezone).to eq("America/Los_Angeles")
         expect(new_her1_r.timezone).to eq("America/Los_Angeles")
+      end
+      it "checks to see if a HearingEmailRecipient currently exists" do
+        subject
+        # variables for HearingEmailRecipient :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
+        # create existing appellant and recipient with different information
+        existing_her_a = AppellantHearingEmailRecipient.create!(
+          appeal: appeal,
+          timezone: "America/New_York",
+          email_address:"old_email_address@va.gov"
+        )
+        existing_her_r = RepresentativeHearingEmailRecipient.create!(
+          appeal: appeal,
+          timezone:"America/New_York",
+          email_address:"old_rep_email_address@va.gov"
+        )
+
+        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
+        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
+
+        expect(new_her_a).to eq(existing_her_a)
+        expect(new_her_r).to eq(existing_her_r)
+      end
+
+      it "checks to see if a HearingEmailRecipient currently exists and updates it" do
+        # variables for HearingEmailRecipient :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
+        # create existing appellant and recipient with different information
+        existing_her_a = AppellantHearingEmailRecipient.create!(
+          appeal: appeal,
+          timezone: "America/New_York",
+          email_address:"old_email_address@va.gov"
+        )
+        existing_her_r = RepresentativeHearingEmailRecipient.create!(
+          appeal: appeal,
+          timezone:"America/New_York",
+          email_address:"old_rep_email_address@va.gov"
+        )
+        subject
+        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
+        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
+
+        # expect the hearing email recipients to be updated from the payload
+        expect(new_her_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
+        expect(new_her_a.timezone).to eq("America/Los_Angeles")
+        expect(new_her_r.timezone).to eq("America/Los_Angeles")
       end
     end
   end
