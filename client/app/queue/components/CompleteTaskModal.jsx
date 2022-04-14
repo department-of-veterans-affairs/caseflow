@@ -64,6 +64,12 @@ const locationTypeOpts = [
 
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+
+  // console.log(taskConfiguration);
+
+  const getTaskType = () => {
+    return taskConfiguration?.type || null;
+  };
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
@@ -82,7 +88,11 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <RadioField
             name="vhaCompleteTaskDocLocation"
             id="vhaCompleteTaskDocLocation"
-            label={COPY.VHA_COMPLETE_TASK_MODAL_TITLE}
+            label={
+              getTaskType() === 'AssessDocumentationTask' ? COPY.VHA_COMPLETE_TASK_MODAL_TITLE :
+                getTaskType() === 'EducationDocumentSearchTask' ? COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY :
+                  null
+            }
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
@@ -111,7 +121,10 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+              !validInstructions(state.instructions) && 
+              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR :
+              null}
+            optional={getTaskType() === 'EducationDocumentSearchTask'}
           />
         </div>
       )}
@@ -377,6 +390,9 @@ class CompleteTaskModal extends React.Component {
 
     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
       return validInstructions(instructions) && validRadio(radio);
+    }
+    if (modalType === 'emo_send_to_board_intake_for_review') {
+      return validRadio(radio);
     }
 
     return true;
