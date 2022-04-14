@@ -32,14 +32,6 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
-      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-    ].compact
+    EducationEmo::COLUMN_NAMES.append(Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name)
   end
 end

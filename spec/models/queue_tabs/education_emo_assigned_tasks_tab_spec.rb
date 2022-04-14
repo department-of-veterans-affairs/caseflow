@@ -19,7 +19,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
       let(:params) { { assignee: create(:education_emo) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq(6)
       end
     end
   end
