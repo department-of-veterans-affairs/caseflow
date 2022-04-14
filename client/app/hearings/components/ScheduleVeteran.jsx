@@ -178,7 +178,7 @@ export const ScheduleVeteran = ({
             appellantTz: appellantTz || appeal?.appellantTz,
             representativeTz: representativeTz || appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz,
             appellantEmailAddress: appeal?.appellant_hearing_email_recipient?.email_address,
-            representativeEmailAddress: appeal?.appellant_hearing_email_recipient?.email_address
+            representativeEmailAddress: appeal?.representative_hearing_email_recipient?.email_address
           }
         }
       );
