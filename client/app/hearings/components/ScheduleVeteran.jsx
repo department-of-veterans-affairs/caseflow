@@ -163,8 +163,8 @@ export const ScheduleVeteran = ({
     if (
       !hearing?.virtualHearing?.appellantTz ||
       !hearing?.virtualHearing?.representativeTz ||
-      !hearing?.virtualHearing?.appellantEmailAddress ||
-      !hearing?.virtualHearing?.representativeEmailAddress
+      !hearing?.virtualHearing?.appellantEmail ||
+      !hearing?.virtualHearing?.representativeEmail
     ) {
 
       const appellantTz = appeal?.appellant_hearing_email_recipient?.timezone;
@@ -177,8 +177,8 @@ export const ScheduleVeteran = ({
             status: 'pending',
             appellantTz: appellantTz || appeal?.appellantTz,
             representativeTz: representativeTz || appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz,
-            appellantEmailAddress: appeal?.appellant_hearing_email_recipient?.email_address,
-            representativeEmailAddress: appeal?.representative_hearing_email_recipient?.email_address
+            appellantEmail: appeal?.appellant_hearing_email_recipient?.email_address,
+            representativeEmail: appeal?.representative_hearing_email_recipient?.email_address
           }
         }
       );
@@ -293,7 +293,7 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || virtual ? null : 'Please select a Regional Office '
       };
 
-      const noAppellantEmail = !hearing.virtualHearing?.appellantEmailAddress;
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
       const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailOrTzErrors = virtual && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
