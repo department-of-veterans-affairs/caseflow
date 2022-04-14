@@ -105,21 +105,42 @@ class ChangeHearingRequestTypeTask < Task
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
-  def update_hearing_email_recipients(payload_values, params)
-    # FIX ME: do we need to clear the appeal's HERs beforehand?
-    recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+  def create_or_update_appellant_email_recipients(payload_values)
+    app_recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
     # create HER object for appellant
-    AppellantHearingEmailRecipient.create!(
-      email_address: payload_values[:email_recipients][:appellant_email],
-      timezone: payload_values[:email_recipients][:appellant_tz],
-      appeal: appeal
-    )
-    # create HER object for poa
-    RepresentativeHearingEmailRecipient.create!(
-      email_address: "attorney@law.com",
-      timezone: payload_values[:email_recipients][:representative_tz],
-      appeal: appeal
-    )
+    if app_recipient.blank?
+      AppellantHearingEmailRecipient.create!(
+        email_address: payload_values[:email_recipients][:appellant_email],
+        timezone: payload_values[:email_recipients][:appellant_tz],
+        appeal: appeal
+      )
+    else
+      app_recipient.update!(
+        email_address: payload_values[:email_recipients][:appellant_email],
+        timezone: payload_values[:email_recipients][:appellant_tz]
+      )
+    end
+  end
+
+  def create_or_update_representative_email_recipients(payload_values)
+    rep_recipient = appeal.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+    if rep_recipient.blank?
+      # create HER object for poa
+      RepresentativeHearingEmailRecipient.create!(
+        email_address: "attorney@law.com",
+        timezone: payload_values[:email_recipients][:representative_tz],
+        appeal: appeal
+      )
+    else
+      rep_recipient.update!(
+        timezone: payload_values[:email_recipients][:appellant_tz]
+      )
+    end
+  end
+
+  def update_hearing_email_recipients(payload_values, params)
+    create_or_update_appellant_email_recipients(payload_values)
+    create_or_update_representative_email_recipients(payload_values)
     # idk if this is needed
     update!(params)
   end
