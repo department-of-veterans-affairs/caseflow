@@ -158,6 +158,28 @@ describe ChangeHearingRequestTypeTask do
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
       end
+
+      it "checks to see if a HearingEmailRecipient currently exists" do
+        subject
+        # variables for HearingEmailRecipient :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
+        # create existing appellant and recipient with different information
+        existing_her_a = AppellantHearingEmailRecipient.create!(
+          appeal: legacy_appeal,
+          timezone: "America/New_York",
+          email_address:"old_email_address@va.gov"
+        )
+        existing_her_r = RepresentativeHearingEmailRecipient.create!(
+          appeal: legacy_appeal,
+          timezone:"America/New_York",
+          email_address:"old_rep_email_address@va.gov"
+        )
+
+        new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
+        new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
+
+        expect(new_her_a).to eq(existing_her_a)
+        expect(new_her_r).to eq(existing_her_r)
+      end
     end
   end
   describe "#update_from_params as a VSO user AMA" do
