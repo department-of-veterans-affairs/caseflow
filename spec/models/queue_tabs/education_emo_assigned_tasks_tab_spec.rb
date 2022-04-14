@@ -24,23 +24,58 @@ describe EducationEmoAssignedTasksTab, :postgres do
   describe ".tasks" do
     subject { tab.tasks }
 
-    context "when the EMO sends appeal to BVA Intake for docketing" do
-    end
+    context "when the EMO sends an appeal to BVA Intake" do
+      let!(:assignee_completed_task) { create(:education_document_search_task, :completed, assigned_to: assignee) }
 
-    # This can occur if the appeal isn't actually education related
-    context "when the EMO sends appeal back to BVA Intake because of an error" do
+      it("the appeal appears in the EMO assigned tab whenever BVA Intake has not taken any additional actions") do
+        assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.assigned)
+
+        expect(subject.count).to eq 1
+      end
+
+      it("the appeal does not appear in the EMO assigned tab whenever BVA Intake dockets it") do
+        assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.completed)
+
+        expect(subject.count).to eq 0
+      end
+
+      it("the appeal does not appear in the EMO assigned tab whenever BVA Intake cancels it") do
+        assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.cancelled)
+
+        expect(subject.count).to eq 0
+      end
     end
 
     context "when the EMO sends the appeal to an RPO" do
-    end
+      let!(:assignee_on_hold_tasks) do
+        create_list(:education_document_search_task, 3, :assigned, assigned_to: assignee)
+      end
+      let!(:on_hold_tasks_children) do
+        assignee_on_hold_tasks.map do |task|
+          create(:education_assess_documentation_task, :in_progress, parent: task)
+          task.update!(status: Constants.TASK_STATUSES.on_hold)
+          task.children
+        end.flatten
+      end
 
-    context "when an RPO sends an appeal back to the EMO" do
-    end
+      it "the apepal appears in the EMO's assigned tab while the RPO works on the appeal" do
+        expect(subject.count).to eq 3
+      end
 
-    context "when an RPO sends an appeal directly to BVA Intake" do
-    end
+      it "the appeal does not appear in the EMO's assigned tab if the RPO returns the appeal to the EMO" do
+        on_hold_tasks_children.first.update!(status: Constants.TASK_STATUSES.completed)
+        on_hold_tasks_children.first.parent.update!(status: Constants.TASK_STATUSES.assigned)
 
-    context "when BVA Intake dockets an appeal after having received it" do
+        expect(subject.count).to eq 2
+        expect(subject).to eq(assignee_on_hold_tasks[1..-1])
+      end
+
+      it "the appeal appears in the EMO's assigned tab when the RPO sends the appeal to BVA Intake directly" do
+        on_hold_tasks_children.first.update!(status: Constants.TASK_STATUSES.completed)
+        on_hold_tasks_children.first.parent.update!(status: Constants.TASK_STATUSES.completed)
+
+        expect(subject.count).to eq 3
+      end
     end
   end
 end
