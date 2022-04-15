@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-SingleCov.covered!
 describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
@@ -166,12 +165,12 @@ describe ChangeHearingRequestTypeTask do
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: legacy_appeal,
           timezone: "America/New_York",
-          email_address:"old_email_address@va.gov"
+          email_address: "old_email_address@va.gov"
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: legacy_appeal,
-          timezone:"America/New_York",
-          email_address:"old_rep_email_address@va.gov"
+          timezone: "America/New_York",
+          email_address: "old_rep_email_address@va.gov"
         )
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
@@ -187,12 +186,12 @@ describe ChangeHearingRequestTypeTask do
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: legacy_appeal,
           timezone: "America/New_York",
-          email_address:"old_email_address@va.gov"
+          email_address: "old_email_address@va.gov"
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: legacy_appeal,
-          timezone:"America/New_York",
-          email_address:"old_rep_email_address@va.gov"
+          timezone: "America/New_York",
+          email_address: "old_rep_email_address@va.gov"
         )
         subject
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
@@ -202,6 +201,8 @@ describe ChangeHearingRequestTypeTask do
         expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
+        expect(new_her_a.email_address).not_to eq(existing_her_a.email_address)
+        expect(new_her_r.timezone).not_to eq(existing_her_r.timezone)
       end
     end
   end
@@ -246,12 +247,12 @@ describe ChangeHearingRequestTypeTask do
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: appeal,
           timezone: "America/New_York",
-          email_address:"old_email_address@va.gov"
+          email_address: "old_email_address@va.gov"
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: appeal,
-          timezone:"America/New_York",
-          email_address:"old_rep_email_address@va.gov"
+          timezone: "America/New_York",
+          email_address: "old_rep_email_address@va.gov"
         )
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
@@ -267,12 +268,12 @@ describe ChangeHearingRequestTypeTask do
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: appeal,
           timezone: "America/New_York",
-          email_address:"old_email_address@va.gov"
+          email_address: "old_email_address@va.gov"
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: appeal,
-          timezone:"America/New_York",
-          email_address:"old_rep_email_address@va.gov"
+          timezone: "America/New_York",
+          email_address: "old_rep_email_address@va.gov"
         )
         subject
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
@@ -282,6 +283,8 @@ describe ChangeHearingRequestTypeTask do
         expect(new_her_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
+        expect(new_her_a.email_address).not_to eq(existing_her_a.email_address)
+        expect(new_her_r.timezone).not_to eq(existing_her_r.timezone)
       end
     end
   end
