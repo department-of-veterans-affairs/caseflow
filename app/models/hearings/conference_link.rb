@@ -8,6 +8,7 @@ class ConferenceLink < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
   class ConferenceLinkGenerationFailed < StandardError; end
+  class ConferenceLinkNotCreatedError < StandardError; end
   include UpdatedByUserConcern
   include Hearings::EnsureCurrentUserIsSet
 
@@ -27,7 +28,7 @@ class ConferenceLink < CaseflowRecord
 
   alias_attribute :alias_name, :alias
 
-  belongs_to :hearing_day, polymorphic: true 
+  belongs_to :hearing_day,
   belongs_to :created_by, class_name: "User"
 
   before_create :assign_created_by_user
@@ -37,7 +38,6 @@ class ConferenceLink < CaseflowRecord
   # After a certain point after this change gets merged, alias_with_host will never be nil
   # so we can rid of this logic then
   def formatted_alias_or_alias_with_host
-    byebug
     alias_with_host.nil? ? ConferenceLink.formatted_alias(alias_name) : alias_with_host
   end
 
@@ -58,26 +58,64 @@ class ConferenceLink < CaseflowRecord
     "pin=#{host_pin}&role=host"
   end
 
-  def generate_links_and_pins
+  # Returns a random host pin
+  def generate_conference_pins
+    self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
+  end
+
+  def
+  retry_on(ConferenceLinkNotCreatedError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  def set_conference_link(hearing_day, hearing_day_id)
+    case hearing_day_id
+    when Hearing.name
+      @conference_link = Hearing.find(hearing_day).conference_link
+    when LegacyHearing.name
+      @conference_link = LegacyHearing.find(hearing_day).conference_link
+    else
+      fail ArgumentError, "Invalid hearing day id supplied to job of set conference link: `#{hearing_day_id}`"
+    end
+
+    ConferenceLinkNotCreatedError if conference_link.nil?
+    ConferenceLinkRequestCancelled if virtual_hearing.cancelled?
+  end
+
+  def create_conference_link_datadog_tags
+    datadog_metric_info.merge(attrs: { hearing_day_id: conference_link.hearing_day_id })
+  end
+
+  # Creates the conference link.
+  def create_conference_link
     Rails.logger.info(
       "Trying to create conference links ()..."
     )
-    begin
-      link_service = ConferenceLink::LinkServices.new
-      conference_link.update!(
-        host_hearing_link: link_service.host_link,
-        host_pin_long: link_service.host_pin,
-        alias_with_host: link_service.alias_with_host
-      )
+    link_service = ConferenceLink::LinkServices.new
+    conference_link.update!(
+      host_hearing_link: link_service.host_link,
+      host_pin_long: link_service.host_pin,
+      alias_with_host: link_service.alias_with_host
+    )
+    assign_conference_link_alias_and_pins if should_initialize_alias_and_pins?
+    pexip_response = create_pexip_conference_link
+    Rails.logger.info("Pexip response: #{pexip_response.inspect}")
+
+    if pexip_response.error
+      error_display = pexip_error_display(pexip_response)
+      Rails.logger.error("CreateConferenceJob failed: #{error_display}")
+      DataDogService.increment_counter(metric_name: "created_conference_link.failed", **create_conference_link_datadog_tags)
+      fail pexip_response.error
+    end
+
     rescue StandardError => error
       Raven.capture_exception(error: error)
       raise ConferenceLinkGenerationFailed
     end
-  end
 
-  # Returns a random host pin
-  def generate_conference_pins
-    self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
+    DataDogService.increment_counter(metric_name: "created_conference_link.successful", **create_conference_link_datadog_tags)
+    conference_link.update(conference_id: pexip_response.data[:conference_id])
+    end
   end
 
   def should_initialize_alias_and_pins?
@@ -94,51 +132,6 @@ class ConferenceLink < CaseflowRecord
       conference_link.alias_with_host = ConferenceLink.formatted_alias(conference_alias)
       conference_link.generate_conference_pins
       conference_link.save!
-    end
-  end
-
-  def set_conference_link(hearing_id, hearing_type)
-    case hearing_type
-    when Hearing.name
-      @conference_link = Hearing.find(hearing_id).conference_link
-    when LegacyHearing.name
-      @conference_link = LegacyHearing.find(hearing_id).conference_link
-    else
-      fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
-    end
-
-    #{}fail VirtualHearingNotCreatedError if conference_link.nil?
-    #{}fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
-  end
-
-  def create_conference_link_datadog_tags
-    datadog_metric_info.merge(attrs: { hearing_id: conference_link.hearing_id })
-  end
-
-  # Creates the conference link.
-  def create_conference_link
-    if FeatureToggle.enabled?(:conference_link_use_new_links, user: conference_link.updated_by_id)
-      generate_links_and_pins
-    else
-      assign_conference_link_alias_and_pins if should_initialize_alias_and_pins?
-
-      pexip_response = create_pexip_conference_link
-
-      Rails.logger.info("Pexip response: #{pexip_response.inspect}")
-
-      if pexip_response.error
-        error_display = pexip_error_display(pexip_response)
-
-        Rails.logger.error("CreateConferenceJob failed: #{error_display}")
-
-        DataDogService.increment_counter(metric_name: "created_conference_link.failed", **create_conference_link_datadog_tags)
-
-        fail pexip_response.error
-      end
-
-      DataDogService.increment_counter(metric_name: "created_conference_link.successful", **create_conference_link_datadog_tags)
-
-      conference_link.update(conference_id: pexip_response.data[:conference_id])
     end
   end
 
