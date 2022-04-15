@@ -7,6 +7,13 @@ class WorkQueue::AppealSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :appellant_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+  end
+  attribute :representative_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
