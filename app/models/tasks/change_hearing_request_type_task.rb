@@ -104,6 +104,14 @@ class ChangeHearingRequestTypeTask < Task
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
+  def find_hearing_type
+    if appeal.is_a?(LegacyAppeal)
+      return "LegacyHearing"
+    end
+
+    "Hearing"
+  end
+
   def create_or_update_appellant_email_recipients(payload_values)
     app_recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
     # create HER object for appellant
@@ -111,7 +119,8 @@ class ChangeHearingRequestTypeTask < Task
       AppellantHearingEmailRecipient.create!(
         email_address: payload_values[:email_recipients][:appellant_email],
         timezone: payload_values[:email_recipients][:appellant_tz],
-        appeal: appeal
+        appeal: appeal,
+        hearing_type: find_hearing_type
       )
     else
       # update recipient if it already exists in the appeal
@@ -129,7 +138,8 @@ class ChangeHearingRequestTypeTask < Task
       RepresentativeHearingEmailRecipient.create!(
         email_address: "caseflow-representative@test.com",
         timezone: payload_values[:email_recipients][:representative_tz],
-        appeal: appeal
+        appeal: appeal,
+        hearing_type: find_hearing_type
       )
     else
       # update recipient if it already exists in the appeal
