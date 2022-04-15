@@ -279,11 +279,11 @@ class HearingDay < CaseflowRecord
     private
 
     def current_user_css_id
-      RequestStore.store[:current_user].css_id.upcase
+      RequestStore.store[:current_user].id 
     end
 
     def updated_by_user_css_id
-      RequestStore.store[:current_user].css_id.upcase
+      RequestStore.store[:current_user].id
     end
   end
 
