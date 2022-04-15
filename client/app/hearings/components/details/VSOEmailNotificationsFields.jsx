@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { marginTop, input8px } from '../details/style';
-import { VSOHearingEmail } from './VSOHearingEmail';
+import { HearingEmail } from './HearingEmail';
 import { Timezone } from '../VirtualHearings/Timezone';
 import { HelperText } from '../VirtualHearings/HelperText';
 import COPY from '../../../../COPY';
@@ -23,7 +23,7 @@ export const VSOEmailNotificationsFields = ({
   return (
     <React.Fragment>
       <div id="email-section" className="usa-grid">
-        <VSOHearingEmail
+        <HearingEmail
           required
           disabled={disableField}
           label={`${appellantTitle} Email`}
@@ -31,9 +31,9 @@ export const VSOEmailNotificationsFields = ({
           email={hearing?.appellantEmailAddress}
           error={errors?.appellantEmailAddress}
           update={update}
+          helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
         />
-        <HelperText label={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO} />
-        <VSOHearingEmail
+        <HearingEmail
           required
           disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
@@ -41,6 +41,7 @@ export const VSOEmailNotificationsFields = ({
           email={hearing?.appellantEmailAddress}
           error={errors?.appellantEmailAddress}
           update={update}
+          showHelper={false}
         />
         <div
           className={classNames('usa-grid', { [marginTop(30)]: true })}
