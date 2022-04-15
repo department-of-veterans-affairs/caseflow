@@ -16233,7 +16233,6 @@ SAN FRANCISCO, CA 94103
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16268,7 +16267,6 @@ SAN FRANCISCO, CA 94103
                 name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16459,7 +16457,7 @@ SAN FRANCISCO, CA 94103
         >
           <ReadOnly
             label="POA/Representative Email (for these notifications only)"
-            text="tom.brady@caseflow.gov"
+            text="None"
           >
             <div
               data-css-1a5irm0=""
@@ -16468,7 +16466,7 @@ SAN FRANCISCO, CA 94103
                 POA/Representative Email (for these notifications only)
               </strong>
               <pre>
-                tom.brady@caseflow.gov
+                None
               </pre>
             </div>
           </ReadOnly>
@@ -16648,7 +16646,6 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16683,7 +16680,6 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
                 name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16883,7 +16879,6 @@ SAN FRANCISCO, CA 94103
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16918,7 +16913,6 @@ SAN FRANCISCO, CA 94103
                 name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -17135,7 +17129,6 @@ exports[`RepresentativeSection Shows Representative name when representative add
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -17170,7 +17163,6 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -17380,7 +17372,6 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -17415,7 +17406,6 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 name="POA/Representative Email (for these notifications only)"
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
