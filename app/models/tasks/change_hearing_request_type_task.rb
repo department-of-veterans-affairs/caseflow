@@ -62,7 +62,7 @@ class ChangeHearingRequestTypeTask < Task
       update_appeal_and_self(payload_values, params)
       # check if email recipients need to be created/updated
       if payload_values.key?(:email_recipients)
-        create_or_update_hearing_email_recipients(payload_values, params)
+        create_or_update_hearing_email_recipients(payload_values)
       end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
@@ -104,14 +104,6 @@ class ChangeHearingRequestTypeTask < Task
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
-  def find_hearing_type
-    if appeal.is_a?(LegacyAppeal)
-      return "LegacyHearing"
-    end
-
-    "Hearing"
-  end
-
   def create_or_update_appellant_email_recipients(payload_values)
     app_recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
     # create HER object for appellant
@@ -119,8 +111,7 @@ class ChangeHearingRequestTypeTask < Task
       AppellantHearingEmailRecipient.create!(
         email_address: payload_values[:email_recipients][:appellant_email],
         timezone: payload_values[:email_recipients][:appellant_tz],
-        appeal: appeal,
-        hearing_type: find_hearing_type
+        appeal: appeal
       )
     else
       # update recipient if it already exists in the appeal
@@ -136,24 +127,22 @@ class ChangeHearingRequestTypeTask < Task
     if rep_recipient.blank?
       # create HER object for representative
       RepresentativeHearingEmailRecipient.create!(
-        email_address: "caseflow-representative@test.com",
+        email_address: payload_values[:email_recipients][:representative_email],
         timezone: payload_values[:email_recipients][:representative_tz],
-        appeal: appeal,
-        hearing_type: find_hearing_type
+        appeal: appeal
       )
     else
       # update recipient if it already exists in the appeal
       rep_recipient.update!(
+        email_address: payload_values[:email_recipients][:representative_email],
         timezone: payload_values[:email_recipients][:representative_tz]
       )
     end
   end
 
-  def create_or_update_hearing_email_recipients(payload_values, params)
+  def create_or_update_hearing_email_recipients(payload_values)
     create_or_update_appellant_email_recipients(payload_values)
     create_or_update_representative_email_recipients(payload_values)
-    # idk if this is needed
-    update!(params)
   end
 
   def set_assignee

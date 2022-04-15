@@ -144,7 +144,8 @@ describe ChangeHearingRequestTypeTask do
               "email_recipients": {
                 "appellant_tz": "America/Los_Angeles",
                 "representative_tz": "America/Los_Angeles",
-                "appellant_email": "asjkfjdkjfd@va.gov"
+                "appellant_email": "asjkfjdkjfd@va.gov",
+                "representative_email": "sejfiejfiej@va.gov"
               }
             }
           }
@@ -155,6 +156,7 @@ describe ChangeHearingRequestTypeTask do
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
         expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
+        expect(new_her_r.email_address).to eq("sejfiejfiej@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
       end
@@ -200,6 +202,7 @@ describe ChangeHearingRequestTypeTask do
 
         # expect the hearing email recipients to be updated from the payload
         expect(new_her_a.email_address).to eq("asjkfjdkjfd@va.gov")
+        expect(new_her_r.email_address).to eq("sejfiejfiej@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
         expect(new_her_a.email_address).not_to eq(existing_her_a.email_address)
@@ -225,7 +228,8 @@ describe ChangeHearingRequestTypeTask do
               "email_recipients": {
                 "appellant_tz": "America/Los_Angeles",
                 "representative_tz": "America/Los_Angeles",
-                "appellant_email": "gdkfkdjfkdjf@va.gov"
+                "appellant_email": "gdkfkdjfkdjf@va.gov",
+                "representative_email": "erueiruierufe@va.gov"
               }
             }
           }
@@ -238,6 +242,7 @@ describe ChangeHearingRequestTypeTask do
         new_her1_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
         new_her1_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
         expect(new_her1_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
+        expect(new_her1_r.email_address).to eq("erueiruierufe@va.gov")
         expect(new_her1_a.timezone).to eq("America/Los_Angeles")
         expect(new_her1_r.timezone).to eq("America/Los_Angeles")
       end
@@ -282,6 +287,7 @@ describe ChangeHearingRequestTypeTask do
 
         # expect the hearing email recipients to be updated from the payload
         expect(new_her_a.email_address).to eq("gdkfkdjfkdjf@va.gov")
+        expect(new_her_r.email_address).to eq("erueiruierufe@va.gov")
         expect(new_her_a.timezone).to eq("America/Los_Angeles")
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
         expect(new_her_a.email_address).not_to eq(existing_her_a.email_address)
