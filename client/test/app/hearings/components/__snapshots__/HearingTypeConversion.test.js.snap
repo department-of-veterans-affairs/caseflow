@@ -428,10 +428,12 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     className="usa-width-one-half"
                   >
                     <HearingEmail
+                      helperLabel="This email address will be used to send notifications for this hearing only."
                       label="Veteran Email (for these notifications only)"
                       optional={false}
                       readOnly={true}
                       required={true}
+                      showHelper={true}
                       type="Virtual"
                     >
                       <ReadOnly
@@ -532,9 +534,11 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     className="usa-width-one-half"
                   >
                     <HearingEmail
+                      helperLabel="This email address will be used to send notifications for this hearing only."
                       label="POA/Representative Email (for these notifications only)"
                       optional={true}
                       readOnly={true}
+                      showHelper={true}
                       type="Virtual"
                     >
                       <ReadOnly

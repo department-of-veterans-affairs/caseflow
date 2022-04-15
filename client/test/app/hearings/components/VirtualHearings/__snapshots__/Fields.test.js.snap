@@ -16224,9 +16224,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="Veteran Email"
               optional={true}
               required={false}
+              showHelper={true}
             >
               <TextField
                 className={
@@ -32412,8 +32414,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="POA/Representative Email"
               optional={true}
+              showHelper={true}
               update={[Function]}
             >
               <TextField
@@ -48712,9 +48716,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="Veteran Email"
               optional={true}
               required={false}
+              showHelper={true}
             >
               <TextField
                 className={
@@ -64900,8 +64906,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="POA/Representative Email"
               optional={true}
+              showHelper={true}
               update={[Function]}
             >
               <TextField

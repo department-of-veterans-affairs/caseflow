@@ -16212,8 +16212,10 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16443,9 +16445,11 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           readOnly={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16619,8 +16623,10 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16849,8 +16855,10 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17096,8 +17104,10 @@ exports[`RepresentativeSection Shows Representative name when representative add
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17336,8 +17346,10 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         className="usa-width-one-half"
       >
         <HearingEmail
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
