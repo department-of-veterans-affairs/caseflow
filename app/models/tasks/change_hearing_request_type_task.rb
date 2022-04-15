@@ -58,12 +58,11 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
-
     if payload_values&.[](:changed_hearing_request_type).present?
       update_appeal_and_self(payload_values, params)
-      # FIX ME make sure task is actually assigned to the user as well
-      if user.can?("VSO")
-        update_hearing_email_recipients(payload_values, params)
+      # check if email recipients need to be created/updated
+      if payload_values.key?(:email_recipients)
+        create_or_update_hearing_email_recipients(payload_values, params)
       end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
@@ -115,6 +114,7 @@ class ChangeHearingRequestTypeTask < Task
         appeal: appeal
       )
     else
+      # update recipient if it already exists in the appeal
       app_recipient.update!(
         email_address: payload_values[:email_recipients][:appellant_email],
         timezone: payload_values[:email_recipients][:appellant_tz]
@@ -125,20 +125,21 @@ class ChangeHearingRequestTypeTask < Task
   def create_or_update_representative_email_recipients(payload_values)
     rep_recipient = appeal.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
     if rep_recipient.blank?
-      # create HER object for poa
+      # create HER object for representative
       RepresentativeHearingEmailRecipient.create!(
-        email_address: "attorney@law.com",
+        email_address: "caseflow-representative@test.com",
         timezone: payload_values[:email_recipients][:representative_tz],
         appeal: appeal
       )
     else
+      # update recipient if it already exists in the appeal
       rep_recipient.update!(
         timezone: payload_values[:email_recipients][:appellant_tz]
       )
     end
   end
 
-  def update_hearing_email_recipients(payload_values, params)
+  def create_or_update_hearing_email_recipients(payload_values, params)
     create_or_update_appellant_email_recipients(payload_values)
     create_or_update_representative_email_recipients(payload_values)
     # idk if this is needed
