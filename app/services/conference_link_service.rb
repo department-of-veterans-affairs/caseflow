@@ -26,7 +26,7 @@ require "digest"
 ##
 # Service for generating new guest and host virtual hearings links
 ##
-module ConferenceLinkServices
+class ConferenceLinkServices
 
   class ConferenceLink::LinkService
     class PINKeyMissingError < StandardError; end
@@ -45,13 +45,12 @@ module ConferenceLinkServices
     def host_pin
       pin_hash("#{pin_key}#{conference_id}")[0..6]
     end
-
+    
     def alias_with_host
       "BVA#{conference_id}@#{host}"
     end
 
     private
-
     def link(pin)
       fail PINMustBePresentError if pin.blank?
       "#{base_url}/?conference=#{alias_with_host}&pin=#{pin}&callType=video"
@@ -66,7 +65,7 @@ module ConferenceLinkServices
     end
 
     def conference_id
-      @conference_id = ConferenceLinks::SequenceConferenceId.next if @conference_id.blank?
+      @conference_id = ConferenceLink::SequenceConferenceId.next if @conference_id.blank?
       @conference_id
     end
 
@@ -87,11 +86,10 @@ module ConferenceLinkServices
 
   class ConferenceLinkSerializer
     include FastJsonapi::ObjectSerializer
-    attr_accessor :conference_link
-  
-    attribute :alias_with_host, &:formatted_alias_or_alias_with_host
+    attr_reader :conference_link
+    attribute :alias_with_host
     attribute :host_pin
-    attribute :host_link, &:host_link
+    attribute :host_link
     attribute :id
     attribute :alias
     attribute :conference_deleted
@@ -101,5 +99,37 @@ module ConferenceLinkServices
     attribute :host_pin_long
     attribute :updated_at
     attribute :updated_by_id
+  end
+
+  class ConferenceLink
+    attr_accessor
+
+    def initialize(alias_with_host, host_pin, host_link, id, conference_deleted, 
+    conference_id, created_at, host_hearing_link, host_pin_long, updated_at, updated_by_id)
+
+      @alias_with_host = alias_with_host
+      @host_pin = host_pin
+      @host_link = host_link
+      @id = id
+      @conference_deleted = conference_deleted
+      @conference_id = conference_id
+      @created_at = created_at
+      @host_hearing_link = host_hearing_link
+      @host_pin_long = host_pin_long
+      @updated_at = updated_at
+      @updated_by_id = updated_by_id
+    end
+  end
+
+  class ConferenceLink::PexipClient
+    def client
+      @client ||= PexipService.new(
+        host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
+        port: ENV["PEXIP_MANAGEMENT_NODE_PORT"],
+        user_name: ENV["PEXIP_USERNAME"],
+        password: ENV["PEXIP_PASSWORD"],
+        client_host: ENV["PEXIP_CLIENT_HOST"]
+      )
+    end
   end
 end

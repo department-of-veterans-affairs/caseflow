@@ -35,6 +35,26 @@ class ExternalApi::PexipService
     ExternalApi::PexipService::CreateResponse.new(resp)
   end
 
+  def create_conferencelink(host_pin:, name:)
+    body = {
+      "aliases": [{ "alias": "BVA#{name}" }, { "alias": ConferenceLink.formatted_alias(name) }, { "alias": name }],
+      "description": "Created by Caseflow",
+      "enable_chat": "yes",
+      "enable_overlay_text": true,
+      # Theme ID is hard coded for now because it's the same in both environments.
+      "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
+      "force_presenter_into_main": true,
+      "name": "BVA#{name}",
+      "pin": host_pin.to_s,
+      "tag": "CASEFLOW"
+    }
+
+    resp = send_pexip_request(CONFERENCES_ENDPOINT, :post, body: body)
+    return if resp.nil?
+
+    ExternalApi::PexipService::CreateResponse.new(resp)
+  end
+
   def delete_conference(conference_id:)
     return if conference_id.nil?
 

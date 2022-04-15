@@ -4,6 +4,7 @@
 # the conference link conference in Pexip.
 
 class ConferenceLink < CaseflowRecord
+
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
   class ConferenceLinkGenerationFailed < StandardError; end
@@ -26,7 +27,7 @@ class ConferenceLink < CaseflowRecord
 
   alias_attribute :alias_name, :alias
 
-  belongs_to :hearing, polymorphic: true
+  belongs_to :hearing_day, polymorphic: true 
   belongs_to :created_by, class_name: "User"
 
   before_create :assign_created_by_user
@@ -36,6 +37,7 @@ class ConferenceLink < CaseflowRecord
   # After a certain point after this change gets merged, alias_with_host will never be nil
   # so we can rid of this logic then
   def formatted_alias_or_alias_with_host
+    byebug
     alias_with_host.nil? ? ConferenceLink.formatted_alias(alias_name) : alias_with_host
   end
 
@@ -51,7 +53,6 @@ class ConferenceLink < CaseflowRecord
 
   def host_link
     return host_hearing_link if host_hearing_link.present?
-
     "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{host_pin}&role=host"
@@ -62,7 +63,7 @@ class ConferenceLink < CaseflowRecord
       "Trying to create conference links ()..."
     )
     begin
-      link_service = ConferenceLink::LinkService.new
+      link_service = ConferenceLink::LinkServices.new
       conference_link.update!(
         host_hearing_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
@@ -96,13 +97,27 @@ class ConferenceLink < CaseflowRecord
     end
   end
 
+  def set_conference_link(hearing_id, hearing_type)
+    case hearing_type
+    when Hearing.name
+      @conference_link = Hearing.find(hearing_id).conference_link
+    when LegacyHearing.name
+      @conference_link = LegacyHearing.find(hearing_id).conference_link
+    else
+      fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
+    end
+
+    #{}fail VirtualHearingNotCreatedError if conference_link.nil?
+    #{}fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
+  end
+
   def create_conference_link_datadog_tags
     datadog_metric_info.merge(attrs: { hearing_id: conference_link.hearing_id })
   end
 
   # Creates the conference link.
   def create_conference_link
-    if FeatureToggle.enabled?(:conference_link_use_new_links, user: conference_link.updated_by)
+    if FeatureToggle.enabled?(:conference_link_use_new_links, user: conference_link.updated_by_id)
       generate_links_and_pins
     else
       assign_conference_link_alias_and_pins if should_initialize_alias_and_pins?

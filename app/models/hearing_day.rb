@@ -283,9 +283,13 @@ class HearingDay < CaseflowRecord
     end
   end
 
+  def updated_by_user_css_id
+    RequestStore.store[:current_user].css_id.upcase
+  end
+
   def call_to_create_conference_link
-    if hearing.hearing_day.request_type == HearingDay::REQUEST_TYPES[:virtual] && hearing.hearing_day.conference_id.nil?
-      create_conference_link(conference_link)
+    if hearing.hearing_day.request_type == HearingDay::REQUEST_TYPES[:virtual] && hearing.hearing_day.conference_link == nil?
+      then hearing.hearing_day.create_conference_link.where(hearing_day_id: hearing.hearing_day_id, created_by_id: hearing.current_user_css_id, updated_by_id: hearing.hearing_day.current_user_css_id)
     end
   end
 end
