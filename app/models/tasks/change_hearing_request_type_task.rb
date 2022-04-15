@@ -134,7 +134,7 @@ class ChangeHearingRequestTypeTask < Task
     else
       # update recipient if it already exists in the appeal
       rep_recipient.update!(
-        timezone: payload_values[:email_recipients][:appellant_tz]
+        timezone: payload_values[:email_recipients][:representative_tz]
       )
     end
   end
