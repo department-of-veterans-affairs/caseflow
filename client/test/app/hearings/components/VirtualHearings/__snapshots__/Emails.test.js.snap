@@ -12,8 +12,10 @@ exports[`HearingEmails Does not show required when ReadOnly 1`] = `
   disabled={true}
   email="123@gmail.com"
   emailType="appellantTz"
+  helperLabel="This email address will be used to send notifications for this hearing only."
   label="Appellant Email"
   required={true}
+  showHelper={true}
 >
   <TextField
     className={
@@ -103,8 +105,10 @@ exports[`HearingEmails Respects required prop 1`] = `
 <HearingEmail
   email="123@gmail.com"
   emailType="appellantTz"
+  helperLabel="This email address will be used to send notifications for this hearing only."
   label="Appellant Email"
   required={true}
+  showHelper={true}
 >
   <TextField
     className={
