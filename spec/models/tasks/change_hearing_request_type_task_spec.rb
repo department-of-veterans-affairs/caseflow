@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
