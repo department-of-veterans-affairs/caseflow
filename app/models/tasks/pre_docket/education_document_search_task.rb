@@ -14,9 +14,6 @@ class EducationDocumentSearchTask < Task
   end
 
   TASK_ACTIONS = [
-    # commented out because the method is not yet created
-    # Constants.TASK_ACTIONS.EDUCATION_ASSIGN_TO_RPO.to_h,
-    # Constants.TASK_ACTIONS.EDUCATION_SEND_TO_BOARD_INTAKE.to_h
     Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.to_h
   ].freeze
 
