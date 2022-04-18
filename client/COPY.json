@@ -279,6 +279,8 @@
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
   "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
 
+  "EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of a Regional Processing Office team or Board Intake:",
+
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned",
   

@@ -14,7 +14,7 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def task_ids_where_parent_has_been_closed
