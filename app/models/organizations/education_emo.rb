@@ -6,4 +6,26 @@ class EducationEmo < Organization
   def self.singleton
     EducationEmo.first || EducationEmo.create(name: "Executive Management Office", url: "edu-emo")
   end
+
+
+  def queue_tabs
+    [
+      completed_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+  
+  def completed_tasks_tab
+    ::EducationEMOCompletedTasksTab.new(assignee: self)
+  end
+  
+  COLUMN_NAMES = [
+    Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+  ].compact
+
+
 end
