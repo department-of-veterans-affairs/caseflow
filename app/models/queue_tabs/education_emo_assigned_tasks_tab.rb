@@ -19,7 +19,7 @@ class EducationEmoAssignedTasksTab < QueueTab
     closed_tasks.select { |task| task.parent.closed? }.pluck(:id)
   end
 
-  def task_ids_emo_sent_elsewhere
+  def task_ids_assigned_to_rpos_or_bva
     on_hold_tasks.map(&:id) + closed_tasks.map(&:id)
   end
 
