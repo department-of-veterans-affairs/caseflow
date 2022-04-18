@@ -5,10 +5,11 @@ describe EducationAssessDocumentationTask, :postgres do
 
   context "#available_actions" do
     describe "for regional processing office user" do
-      let(:regional_processing_office) do
-        EduRegionalProcessingOffice.create!(name: "Regional Processing Office", url: "Regional Processing Office")
-      end
       let(:regional_processing_office) { create(:edu_regional_processing_office) }
+
+      let(:regional_processing_office_task) do
+        create(:education_assess_documentation_task, assigned_to: regional_processing_office)
+      end
 
       it "task should be assigned to RPO" do
         expect(regional_processing_office_task.assigned_to).to eq(regional_processing_office)
