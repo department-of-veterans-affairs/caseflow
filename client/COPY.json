@@ -473,6 +473,7 @@
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
+  "MODAL_RETURN_BUTTON": "Return",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
