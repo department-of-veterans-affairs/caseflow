@@ -1608,7 +1608,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     context "when regional office key is not mapped to a station" do
-      let(:regional_office_key) { "SO62" }
+      let(:regional_office_key) { "SO54" }
       it { is_expected.to be_nil }
     end
   end

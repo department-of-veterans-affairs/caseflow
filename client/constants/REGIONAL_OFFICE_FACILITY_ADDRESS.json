@@ -1,3 +1,5 @@
+
+   
 {
    "vba_301" : {
       "address_1" : "15 New Sudbury Street",
@@ -1151,13 +1153,13 @@
       "zip" : "83814-2531",
       "timezone" : "America/Boise"
    },
-   "vha_671BY" : {
-      "address_1" : "5788 Eckert Road",
+   "vha_671GS" : {
+      "address_1" : "9939 State Hwy 151",
       "address_2" : null,
       "address_3" : null,
       "city" : "San Antonio",
       "state" : "TX",
-      "zip" : "78240-3900",
+      "zip" : "78251-1900",
       "timezone" : "America/Chicago"
    },
    "vha_676" : {
