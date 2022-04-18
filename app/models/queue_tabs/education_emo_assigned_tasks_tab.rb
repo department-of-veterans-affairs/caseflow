@@ -25,7 +25,7 @@ class EducationEmoAssignedTasksTab < QueueTab
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (task_ids_emo_sent_elsewhere - task_ids_where_parent_has_been_closed)
+      id: (task_ids_assigned_to_rpos_or_bva - task_ids_where_parent_has_been_closed)
     )
   end
 
