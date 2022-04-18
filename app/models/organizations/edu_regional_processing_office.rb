@@ -5,4 +5,3 @@ class EduRegionalProcessingOffice < Organization
     false
   end
 end
-  

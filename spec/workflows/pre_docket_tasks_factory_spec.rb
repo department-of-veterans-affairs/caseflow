@@ -10,7 +10,7 @@ describe PreDocketTasksFactory, :postgres do
 
     let(:appeal) { create(:appeal, intake: create(:intake, user: bva_intake_user)) }
 
-    subject { PreDocketTasksFactory.new(appeal).call_vha}
+    subject { PreDocketTasksFactory.new(appeal).call_vha }
 
     it "creates a PreDocket task and child CAMO task" do
       expect(appeal.tasks.count).to eq 0
@@ -46,7 +46,7 @@ describe PreDocketTasksFactory, :postgres do
 
     let(:appeal) { create(:appeal, intake: create(:intake, user: bva_intake_user)) }
 
-    subject { PreDocketTasksFactory.new(appeal).call_edu}
+    subject { PreDocketTasksFactory.new(appeal).call_edu }
 
     it "creates a PreDocket task and child Education task" do
       expect(appeal.tasks.count).to eq 0

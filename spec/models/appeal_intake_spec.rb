@@ -316,7 +316,7 @@ describe AppealIntake, :all_dbs do
             benefit_type: "education",
             decision_date: "2022-04-01",
             is_predocket_needed: true
-          },
+          }
         ]
       end
 
@@ -361,7 +361,7 @@ describe AppealIntake, :all_dbs do
         expect(intake.detail.target_decision_date).to_not be_nil
         expect(intake.detail.request_issues.first).to have_attributes(
           nonrating_issue_category: "test issue category",
-          decision_date: Date.new(2022, 04, 01),
+          decision_date: Date.new(2022, 0o4, 0o1),
           nonrating_issue_description: "nonrating request issue decision text",
           is_predocket_needed: true
         )
