@@ -32,6 +32,22 @@ describe DecisionDocument, :postgres do
     end
   end
 
+  context "#document_type" do
+    subject { decision_document.document_type }
+
+    it "should set document_type to BVA Decision" do
+      expect(subject).to eq "BVA Decision"
+    end
+  end
+
+  context "#source" do
+    subject { decision_document.source }
+
+    it "should set source to BVA" do
+      expect(subject).to eq "BVA"
+    end
+  end
+
   context "#submit_for_processing!" do
     subject { decision_document.submit_for_processing! }
 
