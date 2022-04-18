@@ -75,7 +75,7 @@ class DecisionDocument < CaseflowRecord
       appeal.create_remand_supplemental_claims!
     end
 
-    send_outcode_email(appeal)
+    send_outcode_email(appeal) if FeatureToggle.enabled?(:send_email_for_dispatched_appeals)
 
     processed!
   rescue StandardError => error
