@@ -5,7 +5,7 @@ describe RoNonAvailability, :postgres do
 
   context ".import_ro_non_availability" do
     it "imports ro non-availability days" do
-      expect(RoNonAvailability.where(schedule_period: ro_schedule_period).count).to eq(216)
+      expect(RoNonAvailability.where(schedule_period: ro_schedule_period).count).to eq(220)
     end
   end
 end
