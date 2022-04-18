@@ -64,7 +64,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
         end.flatten
       end
 
-      it "the apepal appears in the EMO's assigned tab while the RPO works on the appeal" do
+      it "the appeal appears in the EMO's assigned tab while the RPO works on the appeal" do
         expect(subject.count).to eq 3
       end
 
