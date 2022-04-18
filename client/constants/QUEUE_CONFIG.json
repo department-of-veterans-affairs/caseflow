@@ -23,6 +23,7 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+  "EDUCATION_ASSIGNED_TASKS_TAB_NAME": "education_assigned",
 
   "COLUMNS": {
     "APPEAL_TYPE": {

@@ -5,10 +5,10 @@ describe EducationDocumentSearchTask, :postgres do
   let(:emo) { EducationEmo.singleton }
   let(:user) { create(:user) }
 
-  before {  emo.add_user(user) }
+  before { emo.add_user(user) }
 
   describe ".label" do
-    it "uses a friendly label" do 
+    it "uses a friendly label" do
       expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
     end
   end
