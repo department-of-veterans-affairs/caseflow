@@ -346,11 +346,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_intake_add_issue
 
         add_intake_nonrating_issue(
-           benefit_type: "Education",
-           category: "Accrued",
-           description: "A pre-docketed education issue",
-           date: 1.month.ago.mdY,
-           is_predocket_needed: true
+          benefit_type: "Education",
+          category: "Accrued",
+          description: "A pre-docketed education issue",
+          date: 1.month.ago.mdY,
+          is_predocket_needed: true
         )
 
         expect(page).to have_button("Submit appeal")

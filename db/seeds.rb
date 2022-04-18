@@ -36,7 +36,7 @@ class SeedDB
 
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
-    call_and_log_seed_step Seeds::Users # TODO must run this before others
+    call_and_log_seed_step Seeds::Users # TODO: must run this before others
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake

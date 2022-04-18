@@ -514,7 +514,9 @@ describe RequestIssue, :all_dbs do
       let(:benefit_type) { "education" }
 
       let!(:request_issues_pre_docket) { create(:request_issue, is_predocket_needed: true, benefit_type: benefit_type) }
-      let!(:request_issues_not_pre_docket) { create(:request_issue, is_predocket_needed: false, benefit_type: benefit_type) }
+      let!(:request_issues_not_pre_docket) do
+        create(:request_issue, is_predocket_needed: false, benefit_type: benefit_type)
+      end
 
       context "education pre-docketing is enabled" do
         before { FeatureToggle.enable!(:edu_predocket_appeals) }
