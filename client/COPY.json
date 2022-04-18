@@ -1243,6 +1243,6 @@
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE": "Ready for Review",
-  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review. Please specify where the documents regarding this appeal were stored.",
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease specify where the documents regarding this appeal were stored.",
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review."
 }

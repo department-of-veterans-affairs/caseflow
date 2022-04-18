@@ -15,6 +15,7 @@ import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../sel
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
+import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
 const validRadio = (radio) => {
@@ -65,8 +66,6 @@ const locationTypeOpts = [
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-  // console.log(taskConfiguration);
-
   const getTaskType = () => {
     return taskConfiguration?.type || null;
   };
@@ -90,7 +89,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             id="vhaCompleteTaskDocLocation"
             label={
               getTaskType() === 'AssessDocumentationTask' ? COPY.VHA_COMPLETE_TASK_MODAL_TITLE :
-                getTaskType() === 'EducationDocumentSearchTask' ? COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY :
+                getTaskType() === 'EducationDocumentSearchTask' ? StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY) :
                   null
             }
             inputRef={props.register}
