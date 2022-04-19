@@ -560,6 +560,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
   );
 
+  routedEMOReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -1019,6 +1023,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
                 }`}
               render={this.routedCamoSendToBoardIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedEMOReturnToBoardIntake}
             />
 
             <PageRoute

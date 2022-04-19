@@ -100,7 +100,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
               errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -111,7 +111,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -184,7 +184,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -193,6 +193,40 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
 };
 
 SendToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
+};
+
+const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <TextareaField
+            label={COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+            name="instructions"
+            id="emoReturnToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+ReturnToBoardIntakeModal.propTypes = {
   props: PropTypes.object,
   tasks: PropTypes.array,
   setState: PropTypes.func,
@@ -261,6 +295,14 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: SendToBoardIntakeModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  emo_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: ReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON
   }
 };
 
@@ -367,12 +409,15 @@ class CompleteTaskModal extends React.Component {
     const { instructions, radio } = this.state;
     const modalType = this.props.modalType;
 
-    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+    if (modalType === 'vha_send_to_board_intake' ||
+      modalType === 'ready_for_review'
+    ) {
       return validInstructions(instructions) && validRadio(radio);
+    } else if (modalType === 'emo_return_to_board_intake') {
+      return validInstructions(instructions);
     }
 
     return true;
-
   }
 
   submit = () => {
