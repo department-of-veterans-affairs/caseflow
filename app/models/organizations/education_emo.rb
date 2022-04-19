@@ -7,21 +7,19 @@ class EducationEmo < Organization
     EducationEmo.first || EducationEmo.create(name: "Executive Management Office", url: "edu-emo")
   end
 
-
   def queue_tabs
     [
       assigned_tasks_tab,
       completed_tasks_tab
     ]
   end
-  
-  def completed_tasks_tab
-    ::EducationEMOCompletedTasksTab.new(assignee: self)
-  end
-  
 
   def assigned_tasks_tab
     ::EducationEmoAssignedTasksTab.new(assignee: self)
+  end
+
+  def completed_tasks_tab
+    ::EducationEMOCompletedTasksTab.new(assignee: self)
   end
 
   COLUMN_NAMES = [
