@@ -9,7 +9,7 @@ class EducationEmo < Organization
 
   def queue_tabs
     [
-      unassigned_tasks_tab
+      unassigned_tasks_tab,
       assigned_tasks_tab
     ]
   end
