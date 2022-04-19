@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Task tracking work searching for decision documents related to VHA issues.
+# Task tracking work searching for decision documents related to Education issues.
 
 class EducationDocumentSearchTask < Task
   validates :parent, presence: true
@@ -14,9 +14,9 @@ class EducationDocumentSearchTask < Task
   end
 
   TASK_ACTIONS = [
-    #commented out because the method is not yet created
-    #Constants.TASK_ACTIONS.EDUCATION_ASSIGN_TO_RPO.to_h,
-    #Constants.TASK_ACTIONS.EDUCATION_SEND_TO_BOARD_INTAKE.to_h
+    # commented out because the method is not yet created
+    # Constants.TASK_ACTIONS.EDUCATION_ASSIGN_TO_RPO.to_h,
+    # Constants.TASK_ACTIONS.EDUCATION_SEND_TO_BOARD_INTAKE.to_h
   ].freeze
 
   def self.label

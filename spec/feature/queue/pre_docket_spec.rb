@@ -10,6 +10,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
+    emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
   end
@@ -25,6 +26,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
+  let(:emo) { EducationEmo.singleton }
+  let(:emo_user) { create(:user) }
   let(:program_office) { create(:vha_program_office) }
   let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
@@ -315,5 +318,57 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
+  end
+
+  context "when an EMO case goes through intake to be pre-docketed" do
+    before do
+      OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
+      FeatureToggle.enable!(:edu_predocket_appeals)
+      FeatureToggle.enable!(:docket_edu_appeals)
+    end
+
+    after do
+      FeatureToggle.disable!(:edu_predocket_appeals)
+      FeatureToggle.disable!(:docket_edu_appeals)
+    end
+
+    it "intaking Education issues and opting for pre-docket
+      creates pre-docket tasks instead of regular docketing tasks" do
+      step "BVA Intake user intakes a EMO case" do
+        User.authenticate!(user: bva_intake_user)
+        start_appeal(veteran, intake_user: bva_intake_user)
+
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        click_intake_continue
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          benefit_type: "Education",
+          category: "Accrued",
+          description: "A pre-docketed education issue",
+          date: 1.month.ago.mdY,
+          is_predocket_needed: true
+        )
+
+        expect(page).to have_button("Submit appeal")
+        click_intake_finish
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+
+        appeal = Appeal.last
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("Pre-Docket")
+      end
+
+      step "Use can search the case and see the Pre Docketed status" do
+        appeal = Appeal.last
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
+        expect(page).to have_content("Pre Docketed")
+      end
+    end
   end
 end

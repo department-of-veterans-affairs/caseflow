@@ -5,6 +5,7 @@ describe PreDocketTask, :postgres do
   let(:root_task) { create(:root_task, appeal: appeal) }
   let!(:pre_docket_task) { create(:pre_docket_task, assigned_to: bva_intake) }
   let!(:assess_documentation_task) { create(:vha_document_search_task, parent: pre_docket_task) }
+  let!(:education_documentation_search_task) { create(:education_document_search_task, parent: pre_docket_task) }
   let(:bva_intake) { BvaIntake.singleton }
   let!(:bva_intake_user) { create(:intake_user) }
   let!(:bva_intake_admin_user) { create(:intake_admin_user) }
@@ -35,17 +36,51 @@ describe PreDocketTask, :postgres do
     context "When the user is a BVA Intake user" do
       let(:user) { bva_intake_user }
 
-      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      # it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      it { is_expected.to eq pre_docket_task.available_actions(user) }
     end
 
     context "When the user is a BVA Intake admin" do
       let(:user) { bva_intake_admin_user }
 
-      it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      # it { is_expected.to eq PreDocketTask::TASK_ACTIONS }
+      it { is_expected.to eq pre_docket_task.available_actions(user) }
+    end
+
+    context "When an admin user has the docket_edu_appeals FeatureToggle enabled" do
+      before do
+        FeatureToggle.enable!(:docket_edu_appeals)
+        FeatureToggle.disable!(:docket_vha_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:docket_edu_appeals)
+        FeatureToggle.enable!(:docket_vha_appeals)
+      end
+
+      let(:user) { bva_intake_admin_user }
+
+      it { is_expected.to eq pre_docket_task.available_actions(user) }
     end
   end
 
   context "#docket_appeal" do
+    it "Creates a distribution task and closes the pre-docket task" do
+      expect { pre_docket_task.docket_appeal }.to_not raise_error
+    end
+  end
+
+  context "#docket_appeal with docket_edu_appeals FeatureToggle enabled" do
+    before do
+      FeatureToggle.enable!(:docket_edu_appeals)
+      FeatureToggle.disable!(:docket_vha_appeals)
+    end
+
+    after do
+      FeatureToggle.disable!(:docket_edu_appeals)
+      FeatureToggle.enable!(:docket_vha_appeals)
+    end
+
     it "Creates a distribution task and closes the pre-docket task" do
       expect { pre_docket_task.docket_appeal }.to_not raise_error
     end

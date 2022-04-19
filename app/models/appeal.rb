@@ -338,6 +338,10 @@ class Appeal < DecisionReview
     request_issues.active.any? { |ri| ri.benefit_type == "vha" }
   end
 
+  def edu_predocket_needed?
+    request_issues.active.any? { |ri| ri.benefit_type == "education" && ri.is_predocket_needed }
+  end
+
   alias cavc? cavc
 
   def cavc_remand
@@ -437,7 +441,9 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
-      PreDocketTasksFactory.new(self).call
+      PreDocketTasksFactory.new(self).call_vha
+    elsif edu_predocket_needed?
+      PreDocketTasksFactory.new(self).call_edu
     else
       InitialTasksFactory.new(self).create_root_and_sub_tasks!
     end

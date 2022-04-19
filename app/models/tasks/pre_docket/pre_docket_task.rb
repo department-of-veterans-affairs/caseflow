@@ -8,14 +8,33 @@
 
 class PreDocketTask < Task
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h,
+    Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
+  ].freeze
+
+  VHA_ACTIONS = [
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
   ].freeze
 
-  def available_actions(user)
-    return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
+  EDU_ACTIONS = [
+    Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.to_h
+  ].freeze
 
-    TASK_ACTIONS
+  def available_actions(user)
+    return [] unless assigned_to.user_has_access?(user) && (
+      FeatureToggle.enabled?(:docket_vha_appeals, user: user) ||
+      FeatureToggle.enabled?(:docket_edu_appeals, user: user)
+    )
+
+    task_actions = Array.new(TASK_ACTIONS)
+    child_task = children.first
+
+    if child_task.task_is_assigned_to_organization?(VhaCamo.singleton)
+      task_actions.concat(VHA_ACTIONS)
+    elsif child_task.task_is_assigned_to_organization?(EducationEmo.singleton)
+      task_actions.concat(EDU_ACTIONS)
+    end
+
+    task_actions
   end
 
   def update_from_params(params, current_user)

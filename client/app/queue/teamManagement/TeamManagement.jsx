@@ -27,6 +27,7 @@ import {
   TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
+  TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
 import { clearStatus, fetchTeamManagement, updateOrg } from './teamManagement.slice';
@@ -45,7 +46,7 @@ export const TeamManagement = React.memo(({
   privateBars,
   vhaProgramOffices,
   vhaRegionalOffices,
-  eduRegionalProccessingOffices,
+  eduRegionalProcessingOffices,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -131,15 +132,14 @@ export const TeamManagement = React.memo(({
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
-
           { vhaRegionalOffices && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
           </OrgSection> }
 
-          { eduRegionalProccessingOffices && <OrgSection>
-            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDU_REGIONAL_PROCESSING_OFFICE_TEAM_LABEL}</OrgHeader>
-            <OrgList orgs={eduRegionalProccessingOffices} statuses={statuses} />
+          { eduRegionalProcessingOffices && <OrgSection>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL}</OrgHeader>
+            <OrgList orgs={eduRegionalProcessingOffices} statuses={statuses} />
           </OrgSection> }
 
           { otherOrgs && <OrgSection>
@@ -171,6 +171,7 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
+  eduRegionalProcessingOffices: PropTypes.array,
   onOrgUpdate: PropTypes.func,
   eduRegionalProccessingOffices: PropTypes.array,
   statuses: PropTypes.shape({
@@ -192,6 +193,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    eduRegionalProcessingOffices,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -224,6 +226,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    eduRegionalProcessingOffices,
     otherOrgs,
     success,
     error,
