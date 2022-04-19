@@ -26,6 +26,7 @@ describe EducationEmoUnassignedTasksTab, :postgres do
         expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
       end
     end
+
     context "when we want to show the reader link column" do
       let(:show_reader_link_column) { true }
       let(:params) { { assignee: create(:education_emo), show_reader_link_column: show_reader_link_column } }
