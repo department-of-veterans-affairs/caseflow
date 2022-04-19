@@ -4,11 +4,13 @@ describe EducationEmoUnassignedTasksTab, :postgres do
   let(:tab) { EducationEmoUnassignedTasksTab.new(params) }
   let(:params) do
     {
-      assignee: assignee
+      assignee: assignee,
+      show_reader_link_column: show_reader_link_column
     }
   end
   let(:assignee) { create(:education_emo) }
   let(:rpo_assignee) { create(:edu_regional_processing_office) }
+  let(:show_reader_link_column) { false }
 
 
   describe ".column_names" do
@@ -18,15 +20,23 @@ describe EducationEmoUnassignedTasksTab, :postgres do
       let(:params) { { assignee: create(:education_emo) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq(6)
+      end
+      it "does not include the reader link column" do
+        expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
       end
     end
     context "when we want to show the reader link column" do
       let(:show_reader_link_column) { true }
+      let(:params) { { assignee: create(:education_emo), show_reader_link_column: show_reader_link_column } }
 
+      it "returns the correct number of columns" do
+        expect(subject.length).to eq(7)
+      end
       it "includes the reader link column" do
         expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
       end
+    end
   end
 
   describe ".tasks" do
