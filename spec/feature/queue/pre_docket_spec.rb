@@ -357,13 +357,13 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-        appeal = Appeal.last
+        appeal = Appeal.order("created_at").last
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Pre-Docket")
       end
 
       step "Use can search the case and see the Pre Docketed status" do
-        appeal = Appeal.last
+        appeal = Appeal.order("created_at").last
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.veteran_file_number
         find("#submit-search-searchBarEmptyList").click
