@@ -16,7 +16,7 @@ class EducationEMOCompletedTasksTab < QueueTab
     end
   
     def tasks
-      recently_completed_tasks
+      Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
     end
   
     def column_names
