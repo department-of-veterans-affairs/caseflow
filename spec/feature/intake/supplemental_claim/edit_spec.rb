@@ -32,7 +32,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
-  let(:is_predocket_needed) { false}
+  let(:is_predocket_needed) { false }
 
   let!(:supplemental_claim) do
     SupplementalClaim.create!(

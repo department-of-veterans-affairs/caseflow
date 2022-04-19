@@ -40,7 +40,7 @@
     "city": "White River Junction",
     "state": "VT",
     "timezone": "America/New_York",
-    "hold_hearings": false,
+    "hold_hearings": true,
     "facility_locator_id": "vba_405",
     "alternate_locations": ["vba_373"]
   },
@@ -590,7 +590,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_362",
-    "alternate_locations": ["vha_671BY", "vha_740GB"]
+    "alternate_locations": ["vha_671GS", "vha_740GB"]
   },
   "RO63": {
     "label": "Anchorage regional office",
