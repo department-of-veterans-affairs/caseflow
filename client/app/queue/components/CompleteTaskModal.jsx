@@ -78,6 +78,15 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const handleTextFieldChange = (value) => {
     setState({ otherInstructions: value });
   };
+  const modalLabel = () => {
+    if (getTaskType() === 'AssessDocumentationTask') {
+      return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
+    } else if (getTaskType() === 'EducationDocumentSearchTask') {
+      return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+    }
+
+    return null;
+  };
 
   return (
     <React.Fragment>
@@ -87,11 +96,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <RadioField
             name="completeTaskDocLocation"
             id="completeTaskDocLocation"
-            label={
-              getTaskType() === 'AssessDocumentationTask' ? COPY.VHA_COMPLETE_TASK_MODAL_TITLE :
-                getTaskType() === 'EducationDocumentSearchTask' ? StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY) :
-                  null
-            }
+            label={modalLabel()}
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
@@ -120,7 +125,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) && 
+              !validInstructions(state.instructions) &&
               getTaskType() !== 'EducationDocumentSearchTask' ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
             optional={getTaskType() === 'EducationDocumentSearchTask'}
