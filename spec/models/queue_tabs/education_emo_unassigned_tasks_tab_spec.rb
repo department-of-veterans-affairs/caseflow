@@ -21,6 +21,12 @@ describe EducationEmoUnassignedTasksTab, :postgres do
         expect(subject.length).to eq(7)
       end
     end
+    context "when we want to show the reader link column" do
+      let(:show_reader_link_column) { true }
+
+      it "includes the reader link column" do
+        expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
+      end
   end
 
   describe ".tasks" do
