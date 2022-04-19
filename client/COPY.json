@@ -1247,5 +1247,6 @@
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
   "EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
-  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action:"
+  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action:",
+  "EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake"
 }
