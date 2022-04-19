@@ -85,8 +85,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
           <RadioField
-            name="vhaCompleteTaskDocLocation"
-            id="vhaCompleteTaskDocLocation"
+            name="completeTaskDocLocation"
+            id="completeTaskDocLocation"
             label={
               getTaskType() === 'AssessDocumentationTask' ? COPY.VHA_COMPLETE_TASK_MODAL_TITLE :
                 getTaskType() === 'EducationDocumentSearchTask' ? StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY) :
@@ -97,31 +97,31 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={handleRadioChange}
             value={state.radio}
             options={locationTypeOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           {state.radio === 'other' &&
             <TextareaField
               label='If "Other" was chosen indicate the source.'
-              name="otherVhaCompleteTaskDocLocation"
-              id="vhaCompleteTaskOtherInstructions"
+              name="otherCompleteTaskDocLocation"
+              id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
               value={state.otherInstructions}
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
               errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
             name="instructions"
-            id="vhaCompleteTaskInstructions"
+            id="completeTaskInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) && 
-              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR :
+              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
             optional={getTaskType() === 'EducationDocumentSearchTask'}
           />
@@ -185,7 +185,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
             options={filteredSendToBoardOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
@@ -196,7 +196,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.VHA_EMPTY_INSTRUCTIONS_ERROR : null}
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
