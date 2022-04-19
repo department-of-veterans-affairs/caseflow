@@ -160,13 +160,10 @@ export const ScheduleVeteran = ({
 
   // Reset the state on unmount
   useEffect(() => {
-    if (
-      !hearing?.virtualHearing?.appellantTz ||
-      !hearing?.virtualHearing?.representativeTz ||
-      !hearing?.virtualHearing?.appellantEmail ||
-      !hearing?.virtualHearing?.representativeEmail
-    ) {
+    const timeZoneMissing = !hearing?.virtualHearing?.appellantTz || !hearing.virtualHearing?.representativeTz;
+    const emailMissing = !hearing?.virtualHearing?.appellantEmail || !hearing.virtualHearing?.representativeEmail;
 
+    if (timeZoneMissing || emailMissing) {
       const appellantTz = appeal?.appellant_hearing_email_recipient?.timezone;
       const representativeTz = appeal?.representative_hearing_email_recipient?.timezone;
 
