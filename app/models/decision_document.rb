@@ -75,6 +75,8 @@ class DecisionDocument < CaseflowRecord
       appeal.create_remand_supplemental_claims!
     end
 
+    send_outcode_email(appeal)
+
     processed!
   rescue StandardError => error
     update_error!(error.to_s)
@@ -163,5 +165,20 @@ class DecisionDocument < CaseflowRecord
     return true unless processed? || decision_date.future?
 
     false
+  end
+
+  def send_outcode_email(appeal)
+    return if !FeatureToggle.enabled?(:send_email_for_dispatched_appeals) || appeal.power_of_attorney.blank?
+
+    if appeal.is_a?(Appeal)
+      email_address = appeal.power_of_attorney.representative_email_address
+    elsif appeal.is_a?(LegacyAppeal)
+      email_address = appeal.power_of_attorney.bgs_representative_email_address
+    end
+
+    DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
+    message = "No BVA Dispatch POA notification email was sent because no POA is defined"
+    log = { class: self.class, appeal_id: appeal.id, message: message }
+    Rails.logger.warn("BVADispatchEmail #{log}")
   end
 end
