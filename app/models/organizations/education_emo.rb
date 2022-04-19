@@ -10,7 +10,7 @@ class EducationEmo < Organization
 
   def queue_tabs
     [
-      completed_tasks_tab,
+      assigned_tasks_tab,
       completed_tasks_tab
     ]
   end
@@ -19,6 +19,11 @@ class EducationEmo < Organization
     ::EducationEMOCompletedTasksTab.new(assignee: self)
   end
   
+
+  def assigned_tasks_tab
+    ::EducationEmoAssignedTasksTab.new(assignee: self)
+  end
+
   COLUMN_NAMES = [
     Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
