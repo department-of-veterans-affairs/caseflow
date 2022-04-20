@@ -12,11 +12,17 @@ class EducationEMOCompletedTasksTab < QueueTab
     end
   
     def description
-       COPY::EDUCATION_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+       COPY::EDUCATION_EMO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION
+    end
+
+    def task_ids_assigned_to_bva
+        closed_tasks.map(&:id)
     end
   
     def tasks
-      Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+      Task.includes(*task_includes).visible_in_queue_table_view.where(
+        id: (task_ids_assigned_to_bva)
+      ).completed
     end
   
     def column_names
