@@ -9,8 +9,13 @@ class EducationEmo < Organization
 
   def queue_tabs
     [
+      unassigned_tasks_tab,
       assigned_tasks_tab
     ]
+  end
+
+  def unassigned_tasks_tab
+    ::EducationEmoUnassignedTasksTab.new(assignee: self)
   end
 
   def assigned_tasks_tab
