@@ -413,12 +413,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "Task now appears in the EMO org's assigned tab" do
-        visit "/organizations/edu-emo?tab=education_unassigned"
+        visit "/organizations/edu-emo?tab=education_assigned"
         expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
 
-      step "Switch to BVA Intake user and make sure task appears in the BVA org's Ready for Review tab" do
+      step "Switch to BVA Intake user and make sure task appears in the BVA Intake org's Ready for Review tab" do
         User.authenticate!(user: bva_intake_user)
         visit "/organizations/bva-intake?tab=bvaReadyForReview"
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
