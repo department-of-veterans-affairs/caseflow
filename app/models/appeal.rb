@@ -335,7 +335,7 @@ class Appeal < DecisionReview
   end
 
   def predocket_issues?
-    request_issues.active(&:predocket_needed?)
+    request_issues&.any?(&:is_predocket_needed?)
   end
 
   alias cavc? cavc
