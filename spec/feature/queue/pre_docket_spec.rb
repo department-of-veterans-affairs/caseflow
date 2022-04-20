@@ -362,12 +362,67 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("Pre-Docket")
       end
 
-      step "Use can search the case and see the Pre Docketed status" do
+      step "User can search the case and see the Pre Docketed status" do
         appeal = Appeal.order("created_at").last
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.veteran_file_number
         find("#submit-search-searchBarEmptyList").click
         expect(page).to have_content("Pre Docketed")
+      end
+    end
+
+    it "EMO user can return an appeal to BVA Intake" do
+      User.authenticate!(user: emo_user)
+      appeal = create(:education_document_search_task, :assigned, assigned_to: emo).appeal
+
+      # TODO: Navigate to appeal in Queue via the unassigned tab once  CS-4599 has been merged
+      # step "EMO user can access the appeal in the EMO org unassigned queue tab" do
+      #   visit "/organizations/edu-emo?tab=education_unassigned"
+      #   expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+      #   find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+      #   expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      # end
+
+      # TODO: Remove this step whenever the above has been uncommented
+      step "EMO user can access an appeal assigned to the EMO org" do
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
+        expect(page).to have_content("Pre Docketed")
+      end
+
+      step "EMO user can select to return an appeal to BVA Intake" do
+        find_link(appeal.docket_number).click
+        expect(page).to have_content("Review Documentation")
+
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.label).click
+        expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+      end
+
+      step "If no text is entered into the modal's textarea it prevents submission" do
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
+      end
+
+      step "After adding text to the text area the form can be submitted" do
+        instructions_textarea = find("textarea", id: "emoReturnToBoardIntakeInstructions")
+        instructions_textarea.send_keys("Issue was not related to education. Please reevalutate.")
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+      end
+
+      step "Task now appears in the EMO org's assigned tab" do
+        visit "/organizations/edu-emo?tab=education_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "Switch to BVA Intake user and make sure task appears in the BVA org's Ready for Review tab" do
+        User.authenticate!(user: bva_intake_user)
+        visit "/organizations/bva-intake?tab=bvaReadyForReview"
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
   end
