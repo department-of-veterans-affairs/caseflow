@@ -9,8 +9,6 @@ class PreDocketTasksFactory
       call_vha
     elsif edu_predocket_needed?
       call_edu
-    else
-      Rails.logger.error("How the hell did you get here?...")
     end
   end
 
