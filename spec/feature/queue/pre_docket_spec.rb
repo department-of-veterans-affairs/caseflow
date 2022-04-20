@@ -370,21 +370,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("Pre Docketed")
       end
 
-      step "EMO user can make appeal as Ready for Review" do
+      step "EMO user can send appeal as Ready for Review" do
         User.authenticate!(user: emo_user)
 
-        # TODO: uncomment once unassignedTab code changes have been merged
-        # visit "/organizations/edu-emo?tab=unassignedTab"
-        # expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
-        # find_link("#{veteran.name} (#{veteran.file_number})").click
-
-        # can remove this block once the above has been added
-        appeal = Appeal.last
-        visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
-        find("#submit-search-searchBarEmptyList").click
-        expect(page).to have_content("Pre Docketed")
-        find_link(appeal.docket_number).click
+        visit "/organizations/edu-emo?tab=education_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find_link("#{veteran.name} (#{veteran.file_number})").click
 
         expect(page).to have_content("Review Documentation")
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
