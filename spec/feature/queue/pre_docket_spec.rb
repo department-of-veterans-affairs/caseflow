@@ -375,24 +375,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       User.authenticate!(user: emo_user)
       appeal = create(:education_document_search_task, :assigned, assigned_to: emo).appeal
 
-      # TODO: Navigate to appeal in Queue via the unassigned tab once  CS-4599 has been merged
-      # step "EMO user can access the appeal in the EMO org unassigned queue tab" do
-      #   visit "/organizations/edu-emo?tab=education_unassigned"
-      #   expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
-      #   find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
-      #   expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      # end
-
-      # TODO: Remove this step whenever the above has been uncommented
-      step "EMO user can access an appeal assigned to the EMO org" do
-        visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
-        find("#submit-search-searchBarEmptyList").click
-        expect(page).to have_content("Pre Docketed")
+      step "EMO user can access the appeal in the EMO org unassigned queue tab" do
+        visit "/organizations/edu-emo?tab=education_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       end
 
       step "EMO user can select to return an appeal to BVA Intake" do
-        find_link(appeal.docket_number).click
         expect(page).to have_content("Review Documentation")
 
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
