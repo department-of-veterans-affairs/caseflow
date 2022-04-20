@@ -12,7 +12,6 @@ describe EducationEmoUnassignedTasksTab, :postgres do
   let(:rpo_assignee) { create(:edu_regional_processing_office) }
   let(:show_reader_link_column) { false }
 
-
   describe ".column_names" do
     subject { tab.column_names }
 
@@ -53,20 +52,34 @@ describe EducationEmoUnassignedTasksTab, :postgres do
 
     context "when the RPO task is cancelled and sent back to the EMO" do
       let!(:assignee_assigned_task) { create(:education_document_search_task, :assigned, assigned_to: assignee) }
-      let!(:assignee_assigned_task_child) { create(:education_assess_documentation_task, :cancelled, assigned_to: rpo_assignee, parent: assignee_assigned_task) }
-      
+      let!(:assignee_assigned_task_child) do
+        create(
+          :education_assess_documentation_task,
+          :cancelled,
+          assigned_to: rpo_assignee,
+          parent: assignee_assigned_task
+        )
+      end
+
       it "returns the appeal that was cancelled by the RPO and is now assigned in EMO" do
-        assignee_assigned_task.update!(status:Constants.TASK_STATUSES.assigned)
+        assignee_assigned_task.update!(status: Constants.TASK_STATUSES.assigned)
         expect(subject.to_a.first).to eq(assignee_assigned_task)
       end
     end
 
     context "when the EMO task is completed, BVA receives the appeal, and then sends it back to EMO" do
       let!(:assignee_assigned_task) { create(:education_document_search_task, :assigned, assigned_to: assignee) }
-      let!(:assignee_assigned_task_child) { create(:education_assess_documentation_task, :completed, assigned_to: rpo_assignee, parent: assignee_assigned_task) }
+      let!(:assignee_assigned_task_child) do
+        create(
+          :education_assess_documentation_task,
+          :completed,
+          assigned_to: rpo_assignee,
+          parent: assignee_assigned_task
+        )
+      end
 
       it "returns the appeal that has tasks completed by RPO and EMO, and then is assigned again to EMO" do
-        assignee_assigned_task.update!(status:Constants.TASK_STATUSES.completed)
+        assignee_assigned_task.update!(status: Constants.TASK_STATUSES.completed)
         create(:education_document_search_task, :assigned, assigned_to: assignee, parent: assignee_assigned_task.parent)
         expect(subject.to_a.first).to eq(assignee_assigned_task.siblings.first)
       end
