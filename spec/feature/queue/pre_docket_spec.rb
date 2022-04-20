@@ -358,7 +358,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
         appeal = Appeal.last
-        visit "/queue/appeals/#{appeal.uuid}"
+        visit "/queue/appeals/#{appeal.external_id}"
         expect(page).to have_content("Pre-Docket")
       end
 
@@ -372,10 +372,21 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "EMO user can make appeal as Ready for Review" do
         User.authenticate!(user: emo_user)
-        visit "/organizations/edu-emo?tab=unassignedTab"
-        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
 
-        find_link("#{veteran.name} (#{veteran.file_number})").click
+        # TODO: uncomment once unassignedTab code changes have been merged
+        # visit "/organizations/edu-emo?tab=unassignedTab"
+        # expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        # find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        # can remove this block once the above has been added
+        appeal = Appeal.last
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
+        expect(page).to have_content("Pre Docketed")
+        find_link(appeal.docket_number).click
+
+        expect(page).to have_content("Review Documentation")
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label).click
         expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
@@ -395,15 +406,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         bva_intake_task = PreDocketTask.last
         expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-      end
-
-      step "BVA Intake user can view appeal and Docket it" do
-        User.authenticate!(user: bva_intake_user)
-        appeal = Appeal.last
-        visit "/queue/appeals/#{appeal.uuid}"
-
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        expect(page).to have_content(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
       end
     end
   end
