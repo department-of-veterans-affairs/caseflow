@@ -25,14 +25,18 @@ class EducationEmoUnassignedTasksTab < QueueTab
   # Column names defined in each tab in education predocket due to different columns needed
   # Actual names found in QUEUE_CONFIG.json file
   def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
-      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-      show_reader_link_column ? Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name : nil
-    ].compact
+    if show_reader_link_column
+      COLUMN_NAMES.append(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
+    end
+    COLUMN_NAMES
   end
+
+  COLUMN_NAMES = [
+    Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+    Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+  ].compact
 end
