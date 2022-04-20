@@ -161,7 +161,7 @@ class RequestIssue < CaseflowRecord
       )
     end
 
-    def is_predocket_needed
+    def predocket_needed
       active.where(is_predocket_needed: true)
     end
 
@@ -520,7 +520,7 @@ class RequestIssue < CaseflowRecord
   def requires_record_request_task?
     user = RequestStore.store[:current_user]
 
-    return false if is_predocket_needed? && (
+    return false if predocket_needed? && (
       benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
       benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
     )
