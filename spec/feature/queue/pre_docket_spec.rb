@@ -356,10 +356,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_button("Submit appeal")
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
-
-        appeal = Appeal.order("created_at").last
-        visit "/queue/appeals/#{appeal.external_id}"
-        expect(page).to have_content("Pre-Docket")
       end
 
       step "User can search the case and see the Pre Docketed status" do
