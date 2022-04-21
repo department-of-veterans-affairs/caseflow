@@ -15,6 +15,7 @@ import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../sel
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
+import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
 const validRadio = (radio) => {
@@ -64,6 +65,10 @@ const locationTypeOpts = [
 
 const ReadyForReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+
+  const getTaskType = () => {
+    return taskConfiguration?.type || null;
+  };
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
@@ -73,6 +78,15 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const handleTextFieldChange = (value) => {
     setState({ otherInstructions: value });
   };
+  const modalLabel = () => {
+    if (getTaskType() === 'AssessDocumentationTask') {
+      return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
+    } else if (getTaskType() === 'EducationDocumentSearchTask') {
+      return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+    }
+
+    return null;
+  };
 
   return (
     <React.Fragment>
@@ -80,21 +94,21 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
           <RadioField
-            name="vhaCompleteTaskDocLocation"
-            id="vhaCompleteTaskDocLocation"
-            label={COPY.VHA_COMPLETE_TASK_MODAL_TITLE}
+            name="completeTaskDocLocation"
+            id="completeTaskDocLocation"
+            label={modalLabel()}
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
             value={state.radio}
             options={locationTypeOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           {state.radio === 'other' &&
             <TextareaField
               label='If "Other" was chosen indicate the source.'
-              name="otherVhaCompleteTaskDocLocation"
-              id="vhaCompleteTaskOtherInstructions"
+              name="otherCompleteTaskDocLocation"
+              id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
               value={state.otherInstructions}
               styling={marginTop(4)}
@@ -105,13 +119,16 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
             name="instructions"
-            id="vhaCompleteTaskInstructions"
+            id="completeTaskInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+              !validInstructions(state.instructions) &&
+              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.EMPTY_INSTRUCTIONS_ERROR :
+              null}
+            optional={getTaskType() === 'EducationDocumentSearchTask'}
           />
         </div>
       )}
@@ -173,7 +190,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
             options={filteredSendToBoardOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.VHA_SELECT_RADIO_ERROR : null}
+            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           <TextareaField
             label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
@@ -303,7 +320,15 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: ReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON
-  }
+  },
+  emo_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
 };
 
 class CompleteTaskModal extends React.Component {
@@ -406,13 +431,20 @@ class CompleteTaskModal extends React.Component {
   };
 
   validateForm = () => {
-    const { instructions, radio } = this.state;
+    const { instructions, otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
 
     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
       return validInstructions(instructions) && validRadio(radio);
     } else if (modalType === 'emo_return_to_board_intake') {
       return validInstructions(instructions);
+    }
+    if (modalType === 'emo_send_to_board_intake_for_review') {
+      if (radio === 'other') {
+        return validInstructions(otherInstructions) && validRadio(radio);
+      }
+
+      return validRadio(radio);
     }
 
     return true;

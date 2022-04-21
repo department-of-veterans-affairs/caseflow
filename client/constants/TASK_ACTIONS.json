@@ -413,5 +413,10 @@
     "label": "Return to Board Intake",
     "value": "modal/emo_return_to_board_intake",
     "func": "emo_return_to_board_intake"
+  },
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/emo_send_to_board_intake_for_review",
+    "func": "emo_send_to_board_intake_for_review"
   }
 }

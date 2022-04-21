@@ -357,8 +357,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-        appeal = Appeal.order("created_at").last
-        visit "/queue/appeals/#{appeal.uuid}"
+        appeal = Appeal.last
+        visit "/queue/appeals/#{appeal.external_id}"
         expect(page).to have_content("Pre-Docket")
       end
 
@@ -368,6 +368,35 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         fill_in "searchBarEmptyList", with: appeal.veteran_file_number
         find("#submit-search-searchBarEmptyList").click
         expect(page).to have_content("Pre Docketed")
+      end
+
+      step "EMO user can send appeal as Ready for Review" do
+        User.authenticate!(user: emo_user)
+
+        visit "/organizations/edu-emo?tab=education_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        expect(page).to have_content("Review Documentation")
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label).click
+        expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices[0]).to have_content("VBMS")
+        expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+        expect(radio_choices[2]).to have_content("Other")
+
+        radio_choices[0].click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content("You have successfully sent #{veteran.name}'s case to Board Intake for review")
+
+        emo_task = EducationDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
       end
     end
 
