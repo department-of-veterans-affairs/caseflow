@@ -379,7 +379,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(page).to have_content("Review Documentation")
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+        ).click
         expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
         expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
 
