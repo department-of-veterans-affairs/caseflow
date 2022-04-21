@@ -434,20 +434,25 @@ class CompleteTaskModal extends React.Component {
     const { instructions, otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
 
+    let isValid = true;
+
     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-      return validInstructions(instructions) && validRadio(radio);
-    } else if (modalType === 'emo_return_to_board_intake') {
-      return validInstructions(instructions);
+      isValid = validInstructions(instructions) && validRadio(radio);
     }
+
+    if (modalType === 'emo_return_to_board_intake') {
+      isValid = validInstructions(instructions);
+    }
+
     if (modalType === 'emo_send_to_board_intake_for_review') {
       if (radio === 'other') {
-        return validInstructions(otherInstructions) && validRadio(radio);
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
       }
 
-      return validRadio(radio);
+      isValid = validRadio(radio);
     }
 
-    return true;
+    return isValid;
   }
 
   submit = () => {
