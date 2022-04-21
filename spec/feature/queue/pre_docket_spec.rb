@@ -383,8 +383,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "EMO user can select to return an appeal to BVA Intake" do
-        expect(page).to have_content("Review Documentation")
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
@@ -413,7 +413,29 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         User.authenticate!(user: bva_intake_user)
         visit "/organizations/bva-intake?tab=bvaReadyForReview"
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+      end
+
+      step "Send the appeal back to the EMO" do
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.label).click
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("The intake details have been corrected. Please review this appeal.")
+
+        find("button", class: "usa-button", text: COPY::MODAL_SUBMIT_BUTTON).click
+      end
+
+      step "Switch to an EMO user and make sure the active
+        EducationDocumentSearchTask only appears in the unassigned tab" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_unassigned"
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
+        expect(page).to_not have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
   end
