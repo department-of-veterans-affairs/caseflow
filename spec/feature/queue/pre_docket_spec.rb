@@ -402,7 +402,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "Task now appears in the EMO org's assigned tab" do
-        visit "/organizations/edu-emo?tab=education_assigned"
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_unassigned&page=1")
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_assigned&page=1")
         expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
