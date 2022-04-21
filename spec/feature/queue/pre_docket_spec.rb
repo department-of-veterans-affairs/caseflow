@@ -357,7 +357,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-        appeal = Appeal.last
+        appeal = Appeal.order("created_at").last
         visit "/queue/appeals/#{appeal.external_id}"
         expect(page).to have_content("Pre-Docket")
       end
