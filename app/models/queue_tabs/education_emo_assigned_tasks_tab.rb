@@ -25,9 +25,7 @@ class EducationEmoAssignedTasksTab < QueueTab
     sibling_task_groups.map do |children|
       newest_child = children.select { |child| child.assigned_to_id == assignee.id }.max_by(&:id)
 
-      if newest_child.status != Constants.TASK_STATUSES.assigned
-        newest_child.id
-      end
+      newest_child.id if newest_child.status != Constants.TASK_STATUSES.assigned
     end
   end
 
