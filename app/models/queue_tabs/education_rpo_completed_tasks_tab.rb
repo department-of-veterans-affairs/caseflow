@@ -6,11 +6,11 @@ class EducationRpoCompletedTasksTab < QueueTab
   :allow_bulk_assign
 
   def label
-    COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+    COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.EDUCATION_UNASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.EDUCATION_RPO_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
