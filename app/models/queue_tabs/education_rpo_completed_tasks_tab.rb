@@ -14,7 +14,8 @@ class EducationRpoCompletedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    # format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    COPY::EDUCATION_RPO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION
   end
 
   # In each case, if the EMO task is assigned, then it should meet each use case for the unassigned tab
