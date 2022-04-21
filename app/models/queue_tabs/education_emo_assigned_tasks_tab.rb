@@ -22,10 +22,10 @@ class EducationEmoAssignedTasksTab < QueueTab
   def task_ids_without_newer_siblings
     sibling_task_groups = active_parents_of_emo_tasks_assigned_to_rpos_or_bva.map(&:children)
 
-    sibling_task_groups.map do |children|
-      newest_child = children.select { |child| child.assigned_to_id == assignee.id }.max_by(&:id)
+    sibling_task_groups.map do |siblings|
+      newest_sibling = siblings.select { |sibling| sibling.assigned_to_id == assignee.id }.max_by(&:id)
 
-      newest_child.id if newest_child.status != Constants.TASK_STATUSES.assigned
+      newest_sibling.id if newest_sibling.status != Constants.TASK_STATUSES.assigned
     end
   end
 
