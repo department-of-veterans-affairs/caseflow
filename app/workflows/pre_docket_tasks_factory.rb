@@ -4,20 +4,6 @@ class PreDocketTasksFactory
   def initialize(appeal)
     @appeal = appeal
     @root_task = RootTask.find_or_create_by!(appeal: appeal)
-
-    if vha_has_issues?
-      call_vha
-    elsif edu_predocket_needed?
-      call_edu
-    end
-  end
-
-  def edu_predocket_needed?
-    @appeal.request_issues.active.any? { |ri| ri.benefit_type == "education" }
-  end
-
-  def vha_has_issues?
-    @appeal.request_issues.active.any? { |ri| ri.benefit_type == "vha" }
   end
 
   def call_vha
