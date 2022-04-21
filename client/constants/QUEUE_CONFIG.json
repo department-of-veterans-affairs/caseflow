@@ -25,6 +25,8 @@
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
   "EDUCATION_UNASSIGNED_TASKS_TAB_NAME": "education_unassigned",
   "EDUCATION_ASSIGNED_TASKS_TAB_NAME": "education_assigned",
+  
+  "EDUCATION_RPO_COMPLETED_TASKS_TAB_NAME": "rpo_completed",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
