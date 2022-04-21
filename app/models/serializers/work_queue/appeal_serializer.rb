@@ -14,6 +14,16 @@ class WorkQueue::AppealSerializer
     object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
   end
 
+  # veteran email address if it is a veteran
+  attribute :veteran_email do |object|
+    object.veteran ? object.veteran.email_address : "Cannot Find Veteran"
+  end
+
+  # power of attorney email address
+  attribute :poa_email do |object|
+    object.power_of_attorney.representative_email_address
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
