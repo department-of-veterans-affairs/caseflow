@@ -16,7 +16,7 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def active_parents_of_emo_tasks_assigned_to_rpos_or_bva
-    (on_hold_tasks.map(&:parent) + closed_tasks.map(&:parent)).reject(&:closed?)
+    (on_hold_tasks + closed_tasks).map(&:parent).reject(&:closed?)
   end
 
   def task_ids_without_newer_siblings
