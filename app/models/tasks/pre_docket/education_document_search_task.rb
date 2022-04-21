@@ -16,7 +16,7 @@ class EducationDocumentSearchTask < Task
   TASK_ACTIONS = [
     # commented out because the method is not yet created
     # Constants.TASK_ACTIONS.EDUCATION_ASSIGN_TO_RPO.to_h,
-    # Constants.TASK_ACTIONS.EDUCATION_SEND_TO_BOARD_INTAKE.to_h
+    Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.to_h
   ].freeze
 
   def self.label

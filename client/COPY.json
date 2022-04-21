@@ -1227,8 +1227,8 @@
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents:",
-  "VHA_SELECT_RADIO_ERROR": "Please select an option.",
-  "VHA_EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
+  "SELECT_RADIO_ERROR": "Please select an option.",
+  "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
   "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
@@ -1248,5 +1248,8 @@
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
-  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue"
+  "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE": "Ready for Review",
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease specify where the documents regarding this appeal were stored.",
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review."
 }
