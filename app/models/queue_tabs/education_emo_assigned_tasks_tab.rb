@@ -23,7 +23,7 @@ class EducationEmoAssignedTasksTab < QueueTab
     child_task_groups = active_parents_of_emo_tasks_assigned_to_rpos_or_bva.map(&:children)
 
     child_task_groups.map do |children|
-      newest_child = children.select { |child| child.type == "EducationDocumentSearchTask" }.max_by(&:id)
+      newest_child = children.select { |child| child.assigned_to_id == assignee.id }.max_by(&:id)
 
       if newest_child.status != Constants.TASK_STATUSES.assigned
         newest_child.id
