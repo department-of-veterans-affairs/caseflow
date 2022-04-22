@@ -31,7 +31,7 @@ describe EducationEMOCompletedTasksTab, :postgres do
         it("the appeal appears in the EMO completed tab whenever BVA Intake dockets it") do
             assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.completed)
     
-            expect(subject.count).to eq 1
+            expect(subject.count).to_not eq 0
         end
   
         it("the appeal does not appear in the EMO completed tab whenever BVA Intake has not taken any additional actions") do
