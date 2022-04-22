@@ -15,18 +15,20 @@ class EducationEMOCompletedTasksTab < QueueTab
     COPY::EDUCATION_EMO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION
   end
   
-  def task_ids_where_parent_has_been_closed
-    closed_tasks.select { |task| task.parent.closed? }.pluck(:id)
+  def task_ids_where_parent_has_been_cancelled
+    closed_tasks.select { |task| task.parent.cancelled? }.pluck(:id)
   end
+
+  def task_ids_on_hold
+    on_hold_tasks.map(&:id)
+  end 
     
   def task_ids_assigned_to_bva
     closed_tasks.map(&:id)
   end
-  
+
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (task_ids_assigned_to_bva + task_ids_where_parent_has_been_closed)
-    ).completed
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).completed
   end
   
   def column_names
