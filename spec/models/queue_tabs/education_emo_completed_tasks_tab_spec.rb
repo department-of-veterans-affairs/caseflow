@@ -27,6 +27,12 @@ describe EducationEMOCompletedTasksTab, :postgres do
   
       context "when the EMO sends an appeal to BVA Intake" do
         let!(:assignee_completed_task) { create(:education_document_search_task, :completed, assigned_to: assignee) }
+
+        it("the appeal appears in the EMO completed tab whenever BVA Intake dockets it") do
+            assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.completed)
+    
+            expect(subject.count).to eq 1
+        end
   
         it("the appeal does not appear in the EMO completed tab whenever BVA Intake has not taken any additional actions") do
           assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.assigned)
@@ -39,12 +45,6 @@ describe EducationEMOCompletedTasksTab, :postgres do
   
           expect(subject.count).to eq 0
         end
-
-        it("the appeal appears in the EMO completed tab whenever BVA Intake dockets it") do
-            assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.completed)
-    
-            expect(subject.count).to eq 1
-          end
       end
   
     
