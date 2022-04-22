@@ -22,10 +22,12 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       sync_record = appeal.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name)
 
       new_task_count, closed_task_count = TrackVeteranTask.sync_tracking_tasks(appeal)
+      new_task_count2, closed_task_count2 = ChangeHearingRequestTypeTask.sync_tracking_tasks(appeal)
+
       sync_record.update!(processed_at: Time.zone.now)
 
-      increment_task_count("new", appeal.id, new_task_count)
-      increment_task_count("closed", appeal.id, closed_task_count)
+      increment_task_count("new", appeal.id, new_task_count + new_task_count2)
+      increment_task_count("closed", appeal.id, closed_task_count + closed_task_count2)
 
       # TODO: Add an alert if we've been running for longer than x number of minutes?
     rescue StandardError => error
