@@ -20,10 +20,10 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     appeals_to_update.each do |appeal|
       sync_record = appeal.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name)
-
+      byebug
       new_task_count, closed_task_count = TrackVeteranTask.sync_tracking_tasks(appeal)
-      new_task_count2, closed_task_count2 = ChangeHearingRequestTypeTask.sync_tracking_tasks(appeal)
-
+      #{}new_task_count2, closed_task_count2 = ChangeHearingRequestTypeTask.sync_tracking_tasks(appeal)
+      byebug
       sync_record.update!(processed_at: Time.zone.now)
 
       increment_task_count("new", appeal.id, new_task_count + new_task_count2)
