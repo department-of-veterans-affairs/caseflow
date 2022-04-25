@@ -578,6 +578,14 @@ class TaskActionRepository
       }
     end
 
+    def emo_return_to_board_intake(*)
+      {
+        modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        type: EducationDocumentSearchTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
