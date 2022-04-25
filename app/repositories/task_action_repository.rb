@@ -585,6 +585,17 @@ class TaskActionRepository
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
     end
+    
+    def emo_assign_to_regional_processing_office_data(*)
+      {
+        options: organizations_to_options(EduRegionalProcessingOffice.all),
+        modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
+        modal_body: COPY::VHA_MODAL_BODY,
+        modal_selector_placeholder: COPY::EMO_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER,
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+      }
+    end
 
     private
 
