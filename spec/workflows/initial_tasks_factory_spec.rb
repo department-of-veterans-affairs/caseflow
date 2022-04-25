@@ -62,6 +62,7 @@ describe InitialTasksFactory, :postgres do
 
           it "does not create a tracking task" do
             expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0)
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
           end
         end
 
@@ -138,22 +139,32 @@ describe InitialTasksFactory, :postgres do
             expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
           end
 
+          it "creates a change hearing request type task assigned to the VSO" do
+            subject
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+            expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva)
+          end
+
           it "doesn't create a InformalHearingPresentationTask for missing organization" do
             subject
             expect(InformalHearingPresentationTask.count).to eq(1)
             expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
           end
 
-          context "when a TrackVeteranTask already exists for the appeal and representative" do
+          context "when VSO tracking tasks already exists for the appeal and representative" do
             before do
               root_task = RootTask.create!(appeal: appeal)
               TrackVeteranTask.create!(appeal: appeal, parent: root_task, assigned_to: pva)
+              ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: root_task, assigned_to: pva)
             end
 
-            it "does not create a duplicate tracking task" do
+            it "does not create duplicate tracking tasks" do
               expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
               subject
               expect(appeal.reload.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+              subject
+              expect(appeal.reload.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
             end
           end
         end
@@ -283,7 +294,7 @@ describe InitialTasksFactory, :postgres do
           expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
           expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
           expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
-
+          expect(remand_appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
           expect(some_task_class.find_by(appeal: remand_appeal).status).to eq(some_task_status)
         end
       end
@@ -310,6 +321,7 @@ describe InitialTasksFactory, :postgres do
           expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
           expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil
           expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+          expect(remand_appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
         end
 
         context "when mandate dates are not provided" do
