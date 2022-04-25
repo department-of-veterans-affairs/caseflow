@@ -478,6 +478,7 @@
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
+  "MODAL_RETURN_BUTTON": "Return",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
@@ -1250,6 +1251,9 @@
   "VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY": "Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task in progress",
   "VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
+  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action:",
+  "EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE": "Ready for Review",
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease specify where the documents regarding this appeal were stored.",
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review."

@@ -703,30 +703,60 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  context ".is_predocket_needed" do
-    subject { RequestIssue.is_predocket_needed }
+  context ".predocket_needed on an education issue" do
+    before { FeatureToggle.enable!(:edu_predocket_appeals) }
+    after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
     context "is_predocket_needed is true" do
-      let!(:request_issue) { create(:request_issue, is_predocket_needed: true) }
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: true) }
 
       it "retrieves issues marked for pre-docketing" do
-        expect(subject.find_by(id: request_issue.id)).to_not be_nil
+        expect(request_issue.predocket_needed?).to eq(true)
       end
     end
 
     context "is_predocket_needed is false" do
-      let!(:request_issue) { create(:request_issue, is_predocket_needed: false) }
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: false) }
 
-      it "filters out entries where is_predocket_needed is false" do
-        expect(subject.find_by(id: request_issue.id)).to be_nil
+      it "predocket_needed? returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
       end
     end
 
     context "is_predocket_needed is nil" do
-      let!(:request_issue) { create(:request_issue, is_predocket_needed: nil) }
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: nil) }
 
-      it "filters out entries where is_predocket_needed is nil" do
-        expect(subject.find_by(id: request_issue.id)).to be_nil
+      it "predocket_needed? also returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
+    end
+  end
+
+  context ".predocket_needed on a vha issue" do
+    before { FeatureToggle.enable!(:vha_predocket_appeals) }
+    after { FeatureToggle.disable!(:vha_predocket_appeals) }
+
+    context "is_predocket_needed is true" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: true) }
+
+      it "retrieves issues marked for pre-docketing" do
+        expect(request_issue.predocket_needed?).to eq(true)
+      end
+    end
+
+    context "is_predocket_needed is false" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: false) }
+
+      it "predocket_needed? returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
+    end
+
+    context "is_predocket_needed is nil" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: nil) }
+
+      it "predocket_needed? also returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
       end
     end
   end
