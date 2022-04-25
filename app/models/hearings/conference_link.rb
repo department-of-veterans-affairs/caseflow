@@ -36,7 +36,7 @@ class ConferenceLink < CaseflowRecord
     return host_hearing_link if host_hearing_link.present?
 
     "#{base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
+    "conference=#{formatted_alias}&" \
     "pin=#{host_pin}&role=host"
   end
 
