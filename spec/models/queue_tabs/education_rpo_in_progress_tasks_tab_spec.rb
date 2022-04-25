@@ -24,27 +24,44 @@ describe EducationRpoInProgressTasksTab, :postgres do
   describe ".tasks" do
     subject { tab.tasks }
 
-    context "when there are tasks in progress to the assignee and other folks" do
-      let!(:other_folks_tasks) { create_list(:education_assess_documentation_task, 9) }
+    context "when there are tasks in progress with the assignee and other folks" do
       let!(:assignee_in_progress_tasks) do
         create_list(:education_assess_documentation_task, 5, :in_progress, assigned_to: assignee)
       end
-      let!(:assignee_assigned_tasks) do
-        create_list(:education_assess_documentation_task, 3, :assigned, assigned_to: assignee)
-      end
+      let!(:other_in_progress_tasks) { create_list(:education_assess_documentation_task, 9) }
 
-      it "returns in progress tasks of the assignee and not any other tasks" do
+      it "returns in progress tasks of the assignee and not any other folks" do
         expect(subject).to match_array(
           [assignee_in_progress_tasks].flatten
         )
 
         expect(subject).not_to include(
-          [assignee_assigned_tasks].flatten
+          [other_in_progress_tasks].flatten
         )
+      end
 
-        expect(subject).not_to include(
-          [other_folks_tasks].flatten
-        )
+      context "when there are tasks assigned to the assignee" do
+        let!(:assignee_assigned_tasks) do
+          create_list(:education_assess_documentation_task, 5, :assigned, assigned_to: assignee)
+        end
+
+        it "does not return the assigned tasks" do
+          expect(subject).not_to include(
+            [assignee_assigned_tasks].flatten
+          )
+        end
+      end
+
+      context "when there are tasks completed by the assignee" do
+        let!(:assignee_completed_tasks) do
+          create_list(:education_assess_documentation_task, 4, :completed, assigned_to: assignee)
+        end
+
+        it "does not return the completed tasks" do
+          expect(subject).not_to include(
+            [assignee_completed_tasks].flatten
+          )
+        end
       end
     end
   end
