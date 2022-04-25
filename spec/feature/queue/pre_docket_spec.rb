@@ -369,7 +369,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "EMO user can send appeal as Ready for Review" do
         User.authenticate!(user: emo_user)
 
-        visit "/organizations/edu-emo?tab=education_unassigned"
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
         expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
         find_link("#{veteran.name} (#{veteran.file_number})").click
 
@@ -405,7 +405,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       appeal = create(:education_document_search_task, :assigned, assigned_to: emo).appeal
 
       step "EMO user can access the appeal in the EMO org unassigned queue tab" do
-        visit "/organizations/edu-emo?tab=education_unassigned"
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
         expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
         find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -431,9 +431,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "Task now appears in the EMO org's assigned tab" do
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_unassigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_assigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
         expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -460,7 +460,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "Switch to an EMO user and make sure the active
         EducationDocumentSearchTask only appears in the unassigned tab" do
         User.authenticate!(user: emo_user)
-        visit "/organizations/edu-emo?tab=education_unassigned"
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
 
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
