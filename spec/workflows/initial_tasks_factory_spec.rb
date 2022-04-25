@@ -109,6 +109,22 @@ describe InitialTasksFactory, :postgres do
               expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal)).not_to be_nil
             end
           end
+          context "when a hearing docket appeal has to have a changehearingrequesttypetask assigned" do
+            let(:appeal) do
+              create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing, claimants: [
+                       create(:claimant, participant_id: participant_id_with_pva),
+                       create(:claimant, participant_id: participant_id_with_aml)
+                     ])
+            end
+
+            subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
+            it "creates a changehearingrequesttypetask assigned to the VSO" do
+              subject
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva)
+            end
+          end
         end
 
         context "when it has an ihp-writing vso" do
@@ -288,7 +304,6 @@ describe InitialTasksFactory, :postgres do
       shared_examples "remand appeal blocking distribution" do |some_task_class, some_task_status|
         it "blocks distribution with a CavcTask" do
           remand_appeal = subject.remand_appeal
-          byebug
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
           expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
           expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
@@ -315,7 +330,6 @@ describe InitialTasksFactory, :postgres do
 
         it "sets appeal ready for distribution" do
           remand_appeal = subject.remand_appeal
-          byebug
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
           expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
           expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil
