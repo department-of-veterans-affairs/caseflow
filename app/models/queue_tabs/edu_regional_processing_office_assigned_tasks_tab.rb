@@ -4,7 +4,7 @@ class EduRegionalProcessingOfficeAssignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATION_QUEUE_TABLE_TITLE
+    COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
   end
 
   def self.tab_name

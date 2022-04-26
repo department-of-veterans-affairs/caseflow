@@ -280,7 +280,7 @@
   "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
 
   "EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of a Regional Processing Office team or Board Intake:",
-  "EDU_REGIONAL_PROCESSING_OFFICE_ASSIGNED_TASKS_TAB_DESCRIPTION": "Cases assigned to the %s team",
+  "EDUCATION_RPO_QUEUE_PAGE_ASSIGNED_TASKS_TAB_DESCRIPTION": "Cases assigned to the %s team",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned",
