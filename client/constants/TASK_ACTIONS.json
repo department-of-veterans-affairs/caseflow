@@ -421,7 +421,7 @@
   },
   "EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE": {
     "label": "Assign to Regional Processing Office",
-    "value": "modal/assign_to_program_office",
+    "value": "modal/emo_assign_to_regional_processing_office",
     "func": "emo_assign_to_regional_processing_office_data"
   }
 }

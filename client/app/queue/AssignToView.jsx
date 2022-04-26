@@ -224,6 +224,7 @@ class AssignToView extends React.Component {
             id="taskInstructions"
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
+            optional={actionData.body_optional}
           />
         )}
         {isPulacCerullo && (
