@@ -10,21 +10,21 @@ class EducationEMOCompletedTasksTab < QueueTab
   def self.tab_name
     Constants.QUEUE_CONFIG.EDUCATION_COMPLETED_TASKS_TAB_NAME
   end
-  
+
   def description
     COPY::EDUCATION_EMO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION
   end
-  
+
   def task_ids_where_parent_has_been_completed
     closed_tasks.select { |task| task.parent.completed? }.pluck(:id)
   end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (task_ids_where_parent_has_been_completed)
+      id: task_ids_where_parent_has_been_completed
     )
   end
-  
+
   def column_names
     EducationEmo::COLUMN_NAMES
   end
