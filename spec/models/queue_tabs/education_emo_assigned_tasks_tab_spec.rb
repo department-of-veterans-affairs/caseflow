@@ -104,7 +104,12 @@ describe EducationEmoAssignedTasksTab, :postgres do
         end.flatten
       end
 
-      it "the appeal appears in the EMO's assigned tab while the RPO works on the appeal" do
+      it "the tasks appear in the EMO's assigned tab while the RPO works on the appeal" do
+        expect(subject.count).to eq 3
+      end
+
+      it "the tasks appear in the EMO's assigned tab even if they are in progress within an RPO" do
+        on_hold_tasks_children.first.update!(status: Constants.TASK_STATUSES.in_progress)
         expect(subject.count).to eq 3
       end
 
