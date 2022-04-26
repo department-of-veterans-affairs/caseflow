@@ -340,6 +340,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="ready_for_review" {...props.match.params} />
   );
 
+  routedEmoSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="emo_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
   routedDocketAppeal = (props) => (
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
@@ -558,6 +562,10 @@ class QueueApp extends React.PureComponent {
 
   routedCamoSendToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
+
+  routedEMOReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
 
   queueName = () =>
@@ -1020,6 +1028,12 @@ class QueueApp extends React.PureComponent {
                 }`}
               render={this.routedCamoSendToBoardIntake}
             />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedEMOReturnToBoardIntake}
+            />
 
             <PageRoute
               exact
@@ -1042,6 +1056,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedVhaCompleteTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedEmoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact
