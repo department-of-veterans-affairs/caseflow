@@ -13,7 +13,7 @@ class EduRegionalProcessingOffice < Organization
   end
 
   def assigned_tasks_tab
-    ::EduRegionalProcessingOfficeAssignedTasksTab.new(assignee: self)
+    ::EducationRpoAssignedTasksTab.new(assignee: self)
   end
 
   def in_progress_tab

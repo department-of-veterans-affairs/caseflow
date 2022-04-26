@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EduRegionalProcessingOfficeAssignedTasksTab < QueueTab
+class EducationRpoAssignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
@@ -8,7 +8,7 @@ class EduRegionalProcessingOfficeAssignedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.EDU_REGIONAL_PROCESSING_OFFICE_ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
