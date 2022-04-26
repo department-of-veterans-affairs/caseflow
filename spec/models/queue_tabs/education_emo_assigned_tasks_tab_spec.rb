@@ -28,7 +28,8 @@ describe EducationEmoAssignedTasksTab, :postgres do
     context "when the EMO sends an appeal to BVA Intake" do
       let!(:assignee_completed_task) { create(:education_document_search_task, :completed, assigned_to: assignee) }
 
-      it("the PreDocketTask appears in the EMO assigned tab whenever BVA Intake has not taken any additional actions") do
+      it("the PreDocketTask appears in the EMO assigned tab whenever
+        BVA Intake has not taken any additional actions") do
         assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.assigned)
 
         expect(subject.count).to eq 1
@@ -43,7 +44,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
           parent: parent_task,
           appeal: parent_task.appeal,
           assigned_at: Time.zone.now,
-          assigned_to: assignee,
+          assigned_to: assignee
         )
 
         emo_task.update!(status: Constants.TASK_STATUSES.completed)
@@ -108,7 +109,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
       end
 
       it "the appeal does not appear in the EMO's assigned tab if the RPO returns the appeal to the EMO" do
-        task_returned =on_hold_tasks_children.first
+        task_returned = on_hold_tasks_children.first
 
         on_hold_tasks_children.first.update!(status: Constants.TASK_STATUSES.completed)
         on_hold_tasks_children.first.parent.update!(status: Constants.TASK_STATUSES.assigned)
