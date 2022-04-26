@@ -8,24 +8,30 @@ class EducationEmoAssignedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.EDUCATION_ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
     format(COPY::EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
-  def task_ids_where_parent_has_been_closed
-    closed_tasks.select { |task| task.parent.closed? }.pluck(:id)
+  def active_parents_of_emo_tasks_assigned_to_rpos_or_bva
+    (on_hold_tasks + closed_tasks).map(&:parent).reject(&:closed?)
   end
 
-  def task_ids_assigned_to_rpos_or_bva
-    on_hold_tasks.map(&:id) + closed_tasks.map(&:id)
+  def task_ids_without_newer_siblings
+    sibling_task_groups = active_parents_of_emo_tasks_assigned_to_rpos_or_bva.map(&:children)
+
+    sibling_task_groups.map do |siblings|
+      newest_sibling = siblings.select { |sibling| sibling.assigned_to_id == assignee.id }.max_by(&:id)
+
+      newest_sibling.id if newest_sibling.status != Constants.TASK_STATUSES.assigned
+    end
   end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: (task_ids_assigned_to_rpos_or_bva - task_ids_where_parent_has_been_closed)
+      id: task_ids_without_newer_siblings
     )
   end
 

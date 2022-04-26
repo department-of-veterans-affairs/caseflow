@@ -5,9 +5,9 @@
 module Seeds
   class Education < Base
     REGIONAL_PROCESSING_OFFICES = [
-      "Buffalo RPO - Buffalo Regional Processing Office",
-      "Central Office RPO - Central Office Regional Processing Office",
-      "Muskogee RPO - Muskogee Regional Processing Office"
+      "Buffalo RPO",
+      "Central Office RPO",
+      "Muskogee RPO"
     ].freeze
 
     def seed!
