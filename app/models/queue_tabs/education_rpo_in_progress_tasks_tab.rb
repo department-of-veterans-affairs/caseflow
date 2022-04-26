@@ -22,14 +22,10 @@ class EducationRpoInProgressTasksTab < QueueTab
   end
 
   def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
-      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name
-    ].compact
+    EduRegionalProcessingOffice::COLUMN_NAMES +
+      [
+        Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
+        Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name
+      ].compact
   end
 end
