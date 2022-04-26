@@ -148,4 +148,37 @@ class ChangeHearingRequestTypeTask < Task
   def set_assignee
     self.assigned_to ||= Bva.singleton
   end
+
+  def self.update_to_new_poa(appeal)
+    new_task_count = 0
+    closed_task_count = 0
+
+    tasks_to_sync = appeal.tasks.open.where(
+      type: [ChangeHearingRequestTypeTask.name],
+      assigned_to_type: Organization.name
+    )
+    cached_representatives = tasks_to_sync.map(&:assigned_to)
+    fresh_representatives = appeal.representatives
+    new_representatives = fresh_representatives - cached_representatives
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_representatives.each do |new_vso|
+      ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
+      new_task_count += 1
+    end
+
+    # Close all ChangeHearingRequestTypeTasks for now-former VSO representatives.
+    outdated_representatives = cached_representatives - fresh_representatives
+    tasks_to_sync.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled,
+                   cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change)
+      task.children.open.each do |child_task|
+        child_task.update!(status: Constants.TASK_STATUSES.cancelled,
+                           cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change)
+      end
+      closed_task_count += 1
+    end
+
+    [new_task_count, closed_task_count]
+  end
 end

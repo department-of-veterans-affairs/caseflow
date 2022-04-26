@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-SingleCov.covered!
+
 describe UpdateAppellantRepresentationJob, :all_dbs do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }
@@ -15,8 +15,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
         create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-        create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -28,8 +26,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
         create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-        create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-
         vso_for_appeal[appeal.id] = []
       end
 
@@ -74,8 +70,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
           expect(appeal.reload.record_synced_by_job.first.processed_at.nil?).to eq(false)
           expect(appeal.tasks.of_type(:TrackVeteranTask).first.assigned_to)
             .to eq(vso_for_legacy_appeal[appeal.id].first)
-          expect(appeal.tasks.of_type(:ChangeHearingRequestTypeTask).first.assigned_to)
-            .to eq(vso_for_legacy_appeal[appeal.id].first)
         end
       end
     end
@@ -100,8 +94,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
         create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-        create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -113,8 +105,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
         create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-        create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-
         vso_for_appeal[appeal.id] = []
       end
 
@@ -122,8 +112,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       error_count.times do |_|
         appeal, vso = create_appeal_and_vso
         create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-        create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-
         vso_for_appeal[appeal.id] = error_indicator
       end
 
