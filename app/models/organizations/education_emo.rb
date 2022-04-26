@@ -24,7 +24,7 @@ class EducationEmo < Organization
   end
 
   def completed_tasks_tab
-    ::EducationEMOCompletedTasksTab.new(assignee: self)
+    ::EducationEmoCompletedTasksTab.new(assignee: self)
   end
 
   COLUMN_NAMES = [
