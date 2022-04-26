@@ -12,7 +12,7 @@ class EduRegionalProcessingOfficeAssignedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name.split("-").first.chomp)
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks
