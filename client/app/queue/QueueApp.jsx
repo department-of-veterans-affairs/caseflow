@@ -560,10 +560,6 @@ class QueueApp extends React.PureComponent {
     />
   )
 
-  // routedAssignToVhaProgramOffice = (props) => (
-  //   <AssignToView isTeamAssign {...props.match.params} />
-  // );
-
   routedCamoSendToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
   );
@@ -1026,12 +1022,6 @@ class QueueApp extends React.PureComponent {
                 }`}
               render={this.routedCavcRemandReceived}
             />
-            {/* <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
-                }`}
-              render={this.routedAssignToVhaProgramOffice}
-            /> */}
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
