@@ -53,12 +53,8 @@ describe EducationEmoUnassignedTasksTab, :postgres do
     context "when the RPO task is cancelled and sent back to the EMO" do
       let!(:assignee_assigned_task) { create(:education_document_search_task, :assigned, assigned_to: assignee) }
       let!(:assignee_assigned_task_child) do
-        create(
-          :education_assess_documentation_task,
-          :cancelled,
-          assigned_to: rpo_assignee,
-          parent: assignee_assigned_task
-        )
+        create(:education_assess_documentation_task, :cancelled,
+               assigned_to: rpo_assignee, parent: assignee_assigned_task)
       end
 
       it "returns the appeal that was cancelled by the RPO and is now assigned in EMO" do
@@ -70,12 +66,8 @@ describe EducationEmoUnassignedTasksTab, :postgres do
     context "when the EMO task is completed, BVA receives the appeal, and then sends it back to EMO" do
       let!(:assignee_assigned_task) { create(:education_document_search_task, :assigned, assigned_to: assignee) }
       let!(:assignee_assigned_task_child) do
-        create(
-          :education_assess_documentation_task,
-          :completed,
-          assigned_to: rpo_assignee,
-          parent: assignee_assigned_task
-        )
+        create(:education_assess_documentation_task, :completed,
+               assigned_to: rpo_assignee, parent: assignee_assigned_task)
       end
 
       it "returns the appeal that has tasks completed by RPO and EMO, and then is assigned again to EMO" do
