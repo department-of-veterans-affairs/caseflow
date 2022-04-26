@@ -7,8 +7,8 @@ class EduRegionalProcessingOffice < Organization
 
   def queue_tabs
     [
-      completed_tasks_tab,
-      in_progress_tab
+      in_progress_tab,
+      completed_tasks_tab
     ]
   end
 
