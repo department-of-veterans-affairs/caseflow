@@ -28,19 +28,38 @@ describe EducationEmoAssignedTasksTab, :postgres do
     context "when the EMO sends an appeal to BVA Intake" do
       let!(:assignee_completed_task) { create(:education_document_search_task, :completed, assigned_to: assignee) }
 
-      it("the appeal appears in the EMO assigned tab whenever BVA Intake has not taken any additional actions") do
+      it("the PreDocketTask appears in the EMO assigned tab whenever BVA Intake has not taken any additional actions") do
         assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.assigned)
 
         expect(subject.count).to eq 1
+        expect(subject.first.type).to eq "PreDocketTask"
       end
 
-      it("the appeal does not appear in the EMO assigned tab whenever BVA Intake dockets it") do
+      it("the PreDocketTask appears once in the EMO assigned tab if it is assigned to BVA Intake
+        even if there are multiple EducationDocumentSearchTasks child tasks") do
+        parent_task = assignee_completed_task.parent
+
+        emo_task = EducationDocumentSearchTask.create!(
+          parent: parent_task,
+          appeal: parent_task.appeal,
+          assigned_at: Time.zone.now,
+          assigned_to: assignee,
+        )
+
+        emo_task.update!(status: Constants.TASK_STATUSES.completed)
+        parent_task.update!(status: Constants.TASK_STATUSES.assigned)
+
+        expect(subject.count).to eq 1
+        expect(subject.first.type).to eq "PreDocketTask"
+      end
+
+      it("no task appears in the EMO assigned tab whenever BVA Intake dockets it") do
         assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.completed)
 
         expect(subject.count).to eq 0
       end
 
-      it("the appeal does not appear in the EMO assigned tab whenever BVA Intake cancels it") do
+      it("no task appears in the EMO assigned tab whenever BVA Intake cancels it") do
         assignee_completed_task.parent.update!(status: Constants.TASK_STATUSES.cancelled)
 
         expect(subject.count).to eq 0
@@ -55,6 +74,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
           :education_document_search_task,
           :assigned,
           assigned_to: assignee,
+          assigned_at: Time.zone.now,
           parent: original_edu_doc_search_task.parent
         )
       end
@@ -75,6 +95,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
             :education_assess_documentation_task,
             :in_progress,
             parent: task,
+            assigned_at: Time.zone.now,
             assigned_to: regional_processing_office
           )
           task.update!(status: Constants.TASK_STATUSES.on_hold)
@@ -87,11 +108,13 @@ describe EducationEmoAssignedTasksTab, :postgres do
       end
 
       it "the appeal does not appear in the EMO's assigned tab if the RPO returns the appeal to the EMO" do
+        task_returned =on_hold_tasks_children.first
+
         on_hold_tasks_children.first.update!(status: Constants.TASK_STATUSES.completed)
         on_hold_tasks_children.first.parent.update!(status: Constants.TASK_STATUSES.assigned)
 
         expect(subject.count).to eq 2
-        expect(subject).to eq(assignee_on_hold_tasks[1..-1])
+        expect(subject).not_to include task_returned
       end
 
       it "the appeal appears in the EMO's assigned tab when the RPO sends the appeal to BVA Intake directly" do
