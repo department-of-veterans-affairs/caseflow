@@ -108,7 +108,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.label).click
         expect(page).to have_content(COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE)
-        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
         find("div", class: "cf-select__option", text: program_office.name).click
         fill_in("Provide instructions and context for this action:", with: po_instructions)
@@ -160,7 +160,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.label).click
         expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
-        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
         find("div", class: "cf-select__option", text: regional_office.name).click
         fill_in("Provide instructions and context for this action:", with: ro_instructions)
