@@ -168,17 +168,19 @@ class DecisionDocument < CaseflowRecord
   end
 
   def send_outcode_email(appeal)
-    return if !FeatureToggle.enabled?(:send_email_for_dispatched_appeals) || appeal.power_of_attorney.blank?
+    return if !FeatureToggle.enabled?(:send_email_for_dispatched_appeals)
 
-    if appeal.is_a?(Appeal)
-      email_address = appeal.power_of_attorney.representative_email_address
-    elsif appeal.is_a?(LegacyAppeal)
-      email_address = appeal.power_of_attorney.bgs_representative_email_address
+    if appeal.power_of_attorney.present?
+      if appeal.is_a?(Appeal)
+        email_address = appeal.power_of_attorney.representative_email_address
+      elsif appeal.is_a?(LegacyAppeal)
+        email_address = appeal.power_of_attorney.bgs_representative_email_address
+      end
+      DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
+    else
+      message = "No BVA Dispatch POA notification email was sent because no POA is defined"
+      log = { class: self.class, appeal_id: appeal.id, message: message }
+      Rails.logger.warn("BVADispatchEmail #{log}")
     end
-
-    DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
-    message = "No BVA Dispatch POA notification email was sent because no POA is defined"
-    log = { class: self.class, appeal_id: appeal.id, message: message }
-    Rails.logger.warn("BVADispatchEmail #{log}")
   end
 end
