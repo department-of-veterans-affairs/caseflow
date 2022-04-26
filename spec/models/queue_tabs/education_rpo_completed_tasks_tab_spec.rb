@@ -12,11 +12,11 @@ describe EducationRpoCompletedTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating an EducationRpoInProgressTasksTab" do
+    context "when only the assignee argument is passed when instantiating an EducationRpoCompletedTasksTab" do
       let(:params) { { assignee: create(:edu_regional_processing_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq(5)
       end
     end
   end
@@ -28,9 +28,9 @@ describe EducationRpoCompletedTasksTab, :postgres do
         create_list(:education_assess_documentation_task, 4, :completed, assigned_to: assignee)
       end
 
-      it "does not return the completed tasks" do
+      it "returns completed tasks" do
         expect(subject).to include(
-          [assignee_completed_tasks].flatten
+          assignee_completed_tasks
         )
       end
     end
