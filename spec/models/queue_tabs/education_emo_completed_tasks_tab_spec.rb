@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EducationEmoCompletedTasksTab, :postgres do
-  let(:tab) { EducationEmoOCompletedTasksTab.new(params) }
+  let(:tab) { EducationEmoCompletedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee
