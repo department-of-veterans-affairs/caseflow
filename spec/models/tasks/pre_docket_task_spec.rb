@@ -17,9 +17,7 @@ describe PreDocketTask, :postgres do
     OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
   end
 
-  after do
-    FeatureToggle.disable!(:docket_vha_appeals)
-  end
+  after { FeatureToggle.disable!(:docket_vha_appeals) }
 
   describe ".label" do
     it "uses a friendly label" do
@@ -48,13 +46,8 @@ describe PreDocketTask, :postgres do
     end
 
     context "When an admin user has the docket_vha_appeals FeatureToggle enabled" do
-      before do
-        FeatureToggle.enable!(:docket_vha_appeals)
-      end
-
-      after do
-        FeatureToggle.disable!(:docket_vha_appeals)
-      end
+      before { FeatureToggle.enable!(:docket_vha_appeals) }
+      after { FeatureToggle.disable!(:docket_vha_appeals) }
 
       let(:user) { bva_intake_admin_user }
 
@@ -69,13 +62,8 @@ describe PreDocketTask, :postgres do
   end
 
   context "#docket_appeal with docket_vha_appeals FeatureToggle enabled" do
-    before do
-      FeatureToggle.enable!(:docket_vha_appeals)
-    end
-
-    after do
-      FeatureToggle.disable!(:docket_vha_appeals)
-    end
+    before { FeatureToggle.enable!(:docket_vha_appeals) }
+    after { FeatureToggle.disable!(:docket_vha_appeals) }
 
     it "Creates a distribution task and closes the pre-docket task" do
       expect { pre_docket_task.docket_appeal }.to_not raise_error
