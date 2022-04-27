@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe EducationRpoAssignedTasksTab, :postgres do
   let(:tab) { EducationRpoAssignedTasksTab.new(params) }
   let(:params) do
@@ -38,7 +39,7 @@ describe EducationRpoAssignedTasksTab, :postgres do
 
       it "when sent to EMO " do
         sent_to_emo = assignee_active_tasks.first
-        
+
         # Simulate sending task back to the EMO
         sent_to_emo.update!(status: Constants.TASK_STATUSES.completed)
         sent_to_emo.parent.update!(status: Constants.TASK_STATUSES.assigned)
@@ -51,7 +52,7 @@ describe EducationRpoAssignedTasksTab, :postgres do
         sent_to_bva_intake = assignee_active_tasks.first
         emo_task = sent_to_bva_intake.parent
         bva_intake_task = emo_task.parent
-        
+
         # Simulate sending task to BVA Intake for Review
         sent_to_bva_intake.update!(status: Constants.TASK_STATUSES.completed)
         emo_task.update!(status: Constants.TASK_STATUSES.completed)
@@ -59,7 +60,6 @@ describe EducationRpoAssignedTasksTab, :postgres do
 
         expect(subject.count).to eq 3
         expect(subject).not_to include sent_to_bva_intake
-       
       end
 
       it "when an RPO task is set to in progress" do
