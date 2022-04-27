@@ -58,7 +58,6 @@ describe EducationEmoUnassignedTasksTab, :postgres do
                assigned_to: rpo_assignee, parent: assignee_assigned_task)
       end
 
-
       it "returns the appeal that was cancelled by the RPO and is now assigned in EMO" do
         assignee_assigned_task.update!(status: Constants.TASK_STATUSES.assigned)
         expect(subject.to_a.first).to eq(assignee_assigned_task)
