@@ -59,5 +59,5 @@ VSOAppellantSection.propTypes = {
   appellantEmailAddress: PropTypes.string,
   appellantEmailType: PropTypes.string,
   veteranEmail: PropTypes.string,
-  veteranTz: PropTypes.string
+  appellantTz: PropTypes.string
 };
