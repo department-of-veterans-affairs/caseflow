@@ -8,7 +8,7 @@ class EducationEmoCompletedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.EDUCATION_COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
