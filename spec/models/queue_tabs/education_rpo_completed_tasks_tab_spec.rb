@@ -67,8 +67,6 @@ describe EducationRpoCompletedTasksTab, :postgres do
 
       it "does not return older tasks" do
         assignee_completed_tasks.first.update!(closed_at: (Time.zone.now - 2.week))
-        # expect(subject.to_a.difference(assignee_completed_tasks).any?).to eq false
-        byebug
         expect(subject).to_not include assignee_completed_tasks.first
       end
     end
