@@ -19,8 +19,14 @@ class EducationEmoCompletedTasksTab < QueueTab
     closed_tasks.select { |task| task.parent.completed? }.pluck(:id)
   end
 
+  def completed_parents
+    closed_tasks.map(&:parent).select(&:closed?).pluck(:id)
+  end
+
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee.name).completed
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: completed_parents
+    )
   end
 
   def column_names
