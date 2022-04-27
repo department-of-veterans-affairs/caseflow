@@ -43,41 +43,44 @@ export const HearingTypeConversion = ({
 
     return { title, detail };
   };
-  //Set Payload based on whether user is VSO or not
+
+  // Set Payload based on whether user is VSO or not
   const submit = async () => {
+    let data = {};
+
     try {
       const changedRequestType = formatChangeRequestType(type);
-      if (userIsVsoEmployee) {        
-        const data = {
-        task: {
-          status: TASK_STATUSES.completed,
-          business_payloads: {
-            values: {
-              changed_hearing_request_type: changedRequestType,
-              closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-              email_recipients: {
-                appellant_tz: appeal?.appellantTz,
-                representative_tz: appeal?.powerOfAttorney?.representative_tz,
-                appellant_email: appeal?.veteranInfo?.veteran?.email_address,
-                representative_email: appeal?.powerOfAttorney?.representative_email_address,
-              }
-            }
-          }
-        }
-        }
-      }
-      else {
-        const data = {
+
+      if (userIsVsoEmployee) {
+        data = {
           task: {
             status: TASK_STATUSES.completed,
             business_payloads: {
               values: {
                 changed_hearing_request_type: changedRequestType,
-                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,              
+                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+                email_recipients: {
+                  appellant_tz: appeal?.appellantTz,
+                  representative_tz: appeal?.powerOfAttorney?.representative_tz,
+                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
+                  representative_email: appeal?.powerOfAttorney?.representative_email_address,
+                }
               }
             }
           }
-        }
+        };
+      } else {
+        data = {
+          task: {
+            status: TASK_STATUSES.completed,
+            business_payloads: {
+              values: {
+                changed_hearing_request_type: changedRequestType,
+                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+              }
+            }
+          }
+        };
       }
       setLoading(true);
 
@@ -102,9 +105,11 @@ export const HearingTypeConversion = ({
       history.push(`/queue/appeals/${appeal.externalId}`);
     }
   };
-  //Render Convert to Virtual Form Depending on VSO User Status
+
+  // Render Convert to Virtual Form Depending on VSO User Status
+
   return (
-     userIsVsoEmployee ? (
+    userIsVsoEmployee ? (
       <VSOHearingTypeConversionForm
         appeal={appeal}
         history={history}
@@ -115,19 +120,18 @@ export const HearingTypeConversion = ({
         type={type}
       />
     ) : (
-        <HearingTypeConversionForm
-          appeal={appeal}
-          history={history}
-          isLoading={loading}
-          onCancel={() => history.goBack()}
-          onSubmit={submit}
-          task={task}
-          type={type}
-        />
+      <HearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
     )
-  )
-}
-  
+  );
+};
 
 HearingTypeConversion.propTypes = {
   appeal: PropTypes.object,
