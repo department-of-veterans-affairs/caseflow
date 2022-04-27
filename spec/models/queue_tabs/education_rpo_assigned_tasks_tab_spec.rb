@@ -15,7 +15,7 @@ describe EducationRpoAssignedTasksTab, :postgres do
       let(:params) { { assignee: create(:edu_regional_processing_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(4)
+        expect(subject.length).to eq(5)
       end
     end
   end
