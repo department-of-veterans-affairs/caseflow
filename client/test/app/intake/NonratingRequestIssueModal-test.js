@@ -79,7 +79,7 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
-    const featureTogglesEMOPreDocket = { vhaPreDocketAppeals: false, eduPreDocketAppeals: true };
+    const featureTogglesEMOPreDocket = { vhaPreDocketAppeals: true };
 
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
       const wrapper = mount(

@@ -171,13 +171,8 @@ describe Appeal, :all_dbs do
         ]
       end
 
-      before do
-        FeatureToggle.enable!(:edu_predocket_appeals)
-      end
-
-      after do
-        FeatureToggle.disable!(:edu_predocket_appeals)
-      end
+      before { FeatureToggle.enable!(:edu_predocket_appeals) }
+      after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
       it "does not create business line tasks" do
         expect(VeteranRecordRequest).to_not receive(:create!)
@@ -193,13 +188,8 @@ describe Appeal, :all_dbs do
         ]
       end
 
-      before do
-        FeatureToggle.enable!(:edu_predocket_appeals)
-      end
-
-      after do
-        FeatureToggle.disable!(:edu_predocket_appeals)
-      end
+      before { FeatureToggle.enable!(:edu_predocket_appeals) }
+      after { FeatureToggle.disable!(:edu_predocket_appeals) }
 
       it "does create business line tasks" do
         expect(VeteranRecordRequest).to receive(:create!)
