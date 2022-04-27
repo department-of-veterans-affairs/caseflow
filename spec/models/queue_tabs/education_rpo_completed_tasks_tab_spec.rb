@@ -46,7 +46,7 @@ describe EducationRpoCompletedTasksTab, :postgres do
       end
 
       it "does not return assigned tasks" do
-        expect(subject.to_a.difference(assignee_assigned_tasks).any?).to eq false
+        expect(subject.empty?).to eq true
       end
     end
 
@@ -56,7 +56,20 @@ describe EducationRpoCompletedTasksTab, :postgres do
       end
 
       it "does not return in progress tasks" do
-        expect(subject.to_a.difference(assignee_in_progress_tasks).any?).to eq false
+        expect(subject.empty?).to eq true
+      end
+    end
+
+    context "when a completed task is older than a week" do
+      let!(:assignee_completed_tasks) do
+        create_list(:education_assess_documentation_task, 4, :completed, assigned_to: assignee)
+      end
+
+      it "does not return older tasks" do
+        assignee_completed_tasks.first.update!(closed_at: (Time.zone.now - 2.week))
+        # expect(subject.to_a.difference(assignee_completed_tasks).any?).to eq false
+        byebug
+        expect(subject).to_not include assignee_completed_tasks.first
       end
     end
   end
