@@ -138,7 +138,9 @@ describe DecisionDocument, :postgres do
       allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
       allow(VBMSService).to receive(:establish_claim!).and_call_original
       allow(VBMSService).to receive(:create_contentions!).and_call_original
+      FeatureToggle.enable!(:send_email_for_dispatched_appeals)
     end
+    after { FeatureToggle.disable!(:send_email_for_dispatched_appeals) }
 
     let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
 
@@ -216,6 +218,12 @@ describe DecisionDocument, :postgres do
         )
 
         expect(decision_document.uploaded_to_vbms_at).to eq(Time.zone.now)
+      end
+
+      it "sends an email" do
+        expect_any_instance_of(DispatchEmailJob).to receive(:send_email).once
+
+        subject
       end
 
       context "when granted compensation issues" do
