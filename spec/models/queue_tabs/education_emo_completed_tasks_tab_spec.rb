@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 describe EducationEmoCompletedTasksTab, :postgres do
-<<<<<<< HEAD
   let(:tab) { EducationEmoOCompletedTasksTab.new(params) }
-=======
-  let(:tab) { EducationEMOCompletedTasksTab.new(params) }
->>>>>>> a20b60f8ae95ae38af8bfeb5d373063186d4b00f
   let(:params) do
     {
       assignee: assignee
