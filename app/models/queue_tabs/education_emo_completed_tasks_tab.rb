@@ -20,9 +20,7 @@ class EducationEmoCompletedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: task_ids_where_parent_has_been_completed
-    )
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee.name).completed
   end
 
   def column_names
