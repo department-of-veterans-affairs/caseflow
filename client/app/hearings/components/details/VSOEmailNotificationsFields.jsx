@@ -16,6 +16,8 @@ export const VSOEmailNotificationsFields = ({
   update,
   time,
   roTimezone,
+  veteranEmail,
+  veteranTz
 }) => {
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -28,7 +30,7 @@ export const VSOEmailNotificationsFields = ({
           disabled={disableField}
           label={`${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={hearing?.appellantEmailAddress}
+          email={veteranEmail}
           error={errors?.appellantEmailAddress}
           update={update}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
@@ -38,12 +40,12 @@ export const VSOEmailNotificationsFields = ({
           disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={hearing?.appellantEmailAddress}
+          email={veteranEmail}
           error={errors?.appellantEmailAddress}
           update={update}
           showHelper={false}
         />
-        <div
+        <div value={hearing?.appellantTz}
           className={classNames('usa-grid', { [marginTop(30)]: true })}
           {...input8px}
         >
@@ -78,4 +80,6 @@ VSOEmailNotificationsFields.propTypes = {
   errors: PropTypes.object,
   initialRepresentativeTz: PropTypes.string,
   header: PropTypes.string,
+  veteranEmail: PropTypes.string,
+  veteranTz: PropTypes.string
 };

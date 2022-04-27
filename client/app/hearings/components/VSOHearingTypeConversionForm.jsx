@@ -48,12 +48,11 @@ export const VSOHearingTypeConversionForm = ({
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,
     // props to populate form
-    veteranEmail: appeal?.veteran?.emailAddress,
+    veteranEmail: appeal?.veteranInfo?.veteran?.email_address,
     appellantTz: appeal?.appellantTz,
     type,
     virtualHearing,
   };
-
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   return (
