@@ -20,7 +20,7 @@ class EducationEmoCompletedTasksTab < QueueTab
   end
 
   def completed_parents
-    closed_tasks.map(&:parent).select(&:closed?).pluck(:id)
+    closed_tasks.map(&:parent).select(&:completed?).pluck(:id)
   end
 
   def tasks
