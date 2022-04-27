@@ -1,13 +1,13 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import React from "react";
+import classNames from "classnames";
+import PropTypes from "prop-types";
 
-import { marginTop, input8px } from '../details/style';
-import { HearingEmail } from './HearingEmail';
-import { Timezone } from '../VirtualHearings/Timezone';
-import { HelperText } from '../VirtualHearings/HelperText';
-import COPY from '../../../../COPY';
-import { getAppellantTitle, readOnlyEmails } from '../../utils';
+import { marginTop, input8px } from "../details/style";
+import { HearingEmail } from "./HearingEmail";
+import { Timezone } from "../VirtualHearings/Timezone";
+import { HelperText } from "../VirtualHearings/HelperText";
+import COPY from "../../../../COPY";
+import { getAppellantTitle, readOnlyEmails } from "../../utils";
 
 export const VSOEmailNotificationsFields = ({
   errors,
@@ -17,7 +17,7 @@ export const VSOEmailNotificationsFields = ({
   time,
   roTimezone,
   veteranEmail,
-  veteranTz
+  appellantTz,
 }) => {
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -45,15 +45,16 @@ export const VSOEmailNotificationsFields = ({
           update={update}
           showHelper={false}
         />
-        <div value={hearing?.appellantTz}
-          className={classNames('usa-grid', { [marginTop(30)]: true })}
+        <div
+          value={hearing?.appellantTz}
+          className={classNames("usa-grid", { [marginTop(30)]: true })}
           {...input8px}
         >
           <Timezone
             required
             errorMessage={errors?.appellantTz}
-            value={hearing?.appellantTz}
-            onChange={(appellantTz) => update('hearing', { appellantTz })}
+            value={appellantTz}
+            onChange={(appellantTz) => update("hearing", { appellantTz })}
             readOnly={disableField}
             time={time}
             roTimezone={roTimezone}
@@ -81,5 +82,5 @@ VSOEmailNotificationsFields.propTypes = {
   initialRepresentativeTz: PropTypes.string,
   header: PropTypes.string,
   veteranEmail: PropTypes.string,
-  veteranTz: PropTypes.string
+  appellantTz: PropTypes.string,
 };
