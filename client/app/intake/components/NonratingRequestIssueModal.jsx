@@ -165,7 +165,7 @@ class NonratingRequestIssueModal extends React.Component {
     } = this.state;
 
     const enforcePreDocketRequirement = (
-      this.props.featureToggles.eduPreDocketAppeals &&
+      this.props.featureToggles.vhaPreDocketAppeals &&
       formType === 'appeal' &&
       benefitType === 'education' &&
       !isPreDocketNeeded
@@ -277,8 +277,7 @@ class NonratingRequestIssueModal extends React.Component {
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
-    const vhaPreDocketAppeals = featureToggles.vhaPreDocketAppeals;
-    const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
+    const preDocketAppeals = featureToggles.vhaPreDocketAppeals;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -289,8 +288,8 @@ class NonratingRequestIssueModal extends React.Component {
         this.getAdditionalDetails() :
         null;
 
-    const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal' && vhaPreDocketAppeals;
-    const showPreDocketField = benefitType === 'education' && formType === 'appeal' && eduPreDocketAppeals;
+    const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal' && preDocketAppeals;
+    const showPreDocketField = benefitType === 'education' && formType === 'appeal' && preDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
