@@ -21,7 +21,11 @@ module WarRoom
                 fail Interrupt
             end
 
-            source = epe.source
+            #stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+            # If decision document set to the appeal of the source.
+
+            source = epe.source_type != "DecisionDocument" ? epe.source : epe.source.appeal
+
             if source.nil?
                 puts("Could not find a source for the orgional EPE. Aborting...")
                 fail Interrupt
