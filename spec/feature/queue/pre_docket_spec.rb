@@ -13,6 +13,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
+    regional_processing_office.add_user(regional_processing_office_user)
   end
 
   after do
@@ -32,6 +33,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
+  let(:regional_processing_office) { create(:edu_regional_processing_office) }
+  let(:regional_processing_office_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -397,6 +400,55 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         bva_intake_task = PreDocketTask.last
         expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      end
+    end
+
+    it "EMO & RPO Workflow" do
+      appeal = create(:education_document_search_task, :assigned, assigned_by: bva_intake_user, assigned_to: emo).appeal
+
+      step "EMO user assigns task to Regional Processing Office" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE.label
+        ).click
+        expect(page).to have_content(COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+        find(".cf-select__control", text: COPY::EMO_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER).click
+
+        find("div", class: "cf-select__option", text: regional_processing_office.name).click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_current_path("/organizations/#{emo.url}?tab=education_emo_unassigned&page=1")
+        expect(page).to have_content("Task assigned to #{regional_processing_office.name}")
+
+        expect(EducationDocumentSearchTask.last).to have_attributes(
+          type: "EducationDocumentSearchTask",
+          status: Constants.TASK_STATUSES.on_hold,
+          assigned_by: bva_intake_user,
+          assigned_to_id: emo.id
+        )
+
+        expect(EducationAssessDocumentationTask.last).to have_attributes(
+          type: "EducationAssessDocumentationTask",
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_by: emo_user,
+          assigned_to_id: regional_processing_office.id
+        )
+      end
+
+      step "Task appears in EMO's assigned tab" do
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
 
