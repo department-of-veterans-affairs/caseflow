@@ -14,11 +14,10 @@ class EducationRpoCompletedTasksTab < QueueTab
   end
 
   def description
-    # format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
     COPY::EDUCATION_RPO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION
   end
 
-  # In each case, if the EMO task is assigned, then it should meet each use case for the unassigned tab
+  # RPO completed tasks include all tasks that have been completed within the last 7 days by the assignee
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
   end
