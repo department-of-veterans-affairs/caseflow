@@ -46,8 +46,8 @@ export const HearingTypeConversion = ({
   //Set Payload based on whether user is VSO or not
   const submit = async () => {
     try {
-      if (userIsVsoEmployee) {
-        const changedRequestType = formatChangeRequestType(type);
+      const changedRequestType = formatChangeRequestType(type);
+      if (userIsVsoEmployee) {        
         const data = {
         task: {
           status: TASK_STATUSES.completed,
@@ -67,7 +67,6 @@ export const HearingTypeConversion = ({
         }
       }
       else {
-        const changedRequestType = formatChangeRequestType(type);
         const data = {
           task: {
             status: TASK_STATUSES.completed,
