@@ -219,6 +219,40 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
+const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <TextareaField
+            label={COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+            name="instructions"
+            id="emoReturnToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+ReturnToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
+};
+
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
   <React.Fragment>
     {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
@@ -278,6 +312,14 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: SendToBoardIntakeModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  emo_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: ReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
@@ -392,19 +434,25 @@ class CompleteTaskModal extends React.Component {
     const { instructions, otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
 
+    let isValid = true;
+
     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-      return validInstructions(instructions) && validRadio(radio);
+      isValid = validInstructions(instructions) && validRadio(radio);
     }
+
+    if (modalType === 'emo_return_to_board_intake') {
+      isValid = validInstructions(instructions);
+    }
+
     if (modalType === 'emo_send_to_board_intake_for_review') {
       if (radio === 'other') {
-        return validInstructions(otherInstructions) && validRadio(radio);
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
       }
 
-      return validRadio(radio);
+      isValid = validRadio(radio);
     }
 
-    return true;
-
+    return isValid;
   }
 
   submit = () => {

@@ -161,10 +161,6 @@ class RequestIssue < CaseflowRecord
       )
     end
 
-    def is_predocket_needed
-      active.where(is_predocket_needed: true)
-    end
-
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
@@ -284,6 +280,17 @@ class RequestIssue < CaseflowRecord
 
   def closed?
     !!closed_at
+  end
+
+  def predocket_needed?
+    user = RequestStore.store[:current_user]
+
+    if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
+       benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
+      !!is_predocket_needed
+    else
+      false
+    end
   end
 
   def description
@@ -518,12 +525,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
-    user = RequestStore.store[:current_user]
-
-    return false if is_predocket_needed? && (
-      benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
-      benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
-    )
+    return false if predocket_needed?
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end

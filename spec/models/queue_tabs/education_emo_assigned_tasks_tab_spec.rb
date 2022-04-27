@@ -47,6 +47,24 @@ describe EducationEmoAssignedTasksTab, :postgres do
       end
     end
 
+    context "when BVA Intake returns an appeal to the EMO" do
+      let!(:original_edu_doc_search_task) { create(:education_document_search_task, :completed, assigned_to: assignee) }
+      let!(:appeal) { original_edu_doc_search_task.appeal }
+      let!(:new_edu_doc_search_task) do
+        create(
+          :education_document_search_task,
+          :assigned,
+          assigned_to: assignee,
+          parent: original_edu_doc_search_task.parent
+        )
+      end
+
+      it "the new EducationDocumentSearchTask appears in the unsassigned tab and
+        the old EducationDocumentSearchTask is hidden from view" do
+        expect(subject.count).to eq 0
+      end
+    end
+
     context "when the EMO sends the appeal to an RPO" do
       let!(:assignee_on_hold_tasks) do
         create_list(:education_document_search_task, 3, :assigned, assigned_to: assignee)
