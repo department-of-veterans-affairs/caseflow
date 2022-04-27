@@ -6,7 +6,7 @@ FactoryBot.define do
     conference_id { nil }
     conference_deleted { false }
     host_pin { nil }
-    host_hearing_link { nil }
+    host_link { nil }
     created_at { Time.zone.now }
     updated_at { Time.zone.now }
     created_by { create(:user) }

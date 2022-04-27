@@ -421,7 +421,7 @@ ActiveRecord::Schema.define(version: 2022_04_22_150300) do
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
     t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
-    t.string "host_hearing_link", comment: "Conference link generated from external conference service"
+    t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
     t.datetime "updated_at", comment: "Date and Time record was last updated"

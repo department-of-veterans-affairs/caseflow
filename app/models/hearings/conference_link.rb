@@ -33,7 +33,7 @@ class ConferenceLink < CaseflowRecord
   end
 
   def host_link
-    return host_hearing_link if host_hearing_link.present?
+    return host_link if host_link.present?
 
     "#{base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias}&" \
@@ -49,7 +49,7 @@ class ConferenceLink < CaseflowRecord
     begin
       link_service = VirtualHearings::LinkService.new
       update!(
-        host_hearing_link: link_service.host_link,
+        host_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
         alias_with_host: link_service.alias_with_host
       )

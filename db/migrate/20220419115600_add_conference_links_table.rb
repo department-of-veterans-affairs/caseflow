@@ -9,11 +9,11 @@ class AddConferenceLinksTable < Caseflow::Migration
           t.datetime   :created_at, null: false, comment: "Date and Time of creation"
           t.bigint     :created_by_id, null: false, comment: "User id of the user who created the record. FK on User table"
           t.bigint     :hearing_day_id, null: false, comment: "The associated hearing day id"
-          t.string     :host_hearing_link, comment: "Conference link generated from external conference service"
+          t.string     :host_link, comment: "Conference link generated from external conference service"
           t.integer    :host_pin, comment: "Pin for the host of the conference to get into the conference"
           t.string     :host_pin_long, limit: 8, comment: "Generated host pin stored as a string"
           t.datetime   :updated_at, comment: "Date and Time record was last updated"
-          t.bigint     :updated_by_id, comment: "user id of teh user to last update the record. FK on the User table"
+          t.bigint     :updated_by_id, comment: "user id of the user to last update the record. FK on the User table"
       end
 
       add_foreign_key "conference_links", "users", column: "created_by_id", validate: false
