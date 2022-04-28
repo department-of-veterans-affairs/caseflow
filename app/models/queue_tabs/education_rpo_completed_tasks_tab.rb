@@ -3,8 +3,6 @@
 class EducationRpoCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
-  :allow_bulk_assign
-
   def label
     COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
   end
