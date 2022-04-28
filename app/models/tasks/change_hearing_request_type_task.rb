@@ -72,6 +72,8 @@ class ChangeHearingRequestTypeTask < Task
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def self.update_to_new_poa(appeal)
     new_task_count = 0
     closed_task_count = 0
@@ -92,7 +94,7 @@ class ChangeHearingRequestTypeTask < Task
 
     # Close all ChangeHearingRequestTypeTasks for now-former VSO representatives.
     outdated_representatives = cached_representatives - fresh_representatives
-    tasks_to_sync.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
+    tasks_to_sync.select { |t_inc| outdated_representatives.include?(t_inc.assigned_to) }.each do |task|
       task.update!(status: Constants.TASK_STATUSES.cancelled,
                    cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change)
       task.children.open.each do |child_task|
@@ -104,6 +106,8 @@ class ChangeHearingRequestTypeTask < Task
 
     [new_task_count, closed_task_count]
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   private
 
