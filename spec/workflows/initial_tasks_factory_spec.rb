@@ -249,7 +249,7 @@ describe InitialTasksFactory, :postgres do
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
-        
+
         it "blocks distribution with schedule hearing task" do
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")

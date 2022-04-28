@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
+import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 import { appealWithDetailSelector, taskById } from '../../queue/selectors';
 import { deleteAppeal } from '../../queue/QueueActions';
@@ -23,6 +24,7 @@ export const HearingTypeConversion = ({
   history,
   task,
   type,
+  userIsVsoEmployee,
   ...props
 }) => {
   // Create and manage the loading state
@@ -42,21 +44,44 @@ export const HearingTypeConversion = ({
     return { title, detail };
   };
 
+  // Set Payload based on whether user is VSO or not
   const submit = async () => {
+    let data = {};
+
     try {
       const changedRequestType = formatChangeRequestType(type);
-      const data = {
-        task: {
-          status: TASK_STATUSES.completed,
-          business_payloads: {
-            values: {
-              changed_hearing_request_type: changedRequestType,
-              closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key
+
+      if (userIsVsoEmployee) {
+        data = {
+          task: {
+            status: TASK_STATUSES.completed,
+            business_payloads: {
+              values: {
+                changed_hearing_request_type: changedRequestType,
+                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+                email_recipients: {
+                  appellant_tz: appeal?.appellantTz,
+                  representative_tz: appeal?.powerOfAttorney?.representative_tz,
+                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
+                  representative_email: appeal?.powerOfAttorney?.representative_email_address,
+                }
+              }
             }
           }
-        }
-      };
-
+        };
+      } else {
+        data = {
+          task: {
+            status: TASK_STATUSES.completed,
+            business_payloads: {
+              values: {
+                changed_hearing_request_type: changedRequestType,
+                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+              }
+            }
+          }
+        };
+      }
       setLoading(true);
 
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
@@ -81,16 +106,30 @@ export const HearingTypeConversion = ({
     }
   };
 
+  // Render Convert to Virtual Form Depending on VSO User Status
+
   return (
-    <HearingTypeConversionForm
-      appeal={appeal}
-      history={history}
-      isLoading={loading}
-      onCancel={() => history.goBack()}
-      onSubmit={submit}
-      task={task}
-      type={type}
-    />
+    userIsVsoEmployee ? (
+      <VSOHearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    ) : (
+      <HearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    )
   );
 };
 
@@ -104,12 +143,14 @@ HearingTypeConversion.propTypes = {
   taskId: PropTypes.string,
   type: PropTypes.oneOf(['Virtual']),
   // Router inherited props
-  history: PropTypes.object
+  history: PropTypes.object,
+  userIsVsoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
-  task: taskById(state, { taskId: ownProps.taskId })
+  task: taskById(state, { taskId: ownProps.taskId }),
+  userIsVsoEmployee: state.ui.userIsVsoEmployee
 });
 
 const mapDispatchToProps = (dispatch) =>
