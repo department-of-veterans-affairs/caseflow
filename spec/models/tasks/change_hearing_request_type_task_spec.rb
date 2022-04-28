@@ -385,6 +385,5 @@ describe ChangeHearingRequestTypeTask do
         end
       end
     end
-
   end
 end
