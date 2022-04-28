@@ -17,7 +17,7 @@ import {
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
-import { filterCurrentIssues, formatChangeRequestType } from '../utils';
+import { formatChangeRequestType } from '../utils';
 
 export const HearingTypeConversion = ({
   appeal,
