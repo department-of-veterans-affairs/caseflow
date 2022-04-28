@@ -52,6 +52,7 @@ describe EducationEmoUnassignedTasksTab, :postgres do
 
     context "when the RPO task is cancelled and sent back to the EMO" do
       let!(:assignee_assigned_task) { create(:education_document_search_task, :assigned, assigned_to: assignee) }
+
       let!(:assignee_assigned_task_child) do
         create(:education_assess_documentation_task, :cancelled,
                assigned_to: rpo_assignee, parent: assignee_assigned_task)
