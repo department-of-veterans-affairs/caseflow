@@ -36,6 +36,7 @@ describe ChangeHearingRequestTypeTask do
           expect(hearing_task).to_not receive(:when_child_task_completed)
 
           subject
+
           expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(schedule_hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -291,98 +292,6 @@ describe ChangeHearingRequestTypeTask do
         expect(new_her_r.timezone).to eq("America/Los_Angeles")
         expect(new_her_a.email_address).not_to eq(existing_her_a.email_address)
         expect(new_her_r.timezone).not_to eq(existing_her_r.timezone)
-      end
-    end
-  end
-  describe "update to new poa" do
-    subject { ChangeHearingRequestTypeTask.update_to_new_poa(appeal) }
-    let!(:appeal) { create(:appeal) }
-    let!(:root_task) { create(:root_task, appeal: appeal) }
-
-    context "When former representative VSO is assigned non-Tracking tasks" do
-      let(:old_vso) { create(:vso, name: "Remember Korea") }
-      let(:new_vso) { create(:vso) }
-
-      let!(:change_type_task) do
-        create(
-          :change_hearing_request_type_task,
-          parent: root_task,
-          appeal: root_task.appeal,
-          assigned_to: old_vso
-        )
-      end
-      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([new_vso]) }
-
-      it "cancels all tasks of former VSO" do
-        subject
-        expect(change_type_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      end
-      it "makes duplicates of active tasks for new representation" do
-        expect(new_vso.tasks.count).to eq(0)
-        expect(subject).to eq([1, 1])
-        expect(new_vso.tasks.count).to eq(1)
-      end
-    end
-    context "when the appeal has no VSOs" do
-      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([]) }
-
-      context "when there are no existing Change" do
-        it "does not create or cancel any ChangeHearingRequestTypeTask" do
-          task_count_before = ChangeHearingRequestTypeTask.count
-
-          expect(subject).to eq([0, 0])
-          expect(ChangeHearingRequestTypeTask.count).to eq(task_count_before)
-        end
-      end
-
-      context "when there is an existing open ChangeHearingRequestTypeTask" do
-        let(:vso) { create(:vso) }
-        let!(:change_task) { create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso) }
-
-        it "cancels old ChangeHearingRequestTypeTask, does not create any new tasks" do
-          active_task_count_before = ChangeHearingRequestTypeTask.open.count
-
-          expect(subject).to eq([0, 1])
-          expect(ChangeHearingRequestTypeTask.open.count).to eq(active_task_count_before - 1)
-        end
-      end
-    end
-    context "when the appeal has two VSOs" do
-      let(:representing_vsos) { create_list(:vso, 2) }
-      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
-
-      context "when there are no existing ChangeHearingRequestTypeTasks" do
-        it "creates 2 new ChangeHearingRequestTypeTask" do
-          task_count_before = ChangeHearingRequestTypeTask.count
-
-          expect(subject).to eq([2, 0])
-          expect(ChangeHearingRequestTypeTask.count).to eq(task_count_before + 2)
-        end
-      end
-
-      context "when there is an existing open ChangeHearingRequestTypeTasks for a different VSO" do
-        before do
-          create(:change_hearing_request_type_task, appeal: appeal, assigned_to: create(:vso))
-        end
-
-        it "cancels old ChangeHearingRequestTypeTask, creates 2 new ChangeHearingRequestTypeTasks" do
-          expect(subject).to eq([2, 1])
-        end
-      end
-
-      context "when there are already ChangeHearingRequestTypeTask for both VSOs" do
-        before do
-          representing_vsos.each do |vso|
-            create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso)
-          end
-        end
-
-        it "does not create or cancel any ChangeHearingRequestTypeTask" do
-          task_count_before = ChangeHearingRequestTypeTask.count
-
-          expect(subject).to eq([0, 0])
-          expect(ChangeHearingRequestTypeTask.count).to eq(task_count_before)
-        end
       end
     end
   end
