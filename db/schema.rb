@@ -425,7 +425,7 @@ ActiveRecord::Schema.define(version: 2022_04_22_150300) do
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
-    t.bigint "updated_by_id", comment: "user id of teh user to last update the record. FK on the User table"
+    t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_updated_by_id"
