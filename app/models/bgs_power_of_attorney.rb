@@ -15,8 +15,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   before_save :update_cached_attributes!
   after_save :update_ihp_task, if: :update_ihp_enabled?
   after_destroy :update_ihp_task, if: :update_ihp_enabled?
-  after_save :update_changehearingrequesttype_task, if: :update_ihp_enabled?
-  after_destroy :update_changehearingrequesttype_task, if: :update_ihp_enabled?
+  after_save :update_changehearingrequesttype_task
+  after_destroy :update_changehearingrequesttype_task
 
   CACHED_BGS_ATTRIBUTES = [
     :representative_name,
