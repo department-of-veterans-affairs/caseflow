@@ -173,6 +173,7 @@ TeamManagement.propTypes = {
   onLookupParticipantId: PropTypes.func,
   eduRegionalProcessingOffices: PropTypes.array,
   onOrgUpdate: PropTypes.func,
+  eduRegionalProccessingOffices: PropTypes.array,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
       loading: PropTypes.object,
