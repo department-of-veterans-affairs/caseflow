@@ -591,7 +591,7 @@ class TaskActionRepository
         options: organizations_to_options(EduRegionalProcessingOffice.all),
         modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
-        modal_selector_placeholder: COPY::EMO_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER,
+        modal_selector_placeholder: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true

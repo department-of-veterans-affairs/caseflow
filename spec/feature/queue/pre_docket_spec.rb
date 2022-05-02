@@ -420,7 +420,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         ).click
         expect(page).to have_content(COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE)
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
-        find(".cf-select__control", text: COPY::EMO_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER).click
+        find(".cf-select__control", text: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER).click
 
         find("div", class: "cf-select__option", text: regional_processing_office.name).click
         find("button", class: "usa-button", text: "Submit").click
