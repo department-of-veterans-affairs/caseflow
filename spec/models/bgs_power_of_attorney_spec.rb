@@ -357,6 +357,38 @@ describe BgsPowerOfAttorney do
       end
     end
 
+    context "when poa_auto_changetype_update feature toggle is disabled" do
+      before do
+        FeatureToggle.disable!(:poa_auto_changetype_update)
+        allow_any_instance_of(described_class).to receive(:update_changehearingrequesttype_task)
+      end
+
+      it "update changehearingrequesttype task method isn't called" do
+        poa.save_with_updated_bgs_record!
+        expect_any_instance_of(described_class).to_not receive(:update_changehearingrequesttype_task)
+        expect(poa.send(:update_changehearingrequesttype_enabled?)).to eq(false)
+      end
+    end
+
+    context "when poa_auto_changetype_update feature toggle is enabled" do
+      before do
+        FeatureToggle.enable!(:poa_auto_changetype_update)
+        allow_any_instance_of(described_class).to receive(:update_changehearingrequesttype_task)
+      end
+      after { FeatureToggle.disable!(:poa_auto_changetype_update) }
+
+      it "update changehearingrequesttype task method is called" do
+        before_poa_pid = poa.poa_participant_id
+        expect(before_poa_pid).to_not be_nil
+
+        poa.save_with_updated_bgs_record!
+
+        expect(poa.poa_participant_id).to_not eq before_poa_pid
+        expect(poa.send(:update_changehearingrequesttype_enabled?)).to eq(true)
+        expect(poa).to have_received(:update_changehearingrequesttype_task)
+      end
+    end
+
     context "2 records exist with same PID but different FNs" do
       before do
         allow(bgs).to receive(:fetch_poa_by_file_number)
