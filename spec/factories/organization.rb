@@ -45,10 +45,6 @@ FactoryBot.define do
       type { "Bva" }
     end
 
-    factory :bva_intake do
-      type { BvaIntake.name }
-    end
-
     factory :vha_program_office do
       type { VhaProgramOffice.name }
     end
