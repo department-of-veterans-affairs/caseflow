@@ -4,7 +4,7 @@ class EducationEmoAssignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
+    COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE
   end
 
   def self.tab_name
@@ -15,23 +15,17 @@ class EducationEmoAssignedTasksTab < QueueTab
     format(COPY::EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
-  def active_parents_of_emo_tasks_assigned_to_rpos_or_bva
-    (on_hold_tasks + closed_tasks).map(&:parent).reject(&:closed?)
+  def assigned_parents_of_emo_tasks_ids
+    (on_hold_tasks + closed_tasks).map(&:parent).select(&:assigned?).pluck(:id)
   end
 
-  def task_ids_without_newer_siblings
-    sibling_task_groups = active_parents_of_emo_tasks_assigned_to_rpos_or_bva.map(&:children)
-
-    sibling_task_groups.map do |siblings|
-      newest_sibling = siblings.select { |sibling| sibling.assigned_to_id == assignee.id }.max_by(&:id)
-
-      newest_sibling.id if newest_sibling.status != Constants.TASK_STATUSES.assigned
-    end
+  def active_rpo_child_tasks_ids
+    on_hold_task_children.select(&:active?).pluck(:id)
   end
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: task_ids_without_newer_siblings
+      id: [assigned_parents_of_emo_tasks_ids, active_rpo_child_tasks_ids].flatten
     )
   end
 
