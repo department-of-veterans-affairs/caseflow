@@ -376,7 +376,6 @@ describe BgsPowerOfAttorney do
         allow_any_instance_of(described_class).to receive(:update_changehearingrequesttype_task)
       end
       after { FeatureToggle.disable!(:poa_auto_changetype_update) }
-
       it "update changehearingrequesttype task method is called" do
         before_poa_pid = poa.poa_participant_id
         expect(before_poa_pid).to_not be_nil
