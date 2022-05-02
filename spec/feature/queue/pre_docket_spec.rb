@@ -324,12 +324,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     before do
       OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
       FeatureToggle.enable!(:edu_predocket_appeals)
-      FeatureToggle.enable!(:docket_edu_appeals)
+      FeatureToggle.enable!(:docket_vha_appeals)
     end
 
     after do
       FeatureToggle.disable!(:edu_predocket_appeals)
-      FeatureToggle.disable!(:docket_edu_appeals)
+      FeatureToggle.disable!(:docket_vha_appeals)
     end
 
     it "intaking Education issues and opting for pre-docket
@@ -434,7 +434,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
         expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
-        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
 
