@@ -213,6 +213,11 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
+  # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
+  def conference_link
+    @conference_link ||= find_or_create_conference_link!
+  end
+
   private
 
   def assign_created_by_user
@@ -258,6 +263,16 @@ class HearingDay < CaseflowRecord
     formatted_datetime_string = combined_datetime.iso8601
 
     formatted_datetime_string
+  end
+
+  # Method to get the associated conference link record if exists and if not create  new one
+  def find_or_create_conference_link!
+    conference_link = ConferenceLink.find_by_hearing_day_id(id)
+    if conference_link.nil?
+      conference_link = ConferenceLink.create(hearing_day_id: id)
+    end
+
+    conference_link
   end
 
   class << self
