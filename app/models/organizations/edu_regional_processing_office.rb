@@ -7,9 +7,14 @@ class EduRegionalProcessingOffice < Organization
 
   def queue_tabs
     [
+      assigned_tasks_tab,
       in_progress_tab,
       completed_tasks_tab
     ]
+  end
+
+  def assigned_tasks_tab
+    ::EducationRpoAssignedTasksTab.new(assignee: self)
   end
 
   def in_progress_tab

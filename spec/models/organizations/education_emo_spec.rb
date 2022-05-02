@@ -11,7 +11,7 @@ describe EducationEmo, :postgres do
 
   describe ".can_receive_task?" do
     let(:appeal) { create(:appeal) }
-    let(:assess_doc_task) { create(:education_assess_documentation_task, appeal: appeal) }
+    let(:assess_doc_task) { create(:education_assess_documentation_task, appeal: appeal, assigned_to: education_emo) }
 
     it "returns false because EMO should not have education assess documentation tasks assigned to them" do
       expect(education_emo.can_receive_task?(assess_doc_task)).to eq(false)

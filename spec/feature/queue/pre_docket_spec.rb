@@ -462,6 +462,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         User.authenticate!(user: emo_user)
         visit "/organizations/edu-emo?tab=education_emo_unassigned"
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
         expect(page).to_not have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
