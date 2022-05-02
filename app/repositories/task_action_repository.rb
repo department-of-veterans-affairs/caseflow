@@ -463,7 +463,7 @@ class TaskActionRepository
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
-        instructions_label: COPY::VHA_MODAL_BODY,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
@@ -488,7 +488,7 @@ class TaskActionRepository
       {
         options: organizations_to_options(VhaProgramOffice.all),
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
-        modal_body: COPY::VHA_MODAL_BODY,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
@@ -501,7 +501,7 @@ class TaskActionRepository
       {
         options: organizations_to_options(VhaRegionalOffice.all),
         modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
-        modal_body: COPY::VHA_MODAL_BODY,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
         instructions: [],
         type: AssessDocumentationTask.name,
@@ -583,6 +583,18 @@ class TaskActionRepository
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+      }
+    end
+
+    def emo_assign_to_regional_processing_office_data(*)
+      {
+        options: organizations_to_options(EduRegionalProcessingOffice.all),
+        modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_selector_placeholder: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER,
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}",
+        body_optional: true
       }
     end
 

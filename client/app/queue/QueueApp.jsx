@@ -296,6 +296,10 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
+  routedAssignToEduRegionalProcessingOffice = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -555,10 +559,6 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   )
-
-  routedAssignToVhaProgramOffice = (props) => (
-    <AssignToView isTeamAssign {...props.match.params} />
-  );
 
   routedCamoSendToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
@@ -910,6 +910,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE.value
+                }`}
+              render={this.routedAssignToEduRegionalProcessingOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
                 }`}
               render={this.routedReturnToCamo}
@@ -1015,12 +1021,6 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
-            />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
-                }`}
-              render={this.routedAssignToVhaProgramOffice}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
