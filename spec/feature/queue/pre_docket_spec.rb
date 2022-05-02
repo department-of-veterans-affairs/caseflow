@@ -445,9 +445,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "Task appears in EMO's assigned tab" do
         expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
-        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE).click
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
         expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
-        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO Task appears in RPO's assigned tab" do
+        User.authenticate!(user: regional_processing_office_user)
+        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
