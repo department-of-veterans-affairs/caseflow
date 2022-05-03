@@ -357,34 +357,34 @@ describe BgsPowerOfAttorney do
       end
     end
 
-    context "when poa_auto_changetype_update feature toggle is disabled" do
+    context "when poa_auto_change_type_update feature toggle is disabled" do
       before do
-        FeatureToggle.disable!(:poa_auto_changetype_update)
-        allow_any_instance_of(described_class).to receive(:update_changehearingrequesttype_task)
+        FeatureToggle.disable!(:poa_auto_change_type_update)
+        allow_any_instance_of(described_class).to receive(:update_change_hearing_request_type_task)
       end
 
-      it "update changehearingrequesttype task method isn't called" do
+      it "update changehearingrequesttypetask method isn't called" do
         poa.save_with_updated_bgs_record!
-        expect_any_instance_of(described_class).to_not receive(:update_changehearingrequesttype_task)
-        expect(poa.send(:update_changehearingrequesttype_enabled?)).to eq(false)
+        expect_any_instance_of(described_class).to_not receive(:update_change_hearing_request_type_task)
+        expect(poa.send(:update_change_hearing_request_type_enabled?)).to eq(false)
       end
     end
 
-    context "when poa_auto_changetype_update feature toggle is enabled" do
+    context "when poa_auto_change_type_update feature toggle is enabled" do
       before do
-        FeatureToggle.enable!(:poa_auto_changetype_update)
-        allow_any_instance_of(described_class).to receive(:update_changehearingrequesttype_task)
+        FeatureToggle.enable!(:poa_auto_change_type_update)
+        allow_any_instance_of(described_class).to receive(:update_change_hearing_request_type_task)
       end
-      after { FeatureToggle.disable!(:poa_auto_changetype_update) }
-      it "update changehearingrequesttype task method is called" do
+      after { FeatureToggle.disable!(:poa_auto_change_type_update) }
+      it "update changehearingrequesttypetask method is called" do
         before_poa_pid = poa.poa_participant_id
         expect(before_poa_pid).to_not be_nil
 
         poa.save_with_updated_bgs_record!
 
         expect(poa.poa_participant_id).to_not eq before_poa_pid
-        expect(poa.send(:update_changehearingrequesttype_enabled?)).to eq(true)
-        expect(poa).to have_received(:update_changehearingrequesttype_task)
+        expect(poa.send(:update_change_hearing_request_type_enabled?)).to eq(true)
+        expect(poa).to have_received(:update_change_hearing_request_type_task)
       end
     end
 
