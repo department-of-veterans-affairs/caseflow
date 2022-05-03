@@ -272,6 +272,7 @@ module IntakeHelpers
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def add_intake_nonrating_issue(
     benefit_type: "Compensation",
     category: "Active Duty Adjustments",
@@ -304,6 +305,7 @@ module IntakeHelpers
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def add_intake_vha_issue(
     benefit_type: "Veterans Health Administration",
