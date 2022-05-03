@@ -811,24 +811,24 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   describe "Establishment credits" do
     let(:url_path) { "higher_level_reviews" }
-    let(:higher_level_review) { higher_level_review }
+    let(:hl_review) { higher_level_review }
     let(:request_issues) { [request_issue] }
     let(:request_issue) do
       create(
         :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: higher_level_review,
+        decision_review: hl_review,
         benefit_type: benefit_type,
         contested_issue_description: "PTSD denied"
       )
     end
 
     context "when the EP has not yet been established" do
-      before { higher_level_review.reload.create_issues!(request_issues) }
+      before { hl_review.reload.create_issues!(request_issues) }
 
       it "disallows editing" do
-        visit "#{url_path}/#{higher_level_review.uuid}/edit"
+        visit "#{url_path}/#{hl_review.uuid}/edit"
 
         expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
@@ -836,21 +836,21 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_link "the job page"
 
-        expect(current_path).to eq higher_level_review.async_job_url
+        expect(current_path).to eq hlevel_review.async_job_url
       end
     end
 
     context "when the EP has been established" do
       before do
-        higher_level_review.reload.create_issues!(request_issues)
-        higher_level_review.establish!
+        hl_review.reload.create_issues!(request_issues)
+        hl_review.establish!
       end
 
       it "shows when and by whom the Intake was performed" do
-        visit "#{url_path}/#{higher_level_review.uuid}/edit"
+        visit "#{url_path}/#{hl_review.uuid}/edit"
 
         expect(page).to have_content(
-          "Established #{higher_level_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+          "Established #{hl_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
         )
       end
     end
