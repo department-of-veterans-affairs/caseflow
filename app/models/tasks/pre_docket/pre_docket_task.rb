@@ -25,11 +25,14 @@ class PreDocketTask < Task
     task_actions = Array.new(TASK_ACTIONS)
     child_task = children.first
 
-    if child_task.task_is_assigned_to_organization?(VhaCamo.singleton)
-      task_actions.concat(VHA_ACTIONS)
-    elsif child_task.task_is_assigned_to_organization?(EducationEmo.singleton)
-      task_actions.concat(EDU_ACTIONS)
+    if child_task&.closed?
+      if child_task.task_is_assigned_to_organization?(VhaCamo.singleton)
+        task_actions.concat(VHA_ACTIONS)
+      elsif child_task.task_is_assigned_to_organization?(EducationEmo.singleton)
+        task_actions.concat(EDU_ACTIONS)
+      end
     end
+
     task_actions
   end
 
