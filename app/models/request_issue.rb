@@ -293,6 +293,10 @@ class RequestIssue < CaseflowRecord
     end
   end
 
+  def education_predocket?
+    benefit_type == "education" && predocket_needed?
+  end
+
   def description
     return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
