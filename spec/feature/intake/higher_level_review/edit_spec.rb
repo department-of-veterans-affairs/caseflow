@@ -399,9 +399,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        # rubocop:disable LineLength
+        # rubocop:disable Layout/LineLength
         expect(page).to have_content("#{eligible_request_issue.contention_text}\nBenefit type: Compensation\nDecision date: #{Time.zone.today.mdY}")
-        # rubocop:enable LineLength
+        # rubocop:enable Layout/LineLength
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
@@ -825,9 +825,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "when the EP has not yet been established" do
-      before do
-        higher_level_review.reload.create_issues!(request_issues)
-      end
+      before { higher_level_review.reload.create_issues!(request_issues) }
 
       it "disallows editing" do
         visit "#{url_path}/#{higher_level_review.uuid}/edit"

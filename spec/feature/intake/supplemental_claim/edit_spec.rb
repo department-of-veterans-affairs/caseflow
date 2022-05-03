@@ -686,9 +686,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when the EP has not yet been established" do
-      before do
-        supplemental_claim.reload.create_issues!(request_issues)
-      end
+      before { supplemental_claim.reload.create_issues!(request_issues) }
 
       it "disallows editing" do
         visit "#{url_path}/#{supplemental_claim.uuid}/edit"
