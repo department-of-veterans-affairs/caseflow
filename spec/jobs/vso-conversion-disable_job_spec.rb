@@ -1,5 +1,5 @@
 describe VSOConversionDisable, :postgres do
-  let(:docket) { HearingRequestDocket.new }
+  let(:hearing_day) { create(:hearing_day, scheduled_for: "")}
   let(:hearing) { create(:hearing, scheduled_time: "") }
   context "when there's no hearings 11 days before scheduled" do
     subject { find_affected_hearings(hearing_docket) }
