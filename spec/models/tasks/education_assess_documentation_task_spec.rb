@@ -19,7 +19,7 @@ describe EducationAssessDocumentationTask, :postgres do
 
       subject { regional_processing_office_task.available_actions(user) }
 
-      available_actions = []
+      available_actions = [Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h]
 
       it { is_expected.to eq available_actions }
     end
