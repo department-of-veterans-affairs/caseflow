@@ -671,14 +671,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   describe "Establishment credits" do
     let(:url_path) { "supplemental_claims" }
-    let(:decision_review) { supplemental_claim }
+    let(:supplemental_claim) { supplemental_claim }
     let(:request_issues) { [request_issue] }
     let(:request_issue) do
       create(
         :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: decision_review,
+        decision_review: supplemental_claim,
         benefit_type: benefit_type,
         contested_issue_description: "PTSD denied",
         is_predocket_needed: is_predocket_needed
@@ -687,11 +687,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when the EP has not yet been established" do
       before do
-        decision_review.reload.create_issues!(request_issues)
+        supplemental_claim.reload.create_issues!(request_issues)
       end
 
       it "disallows editing" do
-        visit "#{url_path}/#{decision_review.uuid}/edit"
+        visit "#{url_path}/#{supplemental_claim.uuid}/edit"
 
         expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
@@ -699,21 +699,21 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         click_link "the job page"
 
-        expect(current_path).to eq decision_review.async_job_url
+        expect(current_path).to eq supplemental_claim.async_job_url
       end
     end
 
     context "when the EP has been established" do
       before do
-        decision_review.reload.create_issues!(request_issues)
-        decision_review.establish!
+        supplemental_claim.reload.create_issues!(request_issues)
+        supplemental_claim.establish!
       end
 
       it "shows when and by whom the Intake was performed" do
-        visit "#{url_path}/#{decision_review.uuid}/edit"
+        visit "#{url_path}/#{supplemental_claim.uuid}/edit"
 
         expect(page).to have_content(
-          "Established #{decision_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+          "Established #{supplemental_claim.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
         )
       end
     end
