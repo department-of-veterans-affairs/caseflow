@@ -598,6 +598,21 @@ class TaskActionRepository
       }
     end
 
+    def regional_processing_office_return_to_emo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE,
+        message_title: format(
+          COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_CONFIRMATION,
+          task.appeal.veteran_full_name
+        ),
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}",
+        modal_button_text: COPY::MODAL_RETURN_BUTTON
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
