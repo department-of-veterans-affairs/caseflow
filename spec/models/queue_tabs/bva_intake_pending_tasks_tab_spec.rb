@@ -44,18 +44,18 @@ describe BvaIntakePendingTab, :postgres do
       let!(:rpo_office) { create(:edu_regional_processing_office) }
 
       it "only the active children are shown" do
-        older_sibling = child_tasks.first
-        older_sibling.completed!
+        completed_sibling = child_tasks.first
+        completed_sibling.completed!
 
-        younger_sibling = EducationDocumentSearchTask.create!(
-          appeal: older_sibling.appeal,
-          parent: older_sibling.parent,
+        active_sibling = EducationDocumentSearchTask.create!(
+          appeal: completed_sibling.appeal,
+          parent: completed_sibling.parent,
           assigned_at: Time.zone.now,
           assigned_to: EducationEmo.singleton
         )
 
-        expect(subject).to include younger_sibling
-        expect(subject).to_not include older_sibling
+        expect(subject).to include active_sibling
+        expect(subject).to_not include completed_sibling
       end
 
       it "tasks with 'grandchildren' are still returned" do
