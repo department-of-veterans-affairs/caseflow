@@ -564,7 +564,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         )
       end
 
-      step "Task is now cancelled, and does not show up in another of the RPOs queue tabs" do
+      step "Task is now cancelled, and does not show up in any of the RPOs queue tabs" do
         expect(EducationDocumentSearchTask.last).to have_attributes(
           type: "EducationDocumentSearchTask",
           status: Constants.TASK_STATUSES.assigned,
