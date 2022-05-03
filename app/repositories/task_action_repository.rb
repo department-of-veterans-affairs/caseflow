@@ -484,6 +484,14 @@ class TaskActionRepository
       }
     end
 
+    def edu_regional_processing_office_send_to_board_intake_for_review(*)
+      {
+        modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+      }
+    end
+
     def vha_assign_to_program_office_data(*)
       {
         options: organizations_to_options(VhaProgramOffice.all),

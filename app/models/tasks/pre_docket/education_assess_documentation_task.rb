@@ -9,7 +9,7 @@ class EducationAssessDocumentationTask < Task
                      on: :create
 
   TASK_ACTIONS = [
-    # TODO
+    Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.to_h
   ].freeze
 
   def available_actions(user)
