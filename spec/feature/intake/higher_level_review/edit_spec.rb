@@ -836,7 +836,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_link "the job page"
 
-        expect(current_path).to eq hlevel_review.async_job_url
+        expect(current_path).to eq hl_review.async_job_url
       end
     end
 
