@@ -569,10 +569,10 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY,
-        message_title: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
-        message_detail: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -602,11 +602,12 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        # modal_title: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        # modal_body: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY,
-        # message_title: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
-        # message_detail: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
-        # type: AssessDocumentationTask.name,
+        # testing here
+        modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
     end
