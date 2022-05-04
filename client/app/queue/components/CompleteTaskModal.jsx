@@ -455,12 +455,12 @@ class CompleteTaskModal extends React.Component {
       isValid = validInstructions(instructions);
     }
 
-    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review' ) {
+    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
       if (radio === 'other') {
         isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
       }
-
-      isValid = validRadio(radio);
     }
 
     return isValid;
