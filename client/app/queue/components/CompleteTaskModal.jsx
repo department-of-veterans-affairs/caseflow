@@ -69,6 +69,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const getTaskType = () => {
     return taskConfiguration?.type || null;
   };
+  const isOptional = () => {
+    return taskConfiguration?.body_optional || false;
+  };
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
@@ -81,7 +84,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if (getTaskType().includes('Education')) {
+    } else if (getTaskType()?.includes('Education')) {
       return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
     }
 
@@ -126,9 +129,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
-              !taskConfiguration.body_optional ? COPY.EMPTY_INSTRUCTIONS_ERROR :
+              !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
-            optional={taskConfiguration.body_optional}
+            optional={isOptional()}
           />
         </div>
       )}
