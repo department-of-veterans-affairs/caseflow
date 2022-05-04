@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
+import { isUndefined, isNil, isEmpty, omitBy, get, _ } from 'lodash';
 
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
@@ -361,7 +361,14 @@ class DailyDocketRow extends React.Component {
 
     return (
       <div {...inputSpacing}>
-        {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {(hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />) ||
+        <div>
+          <Button classNames={['usa-button-secondary']}onClick={this.navigateToConferenceLinkPage}
+          >
+          Connect to Recording System
+          </Button>
+        </div>
+        }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -375,6 +382,10 @@ class DailyDocketRow extends React.Component {
         <NotesField {...inputProps} readOnly={user.userCanVsoHearingSchedule} />
       </div>
     );
+  };
+//Todo: Stephan
+  navigateToConferenceLinkPage = (ConferenceLink) => {
+    window.open(ConferenceLink);
   };
 
   startPolling = () => {
