@@ -21,7 +21,7 @@ class EducationAssessDocumentationTask < Task
       task_actions.concat([Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h].freeze)
     end
 
-    TASK_ACTIONS
+    task_actions
   end
 
   def self.label
