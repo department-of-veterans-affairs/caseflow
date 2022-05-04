@@ -3,8 +3,8 @@
 describe EducationAssessDocumentationTask, :postgres do
   let(:user) { create(:user) }
 
-  context "#available_actions" do
-    describe "for regional processing office user" do
+  describe "#available_actions" do
+    context "for regional processing office user" do
       let(:regional_processing_office) { create(:edu_regional_processing_office) }
 
       let(:regional_processing_office_task) do
