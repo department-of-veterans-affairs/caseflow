@@ -427,6 +427,6 @@
   "RPO_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
-    "func": "vha_mark_task_in_progress"
+    "func": "rpo_mark_task_in_progress"
   }
 }
