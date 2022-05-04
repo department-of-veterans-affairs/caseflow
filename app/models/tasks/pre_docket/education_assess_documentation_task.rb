@@ -9,7 +9,7 @@ class EducationAssessDocumentationTask < Task
                      on: :create
 
   TASK_ACTIONS = [
-    # TODO
+    Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
   ].freeze
 
   def available_actions(user)
