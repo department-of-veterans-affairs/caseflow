@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # VSO users should not be able to convert a hearing to virtual within 11 days of the hearing.
-class VSOConversionDisableJob < CaseflowJob
+class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
   def perform
     appeal_list = find_affected_hearings
     if !appeal_list.nil?
