@@ -27,8 +27,6 @@ describe CancelChangeHearingRequestTypeTaskJob do
 
     it "find_affected_hearings returns relevant hearing" do
       subject
-      hearing_day1 = HearingDay.find_by(scheduled_for: schedule_day)
-      byebug
       expect(!subject.nil?)
       expect(subject.eq('4'))
       #{}expect(subject.has(1))
