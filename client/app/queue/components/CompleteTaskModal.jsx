@@ -81,7 +81,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if (getTaskType() === 'EducationDocumentSearchTask') {
+    } else if (getTaskType().includes('Education')) {
       return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
     }
 
@@ -126,9 +126,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
-              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.EMPTY_INSTRUCTIONS_ERROR :
+              !taskConfiguration.body_optional ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
-            optional={getTaskType() === 'EducationDocumentSearchTask'}
+            optional={taskConfiguration.body_optional}
           />
         </div>
       )}
@@ -329,6 +329,14 @@ const MODAL_TYPE_ATTRS = {
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
+  rpo_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
 };
 
 class CompleteTaskModal extends React.Component {
@@ -444,7 +452,7 @@ class CompleteTaskModal extends React.Component {
       isValid = validInstructions(instructions);
     }
 
-    if (modalType === 'emo_send_to_board_intake_for_review') {
+    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review' ) {
       if (radio === 'other') {
         isValid = validInstructions(otherInstructions) && validRadio(radio);
       }

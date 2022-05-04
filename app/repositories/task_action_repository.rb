@@ -480,15 +480,19 @@ class TaskActionRepository
       {
         modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
-        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}",
+        body_optional: true
       }
     end
 
-    def edu_regional_processing_office_send_to_board_intake_for_review(*)
+    def edu_regional_processing_office_send_to_board_intake_for_review(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
       {
         modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationAssessDocumentationTask.name,
-        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+        redirect_after: "/organizations/#{queue_url}?tab=education_rpo_completed",
+        body_optional: true
       }
     end
 
