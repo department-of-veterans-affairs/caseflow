@@ -457,6 +457,26 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
+
+      step "RPO user marks task as in progress" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        # Click on dropdown
+
+        # Click on 'Mark task as in progress'
+
+        # Click confirmation button on modal
+
+        # Check for success message?
+
+        # Check that EducationAssessDocumentationTask.last's task status is in_progress
+      end
+
+      step "RPO Task appears in RPO's in progress tab" do
+        # visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_in_progress"
+        # expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        # expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
     end
 
     it "EMO user can return an appeal to BVA Intake" do
