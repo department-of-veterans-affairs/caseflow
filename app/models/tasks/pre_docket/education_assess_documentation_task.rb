@@ -9,7 +9,7 @@ class EducationAssessDocumentationTask < Task
                      on: :create
 
   TASK_ACTIONS = [
-    # Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
+    # Should only contain default task actions available on all tabs
   ].freeze
 
   def available_actions(user)
