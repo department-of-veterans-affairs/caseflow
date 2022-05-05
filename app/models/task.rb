@@ -810,19 +810,17 @@ class Task < CaseflowRecord
         return all_children_cancelled_or_completed
       end
 
-      if type == EducationDocumentSearchTask.name
-        update_emo_task_if_children_tasks_are_completed
-      else
-        update!(status: Constants.TASK_STATUSES.assigned)
-      end
+      update_task_if_children_tasks_are_completed
     end
   end
 
   # If an Education pre-docket RPO task is completed and sent to BVA Intake
-  # then the EMO task should also be completed
-  def update_emo_task_if_children_tasks_are_completed
-    if all_children_completed?
+  # then the parent Education EMO task should also be completed.
+  def update_task_if_children_tasks_are_completed
+    if type == EducationDocumentSearchTask.name && all_children_completed?
       update!(status: Constants.TASK_STATUSES.completed)
+    else
+      update!(status: Constants.TASK_STATUSES.assigned)
     end
   end
 
