@@ -19,9 +19,7 @@ describe EducationAssessDocumentationTask, :postgres do
 
       subject { regional_processing_office_task.available_actions(user) }
 
-      available_actions = []
-
-      it { is_expected.to eq available_actions }
+      it { is_expected.to eq EducationAssessDocumentationTask::TASK_ACTIONS }
     end
   end
 end
