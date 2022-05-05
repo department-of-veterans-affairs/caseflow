@@ -383,8 +383,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
-        expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -456,6 +456,53 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_assigned&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO user can send appeal to BVA Intake as Ready for Review" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        rpo_task = EducationAssessDocumentationTask.last
+        emo_task = EducationDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+        ).click
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices[0]).to have_content("VBMS")
+        expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+        expect(radio_choices[2]).to have_content("Other")
+
+        radio_choices[0].click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake for review")
+
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      end
+
+      step "RPO user can find the appeal in the org's Completed Tab" do
+        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_completed&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "BVA Intake can find appeal in their Ready for Review Tab" do
+        User.authenticate!(user: bva_intake_user)
+
+        visit "/organizations/bva-intake?tab=bvaReadyForReview"
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
       end
     end
 
