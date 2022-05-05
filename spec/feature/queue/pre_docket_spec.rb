@@ -503,6 +503,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         visit "/organizations/bva-intake?tab=bvaReadyForReview"
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
 
