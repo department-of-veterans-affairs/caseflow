@@ -70,6 +70,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
     return taskConfiguration?.type || null;
   };
   const isOptional = () => {
+    // eslint-disable-next-line camelcase
     return taskConfiguration?.body_optional || false;
   };
   const handleRadioChange = (value) => {
