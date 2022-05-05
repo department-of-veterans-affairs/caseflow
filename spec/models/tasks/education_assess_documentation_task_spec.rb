@@ -2,22 +2,26 @@
 
 describe EducationAssessDocumentationTask, :postgres do
   let(:user) { create(:user) }
+  let(:regional_processing_office) { create(:edu_regional_processing_office) }
+  let(:task) { create(:education_assess_documentation_task, assigned_to: regional_processing_office) }
 
-  context "#available_actions" do
-    describe "for regional processing office user" do
-      let(:regional_processing_office) { create(:edu_regional_processing_office) }
+  before { regional_processing_office.add_user(user) }
 
-      let(:regional_processing_office_task) do
-        create(:education_assess_documentation_task, assigned_to: regional_processing_office)
-      end
+  describe ".label" do
+    it "uses a friendly label" do
+      expect(task.class.label).to eq COPY::ASSESS_DOCUMENTATION_TASK_LABEL
+    end
+  end
 
-      it "task should be assigned to RPO" do
-        expect(regional_processing_office_task.assigned_to).to eq(regional_processing_office)
-      end
+  context "Task cannot be unassigned" do
+    it "task should be assigned to RPO" do
+      expect(task.assigned_to).to eq(regional_processing_office)
+    end
+  end
 
-      before { regional_processing_office.add_user(user) }
-
-      subject { regional_processing_office_task.available_actions(user) }
+  describe "#available_actions" do
+    context "for regional processing office user" do
+      subject { task.available_actions(user) }
 
       it { is_expected.to eq EducationAssessDocumentationTask::TASK_ACTIONS }
     end
