@@ -462,10 +462,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
 
         # Click on dropdown
-
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         # Click on 'Mark task as in progress'
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.label
+        ).click
 
         # Click confirmation button on modal
+        
 
         # Check for success message?
 
