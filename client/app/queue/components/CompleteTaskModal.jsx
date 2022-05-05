@@ -85,7 +85,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
     } else if (getTaskType()?.includes('Education')) {
-      return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+      return StringUtil.nl2br(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
     }
 
     return null;
@@ -326,7 +326,7 @@ const MODAL_TYPE_ATTRS = {
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+      title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_COMPLETE_TASK_LABEL,
     getContent: ReadyForReviewModal,
@@ -334,7 +334,7 @@ const MODAL_TYPE_ATTRS = {
   },
   rpo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+      title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_COMPLETE_TASK_LABEL,
     getContent: ReadyForReviewModal,

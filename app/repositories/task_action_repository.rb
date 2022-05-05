@@ -478,7 +478,7 @@ class TaskActionRepository
 
     def emo_send_to_board_intake_for_review(*)
       {
-        modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -487,7 +487,7 @@ class TaskActionRepository
 
     def edu_regional_processing_office_send_to_board_intake_for_review(*)
       {
-        modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationAssessDocumentationTask.name,
         body_optional: true
       }
