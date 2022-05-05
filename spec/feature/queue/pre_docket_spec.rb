@@ -461,27 +461,26 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "RPO user marks task as in progress" do
         find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
 
-        # Click on dropdown
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        # Click on 'Mark task as in progress'
         find(
           "div",
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.label
         ).click
 
-        # Click confirmation button on modal
-        
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
 
-        # Check for success message?
+        find("button", class: "usa-button", text: "Submit").click
 
-        # Check that EducationAssessDocumentationTask.last's task status is in_progress
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+
+        expect(EducationAssessDocumentationTask.last.status).to eq Constants.TASK_STATUSES.in_progress
       end
 
       step "RPO Task appears in RPO's in progress tab" do
-        # visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_in_progress"
-        # expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
-        # expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_in_progress"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
 
