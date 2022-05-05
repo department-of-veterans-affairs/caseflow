@@ -383,10 +383,29 @@ class DailyDocketRow extends React.Component {
       </div>
     );
   };
-//Todo: Stephan
-  navigateToConferenceLinkPage = (ConferenceLink) => {
-    window.open(ConferenceLink);
-  };
+
+//Todo: Stephan Need to do in two steps, 1st is to query the client based upon ID
+//1. Finds by user ID & hit conferencelink table, engineers link, opens window
+//2. If does not find ID/Table Information, if doesn't find it, create it/update db, (chaining-atomic event), open window.
+//
+/*
+  async function navigateToConferenceLinkPage () => {
+    try {
+      //Connect to the client
+      await clientInformation.connect()
+      //Query the client
+      await clientInformation.query("BEGIN")
+      **in here if return nil create it, 
+      **
+      await clientInformation.query()
+    } catch (error) {
+      
+    }
+    window.open(URL);
+  };*/
+
+  //Notes: Maybe attach debugger to see. Pull out the label in a copy/json & not hard code it.
+  //When we hit the "hearings controller"; 
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing?.externalId, (response) => {
