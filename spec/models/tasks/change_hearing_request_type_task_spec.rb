@@ -298,15 +298,18 @@ describe ChangeHearingRequestTypeTask do
     subject { ChangeHearingRequestTypeTask.update_to_new_poa(appeal) }
     let!(:appeal) { create(:appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
+    let!(:vso_org) { create(:vso) }
+
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task, assigned_to: vso_org) }
+    let!(:old_vso) { create(:user, roles: ["VSO"], full_name: "old") }
+    let!(:new_vso) { create(:user, roles: ["VSO"], full_name: "new") }
 
     context "When former representative VSO is assigned non-Tracking tasks" do
-      let(:old_vso) { create(:vso, name: "Remember Korea") }
-      let(:new_vso) { create(:vso) }
-
       let!(:change_type_task) do
         create(
           :change_hearing_request_type_task,
-          parent: root_task,
+          parent: schedule_hearing_task,
           appeal: root_task.appeal,
           assigned_to: old_vso
         )
@@ -329,7 +332,6 @@ describe ChangeHearingRequestTypeTask do
       context "when there are no existing Change" do
         it "does not create or cancel any ChangeHearingRequestTypeTask" do
           task_count_before = ChangeHearingRequestTypeTask.count
-
           expect(subject).to eq([0, 0])
           expect(ChangeHearingRequestTypeTask.count).to eq(task_count_before)
         end
@@ -337,32 +339,34 @@ describe ChangeHearingRequestTypeTask do
 
       context "when there is an existing open ChangeHearingRequestTypeTask" do
         let(:vso) { create(:vso) }
-        let!(:change_task) { create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso) }
+        let!(:vso_user) { create(:user, roles: ["VSO"], full_name: "singular") }
+        let!(:change_task) { create(:change_hearing_request_type_task, appeal: appeal, assigned_to: vso_user) }
 
         it "cancels old ChangeHearingRequestTypeTask, does not create any new tasks" do
           active_task_count_before = ChangeHearingRequestTypeTask.open.count
-
           expect(subject).to eq([0, 1])
           expect(ChangeHearingRequestTypeTask.open.count).to eq(active_task_count_before - 1)
         end
       end
     end
     context "when the appeal has two VSOs" do
-      let(:representing_vsos) { create_list(:vso, 2) }
+      let!(:vso_one) { create(:user, roles: ["VSO"], full_name: "thingone") }
+      let!(:vso_two) { create(:user, roles: ["VSO"], full_name: "thingtwo") }
+      let(:representing_vsos) { [vso_one, vso_two] }
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
 
       context "when there are no existing ChangeHearingRequestTypeTasks" do
         it "creates 2 new ChangeHearingRequestTypeTask" do
           task_count_before = ChangeHearingRequestTypeTask.count
-
           expect(subject).to eq([2, 0])
           expect(ChangeHearingRequestTypeTask.count).to eq(task_count_before + 2)
         end
       end
 
       context "when there is an existing open ChangeHearingRequestTypeTasks for a different VSO" do
+        let!(:diff_vso) { create(:user, roles: ["VSO"], full_name: "different") }
         before do
-          create(:change_hearing_request_type_task, appeal: appeal, assigned_to: create(:vso))
+          create(:change_hearing_request_type_task, appeal: appeal, assigned_to: diff_vso)
         end
 
         it "cancels old ChangeHearingRequestTypeTask, creates 2 new ChangeHearingRequestTypeTasks" do
