@@ -33,6 +33,8 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
     # If it's simply a matter of updating :scheduled_time, then maybe a new changehearingrequesttypetask can be created at the same time.
     # Why would a hearing be rescheduled?
     # THIS CAN PROBABLY BE MADE INTO A CONCERN. PROBABLY A STORY FOR NEXT SPRINT
+    byebug
+    return
     appeal_list.each do |appeal|
       tasks_to_sync = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],

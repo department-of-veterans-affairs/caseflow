@@ -5,7 +5,6 @@ describe CancelChangeHearingRequestTypeTaskJob do
   current_time = Time.zone.today
   let(:appeal_one) { create(:appeal, id: 1) }
   let(:appeal_two) { create(:appeal, id: 2) }
-  appeal_list = [appeal_one, appeal_two]
 
   describe "no tasks that need to be cancelled" do
     context "when there's no hearings 10 days before scheduled" do
@@ -30,6 +29,8 @@ describe CancelChangeHearingRequestTypeTaskJob do
     context "when there are hearings 10 days before scheduled" do
       subject { job.find_affected_hearings }
       it "find_affected_hearings returns relevant hearing" do
+        appeal_list = [appeal_one, appeal_two]
+
         subject
         expect(subject).not_to eq nil
         expect(subject).to eq appeal_list
@@ -38,12 +39,14 @@ describe CancelChangeHearingRequestTypeTaskJob do
       end
     end
     context "when there are ChangeHearingRequestTypeTasks to cancel" do
-      subject { CancelChangeHearingRequestTypeTaskJob.disable_conversion_task(appeal_list) }
       schedule_day = current_time.next_day(10)
 
       let(:task) { create(:change_hearing_request_type_task, :assigned) }
 
       it "cancels the task" do
+        appeal_list = [appeal_one, appeal_two]
+        job.disable_conversion_task(appeal_list)
+        subject
         byebug
         expect { subject }.to(
           change { task.reload.status }
