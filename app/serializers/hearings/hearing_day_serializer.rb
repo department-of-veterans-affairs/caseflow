@@ -90,4 +90,11 @@ class HearingDaySerializer
       }
     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
+
+  def self.serialize_conference_link(conference_link)
+    ::ConferenceLinkSerializer.new(
+      conference_link,
+      collection: false
+    ).serializable_hash[:data][:attributes]
+  end
 end
