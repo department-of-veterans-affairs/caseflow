@@ -361,13 +361,33 @@ class DailyDocketRow extends React.Component {
 
     return (
       <div {...inputSpacing}>
-        {(hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />) ||
+        {(hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />)
+        /*
+        ||
         <div>
           <Button classNames={['usa-button-secondary']}onClick={this.navigateToConferenceLinkPage}
           >
           Connect to Recording System
           </Button>
+          <script>
+          function navigateToConferenceLinkPage ( hearing) 
+          fetch('/hearings/hearing_day/:id', { method: 'GET', data: { conferencelink: id } }).
+          then((response) => {
+          if (response.ok) {
+            console.log('Conference Information was returned');
+            var conferenceLinkParsedObject = JSON.parse();
+            console.log(conferenceLinkObject);
+            var conferenceLinkStringifiedObject = Json.stringify(conferenceLinkParsedObject);
+            console.log(conferenceLinkStringifiedObject);
+            hardcode='hardcode';
+            var concatConferenceLink = (hardcode + 'conferenceLinkStringifiedObject');
+            enterthelink = concatConferenceLink;
+            window.open(entherthelink);
+          };
+          throw new Error('Navigate to ConferenceLink failed.');
+          </script>
         </div>
+        */
         }
         <DispositionDropdown
           {...inputProps}
@@ -383,29 +403,6 @@ class DailyDocketRow extends React.Component {
       </div>
     );
   };
-
-//Todo: Stephan Need to do in two steps, 1st is to query the client based upon ID
-//1. Finds by user ID & hit conferencelink table, engineers link, opens window
-//2. If does not find ID/Table Information, if doesn't find it, create it/update db, (chaining-atomic event), open window.
-//
-/*
-  async function navigateToConferenceLinkPage () => {
-    try {
-      //Connect to the client
-      await clientInformation.connect()
-      //Query the client
-      await clientInformation.query("BEGIN")
-      **in here if return nil create it, 
-      **
-      await clientInformation.query()
-    } catch (error) {
-      
-    }
-    window.open(URL);
-  };*/
-
-  //Notes: Maybe attach debugger to see. Pull out the label in a copy/json & not hard code it.
-  //When we hit the "hearings controller"; 
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing?.externalId, (response) => {
