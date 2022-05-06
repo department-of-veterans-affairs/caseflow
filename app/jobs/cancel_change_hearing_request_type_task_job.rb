@@ -36,7 +36,7 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
     appeal_list.each do |appeal|
       tasks_to_sync = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],
-        assigned_to_type: Organization.name
+        assigned_to_type: User.name
       )
       representatives = tasks_to_sync.map(&:assigned_to)
       tasks_to_sync.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
