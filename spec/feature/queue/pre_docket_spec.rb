@@ -485,7 +485,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         radio_choices[0].click
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake for review")
+        expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
 
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
         expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
