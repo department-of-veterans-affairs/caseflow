@@ -11,19 +11,19 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
 
   def find_affected_hearings
     current_time = Time.zone.today
-    deadline_time = current_time.next_day(11)
+    deadline_time = current_time.next_day(10)
     appeal_list = []
     hearing_day = HearingDay.find_by(scheduled_for: deadline_time)
-    byebug
     if hearing_day.nil?
       return
     end
 
     # iterate through hearings on the hearing day to find appeal
     Hearing.where(hearing_day_id: hearing_day.id).to_a.each do |hearing|
-      appeal = Appeal.find_by(hearing_id: hearing.id)
+      appeal = Appeal.find_by(id: hearing.appeal_id)
       appeal_list.push(appeal)
     end
+    appeal_list
   end
 
   def disable_conversion_task(appeal_list)
@@ -32,6 +32,7 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
     # Would need to look into how a hearing is rescheduled.
     # If it's simply a matter of updating :scheduled_time, then maybe a new changehearingrequesttypetask can be created at the same time.
     # Why would a hearing be rescheduled?
+    # THIS CAN PROBABLY BE MADE INTO A CONCERN. PROBABLY A STORY FOR NEXT SPRINT
     appeal_list.each do |appeal|
       tasks_to_sync = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],
@@ -41,7 +42,6 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
       tasks_to_sync.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
         task.update!(status: Constants.TASK_STATUSES.cancelled,
                      cancellation_reason: Constants.TASK_CANCELLATION_REASONS.time_deadline)
-        # DO CHILD TASKS NEED TO BE CANCELLED TOO??????????????/
       end
     end
   end
