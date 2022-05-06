@@ -11,8 +11,10 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
 
   def find_affected_hearings
     current_time = Time.zone.today
+    # set the date for 10 days ahead
     deadline_time = current_time.next_day(10)
     appeal_list = []
+    # find the hearing day for the deadline_time
     hearing_day = HearingDay.find_by(scheduled_for: deadline_time)
     if hearing_day.nil?
       return
@@ -27,14 +29,8 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
   end
 
   def disable_conversion_task(appeal_list)
-    # Since the changehearingrequesttypetask is tied to the appeal, I'm not sure about what to do for postponed hearings
-    # Another job to check all hearings over 11 days away? That would be so inefficient
-    # Would need to look into how a hearing is rescheduled.
-    # If it's simply a matter of updating :scheduled_time, then maybe a new changehearingrequesttypetask can be created at the same time.
-    # Why would a hearing be rescheduled?
     # THIS CAN PROBABLY BE MADE INTO A CONCERN. PROBABLY A STORY FOR NEXT SPRINT
-    byebug
-    return
+    closed_tasks = 0
     appeal_list.each do |appeal|
       tasks_to_sync = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],
@@ -44,7 +40,9 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
       tasks_to_sync.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
         task.update!(status: Constants.TASK_STATUSES.cancelled,
                      cancellation_reason: Constants.TASK_CANCELLATION_REASONS.time_deadline)
+        closed_tasks += 1
       end
     end
+    closed_tasks
   end
 end
