@@ -80,7 +80,7 @@ class ChangeHearingRequestTypeTask < Task
 
     tasks_to_sync = appeal.tasks.open.where(
       type: [ChangeHearingRequestTypeTask.name],
-      assigned_to_type: Organization.name
+      assigned_to_type: User.name
     )
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
