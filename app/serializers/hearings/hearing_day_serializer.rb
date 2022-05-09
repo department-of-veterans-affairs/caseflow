@@ -38,6 +38,9 @@ class HearingDaySerializer
   attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
+  attribute :conference_link do |hearing_day|
+    serialize_conference_link(hearing_day.conference_link)
+  end
 
   def self.get_judge_first_name(hearing_day, params)
     if params[:judge_names].present?
