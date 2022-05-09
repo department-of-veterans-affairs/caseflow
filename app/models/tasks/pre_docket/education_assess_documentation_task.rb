@@ -9,7 +9,7 @@ class EducationAssessDocumentationTask < Task
                      on: :create
 
   TASK_ACTIONS = [
-    # Should only contain default task actions available on all tabs
+    Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
   ].freeze
 
   def available_actions(user)
