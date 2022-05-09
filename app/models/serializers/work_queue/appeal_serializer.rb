@@ -15,8 +15,8 @@ class WorkQueue::AppealSerializer
   end
 
   # veteran email address if it is a veteran
-  attribute :veteran_email do |object|
-    object.veteran ? object.veteran.email_address : "Cannot Find Veteran"
+  attribute :appellant_email_address do |object|
+    object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
   end
 
   # power of attorney email address

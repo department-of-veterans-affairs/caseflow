@@ -1,24 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { VirtualHearingSection } from './Section';
-import { ReadOnly } from '../details/ReadOnly';
-import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields';
+import { VirtualHearingSection } from "./Section";
+import { ReadOnly } from "../details/ReadOnly";
+import { VSOEmailNotificationsFields } from "../details/VSOEmailNotificationsFields";
 
 export const VSOAppellantSection = ({
   hearing,
   showDivider,
   appellantTitle,
   formFieldsOnly,
-  veteranEmail,
-  appellantTz
+  appellantEmailAddress,
+  appellantTz,
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
-  const appellantName = hearing?.appellantIsNotVeteran ?
-    hearing?.appellantFullName ||
-      `${hearing?.appellantFirstName} ${hearing?.appellantLastName}` :
-    hearing?.veteranFullName ||
+  const appellantName = hearing?.appellantIsNotVeteran
+    ? hearing?.appellantFullName ||
+      `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`
+    : hearing?.veteranFullName ||
       `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
 
   return (
@@ -29,7 +29,10 @@ export const VSOAppellantSection = ({
     >
       <React.Fragment>
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
-        <VSOEmailNotificationsFields veteranEmail={veteranEmail} appellantTz={appellantTz} />
+        <VSOEmailNotificationsFields
+          appellantEmailAddress={appellantEmailAddress}
+          appellantTz={appellantTz}
+        />
       </React.Fragment>
     </VirtualHearingSection>
   );
@@ -58,6 +61,5 @@ VSOAppellantSection.propTypes = {
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
   appellantEmailType: PropTypes.string,
-  veteranEmail: PropTypes.string,
-  appellantTz: PropTypes.string
+  appellantTz: PropTypes.string,
 };
