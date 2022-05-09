@@ -363,32 +363,33 @@ class DailyDocketRow extends React.Component {
       <div {...inputSpacing}>
         {(hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />)
         /*
-        ||
-        <div>
-          <Button classNames={['usa-button-secondary']}onClick={this.navigateToConferenceLinkPage}
-          >
-          Connect to Recording System
-          </Button>
-          <script>
-          function navigateToConferenceLinkPage ( hearing) 
-          fetch('/hearings/hearing_day/:id', { method: 'GET', data: { conferencelink: id } }).
-          then((response) => {
-          if (response.ok) {
-            console.log('Conference Information was returned');
-            var conferenceLinkParsedObject = JSON.parse();
-            console.log(conferenceLinkObject);
-            var conferenceLinkStringifiedObject = Json.stringify(conferenceLinkParsedObject);
-            console.log(conferenceLinkStringifiedObject);
-            hardcode='hardcode';
-            var concatConferenceLink = (hardcode + 'conferenceLinkStringifiedObject');
-            enterthelink = concatConferenceLink;
-            window.open(entherthelink);
-          };
-          throw new Error('Navigate to ConferenceLink failed.');
-          </script>
-        </div>
-        */
+         ||
+        <body>
+          <div>
+            <Button classNames={['usa-button-secondary']}onClick={this.navigateToConferenceLinkPage}
+            >
+            Connect to Recording System
+            </Button>
+            <script>
+              function navigateToConferenceLinkPage(hearing_day) {
+                fetch('/hearings/hearing_days/conferencelinks:id',
+                  { conferencelink: 'GET', data: { conferencelink: conferenceLink.id } })}
+                  var conferenceLinkResponse = [this.JSON.parse(response)];
+                  console.log(conferenceLinkResponse);
+                  var conferenceLinkStringifiedObject = Json.stringify(conferenceLinkResponse);
+                  console.log(conferenceLinkStringifiedObject);
+                  hardcode='hardcode';
+                  var concatConferenceLink = (hardcode + 'conferenceLinkStringifiedObject');
+                  enterLink = concatConferenceLink;
+                  return window.open(enterLink);
+              .console{
+                alert ("HTTP-Error: " + "Navigate to ConferenceLink failed" + response.status)};
+            </script>
+          </div>
+        </body>
+                */
         }
+
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
