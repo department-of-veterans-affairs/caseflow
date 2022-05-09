@@ -36,6 +36,7 @@ describe ConferenceLink do
       expect(subject.created_by_id).not_to eq(nil)
       expect(subject.host_pin).to eq(subject.host_pin_long)
       expect(subject.host_link).to eq(subject.host_link)
+      expect(subject.updated_by_id).not_to eq(nil)
     end
   end
   
@@ -73,6 +74,8 @@ describe ConferenceLink do
       expect(updated_conference_link.host_pin_long).to eq("12345678")
       expect(updated_conference_link.created_at).to eq(DateTime.new(2022, 3, 15, 10, 15, 30))
       expect(updated_conference_link.updated_at).to eq(DateTime.new(2022, 4, 27, 11, 20, 35))
+      expect(updated_conference_link.updated_by_id).not_to eq(nil)
+      expect(updated_conference_link.created_by_id).not_to eq(nil)
     end
   end
 end
