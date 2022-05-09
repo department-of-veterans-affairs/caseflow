@@ -588,7 +588,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
       end
 
-      step "Task returned to the EMO shows up in the EMO's assigned tab" do
+      step "Task returned to the EMO shows up in the EMO's unassigned tab" do
         User.authenticate!(user: emo_user)
         visit "/organizations/edu-emo?tab=education_emo_unassigned"
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
