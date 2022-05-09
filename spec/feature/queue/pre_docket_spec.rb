@@ -478,7 +478,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO Task appears in RPO's in progress tab" do
-        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_in_progress"
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_in_progress"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
