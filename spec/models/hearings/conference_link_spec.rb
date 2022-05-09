@@ -33,7 +33,6 @@ describe ConferenceLink do
       expect(subject.host_pin_long).not_to eq(nil)
       expect(subject.alias_with_host).not_to eq(nil)
       expect(subject.alias_name).to eq(nil)
-      expect(subject.created_by_id).to eq(3)
       expect(subject.host_pin).to eq(subject.host_pin_long)
       expect(subject.host_link).to eq(subject.host_link)
     end
