@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isUndefined, isNil, isEmpty, omitBy, get, _ } from 'lodash';
+import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
 
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
@@ -26,7 +26,7 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit, allScheduleVeteranDropdownOptions } from '../../utils';
 import { docketRowStyle, inputSpacing } from './style';
 import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
@@ -266,6 +266,12 @@ class DailyDocketRow extends React.Component {
 
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
+  conferenceLinkOnClick = () => {
+    const { conferenceLink } = this.props;
+
+    window.open(conferenceLink?.hostLink);
+  }
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -361,35 +367,11 @@ class DailyDocketRow extends React.Component {
 
     return (
       <div {...inputSpacing}>
-        {(hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />)
-        /*
-         ||
-        <body>
-          <div>
-            <Button classNames={['usa-button-secondary']}onClick={this.navigateToConferenceLinkPage}
-            >
-            Connect to Recording System
-            </Button>
-            <script>
-              function navigateToConferenceLinkPage(hearing_day) {
-                fetch('/hearings/hearing_days/conferencelinks:id',
-                  { conferencelink: 'GET', data: { conferencelink: conferenceLink.id } })}
-                  var conferenceLinkResponse = [this.JSON.parse(response)];
-                  console.log(conferenceLinkResponse);
-                  var conferenceLinkStringifiedObject = Json.stringify(conferenceLinkResponse);
-                  console.log(conferenceLinkStringifiedObject);
-                  hardcode='hardcode';
-                  var concatConferenceLink = (hardcode + 'conferenceLinkStringifiedObject');
-                  enterLink = concatConferenceLink;
-                  return window.open(enterLink);
-              .console{
-                alert ("HTTP-Error: " + "Navigate to ConferenceLink failed" + response.status)};
-            </script>
-          </div>
-        </body>
-                */
-        }
-
+        {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {hearing?.isVirtual !== true && <Button
+          classNames={['usa-button-secondary']}
+          type="button"
+          onClick={this.conferenceLinkOnClick} > Connect to Recording </Button> }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -519,11 +501,13 @@ DailyDocketRow.propTypes = {
   }),
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  transitionAlert: PropTypes.func,
+  conferenceLink: PropTypes.object
 };
 
 const mapStateToProps = (state, props) => ({
-  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] }
+  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink
 });
 
 const mapDispatchToProps = (dispatch, props) =>
