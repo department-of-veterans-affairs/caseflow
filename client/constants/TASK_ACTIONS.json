@@ -423,5 +423,10 @@
     "label": "Assign to Regional Processing Office",
     "value": "modal/emo_assign_to_regional_processing_office",
     "func": "emo_assign_to_regional_processing_office_data"
+  },
+  "REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO": {
+    "label": "Return to Executive Management Office",
+    "value": "modal/regional_processing_office_return_to_emo",
+    "func": "regional_processing_office_return_to_emo"
   }
 }

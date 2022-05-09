@@ -13,7 +13,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
-    regional_processing_office.add_user(regional_processing_office_user)
+    edu_regional_processing_office.add_user(edu_regional_processing_office_user)
   end
 
   after do
@@ -33,8 +33,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
-  let(:regional_processing_office) { create(:edu_regional_processing_office) }
-  let(:regional_processing_office_user) { create(:user) }
+  let(:edu_regional_processing_office) { create(:edu_regional_processing_office) }
+  let(:edu_regional_processing_office_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -422,11 +422,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER).click
 
-        find("div", class: "cf-select__option", text: regional_processing_office.name).click
+        find("div", class: "cf-select__option", text: edu_regional_processing_office.name).click
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{emo.url}?tab=education_emo_unassigned&page=1")
-        expect(page).to have_content("Task assigned to #{regional_processing_office.name}")
+        expect(page).to have_content("Task assigned to #{edu_regional_processing_office.name}")
 
         expect(EducationDocumentSearchTask.last).to have_attributes(
           type: "EducationDocumentSearchTask",
@@ -439,7 +439,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           type: "EducationAssessDocumentationTask",
           status: Constants.TASK_STATUSES.assigned,
           assigned_by: emo_user,
-          assigned_to_id: regional_processing_office.id
+          assigned_to_id: edu_regional_processing_office.id
         )
       end
 
@@ -452,8 +452,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO Task appears in RPO's assigned tab" do
-        User.authenticate!(user: regional_processing_office_user)
-        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        User.authenticate!(user: edu_regional_processing_office_user)
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -524,6 +524,74 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
         expect(page).to_not have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+    end
+
+    it "RPO user can return an appeal to the EMO" do
+      appeal = create(
+        :education_assess_documentation_task,
+        :assigned,
+        assigned_to: edu_regional_processing_office,
+        assigned_by: emo_user
+      ).appeal
+
+      step "RPO user navigates to the appeal's queue page and returns it to the EMO" do
+        User.authenticate!(user: edu_regional_processing_office_user)
+
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.label
+        ).click
+
+        expect(page).to have_content(COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+
+        find("button", text: COPY::MODAL_RETURN_BUTTON).click
+        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("Incorrect RPO. Please review.")
+        find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
+
+        expect(page).to have_current_path(
+          "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        )
+      end
+
+      step "Task is now cancelled, and does not show up in any of the RPOs queue tabs" do
+        expect(EducationDocumentSearchTask.last).to have_attributes(
+          type: "EducationDocumentSearchTask",
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_to_id: emo.id
+        )
+
+        expect(EducationAssessDocumentationTask.last).to have_attributes(
+          type: "EducationAssessDocumentationTask",
+          status: Constants.TASK_STATUSES.cancelled,
+          assigned_by: emo_user,
+          assigned_to_id: edu_regional_processing_office.id
+        )
+
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_in_progress"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_completed"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+      end
+
+      step "Task returned to the EMO shows up in the EMO's unassigned tab" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
   end
