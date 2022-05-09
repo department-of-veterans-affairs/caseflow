@@ -6,7 +6,7 @@ module CreatedByUserConcern
   included do
     belongs_to :created_by, class_name: "User"
 
-    before_validation :assign_created_by_user, on: :create
+    before_create :assign_created_by_user
   end
 
   private

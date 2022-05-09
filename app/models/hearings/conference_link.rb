@@ -33,10 +33,8 @@ class ConferenceLink < CaseflowRecord
   end
 
   def host_link
-    return host_link if host_link.present?
-
-    "#{base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias}&" \
+    @host_link ||= "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
+    "conference=#{alias_with_host}&" \
     "pin=#{host_pin}&role=host"
   end
 
