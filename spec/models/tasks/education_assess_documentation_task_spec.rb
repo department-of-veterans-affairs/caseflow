@@ -13,12 +13,6 @@ describe EducationAssessDocumentationTask, :postgres do
     end
   end
 
-  context "Task cannot be unassigned" do
-    it "task should be assigned to RPO" do
-      expect(task.assigned_to).to eq(regional_processing_office)
-    end
-  end
-
   describe "#available_actions" do
     subject { task.available_actions(user) }
 
