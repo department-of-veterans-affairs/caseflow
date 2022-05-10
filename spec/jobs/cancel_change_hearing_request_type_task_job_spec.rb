@@ -184,7 +184,7 @@ describe CancelChangeHearingRequestTypeTaskJob do
           assigned_to: vso_user
         )
       end
-      it "perform_now runs correctly" do
+      it "perform_now correctly cancels the task" do
         subject
         expect(subject).not_to eq nil
         expect(task.reload.status).to eq "cancelled"

@@ -29,7 +29,6 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
   end
 
   def disable_conversion_task(appeal_list)
-    # THIS CAN PROBABLY BE MADE INTO A CONCERN. PROBABLY A STORY FOR NEXT SPRINT
     closed_tasks = 0
     appeal_list.each do |appeal|
       tasks_to_cancel = appeal.tasks.open.where(
