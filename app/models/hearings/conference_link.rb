@@ -11,7 +11,7 @@ class ConferenceLink < CaseflowRecord
 
   class << self
     def client_host_or_default
-      ENV["PEXIP_CLIENT_HOST"] || "vc.va.gov"
+      ENV["VIRTUAL_HEARING_URL_HOST"] || "vc.va.gov"
     end
 
     def formatted_alias(alias_name)
