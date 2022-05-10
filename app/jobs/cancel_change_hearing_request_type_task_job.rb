@@ -32,14 +32,13 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
     # THIS CAN PROBABLY BE MADE INTO A CONCERN. PROBABLY A STORY FOR NEXT SPRINT
     closed_tasks = 0
     appeal_list.each do |appeal|
-      tasks_to_sync = appeal.tasks.open.where(
+      tasks_to_cancel = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],
         assigned_to_type: User.name
       )
-      representatives = tasks_to_sync.map(&:assigned_to)
-      tasks_to_sync.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
-        task.update!(status: Constants.TASK_STATUSES.cancelled,
-                     cancellation_reason: Constants.TASK_CANCELLATION_REASONS.time_deadline)
+      representatives = tasks_to_cancel.map(&:assigned_to)
+      tasks_to_cancel.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
+        task.update!(status: Constants.TASK_STATUSES.cancelled)
         closed_tasks += 1
       end
     end
