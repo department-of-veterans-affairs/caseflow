@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-##
 # Task that is assigned to a EduRegionalProcessingOffice organization for them to locate
 # the appropriate documents for an appeal.
 
