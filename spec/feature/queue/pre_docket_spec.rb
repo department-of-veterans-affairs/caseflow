@@ -491,7 +491,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
         expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
 
         find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find(
