@@ -465,7 +465,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(
           "div",
           class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.label
+          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.label
         ).click
 
         expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)

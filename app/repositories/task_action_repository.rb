@@ -622,7 +622,7 @@ class TaskActionRepository
       }
     end
 
-    def rpo_mark_task_in_progress(task, _user)
+    def edu_regional_processing_office_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {

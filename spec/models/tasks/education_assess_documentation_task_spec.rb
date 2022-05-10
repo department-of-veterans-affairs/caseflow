@@ -29,7 +29,7 @@ describe EducationAssessDocumentationTask, :postgres do
 
       it do
         is_expected.to match_array EducationAssessDocumentationTask::TASK_ACTIONS +
-                                   [Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h]
+                                   [Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h]
       end
 
       it "available tasks actions includes Return to EMO action" do
@@ -37,12 +37,12 @@ describe EducationAssessDocumentationTask, :postgres do
       end
 
       it "in progress action is available whenever task is assigned" do
-        is_expected.to include Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
+        is_expected.to include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h
       end
 
       it "in progress action is not available whenever task is already in progress" do
         task.in_progress!
-        is_expected.to_not include Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
+        is_expected.to_not include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h
       end
     end
   end

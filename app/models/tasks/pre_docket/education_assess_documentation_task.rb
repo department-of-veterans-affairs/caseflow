@@ -19,7 +19,7 @@ class EducationAssessDocumentationTask < Task
     task_actions = Array.new(TASK_ACTIONS)
     # VHA uses this to only mark in progress if task is not yet in progress
     if appeal.tasks.in_progress.none? { |task| task.is_a?(EducationAssessDocumentationTask) }
-      task_actions.concat([Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h].freeze)
+      task_actions.concat([Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h].freeze)
     end
 
     task_actions
