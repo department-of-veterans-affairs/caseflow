@@ -145,4 +145,50 @@ describe CancelChangeHearingRequestTypeTaskJob do
       end
     end
   end
+  describe "runs perform now" do
+    subject { job.perform_now }
+    let(:appeal_list) { [appeal_one, appeal_two] }
+    let!(:root_task_one) { create(:root_task, appeal: appeal_one) }
+    let!(:root_task_two) { create(:root_task, appeal: appeal_two) }
+
+    let!(:vso_user) { create(:user, roles: ["VSO"], full_name: "test") }
+
+    context "there are no tasks to cancel" do
+      schedule_day = current_time.next_day(11)
+      let!(:hearing_day) { create(:hearing_day, scheduled_for: schedule_day) }
+      let!(:hearing_one) { create(:hearing, hearing_day: hearing_day, appeal: appeal_one) }
+      let!(:hearing_two) { create(:hearing, hearing_day: hearing_day, appeal: appeal_two) }
+      let!(:task) do
+        create(
+          :change_hearing_request_type_task,
+          parent: root_task_one,
+          appeal: root_task_one.appeal,
+          assigned_to: vso_user
+        )
+      end
+      it "perform_now returns nil" do
+        subject
+        expect(subject).to eq nil
+      end
+    end
+    context "there are tasks to cancel" do
+      schedule_day = current_time.next_day(10)
+      let!(:hearing_day) { create(:hearing_day, scheduled_for: schedule_day) }
+      let!(:hearing_one) { create(:hearing, hearing_day: hearing_day, appeal: appeal_one) }
+      let!(:hearing_two) { create(:hearing, hearing_day: hearing_day, appeal: appeal_two) }
+      let!(:task) do
+        create(
+          :change_hearing_request_type_task,
+          parent: root_task_one,
+          appeal: root_task_one.appeal,
+          assigned_to: vso_user
+        )
+      end
+      it "perform_now runs correctly" do
+        subject
+        expect(subject).not_to eq nil
+        expect(task.reload.status).to eq "cancelled"
+      end
+    end
+  end
 end
