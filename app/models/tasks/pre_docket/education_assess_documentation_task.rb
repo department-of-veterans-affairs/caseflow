@@ -9,7 +9,7 @@ class EducationAssessDocumentationTask < Task
                      on: :create
 
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h,
+    Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h,
     Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.to_h
   ].freeze
 

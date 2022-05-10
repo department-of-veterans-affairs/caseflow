@@ -607,7 +607,7 @@ class TaskActionRepository
       }
     end
 
-    def regional_processing_office_return_to_emo(task, _user)
+    def edu_regional_processing_office_return_to_emo(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {

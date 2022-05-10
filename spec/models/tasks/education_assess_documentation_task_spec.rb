@@ -33,7 +33,7 @@ describe EducationAssessDocumentationTask, :postgres do
       end
 
       it "available tasks actions includes Return to EMO action" do
-        is_expected.to include Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
+        is_expected.to include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
       end
 
       it "in progress action is available whenever task is assigned" do

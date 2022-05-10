@@ -619,7 +619,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(
           "div",
           class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.label
+          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.label
         ).click
 
         expect(page).to have_content(COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE)

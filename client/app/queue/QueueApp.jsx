@@ -937,7 +937,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
+                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
                 }`}
               render={this.routedRegionalProcessingOfficeReturnToEmo}
             />
