@@ -518,7 +518,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO user can find the appeal in the org's Completed Tab" do
-        visit "/organizations/#{regional_processing_office.url}?tab=education_rpo_completed&page=1"
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_completed&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
