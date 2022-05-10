@@ -436,7 +436,7 @@
   },
   "EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
-    "value": "modal/rpo_mark_task_in_progress",
+    "value": "modal/mark_task_in_progress",
     "func": "edu_regional_processing_office_mark_task_in_progress"
   }
 }
