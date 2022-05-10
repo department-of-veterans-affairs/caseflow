@@ -149,11 +149,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "Program Office can mark an AssessDocumentationTask as in progress" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.label).click
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
       step "Program Office can assign AssessDocumentationTask to Regional Office" do
@@ -194,11 +194,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "Regional Office can mark an AssessDocumentationTask as in progress" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.label).click
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
       step "Regional Office can mark AssessDocumentationTask as Ready for Review" do
@@ -454,6 +454,31 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "RPO Task appears in RPO's assigned tab" do
         User.authenticate!(user: edu_regional_processing_office_user)
         visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO user marks task as in progress" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.label
+        ).click
+
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+
+        expect(EducationAssessDocumentationTask.last.status).to eq Constants.TASK_STATUSES.in_progress
+      end
+
+      step "RPO Task appears in RPO's in progress tab" do
+        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_in_progress"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end

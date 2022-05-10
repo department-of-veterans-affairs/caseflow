@@ -21,6 +21,15 @@ describe EducationAssessDocumentationTask, :postgres do
       it "available tasks actions includes Return to EMO action" do
         is_expected.to include Constants.TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
       end
+
+      it "in progress action is available whenever task is assigned" do
+        is_expected.to include Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
+      end
+
+      it "in progress action is not available whenever task is already in progress" do
+        regional_processing_office_task.in_progress!
+        is_expected.to_not include Constants.TASK_ACTIONS.RPO_MARK_TASK_IN_PROGRESS.to_h
+      end
     end
   end
 end
