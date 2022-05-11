@@ -15,14 +15,6 @@ describe('Button', () => {
     const { container } = render(<Button {...hearings} {...user} />);
 
     return { container };
-  };
-
-});
-
-it('passes A11y testing', async () => {
-  const { container } = setup();
-
-  const results = await axe(container);
-
-  expect(results).toHaveNoViolations();
+  }
+  ;
 });
