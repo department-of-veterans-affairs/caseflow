@@ -69,6 +69,10 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const getTaskType = () => {
     return taskConfiguration?.type || null;
   };
+  const isOptional = () => {
+    // eslint-disable-next-line camelcase
+    return taskConfiguration?.body_optional || false;
+  };
   const handleRadioChange = (value) => {
     setState({ radio: value });
     if (value === 'other') {
@@ -81,8 +85,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if (getTaskType() === 'EducationDocumentSearchTask') {
-      return StringUtil.nl2br(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+    } else if (getTaskType()?.includes('Education')) {
+      return StringUtil.nl2br(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
     }
 
     return null;
@@ -126,9 +130,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
-              getTaskType() !== 'EducationDocumentSearchTask' ? COPY.EMPTY_INSTRUCTIONS_ERROR :
+              !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
-            optional={getTaskType() === 'EducationDocumentSearchTask'}
+            optional={isOptional()}
           />
         </div>
       )}
@@ -323,7 +327,15 @@ const MODAL_TYPE_ATTRS = {
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+      title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  rpo_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_COMPLETE_TASK_LABEL,
     getContent: ReadyForReviewModal,
@@ -444,12 +456,12 @@ class CompleteTaskModal extends React.Component {
       isValid = validInstructions(instructions);
     }
 
-    if (modalType === 'emo_send_to_board_intake_for_review') {
+    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
       if (radio === 'other') {
         isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
       }
-
-      isValid = validRadio(radio);
     }
 
     return isValid;
