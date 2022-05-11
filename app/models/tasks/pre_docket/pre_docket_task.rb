@@ -25,7 +25,7 @@ class PreDocketTask < Task
     task_actions = Array.new(TASK_ACTIONS)
     child_task = children.first
 
-    return task_actions unless children.all?(&:closed?)
+    return task_actions unless child_task && children.all?(&:closed?)
 
     if child_task.task_is_assigned_to_organization?(VhaCamo.singleton)
       task_actions.concat(VHA_ACTIONS)
