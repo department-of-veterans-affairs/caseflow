@@ -2,6 +2,9 @@
 
 # VSO users should not be able to convert a hearing to virtual within 11 days of the hearing.
 class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
+  queue_with_priority :low_priority
+  application_attr :dispatch
+
   def perform
     appeal_list = find_affected_hearings
     if !appeal_list.nil?

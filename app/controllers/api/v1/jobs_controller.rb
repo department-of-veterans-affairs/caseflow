@@ -6,6 +6,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
+    "cancel_change_hearing_request_type_task" => CancelChangeHearingRequestTypeTaskJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
