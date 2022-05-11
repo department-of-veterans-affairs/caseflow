@@ -4,17 +4,15 @@ import { anyUser, vsoUser } from 'test/data/user';
 import { Button } from 'app/hearings/components/dailyDocket/DailyDocketRow';
 import { axe } from 'jest-axe';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { shallow } from 'enzyme';
 
-describe('Button', () => {
-  const defaults = {
-    classNames: 'usa-button-secondary',
-    type: 'button'
-  };
+describe('Test Button component', () => {
+  it('Test click event', () => {
+    const conferenceLinkOnClick = jest.fn();
 
-  const setup = (props) => {
-    const { container } = render(<Button {...hearings} {...user} />);
+    const button = shallow((<Button onClick={conferenceLinkOnClick}>Ok!</Button>));
 
-    return { container };
-  }
-  ;
+    button.find('button').simulate('click');
+    expect(conferenceLinkOnClick.mock.calls.length).toEqual(1);
+  });
 });
