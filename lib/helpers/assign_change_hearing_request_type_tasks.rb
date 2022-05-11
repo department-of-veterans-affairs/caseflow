@@ -7,37 +7,48 @@ class AssignChangeHearingRequestTypeTasks
 
     # cycle each appeal in database with a docket type of "hearing"
     Appeal.where(docket_type: "hearing").find_each do |appeal|
-      # for testing
-      puts("processing appeal #{appeal}")
-      # search the hearings in the appeal to find the open hearing day id
-      hearing_day_id = find_open_hearing(appeal.hearings)
+      # if a hearing day hasn't been scheduled, assign ChangeHearingRequestTypeTask to VSO users on the appeal
+      if appeal.hearings.empty?
+        assign_change_hearing_request_type_task(appeal)
+      else
+        # search the hearings in the appeal to find the open hearing day id
+        hearing_day_id = find_open_hearing(appeal.hearings)
 
-      # get the hearing scheduled date using the hearing day id
-      hearing_scheduled_date = HearingDay.find(id: hearing_day_id).scheduled_for
+        # get the hearing day using the hearing day id
+        hearing_day = HearingDay.find_by(id: hearing_day_id)
 
-      if (hearing_scheduled_date > cutoff_date) || hearing_scheduled_date.nil?
+        # if the hearing day doesn't exist or within cutoff date, assign the change hearing task
+        if hearing_day.nil?
+          assign_change_hearing_request_type_task(appeal)
 
-        # get an array of the representative ids that belong to the appeal
-        rep_ids_assigned_to_appeal = Task.where(appeal_id: appeal.id).assigned_to_id
+        elsif hearing_day.scheduled_for > cutoff_date
+          assign_change_hearing_request_type_task(appeal)
 
-        # get the VSO user(s) assigned to the appeal
-        vso_users_assigned_to_appeal = get_VSO_users_assigned_to_appeal(rep_ids_assigned_to_appeal)
-
-        vso_users_assigned_to_appeal.each do |vso_user|
-          # check the VSO user(s) have the ChangeHearingRequestTypeTask
-          next if can_vso_user_change_hearing_request_type(vso_user.tasks)
-
-          # testing
-          puts("User #{vso_user.full_name} assigned ChangeHearingRequestTypeTask")
-
-          # assign ChangeHearingRequestTypeTask to user
-          ChangeHearingRequestTypeTask.create!(
-            appeal: appeal,
-            assigned_to: vso_user,
-            parent: self
-          )
         end
-      end
+        end
+    end
+  end
+
+  def assign_change_hearing_request_type_task(appeal)
+    # get an array of the representative ids that belong to the appeal
+    tasks_assigned_to_appeal = Task.where(appeal_id: appeal.id)
+
+    # get the VSO user(s) assigned to the appeal
+    vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
+
+    vso_users_assigned_to_appeal.each do |vso_user|
+      # check the VSO user(s) have the ChangeHearingRequestTypeTask
+      # next if can_vso_user_change_hearing_request_type(vso_user.tasks)
+
+      # testing
+      puts("User #{vso_user.full_name} assigned ChangeHearingRequestTypeTask")
+
+      # assign ChangeHearingRequestTypeTask to user
+      ChangeHearingRequestTypeTask.create!(
+        appeal: appeal,
+        assigned_to: vso_user,
+        parent: self
+      )
     end
   end
 
@@ -61,17 +72,26 @@ class AssignChangeHearingRequestTypeTasks
     end
   end
 
-  def get_VSO_users_assigned_to_appeal(representative_ids)
+  def get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
     vso_users_assigned_to_appeal = []
     # cycle the representatives
-    representative_ids.each do |id|
-      # get the representative role
-      representative = Users.where(id: id)
+    tasks_assigned_to_appeal.each do |task|
+      # see if the task is a user
+      next unless task.assigned_to_type == "User"
 
-      # find VSO users
-      if representative.roles == "VSO"
-        vso_users_assigned_to_appeal.push(representative)
-      end
+      # get the rep id from each task
+      id = task.assigned_to_id
+
+      puts(id)
+      # get the representative by the id
+      # find_by does not work! Need to find another method to find the user.
+      representative = User.find_by(id: id)
+
+      # find VSO users and push to array
+      next unless representative.roles != "VSO"
+
+      vso_users_assigned_to_appeal.push(representative)
     end
+    vso_users_assigned_to_appeal
   end
 end
