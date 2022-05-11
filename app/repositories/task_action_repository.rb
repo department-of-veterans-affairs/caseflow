@@ -478,9 +478,18 @@ class TaskActionRepository
 
     def emo_send_to_board_intake_for_review(*)
       {
-        modal_title: COPY::EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
-        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}",
+        body_optional: true
+      }
+    end
+
+    def edu_regional_processing_office_send_to_board_intake_for_review(*)
+      {
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        type: EducationAssessDocumentationTask.name,
+        body_optional: true
       }
     end
 
@@ -598,7 +607,7 @@ class TaskActionRepository
       }
     end
 
-    def regional_processing_office_return_to_emo(task, _user)
+    def edu_regional_processing_office_return_to_emo(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
@@ -613,7 +622,7 @@ class TaskActionRepository
       }
     end
 
-    def rpo_mark_task_in_progress(task, _user)
+    def edu_regional_processing_office_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {

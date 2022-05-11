@@ -348,6 +348,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="emo_send_to_board_intake_for_review" {...props.match.params} />
   );
 
+  routedRpoSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="rpo_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
   routedDocketAppeal = (props) => (
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
@@ -933,7 +937,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
+                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
                 }`}
               render={this.routedRegionalProcessingOfficeReturnToEmo}
             />
@@ -1075,6 +1079,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedEmoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedRpoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact
