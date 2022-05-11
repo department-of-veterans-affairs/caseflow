@@ -10,7 +10,10 @@ describe('Test Button component', () => {
   it('Test click event', () => {
     const conferenceLinkOnClick = jest.fn();
 
-    const button = shallow((<Button onClick={conferenceLinkOnClick}>Ok!</Button>));
+    const button = shallow((<Button
+      classNames={['usa-button-secondary']}
+      type="button"
+      onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button>));
 
     button.find('button').simulate('click');
     expect(conferenceLinkOnClick.mock.calls.length).toEqual(1);
