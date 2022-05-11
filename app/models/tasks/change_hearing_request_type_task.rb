@@ -70,7 +70,7 @@ class ChangeHearingRequestTypeTask < Task
       end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
-      cancel_self_and_hearing_task_parents_without_callbacks
+      cancel_self_and_hearing_task_parents_without_callbacks unless !user.can_cancel_change_hearing_request_type?
     else
       super(params, user)
     end
