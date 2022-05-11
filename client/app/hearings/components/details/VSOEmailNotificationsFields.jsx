@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { marginTop, input8px } from '../details/style';
-import { HearingEmail } from './HearingEmail';
+import { VSOHearingEmail } from './VSOHearingEmail';
 import { Timezone } from '../VirtualHearings/Timezone';
 import { HelperText } from '../VirtualHearings/HelperText';
 import COPY from '../../../../COPY';
-import { getAppellantTitle, readOnlyEmails } from '../../utils';
+import { getAppellantTitle, readOnlyEmails} from '../../utils';
 
 export const VSOEmailNotificationsFields = ({
   errors,
@@ -23,7 +23,7 @@ export const VSOEmailNotificationsFields = ({
   return (
     <React.Fragment>
       <div id="email-section" className="usa-grid">
-        <HearingEmail
+        <VSOHearingEmail
           required
           disabled={disableField}
           label={`${appellantTitle} Email`}
@@ -33,7 +33,7 @@ export const VSOEmailNotificationsFields = ({
           update={update}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
         />
-        <HearingEmail
+        <VSOHearingEmail
           required
           disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
