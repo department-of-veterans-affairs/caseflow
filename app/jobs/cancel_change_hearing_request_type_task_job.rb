@@ -35,12 +35,15 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
 
   def disable_conversion_task(appeal_list)
     closed_tasks = 0
+    # iterate through appeals to find open ChangeHearingRequestTypeTasks
     appeal_list.each do |appeal|
       tasks_to_cancel = appeal.tasks.open.where(
         type: [ChangeHearingRequestTypeTask.name],
         assigned_to_type: User.name
       )
-      representatives = tasks_to_cancel.map(&:assigned_to).select{ |user| user.roles == ["VSO"] }
+      # get array of VSO users on the appeal that are assigned ChangeHearingRequestTypeTasks
+      representatives = tasks_to_cancel.map(&:assigned_to).select { |user| user.roles.include?("VSO") }
+      # cancel the tasks
       tasks_to_cancel.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
         task.update!(status: Constants.TASK_STATUSES.cancelled)
         closed_tasks += 1
