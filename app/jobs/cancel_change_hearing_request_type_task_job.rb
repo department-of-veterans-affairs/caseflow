@@ -6,7 +6,9 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
   application_attr :dispatch
 
   def perform
+    # find appeals that have hearings within 11 days of scheduled time
     appeal_list = find_affected_hearings
+    # if there are appeals that fit the criteria, cancel the tasks
     if !appeal_list.nil?
       disable_conversion_task(appeal_list)
     end
@@ -17,7 +19,7 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
     # set the date for 10 days ahead
     deadline_time = current_time.next_day(10)
     appeal_list = []
-    # find the hearing day for the deadline_time
+    # find the hearing day(daily docket) for the deadline_time
     hearing_day = HearingDay.find_by(scheduled_for: deadline_time)
     if hearing_day.nil?
       return
@@ -38,7 +40,7 @@ class CancelChangeHearingRequestTypeTaskJob < CaseflowJob
         type: [ChangeHearingRequestTypeTask.name],
         assigned_to_type: User.name
       )
-      representatives = tasks_to_cancel.map(&:assigned_to)
+      representatives = tasks_to_cancel.map(&:assigned_to).select{ |user| user.roles == ["VSO"] }
       tasks_to_cancel.select { |tasks| representatives.include?(tasks.assigned_to) }.each do |task|
         task.update!(status: Constants.TASK_STATUSES.cancelled)
         closed_tasks += 1

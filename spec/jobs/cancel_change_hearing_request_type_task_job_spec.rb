@@ -189,6 +189,19 @@ describe CancelChangeHearingRequestTypeTaskJob do
         expect(subject).not_to eq nil
         expect(task.reload.status).to eq "cancelled"
       end
+      let(:nonvso_user) { create(:user, roles: ["Edit HearSched"]) }
+      let!(:task_nonvso) do
+        create(
+          :change_hearing_request_type_task,
+          parent: root_task_one,
+          appeal: root_task_one.appeal,
+          assigned_to: nonvso_user
+        )
+      end
+      it "does not cancel the task for non-vso users" do
+        subject
+        expect(task_nonvso.reload.status).to eq "assigned"
+      end
     end
   end
 end
