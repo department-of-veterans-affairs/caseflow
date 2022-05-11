@@ -371,7 +371,11 @@ class DailyDocketRow extends React.Component {
         {hearing?.isVirtual !== true && <Button
           classNames={['usa-button-secondary']}
           type="button"
+<<<<<<< HEAD
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
+=======
+          onClick={this.conferenceLinkOnClick} > Connect to Recording </Button> }
+>>>>>>> jeremy-virtual-link-test
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
