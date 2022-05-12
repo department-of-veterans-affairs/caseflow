@@ -87,10 +87,13 @@ class AssignChangeHearingRequestTypeTasks
       # find_by does not work! Need to find another method to find the user.
       representative = User.find_by(id: id)
 
+      puts("rep role = #{representative.roles}")
       # find VSO users and push to array
-      next unless representative.roles != "VSO"
+      next unless representative.roles.include? "VSO"
 
       vso_users_assigned_to_appeal.push(representative)
+
+      puts("vso users assigned to appeal = #{vso_users_assigned_to_appeal.css_id}")
     end
     vso_users_assigned_to_appeal
   end
