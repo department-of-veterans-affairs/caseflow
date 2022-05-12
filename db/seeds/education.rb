@@ -4,7 +4,7 @@
 
 module Seeds
   class Education < Base
-    REGIONAL_PROCESSING_OFFICES = [
+    RPOS = [
       "Buffalo RPO",
       "Central Office RPO",
       "Muskogee RPO"
@@ -26,7 +26,7 @@ module Seeds
     end
 
     def setup_regional_processing_offices!
-      REGIONAL_PROCESSING_OFFICES.each { |name| EducationRpo.create!(name: name, url: name) }
+      RPOS.each { |name| EducationRpo.create!(name: name, url: name) }
 
       regular_user = create(:user, full_name: "Peter EDURPOUSER Campbell", css_id: "EDURPOUSER")
       admin_user = create(:user, full_name: "Samuel EDURPOADMIN Clemens", css_id: "EDURPOADMIN")

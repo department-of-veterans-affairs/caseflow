@@ -919,7 +919,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE.value
+                  TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value
                 }`}
               render={this.routedAssignToEducationRpo}
             />

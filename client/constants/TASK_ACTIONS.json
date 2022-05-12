@@ -419,7 +419,7 @@
     "value": "modal/emo_send_to_board_intake_for_review",
     "func": "emo_send_to_board_intake_for_review"
   },
-  "EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE": {
+  "EMO_ASSIGN_TO_RPO": {
     "label": "Assign to Regional Processing Office",
     "value": "modal/emo_assign_to_education_rpo",
     "func": "emo_assign_to_education_rpo_data"

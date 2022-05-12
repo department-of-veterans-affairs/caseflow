@@ -598,7 +598,7 @@ class TaskActionRepository
     def emo_assign_to_education_rpo_data(*)
       {
         options: organizations_to_options(EducationRpo.all),
-        modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
+        modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
         type: EducationAssessDocumentationTask.name,
