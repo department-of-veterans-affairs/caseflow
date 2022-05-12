@@ -1,13 +1,12 @@
 import React from 'react';
-import { amaHearing } from 'test/data/hearings';
-import { anyUser, vsoUser } from 'test/data/user';
 import { Button } from 'app/hearings/components/dailyDocket/DailyDocketRow';
-import { axe } from 'jest-axe';
-import { render, screen, fireEvent } from '@testing-library/react';
 import { shallow } from 'enzyme';
 
 describe('Test Button component', () => {
   it('Test click event', () => {
+    const { conferenceLink } = this.props;
+
+    window.open(conferenceLink?.hostLink);
     const conferenceLinkOnClick = jest.fn();
 
     const button = shallow((<Button
@@ -19,3 +18,14 @@ describe('Test Button component', () => {
     expect(conferenceLinkOnClick.mock.calls.length).toEqual(1);
   });
 });
+/*Test Button component › Test click event
+
+TypeError: Cannot read property 'conferenceLinkOnClick' of undefined
+
+14 |       classNames={['usa-button-secondary']}
+15 |       type="button"
+> 16 |       onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button>));
+   |                     ^
+17 |
+18 |     button.find('button').simulate('click');
+19 |     expect(conferenceLinkOnClick.mock.calls.length).toEqual(1);*/
