@@ -512,7 +512,7 @@ FactoryBot.define do
 
       factory :education_assess_documentation_task, class: EducationAssessDocumentationTask do
         parent { create(:education_document_search_task, appeal: appeal) }
-        assigned_to { EduRegionalProcessingOffice.first }
+        assigned_to { EducationRpo.first }
         assigned_by { nil }
       end
 

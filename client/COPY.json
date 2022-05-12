@@ -1263,7 +1263,7 @@
   "EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review.",
   "EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE": "Assign to RPO",
   "EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_BODY": "Regional Processing Office",
-  "EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER": "Select RPO",
-  "EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
-  "EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
+  "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
+  "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
+  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
 }

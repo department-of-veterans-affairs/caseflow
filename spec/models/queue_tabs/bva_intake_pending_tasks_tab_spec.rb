@@ -41,7 +41,7 @@ describe BvaIntakePendingTab, :postgres do
       let!(:child_tasks) do
         create_list(:education_document_search_task, 4, :assigned, assigned_to: EducationEmo.singleton)
       end
-      let!(:rpo_office) { create(:edu_regional_processing_office) }
+      let!(:rpo_office) { create(:education_rpo) }
 
       it "only the active children are shown" do
         completed_sibling = child_tasks.first

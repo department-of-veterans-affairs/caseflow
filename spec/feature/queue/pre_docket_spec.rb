@@ -13,7 +13,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
-    edu_regional_processing_office.add_user(edu_regional_processing_office_user)
+    education_rpo.add_user(education_rpo_user)
   end
 
   after do
@@ -33,8 +33,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
-  let(:edu_regional_processing_office) { create(:edu_regional_processing_office) }
-  let(:edu_regional_processing_office_user) { create(:user) }
+  let(:education_rpo) { create(:education_rpo) }
+  let(:education_rpo_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -420,13 +420,13 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         ).click
         expect(page).to have_content(COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE)
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
-        find(".cf-select__control", text: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER).click
+        find(".cf-select__control", text: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER).click
 
-        find("div", class: "cf-select__option", text: edu_regional_processing_office.name).click
+        find("div", class: "cf-select__option", text: education_rpo.name).click
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{emo.url}?tab=education_emo_unassigned&page=1")
-        expect(page).to have_content("Task assigned to #{edu_regional_processing_office.name}")
+        expect(page).to have_content("Task assigned to #{education_rpo.name}")
 
         expect(EducationDocumentSearchTask.last).to have_attributes(
           type: "EducationDocumentSearchTask",
@@ -439,7 +439,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           type: "EducationAssessDocumentationTask",
           status: Constants.TASK_STATUSES.assigned,
           assigned_by: emo_user,
-          assigned_to_id: edu_regional_processing_office.id
+          assigned_to_id: education_rpo.id
         )
       end
 
@@ -452,8 +452,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO Task appears in RPO's assigned tab" do
-        User.authenticate!(user: edu_regional_processing_office_user)
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        User.authenticate!(user: education_rpo_user)
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -465,7 +465,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(
           "div",
           class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.label
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_MARK_TASK_IN_PROGRESS.label
         ).click
 
         expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
@@ -478,7 +478,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO Task appears in RPO's in progress tab" do
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_in_progress"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_in_progress"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -497,7 +497,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(
           "div",
           class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
@@ -518,7 +518,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "RPO user can find the appeal in the org's Completed Tab" do
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_completed&page=1"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -604,14 +604,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       appeal = create(
         :education_assess_documentation_task,
         :assigned,
-        assigned_to: edu_regional_processing_office,
+        assigned_to: education_rpo,
         assigned_by: emo_user
       ).appeal
 
       step "RPO user navigates to the appeal's queue page and returns it to the EMO" do
-        User.authenticate!(user: edu_regional_processing_office_user)
+        User.authenticate!(user: education_rpo_user)
 
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
@@ -619,10 +619,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(
           "div",
           class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.label
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.label
         ).click
 
-        expect(page).to have_content(COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE)
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
 
         find("button", text: COPY::MODAL_RETURN_BUTTON).click
@@ -633,7 +633,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
 
         expect(page).to have_current_path(
-          "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned&page=1"
+          "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
         )
       end
 
@@ -648,16 +648,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           type: "EducationAssessDocumentationTask",
           status: Constants.TASK_STATUSES.cancelled,
           assigned_by: emo_user,
-          assigned_to_id: edu_regional_processing_office.id
+          assigned_to_id: education_rpo.id
         )
 
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_assigned"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned"
         expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
 
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_in_progress"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_in_progress"
         expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
 
-        visit "/organizations/#{edu_regional_processing_office.url}?tab=education_rpo_completed"
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed"
         expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
       end
 

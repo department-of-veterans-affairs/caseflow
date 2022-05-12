@@ -296,7 +296,7 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
-  routedAssignToEduRegionalProcessingOffice = (props) => (
+  routedAssignToEducationRpo = (props) => (
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
@@ -368,7 +368,7 @@ class QueueApp extends React.PureComponent {
     <CancelTaskModal {...props.match.params} />
   );
 
-  routedRegionalProcessingOfficeReturnToEmo = (props) => (
+  routedRpoReturnToEmo = (props) => (
     <CancelTaskModal {...props.match.params} />
 
   );
@@ -921,7 +921,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE.value
                 }`}
-              render={this.routedAssignToEduRegionalProcessingOffice}
+              render={this.routedAssignToEducationRpo}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -937,9 +937,9 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.value
+                  TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value
                 }`}
-              render={this.routedRegionalProcessingOfficeReturnToEmo}
+              render={this.routedRpoReturnToEmo}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -1083,7 +1083,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                  TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedRpoSendToBoardIntakeForReviewModal}

@@ -26,12 +26,12 @@ module Seeds
     end
 
     def setup_regional_processing_offices!
-      REGIONAL_PROCESSING_OFFICES.each { |name| EduRegionalProcessingOffice.create!(name: name, url: name) }
+      REGIONAL_PROCESSING_OFFICES.each { |name| EducationRpo.create!(name: name, url: name) }
 
       regular_user = create(:user, full_name: "Peter EDURPOUSER Campbell", css_id: "EDURPOUSER")
       admin_user = create(:user, full_name: "Samuel EDURPOADMIN Clemens", css_id: "EDURPOADMIN")
 
-      EduRegionalProcessingOffice.all.each do |org|
+      EducationRpo.all.each do |org|
         org.add_user(regular_user)
         OrganizationsUser.make_user_admin(admin_user, org)
       end

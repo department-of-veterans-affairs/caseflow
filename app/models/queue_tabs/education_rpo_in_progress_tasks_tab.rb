@@ -28,7 +28,7 @@ class EducationRpoInProgressTasksTab < QueueTab
   private
 
   def build_column_names
-    EduRegionalProcessingOffice::COLUMN_NAMES +
+    EducationRpo::COLUMN_NAMES +
       [
         Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
         Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name

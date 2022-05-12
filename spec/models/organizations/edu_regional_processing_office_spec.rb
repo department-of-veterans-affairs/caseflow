@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe EduRegionalProcessingOffice, :postgres do
+describe EducationRpo, :postgres do
   let(:regional_processing_office) do
-    EduRegionalProcessingOffice.create!(name: "Regional Processing Office", url: "Regional Processing Office")
+    EducationRpo.create!(name: "Regional Processing Office", url: "Regional Processing Office")
   end
 
   describe ".create!" do
