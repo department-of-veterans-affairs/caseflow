@@ -7,7 +7,6 @@ class AssignChangeHearingRequestTypeTasks
 
     # cycle each appeal in database with a docket type of "hearing"
     Appeal.where(docket_type: "hearing").find_each do |appeal|
-      # if a hearing day hasn't been scheduled, assign ChangeHearingRequestTypeTask to VSO users on the appeal
       if appeal.hearings.empty?
         assign_change_hearing_request_type_task(appeal)
       else
@@ -27,21 +26,19 @@ class AssignChangeHearingRequestTypeTasks
         end
         end
     end
+
+    puts("Processing appeals is now finished!")
   end
 
   def assign_change_hearing_request_type_task(appeal)
     # get an array of the representative ids that belong to the appeal
     tasks_assigned_to_appeal = Task.where(appeal_id: appeal.id)
 
-    # get the root tasks that are on the appeal
-    root_tasks = tasks_assigned_to_appeal.select { |task| task.type == "RootTask" }
+    # get the schedule hearing tasks that are on the appeal
+    schedule_hearing_tasks = tasks_assigned_to_appeal.select { |task| task.type == "ScheduleHearingTask" }
 
-    puts("Root tasks on appeal = #{root_tasks}")
-
-    # get the open root task if there are multiple
-    open_root_task = root_tasks.select(&:active?)
-
-    puts("Open root task on appeal = #{open_root_task}")
+    # get the open schedule hearings tasks if there are multiple
+    schedule_hearing_task = schedule_hearing_tasks.select(&:active?)
 
     # get the VSO user(s) assigned to the appeal
     vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
@@ -53,12 +50,16 @@ class AssignChangeHearingRequestTypeTasks
       # testing
       puts("User #{vso_user.full_name} assigned ChangeHearingRequestTypeTask")
 
-      puts("Open Root Task = #{open_root_task}")
-      # assign ChangeHearingRequestTypeTask to user with the root task being the open_root_task
+      # if schedule_hearing_task is not empty, create the ChangeHearingRequestTypeTask
+      next if schedule_hearing_task.empty?
+
+      # assign ChangeHearingRequestTypeTask to user with the root task being the schedule_hearing_task
       ChangeHearingRequestTypeTask.create!(
         appeal: appeal,
         assigned_to: vso_user,
-        parent: open_root_task[0]
+        parent: schedule_hearing_task[0],
+        created_at: Time.zone.now,
+        assigned_at: Time.zone.now
       )
     end
   end
@@ -93,12 +94,9 @@ class AssignChangeHearingRequestTypeTasks
       # get the rep id from each task
       id = task.assigned_to_id
 
-      puts(id)
       # get the representative by the id
-      # find_by does not work! Need to find another method to find the user.
       representative = User.find_by(id: id)
 
-      puts("rep role = #{representative.roles}")
       # find VSO users and push to array
       next unless representative.roles.include? "VSO"
 
