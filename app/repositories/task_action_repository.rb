@@ -485,7 +485,7 @@ class TaskActionRepository
       }
     end
 
-    def education_rpo_send_to_board_intake_for_review(task, user)
+    def education_rpo_send_to_board_intake_for_review(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
