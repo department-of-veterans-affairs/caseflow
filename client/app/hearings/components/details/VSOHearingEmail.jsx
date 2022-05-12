@@ -13,11 +13,8 @@ import TextField from '../../../components/TextField';
 
 export const VSOHearingEmail = ({
   email,
-  emailType,
   label,
   readOnly,
-  error,
-  update,
   required,
   disabled,
   optional,
