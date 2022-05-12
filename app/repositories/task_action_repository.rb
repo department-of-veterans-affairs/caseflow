@@ -486,10 +486,13 @@ class TaskActionRepository
     end
 
     def education_rpo_send_to_board_intake_for_review(*)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
       {
         modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationAssessDocumentationTask.name,
-        body_optional: true
+        body_optional: true,
+        redirect_after: "/organizations/#{queue_url}"
       }
     end
 
