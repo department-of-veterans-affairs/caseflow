@@ -23,6 +23,6 @@ class EducationRpoCompletedTasksTab < QueueTab
   # Column names defined in each tab in education predocket due to different columns needed
   # Actual names found in QUEUE_CONFIG.json file
   def column_names
-    EduRegionalProcessingOffice::COLUMN_NAMES
+    EducationRpo::COLUMN_NAMES
   end
 end

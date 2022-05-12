@@ -14,7 +14,7 @@ class EducationDocumentSearchTask < Task
   end
 
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE.to_h,
+    Constants.TASK_ACTIONS.EMO_ASSIGN_TO_RPO.to_h,
     Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.to_h,
     Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.to_h
   ].freeze

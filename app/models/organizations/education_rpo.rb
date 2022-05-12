@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class EduRegionalProcessingOffice < Organization
+# organization representing the Regional Processing Offices within the Education business line.
+
+class EducationRpo < Organization
   def can_receive_task?(_task)
     false
   end

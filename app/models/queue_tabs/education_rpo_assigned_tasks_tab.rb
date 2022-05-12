@@ -20,6 +20,6 @@ class EducationRpoAssignedTasksTab < QueueTab
   end
 
   def column_names
-    EduRegionalProcessingOffice::COLUMN_NAMES
+    EducationRpo::COLUMN_NAMES
   end
 end

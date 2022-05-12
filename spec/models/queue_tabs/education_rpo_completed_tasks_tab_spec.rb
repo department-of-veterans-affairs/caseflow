@@ -7,13 +7,13 @@ describe EducationRpoCompletedTasksTab, :postgres do
       assignee: assignee
     }
   end
-  let(:assignee) { create(:edu_regional_processing_office) }
+  let(:assignee) { create(:education_rpo) }
 
   describe ".column_names" do
     subject { tab.column_names }
 
     context "when only the assignee argument is passed when instantiating an EducationRpoCompletedTasksTab" do
-      let(:params) { { assignee: create(:edu_regional_processing_office) } }
+      let(:params) { { assignee: create(:education_rpo) } }
 
       it "returns the correct number of columns" do
         expect(subject.length).to eq(5)

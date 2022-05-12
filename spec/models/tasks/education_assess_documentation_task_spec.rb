@@ -2,10 +2,10 @@
 
 describe EducationAssessDocumentationTask, :postgres do
   let(:user) { create(:user) }
-  let(:regional_processing_office) { create(:edu_regional_processing_office) }
-  let(:task) { create(:education_assess_documentation_task, assigned_to: regional_processing_office) }
+  let(:education_rpo) { create(:education_rpo) }
+  let(:task) { create(:education_assess_documentation_task, assigned_to: education_rpo) }
 
-  before { regional_processing_office.add_user(user) }
+  before { education_rpo.add_user(user) }
 
   describe ".label" do
     it "uses a friendly label" do
@@ -15,7 +15,7 @@ describe EducationAssessDocumentationTask, :postgres do
 
   context "Task cannot be unassigned" do
     it "task should be assigned to RPO" do
-      expect(task.assigned_to).to eq(regional_processing_office)
+      expect(task.assigned_to).to eq(education_rpo)
     end
   end
 
@@ -25,20 +25,20 @@ describe EducationAssessDocumentationTask, :postgres do
     context "for regional processing office user" do
       it do
         is_expected.to match_array EducationAssessDocumentationTask::TASK_ACTIONS +
-                                   [Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h]
+                                   [Constants.TASK_ACTIONS.EDUCATION_RPO_MARK_TASK_IN_PROGRESS.to_h]
       end
 
       it "available tasks actions includes Return to EMO action" do
-        is_expected.to include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO.to_h
+        is_expected.to include Constants.TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.to_h
       end
 
       it "in progress action is available whenever task is assigned" do
-        is_expected.to include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h
+        is_expected.to include Constants.TASK_ACTIONS.EDUCATION_RPO_MARK_TASK_IN_PROGRESS.to_h
       end
 
       it "in progress action is not available whenever task is already in progress" do
         task.in_progress!
-        is_expected.to_not include Constants.TASK_ACTIONS.EDU_REGIONAL_PROCESSING_OFFICE_MARK_TASK_IN_PROGRESS.to_h
+        is_expected.to_not include Constants.TASK_ACTIONS.EDUCATION_RPO_MARK_TASK_IN_PROGRESS.to_h
       end
     end
   end

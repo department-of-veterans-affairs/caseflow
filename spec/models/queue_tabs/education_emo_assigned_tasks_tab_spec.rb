@@ -8,7 +8,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
     }
   end
   let(:assignee) { create(:education_emo) }
-  let(:regional_processing_office) { create(:edu_regional_processing_office) }
+  let(:education_rpo) { create(:education_rpo) }
 
   describe ".column_names" do
     subject { tab.column_names }
@@ -97,7 +97,7 @@ describe EducationEmoAssignedTasksTab, :postgres do
             :in_progress,
             parent: task,
             assigned_at: Time.zone.now,
-            assigned_to: regional_processing_office
+            assigned_to: education_rpo
           )
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children

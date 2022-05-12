@@ -8,7 +8,7 @@ describe EducationEmoCompletedTasksTab, :postgres do
     }
   end
   let(:assignee) { create(:education_emo) }
-  let(:regional_processing_office) { create(:edu_regional_processing_office) }
+  let(:education_rpo) { create(:education_rpo) }
 
   describe ".column_names" do
     subject { tab.column_names }

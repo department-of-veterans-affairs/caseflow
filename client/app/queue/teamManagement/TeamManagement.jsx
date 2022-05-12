@@ -27,7 +27,7 @@ import {
   TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
-  TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL,
+  TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
 import { clearStatus, fetchTeamManagement, updateOrg } from './teamManagement.slice';
@@ -46,7 +46,7 @@ export const TeamManagement = React.memo(({
   privateBars,
   vhaProgramOffices,
   vhaRegionalOffices,
-  eduRegionalProcessingOffices,
+  educationRpos,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -137,9 +137,9 @@ export const TeamManagement = React.memo(({
             <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
           </OrgSection> }
 
-          { eduRegionalProcessingOffices && <OrgSection>
-            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_REGIONAL_PROCESSING_OFFICE_LABEL}</OrgHeader>
-            <OrgList orgs={eduRegionalProcessingOffices} statuses={statuses} />
+          { educationRpos && <OrgSection>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL}</OrgHeader>
+            <OrgList orgs={educationRpos} statuses={statuses} />
           </OrgSection> }
 
           { otherOrgs && <OrgSection>
@@ -171,9 +171,8 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
-  eduRegionalProcessingOffices: PropTypes.array,
+  educationRpos: PropTypes.array,
   onOrgUpdate: PropTypes.func,
-  eduRegionalProccessingOffices: PropTypes.array,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
       loading: PropTypes.object,
@@ -193,7 +192,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
-    eduRegionalProcessingOffices,
+    educationRpos,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -226,7 +225,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
-    eduRegionalProcessingOffices,
+    educationRpos,
     otherOrgs,
     success,
     error,

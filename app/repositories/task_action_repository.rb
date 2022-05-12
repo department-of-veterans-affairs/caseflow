@@ -485,11 +485,14 @@ class TaskActionRepository
       }
     end
 
-    def edu_regional_processing_office_send_to_board_intake_for_review(*)
+    def education_rpo_send_to_board_intake_for_review(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
       {
         modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
         type: EducationAssessDocumentationTask.name,
-        body_optional: true
+        body_optional: true,
+        redirect_after: "/organizations/#{queue_url}"
       }
     end
 
@@ -595,25 +598,25 @@ class TaskActionRepository
       }
     end
 
-    def emo_assign_to_regional_processing_office_data(*)
+    def emo_assign_to_education_rpo_data(*)
       {
-        options: organizations_to_options(EduRegionalProcessingOffice.all),
-        modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
+        options: organizations_to_options(EducationRpo.all),
+        modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
-        modal_selector_placeholder: COPY::EDU_REGIONAL_PROCESSING_OFFICE_SELECTOR_PLACEHOLDER,
+        modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
       }
     end
 
-    def edu_regional_processing_office_return_to_emo(task, _user)
+    def education_rpo_return_to_emo(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_MODAL_TITLE,
+        modal_title: COPY::EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE,
         message_title: format(
-          COPY::EDU_REGIONAL_PROCESSING_OFFICE_RETURN_TO_EMO_CONFIRMATION,
+          COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
         type: EducationAssessDocumentationTask.name,
@@ -622,7 +625,7 @@ class TaskActionRepository
       }
     end
 
-    def edu_regional_processing_office_mark_task_in_progress(task, _user)
+    def education_rpo_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {

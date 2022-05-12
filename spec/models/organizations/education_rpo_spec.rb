@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe EduRegionalProcessingOffice, :postgres do
-  let(:regional_processing_office) do
-    EduRegionalProcessingOffice.create!(name: "Regional Processing Office", url: "Regional Processing Office")
+describe EducationRpo, :postgres do
+  let(:education_rpo) do
+    EducationRpo.create!(name: "Regional Processing Office", url: "Regional Processing Office")
   end
 
   describe ".create!" do
     it "creates a Regional Processing Office" do
-      expect(regional_processing_office.name).to eq("Regional Processing Office")
+      expect(education_rpo.name).to eq("Regional Processing Office")
     end
   end
 
@@ -16,7 +16,7 @@ describe EduRegionalProcessingOffice, :postgres do
     let(:doc_task) { create(:education_document_search_task, appeal: appeal) }
 
     it "returns false because program offices should not have edu document search tasks assigned to them" do
-      expect(regional_processing_office.can_receive_task?(doc_task)).to eq(false)
+      expect(education_rpo.can_receive_task?(doc_task)).to eq(false)
     end
   end
 end

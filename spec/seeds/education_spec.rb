@@ -11,7 +11,7 @@ describe Seeds::Education do
 
     it "creates all Regional Processing Offices" do
       expect { subject }.to_not raise_error
-      expect(EduRegionalProcessingOffice.count).to eq(3)
+      expect(EducationRpo.count).to eq(3)
     end
   end
 end

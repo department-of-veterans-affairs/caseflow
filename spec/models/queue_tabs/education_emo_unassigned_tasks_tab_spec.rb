@@ -9,7 +9,7 @@ describe EducationEmoUnassignedTasksTab, :postgres do
     }
   end
   let(:assignee) { create(:education_emo) }
-  let(:rpo_assignee) { create(:edu_regional_processing_office) }
+  let(:rpo_assignee) { create(:education_rpo) }
   let(:show_reader_link_column) { false }
 
   describe ".column_names" do
