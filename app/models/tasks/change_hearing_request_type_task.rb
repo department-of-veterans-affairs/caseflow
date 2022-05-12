@@ -46,7 +46,7 @@ class ChangeHearingRequestTypeTask < Task
   end
 
   def available_actions(user)
-    if user.can_change_hearing_request_type?&&user.can_cancel_change_hearing_request_type?
+    if user.can_change_hearing_request_type? && user.can_cancel_change_hearing_request_type?
       [
         Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h,
         Constants.TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
@@ -70,7 +70,7 @@ class ChangeHearingRequestTypeTask < Task
       end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
-      cancel_self_and_hearing_task_parents_without_callbacks unless !user.can_cancel_change_hearing_request_type?
+      cancel_self_and_hearing_task_parents_without_callbacks
     else
       super(params, user)
     end
