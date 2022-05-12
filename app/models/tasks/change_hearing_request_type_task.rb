@@ -103,7 +103,6 @@ class ChangeHearingRequestTypeTask < Task
       end
       closed_task_count += 1
     end
-    byebug
     [new_task_count, closed_task_count]
   end
   # rubocop:enable Metrics/MethodLength
