@@ -15,8 +15,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   before_save :update_cached_attributes!
   after_save :update_ihp_task, if: :update_ihp_enabled?
   after_destroy :update_ihp_task, if: :update_ihp_enabled?
-  after_save :update_change_hearing_request_type_task, if: :update_change_hearing_request_type_enabled?
-  after_destroy :update_change_hearing_request_type_task, if: :update_change_hearing_request_type_enabled?
+  after_save :update_change_hearing_request_type_task
+  after_destroy :update_change_hearing_request_type_task
 
   CACHED_BGS_ATTRIBUTES = [
     :representative_name,
@@ -249,11 +249,6 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def update_ihp_enabled?
     FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
-      saved_change_to_poa_participant_id?
-  end
-
-  def update_change_hearing_request_type_enabled?
-    FeatureToggle.enabled?(:poa_auto_change_type_update, user: RequestStore.store[:current_user]) &&
       saved_change_to_poa_participant_id?
   end
 end
