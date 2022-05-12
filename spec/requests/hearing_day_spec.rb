@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe "Hearing Day", :all_dbs, type: :request do
+  URL_HOST = "example.va.gov"
+  URL_PATH = "/sample"
+  PIN_KEY = "mysecretkey"
+
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 0, 0, 0))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:fetch).and_call_original
   end
 
   let!(:user) do
@@ -10,6 +16,12 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Create a hearing day" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
     it "Creates one hearing day" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "7-Jun-2019", room: "1" }
@@ -41,6 +53,12 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
           room: (n + 3).to_s
         )
       end
+    end
+
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
     end
 
     it "Create new adhoc hearing day and automatically assign a room" do
