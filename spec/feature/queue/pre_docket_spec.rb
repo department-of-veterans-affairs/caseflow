@@ -667,5 +667,59 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
     end
+
+    it "RPO user can send appeal to BVA Intake as Ready for Review
+      even if another RPO had previously cancelled a task" do
+      emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
+      bva_intake_task = PreDocketTask.last
+      appeal = emo_task.appeal
+
+      # Add a cancelled task onto emo_task to represent an instance where an RPO sent an appeal back to the EMO.
+      EducationAssessDocumentationTask.create!(
+        parent: emo_task,
+        appeal: appeal,
+        assigned_at: Time.zone.now,
+        assigned_to: education_rpo
+      ).cancelled!
+
+      open_rpo_task = EducationAssessDocumentationTask.create!(
+        parent: emo_task,
+        appeal: appeal,
+        assigned_at: Time.zone.now,
+        assigned_to: education_rpo
+      )
+
+      User.authenticate!(user: education_rpo_user)
+
+      visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned"
+      find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(open_rpo_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+
+      find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+      ).click
+      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("VBMS")
+      expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+      expect(radio_choices[2]).to have_content("Other")
+
+      radio_choices[0].click
+      find("button", class: "usa-button", text: "Submit").click
+
+      expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
+
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(open_rpo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+    end
   end
 end
