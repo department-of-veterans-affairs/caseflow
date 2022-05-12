@@ -46,7 +46,7 @@ export const TeamManagement = React.memo(({
   privateBars,
   vhaProgramOffices,
   vhaRegionalOffices,
-  eduRpos,
+  educationRpos,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -137,9 +137,9 @@ export const TeamManagement = React.memo(({
             <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
           </OrgSection> }
 
-          { eduRpos && <OrgSection>
+          { educationRpos && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL}</OrgHeader>
-            <OrgList orgs={eduRpos} statuses={statuses} />
+            <OrgList orgs={educationRpos} statuses={statuses} />
           </OrgSection> }
 
           { otherOrgs && <OrgSection>
@@ -171,7 +171,7 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
-  eduRpos: PropTypes.array,
+  educationRpos: PropTypes.array,
   onOrgUpdate: PropTypes.func,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
@@ -192,7 +192,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
-    eduRpos,
+    educationRpos,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -225,7 +225,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
-    eduRpos,
+    educationRpos,
     otherOrgs,
     success,
     error,
