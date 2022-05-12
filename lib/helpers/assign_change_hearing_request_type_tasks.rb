@@ -33,6 +33,16 @@ class AssignChangeHearingRequestTypeTasks
     # get an array of the representative ids that belong to the appeal
     tasks_assigned_to_appeal = Task.where(appeal_id: appeal.id)
 
+    # get the root tasks that are on the appeal
+    root_tasks = tasks_assigned_to_appeal.select { |task| task.type == "RootTask" }
+
+    puts("Root tasks on appeal = #{root_tasks}")
+
+    # get the open root task if there are multiple
+    open_root_task = root_tasks.select(&:active?)
+
+    puts("Open root task on appeal = #{open_root_task}")
+
     # get the VSO user(s) assigned to the appeal
     vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
 
@@ -43,11 +53,12 @@ class AssignChangeHearingRequestTypeTasks
       # testing
       puts("User #{vso_user.full_name} assigned ChangeHearingRequestTypeTask")
 
-      # assign ChangeHearingRequestTypeTask to user
+      puts("Open Root Task = #{open_root_task}")
+      # assign ChangeHearingRequestTypeTask to user with the root task being the open_root_task
       ChangeHearingRequestTypeTask.create!(
         appeal: appeal,
         assigned_to: vso_user,
-        parent: self
+        parent: open_root_task[0]
       )
     end
   end
@@ -92,8 +103,6 @@ class AssignChangeHearingRequestTypeTasks
       next unless representative.roles.include? "VSO"
 
       vso_users_assigned_to_appeal.push(representative)
-
-      puts("vso users assigned to appeal = #{vso_users_assigned_to_appeal.css_id}")
     end
     vso_users_assigned_to_appeal
   end
