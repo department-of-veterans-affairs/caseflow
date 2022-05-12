@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Task that is assigned to a EducationRpo organization for them to locate
+# Task that is assigned to an EducationRpo organization for them to locate
 # the appropriate documents for an appeal.
 
 class EducationAssessDocumentationTask < Task
