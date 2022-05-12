@@ -85,10 +85,10 @@ class ChangeHearingRequestTypeTask < Task
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
-
+    schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
     # Create a ChangeHearingRequestTypeTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
-      ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
+      ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: schedule_hearing_task, assigned_to: new_vso)
       new_task_count += 1
     end
 
@@ -103,7 +103,7 @@ class ChangeHearingRequestTypeTask < Task
       end
       closed_task_count += 1
     end
-
+    byebug
     [new_task_count, closed_task_count]
   end
   # rubocop:enable Metrics/MethodLength
