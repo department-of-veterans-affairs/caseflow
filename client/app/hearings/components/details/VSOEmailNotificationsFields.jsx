@@ -28,9 +28,7 @@ export const VSOEmailNotificationsFields = ({
           disabled={disableField}
           label={`${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={hearing?.appellantEmailAddress}
           error={errors?.appellantEmailAddress}
-          update={update}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
         />
         <VSOHearingEmail
@@ -38,9 +36,7 @@ export const VSOEmailNotificationsFields = ({
           disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={hearing?.appellantEmailAddress}
           error={errors?.appellantEmailAddress}
-          update={update}
           showHelper={false}
         />
         <div

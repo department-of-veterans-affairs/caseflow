@@ -46,12 +46,6 @@ export const VSOHearingEmail = ({
     }
   };
 
-  const updateEmail = (newEmail) => {
-    update('hearing', {
-      [emailType]: isEmpty(newEmail) ? null : newEmail,
-    });
-  };
-
   return (
     readOnly ? (
       <ReadOnly label={label} text={email ?? 'None'} />
@@ -72,7 +66,6 @@ export const VSOHearingEmail = ({
           ]}
           onChange={(newEmail) => {
             validateEmail(newEmail);
-            updateEmail(newEmail);
           }}
         />
         {showHelper ? <HelperText label={helperLabel} /> : null}

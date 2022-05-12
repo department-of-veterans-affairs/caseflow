@@ -73,7 +73,7 @@ export const VSOHearingTypeConversionForm = ({
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   return (
-    <BtnContext.Provider value={[isDisabled, setDisabled]}>
+    <BtnContext.Provider value={[isNotValidEmail, setIsNotValidEmail]}>
       <React.Fragment>
         <AppSegment filledBackground>
           <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
