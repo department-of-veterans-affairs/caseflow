@@ -421,8 +421,8 @@
   },
   "EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE": {
     "label": "Assign to Regional Processing Office",
-    "value": "modal/emo_assign_to_regional_processing_office",
-    "func": "emo_assign_to_regional_processing_office_data"
+    "value": "modal/emo_assign_to_education_rpo",
+    "func": "emo_assign_to_education_rpo_data"
   },
   "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
     "label": "Ready for Review",

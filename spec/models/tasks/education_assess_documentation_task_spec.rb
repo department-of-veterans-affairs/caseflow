@@ -2,10 +2,10 @@
 
 describe EducationAssessDocumentationTask, :postgres do
   let(:user) { create(:user) }
-  let(:regional_processing_office) { create(:education_rpo) }
-  let(:task) { create(:education_assess_documentation_task, assigned_to: regional_processing_office) }
+  let(:education_rpo) { create(:education_rpo) }
+  let(:task) { create(:education_assess_documentation_task, assigned_to: education_rpo) }
 
-  before { regional_processing_office.add_user(user) }
+  before { education_rpo.add_user(user) }
 
   describe ".label" do
     it "uses a friendly label" do
@@ -15,7 +15,7 @@ describe EducationAssessDocumentationTask, :postgres do
 
   context "Task cannot be unassigned" do
     it "task should be assigned to RPO" do
-      expect(task.assigned_to).to eq(regional_processing_office)
+      expect(task.assigned_to).to eq(education_rpo)
     end
   end
 

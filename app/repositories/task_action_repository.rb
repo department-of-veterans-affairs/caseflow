@@ -595,7 +595,7 @@ class TaskActionRepository
       }
     end
 
-    def emo_assign_to_regional_processing_office_data(*)
+    def emo_assign_to_education_rpo_data(*)
       {
         options: organizations_to_options(EducationRpo.all),
         modal_title: COPY::EMO_ASSIGN_TO_REGIONAL_PROCESSING_OFFICE_MODAL_TITLE,
