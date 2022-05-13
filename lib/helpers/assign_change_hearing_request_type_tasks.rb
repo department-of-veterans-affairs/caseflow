@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class AssignChangeHearingRequestTypeTasks
-  def process_appeals
+module AssignChangeHearingRequestTypeTasks
+  def self.process_appeals
     # set the cutoff date as the current date plus 11 days.
     cutoff_date = Time.zone.today + 11
 
@@ -30,7 +30,7 @@ class AssignChangeHearingRequestTypeTasks
     puts("Processing appeals is now finished!")
   end
 
-  def assign_change_hearing_request_type_task(appeal)
+  def self.assign_change_hearing_request_type_task(appeal)
     # get an array of the representative ids that belong to the appeal
     tasks_assigned_to_appeal = Task.where(appeal_id: appeal.id)
 
@@ -64,16 +64,16 @@ class AssignChangeHearingRequestTypeTasks
     end
   end
 
-  def can_vso_user_change_hearing_request_type(vso_user_tasks)
+  def self.can_vso_user_change_hearing_request_type(vso_user_tasks)
     vso_user_tasks.each do |task|
-      if task.type == "ChangeHearingRequestType"
+      if task.type == "ChangeHearingRequestTypeTask"
         return true
       end
     end
     false
   end
 
-  def find_open_hearing(appeal_hearings)
+  def self.find_open_hearing(appeal_hearings)
     # cycle the hearings and throw out the ones that have a disposition
     appeal_hearings.each do |hearing|
       # the disposition is nil, the open hearing has been found
@@ -84,7 +84,7 @@ class AssignChangeHearingRequestTypeTasks
     end
   end
 
-  def get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
+  def self.get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
     vso_users_assigned_to_appeal = []
     # cycle the representatives
     tasks_assigned_to_appeal.each do |task|
