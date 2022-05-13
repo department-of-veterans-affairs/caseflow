@@ -44,6 +44,7 @@ describe InitialTasksFactory, :postgres do
         participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
       )
     end
+    let!(:vso_user) { create(:user, roles: ["VSO"], full_name: "test") }
 
     context "when an original appeal" do
       context "on the direct docket is created" do
@@ -116,13 +117,24 @@ describe InitialTasksFactory, :postgres do
                        create(:claimant, participant_id: participant_id_with_aml)
                      ])
             end
-
+            let!(:pva_vso) { create(:user, roles: ["VSO"], full_name: "pva") }
+            let!(:aml_vso) { create(:user, roles: ["VSO"], full_name: "aml") }
             subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
 
             it "creates a changehearingrequesttypetask assigned to the VSO" do
+              AppealView.create(user: pva_vso, appeal: appeal)
               subject
               expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
-              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva)
+              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva_vso)
+            end
+            it "creates a changehearingrequesttypetask assigned to multiple VSOs" do
+              AppealView.create(user: pva_vso, appeal: appeal)
+              AppealView.create(user: aml_vso, appeal: appeal)
+              byebug
+              subject
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(2)
+              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva_vso)
+              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(aml_vso)
             end
           end
         end
