@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'app/hearings/components/dailyDocket/DailyDocketRow';
-import { render } from '@testing-library/react';
-import { fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 describe('<Conference Link Button Renders Here />', () => {
 
