@@ -42,7 +42,6 @@ class InitialTasksFactory
 
   def create_vso_hearing_request_type_task
     appeal_views = AppealView.where(appeal_id: @appeal.id).to_a
-    byebug
     appeal_views.each do |view|
       user = @appeal.appeal_views.find_by(user_id: view.user_id).user
       if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: user).empty? &&
@@ -55,7 +54,6 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
-
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?

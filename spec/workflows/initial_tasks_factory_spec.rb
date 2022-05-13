@@ -130,11 +130,14 @@ describe InitialTasksFactory, :postgres do
             it "creates a changehearingrequesttypetask assigned to multiple VSOs" do
               AppealView.create(user: pva_vso, appeal: appeal)
               AppealView.create(user: aml_vso, appeal: appeal)
-              byebug
               subject
               expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(2)
-              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva_vso)
-              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(aml_vso)
+              change_tasks = appeal.tasks.open.where(
+                type: [ChangeHearingRequestTypeTask.name],
+                assigned_to_type: User.name
+              )
+              expect(change_tasks[0].assigned_to).to eq(aml_vso)
+              expect(change_tasks[1].assigned_to).to eq(pva_vso)
             end
           end
         end
@@ -214,7 +217,7 @@ describe InitialTasksFactory, :postgres do
         it "creates a task for each VSO" do
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           expect(RootTask.count).to eq(1)
-
+          byebug
           expect(InformalHearingPresentationTask.count).to eq(2)
           # sort order is non-deterministic so load by assignee
           expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
