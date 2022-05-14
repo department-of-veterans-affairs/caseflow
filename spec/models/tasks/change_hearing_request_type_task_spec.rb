@@ -8,26 +8,27 @@ describe ChangeHearingRequestTypeTask do
   context "#available_actions" do
     describe "non-vso user" do
 
-      subject { change_hearing_request_type_task.available_actions(user) }
+      subject { task.available_actions(user) }
       
       available_actions = [
         Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h,
         Constants.TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
       ]
 
-      it { is_expected.to eq available_actions }
+      it { is_expected.to eq available_actions }    
     end
+    
   
     describe "vso user" do
 
-      subject { change_hearing_request_type_task.available_actions(vso_user) }
+      subject { task.available_actions(vso_user) }
 
       available_actions = [
         Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h,
       ]
 
-      it { is_expected.to eq available_actions }
-    end
+      it { is_expected.to eq available_actions }         
+    end    
   end
 
   describe "#update_from_params" do
