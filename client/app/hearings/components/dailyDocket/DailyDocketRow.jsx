@@ -26,7 +26,7 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit, allScheduleVeteranDropdownOptions } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
 import { docketRowStyle, inputSpacing } from './style';
 import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
