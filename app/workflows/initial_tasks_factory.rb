@@ -23,7 +23,6 @@ class InitialTasksFactory
 
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
-    create_vso_hearing_request_type_task
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
     end
@@ -37,16 +36,9 @@ class InitialTasksFactory
       if TrackVeteranTask.where(appeal: @appeal, assigned_to: rep).empty?
         TrackVeteranTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
       end
-    end
-  end
-
-  def create_vso_hearing_request_type_task
-    appeal_views = AppealView.where(appeal_id: @appeal.id).to_a
-    appeal_views.each do |view|
-      user = @appeal.appeal_views.find_by(user_id: view.user_id).user
-      if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: user).empty? &&
+      if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: rep).empty? &&
          @appeal.docket_type == "hearing"
-        ChangeHearingRequestTypeTask.create!(appeal: @appeal, parent: @root_task, assigned_to: user)
+        ChangeHearingRequestTypeTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
       end
     end
   end
@@ -54,6 +46,7 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
+
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?
