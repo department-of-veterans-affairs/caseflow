@@ -34,6 +34,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Create a new hearing day (Add Hearing)" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let(:jan_hearing_days) do
       (1..3).each do |n|
         create(
@@ -96,7 +101,9 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     it "Create new adhoc Travel hearing day and do not assign a room" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:travel],
-                                              scheduled_for: "17-Jan-2019", assign_room: false }
+                                              scheduled_for: "17-Jan-2019",
+                                              regional_office: "RO27",
+                                              assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
@@ -138,8 +145,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc hearing day on a full day. Room assignment not required, hence is empty string." do
       mar_hearing_days
 
-      post "/hearings/hearing_day", params: { regional_office: "RO10",
-                                              request_type: HearingDay::REQUEST_TYPES[:central],
+      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "14-Mar-2019", assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
@@ -150,6 +156,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Assign judge to hearing day" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:hearing_day) { create(:hearing_day) }
     let!(:judge) { create(:user) }
 
@@ -161,6 +172,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Show a hearing day with its children hearings" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:regional_office) do
       create(:staff, stafkey: "RO13", stc4: 11)
     end
@@ -179,6 +195,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Get hearing schedule for a date range" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:hearings) do
       RequestStore[:current_user] = user
       HearingDay.create(
@@ -213,6 +234,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Get hearing schedule for an RO" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:hearings) do
       RequestStore[:current_user] = user
       HearingDay.create(
@@ -241,6 +267,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Get hearings with veterans" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearings) do
       RequestStore[:current_user] = user
@@ -267,6 +298,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Delete a hearing day" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:hearing_day) { create(:hearing_day) }
 
     it "Deletes the hearing day" do
