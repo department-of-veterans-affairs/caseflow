@@ -1,9 +1,11 @@
+/* eslint-disable max-lines */
+/* eslint-disable max-len */
 export const dailyDocketFullStore = {
   hearingWorksheet: {},
   hearingSchedule: {
     selectedHearingDay: '',
     hearingSchedule: {
-      '0': {
+      0: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:25:37.811-04:00',
         createdById: 26,
@@ -33,7 +35,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '1': {
+      1: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:25:38.754-04:00',
         createdById: 29,
@@ -63,7 +65,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '2': {
+      2: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:25:39.094-04:00',
         createdById: 33,
@@ -93,7 +95,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '3': {
+      3: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:25:39.457-04:00',
         createdById: 36,
@@ -123,7 +125,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '4': {
+      4: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:32:25.141-04:00',
         createdById: 9,
@@ -153,7 +155,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '5': {
+      5: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:32:59.863-04:00',
         createdById: 90,
@@ -183,7 +185,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '6': {
+      6: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:04.231-04:00',
         createdById: 90,
@@ -213,7 +215,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '7': {
+      7: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:08.168-04:00',
         createdById: 90,
@@ -243,7 +245,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '8': {
+      8: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:11.330-04:00',
         createdById: 90,
@@ -273,7 +275,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '9': {
+      9: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:11.342-04:00',
         createdById: 90,
@@ -303,7 +305,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '10': {
+      10: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:11.353-04:00',
         createdById: 90,
@@ -333,7 +335,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '11': {
+      11: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:13.698-04:00',
         createdById: 90,
@@ -363,7 +365,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '12': {
+      12: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:15.989-04:00',
         createdById: 90,
@@ -393,7 +395,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '13': {
+      13: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:19.898-04:00',
         createdById: 90,
@@ -423,7 +425,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '14': {
+      14: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:19.916-04:00',
         createdById: 90,
@@ -453,7 +455,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '15': {
+      15: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:19.932-04:00',
         createdById: 90,
@@ -483,7 +485,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '16': {
+      16: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:22.281-04:00',
         createdById: 90,
@@ -513,7 +515,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '17': {
+      17: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:24.272-04:00',
         createdById: 90,
@@ -543,7 +545,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '18': {
+      18: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:27.192-04:00',
         createdById: 90,
@@ -573,7 +575,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '19': {
+      19: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:27.202-04:00',
         createdById: 90,
@@ -603,7 +605,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '20': {
+      20: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:27.214-04:00',
         createdById: 90,
@@ -633,7 +635,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '21': {
+      21: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:29.551-04:00',
         createdById: 90,
@@ -663,7 +665,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '22': {
+      22: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:32.718-04:00',
         createdById: 90,
@@ -693,7 +695,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '23': {
+      23: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:37.687-04:00',
         createdById: 90,
@@ -723,7 +725,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '24': {
+      24: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:37.702-04:00',
         createdById: 90,
@@ -753,7 +755,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '25': {
+      25: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:37.718-04:00',
         createdById: 90,
@@ -783,7 +785,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '26': {
+      26: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:43.226-04:00',
         createdById: 90,
@@ -813,7 +815,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '27': {
+      27: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:46.759-04:00',
         createdById: 90,
@@ -843,7 +845,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '28': {
+      28: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:50.753-04:00',
         createdById: 90,
@@ -873,7 +875,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '29': {
+      29: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:50.766-04:00',
         createdById: 90,
@@ -903,7 +905,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '30': {
+      30: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:50.788-04:00',
         createdById: 90,
@@ -933,7 +935,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '31': {
+      31: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:54.897-04:00',
         createdById: 90,
@@ -963,7 +965,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '32': {
+      32: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:33:58.962-04:00',
         createdById: 90,
@@ -993,7 +995,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '33': {
+      33: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:03.895-04:00',
         createdById: 90,
@@ -1023,7 +1025,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '34': {
+      34: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:03.915-04:00',
         createdById: 90,
@@ -1053,7 +1055,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '35': {
+      35: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:03.935-04:00',
         createdById: 90,
@@ -1083,7 +1085,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '36': {
+      36: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:07.696-04:00',
         createdById: 90,
@@ -1113,7 +1115,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '37': {
+      37: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:10.183-04:00',
         createdById: 90,
@@ -1143,7 +1145,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '38': {
+      38: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:13.518-04:00',
         createdById: 90,
@@ -1173,7 +1175,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '39': {
+      39: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:13.542-04:00',
         createdById: 90,
@@ -1203,7 +1205,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '40': {
+      40: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:13.782-04:00',
         createdById: 90,
@@ -1233,7 +1235,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '41': {
+      41: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:19.035-04:00',
         createdById: 90,
@@ -1263,7 +1265,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '42': {
+      42: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:22.625-04:00',
         createdById: 90,
@@ -1293,7 +1295,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '43': {
+      43: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:27.818-04:00',
         createdById: 90,
@@ -1323,7 +1325,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '44': {
+      44: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:27.842-04:00',
         createdById: 90,
@@ -1353,7 +1355,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '45': {
+      45: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:27.873-04:00',
         createdById: 90,
@@ -1383,7 +1385,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '46': {
+      46: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:33.973-04:00',
         createdById: 90,
@@ -1413,7 +1415,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '47': {
+      47: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:37.283-04:00',
         createdById: 90,
@@ -1443,7 +1445,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '48': {
+      48: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:41.357-04:00',
         createdById: 90,
@@ -1473,7 +1475,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '49': {
+      49: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:41.380-04:00',
         createdById: 90,
@@ -1503,7 +1505,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '50': {
+      50: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:41.393-04:00',
         createdById: 90,
@@ -1533,7 +1535,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '51': {
+      51: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:44.861-04:00',
         createdById: 90,
@@ -1563,7 +1565,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '52': {
+      52: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:48.645-04:00',
         createdById: 90,
@@ -1593,7 +1595,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '53': {
+      53: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:52.209-04:00',
         createdById: 90,
@@ -1623,7 +1625,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '54': {
+      54: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:52.225-04:00',
         createdById: 90,
@@ -1653,7 +1655,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '55': {
+      55: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:52.238-04:00',
         createdById: 90,
@@ -1683,7 +1685,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '56': {
+      56: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:34:56.447-04:00',
         createdById: 90,
@@ -1713,7 +1715,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '57': {
+      57: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:00.379-04:00',
         createdById: 90,
@@ -1743,7 +1745,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '58': {
+      58: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:07.879-04:00',
         createdById: 90,
@@ -1773,7 +1775,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '59': {
+      59: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:07.918-04:00',
         createdById: 90,
@@ -1803,7 +1805,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '60': {
+      60: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:07.942-04:00',
         createdById: 90,
@@ -1833,7 +1835,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '61': {
+      61: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:12.362-04:00',
         createdById: 90,
@@ -1863,7 +1865,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '62': {
+      62: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:15.675-04:00',
         createdById: 90,
@@ -1893,7 +1895,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '63': {
+      63: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:19.362-04:00',
         createdById: 90,
@@ -1923,7 +1925,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '64': {
+      64: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:19.373-04:00',
         createdById: 90,
@@ -1953,7 +1955,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '65': {
+      65: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:19.388-04:00',
         createdById: 90,
@@ -1983,7 +1985,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '66': {
+      66: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:23.352-04:00',
         createdById: 90,
@@ -2013,7 +2015,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '67': {
+      67: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:26.344-04:00',
         createdById: 90,
@@ -2043,7 +2045,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '68': {
+      68: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:32.118-04:00',
         createdById: 90,
@@ -2073,7 +2075,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '69': {
+      69: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:32.180-04:00',
         createdById: 90,
@@ -2103,7 +2105,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '70': {
+      70: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:32.205-04:00',
         createdById: 90,
@@ -2133,7 +2135,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '71': {
+      71: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:37.456-04:00',
         createdById: 90,
@@ -2163,7 +2165,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '72': {
+      72: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:40.437-04:00',
         createdById: 90,
@@ -2193,7 +2195,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '73': {
+      73: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.369-04:00',
         createdById: 90,
@@ -2223,7 +2225,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '74': {
+      74: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.397-04:00',
         createdById: 90,
@@ -2253,7 +2255,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '75': {
+      75: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.415-04:00',
         createdById: 90,
@@ -2283,7 +2285,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '76': {
+      76: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.428-04:00',
         createdById: 90,
@@ -2313,7 +2315,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '77': {
+      77: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.441-04:00',
         createdById: 90,
@@ -2343,7 +2345,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '78': {
+      78: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.455-04:00',
         createdById: 90,
@@ -2373,7 +2375,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '79': {
+      79: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.478-04:00',
         createdById: 90,
@@ -2403,7 +2405,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '80': {
+      80: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.506-04:00',
         createdById: 90,
@@ -2433,7 +2435,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '81': {
+      81: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.520-04:00',
         createdById: 90,
@@ -2463,7 +2465,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '82': {
+      82: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.533-04:00',
         createdById: 90,
@@ -2493,7 +2495,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '83': {
+      83: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.548-04:00',
         createdById: 90,
@@ -2523,7 +2525,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '84': {
+      84: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.562-04:00',
         createdById: 90,
@@ -2553,7 +2555,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '85': {
+      85: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.594-04:00',
         createdById: 90,
@@ -2583,7 +2585,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '86': {
+      86: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.614-04:00',
         createdById: 90,
@@ -2613,7 +2615,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '87': {
+      87: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.627-04:00',
         createdById: 90,
@@ -2643,7 +2645,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '88': {
+      88: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.640-04:00',
         createdById: 90,
@@ -2673,7 +2675,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '89': {
+      89: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.653-04:00',
         createdById: 90,
@@ -2703,7 +2705,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '90': {
+      90: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:44.666-04:00',
         createdById: 90,
@@ -2733,7 +2735,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '91': {
+      91: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:48.475-04:00',
         createdById: 90,
@@ -2763,7 +2765,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '92': {
+      92: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:51.566-04:00',
         createdById: 90,
@@ -2793,7 +2795,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '93': {
+      93: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:55.152-04:00',
         createdById: 90,
@@ -2823,7 +2825,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '94': {
+      94: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:55.179-04:00',
         createdById: 90,
@@ -2853,7 +2855,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '95': {
+      95: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:55.194-04:00',
         createdById: 90,
@@ -2883,7 +2885,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '96': {
+      96: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:35:58.659-04:00',
         createdById: 90,
@@ -2913,7 +2915,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '97': {
+      97: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:01.570-04:00',
         createdById: 90,
@@ -2943,7 +2945,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '98': {
+      98: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:05.503-04:00',
         createdById: 90,
@@ -2973,7 +2975,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '99': {
+      99: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:05.516-04:00',
         createdById: 90,
@@ -3003,7 +3005,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '100': {
+      100: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:05.532-04:00',
         createdById: 90,
@@ -3033,7 +3035,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '101': {
+      101: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:08.982-04:00',
         createdById: 90,
@@ -3063,7 +3065,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '102': {
+      102: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:11.528-04:00',
         createdById: 90,
@@ -3093,7 +3095,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '103': {
+      103: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:15.929-04:00',
         createdById: 90,
@@ -3123,7 +3125,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '104': {
+      104: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:15.955-04:00',
         createdById: 90,
@@ -3153,7 +3155,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '105': {
+      105: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:15.971-04:00',
         createdById: 90,
@@ -3183,7 +3185,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '106': {
+      106: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:19.481-04:00',
         createdById: 90,
@@ -3213,7 +3215,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '107': {
+      107: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:22.319-04:00',
         createdById: 90,
@@ -3243,7 +3245,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '108': {
+      108: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:26.119-04:00',
         createdById: 90,
@@ -3273,7 +3275,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '109': {
+      109: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:26.141-04:00',
         createdById: 90,
@@ -3303,7 +3305,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '110': {
+      110: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:26.153-04:00',
         createdById: 90,
@@ -3333,7 +3335,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '111': {
+      111: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:29.845-04:00',
         createdById: 90,
@@ -3363,7 +3365,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '112': {
+      112: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:33.722-04:00',
         createdById: 90,
@@ -3393,7 +3395,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '113': {
+      113: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:39.010-04:00',
         createdById: 90,
@@ -3423,7 +3425,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '114': {
+      114: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:39.047-04:00',
         createdById: 90,
@@ -3453,7 +3455,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '115': {
+      115: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:39.063-04:00',
         createdById: 90,
@@ -3483,7 +3485,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '116': {
+      116: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:42.087-04:00',
         createdById: 90,
@@ -3513,7 +3515,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '117': {
+      117: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:44.757-04:00',
         createdById: 90,
@@ -3543,7 +3545,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '118': {
+      118: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:48.897-04:00',
         createdById: 90,
@@ -3573,7 +3575,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '119': {
+      119: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:48.909-04:00',
         createdById: 90,
@@ -3603,7 +3605,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '120': {
+      120: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:48.920-04:00',
         createdById: 90,
@@ -3633,7 +3635,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '121': {
+      121: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:51.027-04:00',
         createdById: 90,
@@ -3663,7 +3665,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '122': {
+      122: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:54.654-04:00',
         createdById: 90,
@@ -3693,7 +3695,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '123': {
+      123: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:58.021-04:00',
         createdById: 90,
@@ -3723,7 +3725,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '124': {
+      124: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:58.032-04:00',
         createdById: 90,
@@ -3753,7 +3755,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '125': {
+      125: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:36:58.043-04:00',
         createdById: 90,
@@ -3783,7 +3785,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '126': {
+      126: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:00.858-04:00',
         createdById: 90,
@@ -3813,7 +3815,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '127': {
+      127: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:02.989-04:00',
         createdById: 90,
@@ -3843,7 +3845,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '128': {
+      128: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:06.989-04:00',
         createdById: 90,
@@ -3873,7 +3875,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '129': {
+      129: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:07.006-04:00',
         createdById: 90,
@@ -3903,7 +3905,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '130': {
+      130: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:07.023-04:00',
         createdById: 90,
@@ -3933,7 +3935,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '131': {
+      131: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:09.355-04:00',
         createdById: 90,
@@ -3963,7 +3965,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '132': {
+      132: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:12.140-04:00',
         createdById: 90,
@@ -3993,7 +3995,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '133': {
+      133: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:15.632-04:00',
         createdById: 90,
@@ -4023,7 +4025,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '134': {
+      134: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:15.645-04:00',
         createdById: 90,
@@ -4053,7 +4055,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '135': {
+      135: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:15.663-04:00',
         createdById: 90,
@@ -4083,7 +4085,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '136': {
+      136: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:20.108-04:00',
         createdById: 90,
@@ -4113,7 +4115,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '137': {
+      137: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:22.580-04:00',
         createdById: 90,
@@ -4143,7 +4145,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '138': {
+      138: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:25.786-04:00',
         createdById: 90,
@@ -4173,7 +4175,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '139': {
+      139: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:25.799-04:00',
         createdById: 90,
@@ -4203,7 +4205,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '140': {
+      140: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:25.811-04:00',
         createdById: 90,
@@ -4233,7 +4235,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '141': {
+      141: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:28.973-04:00',
         createdById: 90,
@@ -4263,7 +4265,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '142': {
+      142: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:31.358-04:00',
         createdById: 90,
@@ -4293,7 +4295,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '143': {
+      143: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:34.905-04:00',
         createdById: 90,
@@ -4323,7 +4325,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '144': {
+      144: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:34.931-04:00',
         createdById: 90,
@@ -4353,7 +4355,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '145': {
+      145: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:34.957-04:00',
         createdById: 90,
@@ -4383,7 +4385,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '146': {
+      146: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:37.925-04:00',
         createdById: 90,
@@ -4413,7 +4415,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '147': {
+      147: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:40.619-04:00',
         createdById: 90,
@@ -4443,7 +4445,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '148': {
+      148: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:43.598-04:00',
         createdById: 90,
@@ -4473,7 +4475,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '149': {
+      149: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:43.613-04:00',
         createdById: 90,
@@ -4503,7 +4505,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '150': {
+      150: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:43.626-04:00',
         createdById: 90,
@@ -4533,7 +4535,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '151': {
+      151: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:46.296-04:00',
         createdById: 90,
@@ -4563,7 +4565,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '152': {
+      152: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:48.425-04:00',
         createdById: 90,
@@ -4593,7 +4595,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '153': {
+      153: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:52.261-04:00',
         createdById: 90,
@@ -4623,7 +4625,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '154': {
+      154: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:52.279-04:00',
         createdById: 90,
@@ -4653,7 +4655,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '155': {
+      155: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:52.295-04:00',
         createdById: 90,
@@ -4683,7 +4685,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '156': {
+      156: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:54.964-04:00',
         createdById: 90,
@@ -4713,7 +4715,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '157': {
+      157: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:37:57.160-04:00',
         createdById: 90,
@@ -4743,7 +4745,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '158': {
+      158: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:00.610-04:00',
         createdById: 90,
@@ -4773,7 +4775,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '159': {
+      159: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:00.621-04:00',
         createdById: 90,
@@ -4803,7 +4805,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '160': {
+      160: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:00.632-04:00',
         createdById: 90,
@@ -4833,7 +4835,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '161': {
+      161: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:02.918-04:00',
         createdById: 90,
@@ -4863,7 +4865,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '162': {
+      162: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:04.738-04:00',
         createdById: 90,
@@ -4893,7 +4895,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '163': {
+      163: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:09.013-04:00',
         createdById: 90,
@@ -4923,7 +4925,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '164': {
+      164: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:09.045-04:00',
         createdById: 90,
@@ -4953,7 +4955,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '165': {
+      165: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:09.065-04:00',
         createdById: 90,
@@ -4983,7 +4985,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '166': {
+      166: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:11.271-04:00',
         createdById: 90,
@@ -5013,7 +5015,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '167': {
+      167: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:13.388-04:00',
         createdById: 90,
@@ -5043,7 +5045,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '168': {
+      168: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:16.829-04:00',
         createdById: 90,
@@ -5073,7 +5075,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '169': {
+      169: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:16.869-04:00',
         createdById: 90,
@@ -5103,7 +5105,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '170': {
+      170: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:16.881-04:00',
         createdById: 90,
@@ -5133,7 +5135,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '171': {
+      171: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:19.764-04:00',
         createdById: 90,
@@ -5163,7 +5165,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '172': {
+      172: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:22.503-04:00',
         createdById: 90,
@@ -5193,7 +5195,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '173': {
+      173: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:25.498-04:00',
         createdById: 90,
@@ -5223,7 +5225,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '174': {
+      174: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:25.510-04:00',
         createdById: 90,
@@ -5253,7 +5255,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '175': {
+      175: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:25.530-04:00',
         createdById: 90,
@@ -5283,7 +5285,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '176': {
+      176: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:28.451-04:00',
         createdById: 90,
@@ -5313,7 +5315,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '177': {
+      177: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:30.640-04:00',
         createdById: 90,
@@ -5343,7 +5345,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '178': {
+      178: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:34.799-04:00',
         createdById: 90,
@@ -5373,7 +5375,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '179': {
+      179: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:34.816-04:00',
         createdById: 90,
@@ -5403,7 +5405,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '180': {
+      180: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:34.840-04:00',
         createdById: 90,
@@ -5433,7 +5435,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '181': {
+      181: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:37.385-04:00',
         createdById: 90,
@@ -5463,7 +5465,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '182': {
+      182: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:39.642-04:00',
         createdById: 90,
@@ -5493,7 +5495,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '183': {
+      183: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:42.565-04:00',
         createdById: 90,
@@ -5523,7 +5525,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '184': {
+      184: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:42.578-04:00',
         createdById: 90,
@@ -5553,7 +5555,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '185': {
+      185: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:42.589-04:00',
         createdById: 90,
@@ -5583,7 +5585,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '186': {
+      186: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:45.154-04:00',
         createdById: 90,
@@ -5613,7 +5615,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '187': {
+      187: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:47.563-04:00',
         createdById: 90,
@@ -5643,7 +5645,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '188': {
+      188: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:50.233-04:00',
         createdById: 90,
@@ -5673,7 +5675,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '189': {
+      189: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:50.246-04:00',
         createdById: 90,
@@ -5703,7 +5705,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '190': {
+      190: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:50.262-04:00',
         createdById: 90,
@@ -5733,7 +5735,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '191': {
+      191: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:52.568-04:00',
         createdById: 90,
@@ -5763,7 +5765,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '192': {
+      192: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:54.364-04:00',
         createdById: 90,
@@ -5793,7 +5795,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '193': {
+      193: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:58.121-04:00',
         createdById: 90,
@@ -5823,7 +5825,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '194': {
+      194: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:58.144-04:00',
         createdById: 90,
@@ -5853,7 +5855,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '195': {
+      195: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:38:58.161-04:00',
         createdById: 90,
@@ -5883,7 +5885,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '196': {
+      196: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:00.573-04:00',
         createdById: 90,
@@ -5913,7 +5915,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '197': {
+      197: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:02.677-04:00',
         createdById: 90,
@@ -5943,7 +5945,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '198': {
+      198: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:06.179-04:00',
         createdById: 90,
@@ -5973,7 +5975,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '199': {
+      199: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:06.213-04:00',
         createdById: 90,
@@ -6003,7 +6005,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '200': {
+      200: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:06.229-04:00',
         createdById: 90,
@@ -6033,7 +6035,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '201': {
+      201: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:09.149-04:00',
         createdById: 90,
@@ -6063,7 +6065,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '202': {
+      202: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:11.620-04:00',
         createdById: 90,
@@ -6093,7 +6095,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '203': {
+      203: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:14.730-04:00',
         createdById: 90,
@@ -6123,7 +6125,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '204': {
+      204: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:14.744-04:00',
         createdById: 90,
@@ -6153,7 +6155,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '205': {
+      205: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:14.760-04:00',
         createdById: 90,
@@ -6183,7 +6185,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '206': {
+      206: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:17.176-04:00',
         createdById: 90,
@@ -6213,7 +6215,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '207': {
+      207: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:19.509-04:00',
         createdById: 90,
@@ -6243,7 +6245,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '208': {
+      208: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:23.116-04:00',
         createdById: 90,
@@ -6273,7 +6275,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '209': {
+      209: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:23.126-04:00',
         createdById: 90,
@@ -6303,7 +6305,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '210': {
+      210: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:23.138-04:00',
         createdById: 90,
@@ -6333,7 +6335,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '211': {
+      211: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:25.800-04:00',
         createdById: 90,
@@ -6363,7 +6365,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '212': {
+      212: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:28.278-04:00',
         createdById: 90,
@@ -6393,7 +6395,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '213': {
+      213: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:32.290-04:00',
         createdById: 90,
@@ -6423,7 +6425,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '214': {
+      214: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:32.304-04:00',
         createdById: 90,
@@ -6453,7 +6455,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '215': {
+      215: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:32.317-04:00',
         createdById: 90,
@@ -6483,7 +6485,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '216': {
+      216: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:34.571-04:00',
         createdById: 90,
@@ -6513,7 +6515,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '217': {
+      217: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:37.058-04:00',
         createdById: 90,
@@ -6543,7 +6545,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '218': {
+      218: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:40.253-04:00',
         createdById: 90,
@@ -6573,7 +6575,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '219': {
+      219: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:40.278-04:00',
         createdById: 90,
@@ -6603,7 +6605,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '220': {
+      220: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:40.290-04:00',
         createdById: 90,
@@ -6633,7 +6635,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '221': {
+      221: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:42.903-04:00',
         createdById: 90,
@@ -6663,7 +6665,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '222': {
+      222: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:45.054-04:00',
         createdById: 90,
@@ -6693,7 +6695,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '223': {
+      223: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:48.309-04:00',
         createdById: 90,
@@ -6723,7 +6725,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '224': {
+      224: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:48.321-04:00',
         createdById: 90,
@@ -6753,7 +6755,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '225': {
+      225: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:48.338-04:00',
         createdById: 90,
@@ -6783,7 +6785,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '226': {
+      226: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:51.542-04:00',
         createdById: 90,
@@ -6813,7 +6815,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '227': {
+      227: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:53.874-04:00',
         createdById: 90,
@@ -6843,7 +6845,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '228': {
+      228: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:57.653-04:00',
         createdById: 90,
@@ -6873,7 +6875,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '229': {
+      229: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:57.666-04:00',
         createdById: 90,
@@ -6903,7 +6905,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '230': {
+      230: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:39:57.686-04:00',
         createdById: 90,
@@ -6933,7 +6935,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '231': {
+      231: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:00.789-04:00',
         createdById: 90,
@@ -6963,7 +6965,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '232': {
+      232: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:02.810-04:00',
         createdById: 90,
@@ -6993,7 +6995,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '233': {
+      233: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:06.484-04:00',
         createdById: 90,
@@ -7023,7 +7025,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '234': {
+      234: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:06.500-04:00',
         createdById: 90,
@@ -7053,7 +7055,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '235': {
+      235: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:06.522-04:00',
         createdById: 90,
@@ -7083,7 +7085,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '236': {
+      236: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:09.805-04:00',
         createdById: 90,
@@ -7113,7 +7115,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '237': {
+      237: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:11.958-04:00',
         createdById: 90,
@@ -7143,7 +7145,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '238': {
+      238: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:14.673-04:00',
         createdById: 90,
@@ -7173,7 +7175,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '239': {
+      239: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:14.689-04:00',
         createdById: 90,
@@ -7203,7 +7205,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '240': {
+      240: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:14.704-04:00',
         createdById: 90,
@@ -7233,7 +7235,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '241': {
+      241: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:17.712-04:00',
         createdById: 90,
@@ -7263,7 +7265,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '242': {
+      242: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:19.661-04:00',
         createdById: 90,
@@ -7293,7 +7295,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '243': {
+      243: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:23.616-04:00',
         createdById: 90,
@@ -7323,7 +7325,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '244': {
+      244: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:23.636-04:00',
         createdById: 90,
@@ -7353,7 +7355,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '245': {
+      245: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:23.650-04:00',
         createdById: 90,
@@ -7383,7 +7385,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '246': {
+      246: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:27.942-04:00',
         createdById: 90,
@@ -7413,7 +7415,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '247': {
+      247: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:31.031-04:00',
         createdById: 90,
@@ -7443,7 +7445,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '248': {
+      248: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:35.890-04:00',
         createdById: 90,
@@ -7473,7 +7475,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '249': {
+      249: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:35.913-04:00',
         createdById: 90,
@@ -7503,7 +7505,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '250': {
+      250: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:35.937-04:00',
         createdById: 90,
@@ -7533,7 +7535,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '251': {
+      251: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:39.662-04:00',
         createdById: 90,
@@ -7563,7 +7565,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '252': {
+      252: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:42.739-04:00',
         createdById: 90,
@@ -7593,7 +7595,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '253': {
+      253: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.297-04:00',
         createdById: 90,
@@ -7623,7 +7625,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '254': {
+      254: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.328-04:00',
         createdById: 90,
@@ -7653,7 +7655,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '255': {
+      255: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.345-04:00',
         createdById: 90,
@@ -7683,7 +7685,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '256': {
+      256: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.358-04:00',
         createdById: 90,
@@ -7713,7 +7715,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '257': {
+      257: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.379-04:00',
         createdById: 90,
@@ -7743,7 +7745,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '258': {
+      258: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.401-04:00',
         createdById: 90,
@@ -7773,7 +7775,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '259': {
+      259: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.417-04:00',
         createdById: 90,
@@ -7803,7 +7805,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '260': {
+      260: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.428-04:00',
         createdById: 90,
@@ -7833,7 +7835,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '261': {
+      261: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.440-04:00',
         createdById: 90,
@@ -7863,7 +7865,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '262': {
+      262: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.452-04:00',
         createdById: 90,
@@ -7893,7 +7895,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '263': {
+      263: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.474-04:00',
         createdById: 90,
@@ -7923,7 +7925,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '264': {
+      264: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.496-04:00',
         createdById: 90,
@@ -7953,7 +7955,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '265': {
+      265: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.510-04:00',
         createdById: 90,
@@ -7983,7 +7985,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '266': {
+      266: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.521-04:00',
         createdById: 90,
@@ -8013,7 +8015,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '267': {
+      267: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.533-04:00',
         createdById: 90,
@@ -8043,7 +8045,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '268': {
+      268: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.544-04:00',
         createdById: 90,
@@ -8073,7 +8075,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '269': {
+      269: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.556-04:00',
         createdById: 90,
@@ -8103,7 +8105,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '270': {
+      270: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.568-04:00',
         createdById: 90,
@@ -8133,7 +8135,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '271': {
+      271: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.585-04:00',
         createdById: 90,
@@ -8163,7 +8165,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '272': {
+      272: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.605-04:00',
         createdById: 90,
@@ -8193,7 +8195,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '273': {
+      273: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.617-04:00',
         createdById: 90,
@@ -8223,7 +8225,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '274': {
+      274: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.629-04:00',
         createdById: 90,
@@ -8253,7 +8255,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '275': {
+      275: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.641-04:00',
         createdById: 90,
@@ -8283,7 +8285,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '276': {
+      276: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.651-04:00',
         createdById: 90,
@@ -8313,7 +8315,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '277': {
+      277: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.663-04:00',
         createdById: 90,
@@ -8343,7 +8345,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '278': {
+      278: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.678-04:00',
         createdById: 90,
@@ -8373,7 +8375,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '279': {
+      279: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.693-04:00',
         createdById: 90,
@@ -8403,7 +8405,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '280': {
+      280: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.713-04:00',
         createdById: 90,
@@ -8433,7 +8435,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '281': {
+      281: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.733-04:00',
         createdById: 90,
@@ -8463,7 +8465,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '282': {
+      282: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.746-04:00',
         createdById: 90,
@@ -8493,7 +8495,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '283': {
+      283: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.761-04:00',
         createdById: 90,
@@ -8523,7 +8525,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '284': {
+      284: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.778-04:00',
         createdById: 90,
@@ -8553,7 +8555,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '285': {
+      285: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.798-04:00',
         createdById: 90,
@@ -8583,7 +8585,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '286': {
+      286: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.816-04:00',
         createdById: 90,
@@ -8613,7 +8615,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '287': {
+      287: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.828-04:00',
         createdById: 90,
@@ -8643,7 +8645,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '288': {
+      288: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.839-04:00',
         createdById: 90,
@@ -8673,7 +8675,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '289': {
+      289: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.852-04:00',
         createdById: 90,
@@ -8703,7 +8705,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '290': {
+      290: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.865-04:00',
         createdById: 90,
@@ -8733,7 +8735,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '291': {
+      291: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.881-04:00',
         createdById: 90,
@@ -8763,7 +8765,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '292': {
+      292: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.913-04:00',
         createdById: 90,
@@ -8793,7 +8795,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '293': {
+      293: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.931-04:00',
         createdById: 90,
@@ -8823,7 +8825,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '294': {
+      294: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.942-04:00',
         createdById: 90,
@@ -8853,7 +8855,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '295': {
+      295: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.956-04:00',
         createdById: 90,
@@ -8883,7 +8885,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '296': {
+      296: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.969-04:00',
         createdById: 90,
@@ -8913,7 +8915,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '297': {
+      297: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:47.988-04:00',
         createdById: 90,
@@ -8943,7 +8945,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '298': {
+      298: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.012-04:00',
         createdById: 90,
@@ -8973,7 +8975,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '299': {
+      299: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.031-04:00',
         createdById: 90,
@@ -9003,7 +9005,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '300': {
+      300: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.059-04:00',
         createdById: 90,
@@ -9033,7 +9035,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '301': {
+      301: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.073-04:00',
         createdById: 90,
@@ -9063,7 +9065,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '302': {
+      302: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.104-04:00',
         createdById: 90,
@@ -9093,7 +9095,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '303': {
+      303: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.132-04:00',
         createdById: 90,
@@ -9123,7 +9125,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '304': {
+      304: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.144-04:00',
         createdById: 90,
@@ -9153,7 +9155,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '305': {
+      305: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.157-04:00',
         createdById: 90,
@@ -9183,7 +9185,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '306': {
+      306: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.180-04:00',
         createdById: 90,
@@ -9213,7 +9215,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '307': {
+      307: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.227-04:00',
         createdById: 90,
@@ -9243,7 +9245,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '308': {
+      308: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.252-04:00',
         createdById: 90,
@@ -9273,7 +9275,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '309': {
+      309: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.269-04:00',
         createdById: 90,
@@ -9303,7 +9305,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '310': {
+      310: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.352-04:00',
         createdById: 90,
@@ -9333,7 +9335,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '311': {
+      311: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.372-04:00',
         createdById: 90,
@@ -9363,7 +9365,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '312': {
+      312: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.406-04:00',
         createdById: 90,
@@ -9393,7 +9395,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '313': {
+      313: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.440-04:00',
         createdById: 90,
@@ -9423,7 +9425,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '314': {
+      314: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.460-04:00',
         createdById: 90,
@@ -9453,7 +9455,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '315': {
+      315: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.498-04:00',
         createdById: 90,
@@ -9483,7 +9485,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '316': {
+      316: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.518-04:00',
         createdById: 90,
@@ -9513,7 +9515,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '317': {
+      317: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.538-04:00',
         createdById: 90,
@@ -9543,7 +9545,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '318': {
+      318: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.553-04:00',
         createdById: 90,
@@ -9573,7 +9575,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '319': {
+      319: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.565-04:00',
         createdById: 90,
@@ -9603,7 +9605,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '320': {
+      320: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.585-04:00',
         createdById: 90,
@@ -9633,7 +9635,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '321': {
+      321: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.663-04:00',
         createdById: 90,
@@ -9663,7 +9665,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '322': {
+      322: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.721-04:00',
         createdById: 90,
@@ -9693,7 +9695,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '323': {
+      323: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.739-04:00',
         createdById: 90,
@@ -9723,7 +9725,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '324': {
+      324: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.753-04:00',
         createdById: 90,
@@ -9753,7 +9755,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '325': {
+      325: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.764-04:00',
         createdById: 90,
@@ -9783,7 +9785,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '326': {
+      326: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.774-04:00',
         createdById: 90,
@@ -9813,7 +9815,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '327': {
+      327: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.785-04:00',
         createdById: 90,
@@ -9843,7 +9845,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '328': {
+      328: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.796-04:00',
         createdById: 90,
@@ -9873,7 +9875,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '329': {
+      329: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.814-04:00',
         createdById: 90,
@@ -9903,7 +9905,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '330': {
+      330: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.835-04:00',
         createdById: 90,
@@ -9933,7 +9935,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '331': {
+      331: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.846-04:00',
         createdById: 90,
@@ -9963,7 +9965,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '332': {
+      332: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.858-04:00',
         createdById: 90,
@@ -9993,7 +9995,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '333': {
+      333: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.869-04:00',
         createdById: 90,
@@ -10023,7 +10025,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '334': {
+      334: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.880-04:00',
         createdById: 90,
@@ -10053,7 +10055,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '335': {
+      335: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.891-04:00',
         createdById: 90,
@@ -10083,7 +10085,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '336': {
+      336: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.916-04:00',
         createdById: 90,
@@ -10113,7 +10115,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '337': {
+      337: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.939-04:00',
         createdById: 90,
@@ -10143,7 +10145,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '338': {
+      338: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.951-04:00',
         createdById: 90,
@@ -10173,7 +10175,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '339': {
+      339: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.962-04:00',
         createdById: 90,
@@ -10203,7 +10205,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '340': {
+      340: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:48.973-04:00',
         createdById: 90,
@@ -10233,7 +10235,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '341': {
+      341: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:51.546-04:00',
         createdById: 90,
@@ -10263,7 +10265,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '342': {
+      342: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:53.883-04:00',
         createdById: 90,
@@ -10293,7 +10295,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '343': {
+      343: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:58.315-04:00',
         createdById: 90,
@@ -10323,7 +10325,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '344': {
+      344: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:58.330-04:00',
         createdById: 90,
@@ -10353,7 +10355,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '345': {
+      345: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:40:58.342-04:00',
         createdById: 90,
@@ -10383,7 +10385,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '346': {
+      346: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:03.244-04:00',
         createdById: 90,
@@ -10413,7 +10415,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '347': {
+      347: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:05.289-04:00',
         createdById: 90,
@@ -10443,7 +10445,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '348': {
+      348: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:09.685-04:00',
         createdById: 90,
@@ -10473,7 +10475,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '349': {
+      349: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:09.786-04:00',
         createdById: 90,
@@ -10503,7 +10505,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '350': {
+      350: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:09.811-04:00',
         createdById: 90,
@@ -10533,7 +10535,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '351': {
+      351: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:13.224-04:00',
         createdById: 90,
@@ -10563,7 +10565,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '352': {
+      352: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:16.130-04:00',
         createdById: 90,
@@ -10593,7 +10595,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '353': {
+      353: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:19.643-04:00',
         createdById: 90,
@@ -10623,7 +10625,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '354': {
+      354: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:19.656-04:00',
         createdById: 90,
@@ -10653,7 +10655,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '355': {
+      355: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:19.667-04:00',
         createdById: 90,
@@ -10683,7 +10685,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '356': {
+      356: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:22.785-04:00',
         createdById: 90,
@@ -10713,7 +10715,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '357': {
+      357: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:25.872-04:00',
         createdById: 90,
@@ -10743,7 +10745,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '358': {
+      358: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:30.426-04:00',
         createdById: 90,
@@ -10773,7 +10775,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '359': {
+      359: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:30.463-04:00',
         createdById: 90,
@@ -10803,7 +10805,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '360': {
+      360: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:30.484-04:00',
         createdById: 90,
@@ -10833,7 +10835,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '361': {
+      361: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:34.542-04:00',
         createdById: 90,
@@ -10863,7 +10865,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '362': {
+      362: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:38.378-04:00',
         createdById: 90,
@@ -10893,7 +10895,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '363': {
+      363: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:42.811-04:00',
         createdById: 90,
@@ -10923,7 +10925,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '364': {
+      364: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:42.831-04:00',
         createdById: 90,
@@ -10953,7 +10955,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '365': {
+      365: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:42.845-04:00',
         createdById: 90,
@@ -10983,7 +10985,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '366': {
+      366: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:46.487-04:00',
         createdById: 90,
@@ -11013,7 +11015,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '367': {
+      367: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:50.150-04:00',
         createdById: 90,
@@ -11043,7 +11045,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '368': {
+      368: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:54.608-04:00',
         createdById: 90,
@@ -11073,7 +11075,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '369': {
+      369: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:54.633-04:00',
         createdById: 90,
@@ -11103,7 +11105,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '370': {
+      370: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:54.657-04:00',
         createdById: 90,
@@ -11133,7 +11135,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '371': {
+      371: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:41:59.373-04:00',
         createdById: 90,
@@ -11163,7 +11165,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '372': {
+      372: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:02.690-04:00',
         createdById: 90,
@@ -11193,7 +11195,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '373': {
+      373: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:08.211-04:00',
         createdById: 90,
@@ -11223,7 +11225,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '374': {
+      374: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:08.224-04:00',
         createdById: 90,
@@ -11253,7 +11255,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '375': {
+      375: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:08.236-04:00',
         createdById: 90,
@@ -11283,7 +11285,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '376': {
+      376: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:12.173-04:00',
         createdById: 90,
@@ -11313,7 +11315,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '377': {
+      377: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:15.781-04:00',
         createdById: 90,
@@ -11343,7 +11345,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '378': {
+      378: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:18.977-04:00',
         createdById: 90,
@@ -11373,7 +11375,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '379': {
+      379: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:18.997-04:00',
         createdById: 90,
@@ -11403,7 +11405,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '380': {
+      380: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:19.011-04:00',
         createdById: 90,
@@ -11433,7 +11435,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '381': {
+      381: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:22.268-04:00',
         createdById: 90,
@@ -11463,7 +11465,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '382': {
+      382: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:24.479-04:00',
         createdById: 90,
@@ -11493,7 +11495,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '383': {
+      383: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:27.842-04:00',
         createdById: 90,
@@ -11523,7 +11525,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '384': {
+      384: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:27.863-04:00',
         createdById: 90,
@@ -11553,7 +11555,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '385': {
+      385: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:27.883-04:00',
         createdById: 90,
@@ -11583,7 +11585,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '386': {
+      386: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:32.150-04:00',
         createdById: 90,
@@ -11613,7 +11615,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '387': {
+      387: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:34.336-04:00',
         createdById: 90,
@@ -11643,7 +11645,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '388': {
+      388: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:38.274-04:00',
         createdById: 90,
@@ -11673,7 +11675,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '389': {
+      389: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:38.293-04:00',
         createdById: 90,
@@ -11703,7 +11705,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '390': {
+      390: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:38.322-04:00',
         createdById: 90,
@@ -11733,7 +11735,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '391': {
+      391: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:42.318-04:00',
         createdById: 90,
@@ -11763,7 +11765,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '392': {
+      392: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:45.626-04:00',
         createdById: 90,
@@ -11793,7 +11795,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '393': {
+      393: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:49.315-04:00',
         createdById: 90,
@@ -11823,7 +11825,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '394': {
+      394: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:49.327-04:00',
         createdById: 90,
@@ -11853,7 +11855,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '395': {
+      395: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:49.338-04:00',
         createdById: 90,
@@ -11883,7 +11885,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '396': {
+      396: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:52.798-04:00',
         createdById: 90,
@@ -11913,7 +11915,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '397': {
+      397: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:42:56.310-04:00',
         createdById: 90,
@@ -11943,7 +11945,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '398': {
+      398: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:43:00.795-04:00',
         createdById: 90,
@@ -11973,7 +11975,7 @@ export const dailyDocketFullStore = {
           alias: null
         }
       },
-      '399': {
+      399: {
         bvaPoc: null,
         createdAt: '2022-04-29T08:43:00.814-04:00',
         createdById: 90,
@@ -12096,7 +12098,7 @@ export const dailyDocketFullStore = {
         wasVirtual: false,
         witness: null,
         worksheetIssues: {
-          '0': {
+          0: {
             id: 84,
             allow: false,
             createdAt: '2022-05-09T13:32:20.419-04:00',
@@ -12139,7 +12141,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '1': {
+          1: {
             id: 85,
             allow: false,
             createdAt: '2022-05-09T13:32:20.486-04:00',
@@ -12182,7 +12184,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '2': {
+          2: {
             id: 86,
             allow: false,
             createdAt: '2022-05-09T13:32:20.501-04:00',
@@ -12225,7 +12227,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '3': {
+          3: {
             id: 87,
             allow: false,
             createdAt: '2022-05-09T13:32:20.516-04:00',
@@ -12268,7 +12270,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '4': {
+          4: {
             id: 88,
             allow: false,
             createdAt: '2022-05-09T13:32:20.533-04:00',
@@ -12311,7 +12313,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '5': {
+          5: {
             id: 89,
             allow: false,
             createdAt: '2022-05-09T13:32:20.585-04:00',
@@ -12354,7 +12356,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '6': {
+          6: {
             id: 90,
             allow: false,
             createdAt: '2022-05-09T13:32:20.605-04:00',
@@ -12397,7 +12399,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '7': {
+          7: {
             id: 91,
             allow: false,
             createdAt: '2022-05-09T13:32:20.617-04:00',
@@ -12440,7 +12442,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '8': {
+          8: {
             id: 92,
             allow: false,
             createdAt: '2022-05-09T13:32:20.630-04:00',
@@ -12483,7 +12485,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '9': {
+          9: {
             id: 93,
             allow: false,
             createdAt: '2022-05-09T13:32:20.643-04:00',
@@ -12526,7 +12528,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '10': {
+          10: {
             id: 94,
             allow: false,
             createdAt: '2022-05-09T13:32:20.661-04:00',
@@ -12569,7 +12571,7 @@ export const dailyDocketFullStore = {
               externalId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc'
             }
           },
-          '11': {
+          11: {
             id: 95,
             allow: false,
             createdAt: '2022-05-09T13:32:20.683-04:00',
@@ -12686,7 +12688,7 @@ export const dailyDocketFullStore = {
         wasVirtual: false,
         witness: null,
         worksheetIssues: {
-          '0': {
+          0: {
             id: 96,
             allow: false,
             createdAt: '2022-05-09T13:32:21.178-04:00',
@@ -12729,7 +12731,7 @@ export const dailyDocketFullStore = {
               externalId: '3c170697-2c52-4bad-b7bd-2ccf44f0c44c'
             }
           },
-          '1': {
+          1: {
             id: 97,
             allow: false,
             createdAt: '2022-05-09T13:32:21.233-04:00',
@@ -12772,7 +12774,7 @@ export const dailyDocketFullStore = {
               externalId: '3c170697-2c52-4bad-b7bd-2ccf44f0c44c'
             }
           },
-          '2': {
+          2: {
             id: 98,
             allow: false,
             createdAt: '2022-05-09T13:32:21.246-04:00',
@@ -12815,7 +12817,7 @@ export const dailyDocketFullStore = {
               externalId: '3c170697-2c52-4bad-b7bd-2ccf44f0c44c'
             }
           },
-          '3': {
+          3: {
             id: 99,
             allow: false,
             createdAt: '2022-05-09T13:32:21.259-04:00',
@@ -13091,4 +13093,4 @@ export const dailyDocketFullStore = {
       notes: null
     }
   }
-}
+};
