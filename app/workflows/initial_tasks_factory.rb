@@ -1,183 +1,380 @@
 # frozen_string_literal: true
 
-##
-# Factory to create tasks for a new appeal based on appeal characteristics.
+describe InitialTasksFactory, :postgres do
+  context ".create_root_and_sub_tasks!" do
+    let(:participant_id_with_pva) { "1234" }
+    let(:participant_id_with_aml) { "5678" }
+    let(:participant_id_with_no_vso) { "9999" }
 
-class InitialTasksFactory
-  include TasksFactoryConcern
-
-  def initialize(appeal)
-    @appeal = appeal
-    @root_task = RootTask.find_or_create_by!(appeal: appeal)
-
-    if @appeal.cavc?
-      @cavc_remand = appeal.cavc_remand
-
-      fail "CavcRemand required for CAVC-Remand appeal #{@appeal.id}" unless @cavc_remand
+    let(:appeal) do
+      create(:appeal, claimants: [
+               create(:claimant, participant_id: participant_id_with_pva),
+               create(:claimant, participant_id: participant_id_with_aml)
+             ])
     end
-  end
 
-  delegate :veteran, to: :@appeal
-
-  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
-
-  def create_root_and_sub_tasks!
-    create_vso_tracking_tasks
-    ActiveRecord::Base.transaction do
-      create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+    before do
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_pva]).and_return(
+          participant_id_with_pva => {
+            representative_name: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66660000"
+          }
+        )
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_aml]).and_return(
+          participant_id_with_aml => {
+            representative_name: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66661111"
+          }
+        )
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_no_vso]).and_return({})
     end
-    maybe_create_translation_task
-  end
 
-  private
+    let!(:pva) do
+      Vso.create(
+        name: "Paralyzed Veterans Of America",
+        role: "VSO",
+        url: "paralyzed-veterans-of-america",
+        participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
+      )
+    end
+    let!(:vso_user) { create(:user, roles: ["VSO"], full_name: "test") }
 
-  def create_vso_tracking_tasks
-    @appeal.representatives.map do |rep|
-      if TrackVeteranTask.where(appeal: @appeal, assigned_to: rep).empty?
-        TrackVeteranTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
+    context "when an original appeal" do
+      context "on the direct docket is created" do
+        context "when it has no vso representation" do
+          let(:appeal) do
+            create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
+                     create(:claimant, participant_id: participant_id_with_no_vso)
+                   ])
+          end
+
+          before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
+          it "is ready for distribution immediately" do
+            expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+          end
+
+          it "does not create a tracking task" do
+            expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0)
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
+          end
+        end
+
+        context "on veteran date of death present" do
+          before { FeatureToggle.enable!(:death_dismissal_streamlining) }
+          after { FeatureToggle.disable!(:death_dismissal_streamlining) }
+          let(:appeal) do
+            create(
+              :appeal,
+              docket_type: docket_type,
+              claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+              veteran: create(:veteran, date_of_death: 30.days.ago.to_date),
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+          end
+          let(:veteran_is_not_claimant) { false }
+
+          context "on the evidence submission docket is created" do
+            let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+
+            it "is ready for distribution" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+              expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+            end
+          end
+
+          context "on hearing docket is created" do
+            let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+
+            it "is ready for distribution" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+              expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+            end
+          end
+
+          context "when the appellant is not the veteran" do
+            let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+            let(:veteran_is_not_claimant) { true }
+
+            it "does not streamline death dismissal" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+              expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal)).not_to be_nil
+            end
+          end
+          context "when a hearing docket appeal has to have a changehearingrequesttypetask assigned" do
+            let(:appeal) do
+              create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing, claimants: [
+                       create(:claimant, participant_id: participant_id_with_pva),
+                       create(:claimant, participant_id: participant_id_with_aml)
+                     ])
+            end
+            let!(:pva_vso) { create(:user, roles: ["VSO"], full_name: "pva") }
+            let!(:aml_vso) { create(:user, roles: ["VSO"], full_name: "aml") }
+            subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
+            it "creates a changehearingrequesttypetask assigned to the VSO" do
+              AppealView.create(user: pva_vso, appeal: appeal)
+              subject
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva_vso)
+            end
+            it "creates a changehearingrequesttypetask assigned to multiple VSOs" do
+              AppealView.create(user: pva_vso, appeal: appeal)
+              AppealView.create(user: aml_vso, appeal: appeal)
+              subject
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(2)
+              change_tasks = appeal.tasks.open.where(
+                type: [ChangeHearingRequestTypeTask.name],
+                assigned_to_type: User.name
+              )
+              expect(change_tasks[0].assigned_to).to eq(aml_vso)
+              expect(change_tasks[1].assigned_to).to eq(pva_vso)
+            end
+          end
+        end
+
+        context "when it has an ihp-writing vso" do
+          let(:appeal) do
+            create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
+                     create(:claimant, participant_id: participant_id_with_pva),
+                     create(:claimant, participant_id: participant_id_with_aml)
+                   ])
+          end
+
+          subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
+          it "blocks distribution" do
+            subject
+            expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+          end
+
+          it "requires an informal hearing presentation" do
+            subject
+            expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
+            expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+          end
+
+          it "creates a tracking task assigned to the VSO" do
+            subject
+            expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+            expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
+          end
+
+          it "has no change hearing request type task" do
+            subject
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
+          end
+
+          it "doesn't create a InformalHearingPresentationTask for missing organization" do
+            subject
+            expect(InformalHearingPresentationTask.count).to eq(1)
+            expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
+          end
+
+          context "when VSO tracking tasks already exists for the appeal and representative" do
+            before do
+              root_task = RootTask.create!(appeal: appeal)
+              TrackVeteranTask.create!(appeal: appeal, parent: root_task, assigned_to: pva)
+            end
+
+            it "does not create duplicate tracking tasks" do
+              expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+              subject
+              expect(appeal.reload.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
+              subject
+            end
+          end
+        end
       end
-      if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: rep).empty? &&
-         @appeal.docket_type == "hearing"
-        ChangeHearingRequestTypeTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
+
+      context "when it has multiple ihp-writing vsos" do
+        let!(:vva) do
+          Vso.create(
+            name: "Vietnam Veterans Of America",
+            role: "VSO",
+            url: "vietnam-veterans-of-america",
+            participant_id: "2452415"
+          )
+        end
+
+        let(:appeal) do
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
+                   create(:claimant, participant_id: participant_id_with_pva),
+                   create(:claimant, participant_id: participant_id_with_aml)
+                 ])
+        end
+
+        it "creates a task for each VSO" do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          expect(RootTask.count).to eq(1)
+          expect(InformalHearingPresentationTask.count).to eq(2)
+          # sort order is non-deterministic so load by assignee
+          expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+          expect(vva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+        end
+
+        it "does not create a task for a VSO if one already exists for that appeal" do
+          InformalHearingPresentationTask.create!(
+            appeal: appeal,
+            parent: appeal.root_task,
+            assigned_to: vva
+          )
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+          expect(InformalHearingPresentationTask.count).to eq(2)
+          # sort order is non-deterministic so load by assignee
+          expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+          expect(vva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+        end
+
+        it "creates RootTask assigned to Bva organization" do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          expect(RootTask.last.assigned_to).to eq(Bva.singleton)
+        end
+      end
+
+      context "on the evidence submission docket is created" do
+        let(:appeal) do
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission, claimants: [
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
+        end
+
+        it "blocks distribution" do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        end
+      end
+
+      context "on the hearing docket is created" do
+        let(:appeal) do
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing, claimants: [
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
+        end
+
+        it "blocks distribution with schedule hearing task" do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+          expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
+          expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
+        end
+
+        it "creates the tasks" do
+        end
+
+        context "when VSO does not writes IHPs for hearing docket cases" do
+          let(:appeal) do
+            create(
+              :appeal,
+              docket_type: Constants.AMA_DOCKETS.hearing,
+              claimants: [create(:claimant, participant_id: participant_id_with_pva)]
+            )
+          end
+
+          before do
+            allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false)
+          end
+
+          it "creates no IHP tasks" do
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+            expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
+          end
+        end
       end
     end
-  end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  def create_subtasks!
-    distribution_task # ensure distribution_task exists
+    context "when a Court Remand appeal stream is created" do
+      # create(:cavc_remand, ...) indirectly calls InitialTasksFactory#create_root_and_sub_tasks!
+      subject do
+        create(:cavc_remand,
+               source_appeal: appeal,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: remand_subtype,
+               judgement_date: judgement_date,
+               mandate_date: mandate_date)
+      end
 
-    if @appeal.appellant_substitution?
-      create_selected_tasks
-    elsif @appeal.cavc?
-      create_cavc_subtasks
-    elsif should_streamline_death_dismissal?
-      distribution_task.ready_for_distribution!
-    else
-      case @appeal.docket_type
-      when "evidence_submission"
-        EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
-      when "hearing"
-        ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
-      when "direct_review"
-        vso_tasks = create_ihp_task
-        # If the appeal is direct docket and there are no ihp tasks,
-        # then it is initially ready for distribution.
-        distribution_task.ready_for_distribution! if vso_tasks.empty?
+      let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.remand }
+      let(:judgement_date) { 30.days.ago.to_date }
+      let(:mandate_date) { 30.days.ago.to_date }
+
+      before do
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_cavc_subtasks).once.and_call_original
+      end
+
+      shared_examples "remand appeal blocking distribution" do |some_task_class, some_task_status|
+        it "blocks distribution with a CavcTask" do
+          remand_appeal = subject.remand_appeal
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
+          expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+          expect(remand_appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
+          expect(some_task_class.find_by(appeal: remand_appeal).status).to eq(some_task_status)
+        end
+      end
+
+      context "when CavcRemand subtype is JMR or JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        include_examples "remand appeal blocking distribution", SendCavcRemandProcessedLetterTask, "assigned"
+      end
+
+      context "when CavcRemand subtype is MDR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+
+        include_examples "remand appeal blocking distribution", MdrTask, "on_hold"
+      end
+
+      shared_examples "creates mandate hold task if needed" do
+        let(:remand_subtype) { nil }
+
+        it "sets appeal ready for distribution" do
+          remand_appeal = subject.remand_appeal
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
+          expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+          expect(remand_appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
+        end
+
+        context "when mandate dates are not provided" do
+          let(:judgement_date) { nil }
+          let(:mandate_date) { nil }
+
+          include_examples "remand appeal blocking distribution", MandateHoldTask, "on_hold"
+        end
+
+        context "when either of the mandate dates is not provided" do
+          let(:judgement_date) { [nil, 30.days.ago.to_date].sample }
+          let(:mandate_date) { 30.days.ago.to_date if judgement_date.nil? }
+
+          include_examples "remand appeal blocking distribution", MandateHoldTask, "on_hold"
+        end
+      end
+
+      context "when CavcRemand decision type is straight_reversal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+        include_examples "creates mandate hold task if needed"
+      end
+
+      context "when CavcRemand decision type is death_dismissal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.death_dismissal }
+        include_examples "creates mandate hold task if needed"
       end
     end
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  def distribution_task
-    @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
-                           DistributionTask.create!(appeal: @appeal, parent: @root_task)
-  end
-
-  def create_ihp_task
-    # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
-    IhpTasksFactory.new(distribution_task).create_ihp_tasks!
-  end
-
-  def create_selected_tasks
-    # Given a selection of task_ids, select it and all its tree ancestors
-    task_ids = @appeal.appellant_substitution.selected_task_ids
-    # Order the tasks so they are created in the same order
-    source_tasks = Task.where(id: task_ids).order(:id)
-
-    fail "Could not find all the tasks in the source appeal" if (task_ids - source_tasks.pluck(:id)).any?
-
-    fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
-
-    source_tasks.map do |source_task|
-      creation_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
-      create_task_from(source_task, creation_params)
-    end.flatten
-  end
-
-  def create_task_from(source_task, creation_params)
-    case source_task.type
-    when "DistributionTask"
-      distribution_task
-    when "EvidenceSubmissionWindowTask"
-      create_evidence_submission_window_task(@appeal, source_task, creation_params)
-    when "InformalHearingPresentationTask"
-      handle_substitution_ihp_task_and_poa
-    when "ScheduleHearingTask"
-      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
-    else
-      excluded_attrs = %w[status closed_at placed_on_hold_at]
-      source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
-    end
-  end
-
-  def handle_substitution_ihp_task_and_poa
-    create_ihp_task.tap do |vso_tasks|
-      warn_poa_not_a_representative if vso_tasks.blank?
-      if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
-        handle_different_poa
-      end
-    end
-  end
-
-  def warn_poa_not_a_representative
-    msg = "For Appeal #{@appeal.id}, did not create user-selected InformalHearingPresentationTask because " \
-      "POA is not a Representative: poa_participant_id = #{@appeal.appellant_substitution.poa_participant_id}"
-    # Change this to a Rails.logger.warning(msg) if Sentry becomes too noisy
-    Raven.capture_message(msg)
-  end
-
-  def handle_different_poa
-    # To-do: Refine or replace this code block for unrecognized appellants.
-    # If this happens, then the claimant's power_of_attorney is different than what is in BGS
-    # and BGS probably needs to be updated.
-    # ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-    # target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
-    # ihp_task&.update(assigned_to: target_org)
-    # To-do: close the other vso_tasks
-  end
-
-  # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
-  def create_cavc_subtasks
-    case @cavc_remand.cavc_decision_type
-    when Constants.CAVC_DECISION_TYPES.remand
-      create_remand_subtask
-    when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
-      if @cavc_remand.judgement_date.nil? || @cavc_remand.mandate_date.nil?
-        cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
-        MandateHoldTask.create_with_hold(cavc_task)
-      end
-    else
-      fail "Unsupported type: #{@cavc_remand.type}"
-    end
-  end
-
-  def create_remand_subtask
-    cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
-    case @cavc_remand.remand_subtype
-    when Constants.CAVC_REMAND_SUBTYPES.mdr
-      MdrTask.create_with_hold(cavc_task)
-    when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
-      SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
-    else
-      fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"
-    end
-  end
-
-  def should_streamline_death_dismissal?
-    return false if @appeal.appellant_is_not_veteran
-    return false if @appeal.veteran.alive?
-
-    FeatureToggle.enabled?(:death_dismissal_streamlining)
-  end
-
-  def maybe_create_translation_task
-    veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran&.validate_address
-    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
-  rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran_state_code
-  ensure
-    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 end
