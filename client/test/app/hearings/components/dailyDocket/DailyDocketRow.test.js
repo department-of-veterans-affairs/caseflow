@@ -69,3 +69,13 @@ describe('DailyDocketRow', () => {
     expect(results).toHaveNoViolations();
   });
 });
+
+describe('Test Conference Link Button', () => {
+  it('Test click event', () => {
+    const conferenceLink = jest.fn();
+    const button = shallow((<button onClick={conferenceLink}>Connect to Recording System</button>));
+
+    button.find('button').simulate('click');
+    expect(conferenceLink.mock.calls.length).toEqual(1);
+  });
+});
