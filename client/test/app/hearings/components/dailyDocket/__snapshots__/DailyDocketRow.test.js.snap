@@ -173,7 +173,7 @@ exports[`DailyDocketRow renders correctly 1`] = `
             class="usa-button-secondary usa-button"
             type="button"
           >
-             Connect to Recording 
+             Connect to Recording System
           </button>
         </span>
         <div>
