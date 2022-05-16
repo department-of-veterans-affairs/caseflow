@@ -217,7 +217,6 @@ describe InitialTasksFactory, :postgres do
         it "creates a task for each VSO" do
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           expect(RootTask.count).to eq(1)
-          byebug
           expect(InformalHearingPresentationTask.count).to eq(2)
           # sort order is non-deterministic so load by assignee
           expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
