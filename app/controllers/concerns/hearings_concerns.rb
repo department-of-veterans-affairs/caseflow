@@ -16,6 +16,10 @@ module HearingsConcerns
       verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
     end
 
+    def verify_access_to_hearings_update
+      verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched", "VSO")
+    end
+
     def verify_build_hearing_schedule_access
       verify_authorized_roles("Build HearSched")
     end
