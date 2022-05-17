@@ -24,6 +24,11 @@ class WorkQueue::AppealSerializer
     object.power_of_attorney.representative_email_address
   end
 
+  # current user who is signed in
+  attribute :current_user_email do |object|
+    object.appeal_views.find_by(user_id: RequestStore.read[:current_user]).user.email
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
