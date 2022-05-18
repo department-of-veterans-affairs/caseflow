@@ -9,6 +9,7 @@ import {
   dailyDokcetPropsHearingIsVirtual,
   dailyDokcetPropsHearingNotVirtual } from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
+import { shallow } from 'enzyme';
 
 let store;
 
