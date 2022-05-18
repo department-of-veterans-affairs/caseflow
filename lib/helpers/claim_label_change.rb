@@ -18,9 +18,25 @@ module WarRoom
         
         end
 
-        def claim_code_check()
+        def claim_code_check(code)
+            #load json file of Claim codes
+            file = File.open("END_PRODUCT_CODES.json")
 
+            #Parse json to ruby hash
+            codes_hash = JSON.parse(file)
+
+            #if claim code is in hash return true, else false.
+            return codes_hash[:code] ? true : false
         end
+
+        def same_claim_type?(old_code, new_code)
+            if(old_code[0,2] == new_code[0,2])
+                return true
+            else
+                return false
+            end
+        end
+
 
         def UpdateCaseflow(epe, new_code)
             #Update the End Product in Caseflow. 
@@ -31,6 +47,16 @@ module WarRoom
         end
        
         def ClaimLabelUpdater(reference_id, original_code, new_code)
+
+            if (same_claim_type?(original_code, new_code) == false)
+                puts("This is a different End Product, cannot claim label change. Aborting...")
+                fail Interrupt
+            end
+
+            if (claim_code_check(new_code) == false)
+                puts("Invalid claim label code. Aborting...")
+                fail Interrupt
+            end
 
              #set the user
              RequestStore[:current_user] = WarRoom.user
