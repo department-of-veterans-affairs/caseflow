@@ -160,8 +160,6 @@ describe InitialTasksFactory, :postgres do
               expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
               subject
               expect(appeal.reload.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
-              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(0)
-              subject
             end
           end
         end
@@ -248,21 +246,6 @@ describe InitialTasksFactory, :postgres do
               docket_type: Constants.AMA_DOCKETS.hearing,
               claimants: [create(:claimant, participant_id: participant_id_with_pva)]
             )
-          end
-
-          context "when VSO tasks already exists for the appeal and representative" do
-            before do
-              schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal)
-              ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: schedule_hearing_task, assigned_to: pva)
-            end
-
-            it "does not create duplicate change hearing tasks" do
-              expect(appeal.tasks.count { |t| t.is_a?(ScheduleHearingTask) }).to eq(1)
-              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
-              subject
-              expect(appeal.tasks.count { |t| t.is_a?(ScheduleHearingTask) }).to eq(1)
-              expect(appeal.reload.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
-            end
           end
 
           before do
