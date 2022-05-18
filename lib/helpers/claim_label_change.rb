@@ -18,6 +18,10 @@ module WarRoom
         
         end
 
+        def claim_code_check()
+
+        end
+
         def UpdateCaseflow(epe, new_code)
             #Update the End Product in Caseflow. 
             epe.update(code: new_code)
@@ -52,8 +56,10 @@ module WarRoom
              #todo: Test this 
             bgs = BGSService.new.client.claims
             claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+            record = claim_detail[:benefit_claim_record]
+            claim_label_check = record[:claim_type_code]
         
-            if(claim_detail != new_code)
+            if(claim_label_check != new_code)
                 UpdateVBMS(epe, original_code, new_code)
             end
 
