@@ -40,17 +40,6 @@ class InitialTasksFactory
     end
   end
 
-  def create_vso_hearing_request_type_task
-    appeal_views = AppealView.where(appeal_id: @appeal.id).to_a
-    appeal_views.each do |view|
-      user = @appeal.appeal_views.find_by(user_id: view.user_id).user
-      if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: user).empty? &&
-         @appeal.docket_type == "hearing"
-        ChangeHearingRequestTypeTask.create!(appeal: @appeal, parent: @root_task, assigned_to: user)
-      end
-    end
-  end
-
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
@@ -65,7 +54,8 @@ class InitialTasksFactory
       when "evidence_submission"
         EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
       when "hearing"
-        ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+        create_vso_hearing_request_type_task(schedule_hearing_task)
       when "direct_review"
         vso_tasks = create_ihp_task
         # If the appeal is direct docket and there are no ihp tasks,
@@ -84,6 +74,11 @@ class InitialTasksFactory
   def create_ihp_task
     # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
+  end
+
+  def create_vso_hearing_request_type_task(schedule_hearing_task)
+    # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
+    ChangeHearingRequestTypeTaskFactory.new(schedule_hearing_task).create_change_hearing_request_type_tasks!
   end
 
   def create_selected_tasks

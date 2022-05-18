@@ -22,6 +22,10 @@ class Representative < Organization
     ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
   end
 
+  def should_change_hearing_request_type?(appeal)
+    appeal.docket_type == Constants.AMA_DOCKETS.hearing && appeal.representatives.include?(self)
+  end
+
   def queue_tabs
     [
       tracking_tasks_tab,
