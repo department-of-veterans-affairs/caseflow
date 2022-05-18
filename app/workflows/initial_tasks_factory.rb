@@ -54,8 +54,8 @@ class InitialTasksFactory
       when "evidence_submission"
         EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
       when "hearing"
-        schedule_hearing_task = ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
-        create_vso_hearing_request_type_task(schedule_hearing_task)
+        ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+        create_vso_hearing_request_type_task
       when "direct_review"
         vso_tasks = create_ihp_task
         # If the appeal is direct docket and there are no ihp tasks,
@@ -71,13 +71,17 @@ class InitialTasksFactory
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
+  def schedule_hearing_task
+    @schedule_hearing_task ||= @appeal.tasks.open.find_by(type: :schedule_hearing_task) ||
+                               ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+  end
+
   def create_ihp_task
     # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def create_vso_hearing_request_type_task(schedule_hearing_task)
-    # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
+  def create_vso_hearing_request_type_task
     ChangeHearingRequestTypeTaskFactory.new(schedule_hearing_task).create_change_hearing_request_type_tasks!
   end
 

@@ -110,36 +110,6 @@ describe InitialTasksFactory, :postgres do
               expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal)).not_to be_nil
             end
           end
-          context "when a hearing docket appeal has to have a changehearingrequesttypetask assigned" do
-            let(:appeal) do
-              create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing, claimants: [
-                       create(:claimant, participant_id: participant_id_with_pva),
-                       create(:claimant, participant_id: participant_id_with_aml)
-                     ])
-            end
-            let!(:pva_vso) { create(:user, roles: ["VSO"], full_name: "pva") }
-            let!(:aml_vso) { create(:user, roles: ["VSO"], full_name: "aml") }
-            subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
-
-            it "creates a changehearingrequesttypetask assigned to the VSO" do
-              AppealView.create(user: pva_vso, appeal: appeal)
-              subject
-              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
-              expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva_vso)
-            end
-            it "creates a changehearingrequesttypetask assigned to multiple VSOs" do
-              AppealView.create(user: pva_vso, appeal: appeal)
-              AppealView.create(user: aml_vso, appeal: appeal)
-              subject
-              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(2)
-              change_tasks = appeal.tasks.open.where(
-                type: [ChangeHearingRequestTypeTask.name],
-                assigned_to_type: User.name
-              )
-              expect(change_tasks[0].assigned_to).to eq(aml_vso)
-              expect(change_tasks[1].assigned_to).to eq(pva_vso)
-            end
-          end
         end
 
         context "when it has an ihp-writing vso" do
@@ -271,7 +241,40 @@ describe InitialTasksFactory, :postgres do
           expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
         end
 
-        it "creates the tasks" do
+        context "when VSO does write IHPs for hearing docket cases" do
+          let(:appeal) do
+            create(
+              :appeal,
+              docket_type: Constants.AMA_DOCKETS.hearing,
+              claimants: [create(:claimant, participant_id: participant_id_with_pva)]
+            )
+          end
+
+          context "when VSO tasks already exists for the appeal and representative" do
+            before do
+              schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal)
+              ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: schedule_hearing_task, assigned_to: pva)
+            end
+
+            it "does not create duplicate change hearing tasks" do
+              expect(appeal.tasks.count { |t| t.is_a?(ScheduleHearingTask) }).to eq(1)
+              expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+              subject
+              expect(appeal.tasks.count { |t| t.is_a?(ScheduleHearingTask) }).to eq(1)
+              expect(appeal.reload.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+            end
+          end
+
+          before do
+            allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(true)
+          end
+
+          it "creates a changehearingrequesttypetask" do
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+            expect(ChangeHearingRequestTypeTask.find_by(appeal: appeal)).not_to be_nil
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+            expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva)
+          end
         end
 
         context "when VSO does not writes IHPs for hearing docket cases" do
@@ -290,6 +293,13 @@ describe InitialTasksFactory, :postgres do
           it "creates no IHP tasks" do
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
             expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
+          end
+
+          it "creates a changehearingrequesttypetask" do
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+            expect(ChangeHearingRequestTypeTask.find_by(appeal: appeal)).not_to be_nil
+            expect(appeal.tasks.count { |t| t.is_a?(ChangeHearingRequestTypeTask) }).to eq(1)
+            expect(appeal.tasks.detect { |t| t.is_a?(ChangeHearingRequestTypeTask) }.assigned_to).to eq(pva)
           end
         end
       end

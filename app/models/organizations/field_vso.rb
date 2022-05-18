@@ -13,10 +13,6 @@ class FieldVso < Vso
     false
   end
 
-  def should_change_hearing_request_type?(_appeal)
-    false
-  end
-
   private
 
   def add_vso_config
