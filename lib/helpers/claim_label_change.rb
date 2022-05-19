@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WarRoom
     class ClaimLabelChange
         def UpdateVBMS(epe, original_code, new_code)
@@ -14,8 +16,7 @@ module WarRoom
             ep_update.perform!
 
             #print the End Product Update to confirm the results. 
-            pp ep_update          
-        
+            pp ep_update              
         end
 
         def claim_code_check(code)
@@ -30,13 +31,13 @@ module WarRoom
         end
 
         def same_claim_type?(old_code, new_code)
+            #Checks the sameness of the first two chacters as a substing
             if(old_code[0,2] == new_code[0,2])
                 return true
             else
                 return false
             end
         end
-
 
         def UpdateCaseflow(epe, new_code)
             #Update the End Product in Caseflow. 
@@ -48,13 +49,21 @@ module WarRoom
        
         def ClaimLabelUpdater(reference_id, original_code, new_code)
 
+            #The End products must be of the same type. (030, 040, 070)
             if (same_claim_type?(original_code, new_code) == false)
                 puts("This is a different End Product, cannot claim label change. Aborting...")
                 fail Interrupt
             end
 
+            #Check that the new claim code is valid
             if (claim_code_check(new_code) == false)
-                puts("Invalid claim label code. Aborting...")
+                puts("Invalid new claim label code. Aborting...")
+                fail Interrupt
+            end
+
+            #Check that the old claim code is valid for record
+            if (claim_code_check(original_code) == false)
+                puts("Invalid orginal claim label code. Aborting...")
                 fail Interrupt
             end
 
@@ -78,21 +87,17 @@ module WarRoom
                 UpdateCaseflow(epe, new_code)
              end
 
-             #check VBMS
-             #todo: Test this 
+             #check VBMS 
             bgs = BGSService.new.client.claims
+            #fetch Claim details from VBMS by Claim_ID
             claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+            #retrieve specific record
             record = claim_detail[:benefit_claim_record]
+            #retrieve Claim code from record
             claim_label_check = record[:claim_type_code]
         
+            #If the claim label in VBMS does not match the new code, Update it
             if(claim_label_check != new_code)
                 UpdateVBMS(epe, original_code, new_code)
             end
-
         end
-
-        
-
-
-    
-
