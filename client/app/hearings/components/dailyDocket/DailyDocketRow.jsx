@@ -266,6 +266,12 @@ class DailyDocketRow extends React.Component {
 
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
+  conferenceLinkOnClick = () => {
+    const { conferenceLink } = this.props;
+
+    window.open(conferenceLink?.hostLink);
+  }
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -362,6 +368,10 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {hearing?.isVirtual !== true && <Button
+          classNames={['usa-button-secondary']}
+          type="button"
+          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -491,11 +501,13 @@ DailyDocketRow.propTypes = {
   }),
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  transitionAlert: PropTypes.func,
+  conferenceLink: PropTypes.object
 };
 
 const mapStateToProps = (state, props) => ({
-  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] }
+  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink
 });
 
 const mapDispatchToProps = (dispatch, props) =>
