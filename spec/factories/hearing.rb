@@ -94,5 +94,18 @@ FactoryBot.define do
                appeal: hearing.appeal)
       end
     end
+
+    # RootTask, on_hold
+    #   DistributionTask, on_hold
+    #     HearingTask, on_hold
+    #       ScheduleHearingTask, on_hold
+    #         ChangeHearingRequestTypeTask, assigned
+    trait :with_open_change_hearing_request_type_task do
+      after(:create) do |hearing, _evaluator|
+        create(:change_hearing_request_type_task,
+               appeal: hearing.appeal,
+               assigned_to: create(:vso))
+      end
+    end
   end
 end
