@@ -3,7 +3,7 @@
 module WarRoom
     class ClaimLabelChange
         def UpdateVBMS(epe, original_code, new_code)
-            #An End Product Update is created with the desired changes.
+            # An End Product Update is created with the desired changes.
             ep_update = EndProductUpdate.create!(
                     end_product_establishment: epe,
                     original_decision_review: epe.source,
@@ -12,26 +12,29 @@ module WarRoom
                     user: User.system_user
                     )	
 
-            #Perform the End Product Update. Note the return message. 
+            # Perform the End Product Update. Note the return message. 
             ep_update.perform!
 
-            #print the End Product Update to confirm the results. 
-            pp ep_update              
+            # print the End Product Update to confirm the results. 
+            pp ep_update          
+        
         end
 
         def claim_code_check(code)
-            #load json file of Claim codes
-            file = File.open("END_PRODUCT_CODES.json")
+            # Declare hash
+            codes_hash =[]
 
-            #Parse json to ruby hash
-            codes_hash = JSON.parse(file)
+            #File open and process. 
+            File.open('lib/helpers/END_PRODUCT_CODES.json') do |f|
+                codes_hash = JSON.parse(f.read)
+            end
 
             #if claim code is in hash return true, else false.
-            return codes_hash[:code] ? true : false
+            return codes_hash.has_key?(code)
         end
 
         def same_claim_type?(old_code, new_code)
-            #Checks the sameness of the first two chacters as a substing
+            # Checks the sameness of the first two chacters as a substing
             if(old_code[0,2] == new_code[0,2])
                 return true
             else
@@ -39,29 +42,30 @@ module WarRoom
             end
         end
 
+
         def UpdateCaseflow(epe, new_code)
-            #Update the End Product in Caseflow. 
+            # Update the End Product in Caseflow. 
             epe.update(code: new_code)
 
-            #Save the changes to the End Product. 
+            # Save the changes to the End Product. 
             epe.save
         end
        
         def ClaimLabelUpdater(reference_id, original_code, new_code)
 
-            #The End products must be of the same type. (030, 040, 070)
+             #The End products must be of the same type. (030, 040, 070)
             if (same_claim_type?(original_code, new_code) == false)
                 puts("This is a different End Product, cannot claim label change. Aborting...")
                 fail Interrupt
             end
 
             #Check that the new claim code is valid
-            if (claim_code_check(new_code) == false)
+             if (claim_code_check(new_code) == false)
                 puts("Invalid new claim label code. Aborting...")
                 fail Interrupt
-            end
+             end
 
-            #Check that the old claim code is valid for record
+             #Check that the old claim code is valid for record
             if (claim_code_check(original_code) == false)
                 puts("Invalid orginal claim label code. Aborting...")
                 fail Interrupt
@@ -87,7 +91,7 @@ module WarRoom
                 UpdateCaseflow(epe, new_code)
              end
 
-             #check VBMS 
+            #check VBMS 
             bgs = BGSService.new.client.claims
             #fetch Claim details from VBMS by Claim_ID
             claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
@@ -95,9 +99,12 @@ module WarRoom
             record = claim_detail[:benefit_claim_record]
             #retrieve Claim code from record
             claim_label_check = record[:claim_type_code]
-        
+
             #If the claim label in VBMS does not match the new code, Update it
             if(claim_label_check != new_code)
                 UpdateVBMS(epe, original_code, new_code)
             end
+
         end
+    end
+end
