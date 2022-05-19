@@ -2,7 +2,7 @@
 
 module WarRoom
     class ClaimLabelChange
-        def UpdateVBMS(epe, original_code, new_code)
+        def update_vbms(epe, original_code, new_code)
             # An End Product Update is created with the desired changes.
             ep_update = EndProductUpdate.create!(
                     end_product_establishment: epe,
@@ -33,7 +33,7 @@ module WarRoom
             return codes_hash.has_key?(code)
         end
 
-        def same_claim_type?(old_code, new_code)
+        def same_claim_type(old_code, new_code)
             # Checks the sameness of the first two chacters as a substing
             if(old_code[0,2] == new_code[0,2])
                 return true
@@ -43,7 +43,7 @@ module WarRoom
         end
 
 
-        def UpdateCaseflow(epe, new_code)
+        def update_caseflow(epe, new_code)
             # Update the End Product in Caseflow. 
             epe.update(code: new_code)
 
@@ -51,10 +51,10 @@ module WarRoom
             epe.save
         end
        
-        def ClaimLabelUpdater(reference_id, original_code, new_code)
+        def claim_label_updater(reference_id, original_code, new_code)
 
              #The End products must be of the same type. (030, 040, 070)
-            if (same_claim_type?(original_code, new_code) == false)
+            if (same_claim_type(original_code, new_code) == false)
                 puts("This is a different End Product, cannot claim label change. Aborting...")
                 fail Interrupt
             end
@@ -88,7 +88,7 @@ module WarRoom
 
              #check caseflow
              if(epe.code != new_code)
-                UpdateCaseflow(epe, new_code)
+             update_caseflow(epe, new_code)
              end
 
             #check VBMS 
@@ -102,7 +102,7 @@ module WarRoom
 
             #If the claim label in VBMS does not match the new code, Update it
             if(claim_label_check != new_code)
-                UpdateVBMS(epe, original_code, new_code)
+                update_vbms(epe, original_code, new_code)
             end
 
         end
