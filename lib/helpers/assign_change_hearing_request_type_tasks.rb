@@ -32,14 +32,13 @@ module AssignChangeHearingRequestTypeTasks
 
   def self.assign_change_hearing_request_type_task(appeal)
     # get an array of the representative ids that belong to the appeal
-    tasks_assigned_to_appeal = Task.where(appeal_id: appeal.id)
+    tasks_assigned_to_appeal = appeal.tasks
 
     # get the schedule hearing tasks that are on the appeal
     schedule_hearing_tasks = tasks_assigned_to_appeal.select { |task| task.type == "ScheduleHearingTask" }
 
     # get the open schedule hearings tasks if there are multiple
     schedule_hearing_task = schedule_hearing_tasks.select(&:active?)
-
     # get the VSO user(s) assigned to the appeal
     vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
 
@@ -48,11 +47,6 @@ module AssignChangeHearingRequestTypeTasks
       # next if can_vso_user_change_hearing_request_type(vso_user.tasks)
 
       # testing
-      puts("User #{vso_user.full_name} assigned ChangeHearingRequestTypeTask")
-
-      # if schedule_hearing_task is not empty, create the ChangeHearingRequestTypeTask
-      next if schedule_hearing_task.empty?
-
       # assign ChangeHearingRequestTypeTask to user with the root task being the schedule_hearing_task
       ChangeHearingRequestTypeTask.create!(
         appeal: appeal,
