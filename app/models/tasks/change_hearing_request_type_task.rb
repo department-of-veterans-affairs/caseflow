@@ -74,24 +74,23 @@ class ChangeHearingRequestTypeTask < Task
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def self.update_to_new_poa(appeal)
+  def poa_update(appeal, assigned_to_name)
     new_task_count = 0
     closed_task_count = 0
 
     tasks_to_sync = appeal.tasks.open.where(
       type: [ChangeHearingRequestTypeTask.name],
-      assigned_to_type: User.name
+      assigned_to_type: assigned_to_name
     )
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
-    schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
+
     # Create a ChangeHearingRequestTypeTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
       ChangeHearingRequestTypeTask.create!(appeal: appeal, parent: schedule_hearing_task, assigned_to: new_vso)
       new_task_count += 1
     end
-
     # Close all ChangeHearingRequestTypeTasks for now-former VSO representatives.
     outdated_representatives = cached_representatives - fresh_representatives
     tasks_to_sync.select { |t_inc| outdated_representatives.include?(t_inc.assigned_to) }.each do |task|
@@ -107,6 +106,17 @@ class ChangeHearingRequestTypeTask < Task
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+
+  def self.update_to_new_poa(appeal)
+    # check if parent tasks exists
+    schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
+    if schedule_hearing_task.nil?
+      return
+    end
+
+    poa_update(appeal, User.name)
+    poa_update(appeal, Organization.name)
+  end
 
   private
 
