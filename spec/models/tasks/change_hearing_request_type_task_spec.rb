@@ -301,7 +301,14 @@ describe ChangeHearingRequestTypeTask do
     let!(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
     let!(:vso_org) { create(:vso) }
     let!(:vso_org_new) { create(:vso) }
-    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task, assigned_to: vso_org) }
+    let!(:schedule_hearing_task) do
+      create(
+        :schedule_hearing_task,
+        parent: hearing_task,
+        appeal: root_task.appeal,
+        assigned_to: vso_org
+      )
+    end
     let!(:old_vso) { create(:user, roles: ["VSO"], full_name: "old") }
     let!(:new_vso) { create(:user, roles: ["VSO"], full_name: "new") }
 
