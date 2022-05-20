@@ -43,18 +43,20 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
+    byebug
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif should_streamline_death_dismissal?
+      byebug
       distribution_task.ready_for_distribution!
     else
       case @appeal.docket_type
       when "evidence_submission"
+        byebug
         EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
       when "hearing"
-        ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
         create_vso_hearing_request_type_task
       when "direct_review"
         vso_tasks = create_ihp_task
@@ -72,7 +74,7 @@ class InitialTasksFactory
   end
 
   def schedule_hearing_task
-    @schedule_hearing_task ||= @appeal.tasks.open.find_by(type: :schedule_hearing_task) ||
+    @schedule_hearing_task ||= @appeal.tasks.open.find_by(type: :ScheduleHearingTask) ||
                                ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
   end
 
