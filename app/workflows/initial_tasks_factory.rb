@@ -23,7 +23,6 @@ class InitialTasksFactory
 
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
-    create_vso_hearing_request_type_task
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
     end
@@ -43,18 +42,15 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
-    byebug
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif should_streamline_death_dismissal?
-      byebug
       distribution_task.ready_for_distribution!
     else
       case @appeal.docket_type
       when "evidence_submission"
-        byebug
         EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
       when "hearing"
         create_vso_hearing_request_type_task
