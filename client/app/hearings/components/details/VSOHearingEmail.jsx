@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 import * as yup from 'yup';
 
+import { EmptyConfirmContext, EmptyConfirmMessageContext } from '../HearingTypeConversion';
 import { OriginalEmailContext } from './VSOEmailNotificationsFields';
 import { BtnContext } from '../VSOHearingTypeConversionForm';
 import { HelperText } from '../VirtualHearings/HelperText';
@@ -27,6 +28,8 @@ export const VSOHearingEmail = ({
 
   const [isNotValidEmail, setIsNotValidEmail] = useContext(BtnContext);
   const [originalEmail, setOriginalEmail] = useContext(OriginalEmailContext);
+  const [confirmIsEmpty, setConfirmIsEmpty] = useContext(EmptyConfirmContext);
+  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useContext(EmptyConfirmMessageContext);
 
   // Regex to validate email input in real time
   const emailRegex = /\S+@\S+\.\S+/;
@@ -50,6 +53,12 @@ export const VSOHearingEmail = ({
   const confirmEmailCheck = (newEmail) => {
     const email = newEmail;
 
+    if (email === '') {
+      setConfirmIsEmpty(true);
+    } else {
+      setConfirmIsEmpty(false);
+    }
+
     if (email === originalEmail) {
       setIsValid(true);
       setMessage('');
@@ -67,7 +76,7 @@ export const VSOHearingEmail = ({
         <TextField
           optional={optional}
           readOnly={disabled}
-          errorMessage={message}
+          errorMessage={confirmIsEmpty ? confirmIsEmptyMessage : message}
           name={label}
           value={email}
           required={!disabled && required}

@@ -29,11 +29,8 @@ export const VSOEmailNotificationsFields = ({
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
-  const timezoneCheck = (appellantTz) => {
-    const tz = appellantTz;
-
+  const timezoneCheck = () => {
     setIsAppellantTZEmpty(false);
-    console.log("TZ is " + tz);
   };
 
   return (
@@ -64,7 +61,7 @@ export const VSOEmailNotificationsFields = ({
           >
             <Timezone
               required
-              errorMessage={appellantTZErrorMessage}
+              errorMessage={isAppellantTZEmpty ? appellantTZErrorMessage : null}
               onChange={(appellantTz) => {
                 timezoneCheck(appellantTz);
               }}

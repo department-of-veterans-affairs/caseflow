@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import COPY from '../../../../COPY';
-import { RepresentativeTZContext, RepresentativeTZErrorContext } from '../HearingTypeConversion'; 
+import { RepresentativeTZContext, RepresentativeTZErrorContext } from '../HearingTypeConversion';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
@@ -27,7 +27,11 @@ export const VSORepresentativeSection = ({
 }) => {
 
   const [isRepTZEmpty, setIsRepTZEmpty] = useContext(RepresentativeTZContext);
-  const [repTZErrorMessage, setRepTZErrorMessage] = useContext(RepresentativeTZErrorContext);
+  const [repTZErrorMessage] = useContext(RepresentativeTZErrorContext);
+
+  const timezoneCheck = () => {
+    setIsRepTZEmpty(false);
+  };
 
   return (
     <VirtualHearingSection
@@ -85,12 +89,12 @@ export const VSORepresentativeSection = ({
           )}
         >
           <Timezone
-            errorMessage={errors?.representativeTz}
+            errorMessage={isRepTZEmpty ? repTZErrorMessage : null}
             required
             value={representativeTimezone}
-            onChange={(representativeTz) =>
-              update('hearing', { representativeTz })
-            }
+            onChange={(representativeTz) => {
+              timezoneCheck(representativeTz);
+            }}
             time={hearing.scheduledTimeString}
             roTimezone={hearing?.regionalOfficeTimezone}
             label="POA/Representative Timezone"
