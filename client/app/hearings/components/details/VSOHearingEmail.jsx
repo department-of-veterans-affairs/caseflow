@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 import * as yup from 'yup';
 
+import { OriginalEmailContext } from './VSOEmailNotificationsFields';
 import { BtnContext } from '../VSOHearingTypeConversionForm';
 import { HelperText } from '../VirtualHearings/HelperText';
 import { ReadOnly } from '../details/ReadOnly';
@@ -14,23 +15,26 @@ import TextField from '../../../components/TextField';
 export const VSOHearingEmail = ({
   email,
   label,
-  readOnly,
   required,
   disabled,
   optional,
   helperLabel,
   showHelper,
+  confirmEmail
 }) => {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState('');
 
   const [isNotValidEmail, setIsNotValidEmail] = useContext(BtnContext);
+  const [originalEmail, setOriginalEmail] = useContext(OriginalEmailContext);
 
   // Regex to validate email input in real time
   const emailRegex = /\S+@\S+\.\S+/;
 
   const validateEmail = (newEmail) => {
     const email = newEmail;
+
+    setOriginalEmail(email);
 
     if (emailRegex.test(email)) {
       setIsValid(true);
@@ -43,9 +47,43 @@ export const VSOHearingEmail = ({
     }
   };
 
+  const confirmEmailCheck = (newEmail) => {
+    const email = newEmail;
+
+    if (email === originalEmail) {
+      setIsValid(true);
+      setMessage('');
+      setIsNotValidEmail(false);
+    } else {
+      setIsValid(false);
+      setMessage('Email does not match');
+      setIsNotValidEmail(true);
+    }
+  };
+
   return (
-    readOnly ? (
-      <ReadOnly label={label} text={email ?? 'None'} />
+    confirmEmail ? (
+      <React.Fragment>
+        <TextField
+          optional={optional}
+          readOnly={disabled}
+          errorMessage={message}
+          name={label}
+          value={email}
+          required={!disabled && required}
+          strongLabel
+          className={[
+            classnames('cf-form-textinput', 'cf-inline-field', {
+              [enablePadding]: message,
+            }),
+          ]}
+          onChange={(newEmail) => {
+            confirmEmailCheck(newEmail);
+          }}
+        />
+        {showHelper ? <HelperText label={helperLabel} /> : null}
+
+      </React.Fragment>
     ) : (
       <React.Fragment>
         <TextField
@@ -88,4 +126,5 @@ VSOHearingEmail.propTypes = {
   disabled: PropTypes.bool,
   helperLabel: PropTypes.string,
   showHelper: PropTypes.bool,
+  confirmEmail: PropTypes.bool
 };
