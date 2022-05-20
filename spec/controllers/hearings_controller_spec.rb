@@ -371,6 +371,114 @@ RSpec.describe HearingsController, type: :controller do
       include_context "based on hearing disposition"
     end
 
+    context "when updating a hearing as a VSO user to virtual hearing" do
+      let(:vso) { create(:vso) }
+      let(:vso_user) { create(:user, :vso_role) }
+      let(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: vso) }
+      let(:hearing) { create(:hearing, appeal: change_hearing_request_type_task.appeal) }
+      let(:virtual_hearing_params) { {} }
+
+      before do
+        vso.add_user(vso_user)
+        User.authenticate!(user: vso_user)
+      end
+
+      subject do
+        hearing_params = {
+          notes: "Notes",
+          virtual_hearing_attributes: virtual_hearing_params
+        }
+        patch_params = {
+          id: hearing.external_id,
+          hearing: hearing_params
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      context "without any params" do
+        it "returns 200 status code" do
+          expect(subject.status).to eq(200)
+        end
+        it "hearing was not changed " do
+          expect(hearing.virtual?).to eq(false)
+        end
+      end
+    end
+
+    context "when updating a hearing as a PrivateBar user to virtual hearing" do
+      let(:private_bar) { create(:private_bar) }
+      let(:private_bar_user) { create(:user, :vso_role) }
+      let(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: private_bar) }
+      let(:hearing) { create(:hearing, appeal: change_hearing_request_type_task.appeal) }
+      let(:virtual_hearing_params) { {} }
+
+      before do
+        private_bar.add_user(private_bar_user)
+        User.authenticate!(user: private_bar_user)
+      end
+
+      subject do
+        hearing_params = {
+          notes: "Notes",
+          virtual_hearing_attributes: virtual_hearing_params
+        }
+        patch_params = {
+          id: hearing.external_id,
+          hearing: hearing_params
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      context "without any params" do
+        it "returns 200 status code" do
+          expect(subject.status).to eq(200)
+        end
+        it "hearing was not changed " do
+          expect(hearing.virtual?).to eq(false)
+        end
+      end
+    end
+
+    context "when updating a hearing as a FieldVSO user to virtual hearing" do
+      let(:field_vso) { create(:field_vso) }
+      let(:field_vso_user) { create(:user, :vso_role) }
+      let(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: field_vso) }
+      let(:hearing) { create(:hearing, appeal: change_hearing_request_type_task.appeal) }
+      let(:virtual_hearing_params) { {} }
+
+      before do
+        field_vso.add_user(field_vso_user)
+        User.authenticate!(user: field_vso_user)
+      end
+
+      subject do
+        hearing_params = {
+          notes: "Notes",
+          virtual_hearing_attributes: virtual_hearing_params
+        }
+        patch_params = {
+          id: hearing.external_id,
+          hearing: hearing_params
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      context "without any params" do
+        it "returns 200 status code" do
+          expect(subject.status).to eq(200)
+        end
+        it "hearing was not changed " do
+          expect(hearing.virtual?).to eq(false)
+        end
+      end
+    end
+
     context "when updating the AOD" do
       it "should return a 200 if empty aod" do
         params = {
