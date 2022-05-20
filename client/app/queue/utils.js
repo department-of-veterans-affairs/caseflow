@@ -701,7 +701,7 @@ export const taskActionData = ({ task, match }) => {
     return relevantAction.data;
   }
 
-  return null;
+  return {};
 };
 
 export const parentTasks = (childrenTasks, allTasks) => {
