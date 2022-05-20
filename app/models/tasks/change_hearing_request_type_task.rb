@@ -74,13 +74,18 @@ class ChangeHearingRequestTypeTask < Task
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def poa_update(appeal, assigned_to_name)
+  def self.update_to_new_poa(appeal)
+    # check if parent tasks exists
+    schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
+    if schedule_hearing_task.nil?
+      return
+    end
+
     new_task_count = 0
     closed_task_count = 0
 
     tasks_to_sync = appeal.tasks.open.where(
-      type: [ChangeHearingRequestTypeTask.name],
-      assigned_to_type: assigned_to_name
+      type: [ChangeHearingRequestTypeTask.name]
     )
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
@@ -106,17 +111,6 @@ class ChangeHearingRequestTypeTask < Task
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
-
-  def self.update_to_new_poa(appeal)
-    # check if parent tasks exists
-    schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
-    if schedule_hearing_task.nil?
-      return
-    end
-
-    poa_update(appeal, User.name)
-    poa_update(appeal, Organization.name)
-  end
 
   private
 

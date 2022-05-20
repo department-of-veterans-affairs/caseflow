@@ -300,12 +300,12 @@ describe ChangeHearingRequestTypeTask do
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
     let!(:vso_org) { create(:vso) }
-
+    let!(:vso_org_new) { create(:vso) }
     let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task, assigned_to: vso_org) }
     let!(:old_vso) { create(:user, roles: ["VSO"], full_name: "old") }
     let!(:new_vso) { create(:user, roles: ["VSO"], full_name: "new") }
 
-    context "When former representative VSO is assigned non-Tracking tasks" do
+    context "When former representative VSO user is assigned tasks" do
       let!(:change_type_task) do
         create(
           :change_hearing_request_type_task,
@@ -324,6 +324,27 @@ describe ChangeHearingRequestTypeTask do
         expect(new_vso.tasks.count).to eq(0)
         expect(subject).to eq([1, 1])
         expect(new_vso.tasks.count).to eq(1)
+      end
+    end
+    context "When former representative VSO organization is assigned tasks" do
+      let!(:change_type_task) do
+        create(
+          :change_hearing_request_type_task,
+          parent: schedule_hearing_task,
+          appeal: root_task.appeal,
+          assigned_to: vso_org
+        )
+      end
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([vso_org_new]) }
+
+      it "cancels all tasks of former VSO" do
+        subject
+        expect(change_type_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+      it "makes duplicates of active tasks for new representation" do
+        expect(vso_org_new.tasks.count).to eq(0)
+        expect(subject).to eq([1, 1])
+        expect(vso_org_new.tasks.count).to eq(1)
       end
     end
     context "when the appeal has no VSOs" do
