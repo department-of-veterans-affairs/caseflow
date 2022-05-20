@@ -727,7 +727,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         :education_document_search_task,
         :assigned,
         assigned_to: emo,
-        assigned_by: emo_user
+        assigned_by: bva_intake_user
       )
 
       emo_task.completed!
