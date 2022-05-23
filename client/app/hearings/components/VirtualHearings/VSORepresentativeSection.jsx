@@ -63,7 +63,7 @@ export const VSORepresentativeSection = ({
           optional
           emailType={representativeEmailType}
           label="POA/Representative Email"
-          email={hearing?.representativeEmailAddress}
+          email={hearing?.currentUserEmail}
           error={errors?.representativeEmailAddress}
           type={type}
           update={update}

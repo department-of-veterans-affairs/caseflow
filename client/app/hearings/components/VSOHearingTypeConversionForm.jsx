@@ -30,6 +30,7 @@ export const VSOHearingTypeConversionForm = ({
     appellantFullName: appeal?.appellantFullName,
     appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
     veteranFullName: appeal?.veteranFullName,
+    currentUserEmail: appeal?.currentUserEmail
   };
 
   // veteranInfo gets loaded into redux store when case details page loads
