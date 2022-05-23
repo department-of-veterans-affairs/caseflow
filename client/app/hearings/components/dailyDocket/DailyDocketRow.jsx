@@ -26,7 +26,7 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit, userJudgeOrCoordinator } from '../../utils';
 import { docketRowStyle, inputSpacing } from './style';
 import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
@@ -368,7 +368,7 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
-        {hearing?.isVirtual !== true && <Button
+        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
           classNames={['usa-button-secondary']}
           type="button"
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }

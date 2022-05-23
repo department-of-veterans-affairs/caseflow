@@ -203,7 +203,7 @@ export const handleEdit = (init, current, fields) => {
 };
 
 export const userJudgeOrCoordinator = (user, hearing) =>
-  user.userCanAssignHearingSchedule ||  user.userId === hearing?.judgeId;
+  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId;
 
 export const virtualHearingRoleForUser = (user, hearing) =>
   userJudgeOrCoordinator(user, hearing) ?
