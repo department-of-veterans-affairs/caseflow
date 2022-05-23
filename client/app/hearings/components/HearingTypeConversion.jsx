@@ -84,8 +84,6 @@ export const HearingTypeConversion = ({
       }
       setLoading(true);
 
-      console.log(data);
-
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
 
       props.showSuccessMessage(getSuccessMsg());
