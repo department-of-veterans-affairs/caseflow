@@ -62,7 +62,8 @@ export const HearingTypeConversion = ({
                 email_recipients: {
                   appellant_tz: appeal?.appellantTz,
                   representative_tz: appeal?.powerOfAttorney?.representative_tz,
-                  appellant_email: appeal?.veteranInfo?.veteran?.email_address
+                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
+                  representative_email: appeal?.powerOfAttorney?.representative_email_address
                 }
               }
             }
