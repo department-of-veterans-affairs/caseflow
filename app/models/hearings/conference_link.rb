@@ -53,7 +53,7 @@ class ConferenceLink < CaseflowRecord
       )
     rescue StandardError => error
       Raven.capture_exception(error: error)
-      raise VirtualHearingLinkGenerationFailed
+      raise error
     end
   end
 
