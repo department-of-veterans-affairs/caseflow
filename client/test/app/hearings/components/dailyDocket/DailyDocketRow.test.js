@@ -6,8 +6,12 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { dailyDocketReducer } from '../../../../data/hearings/dailyDocket/reducer/dailyDocketReducer';
 import {
-  dailyDokcetPropsHearingIsVirtual,
-  dailyDokcetPropsHearingNotVirtual } from '../../../../data/hearings/dailyDocket/dailyDocketProps';
+  dailyDocketPropsHearingIsVirtual,
+  dailyDocketPropsHearingNotVirtual,
+  dailyDocketPropsHearingNotVirtualVSOUser,
+  dailyDocketPropsHearingNotVirtualJudgeUser,
+  dailyDocketPropsHearingNotVirtualCoordinatorUser,
+  dailyDocketPropsHearingNotVirtualAttorneyUser} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
 import { shallow } from 'enzyme';
 
@@ -22,7 +26,7 @@ describe('DailyDocketRow', () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDokcetPropsHearingNotVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
         </Router>
       </Provider>
     );
@@ -34,7 +38,55 @@ describe('DailyDocketRow', () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDokcetPropsHearingIsVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingIsVirtual} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+  // noelle's area
+  it('renders correctly for non virtual, judge', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non virtual, attorney', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualAttorneyUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non virtual, hearing cooridnator', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualCoordinatorUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non virtual, VSO ', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualVSOUser} />
         </Router>
       </Provider>
     );
@@ -46,7 +98,7 @@ describe('DailyDocketRow', () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDokcetPropsHearingNotVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
         </Router>
       </Provider>
     );
@@ -60,7 +112,7 @@ describe('DailyDocketRow', () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDokcetPropsHearingIsVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingIsVirtual} />
         </Router>
       </Provider>
     );
