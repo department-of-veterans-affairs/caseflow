@@ -142,10 +142,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can?("Build HearSched") || can?("Edit HearSched") || can?("VSO")
   end
 
-  def can_cancel_change_hearing_request_type?
-    can?("Build HearSched") || can?("Edit HearSched")
-  end
-
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end
