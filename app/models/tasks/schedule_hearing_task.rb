@@ -99,6 +99,7 @@ class ScheduleHearingTask < Task
   end
 
   def available_actions(user)
+    return available_vso_user_actions() if user.vso_employee?
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
@@ -112,13 +113,22 @@ class ScheduleHearingTask < Task
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
-      ] | hearing_admin_actions
+      ] | hearing_admin_actions 
     end
 
     hearing_admin_actions
   end
 
-  # Override the available user actions to inject change hearing request type tasks
+  # Helper method to assign task actions for VSO user and return array with only convert
+  # to virtual option if the hearing type is something other than virtual
+  def available_vso_user_actions()
+    if self.appeal.current_hearing_request_type != :virtual
+      return [Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h]
+    else
+      return []
+    end
+  end
+
   def available_hearing_user_actions(user)
     # Capture the parent user actions
     parent_admin_actions = super(user)

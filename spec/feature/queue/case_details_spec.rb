@@ -2331,7 +2331,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
   
-      #National VSO Test
+      # National VSO Test
       context "when updating a hearing as a VSO user to virtual hearing" do
         let!(:vso) { create(:vso) }
         let!(:vso_user) { create(:user, :vso_role) }
@@ -2382,7 +2382,7 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
   
-      #Field VSO Test
+      # Field VSO Test
       context "when updating a hearing as a Field VSO user to virtual hearing" do
         let!(:field_vso) { create(:field_vso) }
         let!(:field_vso_user) { create(:user, :vso_role) }
@@ -2433,7 +2433,7 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
   
-      #Private Bar Test
+      # Private Bar Test
       context "when updating a hearing as a private bar user to virtual hearing" do
         let!(:private_bar) { create(:private_bar) }
         let!(:private_bar_user) { create(:user, :vso_role) }
