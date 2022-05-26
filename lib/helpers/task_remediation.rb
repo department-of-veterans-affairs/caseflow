@@ -11,7 +11,7 @@ class TaskRemediation
 
         #Confirm Number of Tasks Being Reassigned matches the number of tasks displayed within the current user's assigned and on hold queue 
         #within Casflow UI
-        puts "\n\n\n#{assigned_tasks.count} task(s) are being reassigned\n\n\n\n"
+        puts "\n\n\n#{assigned_tasks.count} task(s) are being reassigned\n\n\n"
 
         #Task Counter Variable
         task_counter = 0
@@ -21,7 +21,7 @@ class TaskRemediation
         assigned_tasks.each {|task| task.update!(assigned_to_id: new_user.id, assigned_by_id: User.system_user.id, updated_at: Time.zone.now) && task_counter += 1}
 
         #Display number of Tasks Reassigned
-        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n\n"
+        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n"
     end
 
     def self.reassign_by_appeal_uuid!(old_css_id_string, new_css_id_string, array_of_uuids_as_strings)
@@ -49,7 +49,7 @@ class TaskRemediation
 
         #Confirm Number of Tasks Being Reassigned matches the number of tasks desired to be reassigned from within the current user's 
         #assigned and on hold queue within Casflow UI
-        puts "\n\n\n#{assigned_tasks.count} task(s) found to be reassigned\n\n\n\n"
+        puts "\n\n\n#{assigned_tasks.count} task(s) found to be reassigned\n\n\n"
 
         #Task Counter Variable
         task_counter = 0
@@ -59,7 +59,7 @@ class TaskRemediation
         assigned_tasks.each {|task| task.update!(assigned_to_id: new_user.id, assigned_by_id: User.system_user.id, updated_at: Time.zone.now) && task_counter += 1}
         
         #Display number of Tasks Reassigned
-        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n\n"
+        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n"
     end
 
     def
@@ -78,7 +78,7 @@ class TaskRemediation
 
         #Confirm Number of Tasks Being Reassigned matches the number of tasks displayed within the current user's queue in Casflow UI
         #Note: This number may be higher than what is shown in user's queue if user has Tasks that are "on_hold".  
-        puts "\n\n\n#{assigned_tasks.count} task(s) are being reassigned\n\n\n\n"
+        puts "\n\n\n#{assigned_tasks.count} task(s) are being reassigned\n\n\n"
 
         #Task Counter Variable
         task_counter = 0
@@ -88,7 +88,7 @@ class TaskRemediation
         assigned_tasks.each {|task| task.update!(assigned_to_id: new_user.id, assigned_by_id: User.system_user.id, updated_at: Time.zone.now) && task_counter += 1}
     
         #Display number of Tasks Reassigned
-        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n\n"
+        puts "\n\n\n#{task_counter} task(s) successfully reassigned\n\n\n"
     end
 
     def
