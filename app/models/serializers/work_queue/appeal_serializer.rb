@@ -24,9 +24,14 @@ class WorkQueue::AppealSerializer
     object.power_of_attorney.representative_email_address
   end
 
-  # current user who is signed in
+  # email address of current user who is signed in
   attribute :current_user_email do |_, params|
     params[:user].email
+  end
+
+  # timezone of current user who is signed in
+  attribute :current_user_timezone do |_, params|
+    params[:user].timezone
   end
 
   attribute :contested_claim, &:contested_claim?

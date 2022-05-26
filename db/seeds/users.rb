@@ -131,6 +131,7 @@ module Seeds
           full_name: "#{name} VSOUser Jones",
           roles: %w[VSO],
           email: "#{name}@test.com"
+          # timezone: Time.new.in_time_zone
         )
         vso.add_user(u)
 

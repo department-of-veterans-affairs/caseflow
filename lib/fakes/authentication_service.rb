@@ -23,7 +23,8 @@ class Fakes::AuthenticationService
       "roles" => roles,
       "station_id" => user.station_id,
       "name" => user.full_name,
-      "email" => user.email
+      "email" => user.email,
+      "timezone" => user.timezone
     }
   end
 
