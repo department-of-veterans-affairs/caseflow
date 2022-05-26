@@ -39,7 +39,7 @@ RSpec.feature "Convert hearing request type" do
 
       step "Confirm success message" do
         expect(page).to have_content(
-          "You have successfully converted #{appeal.veteran_full_name}'s hearing to Virtual"
+          "You have successfully converted #{appeal.veteran_full_name}'s hearing to virtual"
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
       end
