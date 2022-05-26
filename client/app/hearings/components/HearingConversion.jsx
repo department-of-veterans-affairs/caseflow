@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
 import { marginTop } from './details/style';
@@ -23,13 +24,14 @@ export const HearingConversion = ({
   type,
   scheduledFor,
   errors,
-  update,
+  update
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Set the section props
   const sectionProps = {
@@ -72,6 +74,7 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
+      {userVsoEmployee ? <h1>VSO Employee</h1> : <></>}
       <span>{sprintf(helperLabel, appellantTitle)}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
@@ -112,5 +115,5 @@ HearingConversion.propTypes = {
   scheduledFor: PropTypes.string.isRequired,
   errors: PropTypes.object,
   update: PropTypes.func,
-  hearing: PropTypes.object.isRequired,
+  hearing: PropTypes.object.isRequired
 };
