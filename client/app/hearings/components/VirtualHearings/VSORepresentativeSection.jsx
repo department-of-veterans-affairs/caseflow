@@ -81,7 +81,7 @@ export const VSORepresentativeSection = ({
         <Timezone
           errorMessage={errors?.representativeTz}
           required
-          value={currentUserTimezone}
+          value={hearing?.currentUserTimezone}
           onChange={(currentUserTimezone) =>
             update("hearing", { currentUserTimezone })
           }

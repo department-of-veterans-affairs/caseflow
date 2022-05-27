@@ -1,23 +1,23 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { sprintf } from 'sprintf-js';
-import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { get } from "lodash";
+import { sprintf } from "sprintf-js";
+import { withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
 
-import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
-import { HearingTypeConversionForm } from './HearingTypeConversionForm';
-import { appealWithDetailSelector, taskById } from '../../queue/selectors';
-import { deleteAppeal } from '../../queue/QueueActions';
+import { VSOHearingTypeConversionForm } from "./VSOHearingTypeConversionForm";
+import { HearingTypeConversionForm } from "./HearingTypeConversionForm";
+import { appealWithDetailSelector, taskById } from "../../queue/selectors";
+import { deleteAppeal } from "../../queue/QueueActions";
 import {
   showErrorMessage,
-  showSuccessMessage
-} from '../../queue/uiReducer/uiActions';
-import ApiUtil from '../../util/ApiUtil';
-import COPY from '../../../COPY';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES';
-import { formatChangeRequestType } from '../utils';
+  showSuccessMessage,
+} from "../../queue/uiReducer/uiActions";
+import ApiUtil from "../../util/ApiUtil";
+import COPY from "../../../COPY";
+import TASK_STATUSES from "../../../constants/TASK_STATUSES";
+import { formatChangeRequestType } from "../utils";
 
 export const HearingTypeConversion = ({
   appeal,
@@ -33,12 +33,15 @@ export const HearingTypeConversion = ({
   const getSuccessMsg = () => {
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
-      appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName,
+      appeal?.appellantIsNotVeteran
+        ? appeal?.appellantFullName
+        : appeal?.veteranFullName,
       type
     );
     const detail = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
-      appeal?.closestRegionalOfficeLabel || COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+      appeal?.closestRegionalOfficeLabel ||
+        COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
     );
 
     return { title, detail };
@@ -58,16 +61,18 @@ export const HearingTypeConversion = ({
             business_payloads: {
               values: {
                 changed_hearing_request_type: changedRequestType,
-                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+                closest_regional_office:
+                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
                 email_recipients: {
                   appellant_tz: appeal?.appellantTz,
                   representative_tz: appeal?.powerOfAttorney?.representative_tz,
                   appellant_email: appeal?.veteranInfo?.veteran?.email_address,
-                  representative_email: appeal?.powerOfAttorney?.representative_email_address,
-                }
-              }
-            }
-          }
+                  representative_email:
+                    appeal?.powerOfAttorney?.representative_email_address,
+                },
+              },
+            },
+          },
         };
       } else {
         data = {
@@ -76,10 +81,11 @@ export const HearingTypeConversion = ({
             business_payloads: {
               values: {
                 changed_hearing_request_type: changedRequestType,
-                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-              }
-            }
-          }
+                closest_regional_office:
+                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+              },
+            },
+          },
         };
       }
       setLoading(true);
@@ -89,14 +95,10 @@ export const HearingTypeConversion = ({
       props.showSuccessMessage(getSuccessMsg());
       props.deleteAppeal(task.externalAppealId);
     } catch (err) {
-      const error = get(
-        err,
-        'response.body.errors[0]',
-        {
-          title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
-          detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
-        }
-      );
+      const error = get(err, "response.body.errors[0]", {
+        title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
+      });
 
       props.showErrorMessage(error);
     } finally {
@@ -109,27 +111,27 @@ export const HearingTypeConversion = ({
   // Render Convert to Virtual Form Depending on VSO User Status
 
   return (
-    userIsVsoEmployee ? (
-      <VSOHearingTypeConversionForm
-        appeal={appeal}
-        history={history}
-        isLoading={loading}
-        onCancel={() => history.goBack()}
-        onSubmit={submit}
-        task={task}
-        type={type}
-      />
-    ) : (
-      <HearingTypeConversionForm
-        appeal={appeal}
-        history={history}
-        isLoading={loading}
-        onCancel={() => history.goBack()}
-        onSubmit={submit}
-        task={task}
-        type={type}
-      />
-    )
+    // userIsVsoEmployee ? (
+    <VSOHearingTypeConversionForm
+      appeal={appeal}
+      history={history}
+      isLoading={loading}
+      onCancel={() => history.goBack()}
+      onSubmit={submit}
+      task={task}
+      type={type}
+    />
+    // ) : (
+    //   <HearingTypeConversionForm
+    //     appeal={appeal}
+    //     history={history}
+    //     isLoading={loading}
+    //     onCancel={() => history.goBack()}
+    //     onSubmit={submit}
+    //     task={task}
+    //     type={type}
+    //   />
+    // )
   );
 };
 
@@ -141,16 +143,16 @@ HearingTypeConversion.propTypes = {
   showSuccessMessage: PropTypes.func,
   task: PropTypes.object,
   taskId: PropTypes.string,
-  type: PropTypes.oneOf(['Virtual']),
+  type: PropTypes.oneOf(["Virtual"]),
   // Router inherited props
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool
+  userIsVsoEmployee: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
   task: taskById(state, { taskId: ownProps.taskId }),
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
+  userIsVsoEmployee: state.ui.userIsVsoEmployee,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -158,7 +160,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       deleteAppeal,
       showErrorMessage,
-      showSuccessMessage
+      showSuccessMessage,
     },
     dispatch
   );
