@@ -14,6 +14,7 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
@@ -39,7 +40,7 @@ import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import EmailConfirmationModal from './EmailConfirmationModal';
 import COPY from '../../../COPY';
-import { VIRTUAL_HEARING_LABEL } from '../constants';
+import { HEARING_CONVERSION_TYPES, VIRTUAL_HEARING_LABEL } from '../constants';
 
 /**
  * Hearing Details Component
@@ -49,6 +50,7 @@ import { VIRTUAL_HEARING_LABEL } from '../constants';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -69,7 +71,7 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
-  const convertingToVirtual = converting === 'change_to_virtual';
+  const convertingToVirtual = converting === 'change_to_virtual' || userVsoEmployee;
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -247,7 +249,7 @@ const HearingDetails = (props) => {
   };
 
   const editedEmailsAndTz = getEditedEmailsAndTz();
-  const convertLabel = convertingToVirtual ?
+  const convertLabel = convertingToVirtual || userVsoEmployee ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
 
   return (
@@ -261,14 +263,15 @@ const HearingDetails = (props) => {
           />
         </div>
       )}
-      {converting ? (
+      {converting || userVsoEmployee ? (
         <HearingConversion
           title={convertLabel}
-          type={converting}
+          type={userVsoEmployee ? 'change_to_virtual' : converting}
           update={updateHearing}
           hearing={hearing}
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
+          userVsoEmployee={userVsoEmployee}
         />
       ) : (
         <AppSegment filledBackground>
