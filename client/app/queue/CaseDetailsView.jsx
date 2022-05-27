@@ -201,7 +201,10 @@ export const CaseDetailsView = (props) => {
   const allHearingTasks = useSelector(
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
-  const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
+
+  // TODO: Attach open ScheduleHearingTask id to each hearing task.
+  // Also, this variable will need a better name.
+  const parentHearingTasks = userIsVsoEmployee ? allHearingTasks : parentTasks(openScheduledHearingTasks, allHearingTasks);
 
   return (
     <React.Fragment>
@@ -301,7 +304,9 @@ export const CaseDetailsView = (props) => {
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
-            openScheduledHearingTasks.length) && (
+            openScheduledHearingTasks.length ||
+            userIsVsoEmployee
+          ) && (
             <CaseHearingsDetail
               title="Hearings"
               appeal={appeal}
