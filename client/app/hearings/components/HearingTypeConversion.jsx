@@ -36,13 +36,15 @@ export const HearingTypeConversion = ({
       appeal?.appellantIsNotVeteran
         ? appeal?.appellantFullName
         : appeal?.veteranFullName,
-      type
+      type.toLowerCase()
     );
-    const detail = sprintf(
-      COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
-      appeal?.closestRegionalOfficeLabel ||
-        COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
-    );
+    const detail = userIsVsoEmployee
+      ? COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL
+      : sprintf(
+          COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
+          appeal?.closestRegionalOfficeLabel ||
+            COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+        );
 
     return { title, detail };
   };
