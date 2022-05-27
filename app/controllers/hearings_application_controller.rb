@@ -3,9 +3,11 @@
 class HearingsApplicationController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
+  skip_before_action :deny_vso_access, except: [:build_schedule_index]
+  
   before_action :react_routed, :check_hearings_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]
-  before_action :verify_access_to_reader_or_hearings, only: [:show_hearing_index]
+  before_action :verify_access_to_hearings_update, only: [:show_hearing_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
 
   def set_application
