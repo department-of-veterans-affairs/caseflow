@@ -10,6 +10,7 @@ import {
   boldText,
   LEGACY_APPEAL_TYPES
 } from './constants';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 import { PencilIcon } from '../components/icons/PencilIcon';
@@ -109,6 +110,7 @@ class CaseHearingsDetail extends React.PureComponent {
       );
     }
 
+    // TODO: Check if hearing date is > 11 days out.
     if (userIsVsoEmployee && !hearing.isVirtual) {
       hearingAttrs.push(
         {
@@ -172,13 +174,25 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal) => {
-    return [
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee) => {
+    const unscheduledHearingAttrs = [
       {
         label: 'Type',
         value: appeal?.readableHearingRequestType
-      },
-      {
+      }
+    ];
+
+    if (userIsVsoEmployee) {
+      unscheduledHearingAttrs.push({
+        label: '',
+        value: <Link to={
+          `/queue/appeals/${appeal.externalId}/tasks/${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
+        }>
+          {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
+        </Link>
+      });
+    } else {
+      unscheduledHearingAttrs.push({
         label: 'Notes',
         value: <React.Fragment>
           <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
@@ -195,14 +209,17 @@ class CaseHearingsDetail extends React.PureComponent {
             uniqueId={task?.taskId} />
           }
         </React.Fragment>
-      },
-    ];
+      });
+    }
+
+    return unscheduledHearingAttrs;
   }
 
   getUnscheduledHearingElements = () => {
     const {
       appeal,
-      hearingTasks
+      hearingTasks,
+      userIsVsoEmployee
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -213,7 +230,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getUnscheduledHearingAttrs(task, appeal).map(this.getDetailField)} />
+        items={this.getUnscheduledHearingAttrs(task, appeal, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
   }
 
