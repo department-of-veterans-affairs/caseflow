@@ -118,6 +118,7 @@
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
+  "CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY": "Convert Hearing to Virtual",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
   "CASE_DETAILS_HEARING_LIST_LABEL": "Scheduled Hearings (Newest to Oldest)",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",

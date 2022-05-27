@@ -98,14 +98,27 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     );
 
-    hearingAttrs.push(
-      {
-        label: '',
-        value: <Link href={`/hearings/${hearing.externalId}/details`}>
-          {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
-        </Link>
-      }
-    );
+    if (!userIsVsoEmployee) {
+      hearingAttrs.push(
+        {
+          label: '',
+          value: <Link href={`/hearings/${hearing.externalId}/details`}>
+            {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
+          </Link>
+        }
+      );
+    }
+
+    if (userIsVsoEmployee && !hearing.isVirtual) {
+      hearingAttrs.push(
+        {
+          label: '',
+          value: <Link href={`/hearings/${hearing.externalId}/details`}>
+            {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
+          </Link>
+        }
+      );
+    }
 
     return hearingAttrs;
   }
