@@ -110,16 +110,20 @@ class CaseHearingsDetail extends React.PureComponent {
       );
     }
 
-    // TODO: Check if hearing date is > 11 days out.
     if (userIsVsoEmployee && !hearing.isVirtual) {
-      hearingAttrs.push(
-        {
-          label: '',
-          value: <Link href={`/hearings/${hearing.externalId}/details`}>
-            {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
-          </Link>
-        }
-      );
+      const hearingDate = new Date(hearing.date);
+      const currDate = new Date();
+
+      if (hearingDate >= currDate.setDate(currDate.getDate() + 11)) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value: <Link href={`/hearings/${hearing.externalId}/details`}>
+              {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
+            </Link>
+          }
+        );
+      }
     }
 
     return hearingAttrs;
