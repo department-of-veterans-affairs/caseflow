@@ -186,7 +186,9 @@ class CaseHearingsDetail extends React.PureComponent {
       unscheduledHearingAttrs.push({
         label: '',
         value: <Link to={
-          `/queue/appeals/${appeal.externalId}/tasks/${task.activeScheduleHearingTask.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
+          `/queue/appeals/${appeal.externalId}` +
+          `/tasks/${task.activeScheduleHearingTask.uniqueId}` +
+          `/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
         }>
           {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
         </Link>
