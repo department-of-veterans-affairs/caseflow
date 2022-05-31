@@ -182,7 +182,7 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     ];
 
-    if (userIsVsoEmployee) {
+    if (userIsVsoEmployee && appeal.readableHearingRequestType !== COPY.VIRTUAL_HEARING_REQUEST_TYPE) {
       unscheduledHearingAttrs.push({
         label: '',
         value: <Link to={
@@ -193,7 +193,9 @@ class CaseHearingsDetail extends React.PureComponent {
           {COPY.CASE_DETAILS_HEARING_DETAILS_CONVERT_TO_VIRTUAL_COPY}
         </Link>
       });
-    } else {
+    }
+
+    if (!userIsVsoEmployee) {
       unscheduledHearingAttrs.push({
         label: 'Notes',
         value: <React.Fragment>
