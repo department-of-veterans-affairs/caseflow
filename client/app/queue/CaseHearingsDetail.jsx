@@ -186,7 +186,9 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     ];
 
-    if (userIsVsoEmployee && appeal.readableHearingRequestType !== COPY.VIRTUAL_HEARING_REQUEST_TYPE) {
+    if (userIsVsoEmployee &&
+        appeal.readableHearingRequestType !== COPY.VIRTUAL_HEARING_REQUEST_TYPE &&
+        task.openScheduleHearingTask) {
       unscheduledHearingAttrs.push({
         label: '',
         value: <Link to={

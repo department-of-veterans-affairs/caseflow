@@ -152,13 +152,18 @@ export const openScheduleHearingTasksForAppeal = createSelector(
   (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
 );
 
+export const scheduleHearingTasksForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
+);
+
 export const allHearingTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => filter(tasks, (task) => task.type === 'HearingTask')
 );
 
 export const hearingTasksAndChildForAppeal = createSelector(
-  [allHearingTasksForAppeal, openScheduleHearingTasksForAppeal],
+  [allHearingTasksForAppeal, scheduleHearingTasksForAppeal],
   (hearingTasks, scheduleHearingTasks) => {
     return hearingTasks.map(
       (hearTask) => {
