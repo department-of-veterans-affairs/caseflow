@@ -28,9 +28,12 @@ export const VSORepresentativeSection = ({
 
   const [isRepTZEmpty, setIsRepTZEmpty] = useContext(RepresentativeTZContext);
   const [repTZErrorMessage] = useContext(RepresentativeTZErrorContext);
+  const [repTZ, setRepTZ] = useState('');
 
-  const timezoneCheck = () => {
+
+  const timezoneCheck = (repTz) => {
     setIsRepTZEmpty(false);
+    setRepTZ(repTz);
   };
 
   return (
@@ -91,9 +94,9 @@ export const VSORepresentativeSection = ({
           <Timezone
             errorMessage={isRepTZEmpty ? repTZErrorMessage : null}
             required
-            value={representativeTimezone}
-            onChange={(representativeTz) => {
-              timezoneCheck(representativeTz);
+            value={repTZ}
+            onChange={(repTz) => {
+              timezoneCheck(repTz);
             }}
             time={hearing.scheduledTimeString}
             roTimezone={hearing?.regionalOfficeTimezone}

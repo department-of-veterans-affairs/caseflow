@@ -7,7 +7,7 @@ import { VSOHearingEmail } from './VSOHearingEmail';
 import { Timezone } from '../VirtualHearings/Timezone';
 import { HelperText } from '../VirtualHearings/HelperText';
 import COPY from '../../../../COPY';
-import { getAppellantTitle, readOnlyEmails} from '../../utils';
+import { getAppellantTitle, readOnlyEmails } from '../../utils';
 import { AppellantTZContext, AppellantTZErrorContext } from '../HearingTypeConversion';
 
 export const OriginalEmailContext = createContext([{}, () => {}]);
@@ -16,7 +16,6 @@ export const VSOEmailNotificationsFields = ({
   errors,
   hearing,
   readOnly,
-  update,
   time,
   roTimezone,
 }) => {
@@ -25,12 +24,13 @@ export const VSOEmailNotificationsFields = ({
   const [appellantTZErrorMessage] = useContext(AppellantTZErrorContext);
 
   const [originalEmail, setOriginalEmail] = useState('');
-
+  const [appellantTZ, setAppellantTZ] = useState('');
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
-  const timezoneCheck = () => {
+  const timezoneCheck = (appellantTz) => {
     setIsAppellantTZEmpty(false);
+    setAppellantTZ(appellantTz);
   };
 
   return (
@@ -62,6 +62,7 @@ export const VSOEmailNotificationsFields = ({
             <Timezone
               required
               errorMessage={isAppellantTZEmpty ? appellantTZErrorMessage : null}
+              value={appellantTZ}
               onChange={(appellantTz) => {
                 timezoneCheck(appellantTz);
               }}

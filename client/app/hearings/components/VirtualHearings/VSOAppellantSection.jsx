@@ -11,7 +11,8 @@ export const VSOAppellantSection = ({
   showDivider,
   appellantTitle,
   formFieldsOnly,
-  update
+  update,
+  appellantTimezone
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -35,7 +36,8 @@ export const VSOAppellantSection = ({
           update={update}
           time={hearing.scheduledTimeString}
           roTimezone={hearing?.regionalOfficeTimezone}
-          requestType={hearing.readableRequestType}/>
+          requestType={hearing.readableRequestType}
+          appellantTimezone={appellantTimezone} />
       </React.Fragment>
     </VirtualHearingSection>
   );
