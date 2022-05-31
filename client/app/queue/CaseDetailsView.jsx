@@ -13,7 +13,8 @@ import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
   openScheduleHearingTasksForAppeal,
-  allHearingTasksForAppeal
+  allHearingTasksForAppeal,
+  hearingTasksAndChildForAppeal
 } from './selectors';
 import {
   stopPollingHearing,
@@ -202,9 +203,15 @@ export const CaseDetailsView = (props) => {
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
 
+  const hearingTasksAndChildren = useSelector(
+    (state) => hearingTasksAndChildForAppeal(state, { appealId: appeal.externalId })
+  );
+
   // TODO: Attach open ScheduleHearingTask id to each hearing task.
-  // Also, this variable will need a better name.
-  const parentHearingTasks = userIsVsoEmployee ? allHearingTasks : parentTasks(openScheduledHearingTasks, allHearingTasks);
+  // Also, this variable will need a better name..
+  const parentHearingTasks = userIsVsoEmployee ?
+    hearingTasksAndChildren :
+    parentTasks(openScheduledHearingTasks, allHearingTasks);
 
   return (
     <React.Fragment>

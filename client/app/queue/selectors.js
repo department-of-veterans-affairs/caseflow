@@ -157,6 +157,21 @@ export const allHearingTasksForAppeal = createSelector(
   (tasks) => filter(tasks, (task) => task.type === 'HearingTask')
 );
 
+export const hearingTasksAndChildForAppeal = createSelector(
+  [allHearingTasksForAppeal, openScheduleHearingTasksForAppeal],
+  (hearingTasks, scheduleHearingTasks) => {
+    return hearingTasks.map(
+      (hearTask) => {
+        hearTask.activeScheduleHearingTask = scheduleHearingTasks.find(
+          (schedTask) => schedTask.parentId === parseInt(hearTask.taskId, 10)
+        );
+
+        return hearTask;
+      }
+    );
+  }
+);
+
 export const rootTasksForAppeal = createSelector(
   [actionableTasksForAppeal],
   (tasks) => filter(tasks, (task) => task.type === 'RootTask')
