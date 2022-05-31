@@ -270,6 +270,7 @@ class CaseHearingsDetail extends React.PureComponent {
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
           </React.Fragment>
         }
+        {console.log(hearingTasks)}
         {!_.isEmpty(hearingTasks) && this.getUnscheduledHearingElements()}
         {!_.isEmpty(hearings) &&
           <BareList

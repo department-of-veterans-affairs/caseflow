@@ -165,11 +165,13 @@ export const allHearingTasksForAppeal = createSelector(
 export const hearingTasksAndChildForAppeal = createSelector(
   [allHearingTasksForAppeal, scheduleHearingTasksForAppeal],
   (hearingTasks, scheduleHearingTasks) => {
-    return hearingTasks.map(
-      (hearTask) => {
-        hearTask.openScheduleHearingTask = scheduleHearingTasks.find(
-          (schedTask) => schedTask.parentId === parseInt(hearTask.taskId, 10)
+    return scheduleHearingTasks.map(
+      (schedTask) => {
+        const hearTask = hearingTasks.find(
+          (hTask) => schedTask.parentId === parseInt(hTask.taskId, 10)
         );
+
+        hearTask.openScheduleHearingTask = schedTask;
 
         return hearTask;
       }
