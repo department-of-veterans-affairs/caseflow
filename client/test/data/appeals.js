@@ -125,6 +125,23 @@ export const amaAppeal = {
   hearings: [],
 };
 
+export const virtualAppeal = {
+  ...appealData,
+  id: '1',
+  veteranFullName: 'Susan Smith',
+  veteranFileNumber: '1234456',
+  docketName: 'AMA',
+  appellantIsNotVeteran: false,
+  appellantFullName: 'Susan Smith',
+  appellantEmailAddress: 'susan@gmail.com',
+  appellantTz: 'America/New_York',
+  powerOfAttorney: 'Tim Scott',
+  representative_email_address: 'tom.brady@caseflow.gov',
+  currentUserTimezone: 'America/New_York',
+  currentUserEmail: 'tom@brady.com'
+
+}
+
 export const legacyAppeal = {
   ...appealData,
   id: '1',

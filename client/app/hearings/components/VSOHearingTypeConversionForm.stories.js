@@ -2,7 +2,7 @@ import React from 'react';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 
-import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from '../../../test/data/appeals';
+import { legacyAppealForTravelBoard, veteranInfoWithoutEmail, virtualAppeal } from '../../../test/data/appeals';
 
 export default {
   title: 'Hearings/Components/VSOHearingTypeConversionForm',
@@ -53,6 +53,13 @@ MissingVeteranEmailAlert.args = {
     veteranInfo: {
       ...veteranInfoWithoutEmail
     }
+  }
+}
+
+export const VirtualVSOAppeal = Template.bind({});
+VirtualVSOAppeal.args = {
+  appeal:{
+    ...virtualAppeal
   }
 }
 
