@@ -162,7 +162,7 @@ export const hearingTasksAndChildForAppeal = createSelector(
   (hearingTasks, scheduleHearingTasks) => {
     return hearingTasks.map(
       (hearTask) => {
-        hearTask.activeScheduleHearingTask = scheduleHearingTasks.find(
+        hearTask.openScheduleHearingTask = scheduleHearingTasks.find(
           (schedTask) => schedTask.parentId === parseInt(hearTask.taskId, 10)
         );
 
