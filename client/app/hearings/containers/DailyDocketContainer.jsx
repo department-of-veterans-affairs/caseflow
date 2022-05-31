@@ -27,7 +27,8 @@ import {
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHandleConferenceLinkError
 } from '../actions/dailyDocketActions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
@@ -314,7 +315,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHandleConferenceLinkError
 }, dispatch);
 
 DailyDocketContainer.propTypes = {
@@ -372,7 +374,8 @@ DailyDocketContainer.propTypes = {
   onResetDailyDocketAfterError: PropTypes.func,
   onUpdateLock: PropTypes.func,
   onHearingDayModified: PropTypes.func,
-  print: PropTypes.bool
+  print: PropTypes.bool,
+  onHandleConferenceLinkError: PropTypes.func
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));
