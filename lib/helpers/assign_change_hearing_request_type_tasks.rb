@@ -31,7 +31,16 @@ module AssignChangeHearingRequestTypeTasks
   end
 
   def self.assign_change_hearing_request_type_task(appeal)
-    # get an array of the representative ids that belong to the appeal
+    # get POA ID assigned to the appeal
+    poa_id = appeal.poa_participant_id
+
+    # get the Organization assigned to the appeal using the poa_id
+    poa_assigned_to_appeal = Organization.where(participant_id: poa_id)
+
+    # skip if the POA role isn't VSO
+    next unless poa_assigned_to_appeal.role == "VSO"
+
+    # get the tasks assigned to the appeal
     tasks_assigned_to_appeal = appeal.tasks
 
     # get the schedule hearing tasks that are on the appeal
@@ -39,8 +48,9 @@ module AssignChangeHearingRequestTypeTasks
 
     # get the open schedule hearings tasks if there are multiple
     schedule_hearing_task = schedule_hearing_tasks.select(&:active?)
-    # get the VSO user(s) assigned to the appeal
-    vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
+
+    # # get the VSO user(s) assigned to the appeal
+    # vso_users_assigned_to_appeal = get_vso_users_assigned_to_appeal(tasks_assigned_to_appeal)
 
     vso_users_assigned_to_appeal.each do |vso_user|
       # check the VSO user(s) have the ChangeHearingRequestTypeTask
@@ -49,12 +59,10 @@ module AssignChangeHearingRequestTypeTasks
       # testing
       # assign ChangeHearingRequestTypeTask to user with the root task being the schedule_hearing_task
       ChangeHearingRequestTypeTask.create!(
-        appeal: appeal,
-        assigned_to: vso_user,
-        parent: schedule_hearing_task[0],
-        created_at: Time.zone.now,
-        assigned_at: Time.zone.now
-      )
+        appeal: appeal, 
+        parent: schedule_hearing_task, 
+        created_at: Time.zone.now, 
+        assigned_to: poa_assigned_to_appeal)
     end
   end
 
