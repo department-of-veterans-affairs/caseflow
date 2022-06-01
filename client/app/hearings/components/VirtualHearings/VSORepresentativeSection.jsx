@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -29,7 +29,6 @@ export const VSORepresentativeSection = ({
   const [isRepTZEmpty, setIsRepTZEmpty] = useContext(RepresentativeTZContext);
   const [repTZErrorMessage] = useContext(RepresentativeTZErrorContext);
   const [repTZ, setRepTZ] = useState('');
-
 
   const timezoneCheck = (repTz) => {
     setIsRepTZEmpty(false);
