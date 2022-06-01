@@ -178,8 +178,8 @@ Rails.application.routes.draw do
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
-  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_details_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_worksheet_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
