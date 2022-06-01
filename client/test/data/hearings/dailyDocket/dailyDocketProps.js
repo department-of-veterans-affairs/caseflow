@@ -506,3 +506,38 @@ export const dailyDocketPropsHearingIsVirtual = {
   onReceiveTransitioningAlert: 'ƒ () {}',
   transitionAlert: 'ƒ () {}'
 };
+
+export const dailyDocketPropsConferenceLinkError = {
+
+  dailyDocket: {
+    bvaPoc: null,
+    createdAt: '2022-05-23T14:04:28.593-04:00',
+    createdById: 36,
+    deletedAt: null,
+    id: 4,
+    judgeFirstName: '',
+    judgeId: 35,
+    judgeCssId: 'CSS_ID11',
+    judgeLastName: '',
+    lock: null,
+    notes: null,
+    readableRequestType: 'Central',
+    regionalOffice: null,
+    regionalOfficeKey: null,
+    requestType: 'C',
+    room: '2 (1W200B)',
+    scheduledFor: '2022-05-23',
+    filledSlots: 0,
+    totalSlots: 10,
+    slotLengthMinutes: 60,
+    beginsAt: null,
+    updatedById: 36,
+    updatedAt: '2022-05-23T14:04:28.593-04:00',
+    conferenceLink: {
+      hostPin: '1116504',
+      hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000004@example.va.gov&pin=1116504&role=host',
+      alias: null
+    }
+  },
+  onHandleConferenceLinkError: true
+};

@@ -91,6 +91,7 @@ Alerts.propTypes = {
     scheduledFor: PropTypes.string,
   }),
   dailyDocketServerError: PropTypes.bool,
+  onHandleConferenceLinkError: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
   saveSuccessful: PropTypes.object,
@@ -251,6 +252,7 @@ export default class DailyDocket extends React.Component {
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
           dailyDocketServerError={this.props.dailyDocketServerError}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock}
+          onHandleConferenceLinkError={this.props.onHandleConferenceLinkError}
         />
 
         <div className="cf-app-segment">
