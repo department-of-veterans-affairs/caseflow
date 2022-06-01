@@ -15,7 +15,7 @@ import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
-import { isPreviouslyScheduledHearing } from '../../utils';
+import { isPreviouslyScheduledHearing, userJudgeOrCoordinator } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import COPY from '../../../../COPY';
@@ -32,6 +32,7 @@ const Alerts = ({
   onErrorHearingDayLock,
   dailyDocket,
   dailyDocketServerError,
+  onHandleConferenceLinkError
 }) => (
   <React.Fragment>
     <UserAlerts />
@@ -58,6 +59,15 @@ const Alerts = ({
         styling={alertStyling}
         title=" This save was unsuccessful."
         message="Please refresh the page and try again."
+      />
+    )}
+
+    {onHandleConferenceLinkError && userJudgeOrCoordinator && (
+      <Alert
+        type="error"
+        styling={alertStyling}
+        title="Unable to create a hearing link"
+        message="Please use the judge's dedicated link or contact the Hearing Coordinator for assistance."
       />
     )}
 
@@ -349,6 +359,7 @@ DailyDocket.propTypes = {
   displayLockSuccessMessage: PropTypes.bool,
   dailyDocketServerError: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
+  onHandleConferenceLinkError: PropTypes.bool,
   history: PropTypes.shape({
     push: PropTypes.func,
   }),
