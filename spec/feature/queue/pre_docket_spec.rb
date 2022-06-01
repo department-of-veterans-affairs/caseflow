@@ -721,5 +721,42 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(open_rpo_task.reload.status).to eq Constants.TASK_STATUSES.completed
     end
+
+    it "BVA Intake user can return an appeal to the EMO" do
+      emo_task = create(
+        :education_document_search_task,
+        :assigned,
+        assigned_to: emo,
+        assigned_by: bva_intake_user
+      )
+
+      emo_task.completed!
+
+      User.authenticate!(user: bva_intake_user)
+
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.label
+      ).click
+
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE)
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY)
+
+      instructions_textarea = find("textarea", id: "taskInstructions")
+      instructions_textarea.send_keys("Please review this appeal, EMO.")
+
+      find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
+
+      expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE)
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_DETAIL)
+
+      expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
+    end
   end
 end
