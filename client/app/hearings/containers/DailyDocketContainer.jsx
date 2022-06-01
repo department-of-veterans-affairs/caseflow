@@ -101,6 +101,10 @@ export class DailyDocketContainer extends React.Component {
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(hearingDay, hearings);
+    }, (err) => {
+      this.props.onHandleConferenceLinkError(err);
+
+      return false;
     });
   };
 
