@@ -162,10 +162,21 @@ class CaseHearingsDetail extends React.PureComponent {
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
   getUnscheduledHearingAttrs = (task, appeal) => {
+    const routeChange = () =>{ 
+      let path = `newPath`; 
+      navigate(path);
+    }
     return [
       {
         label: 'Type',
-        value: appeal?.readableHearingRequestType
+        value: 
+        <React.Fragment>
+          appeal?.readableHearingRequestType
+          <Link to={this.props.myroute} onClick={routeChange}>Convert to virtual</Link>
+          <br />
+        </React.Fragment>
+        
+
       },
       {
         label: 'Notes',
