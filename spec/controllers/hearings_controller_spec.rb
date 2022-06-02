@@ -348,6 +348,7 @@ RSpec.describe HearingsController, type: :controller do
         let!(:user) { User.authenticate!(roles: ["VSO"]) }
 
         it "the hearing can be updated" do
+          expect(hearing.virtual?).to be false
           expect(hearing.appellant_recipient&.email_address).to_not eq appellant_email
 
           expect(subject.status).to eq(200)
