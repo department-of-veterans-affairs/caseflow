@@ -11,9 +11,11 @@ import {
   dailyDocketPropsHearingNotVirtualVSOUser,
   dailyDocketPropsHearingNotVirtualJudgeUser,
   dailyDocketPropsHearingNotVirtualCoordinatorUser,
-  dailyDocketPropsHearingNotVirtualAttorneyUser} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
+  dailyDocketPropsHearingNotVirtualAttorneyUser,
+  dailyDocketPropsConferenceLinkError} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
 import { shallow } from 'enzyme';
+import DailyDocketContainer from '../../../../../app/hearings/containers/DailyDocketContainer';
 
 let store;
 
@@ -92,6 +94,32 @@ describe('DailyDocketRow', () => {
     );
 
     expect(container).toMatchSnapshot();
+  });
+
+  it('renders banner correctly for conference link error', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketContainer {...dailyDocketPropsConferenceLinkError} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('Conference Link Error passes a11y testing', async () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketContainer {...dailyDocketPropsConferenceLinkError} />
+        </Router>
+      </Provider>
+    );
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 
   it('Non Virtual passes a11y testing', async () => {
