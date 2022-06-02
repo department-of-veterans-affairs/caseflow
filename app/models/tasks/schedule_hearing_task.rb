@@ -100,6 +100,7 @@ class ScheduleHearingTask < Task
 
   def available_actions(user)
     return [] if user.vso_employee?
+
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
@@ -113,7 +114,7 @@ class ScheduleHearingTask < Task
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
-      ] | hearing_admin_actions 
+      ] | hearing_admin_actions
     end
 
     hearing_admin_actions
