@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React, { useState, createContext, useEffect } from 'react';
+import React, { useState, createContext } from 'react';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';

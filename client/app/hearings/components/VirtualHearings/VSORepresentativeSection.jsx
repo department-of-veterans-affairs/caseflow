@@ -22,7 +22,6 @@ export const VSORepresentativeSection = ({
   appellantTitle,
   showDivider,
   formFieldsOnly,
-  representativeTimezone,
   representativeEmailType,
 }) => {
 

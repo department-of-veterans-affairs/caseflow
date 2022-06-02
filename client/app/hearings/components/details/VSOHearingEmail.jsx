@@ -1,14 +1,13 @@
+/* eslint-disable no-unused-vars */
+
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
-import { isEmpty } from 'lodash';
 import classnames from 'classnames';
-import * as yup from 'yup';
 
 import { EmptyConfirmContext, EmptyConfirmMessageContext } from '../HearingTypeConversion';
 import { OriginalEmailContext } from './VSOEmailNotificationsFields';
 import { BtnContext } from '../VSOHearingTypeConversionForm';
 import { HelperText } from '../VirtualHearings/HelperText';
-import { ReadOnly } from '../details/ReadOnly';
 import { enablePadding } from '../details/style';
 import COPY from '../../../../COPY';
 import TextField from '../../../components/TextField';
@@ -23,48 +22,41 @@ export const VSOHearingEmail = ({
   showHelper,
   confirmEmail
 }) => {
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState('');
 
+  const [message, setMessage] = useState('');
   const [isNotValidEmail, setIsNotValidEmail] = useContext(BtnContext);
+  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useContext(EmptyConfirmMessageContext);
   const [originalEmail, setOriginalEmail] = useContext(OriginalEmailContext);
   const [confirmIsEmpty, setConfirmIsEmpty] = useContext(EmptyConfirmContext);
-  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useContext(EmptyConfirmMessageContext);
 
   // Regex to validate email input in real time
   const emailRegex = /\S+@\S+\.\S+/;
 
   const validateEmail = (newEmail) => {
-    const email = newEmail;
 
-    setOriginalEmail(email);
+    setOriginalEmail(newEmail);
 
-    if (emailRegex.test(email)) {
-      setIsValid(true);
+    if (emailRegex.test(newEmail)) {
       setMessage('');
       setIsNotValidEmail(false);
     } else {
-      setIsValid(false);
       setMessage('Please enter a valid email');
       setIsNotValidEmail(true);
     }
   };
 
   const confirmEmailCheck = (newEmail) => {
-    const email = newEmail;
 
-    if (email === '') {
+    if (newEmail === '') {
       setConfirmIsEmpty(true);
     } else {
       setConfirmIsEmpty(false);
     }
 
-    if (email === originalEmail) {
-      setIsValid(true);
+    if (newEmail === originalEmail) {
       setMessage('');
       setIsNotValidEmail(false);
     } else {
-      setIsValid(false);
       setMessage('Email does not match');
       setIsNotValidEmail(true);
     }
