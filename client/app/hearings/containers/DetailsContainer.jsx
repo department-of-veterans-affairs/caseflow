@@ -43,6 +43,7 @@ export const HearingDetailsContainer = ({ hearingId, history }) => {
           disabled={!userInHearingOrTranscriptionOrganization}
           saveHearing={saveHearing}
           goBack={history.goBack}
+          history={history}
         />
       </HearingsFormContextProvider>
     </LoadingDataDisplay>

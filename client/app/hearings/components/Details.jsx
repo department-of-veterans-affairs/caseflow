@@ -14,6 +14,7 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
@@ -49,12 +50,13 @@ import { VIRTUAL_HEARING_LABEL } from '../constants';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   // Pull out the inherited state to handle actions
-  const { saveHearing, goBack, disabled } = props;
+  const { saveHearing, goBack, disabled, history } = props;
 
   // Determine whether this is a legacy hearing
   const isLegacy = hearing?.docketName !== 'hearing';
@@ -109,6 +111,17 @@ const HearingDetails = (props) => {
       representativeTzEdited: !isUndefined(changes.representativeTz),
       appellantTzEdited: !isUndefined(changes.appellantTz)
     };
+  };
+
+  console.log(userVsoEmployee);
+  console.log(hearing);
+
+  const handleCancelButton = () => {
+    if (converting || !userVsoEmployee) {
+      resetState(initialHearing);
+    } else {
+      goBack();
+    }
   };
 
   const submit = async (editedEmailsAndTz) => {
@@ -212,6 +225,10 @@ const HearingDetails = (props) => {
       } else {
         setError(msg);
       }
+    } finally {
+      if (userVsoEmployee) {
+        history.push(`/queue/appeals/${hearing.externalId}`);
+      }
     }
   };
 
@@ -307,7 +324,8 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => resetState(initialHearing) : goBack}
+          // onClick={converting ? () => resetState(initialHearing) : goBack}
+          onClick={handleCancelButton}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -344,6 +362,7 @@ HearingDetails.propTypes = {
   saveHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
+  history: PropTypes.object,
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
