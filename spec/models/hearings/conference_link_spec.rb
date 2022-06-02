@@ -10,6 +10,55 @@ describe ConferenceLink do
     allow(ENV).to receive(:fetch).and_call_original
   end
 
+  context "#create with errors" do
+    context "pin key env variable is missing" do
+      before do
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
+      end
+      let(:hearing_day) { create(:hearing_day) }
+      let(:user) { create(:user) }
+      it "raises the missing PIN key error" do
+        RequestStore[:current_user] = user
+        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+      end
+    end
+
+    context "url host env variable is missing" do
+      before do
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
+      end
+      let(:hearing_day) { create(:hearing_day) }
+      let(:user) { create(:user) }
+      it "raises the missing host error" do
+        RequestStore[:current_user] = user
+        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLHostMissingError
+      end
+    end
+
+    context "url path env variable is missing" do
+      before do
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
+      end
+      let(:hearing_day) { create(:hearing_day) }
+      let(:user) { create(:user) }
+      it "raises the missing path error" do
+        RequestStore[:current_user] = user
+        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLPathMissingError
+      end
+    end
+
+    context "all env variables are missing" do
+      let(:hearing_day) { create(:hearing_day) }
+      let(:user) { create(:user) }
+      it "raises the missing PIN key error" do
+        RequestStore[:current_user] = user
+        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+      end
+    end
+  end
   context "#create" do
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
@@ -39,7 +88,7 @@ describe ConferenceLink do
       expect(subject.updated_by_id).not_to eq(nil)
     end
   end
-  
+
   context "update conference day" do
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
