@@ -2331,159 +2331,63 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
   
-      # National VSO Test
-      context "when updating a hearing as a VSO user to virtual hearing" do
-        let!(:vso) { create(:vso) }
-        let!(:vso_user) { create(:user, :vso_role) }
-        let!(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: vso) }
-        
-        before do
-          vso.add_user(vso_user)
-          User.authenticate!(user: vso_user)
-        end
-  
-        it "should give user the option to convert hearing to virtual" do
-          step "go to the correct screen" do
-            visit "/queue/appeals/#{change_hearing_request_type_task.appeal.uuid}" 
-          end
-          
-          step "select change hearing request type action" do
-            find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-            click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
-          end
-  
-          step "fill in email fields for VSO form" do
-            fill_in "Veteran Email", with: "some_email@test.com"
-            fill_in "Confirm Veteran Email", with: "some_email@test.com"          
-          end 
-  
-          step "select time zones" do
-            click_dropdown(name: "appellantTz", text: "Hawaii")
-            click_dropdown(name: "representativeTz", text: "Indiana")          
-          end
-  
-          # Need to Un-Comment this section once the check boxes have been activated
-          # step "make sure check boxes are checked" do
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS
-          # end
-  
-          step "submit conversion" do
-            click_button("Convert Hearing To Virtual")
-          end
-          
-          step "confirm page has the correct success message" do
-           expect(page).to have_content("You have successfully converted #{change_hearing_request_type_task.appeal.veteran_full_name}'s hearing to Virtual") 
-          end            
-        end
-  
-        it "should not display a dropdown menu giving VSO user option to cancel conversion" do
-          expect(page.has_no_content?("Select an action")).to eq(true)
-        end
-      end
-  
-      # Field VSO Test
-      context "when updating a hearing as a Field VSO user to virtual hearing" do
-        let!(:field_vso) { create(:field_vso) }
-        let!(:field_vso_user) { create(:user, :vso_role) }
-        let!(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: field_vso) }
-  
-        before do 
-          field_vso.add_user(field_vso_user)
-          User.authenticate!(user: field_vso_user)
-        end
-  
-        it "should give user the option to convert hearing to virtual" do
-          step "go to the correct screen" do
-            visit "/queue/appeals/#{change_hearing_request_type_task.appeal.uuid}" 
-          end
-          
-          step "select change hearing request type action" do
-            find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-            click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
-          end
-  
-          step "fill in email fields for VSO form" do
-            fill_in "Veteran Email", with: "some_email@test.com"
-            fill_in "Confirm Veteran Email", with: "some_email@test.com"          
-          end 
-  
-          step "select time zones" do
-            click_dropdown(name: "appellantTz", text: "Hawaii")
-            click_dropdown(name: "representativeTz", text: "Indiana")          
-          end
-  
-          # Need to Un-Comment this section once the check boxes have been activated
-          # step "make sure check boxes are checked" do
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS
-          # end
-  
-          step "submit conversion" do
-            click_button("Convert Hearing To Virtual")
-          end
-          
-          step "confirm page has the correct success message" do
-           expect(page).to have_content("You have successfully converted #{change_hearing_request_type_task.appeal.veteran_full_name}'s hearing to Virtual") 
-          end            
-        end
-  
-        it "should not display a dropdown menu giving VSO user option to cancel conversion" do
-          expect(page.has_no_content?("Select an action")).to eq(true)
-        end
-      end
-  
-      # Private Bar Test
-      context "when updating a hearing as a private bar user to virtual hearing" do
-        let!(:private_bar) { create(:private_bar) }
-        let!(:private_bar_user) { create(:user, :vso_role) }
-        let!(:change_hearing_request_type_task) { create(:change_hearing_request_type_task, assigned_to: private_bar) }
-  
-        before do
-          private_bar.add_user(private_bar_user)
-          User.authenticate!(user: private_bar_user)
-        end
-  
-        it "should give user the option to convert hearing to virtual" do
-          step "go to the correct screen" do
-            visit "/queue/appeals/#{change_hearing_request_type_task.appeal.uuid}" 
-          end
-          
-          step "select change hearing request type action" do
-            find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-            click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
-          end
-  
-          step "fill in email fields for VSO form" do
-            fill_in "Veteran Email", with: "some_email@test.com"
-            fill_in "Confirm Veteran Email", with: "some_email@test.com"          
-          end 
-  
-          step "select time zones" do
-            click_dropdown(name: "appellantTz", text: "Hawaii")
-            click_dropdown(name: "representativeTz", text: "Indiana")          
-          end
-  
-          # Need to Un-Comment this section once the check boxes have been activated
-          # step "make sure check boxes are checked" do
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION
-          #   check COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS
-          # end
-  
-          step "submit conversion" do
-            click_button("Convert Hearing To Virtual")
-          end
-          
-          step "confirm page has the correct success message" do
-           expect(page).to have_content("You have successfully converted #{change_hearing_request_type_task.appeal.veteran_full_name}'s hearing to Virtual") 
-          end            
-        end
-  
-        it "should not display a dropdown menu giving VSO user option to cancel conversion" do
-          expect(page.has_no_content?("Select an action")).to eq(true)
-        end
+    # National VSO Test
+    context "when updating a hearing as a VSO user to virtual hearing" do
+      let!(:vso) { create(:vso) }
+      let!(:vso_user) { create(:user, :vso_role) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso) }
+              
+      before do
+        vso.add_user(vso_user)
+        User.authenticate!(user: vso_user)
       end
 
+      it "should not display a dropdown menu for VSO user" do
+        step "go to the correct screen" do
+          visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}" 
+          expect(page.has_no_content?("Select an action")).to eq(true)
+        end
+      end
+    end
+
+    # Field VSO Test
+    context "when updating a hearing as a VSO user to virtual hearing" do
+      let!(:field_vso) { create(:field_vso) }
+      let!(:field_vso_user) { create(:user, :vso_role) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: field_vso) }
+              
+      before do
+        field_vso.add_user(field_vso_user)
+        User.authenticate!(user: field_vso_user)
+      end
+
+      it "should not display a dropdown menu for VSO user" do
+        step "go to the correct screen" do
+          visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}" 
+          expect(page.has_no_content?("Select an action")).to eq(true)
+        end
+      end
+    end
+  
+    # Private Bar Test
+    context "when updating a hearing as a Private_Bar user to virtual hearing" do
+      let!(:private_bar) { create(:private_bar) }
+      let!(:private_bar_user) { create(:user, :vso_role) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: private_bar) }
+              
+      before do
+        private_bar.add_user(private_bar_user)
+        User.authenticate!(user: private_bar_user)
+      end
+
+      it "should not display a dropdown menu for Private_Bar user" do
+        step "go to the correct screen" do
+          visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}" 
+          expect(page.has_no_content?("Select an action")).to eq(true)
+        end
+      end
+    end
+      
   describe "case title details" do
     shared_examples "show hearing request type" do
       it "displays hearing request type" do        

@@ -18,6 +18,15 @@ describe TasksForAppeal do
         expect(dist_tasks).not_to be_empty
       end
 
+      context "with ScheduleHearingTask" do
+        let!(:factory) { create(:schedule_hearing_task)}
+        let!(:appeal) { factory.appeal}
+        it "includes Schedule Hearing tasks" do
+          sch_hear_tasks = tasks.select { |t| t.is_a?(ScheduleHearingTask) }
+          expect(sch_hear_tasks).not_to be_empty
+        end
+      end
+
       it "includes tasks assigned to a vso" do
         ihps = tasks.select { |t| t.is_a?(InformalHearingPresentationTask) }
         expect(ihps).not_to be_empty
@@ -26,8 +35,42 @@ describe TasksForAppeal do
       context "with HearingTask" do
         let(:appeal) { create(:appeal, :hearing_docket) }
 
-        context "hearing has not been held" do
+        context "hearing disposition is nil" do
+          let!(:hearing_nil_disposition) { create(:hearing, :with_tasks, appeal: appeal) }
+
+          it "includes the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to_not be_nil
+          end
+        end
+
+        context "hearing has been postponed" do
+          let!(:hearing) do
+            new_hearing = create(:hearing, :with_tasks, appeal: appeal)
+            new_hearing.update!(disposition: :postponed)
+            new_hearing
+         end
+          it "does not include the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
+          end       
+        end
+        
+       context "hearing has been cancelled" do
           let!(:hearing) { create(:hearing, :with_tasks, :cancelled, appeal: appeal) }
+
+          it "does not include the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
+          end
+        end       
+
+        context "hearing has been scheduled in error" do
+          let!(:hearing) { create(:hearing, :with_tasks, :scheduled_in_error, appeal: appeal) }
+          it "does not include the HearingTask" do
+            expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
+          end
+        end
+
+        context "hearing has been missed" do
+          let!(:hearing) { create(:hearing, :with_tasks, :no_show, appeal: appeal) }
 
           it "does not include the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
@@ -40,10 +83,10 @@ describe TasksForAppeal do
           it "includes the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to_not be_nil
           end
-        end
-      end
+        end      
+      end    
     end
-
+  
     context "for a legacy appeal with a travel board hearing request" do
       let(:user_roles) { ["Build HearSched"] }
       let!(:user) { create(:user, roles: user_roles) }

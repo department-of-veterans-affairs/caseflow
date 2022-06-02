@@ -49,15 +49,14 @@ class TasksForAppeal
       .select do |task|
       task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
         (task.is_a?(HearingTask) && task&.hearing&.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
-        task.is_a?(DistributionTask)
+        task.is_a?(DistributionTask) 
     end
   end
 
   def tasks_actionable_to_vso_employee
     appeal.tasks
       .includes(*task_includes)
-      .select do |task|
-      task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
+      .select do |task| 
         (task.is_a?(HearingTask) && task&.hearing&.disposition == nil) || task.is_a?(ScheduleHearingTask)
     end
   end
