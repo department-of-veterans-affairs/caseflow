@@ -117,7 +117,9 @@ const HearingDetails = (props) => {
   console.log(hearing);
 
   const handleCancelButton = () => {
-    if (converting || !userVsoEmployee) {
+    if (userVsoEmployee) {
+      goBack();
+    } else if (converting) {
       resetState(initialHearing);
     } else {
       goBack();
