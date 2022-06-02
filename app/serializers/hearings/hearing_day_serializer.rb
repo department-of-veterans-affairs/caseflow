@@ -38,8 +38,10 @@ class HearingDaySerializer
   attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
-  attribute :conference_link do |hearing_day|
-    serialize_conference_link(hearing_day.conference_link)
+  attribute :conference_link do |hearing_day, params|
+    if params[:include_conference_link]
+      serialize_conference_link(hearing_day.conference_link)
+    end
   end
 
   def self.get_judge_first_name(hearing_day, params)
@@ -95,9 +97,11 @@ class HearingDaySerializer
   end
 
   def self.serialize_conference_link(conference_link)
-    ::ConferenceLinkSerializer.new(
-      conference_link,
-      collection: false
-    ).serializable_hash[:data][:attributes]
+    if !conference_link.nil?
+      ::ConferenceLinkSerializer.new(
+        conference_link,
+        collection: false
+      ).serializable_hash[:data][:attributes]
+    end
   end
 end
