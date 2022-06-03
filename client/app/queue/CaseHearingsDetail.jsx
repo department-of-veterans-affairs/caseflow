@@ -65,13 +65,24 @@ class CaseHearingsDetail extends React.PureComponent {
     const hearingAttrs = [{
       label: 'Type',
       value: hearing.isVirtual ? 'Virtual' : hearing.type
-    },
-    {
-      label: 'Disposition',
-      value: <React.Fragment>
-        {dispositionLabel(hearing?.disposition)}
-      </React.Fragment>
     }];
+    if (userIsVsoEmployee) {
+      if(hearings[0].type != 'virtual' && today + 11 < hearings[0].date) {
+        route = `/hearings/${appeal.externalId}/details`
+        history.push(route)
+        hearingAttrs.push(
+          <Link to={route}>Convert to virtual</Link>
+        )
+      }
+    }
+    hearingAttrs.push(
+      {
+        label: 'Disposition',
+        value: <React.Fragment>
+          {dispositionLabel(hearing?.disposition)}
+        </React.Fragment>
+      }
+    )
 
     if (!userIsVsoEmployee) {
       hearingAttrs.push(
@@ -109,6 +120,12 @@ class CaseHearingsDetail extends React.PureComponent {
           </Link>
         }
       );
+    }
+    //FIXME
+    else {
+      if (hearings[0].type != 'virtual' && today + 11 >= hearings[0].date) {
+        // put in the banner here
+      }
     }
 
     return hearingAttrs;
@@ -174,23 +191,6 @@ class CaseHearingsDetail extends React.PureComponent {
       route = `/queue/appeals/${appeal.externalId}/tasks/${openScheduleHearingTasksForAppeal.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
       history.push(route)
       return <Link to={route}>Convert to virtual</Link>
-    }
-    // if hearing is scheduled
-    //FIXME this is all pseudocode
-    else {
-      // if hearing is already virtual
-      if(hearings[0].type == 'virtual') {
-        return
-      }
-      // if hearing is within 11 days
-      else if(today + 11 == hearings[0].date) {
-        // insert banner here
-      }
-      else {
-        route = `/hearings/${appeal.externalId}/details`
-        history.push(route)
-        return <Link to={route}>Convert to virtual</Link>
-      }
     }
   };
 
