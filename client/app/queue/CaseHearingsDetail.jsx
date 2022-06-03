@@ -15,6 +15,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Tooltip from '../components/Tooltip';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
 
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
 import { UnscheduledNotes } from '../hearings/components/UnscheduledNotes';
@@ -23,7 +24,7 @@ import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
 import { dispositionLabel } from '../hearings/utils';
-import { openScheduleHearingTasksForAppeal } from './selectors';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -184,44 +185,56 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  unscheduledHearingConversion = (appeal, userIsVsoEmployee) => {
-    appeal?.readableHearingRequestType
-    if(userIsVsoEmployee) {
-      route = `/queue/appeals/${appeal.externalId}/tasks/${openScheduleHearingTasksForAppeal.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
-      history.push(route)
-      return <Link to={route}>Convert to virtual</Link>
-    }
-  };
-
   getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, history) => {
-    return [
-      {
-        label: 'Type',
-        value: 
-        <React.Fragment>
-           {this.unscheduledHearingConversion(appeal, userIsVsoEmployee)} 
-          <br />
-        </React.Fragment>
-      },
-      {
-        label: 'Notes',
-        value: <React.Fragment>
-          <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
-            <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
-            <span {...css({ marginLeft: '24px' })}>Edit</span>
-          </Button>
-          <br />
-          {task?.unscheduledHearingNotes?.notes && <UnscheduledNotes
-            readonly
-            styling={{ marginLeft: '2rem' }}
-            unscheduledNotes={task?.unscheduledHearingNotes?.notes}
-            updatedAt={task?.unscheduledHearingNotes?.updatedAt}
-            updatedByCssId={task?.unscheduledHearingNotes?.updatedByCssId}
-            uniqueId={task?.taskId} />
-          }
-        </React.Fragment>
-      },
-    ];
+    if (userIsVsoEmployee){
+      return [
+        {
+          label: 'Type',
+          value: 
+            <React.Fragment>
+              {appeal?.readableHearingRequestType}&nbsp;&nbsp;
+              {appeal?.readableHearingRequestType !== "Virtual" && 
+               <Link to={`/queue/appeals/${appeal.externalId}/tasks/` + 
+               `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>Convert to virtual</Link>}
+               {//FIXME
+               appeal?.readableHearingRequestType == "Virtual" && 
+                <div className="cf-sg-alert-slim">
+                  <Alert
+                    type="info">
+                    Hearing already virtual
+                  </Alert>
+                </div>}
+            </React.Fragment>
+        },
+      ];
+    }
+    else {
+      return [
+        {
+          label: 'Type',
+          value: 
+            appeal?.readableHearingRequestType
+        },
+        {
+          label: 'Notes',
+          value: <React.Fragment>
+            <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
+              <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
+              <span {...css({ marginLeft: '24px' })}>Edit</span>
+            </Button>
+            <br />
+            {task?.unscheduledHearingNotes?.notes && <UnscheduledNotes
+              readonly
+              styling={{ marginLeft: '2rem' }}
+              unscheduledNotes={task?.unscheduledHearingNotes?.notes}
+              updatedAt={task?.unscheduledHearingNotes?.updatedAt}
+              updatedByCssId={task?.unscheduledHearingNotes?.updatedByCssId}
+              uniqueId={task?.taskId} />
+            }
+          </React.Fragment>
+        },
+      ];
+    }
   }
 
   getUnscheduledHearingElements = () => {
@@ -239,7 +252,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getUnscheduledHearingAttrs(task, appeal).map(this.getDetailField)} />
+        items={this.getUnscheduledHearingAttrs(task, appeal, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
   }
 

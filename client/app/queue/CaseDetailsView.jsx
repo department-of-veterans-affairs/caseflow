@@ -13,7 +13,8 @@ import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
   openScheduleHearingTasksForAppeal,
-  allHearingTasksForAppeal
+  allHearingTasksForAppeal,
+  scheduleHearingTasksForAppeal
 } from './selectors';
 import {
   stopPollingHearing,
@@ -198,6 +199,9 @@ export const CaseDetailsView = (props) => {
   const openScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
+  const scheduleHearingTasks= useSelector(
+    (state) => scheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
   const allHearingTasks = useSelector(
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
@@ -305,7 +309,7 @@ export const CaseDetailsView = (props) => {
             <CaseHearingsDetail
               title="Hearings"
               appeal={appeal}
-              hearingTasks={parentHearingTasks}
+              hearingTasks={userIsVsoEmployee ? scheduleHearingTasks : parentTasks(openScheduledHearingTasks, allHearingTasks)}
             />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
