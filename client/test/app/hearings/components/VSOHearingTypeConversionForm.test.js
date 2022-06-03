@@ -11,15 +11,7 @@ const mountVSOHearingTypeConversionForm = () => {
 
 describe("VSOHearingTypeConversionForm", () => {
   test("Display claimant email on VSOHearingTypeConversionForm", () => {
-    const appeal = {
-      appealData,
-      virtualAppeal,
-      appellantEmail: { ...virtualAppeal },
-    };
-
-    const vsoHearingTypeConversionForm = mount(
-      <VSOHearingTypeConversionForm appeal={virtualAppeal} type="Virtual" />
-    );
+    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
 
     expect(vsoHearingTypeConversionForm.props.appellantEmail).toEqual(
       "susan@gmail.com"
