@@ -66,12 +66,16 @@ class CaseHearingsDetail extends React.PureComponent {
       label: 'Type',
       value: hearing.isVirtual ? 'Virtual' : hearing.type
     }];
+    //FIXME
     if (userIsVsoEmployee) {
-      if(hearings[0].type != 'virtual' && today + 11 < hearings[0].date) {
+      if(hearing.type != 'virtual' && today + 11 < hearing.date) {
         route = `/hearings/${appeal.externalId}/details`
         history.push(route)
         hearingAttrs.push(
-          <Link to={route}>Convert to virtual</Link>
+          {
+            label: '',
+            value: <Link to={route}>Convert to virtual</Link>
+          }
         )
       }
     }
@@ -180,14 +184,9 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  changeRoute = () => {
-    const {
-      appeal: { hearings },
-      openScheduleHearingTasksForAppeal,
-      userIsVsoEmployee
-    } = this.props;
-    // if hearing is unscheduled
-    if(!_.isEmpty(hearings)) {
+  unscheduledHearingConversion = (appeal, userIsVsoEmployee) => {
+    appeal?.readableHearingRequestType
+    if(userIsVsoEmployee) {
       route = `/queue/appeals/${appeal.externalId}/tasks/${openScheduleHearingTasksForAppeal.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
       history.push(route)
       return <Link to={route}>Convert to virtual</Link>
@@ -200,10 +199,7 @@ class CaseHearingsDetail extends React.PureComponent {
         label: 'Type',
         value: 
         <React.Fragment>
-          {
-          appeal?.readableHearingRequestType
-          if (userIsVsoEmployee) {this.changeRoute} 
-          }
+           {this.unscheduledHearingConversion(appeal, userIsVsoEmployee)} 
           <br />
         </React.Fragment>
       },
