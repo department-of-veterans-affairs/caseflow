@@ -19,8 +19,8 @@ describe TasksForAppeal do
       end
 
       context "with ScheduleHearingTask" do
-        let!(:factory) { create(:schedule_hearing_task)}
-        let!(:appeal) { factory.appeal}
+        let!(:factory) { create(:schedule_hearing_task) }
+        let!(:appeal) { factory.appeal }
         it "includes Schedule Hearing tasks" do
           sch_hear_tasks = tasks.select { |t| t.is_a?(ScheduleHearingTask) }
           expect(sch_hear_tasks).not_to be_empty
@@ -48,19 +48,19 @@ describe TasksForAppeal do
             new_hearing = create(:hearing, :with_tasks, appeal: appeal)
             new_hearing.update!(disposition: :postponed)
             new_hearing
-         end
+          end
           it "does not include the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
-          end       
+          end
         end
-        
-       context "hearing has been cancelled" do
+
+        context "hearing has been cancelled" do
           let!(:hearing) { create(:hearing, :with_tasks, :cancelled, appeal: appeal) }
 
           it "does not include the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
           end
-        end       
+        end
 
         context "hearing has been scheduled in error" do
           let!(:hearing) { create(:hearing, :with_tasks, :scheduled_in_error, appeal: appeal) }
@@ -83,10 +83,10 @@ describe TasksForAppeal do
           it "includes the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to_not be_nil
           end
-        end      
-      end    
+        end
+      end
     end
-  
+
     context "for a legacy appeal with a travel board hearing request" do
       let(:user_roles) { ["Build HearSched"] }
       let!(:user) { create(:user, roles: user_roles) }
