@@ -112,7 +112,7 @@ export const HearingTypeConversion = ({
 
   // Render Convert to Virtual Form Depending on VSO User Status
 
-  return !userIsVsoEmployee ? (
+  return userIsVsoEmployee ? (
     <VSOHearingTypeConversionForm
       appeal={appeal}
       history={history}

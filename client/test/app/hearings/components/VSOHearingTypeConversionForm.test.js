@@ -5,6 +5,10 @@ import { VSOHearingTypeConversionForm } from "app/hearings/components/VSOHearing
 import { mount } from "enzyme";
 import { virtualAppeal, appealData } from "test/data";
 
+const mountVSOHearingTypeConversionForm = () => {
+  return <VSOHearingTypeConversionForm appeal={virtualAppeal} type="Virtual" />;
+};
+
 describe("VSOHearingTypeConversionForm", () => {
   test("Display claimant email on VSOHearingTypeConversionForm", () => {
     const appeal = {
@@ -23,14 +27,7 @@ describe("VSOHearingTypeConversionForm", () => {
   });
 
   test("Display claimant timezone on VSOHearingTypeConversionForm", () => {
-    const appeal = {
-      appealData,
-      appellantTz: { ...virtualAppeal },
-    };
-
-    const vsoHearingTypeConversionForm = mount(
-      <VSOHearingTypeConversionForm appeal={appeal} type="Virtual" />
-    );
+    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
 
     expect(vsoHearingTypeConversionForm.appellantTz).toEqual(
       "America/New_York"
@@ -38,14 +35,7 @@ describe("VSOHearingTypeConversionForm", () => {
   });
 
   test("Display current user email on VSOHearingTypeConversionForm", () => {
-    const appeal = {
-      appealData,
-      currentUserEmail: { ...virtualAppeal },
-    };
-
-    const vsoHearingTypeConversionForm = mount(
-      <VSOHearingTypeConversionForm appeal={appeal} type="Virtual" />
-    );
+    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
 
     expect(vsoHearingTypeConversionForm.currentUserEmail).toEqual(
       "tom@brady.com"
@@ -53,14 +43,7 @@ describe("VSOHearingTypeConversionForm", () => {
   });
 
   test("Display current user time zone on VSOHearingTypeConversionForm", () => {
-    const appeal = {
-      appealData,
-      currentUserTimezone: { ...virtualAppeal },
-    };
-
-    const vsoHearingTypeConversionForm = mount(
-      <VSOHearingTypeConversionForm appeal={appeal} type="Virtual" />
-    );
+    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
 
     expect(vsoHearingTypeConversionForm.currentUserTimezone).toEqual(
       "America/New_York"
