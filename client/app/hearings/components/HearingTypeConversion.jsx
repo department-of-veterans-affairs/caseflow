@@ -112,8 +112,7 @@ export const HearingTypeConversion = ({
 
   // Render Convert to Virtual Form Depending on VSO User Status
 
-  return (
-    // userIsVsoEmployee ? (
+  return !userIsVsoEmployee ? (
     <VSOHearingTypeConversionForm
       appeal={appeal}
       history={history}
@@ -123,17 +122,16 @@ export const HearingTypeConversion = ({
       task={task}
       type={type}
     />
-    // ) : (
-    //   <HearingTypeConversionForm
-    //     appeal={appeal}
-    //     history={history}
-    //     isLoading={loading}
-    //     onCancel={() => history.goBack()}
-    //     onSubmit={submit}
-    //     task={task}
-    //     type={type}
-    //   />
-    // )
+  ) : (
+    <HearingTypeConversionForm
+      appeal={appeal}
+      history={history}
+      isLoading={loading}
+      onCancel={() => history.goBack()}
+      onSubmit={submit}
+      task={task}
+      type={type}
+    />
   );
 };
 

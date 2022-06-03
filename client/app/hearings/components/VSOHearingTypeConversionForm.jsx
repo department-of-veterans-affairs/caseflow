@@ -25,7 +25,7 @@ export const VSOHearingTypeConversionForm = ({
   // powerOfAttorney gets loaded into redux store when case details page loads
   const hearing = {
     representative: appeal?.powerOfAttorney?.representative_name,
-    representativeEmail: appeal?.powerOfAttorney.representativeEmailAddress,
+    representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
     representativeType: appeal?.powerOfAttorney?.representative_type,
     appellantFullName: appeal?.appellantFullName,
     appellantIsNotVeteran: appeal?.appellantIsNotVeteran,

@@ -9,14 +9,15 @@ describe("VSOHearingTypeConversionForm", () => {
   test("Display claimant email on VSOHearingTypeConversionForm", () => {
     const appeal = {
       appealData,
-      appellantEmailAddress: { ...virtualAppeal },
+      virtualAppeal,
+      appellantEmail: { ...virtualAppeal },
     };
 
     const vsoHearingTypeConversionForm = mount(
-      <VSOHearingTypeConversionForm appeal={appeal} type="Virtual" />
+      <VSOHearingTypeConversionForm appeal={virtualAppeal} type="Virtual" />
     );
 
-    expect(vsoHearingTypeConversionForm.appellantEmailAddress).toEqual(
+    expect(vsoHearingTypeConversionForm.props.appellantEmail).toEqual(
       "susan@gmail.com"
     );
   });
