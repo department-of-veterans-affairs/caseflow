@@ -33,18 +33,18 @@ export const HearingTypeConversion = ({
   const getSuccessMsg = () => {
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
-      appeal?.appellantIsNotVeteran
-        ? appeal?.appellantFullName
-        : appeal?.veteranFullName,
+      appeal?.appellantIsNotVeteran ?
+        appeal?.appellantFullName :
+        appeal?.veteranFullName,
       type.toLowerCase()
     );
-    const detail = userIsVsoEmployee
-      ? COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL
-      : sprintf(
-          COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
+    const detail = userIsVsoEmployee ?
+      COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL :
+      sprintf(
+        COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
           appeal?.closestRegionalOfficeLabel ||
             COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
-        );
+      );
 
     return { title, detail };
   };
@@ -113,27 +113,27 @@ export const HearingTypeConversion = ({
   // Render Convert to Virtual Form Depending on VSO User Status
 
   return (
-    // userIsVsoEmployee ? (
-    <VSOHearingTypeConversionForm
-      appeal={appeal}
-      history={history}
-      isLoading={loading}
-      onCancel={() => history.goBack()}
-      onSubmit={submit}
-      task={task}
-      type={type}
-    />
-    // ) : (
-    //   <HearingTypeConversionForm
-    //     appeal={appeal}
-    //     history={history}
-    //     isLoading={loading}
-    //     onCancel={() => history.goBack()}
-    //     onSubmit={submit}
-    //     task={task}
-    //     type={type}
-    //   />
-    // )
+    userIsVsoEmployee ? (
+      <VSOHearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    ) : (
+      <HearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    )
   );
 };
 
