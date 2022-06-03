@@ -246,10 +246,41 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
       end
 
+      step "BVA Intake user can return an appeal to CAMO" do
+        appeal = Appeal.last
+
+        User.authenticate!(user: bva_intake_user)
+
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.label
+        ).click
+
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("Please review this appeal, CAMO.")
+
+        find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
+
+        expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+        expect(page).to have_content(format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name))
+
+        expect(appeal.tasks.last.assigned_to). to eq camo
+      end
+
       step "BVA Intake can docket an appeal" do
         appeal = Appeal.last
         camo_task = VhaDocumentSearchTask.last
         bva_intake_task = PreDocketTask.last
+
+        camo_task.completed!
 
         User.authenticate!(user: bva_intake_user)
         visit "/queue/appeals/#{appeal.external_id}"
@@ -268,7 +299,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
     end
 
-    # This test confirms that BVA Intake can still perform this action while tis
+    # This test confirms that BVA Intake can still perform this action while it is
     # in progress and the Pre-Docket task is on hold.
     it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
       User.authenticate!(user: bva_intake_user)
@@ -323,7 +354,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     find("button", class: "usa-button", text: "Confirm").click
   end
 
-  context "when an EMO case goes through intake to be pre-docketed" do
+  context "when an education case goes through intake to be pre-docketed" do
     before do
       OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
       FeatureToggle.enable!(:edu_predocket_appeals)
@@ -753,8 +784,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
 
-      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE)
-      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_DETAIL)
+      expect(page).to have_content(
+        format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, emo_task.appeal.veteran_full_name)
+      )
 
       expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
     end
