@@ -1,44 +1,38 @@
-import React from "react";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 
-import { VSOHearingTypeConversionForm } from "app/hearings/components/VSOHearingTypeConversionForm";
+import { virtualAppeal } from 'test/data';
+import { VSOHearingTypeConversionForm } from 'app/hearings/components/VSOHearingTypeConversionForm';
 
-import { mount } from "enzyme";
-import { virtualAppeal, appealData } from "test/data";
-
-const mountVSOHearingTypeConversionForm = () => {
-  return <VSOHearingTypeConversionForm appeal={virtualAppeal} type="Virtual" />;
+const renderVSOHearingTypeConversionForm = (appeal) => {
+  return render(<VSOHearingTypeConversionForm appeal={appeal} type="Virtual" />);
 };
 
-describe("VSOHearingTypeConversionForm", () => {
-  test("Display claimant email on VSOHearingTypeConversionForm", () => {
-    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
 
-    expect(vsoHearingTypeConversionForm.props.appellantEmail).toEqual(
-      "susan@gmail.com"
+describe('VSOHearingTypeConversionForm', () => {
+  renderVSOHearingTypeConversionForm(virtualAppeal);
+
+  test('Display claimant email on VSOHearingTypeConversionForm', () => {
+    expect(true).toEqual(
+      virtualAppeal.appellantEmail
     );
   });
 
-  test("Display claimant timezone on VSOHearingTypeConversionForm", () => {
-    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
-
-    expect(vsoHearingTypeConversionForm.appellantTz).toEqual(
-      "America/New_York"
+  test('Display appellant timezone on VSOHearingTypeConversionForm', () => {
+    expect(true).toEqual(
+      virtualAppeal.appellantTz
     );
   });
 
-  test("Display current user email on VSOHearingTypeConversionForm", () => {
-    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
-
-    expect(vsoHearingTypeConversionForm.currentUserEmail).toEqual(
-      "tom@brady.com"
+  test('Display POA email on VSOHearingTypeConversionForm', () => {
+    expect(true).toEqual(
+      virtualAppeal.representativeEmail
     );
   });
 
-  test("Display current user time zone on VSOHearingTypeConversionForm", () => {
-    const vsoHearingTypeConversionForm = mountVSOHearingTypeConversionForm();
-
-    expect(vsoHearingTypeConversionForm.currentUserTimezone).toEqual(
-      "America/New_York"
+  test('Display POA time zone on VSOHearingTypeConversionForm', () => {
+    expect(true).toEqual(
+      virtualAppeal.currentUserEmail
     );
   });
 });
