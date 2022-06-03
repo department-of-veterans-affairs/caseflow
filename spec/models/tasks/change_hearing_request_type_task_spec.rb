@@ -24,7 +24,7 @@ describe ChangeHearingRequestTypeTask do
         Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
       ]
 
-      it { is_expected.to eq available_actions }
+      it { is_expected.to match_array available_actions }
     end
   end
 
