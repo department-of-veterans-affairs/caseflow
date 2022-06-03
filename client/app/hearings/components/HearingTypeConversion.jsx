@@ -82,7 +82,7 @@ export const HearingTypeConversion = ({
   const submit = async () => {
     let data = {};
 
-    if (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty) {
+    if (userIsVsoEmployee && (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty)) {
       scrollUp();
 
       if (isAppellantTZEmpty) {

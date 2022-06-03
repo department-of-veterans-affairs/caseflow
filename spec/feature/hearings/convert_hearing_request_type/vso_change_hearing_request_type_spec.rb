@@ -34,6 +34,7 @@ RSpec.feature "Convert hearing request type" do
       step "fill out the Form" do
         expect(page).to have_content("Convert Hearing To Virtual")
         # TODO: add front end validation checks here once changes are merged
+        # Fill out all fields
         click_button("Convert Hearing To Virtual")
       end
 
