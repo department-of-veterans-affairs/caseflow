@@ -22,9 +22,9 @@ describe ChangeHearingRequestTypeTask do
     describe "vso user" do
 
       subject { task.available_actions(vso_user) }
-
+      
       available_actions = [
-        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h,
+        
       ]
 
       it { is_expected.to eq available_actions }         
