@@ -1,6 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -22,6 +23,7 @@ import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
 import { dispositionLabel } from '../hearings/utils';
+import { openScheduleHearingTasksForAppeal } from './selectors';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -161,22 +163,49 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal) => {
-    const routeChange = () =>{ 
-      let path = `newPath`; 
-      navigate(path);
+  changeRoute = () => {
+    const {
+      appeal: { hearings },
+      openScheduleHearingTasksForAppeal,
+      userIsVsoEmployee
+    } = this.props;
+    // if hearing is unscheduled
+    if(!_.isEmpty(hearings)) {
+      route = `/queue/appeals/${appeal.externalId}/tasks/${openScheduleHearingTasksForAppeal.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
+      history.push(route)
+      return <Link to={route}>Convert to virtual</Link>
     }
+    // if hearing is scheduled
+    //FIXME this is all pseudocode
+    else {
+      // if hearing is already virtual
+      if(hearings[0].type == 'virtual') {
+        return
+      }
+      // if hearing is within 11 days
+      else if(today + 11 == hearings[0].date) {
+        // insert banner here
+      }
+      else {
+        route = `/hearings/${appeal.externalId}/details`
+        history.push(route)
+        return <Link to={route}>Convert to virtual</Link>
+      }
+    }
+  };
+
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, history) => {
     return [
       {
         label: 'Type',
         value: 
         <React.Fragment>
+          {
           appeal?.readableHearingRequestType
-          <Link to={this.props.myroute} onClick={routeChange}>Convert to virtual</Link>
+          if (userIsVsoEmployee) {this.changeRoute} 
+          }
           <br />
         </React.Fragment>
-        
-
       },
       {
         label: 'Notes',
@@ -202,7 +231,8 @@ class CaseHearingsDetail extends React.PureComponent {
   getUnscheduledHearingElements = () => {
     const {
       appeal,
-      hearingTasks
+      hearingTasks,
+      userIsVsoEmployee
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -269,7 +299,6 @@ CaseHearingsDetail.propTypes = {
       PropTypes.shape({
         externalId: PropTypes.string,
         type: PropTypes.string
-
       })
     ),
     caseType: PropTypes.string,
@@ -277,7 +306,9 @@ CaseHearingsDetail.propTypes = {
   }),
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
-  hearingTasks: PropTypes.array
+  hearingTasks: PropTypes.array,
+  // Router inherited props
+  history: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
