@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
