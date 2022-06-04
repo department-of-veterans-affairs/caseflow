@@ -1,27 +1,25 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
-import COPY from "../../../../COPY";
-import { AddressLine } from "../details/Address";
-import { VirtualHearingSection } from "./Section";
-import { ReadOnly } from "../details/ReadOnly";
-import { HelperText } from "./HelperText";
-import { HearingEmail } from "../details/HearingEmail";
-import { Timezone } from "./Timezone";
-import { marginTop } from "../details/style";
+import COPY from '../../../../COPY';
+import { AddressLine } from '../details/Address';
+import { VirtualHearingSection } from './Section';
+import { ReadOnly } from '../details/ReadOnly';
+import { HelperText } from './HelperText';
+import { HearingEmail } from '../details/HearingEmail';
+import { Timezone } from './Timezone';
+import { marginTop } from '../details/style';
 
 export const VSORepresentativeSection = ({
   hearing,
   errors,
   type,
-  readOnly,
   fullWidth,
   update,
   appellantTitle,
   showDivider,
   formFieldsOnly,
-  representativeTimezone,
   representativeEmailType,
   currentUserTimezone,
 }) => (
@@ -54,10 +52,10 @@ export const VSORepresentativeSection = ({
       />
     )}
 
-    <div className={classNames("usa-grid", { [marginTop(30)]: true })}>
+    <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
       <div
         className={classNames(
-          fullWidth ? "usa-width-one-whole" : "usa-width-one-half"
+          fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half'
         )}
       >
         <HearingEmail
@@ -72,18 +70,18 @@ export const VSORepresentativeSection = ({
       </div>
     </div>
 
-    <div className={classNames("usa-grid", { [marginTop(30)]: true })}>
+    <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
       <div
         className={classNames(
-          fullWidth ? "usa-width-one-whole" : "usa-width-one-half"
+          fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half'
         )}
       >
         <Timezone
           errorMessage={errors?.representativeTz}
           required
-          value={hearing?.currentUserTimezone}
-          onChange={(currentUserTimezone) =>
-            update("hearing", { currentUserTimezone })
+          value={currentUserTimezone}
+          onChange={() =>
+            update('hearing', { currentUserTimezone })
           }
           time={hearing.scheduledTimeString}
           roTimezone={hearing?.regionalOfficeTimezone}
