@@ -1,16 +1,14 @@
-import { sprintf } from "sprintf-js";
-import AppSegment from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment";
-import PropTypes from "prop-types";
-import React from "react";
-
-import { VSOAppellantSection } from "./VirtualHearings/VSOAppellantSection";
-import { VSORepresentativeSection } from "./VirtualHearings/VSORepresentativeSection";
-import { getAppellantTitle } from "../utils";
-import { marginTop, saveButton, cancelButton } from "./details/style";
-import Checkbox from "../../components/Checkbox";
-import Button from "../../components/Button";
-import COPY from "../../../COPY";
-
+import { sprintf } from 'sprintf-js';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
+import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
+import { getAppellantTitle } from '../utils';
+import { marginTop, saveButton, cancelButton } from './details/style';
+import Checkbox from '../../components/Checkbox';
+import Button from '../../components/Button';
+import COPY from '../../../COPY';
 export const VSOHearingTypeConversionForm = ({
   appeal,
   isLoading,
@@ -32,6 +30,8 @@ export const VSOHearingTypeConversionForm = ({
     veteranFullName: appeal?.veteranFullName,
     currentUserEmail: appeal?.currentUserEmail,
     currentUserTimezone: appeal?.currentUserTimezone,
+    appellantTz: appeal?.appellantTz,
+    appellantTitle
   };
 
   // veteranInfo gets loaded into redux store when case details page loads
@@ -39,8 +39,8 @@ export const VSOHearingTypeConversionForm = ({
     appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
     representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
   };
-  /* eslint-enable camelcase */
 
+  /* eslint-enable camelcase */
   // Set the section props
   const sectionProps = {
     appellantTitle,
@@ -55,6 +55,7 @@ export const VSOHearingTypeConversionForm = ({
     type,
     virtualHearing,
   };
+
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   return (
@@ -66,7 +67,7 @@ export const VSOHearingTypeConversionForm = ({
         <VSORepresentativeSection {...sectionProps} showDivider />
         <Checkbox
           label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
-          name="affirmPermission"
+          name="Affirm Permission"
           value
           onChange
         />
@@ -77,13 +78,13 @@ export const VSOHearingTypeConversionForm = ({
               <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
               <a
                 href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                style={{ textDecoration: "underline" }}
+                style={{ textDecoration: 'underline' }}
               >
                 Learn more
               </a>
             </div>
           }
-          name="affirmAccess"
+          name="Affirm Access"
           value
           onChange
         />
@@ -118,7 +119,7 @@ VSOHearingTypeConversionForm.defaultProps = {
 
 VSOHearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
-  type: PropTypes.oneOf(["Virtual"]),
+  type: PropTypes.oneOf(['Virtual']),
   isLoading: PropTypes.bool,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,

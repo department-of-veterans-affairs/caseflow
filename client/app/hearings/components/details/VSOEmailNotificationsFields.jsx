@@ -1,14 +1,12 @@
-import React from "react";
-import classNames from "classnames";
-import PropTypes from "prop-types";
-
-import { marginTop, input8px } from "../details/style";
-import { HearingEmail } from "./HearingEmail";
-import { Timezone } from "../VirtualHearings/Timezone";
-import { HelperText } from "../VirtualHearings/HelperText";
-import COPY from "../../../../COPY";
-import { getAppellantTitle, readOnlyEmails } from "../../utils";
-
+import React from 'react';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { marginTop, input8px } from '../details/style';
+import { HearingEmail } from './HearingEmail';
+import { Timezone } from '../VirtualHearings/Timezone';
+import { HelperText } from '../VirtualHearings/HelperText';
+import COPY from '../../../../COPY';
+import { getAppellantTitle, readOnlyEmails } from '../../utils';
 export const VSOEmailNotificationsFields = ({
   errors,
   hearing,
@@ -46,15 +44,15 @@ export const VSOEmailNotificationsFields = ({
           showHelper={false}
         />
         <div
-          value={hearing?.appellantTz}
-          className={classNames("usa-grid", { [marginTop(30)]: true })}
+          value={appellantTz}
+          className={classNames('usa-grid', { [marginTop(30)]: true })}
           {...input8px}
         >
           <Timezone
             required
             errorMessage={errors?.appellantTz}
             value={appellantTz}
-            onChange={(appellantTz) => update("hearing", { appellantTz })}
+            onChange={() => update('hearing', { appellantTz })}
             readOnly={disableField}
             time={time}
             roTimezone={roTimezone}
