@@ -460,7 +460,6 @@ export const prepareAppealForStore = (appeals) => {
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
       hasSameAppealSubstitution:
-        // eslint-disable-next-line max-len
         appeal.attributes.substitutions?.[0]?.target_appeal_uuid ===
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
