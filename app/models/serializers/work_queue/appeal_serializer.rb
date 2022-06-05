@@ -14,17 +14,14 @@ class WorkQueue::AppealSerializer
     object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
   end
 
-  # veteran email address if it is a veteran
   attribute :appellant_email_address do |object|
     object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
   end
 
-  # email address of current user who is signed in
   attribute :current_user_email do |_, params|
     params[:user].email
   end
 
-  # timezone of current user who is signed in
   attribute :current_user_timezone do |_, params|
     params[:user].timezone
   end
