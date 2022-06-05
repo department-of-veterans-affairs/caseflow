@@ -124,14 +124,12 @@ module Seeds
         participant_id: "2452415"
       )
 
-      %w[BILLIE MICHAEL JIMMY].each do |name|
+      %w[BILLIE MICHAEL].each do |name|
         u = User.create(
           css_id: "#{name}_VSO",
           station_id: 101,
           full_name: "#{name} VSOUser Jones",
-          roles: %w[VSO],
-          email: "#{name}@test.com"
-          # timezone: Time.new.in_time_zone
+          roles: %w[VSO]
         )
         vso.add_user(u)
 
