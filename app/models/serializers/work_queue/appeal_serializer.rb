@@ -19,11 +19,6 @@ class WorkQueue::AppealSerializer
     object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
   end
 
-  # power of attorney email address
-  attribute :poa_email do |object|
-    object.power_of_attorney&.representative_email_address
-  end
-
   # email address of current user who is signed in
   attribute :current_user_email do |_, params|
     params[:user].email
