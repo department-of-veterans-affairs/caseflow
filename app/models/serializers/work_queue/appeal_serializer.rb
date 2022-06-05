@@ -21,7 +21,7 @@ class WorkQueue::AppealSerializer
 
   # power of attorney email address
   attribute :poa_email do |object|
-    object.power_of_attorney.representative_email_address
+    object.power_of_attorney&.representative_email_address
   end
 
   # email address of current user who is signed in
