@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
-import { HearingTypeConversionContext } from '../contexts/HearingTypeConversionContext';
+import { HearingTypeConversionProvider } from '../contexts/HearingTypeConversionContext';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
@@ -31,13 +31,14 @@ export const HearingTypeConversion = ({
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
-  const { isAppellantTZEmpty,
+  const {
+    isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
     setAppellantTZErrorMessage,
     setRepTZErrorMessage,
     setConfirmIsEmptyMessage
-  } = useContext(HearingTypeConversionContext);
+  } = useContext(HearingTypeConversionProvider);
 
   // Function to scroll to top of window
   const scrollUp = () => {
