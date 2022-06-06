@@ -97,16 +97,16 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
+      if (response.body.conferenceLinkGenerateError) {
+        this.props.onHandleConferenceLinkError(response.body.conferenceLinkGenerateErrorMessage);
+      }
+
       const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(hearingDay, hearings);
-    }, (err) => {
-      this.props.onHandleConferenceLinkError(err);
-
-      return false;
     });
-  };
+  }
 
   formatHearingFormData = (hearingFormData) => {
     const { virtualHearing, location, ...rest } = hearingFormData;

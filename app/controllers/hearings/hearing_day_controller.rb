@@ -34,7 +34,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def log_error(error)
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { hearing_day_id: id, message: error.message })
+    Raven.capture_exception(error)
   end
 
   def show
@@ -44,7 +44,9 @@ class Hearings::HearingDayController < HearingsApplicationController
           hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
         )
       }
-    rescue StandardError => error
+    rescue VirtualHearings::LinkService::PINKeyMissingError, 
+    VirtualHearings::LinkService::URLHostMissingError, 
+    VirtualHearings::LinkService::URLPathMissingError => error
       log_error(error)
       render json: {
         hearing_day: hearing_day.to_hash(include_conference_link: true).merge(
