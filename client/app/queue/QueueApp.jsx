@@ -23,6 +23,7 @@ import {
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
+import { HearingTypeConversionContext } from '../hearings/contexts/HearingTypeConversionContext';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -442,7 +443,9 @@ class QueueApp extends React.PureComponent {
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
-    <HearingTypeConversion type="Virtual" {...props.match.params} />
+    <HearingTypeConversionContext.Provider>
+      <HearingTypeConversion type="Virtual" {...props.match.params} />
+    </HearingTypeConversionContext.Provider>
   );
 
   routedChangeHearingRequestTypeModal = (props) => (

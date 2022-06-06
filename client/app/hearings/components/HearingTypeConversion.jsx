@@ -4,7 +4,8 @@ import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React, { useState, createContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { HearingTypeConversionContext } from '../contexts/HearingTypeConversionContext';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
@@ -19,13 +20,6 @@ import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { formatChangeRequestType } from '../utils';
 
-export const AppellantTZContext = createContext([{}, () => {}]);
-export const AppellantTZErrorContext = createContext([{}, () => {}]);
-export const RepresentativeTZContext = createContext([{}, () => {}]);
-export const RepresentativeTZErrorContext = createContext([{}, () => {}]);
-export const EmptyConfirmContext = createContext([{}, () => {}]);
-export const EmptyConfirmMessageContext = createContext([{}, () => {}]);
-
 export const HearingTypeConversion = ({
   appeal,
   history,
@@ -37,23 +31,13 @@ export const HearingTypeConversion = ({
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
-  // Create state for appellant timezone check
-  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
-
-  // Create state for appellant timezone error message
-  const [appellantTZErrorMessage, setAppellantTZErrorMessage] = useState('');
-
-  // Create state for rep timezone check
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(true);
-
-  // Create state for rep timezone error message
-  const [repTZErrorMessage, setRepTZErrorMessage] = useState('');
-
-  // Create state to check if confirm field is empty
-  const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
-
-  // Create state for confirmIsEmpty error message
-  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useState('');
+  const { isAppellantTZEmpty,
+    isRepTZEmpty,
+    confirmIsEmpty,
+    setAppellantTZErrorMessage,
+    setRepTZErrorMessage,
+    setConfirmIsEmptyMessage
+  } = useContext(HearingTypeConversionContext);
 
   // Function to scroll to top of window
   const scrollUp = () => {
@@ -101,6 +85,7 @@ export const HearingTypeConversion = ({
       try {
         const changedRequestType = formatChangeRequestType(type);
 
+        /* eslint-disable camelcase */
         if (userIsVsoEmployee) {
           data = {
             task: {
@@ -124,6 +109,7 @@ export const HearingTypeConversion = ({
               },
             },
           };
+        /* eslint-enable camelcase */
         } else {
           data = {
             task: {
@@ -160,44 +146,28 @@ export const HearingTypeConversion = ({
     }
   };
 
-  // Render Convert to Virtual Form Depending on VSO User Status
-
   return (
-    <EmptyConfirmMessageContext.Provider value={[confirmIsEmptyMessage, setConfirmIsEmptyMessage]}>
-      <EmptyConfirmContext.Provider value={[confirmIsEmpty, setConfirmIsEmpty]}>
-        <RepresentativeTZErrorContext.Provider value={[repTZErrorMessage, setRepTZErrorMessage]}>
-          <RepresentativeTZContext.Provider value={[isRepTZEmpty, setIsRepTZEmpty]}>
-            <AppellantTZErrorContext.Provider value={[appellantTZErrorMessage, setAppellantTZErrorMessage]}>
-              <AppellantTZContext.Provider
-                value={[isAppellantTZEmpty, setIsAppellantTZEmpty]}
-              >
-                {userIsVsoEmployee ? (
-                  <VSOHearingTypeConversionForm
-                    appeal={appeal}
-                    history={history}
-                    isLoading={loading}
-                    onCancel={() => history.goBack()}
-                    onSubmit={submit}
-                    task={task}
-                    type={type}
-                  />
-                ) : (
-                  <HearingTypeConversionForm
-                    appeal={appeal}
-                    history={history}
-                    isLoading={loading}
-                    onCancel={() => history.goBack()}
-                    onSubmit={submit}
-                    task={task}
-                    type={type}
-                  />
-                )}
-              </AppellantTZContext.Provider>
-            </AppellantTZErrorContext.Provider>
-          </RepresentativeTZContext.Provider>
-        </RepresentativeTZErrorContext.Provider>
-      </EmptyConfirmContext.Provider>
-    </EmptyConfirmMessageContext.Provider>
+    userIsVsoEmployee ? (
+      <VSOHearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    ) : (
+      <HearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    )
   );
 };
 

@@ -22,6 +22,11 @@ export const HearingTypeConversionProvider = ({ children }) => {
   // Create state for confirmIsEmpty error message
   const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useState('');
 
+  // initiliaze hook to manage state for email validation
+  const [isNotValidEmail, setIsNotValidEmail] = useState(true);
+
+  const [originalEmail, setOriginalEmail] = useState('');
+
   const contextData = {
     isAppellantTZEmpty,
     appellantTZErrorMessage,
@@ -29,12 +34,16 @@ export const HearingTypeConversionProvider = ({ children }) => {
     repTZErrorMessage,
     confirmIsEmpty,
     confirmIsEmptyMessage,
+    isNotValidEmail,
+    originalEmail,
     setIsAppellantTZEmpty,
     setAppellantTZErrorMessage,
     setIsRepTZEmpty,
     setRepTZErrorMessage,
     setConfirmIsEmpty,
-    setConfirmIsEmptyMessage
+    setConfirmIsEmptyMessage,
+    setIsNotValidEmail,
+    setOriginalEmail
   };
 
   return (
