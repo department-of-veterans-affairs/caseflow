@@ -1,20 +1,11 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
-import { appealWithDetailSelector, taskById } from '../../queue/selectors';
-import { deleteAppeal } from '../../queue/QueueActions';
-import {
-  showErrorMessage,
-  showSuccessMessage,
-} from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
@@ -185,26 +176,3 @@ HearingTypeConversion.propTypes = {
   history: PropTypes.object,
   userIsVsoEmployee: PropTypes.bool,
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  appeal: appealWithDetailSelector(state, ownProps),
-  task: taskById(state, { taskId: ownProps.taskId }),
-  userIsVsoEmployee: state.ui.userIsVsoEmployee,
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      deleteAppeal,
-      showErrorMessage,
-      showSuccessMessage,
-    },
-    dispatch
-  );
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(HearingTypeConversion)
-);
