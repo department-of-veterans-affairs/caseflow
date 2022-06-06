@@ -86,15 +86,15 @@ export const HearingTypeConversion = ({
       scrollUp();
 
       if (isAppellantTZEmpty) {
-        setAppellantTZErrorMessage('Please enter a timezone');
+        setAppellantTZErrorMessage(COPY.CONVERT_HEARING_VALIDATE_TIMEZONE);
       }
 
       if (isRepTZEmpty) {
-        setRepTZErrorMessage('Please enter a timezone');
+        setRepTZErrorMessage(COPY.CONVERT_HEARING_VALIDATE_TIMEZONE);
       }
 
       if (confirmIsEmpty) {
-        setConfirmIsEmptyMessage('Please confirm email');
+        setConfirmIsEmptyMessage(COPY.CONVERT_HEARING_VALIDATE_CONFIRM_EMAIL_EMPTY);
       }
 
     } else {

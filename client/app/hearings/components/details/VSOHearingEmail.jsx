@@ -40,7 +40,7 @@ export const VSOHearingEmail = ({
       setMessage('');
       setIsNotValidEmail(false);
     } else {
-      setMessage('Please enter a valid email');
+      setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL);
       setIsNotValidEmail(true);
     }
   };
@@ -57,7 +57,7 @@ export const VSOHearingEmail = ({
       setMessage('');
       setIsNotValidEmail(false);
     } else {
-      setMessage('Email does not match');
+      setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
       setIsNotValidEmail(true);
     }
   };
