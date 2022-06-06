@@ -9,7 +9,7 @@ export const VSOAppellantSection = ({
   appellantTitle,
   formFieldsOnly,
   appellantEmailAddress,
-  appellantTz,
+  appellantTz
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -60,5 +60,5 @@ VSOAppellantSection.propTypes = {
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
   appellantEmailType: PropTypes.string,
-  appellantTz: PropTypes.string,
+  appellantTz: PropTypes.string
 };

@@ -9,13 +9,13 @@ export const defaultAssignHearing = {
     hearingDay: null,
     hearingLocation: null,
     scheduledTimeString: null,
-    hasErrorMessages: false,
+    hasErrorMessages: false
   },
   apiFormattedValues: {
     scheduled_time_string: null,
     hearing_day_id: null,
-    hearing_location: null,
-  },
+    hearing_location: null
+  }
 };
 
 export const powerOfAttorney = {
@@ -28,7 +28,7 @@ export const powerOfAttorney = {
     city: 'SAN FRANCISCO',
     zip: '94103',
     country: 'USA',
-    state: 'CA',
+    state: 'CA'
   },
   representative_email_address: 'tom.brady@caseflow.gov',
 };
@@ -47,7 +47,7 @@ export const veteranInfo = {
       city: 'Orlando',
       state: 'FL',
       zip: '12345',
-      country: 'USA',
+      country: 'USA'
     },
   },
 };
@@ -73,12 +73,12 @@ export const appealData = {
   decisionIssues: [
     {
       id: 1,
-      description: 'This is a description of the decision',
+      description: 'This is a description of the decision'
     },
     {
       id: 2,
-      description: 'This is a description of another decision',
-    },
+      description: 'This is a description of another decision'
+    }
   ],
   canEditRequestIssues: false,
   appellantIsNotVeteran: false,
@@ -90,7 +90,7 @@ export const appealData = {
     city: 'SAN FRANCISCO',
     zip: '94103',
     country: 'USA',
-    state: 'CA',
+    state: 'CA'
   },
   appellantRelationship: 'Spouse',
   assignedToLocation: 'Hearing Admin',
@@ -112,7 +112,7 @@ export const appealData = {
     untimely_evidence: null,
   },
   veteranInfo: {
-    ...veteranInfo,
+    ...veteranInfo
   },
   readableHearingRequestType: 'Video',
   readableOriginalHearingRequestType: 'Video',
@@ -141,7 +141,7 @@ export const virtualAppeal = {
   representativeEmail: 'tom.brady@caseflow.gov',
   currentUserTimezone: 'America/New_York',
   currentUserEmail: 'tom@brady.com',
-  type: 'Virtual',
+  type: 'Virtual'
 };
 
 export const legacyAppeal = {
@@ -157,7 +157,7 @@ export const legacyAppealForTravelBoard = {
   ...legacyAppeal,
   closestRegionalOfficeLabel: 'Nashville Regional office',
   powerOfAttorney: {
-    ...powerOfAttorney,
+    ...powerOfAttorney
   },
   readableHearingRequestType: 'Travel',
   readableOriginalHearingRequestType: 'Travel',
@@ -167,9 +167,9 @@ export const veteranInfoWithoutEmail = {
   veteranInfo: {
     veteran: {
       ...veteranInfo.veteran,
-      email_address: null,
-    },
-  },
+      email_address: null
+    }
+  }
 };
 
 export const openHearingAppeal = {
@@ -185,8 +185,8 @@ export const openHearingAppeal = {
       externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
       disposition: null,
       isVirtual: false,
-      createdAt: '2020-04-07T03:30:00.000-04:00',
-    },
+      createdAt: '2020-04-07T03:30:00.000-04:00'
+    }
   ],
 };
 
@@ -210,7 +210,7 @@ export const scheduleHearingDetails = {
     distance: 0,
     classification: 'Primary Care CBOC',
     facilityId: 'vba_317a',
-    facilityType: 'va_health_facility',
+    facilityType: 'va_health_facility'
   },
   scheduledTimeString: '08:45',
   hearingDay: hearingDateOptions[1].value,
@@ -218,7 +218,7 @@ export const scheduleHearingDetails = {
     hearingDay: null,
     hearingLocation: null,
     scheduledTimeString: null,
-    hasErrorMessages: false,
+    hasErrorMessages: false
   },
   notes: '',
   apiFormattedValues: {
@@ -234,8 +234,8 @@ export const scheduleHearingDetails = {
       classification: 'Primary Care CBOC',
       facility_id: 'vba_317a',
       facility_type: 'va_health_facility',
-    },
-  },
+    }
+  }
 };
 
 export const amaAppealHearingData = {
@@ -246,5 +246,5 @@ export const amaAppealHearingData = {
   type: 'Central',
   externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
   disposition: null,
-  isVirtual: false,
+  isVirtual: false
 };

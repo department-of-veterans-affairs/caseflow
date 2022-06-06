@@ -21,7 +21,7 @@ export const VSORepresentativeSection = ({
   showDivider,
   formFieldsOnly,
   representativeEmailType,
-  currentUserTimezone,
+  currentUserTimezone
 }) => (
   <VirtualHearingSection
     formFieldsOnly={formFieldsOnly}
@@ -115,5 +115,5 @@ VSORepresentativeSection.propTypes = {
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
   representativeEmailType: PropTypes.string,
-  currentUserTimezone: PropTypes.string,
+  currentUserTimezone: PropTypes.string
 };

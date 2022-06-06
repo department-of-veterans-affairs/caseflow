@@ -12,7 +12,7 @@ import { appealWithDetailSelector, taskById } from '../../queue/selectors';
 import { deleteAppeal } from '../../queue/QueueActions';
 import {
   showErrorMessage,
-  showSuccessMessage,
+  showSuccessMessage
 } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
@@ -56,6 +56,7 @@ export const HearingTypeConversion = ({
     try {
       const changedRequestType = formatChangeRequestType(type);
 
+      /* eslint-disable camelcase */
       if (userIsVsoEmployee) {
         data = {
           task: {
@@ -70,12 +71,13 @@ export const HearingTypeConversion = ({
                   representative_tz: appeal?.powerOfAttorney?.representative_tz,
                   appellant_email: appeal?.veteranInfo?.veteran?.email_address,
                   representative_email:
-                    appeal?.powerOfAttorney?.representative_email_address,
+                    appeal?.powerOfAttorney?.representative_email_address
                 },
               },
             },
           },
         };
+      /* eslint-enable camelcase */
       } else {
         data = {
           task: {
@@ -84,7 +86,7 @@ export const HearingTypeConversion = ({
               values: {
                 changed_hearing_request_type: changedRequestType,
                 closest_regional_office:
-                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key
               },
             },
           },
@@ -146,13 +148,13 @@ HearingTypeConversion.propTypes = {
   type: PropTypes.oneOf(['Virtual']),
   // Router inherited props
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool,
+  userIsVsoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
   task: taskById(state, { taskId: ownProps.taskId }),
-  userIsVsoEmployee: state.ui.userIsVsoEmployee,
+  userIsVsoEmployee: state.ui.userIsVsoEmployee
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -160,7 +162,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       deleteAppeal,
       showErrorMessage,
-      showSuccessMessage,
+      showSuccessMessage
     },
     dispatch
   );

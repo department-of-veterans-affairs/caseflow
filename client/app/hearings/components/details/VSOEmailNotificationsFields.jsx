@@ -15,7 +15,7 @@ export const VSOEmailNotificationsFields = ({
   time,
   roTimezone,
   appellantEmailAddress,
-  appellantTz,
+  appellantTz
 }) => {
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -80,5 +80,5 @@ VSOEmailNotificationsFields.propTypes = {
   initialRepresentativeTz: PropTypes.string,
   header: PropTypes.string,
   appellantEmailAddress: PropTypes.string.isRequired,
-  appellantTz: PropTypes.string.isRequired,
+  appellantTz: PropTypes.string.isRequired
 };

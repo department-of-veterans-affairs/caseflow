@@ -153,7 +153,7 @@ const taskAttributesFromRawTask = (task) => {
       updatedAt: task.attributes.unscheduled_hearing_notes?.updated_at,
       updatedByCssId:
         task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
-      notes: task.attributes.unscheduled_hearing_notes?.notes,
+      notes: task.attributes.unscheduled_hearing_notes?.notes
     },
     ownedBy: task.attributes.owned_by,
     daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
@@ -319,7 +319,7 @@ export const prepareAppealHearingsForStore = (appeal) =>
     disposition: hearing.disposition,
     isVirtual: hearing.is_virtual,
     notes: hearing.notes,
-    createdAt: hearing.created_at,
+    createdAt: hearing.created_at
   }));
 
 const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
