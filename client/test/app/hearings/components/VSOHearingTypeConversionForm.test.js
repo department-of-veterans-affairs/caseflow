@@ -43,6 +43,7 @@ describe('VSOHearingTypeConversionForm', () => {
     userEvent.click(screen.getByText('Guam'));
 
     expect(screen.findByText('Guam')).toBeTruthy();
+    expect(screen.queryByText('Eastern Time (US & Canada)')).not.toBeInDocument();
   });
 
   test('Display current user email on VSOHearingTypeConversionForm', () => {
@@ -62,5 +63,6 @@ describe('VSOHearingTypeConversionForm', () => {
     userEvent.click(screen.getByText('Vienna'));
 
     expect(screen.getByText('Vienna')).toBeTruthy();
+    expect(screen.queryByText('Central Time (US & Canada)')).not.toBeInDocument();
   });
 });
