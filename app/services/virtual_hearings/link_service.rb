@@ -57,7 +57,7 @@ class VirtualHearings::LinkService
   end
 
   def pin_key
-    ENV["VIRTUAL_HEARING_PIN_KEY"] || fail(PINKeyMissingError, message: COPY::PIN_KEY_MISSING_ERROR_MESSAGE)
+    fail(PINKeyMissingError, message: COPY::PIN_KEY_MISSING_ERROR_MESSAGE)
   end
 
   def host

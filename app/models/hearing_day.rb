@@ -282,7 +282,6 @@ class HearingDay < CaseflowRecord
 
   # Method to get the associated conference link record if exists and if not create  new one
   def find_or_create_conference_link!
-    raise VirtualHearings::LinkService::PINKeyMissingError
     conference_link = ConferenceLink.find_by_hearing_day_id(id)
     if conference_link.nil?
       conference_link = ConferenceLink.create(hearing_day_id: id)

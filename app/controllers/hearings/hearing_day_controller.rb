@@ -49,14 +49,14 @@ class Hearings::HearingDayController < HearingsApplicationController
     VirtualHearings::LinkService::URLPathMissingError => error
       log_error(error)
       render json: {
-        hearing_day: hearing_day.to_hash(include_conference_link: true).merge(
+        hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
           hearings: hearing_day.hearings_for_user(current_user).map do |hearing|
                       hearing.quick_to_hash(current_user.id)
                     end
         ),
         conference_link_generate_error: true,
         conference_link_generate_error_message: error.message
-      }, status: :success
+      }
     end
   end
 
