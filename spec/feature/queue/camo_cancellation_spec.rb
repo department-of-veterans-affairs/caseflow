@@ -51,8 +51,8 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       end
       step "trigger error state" do
         find("button", class: "usa-button", text: "Submit").click
-        expect(page).to have_content(COPY::VHA_SELECT_RADIO_ERROR)
-        expect(page).to have_content(COPY::VHA_EMPTY_INSTRUCTIONS_ERROR)
+        expect(page).to have_content(COPY::SELECT_RADIO_ERROR)
+        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
       end
       step "submit valid form" do
         find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click
