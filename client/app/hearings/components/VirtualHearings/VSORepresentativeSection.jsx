@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import COPY from '../../../../COPY';
-import { HearingTypeConversionContext } from '../contexts/HearingTypeConversionContext';
+import { HearingTypeConversionContext } from '../../contexts/HearingTypeConversionContext';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
