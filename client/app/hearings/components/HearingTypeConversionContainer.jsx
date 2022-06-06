@@ -3,10 +3,10 @@ import React from 'react';
 import { HearingTypeConversion } from './HearingTypeConversion';
 import { HearingTypeConversionProvider } from '../contexts/HearingTypeConversionContext';
 
-const HearingTypeConversionContainer = ({ type, props }) => {
+const HearingTypeConversionContainer = (props) => {
   return (
     <HearingTypeConversionProvider>
-      <HearingTypeConversion type={type} props={props} />
+      <HearingTypeConversion {...props} />
     </HearingTypeConversionProvider>
   );
 };
