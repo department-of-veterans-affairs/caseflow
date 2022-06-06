@@ -63,31 +63,23 @@ class CaseHearingsDetail extends React.PureComponent {
   }
 
   getHearingAttrs = (hearing, userIsVsoEmployee) => {
-    const hearingAttrs = [{
-      label: 'Type',
-      value: hearing.isVirtual ? 'Virtual' : hearing.type
-    }];
     //FIXME
-    if (userIsVsoEmployee) {
-      if(hearing.type != 'virtual' && today + 11 < hearing.date) {
-        route = `/hearings/${appeal.externalId}/details`
-        history.push(route)
-        hearingAttrs.push(
-          {
-            label: '',
-            value: <Link to={route}>Convert to virtual</Link>
-          }
-        )
-      }
-    }
-    hearingAttrs.push(
+    const today = new Date().toLocaleDateString();      // convert to virtual link
+    const hearingAttrs = [{
+        label: 'Type',
+        value: 
+        <React.Fragment>
+          {hearing.isVirtual ? 'Virtual' : hearing.type}
+          {userIsVsoEmployee && !hearing.isVirtual && today + 11 < hearing.date && 
+           <Link to={`/hearings/${appeal.externalId}/details`}>Convert to virtual</Link> }
+        </React.Fragment>
+      },
       {
         label: 'Disposition',
         value: <React.Fragment>
           {dispositionLabel(hearing?.disposition)}
         </React.Fragment>
-      }
-    )
+      }];
 
     if (!userIsVsoEmployee) {
       hearingAttrs.push(
@@ -126,10 +118,19 @@ class CaseHearingsDetail extends React.PureComponent {
         }
       );
     }
-    //FIXME
+    //info alerts
     else {
-      if (hearings[0].type != 'virtual' && today + 11 >= hearings[0].date) {
-        // put in the banner here
+      if (!hearing.isVirtual && today + 11 >= hearing.date) {
+        hearingAttrs.push(
+          <div className="cf-sg-alert-slim">
+            <Alert type="info">
+              Hearing within next 10 days; 
+              <a href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank" rel="noreferrer">
+                contact Hearing Coordinator to convert to Virtual.
+              </a>
+            </Alert>
+          </div>
+        )
       }
     }
 
@@ -185,7 +186,7 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, history) => {
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee) => {
     if (userIsVsoEmployee){
       return [
         {
@@ -196,14 +197,6 @@ class CaseHearingsDetail extends React.PureComponent {
               {appeal?.readableHearingRequestType !== "Virtual" && 
                <Link to={`/queue/appeals/${appeal.externalId}/tasks/` + 
                `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>Convert to virtual</Link>}
-               {//FIXME
-               appeal?.readableHearingRequestType == "Virtual" && 
-                <div className="cf-sg-alert-slim">
-                  <Alert
-                    type="info">
-                    Hearing already virtual
-                  </Alert>
-                </div>}
             </React.Fragment>
         },
       ];
@@ -316,8 +309,6 @@ CaseHearingsDetail.propTypes = {
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
   hearingTasks: PropTypes.array,
-  // Router inherited props
-  history: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
