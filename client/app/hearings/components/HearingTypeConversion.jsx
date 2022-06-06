@@ -72,10 +72,10 @@ export const HearingTypeConversion = ({
                   appellant_email: appeal?.veteranInfo?.veteran?.email_address,
                   representative_email:
                     appeal?.powerOfAttorney?.representative_email_address
-                },
-              },
-            },
-          },
+                }
+              }
+            }
+          }
         };
       /* eslint-enable camelcase */
       } else {
@@ -87,9 +87,9 @@ export const HearingTypeConversion = ({
                 changed_hearing_request_type: changedRequestType,
                 closest_regional_office:
                   appeal?.closestRegionalOffice || appeal?.regionalOffice?.key
-              },
-            },
-          },
+              }
+            }
+          }
         };
       }
       setLoading(true);
@@ -101,7 +101,7 @@ export const HearingTypeConversion = ({
     } catch (err) {
       const error = get(err, 'response.body.errors[0]', {
         title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
-        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
       });
 
       props.showErrorMessage(error);
