@@ -62,15 +62,17 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-  getHearingAttrs = (hearing, userIsVsoEmployee) => {
-    //FIXME
-    const today = new Date().toLocaleDateString();      // convert to virtual link
+  getHearingAttrs = (appeal, hearing, userIsVsoEmployee) => {
+    const today = new Date();
+    const deadline = today.setDate(today.getDate() + 11)
+    const hearing_day = new Date(hearing.date);
+    // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
         label: 'Type',
         value: 
         <React.Fragment>
-          {hearing.isVirtual ? 'Virtual' : hearing.type}
-          {userIsVsoEmployee && !hearing.isVirtual && today + 11 < hearing.date && 
+          {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
+          {userIsVsoEmployee && !hearing.isVirtual && hearing_day > deadline && 
            <Link to={`/hearings/${appeal.externalId}/details`}>Convert to virtual</Link> }
         </React.Fragment>
       },
@@ -118,22 +120,25 @@ class CaseHearingsDetail extends React.PureComponent {
         }
       );
     }
-    //info alerts
+    //info alert for hearings within 11 days of scheduled date
     else {
-      if (!hearing.isVirtual && today + 11 >= hearing.date) {
+      if (!hearing.isVirtual && hearing_day <= deadline) {
         hearingAttrs.push(
-          <div className="cf-sg-alert-slim">
-            <Alert type="info">
-              Hearing within next 10 days; 
-              <a href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank" rel="noreferrer">
-                contact Hearing Coordinator to convert to Virtual.
-              </a>
-            </Alert>
-          </div>
+          {
+            label: '',
+            value:
+              <div className="cf-sg-alert-slim">
+                <Alert type="info">
+                  Hearing within next 10 days;&nbsp;
+                  <a href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank" rel="noreferrer">
+                    contact Hearing Coordinator to convert to Virtual.
+                  </a>
+                </Alert>
+              </div>
+          }
         )
       }
-    }
-
+    }   
     return hearingAttrs;
   }
 
@@ -158,7 +163,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(hearing, userIsVsoEmployee).map(this.getDetailField)} />
+        items={this.getHearingAttrs(this.props.appeal, hearing, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
