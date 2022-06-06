@@ -550,7 +550,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "with an AMA appeal" do
       let!(:appeal) { create(:appeal, :hearing_docket) }
-      let!(:user) { User.authenticate!(roles: ["VSO"]) }
 
       subject { get :show, params: { appeal_id: appeal.external_id }, as: :json }
 
