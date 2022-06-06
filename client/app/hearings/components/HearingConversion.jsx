@@ -30,6 +30,7 @@ export const HearingConversion = ({
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
+  //const userVSOemployee = true;
 
   // Set the section props
   const sectionProps = {
@@ -46,7 +47,8 @@ export const HearingConversion = ({
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
-    schedulingToVirtual: virtual
+    schedulingToVirtual: virtual,
+    userVSOemployee
   };
 
   const prefillFields = () => {
@@ -73,35 +75,42 @@ export const HearingConversion = ({
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{sprintf(helperLabel, appellantTitle)}</span>
-      <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
-      <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className="usa-width-one-half">
-          <HearingTime
-            vertical
-            label="Hearing Time"
-            disableRadioOptions={virtual && !video}
-            enableZone
-            localZone={hearing.regionalOfficeTimezone}
-            onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
-            value={hearing.scheduledTimeString}
-          />
-          {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
-        </div>
-      </div>
-      <AppellantSection {...sectionProps} />
-      <RepresentativeSection {...sectionProps} />
-      <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
-        <div className="usa-grid">
+      
+      {!userVSOemployee && <div>
+        <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-half">
-            <JudgeDropdown
-              name="judgeDropdown"
-              value={hearing?.judgeId}
-              onChange={(judgeId) => update('hearing', { judgeId })}
+            <HearingTime
+              vertical
+              label="Hearing Time"
+              disableRadioOptions={virtual && !video}
+              enableZone
+              localZone={hearing.regionalOfficeTimezone}
+              onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
+              value={hearing.scheduledTimeString}
             />
+            {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
           </div>
         </div>
-        <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
-      </VirtualHearingSection>
+      </div>}
+      <AppellantSection {...sectionProps} />
+      <RepresentativeSection {...sectionProps} />
+        
+      {!userVSOemployee && <div>
+        <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
+          <div className="usa-grid">
+            <div className="usa-width-one-half">
+              <JudgeDropdown
+                name="judgeDropdown"
+                value={hearing?.judgeId}
+                onChange={(judgeId) => update('hearing', { judgeId })}
+              />
+            </div>
+          </div>
+          <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
+        </VirtualHearingSection>
+      </div>}
+        
     </AppSegment>
   );
 };
