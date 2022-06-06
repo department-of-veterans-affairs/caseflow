@@ -18,6 +18,7 @@ import ApiUtil from "../../util/ApiUtil";
 import COPY from "../../../COPY";
 import TASK_STATUSES from "../../../constants/TASK_STATUSES";
 import { formatChangeRequestType } from "../utils";
+import { Checkbox } from '../../components/Checkbox';
 
 export const HearingTypeConversion = ({
   appeal,
@@ -123,6 +124,7 @@ export const HearingTypeConversion = ({
       task={task}
       type={type}
     />
+    
     // ) : (
     //   <HearingTypeConversionForm
     //     appeal={appeal}
