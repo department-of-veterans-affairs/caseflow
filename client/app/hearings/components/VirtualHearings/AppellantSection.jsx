@@ -29,7 +29,8 @@ export const AppellantSection = ({
   formFieldsOnly,
   appellantTimezone,
   appellantEmailAddress,
-  appellantEmailType
+  appellantEmailType,
+  userVSOemployee
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -62,20 +63,21 @@ export const AppellantSection = ({
                   label={`${appellantTitle} Name`}
                   text={appellantName}
                 />
-                {hearing?.appellantIsNotVeteran && hearing?.appellantRelationship && (
+                 
+                {!userVSOemployee && (hearing?.appellantIsNotVeteran && hearing?.appellantRelationship) && (
                   <ReadOnly
                     label="Relation to Veteran"
                     text={hearing?.appellantRelationship}
                   />
                 )}
-                <AddressLine
+                {!userVSOemployee && <AddressLine
                   label={`${appellantTitle} Mailing Address`}
                   name={appellantName}
                   addressLine1={hearing?.appellantAddressLine1}
                   addressState={hearing?.appellantState}
                   addressCity={hearing?.appellantCity}
                   addressZip={hearing?.appellantZip}
-                />
+                />}
               </React.Fragment>
             )}
         </React.Fragment>
@@ -131,11 +133,12 @@ export const AppellantSection = ({
     </VirtualHearingSection>
   );
 };
-
+     
 AppellantSection.defaultProps = {
-  schedulingToVirtual: true
+  schedulingToVirtual: true,
+  userVSOemployee: false
 };
-
+     
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
   errors: PropTypes.object,
@@ -154,5 +157,6 @@ AppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string
+  appellantEmailType: PropTypes.string,
+  userVSOemployee: PropTypes.bool
 };
