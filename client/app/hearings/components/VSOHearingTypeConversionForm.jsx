@@ -3,7 +3,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 
-import { HearingTypeConversionContext } from '../contexts/HearingTypeConversionContext';
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { getAppellantTitle } from '../utils';

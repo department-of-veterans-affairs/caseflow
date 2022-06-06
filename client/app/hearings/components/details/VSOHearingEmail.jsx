@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 import classnames from 'classnames';
 
-import { HearingTypeConversionContext } from '../../contexts/HearingTypeConversionContext';
+import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 import { HelperText } from '../VirtualHearings/HelperText';
 import { enablePadding } from '../details/style';
 import COPY from '../../../../COPY';

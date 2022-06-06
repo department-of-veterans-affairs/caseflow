@@ -8,7 +8,7 @@ import { Timezone } from '../VirtualHearings/Timezone';
 import { HelperText } from '../VirtualHearings/HelperText';
 import COPY from '../../../../COPY';
 import { getAppellantTitle, readOnlyEmails } from '../../utils';
-import { HearingTypeConversionContext } from '../../contexts/HearingTypeConversionContext';
+import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 
 export const VSOEmailNotificationsFields = ({
   errors,

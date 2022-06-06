@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
-import { HearingTypeConversionProvider } from '../contexts/HearingTypeConversionContext';
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
@@ -38,7 +38,7 @@ export const HearingTypeConversion = ({
     setAppellantTZErrorMessage,
     setRepTZErrorMessage,
     setConfirmIsEmptyMessage
-  } = useContext(HearingTypeConversionProvider);
+  } = useContext(HearingTypeConversionContext);
 
   // Function to scroll to top of window
   const scrollUp = () => {
