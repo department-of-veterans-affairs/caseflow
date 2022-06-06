@@ -554,8 +554,7 @@ class TaskActionRepository
         options: [{ label: camo.name, value: camo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
-        message_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
-        message_detail: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -570,8 +569,7 @@ class TaskActionRepository
         options: [{ label: emo.name, value: emo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
-        message_title: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE,
-        message_detail: COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_DETAIL,
+        message_title: format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
