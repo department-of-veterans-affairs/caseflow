@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -17,6 +17,7 @@ import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { Checkbox } from '../../components/Checkbox';
+import HearingsUserContext from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -36,6 +37,8 @@ export const HearingConversion = ({
   // set values for checkboxes
   const [checkboxPermission, setCheckboxPermission] = useState(false);
   const [checkboxAccess, setCheckboxAccess] = useState(false);
+
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Set the section props
   const sectionProps = {
@@ -64,19 +67,9 @@ export const HearingConversion = ({
       });
   };
 
-  const handlePermissionCheckboxChange = event =>{
-    setCheckboxPermission(event)
-    updateCheckboxes(checkboxPermission && checkboxAccess)
-    console.log(`update checkboxes ${updateCheckboxes}`)
-    console.log(event)
-  }
-
-  const handleAccessCheckboxChange = event =>{
-    setCheckboxAccess(event)
-    updateCheckboxes(checkboxPermission && checkboxAccess)
-    console.log(`update checkboxes ${updateCheckboxes}`)
-    console.log(event)
-  }
+  useEffect(() => {
+    updateCheckboxes(checkboxAccess && checkboxPermission);
+  }, [checkboxAccess, checkboxPermission]);
 
   // Pre-fill appellant/veteran email address and representative email on mount.
   useEffect(() => {
@@ -114,7 +107,7 @@ export const HearingConversion = ({
         label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
         name="affirmPermission"
         value={checkboxPermission}
-        onChange = {handlePermissionCheckboxChange}
+        onChange={(checked) => setCheckboxPermission(checked)}
       />
       <div />
       <Checkbox
@@ -131,7 +124,7 @@ export const HearingConversion = ({
         }
         name="affirmAccess"
         value={checkboxAccess}
-        onChange = {handleAccessCheckboxChange}
+        onChange={(checked) => setCheckboxAccess(checked)}
       />
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">

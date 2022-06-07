@@ -272,7 +272,7 @@ const HearingDetails = (props) => {
           hearing={hearing}
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
-          updateCheckboxes= {setHearingConversionCheckboxes}
+          updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
         <AppSegment filledBackground>
