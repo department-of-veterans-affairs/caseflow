@@ -18,7 +18,7 @@ RSpec.feature "Convert hearing request type" do
   let!(:vso_user) { create(:user, :vso_role) }
 
   context "for VSO users" do
-    scenario "Convert appeal to Virtual hearing type" do
+    scenario "Convert unscheduled appeal to Virtual hearing type" do
       step "navigate to the VSO Form" do
         visit "queue/appeals/#{appeal.uuid}"
 
