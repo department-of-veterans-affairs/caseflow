@@ -17,7 +17,7 @@ import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { Checkbox } from '../../components/Checkbox';
-import HearingsUserContext from '../contexts/HearingsUserContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
