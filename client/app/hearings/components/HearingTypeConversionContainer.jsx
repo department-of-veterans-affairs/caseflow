@@ -22,7 +22,7 @@ const HearingTypeConversionContainer = (props) => {
   );
 };
 
-HearingTypeConversion.propTypes = {
+HearingTypeConversionContainer.propTypes = {
   appeal: PropTypes.object,
   appealId: PropTypes.string,
   deleteAppeal: PropTypes.func,
