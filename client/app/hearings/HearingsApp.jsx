@@ -101,23 +101,23 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
-  render = () => <BrowserRouter basename="/hearings">
+  render = () => <BrowserRouter>
     <Switch>
       <PageRoute
         exact
-        path="/worksheet/print"
+        path="/hearings/worksheet/print"
         title="Hearing Worksheet"
         render={this.routeForPrintedHearingWorksheets}
       />
       <PageRoute
         exact
-        path="/schedule/docket/:hearingDayId/print"
+        path="/hearings/schedule/docket/:hearingDayId/print"
         title="Daily Docket"
         render={this.routeForDailyDocket(true)}
       />
       <NavigationBar
         wideApp
-        defaultUrl="/schedule"
+        defaultUrl="/hearings/schedule"
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}
         applicationUrls={this.props.applicationUrls}
@@ -131,64 +131,64 @@ export default class HearingsApp extends React.PureComponent {
           <div className="cf-wide-app">
             <PageRoute
               exact
-              path="/:hearingId/details"
+              path="/hearings/:hearingId/details"
               title="Hearing Details"
               render={this.routeForHearingDetails}
             />
             <PageRoute
               exact
-              path="/:hearingId/worksheet"
+              path="/hearings/:hearingId/worksheet"
               title="Hearing Worksheet"
               render={this.routeForHearingWorksheet(false)}
             />
             <PageRoute
               exact
-              path="/schedule"
+              path="/hearings/schedule"
               title="Scheduled Hearings"
               render={this.routeForListScheduleContainer}
             />
             <PageRoute
               exact
-              path="/schedule/add_hearing_day"
+              path="/hearings/schedule/add_hearing_day"
               title="Add Hearing Day"
               render={this.routeForListScheduleContainer}
             />
             <PageRoute
               exact
-              path="/schedule/docket/:hearingDayId/edit"
+              path="/hearings/schedule/docket/:hearingDayId/edit"
               title="Edit Hearing Day"
               render={this.routeForDailyDocket(false, true)}
             />
             <PageRoute
               exact
-              path="/schedule/docket/:hearingDayId"
+              path="/hearings/schedule/docket/:hearingDayId"
               title="Daily Docket"
               render={this.routeForDailyDocket(false)}
             />
             <PageRoute
               exact
-              path="/schedule/build"
+              path="/hearings/schedule/build"
               title="Caseflow Hearings"
               breadcrumb="Build"
               component={BuildScheduleContainer}
             />
             <PageRoute
               exact
-              path="/schedule/build/upload"
+              path="/hearings/schedule/build/upload"
               title="Upload Files"
               breadcrumb="Upload"
               component={BuildScheduleUploadContainer}
             />
             <PageRoute
               exact
-              path="/schedule/build/upload/:schedulePeriodId"
+              path="/hearings/schedule/build/upload/:schedulePeriodId"
               title="Review Assignments"
               breadcrumb="Review"
               component={ReviewAssignmentsContainer}
             />
             <PageRoute
               exact
-              path="/schedule/assign"
+              path="/hearings/schedule/assign"
               title="Assign Hearings"
               breadcrumb="Assign"
               component={this.routeForAssignHearingsContainer}
