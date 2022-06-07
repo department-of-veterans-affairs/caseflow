@@ -1,4 +1,4 @@
-import React, { createContext, useState} from 'react';
+import React, { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
@@ -63,7 +63,8 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
 };
 
 HearingTypeConversionProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  appeal: PropTypes.object
 };
 
 export default HearingTypeConversionContext;

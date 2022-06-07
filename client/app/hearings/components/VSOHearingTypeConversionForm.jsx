@@ -51,7 +51,7 @@ export const VSOHearingTypeConversionForm = ({
 
   // veteranInfo gets loaded into redux store when case details page loads
   const virtualHearing = {
-    appellantEmail: appeal?.veteranInfo?.veteran?.email_address, // timezone here?
+    appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
     representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
   };
   /* eslint-enable camelcase */
