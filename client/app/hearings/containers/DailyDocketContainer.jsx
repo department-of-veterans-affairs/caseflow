@@ -98,7 +98,7 @@ export class DailyDocketContainer extends React.Component {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
       if (resp.conferenceLinkGenerateError) {
-        this.setState({ onHandleConferenceLinkError: true });
+        this.props.onHandleConferenceLinkError(resp.conferenceLinkGenerateErrorMessage);
       }
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
@@ -267,6 +267,7 @@ export class DailyDocketContainer extends React.Component {
             dailyDocketServerError={this.props.dailyDocketServerError}
             history={this.props.history}
             onErrorHearingDayLock={this.props.onErrorHearingDayLock}
+            conferenceLinkError={this.props.conferenceLinkError}
           />
         )}
 
@@ -297,7 +298,8 @@ const mapStateToProps = (state) => ({
   displayLockModal: state.dailyDocket.displayLockModal,
   displayLockSuccessMessage: state.dailyDocket.displayLockSuccessMessage,
   dailyDocketServerError: state.dailyDocket.dailyDocketServerError,
-  onErrorHearingDayLock: state.dailyDocket.onErrorHearingDayLock
+  onErrorHearingDayLock: state.dailyDocket.onErrorHearingDayLock,
+  conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -379,7 +381,7 @@ DailyDocketContainer.propTypes = {
   onUpdateLock: PropTypes.func,
   onHearingDayModified: PropTypes.func,
   print: PropTypes.bool,
-  onHandleConferenceLinkError: PropTypes.func
+  conferenceLinkError: PropTypes.bool
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

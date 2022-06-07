@@ -120,7 +120,7 @@ export const dailyDocketReducer = function(state = {}, action = {}) {
     });
   case ACTIONS.HANDLE_CONFERENCE_LINK_ERROR:
     return update(state, {
-      HANDLE_CONFERENCE_LINK_ERROR: { $set: true }
+      conferenceLinkError: { $set: true }
     });
   default:
     return state;

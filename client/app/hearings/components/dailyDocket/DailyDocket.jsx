@@ -32,7 +32,7 @@ const Alerts = ({
   onErrorHearingDayLock,
   dailyDocket,
   dailyDocketServerError,
-  onHandleConferenceLinkError
+  conferenceLinkError
 }) => (
   <React.Fragment>
     <UserAlerts />
@@ -62,7 +62,7 @@ const Alerts = ({
       />
     )}
 
-    {onHandleConferenceLinkError && userJudgeOrCoordinator && (
+    {conferenceLinkError && userJudgeOrCoordinator && (
       <Alert
         type="error"
         styling={alertStyling}
@@ -91,7 +91,7 @@ Alerts.propTypes = {
     scheduledFor: PropTypes.string,
   }),
   dailyDocketServerError: PropTypes.bool,
-  onHandleConferenceLinkError: PropTypes.bool,
+  conferenceLinkError: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
   saveSuccessful: PropTypes.object,
@@ -252,7 +252,7 @@ export default class DailyDocket extends React.Component {
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
           dailyDocketServerError={this.props.dailyDocketServerError}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock}
-          onHandleConferenceLinkError={this.props.onHandleConferenceLinkError}
+          conferenceLinkError={this.props.conferenceLinkError}
         />
 
         <div className="cf-app-segment">
@@ -361,7 +361,7 @@ DailyDocket.propTypes = {
   displayLockSuccessMessage: PropTypes.bool,
   dailyDocketServerError: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
-  onHandleConferenceLinkError: PropTypes.bool,
+  conferenceLinkError: PropTypes.bool,
   history: PropTypes.shape({
     push: PropTypes.func,
   }),
