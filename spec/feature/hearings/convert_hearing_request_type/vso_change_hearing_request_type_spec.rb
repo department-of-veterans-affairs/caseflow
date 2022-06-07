@@ -5,7 +5,9 @@ RSpec.feature "Convert hearing request type" do
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
   let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
-  let!(:task) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task, assigned_to: vso) }
+  let!(:task) do
+    create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task, assigned_to: vso)
+  end
 
   before do
     vso.add_user(vso_user)
