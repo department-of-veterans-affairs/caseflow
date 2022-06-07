@@ -52,6 +52,7 @@ export const HearingTypeConversion = ({
     try {
       const changedRequestType = formatChangeRequestType(type);
 
+      /* eslint-disable camelcase */
       if (userIsVsoEmployee) {
         data = {
           task: {
@@ -70,6 +71,7 @@ export const HearingTypeConversion = ({
             }
           }
         };
+      /* eslint-enable camelcase */
       } else {
         data = {
           task: {
