@@ -202,11 +202,11 @@ export const handleEdit = (init, current, fields) => {
   }, {});
 };
 
-export const userJudgeOrCoordinator = (user, hearing) =>
-  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId;
+export const userJudgeOrCoordinator = (user) =>
+  user.userIsJudge;
 
 export const virtualHearingRoleForUser = (user, hearing) =>
-  userJudgeOrCoordinator(user, hearing) ?
+  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST;
 
