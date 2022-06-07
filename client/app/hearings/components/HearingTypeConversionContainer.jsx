@@ -15,7 +15,7 @@ import { HearingTypeConversionProvider } from '../contexts/HearingTypeConversion
 
 const HearingTypeConversionContainer = (props) => {
   return (
-    <HearingTypeConversionProvider>
+    <HearingTypeConversionProvider appeal={props.appeal}>
       <HearingTypeConversion {...props} />
     </HearingTypeConversionProvider>
   );

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
 
-export const HearingTypeConversionProvider = ({ children }) => {
+export const HearingTypeConversionProvider = ({ children, appeal }) => {
   // Create state for appellant timezone check
   const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
 
@@ -27,6 +27,8 @@ export const HearingTypeConversionProvider = ({ children }) => {
 
   const [originalEmail, setOriginalEmail] = useState('');
 
+  const [updatedAppeal, setUpdatedAppeal] = useState(appeal);
+
   const contextData = {
     isAppellantTZEmpty,
     appellantTZErrorMessage,
@@ -36,6 +38,7 @@ export const HearingTypeConversionProvider = ({ children }) => {
     confirmIsEmptyMessage,
     isNotValidEmail,
     originalEmail,
+    updatedAppeal,
     setIsAppellantTZEmpty,
     setAppellantTZErrorMessage,
     setIsRepTZEmpty,
@@ -43,7 +46,8 @@ export const HearingTypeConversionProvider = ({ children }) => {
     setConfirmIsEmpty,
     setConfirmIsEmptyMessage,
     setIsNotValidEmail,
-    setOriginalEmail
+    setOriginalEmail,
+    setUpdatedAppeal
   };
 
   return (
