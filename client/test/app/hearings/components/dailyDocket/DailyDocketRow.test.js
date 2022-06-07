@@ -24,18 +24,6 @@ describe('DailyDocketRow', () => {
     store = createStore(dailyDocketReducer);
   });
 
-  it('renders correctly for non virtual', () => {
-    const { container } = render(
-      <Provider store={store}>
-        <Router>
-          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
-        </Router>
-      </Provider>
-    );
-
-    expect(container).toMatchSnapshot();
-  });
-
   it('renders correctly for virtual', () => {
     const { container } = render(
       <Provider store={store}>
@@ -122,11 +110,11 @@ describe('DailyDocketRow', () => {
     expect(results).toHaveNoViolations();
   });
 
-  it('Non Virtual passes a11y testing', async () => {
+  it('Non Virtual passes a11y testing, as judge', async () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
         </Router>
       </Provider>
     );
