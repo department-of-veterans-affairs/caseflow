@@ -24,6 +24,7 @@
   userCanViewFnodBadgeInHearings: FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: current_user),
   userVsoEmployee: current_user.vso_employee?,
   userId: current_user.id,
-  userCssId: current_user.css_id
+  userCssId: current_user.css_id,
+  userIsJudge: current_user.judge?
 }) %>
 <% end %>
