@@ -10,8 +10,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
+    emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
+    education_rpo.add_user(education_rpo_user)
   end
 
   after do
@@ -25,10 +27,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
+  let(:emo) { EducationEmo.singleton }
+  let(:emo_user) { create(:user) }
   let(:program_office) { create(:vha_program_office) }
   let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
+  let(:education_rpo) { create(:education_rpo) }
+  let(:education_rpo_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -79,7 +85,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         appeal = Appeal.last
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content("Review Documentation")
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
 
         created_task_types = Set.new(appeal.tasks.map(&:type))
         pre_docket_tasks = Set.new %w[RootTask PreDocketTask VhaDocumentSearchTask]
@@ -99,13 +105,13 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "CAMO user assigns to Program Office" do
         User.authenticate!(user: camo_user)
         visit "/organizations/vha-camo?tab=camo_assigned"
-        expect(page).to have_content(COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
 
         find_link("#{veteran.name} (#{veteran.file_number})").click
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.label).click
         expect(page).to have_content(COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE)
-        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
         find("div", class: "cf-select__option", text: program_office.name).click
         fill_in("Provide instructions and context for this action:", with: po_instructions)
@@ -143,11 +149,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "Program Office can mark an AssessDocumentationTask as in progress" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.label).click
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
       step "Program Office can assign AssessDocumentationTask to Regional Office" do
@@ -157,7 +163,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.label).click
         expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
-        expect(page).to have_content(COPY::VHA_MODAL_BODY)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
         find("div", class: "cf-select__option", text: regional_office.name).click
         fill_in("Provide instructions and context for this action:", with: ro_instructions)
@@ -188,11 +194,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "Regional Office can mark an AssessDocumentationTask as in progress" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.label).click
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
         find("button", class: "usa-button", text: "Submit").click
 
         expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
-        expect(page).to have_content(COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
       end
 
       step "Regional Office can mark AssessDocumentationTask as Ready for Review" do
@@ -240,10 +246,41 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
       end
 
+      step "BVA Intake user can return an appeal to CAMO" do
+        appeal = Appeal.last
+
+        User.authenticate!(user: bva_intake_user)
+
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.label
+        ).click
+
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("Please review this appeal, CAMO.")
+
+        find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
+
+        expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+        expect(page).to have_content(format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name))
+
+        expect(appeal.tasks.last.assigned_to). to eq camo
+      end
+
       step "BVA Intake can docket an appeal" do
         appeal = Appeal.last
         camo_task = VhaDocumentSearchTask.last
         bva_intake_task = PreDocketTask.last
+
+        camo_task.completed!
 
         User.authenticate!(user: bva_intake_user)
         visit "/queue/appeals/#{appeal.external_id}"
@@ -262,7 +299,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
     end
 
-    # This test confirms that BVA Intake can still perform this action while tis
+    # This test confirms that BVA Intake can still perform this action while it is
     # in progress and the Pre-Docket task is on hold.
     it "BVA Intake can manually docket an appeal without assessing documentation through Caseflow" do
       User.authenticate!(user: bva_intake_user)
@@ -315,5 +352,443 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
+  end
+
+  context "when an education case goes through intake to be pre-docketed" do
+    before do
+      OrganizationsUser.make_user_admin(bva_intake_user, bva_intake)
+      FeatureToggle.enable!(:edu_predocket_appeals)
+      FeatureToggle.enable!(:docket_vha_appeals)
+    end
+
+    after do
+      FeatureToggle.disable!(:edu_predocket_appeals)
+      FeatureToggle.disable!(:docket_vha_appeals)
+    end
+
+    it "intaking Education issues and opting for pre-docket
+      creates pre-docket tasks instead of regular docketing tasks" do
+      step "BVA Intake user intakes a EMO case" do
+        User.authenticate!(user: bva_intake_user)
+        start_appeal(veteran, intake_user: bva_intake_user)
+
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        click_intake_continue
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          benefit_type: "Education",
+          category: "Accrued",
+          description: "A pre-docketed education issue",
+          date: 1.month.ago.mdY,
+          is_predocket_needed: true
+        )
+
+        expect(page).to have_button("Submit appeal")
+        click_intake_finish
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+      end
+
+      step "User can search the case and see the Pre Docketed status" do
+        appeal = Appeal.order("created_at").last
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
+        expect(page).to have_content("Pre Docketed")
+      end
+
+      step "EMO user can send appeal as Ready for Review" do
+        User.authenticate!(user: emo_user)
+
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        expect(page).to have_content("Review Documentation")
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+        ).click
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices[0]).to have_content("VBMS")
+        expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+        expect(radio_choices[2]).to have_content("Other")
+
+        radio_choices[0].click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content("You have successfully sent #{veteran.name}'s case to Board Intake for review")
+
+        emo_task = EducationDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      end
+    end
+
+    it "EMO & RPO Workflow" do
+      appeal = create(:education_document_search_task, :assigned, assigned_by: bva_intake_user, assigned_to: emo).appeal
+
+      step "EMO user assigns task to Regional Processing Office" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EMO_ASSIGN_TO_RPO.label
+        ).click
+        expect(page).to have_content(COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+        find(".cf-select__control", text: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER).click
+
+        find("div", class: "cf-select__option", text: education_rpo.name).click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_current_path("/organizations/#{emo.url}?tab=education_emo_unassigned&page=1")
+        expect(page).to have_content("Task assigned to #{education_rpo.name}")
+
+        expect(EducationDocumentSearchTask.last).to have_attributes(
+          type: "EducationDocumentSearchTask",
+          status: Constants.TASK_STATUSES.on_hold,
+          assigned_by: bva_intake_user,
+          assigned_to_id: emo.id
+        )
+
+        expect(EducationAssessDocumentationTask.last).to have_attributes(
+          type: "EducationAssessDocumentationTask",
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_by: emo_user,
+          assigned_to_id: education_rpo.id
+        )
+      end
+
+      step "Task appears in EMO's assigned tab" do
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO Task appears in RPO's assigned tab" do
+        User.authenticate!(user: education_rpo_user)
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO user marks task as in progress" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_MARK_TASK_IN_PROGRESS.label
+        ).click
+
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
+
+        expect(EducationAssessDocumentationTask.last.status).to eq Constants.TASK_STATUSES.in_progress
+      end
+
+      step "RPO Task appears in RPO's in progress tab" do
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_in_progress"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "RPO user can send appeal to BVA Intake as Ready for Review" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        rpo_task = EducationAssessDocumentationTask.last
+        emo_task = EducationDocumentSearchTask.last
+        bva_intake_task = PreDocketTask.last
+
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+        ).click
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices[0]).to have_content("VBMS")
+        expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+        expect(radio_choices[2]).to have_content("Other")
+
+        radio_choices[0].click
+        find("button", class: "usa-button", text: "Submit").click
+
+        expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
+
+        expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        expect(rpo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      end
+
+      step "RPO user can find the appeal in the org's Completed Tab" do
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "BVA Intake can find appeal in their Ready for Review Tab" do
+        User.authenticate!(user: bva_intake_user)
+
+        visit "/organizations/bva-intake?tab=bvaReadyForReview"
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+    end
+
+    it "EMO user can return an appeal to BVA Intake" do
+      User.authenticate!(user: emo_user)
+      appeal = create(:education_document_search_task, :assigned, assigned_to: emo).appeal
+
+      step "EMO user can access the appeal in the EMO org unassigned queue tab" do
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      end
+
+      step "EMO user can select to return an appeal to BVA Intake" do
+        expect(page).to have_content(COPY::REVIEW_DOCUMENTATION_TASK_LABEL)
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.label).click
+        expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+      end
+
+      step "If no text is entered into the modal's textarea it prevents submission" do
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
+      end
+
+      step "After adding text to the text area the form can be submitted" do
+        instructions_textarea = find("textarea", id: "emoReturnToBoardIntakeInstructions")
+        instructions_textarea.send_keys("Issue was not related to education. Please reevalutate.")
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+      end
+
+      step "Task now appears in the EMO org's assigned tab" do
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "Switch to BVA Intake user and make sure task appears in the BVA Intake org's Ready for Review tab" do
+        User.authenticate!(user: bva_intake_user)
+        visit "/organizations/bva-intake?tab=bvaReadyForReview"
+        expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+      end
+
+      step "Send the appeal back to the EMO" do
+        find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.label).click
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("The intake details have been corrected. Please review this appeal.")
+
+        find("button", class: "usa-button", text: COPY::MODAL_SUBMIT_BUTTON).click
+      end
+
+      step "Switch to an EMO user and make sure the active
+        EducationDocumentSearchTask only appears in the unassigned tab" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+
+        find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
+        expect(page).to_not have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+    end
+
+    it "RPO user can return an appeal to the EMO" do
+      appeal = create(
+        :education_assess_documentation_task,
+        :assigned,
+        assigned_to: education_rpo,
+        assigned_by: emo_user
+      ).appeal
+
+      step "RPO user navigates to the appeal's queue page and returns it to the EMO" do
+        User.authenticate!(user: education_rpo_user)
+
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
+        expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.label
+        ).click
+
+        expect(page).to have_content(COPY::EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+
+        find("button", text: COPY::MODAL_RETURN_BUTTON).click
+        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+
+        instructions_textarea = find("textarea", id: "taskInstructions")
+        instructions_textarea.send_keys("Incorrect RPO. Please review.")
+        find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
+
+        expect(page).to have_current_path(
+          "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
+        )
+      end
+
+      step "Task is now cancelled, and does not show up in any of the RPOs queue tabs" do
+        expect(EducationDocumentSearchTask.last).to have_attributes(
+          type: "EducationDocumentSearchTask",
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_to_id: emo.id
+        )
+
+        expect(EducationAssessDocumentationTask.last).to have_attributes(
+          type: "EducationAssessDocumentationTask",
+          status: Constants.TASK_STATUSES.cancelled,
+          assigned_by: emo_user,
+          assigned_to_id: education_rpo.id
+        )
+
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_in_progress"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+
+        visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed"
+        expect(page).to_not have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
+      end
+
+      step "Task returned to the EMO shows up in the EMO's unassigned tab" do
+        User.authenticate!(user: emo_user)
+        visit "/organizations/edu-emo?tab=education_emo_unassigned"
+        expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+    end
+
+    it "RPO user can send appeal to BVA Intake as Ready for Review
+      even if another RPO had previously cancelled a task" do
+      emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
+      bva_intake_task = PreDocketTask.last
+      appeal = emo_task.appeal
+
+      # Add a cancelled task onto emo_task to represent an instance where an RPO sent an appeal back to the EMO.
+      EducationAssessDocumentationTask.create!(
+        parent: emo_task,
+        appeal: appeal,
+        assigned_at: Time.zone.now,
+        assigned_to: education_rpo
+      ).cancelled!
+
+      open_rpo_task = EducationAssessDocumentationTask.create!(
+        parent: emo_task,
+        appeal: appeal,
+        assigned_at: Time.zone.now,
+        assigned_to: education_rpo
+      )
+
+      User.authenticate!(user: education_rpo_user)
+
+      visit "/organizations/#{education_rpo.url}?tab=education_rpo_assigned"
+      find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+      expect(open_rpo_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+
+      find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
+      ).click
+      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("VBMS")
+      expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+      expect(radio_choices[2]).to have_content("Other")
+
+      radio_choices[0].click
+      find("button", class: "usa-button", text: "Submit").click
+
+      expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
+
+      expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      expect(emo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(open_rpo_task.reload.status).to eq Constants.TASK_STATUSES.completed
+    end
+
+    it "BVA Intake user can return an appeal to the EMO" do
+      emo_task = create(
+        :education_document_search_task,
+        :assigned,
+        assigned_to: emo,
+        assigned_by: bva_intake_user
+      )
+
+      emo_task.completed!
+
+      User.authenticate!(user: bva_intake_user)
+
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.label
+      ).click
+
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE)
+      expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY)
+
+      instructions_textarea = find("textarea", id: "taskInstructions")
+      instructions_textarea.send_keys("Please review this appeal, EMO.")
+
+      find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
+
+      expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+      expect(page).to have_content(
+        format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, emo_task.appeal.veteran_full_name)
+      )
+
+      expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
+    end
   end
 end

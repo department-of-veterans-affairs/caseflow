@@ -144,7 +144,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
-      verifiedUnidentifiedIssue: issue.verified_unidentified_issue
+      verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
+      isPreDocketNeeded: issue.is_predocket_needed
     };
   }
   );
@@ -247,7 +248,8 @@ const formatNonratingRequestIssues = (state) => {
         ineligible_reason: issue.ineligibleReason,
         edited_description: issue.editedDescription,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        is_predocket_needed: issue.isPreDocketNeeded
       };
     });
 };
