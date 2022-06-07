@@ -29,6 +29,10 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
 
   const [updatedAppeal, setUpdatedAppeal] = useState(appeal);
 
+  const updateAppeal = (key, val) => {
+    setUpdatedAppeal(updateAppeal[key] = val);
+  };
+
   const contextData = {
     isAppellantTZEmpty,
     appellantTZErrorMessage,
@@ -47,7 +51,8 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
     setConfirmIsEmptyMessage,
     setIsNotValidEmail,
     setOriginalEmail,
-    setUpdatedAppeal
+    setUpdatedAppeal,
+    updateAppeal
   };
 
   return (
