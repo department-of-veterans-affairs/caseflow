@@ -25,6 +25,8 @@
   userVsoEmployee: current_user.vso_employee?,
   userId: current_user.id,
   userCssId: current_user.css_id,
-  userIsJudge: current_user.judge?
+  userIsJudge: current_user.judge?,
+  userIsDvc: current_user.can_view_judge_team_management?,
+  userIsHearingManagement: current_user.in_hearing_management_team?
 }) %>
 <% end %>
