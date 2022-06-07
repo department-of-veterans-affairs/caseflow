@@ -17,7 +17,8 @@ export const VSOEmailNotificationsFields = ({
   time,
   roTimezone,
 }) => {
-  const { isAppellantTZEmpty,
+  const {
+    isAppellantTZEmpty,
     setIsAppellantTZEmpty,
     appellantTZErrorMessage
   } = useContext(HearingTypeConversionContext);
