@@ -841,7 +841,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   context "with VSO user role" do
     let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
 
-    scenario "User is immediately redirected to the Convert to Virtual form" do
+    scenario "user is immediately redirected to the Convert to Virtual form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
     end
