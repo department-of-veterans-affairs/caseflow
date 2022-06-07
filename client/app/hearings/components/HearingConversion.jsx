@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -25,12 +25,17 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
+  updateCheckboxes
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
+
+  // set values for checkboxes
+  const [checkboxPermission, setCheckboxPermission] = useState(false);
+  const [checkboxAccess, setCheckboxAccess] = useState(false);
 
   // Set the section props
   const sectionProps = {
@@ -58,6 +63,20 @@ export const HearingConversion = ({
         representativeTz: hearing?.representativeTz || hearing?.appellantTz
       });
   };
+
+  const handlePermissionCheckboxChange = event =>{
+    setCheckboxPermission(event)
+    updateCheckboxes(checkboxPermission && checkboxAccess)
+    console.log(`update checkboxes ${updateCheckboxes}`)
+    console.log(event)
+  }
+
+  const handleAccessCheckboxChange = event =>{
+    setCheckboxAccess(event)
+    updateCheckboxes(checkboxPermission && checkboxAccess)
+    console.log(`update checkboxes ${updateCheckboxes}`)
+    console.log(event)
+  }
 
   // Pre-fill appellant/veteran email address and representative email on mount.
   useEffect(() => {
@@ -92,28 +111,28 @@ export const HearingConversion = ({
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
       <Checkbox
-          label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
-          name="affirmPermission"
-          value
-          onChange
-        />
-        <div />
-        <Checkbox
-          label={
-            <div>
-              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
-              <a
-                href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                style={{ textDecoration: "underline" }}
-              >
-                Learn more
-              </a>
-            </div>
-          }
-          name="affirmAccess"
-          value
-          onChange
-        />
+        label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
+        name="affirmPermission"
+        value={checkboxPermission}
+        onChange = {handlePermissionCheckboxChange}
+      />
+      <div />
+      <Checkbox
+        label={
+          <div>
+            <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+            <a
+              href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
+              style={{ textDecoration: "underline" }}
+            >
+              Learn more
+            </a>
+          </div>
+        }
+        name="affirmAccess"
+        value={checkboxAccess}
+        onChange = {handleAccessCheckboxChange}
+      />
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">
           <div className="usa-width-one-half">
@@ -137,4 +156,5 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
+  updateCheckboxes: PropTypes.func
 };
