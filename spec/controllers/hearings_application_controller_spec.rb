@@ -45,4 +45,19 @@ RSpec.describe HearingsApplicationController, :postgres, type: :controller do
       expect(response.status).to eq 200
     end
   end
+
+  context "when user has VSO role" do
+    let!(:hearing) { create(:hearing, :with_completed_tasks) }
+
+    before { User.authenticate!(roles: ["VSO"]) }
+
+    it "GET show_hearing_worksheet_index redirects" do
+      get :show_hearing_worksheet_index, params: { hearing_id: hearing.uuid }
+      expect(response.status).to eq 302
+    end
+    it "GET hearings details page returns a successful response" do
+      get :show_hearing_details_index, params: { hearing_id: hearing.uuid }
+      expect(response.status).to eq 200
+    end
+  end
 end
