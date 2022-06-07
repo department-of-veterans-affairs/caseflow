@@ -843,7 +843,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
     scenario "User is immediately redirected to the Convert to Virtual form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      expect(page).to have_content(sprintf(COPY::CONVERT_HEARING_TITLE), "Virtual")
+      expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
     end
   end
 end
