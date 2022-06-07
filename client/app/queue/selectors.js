@@ -146,7 +146,7 @@ const actionableTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => filter(tasks, (task) => task.availableActions.length)
 );
-//FIXME
+
 export const scheduleHearingTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')

@@ -129,10 +129,7 @@ class CaseHearingsDetail extends React.PureComponent {
             value:
               <div className="cf-sg-alert-slim">
                 <Alert type="info">
-                  Hearing within next 10 days;&nbsp;
-                  <a href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank" rel="noreferrer">
-                    contact Hearing Coordinator to convert to Virtual.
-                  </a>
+                  Hearing within next 10 days; contact Hearing Coordinator to convert to Virtual.
                 </Alert>
               </div>
           }
