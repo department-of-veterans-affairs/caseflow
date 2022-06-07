@@ -103,29 +103,33 @@ export const HearingConversion = ({
       </div>
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
-      <Checkbox
-        label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
-        name="affirmPermission"
-        value={checkboxPermission}
-        onChange={(checked) => setCheckboxPermission(checked)}
-      />
-      <div />
-      <Checkbox
-        label={
-          <div>
-            <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
-            <a
-              href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-              style={{ textDecoration: "underline" }}
-            >
-              Learn more
-            </a>
-          </div>
-        }
-        name="affirmAccess"
-        value={checkboxAccess}
-        onChange={(checked) => setCheckboxAccess(checked)}
-      />
+      {userVsoEmployee &&
+        <div>
+          <Checkbox
+            label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
+            name="affirmPermission"
+            value={checkboxPermission}
+            onChange={(checked) => setCheckboxPermission(checked)}
+          />
+          <div />
+          <Checkbox
+            label={
+              <div>
+                <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+                <a
+                  href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
+                  style={{ textDecoration: "underline" }}
+                >
+                  Learn more
+                </a>
+              </div>
+            }
+            name="affirmAccess"
+            value={checkboxAccess}
+            onChange={(checked) => setCheckboxAccess(checked)}
+          />
+        </div>
+      }
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">
           <div className="usa-width-one-half">

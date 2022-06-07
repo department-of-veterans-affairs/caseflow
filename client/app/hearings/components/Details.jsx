@@ -14,6 +14,7 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
@@ -49,6 +50,7 @@ import { VIRTUAL_HEARING_LABEL } from '../constants';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -319,7 +321,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || disabled || !hearingConversionCheckboxes}
+            disabled={!formsUpdated || disabled || (!hearingConversionCheckboxes && userVsoEmployee)}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
