@@ -165,14 +165,11 @@ export const HearingTypeConversion = ({
 
 HearingTypeConversion.propTypes = {
   appeal: PropTypes.object,
-  appealId: PropTypes.string,
   deleteAppeal: PropTypes.func,
   showErrorMessage: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   task: PropTypes.object,
-  taskId: PropTypes.string,
   type: PropTypes.oneOf(['Virtual']),
-  // Router inherited props
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool,
+  userIsVsoEmployee: PropTypes.bool
 };

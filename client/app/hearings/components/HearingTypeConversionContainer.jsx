@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -19,6 +20,19 @@ const HearingTypeConversionContainer = (props) => {
       <HearingTypeConversion {...props} />
     </HearingTypeConversionProvider>
   );
+};
+
+HearingTypeConversion.propTypes = {
+  appeal: PropTypes.object,
+  appealId: PropTypes.string,
+  deleteAppeal: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  showSuccessMessage: PropTypes.func,
+  task: PropTypes.object,
+  taskId: PropTypes.string,
+  type: PropTypes.oneOf(['Virtual']),
+  history: PropTypes.object,
+  userIsVsoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
