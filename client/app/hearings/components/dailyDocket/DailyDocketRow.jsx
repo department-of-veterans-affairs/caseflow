@@ -377,6 +377,7 @@ class DailyDocketRow extends React.Component {
         {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
           classNames={['usa-button-secondary']}
           type="button"
+          disabled={this.props.conferenceLinkError}
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
         <DispositionDropdown
           {...inputProps}
@@ -508,12 +509,14 @@ DailyDocketRow.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  conferenceLink: PropTypes.object
+  conferenceLink: PropTypes.object,
+  conferenceLinkError: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => ({
   hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
-  conferenceLink: state.dailyDocket.hearingDay.conferenceLink
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink,
+  conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
 const mapDispatchToProps = (dispatch, props) =>

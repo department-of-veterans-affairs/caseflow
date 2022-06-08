@@ -51,7 +51,9 @@ class ConferenceLink < CaseflowRecord
         host_pin_long: link_service.host_pin,
         alias_with_host: link_service.alias_with_host
       )
-    rescue StandardError => error
+    rescue VirtualHearings::LinkService::PINKeyMissingError,
+      VirtualHearings::LinkService::URLHostMissingError, 
+      VirtualHearings::LinkService::URLPathMissingError => error
       Raven.capture_exception(error: error)
       raise error
     end

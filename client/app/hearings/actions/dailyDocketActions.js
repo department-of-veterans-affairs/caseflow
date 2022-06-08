@@ -124,3 +124,10 @@ export const onSuccessfulHearingDayDelete = (date) => ({
     date
   }
 });
+
+export const onHandleConferenceLinkError = (err) => ({
+  type: ACTIONS.HANDLE_CONFERENCE_LINK_ERROR,
+  payload: {
+    err
+  }
+});

@@ -7,31 +7,22 @@ import { createStore } from 'redux';
 import { dailyDocketReducer } from '../../../../data/hearings/dailyDocket/reducer/dailyDocketReducer';
 import {
   dailyDocketPropsHearingIsVirtual,
-  dailyDocketPropsHearingNotVirtual,
   dailyDocketPropsHearingNotVirtualVSOUser,
   dailyDocketPropsHearingNotVirtualJudgeUser,
   dailyDocketPropsHearingNotVirtualCoordinatorUser,
-  dailyDocketPropsHearingNotVirtualAttorneyUser} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
+  dailyDocketPropsHearingNotVirtualAttorneyUser,
+  dailyDocketPropsHearingNotVirtualDVCUser,
+  dailyDocketPropsHearingNotVirtualTranscriberUser,
+  dailyDocketPropsConferenceLinkError} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
 import { shallow } from 'enzyme';
+import DailyDocketContainer from '../../../../../app/hearings/containers/DailyDocketContainer';
 
 let store;
 
 describe('DailyDocketRow', () => {
   beforeEach(() => {
     store = createStore(dailyDocketReducer);
-  });
-
-  it('renders correctly for non virtual', () => {
-    const { container } = render(
-      <Provider store={store}>
-        <Router>
-          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
-        </Router>
-      </Provider>
-    );
-
-    expect(container).toMatchSnapshot();
   });
 
   it('renders correctly for virtual', () => {
@@ -94,11 +85,75 @@ describe('DailyDocketRow', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('Non Virtual passes a11y testing', async () => {
+  it('renders correctly for non virtual, DVC ', () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
-          <DailyDocketRow {...dailyDocketPropsHearingNotVirtual} />
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualDVCUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non virtual, Transcriber ', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualTranscriberUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders banner correctly for conference link error', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketContainer {...dailyDocketPropsConferenceLinkError} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('Conference Link Error passes a11y testing', async () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketContainer {...dailyDocketPropsConferenceLinkError} />
+        </Router>
+      </Provider>
+    );
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Non Virtual passes a11y testing, as judge', async () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
+        </Router>
+      </Provider>
+    );
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Non Virtual passes a11y testing, as VSO', async () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualVSOUser} />
         </Router>
       </Provider>
     );
