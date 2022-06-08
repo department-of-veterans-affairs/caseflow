@@ -56,7 +56,6 @@ export const HearingTypeConversion = ({
 
   // Set Payload based on whether user is VSO or not
   const submit = async () => {
-
     if (userIsVsoEmployee && (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty)) {
       scrollUp();
 
