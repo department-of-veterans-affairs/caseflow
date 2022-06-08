@@ -51,47 +51,30 @@ export const HearingTypeConversion = ({
 
   // Set Payload based on whether user is VSO or not
   const submit = async () => {
-    let data = {};
-
     try {
       const changedRequestType = formatChangeRequestType(type);
 
-      /* eslint-disable camelcase */
-      if (userIsVsoEmployee) {
-        data = {
-          task: {
-            status: TASK_STATUSES.completed,
-            business_payloads: {
-              values: {
-                changed_hearing_request_type: changedRequestType,
-                closest_regional_office:
-                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-                email_recipients: {
+      const data = {
+        task: {
+          status: TASK_STATUSES.completed,
+          business_payloads: {
+            values: {
+              changed_hearing_request_type: changedRequestType,
+              closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+              [userIsVsoEmployee && 'email_recipients']:
+                {
+                /* eslint-disable camelcase */
                   appellant_tz: appeal?.appellantTz,
                   representative_tz: appeal?.powerOfAttorney?.representative_tz,
                   appellant_email: appeal?.veteranInfo?.veteran?.email_address,
-                  representative_email:
-                    appeal?.powerOfAttorney?.representative_email_address
+                  representative_email: appeal?.powerOfAttorney?.representative_email_address
+                /* eslint-enable camelcase */
                 }
-              }
             }
           }
-        };
-      /* eslint-enable camelcase */
-      } else {
-        data = {
-          task: {
-            status: TASK_STATUSES.completed,
-            business_payloads: {
-              values: {
-                changed_hearing_request_type: changedRequestType,
-                closest_regional_office:
-                  appeal?.closestRegionalOffice || appeal?.regionalOffice?.key
-              }
-            }
-          }
-        };
-      }
+        }
+      };
+
       setLoading(true);
 
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
