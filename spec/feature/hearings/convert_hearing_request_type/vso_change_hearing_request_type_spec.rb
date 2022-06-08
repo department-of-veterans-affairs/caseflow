@@ -43,8 +43,8 @@ RSpec.feature "Convert hearing request type" do
         click_dropdown(name: "appellantTz", index: 1)
         click_dropdown(name: "representativeTz", index: 1)
 
-        click_label("affirmPermission")
-        click_label("affirmAccess")
+        click_label("Affirm Permission")
+        click_label("Affirm Access")
 
         click_button("Convert Hearing To Virtual")
       end
