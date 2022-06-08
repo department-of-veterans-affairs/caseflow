@@ -7,7 +7,7 @@ import {
 } from '../../../../app/hearings/components/HearingTypeConversionForm';
 import { legacyAppealForTravelBoard } from '../../../data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
-import HearingTypeConversion from '../../../../app/hearings/components/HearingTypeConversion';
+import { HearingTypeConversion } from '../../../../app/hearings/components/HearingTypeConversion';
 import {
   HearingTypeConversionProvider,
 } from '../../../../app/hearings/contexts/HearingTypeConversionContext';

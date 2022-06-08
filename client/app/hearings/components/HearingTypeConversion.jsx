@@ -11,7 +11,7 @@ import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { formatChangeRequestType } from '../utils';
 
-const HearingTypeConversion = ({
+export const HearingTypeConversion = ({
   appeal,
   history,
   task,
@@ -151,5 +151,3 @@ HearingTypeConversion.propTypes = {
   history: PropTypes.object,
   userIsVsoEmployee: PropTypes.bool
 };
-
-export default HearingTypeConversion;
