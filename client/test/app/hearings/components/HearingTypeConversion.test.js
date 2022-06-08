@@ -27,6 +27,6 @@ describe('HearingTypeConversion', () => {
     );
 
     expect(hearingTypeConversion.exists(HearingTypeConversionForm)).toBeTruthy();
-    //expect(hearingTypeConversion).toMatchSnapshot();
+    expect(hearingTypeConversion).toMatchSnapshot();
   });
 });
