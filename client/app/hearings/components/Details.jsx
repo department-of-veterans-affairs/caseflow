@@ -1,5 +1,6 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { css } from 'glamor';
 import { isUndefined, get, omitBy } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -33,6 +34,10 @@ import {
   transitionAlert,
   clearAlerts
 } from '../../components/common/actions';
+import {
+  showErrorMessage,
+  showSuccessMessage
+} from '../../queue/uiReducer/uiActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -69,6 +74,7 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+  const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
@@ -113,9 +119,6 @@ const HearingDetails = (props) => {
     };
   };
 
-  console.log(userVsoEmployee);
-  console.log(hearing);
-
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -124,6 +127,18 @@ const HearingDetails = (props) => {
     } else {
       goBack();
     }
+  };
+
+  // VSO convert success banner
+  const getSuccessMsg = () => {
+    const title = sprintf(
+      COPY.CONVERT_HEARING_TYPE_SUCCESS,
+      hearing?.appellantIsNotVeteran ? hearing?.appellantFullName : hearing?.veteranFullName,
+      'virtual'
+    );
+    const detail = COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL;
+
+    return { title, detail };
   };
 
   const submit = async (editedEmailsAndTz) => {
@@ -204,10 +219,19 @@ const HearingDetails = (props) => {
 
       if (alerts) {
         processAlerts(alerts, props, setShouldStartPolling);
+        // props.showSuccessMessage(getSuccessMsg());
       }
 
-      // Reset the state
-      resetState(hearingResp);
+      if (userVsoEmployee && convertingToVirtual) {
+        // props.showSuccessMessage(getSuccessMsg());
+        // Redirect back to the Case Details Page
+        // goBack();
+        // history.replace(`/queue/appeals/${hearing.externalId}`);
+        setVSOConvertSuccessful(true);
+      } else {
+        // Reset the state
+        resetState(hearingResp);
+      }
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -226,10 +250,6 @@ const HearingDetails = (props) => {
         setVirtualHearingErrors(errors);
       } else {
         setError(msg);
-      }
-    } finally {
-      if (userVsoEmployee) {
-        history.push(`/queue/appeals/${hearing.externalId}`);
       }
     }
   };
@@ -268,6 +288,17 @@ const HearingDetails = (props) => {
   const editedEmailsAndTz = getEditedEmailsAndTz();
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
+
+
+  if (VSOConvertSuccessful && userVsoEmployee) {
+    console.log("navigating");
+     // Construct the URL to redirect
+     const baseUrl = `${window.location.origin}/queue/appeals`;
+
+    // return <Redirect to={`/queue/appeals/${hearing.appealExternalId}`} />;
+    // history.replace(`/queue/appeals/${hearing.appealExternalId}`);
+    window.location.href = `${baseUrl}/${hearing.appealExternalId}`;
+  }
 
   return (
     <React.Fragment>
@@ -335,7 +366,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || disabled}
+            // disabled={!formsUpdated || disabled}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
@@ -369,10 +400,11 @@ HearingDetails.propTypes = {
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
   clearAlerts: PropTypes.func,
+  showSuccessMessage: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert }, dispatch);
+  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert, showSuccessMessage }, dispatch);
 
 export default connect(
   null,
