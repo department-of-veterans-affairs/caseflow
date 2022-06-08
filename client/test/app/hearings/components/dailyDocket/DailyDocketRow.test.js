@@ -7,11 +7,12 @@ import { createStore } from 'redux';
 import { dailyDocketReducer } from '../../../../data/hearings/dailyDocket/reducer/dailyDocketReducer';
 import {
   dailyDocketPropsHearingIsVirtual,
-  dailyDocketPropsHearingNotVirtual,
   dailyDocketPropsHearingNotVirtualVSOUser,
   dailyDocketPropsHearingNotVirtualJudgeUser,
   dailyDocketPropsHearingNotVirtualCoordinatorUser,
   dailyDocketPropsHearingNotVirtualAttorneyUser,
+  dailyDocketPropsHearingNotVirtualDVCUser,
+  dailyDocketPropsHearingNotVirtualTranscriberUser,
   dailyDocketPropsConferenceLinkError} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
 import { shallow } from 'enzyme';
@@ -84,6 +85,30 @@ describe('DailyDocketRow', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('renders correctly for non virtual, DVC ', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualDVCUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non virtual, Transcriber ', () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualTranscriberUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
   it('renders banner correctly for conference link error', () => {
     const { container } = render(
       <Provider store={store}>
@@ -115,6 +140,20 @@ describe('DailyDocketRow', () => {
       <Provider store={store}>
         <Router>
           <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
+        </Router>
+      </Provider>
+    );
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Non Virtual passes a11y testing, as VSO', async () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualVSOUser} />
         </Router>
       </Provider>
     );

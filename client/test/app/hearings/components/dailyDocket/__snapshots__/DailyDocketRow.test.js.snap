@@ -51,6 +51,1206 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
 </div>
 `;
 
+exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
+<div>
+  <div
+    class="judge-view"
+    data-css-18nid7q=""
+  >
+    <div>
+      <div>
+        <div>
+          <div
+            class="checkbox-wrapper-checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
+                id="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
+                name="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
+                type="checkbox"
+              />
+              <label
+                for="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
+              >
+                <span
+                  class=""
+                >
+                  <span
+                    style="font-size: 0px;"
+                  >
+                    Accessibility hack
+                  </span>
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <strong>
+          1
+        </strong>
+      </div>
+      <div>
+        <strong>
+          Keneth Murazik
+        </strong>
+        <br />
+        <strong>
+          <a
+            href="/queue/appeals/03cb63d8-5f44-4ebc-8c59-e4c0df680489"
+            id="100000026"
+          >
+            100000026
+          </a>
+        </strong>
+        <br />
+        <span
+          aria-describedby="badge-220428-968"
+          aria-label="Hearing Request"
+          currentitem="false"
+          data-css-2moai0=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="badge-220428-968"
+          data-tip="true"
+          tabindex="0"
+        >
+          H
+        </span>
+        <span
+          data-css-ht9rt8=""
+        >
+          <div
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="badge-220428-968"
+            role="tooltip"
+          >
+            <style>
+              
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+            </style>
+            Hearing Request
+          </div>
+        </span>
+        220428-968
+         
+        <br />
+        <br />
+        <br />
+        <br />
+        9999 MISSION ST
+        <br />
+        SAN FRANCISCO CA 94103
+        <br />
+        <br />
+        PARALYZED VETERANS OF AMERICA, INC.
+      </div>
+      <div>
+        <p
+          data-css-1j4x2ld=""
+        >
+          <b>
+            Video
+          </b>
+        </p>
+        <p>
+          <span>
+            9:30 AM EDT
+          </span>
+           /
+          <br />
+          8:30 AM CDT
+        </p>
+        <p>
+          12
+           issues
+        </p>
+      </div>
+    </div>
+    <div>
+      <div
+        data-css-leaxad=""
+      >
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
+        <div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-ae4c4050-36e8-4df2-83a4-839cf73725dc-disposition"
+            >
+              <label
+                class="question-label"
+                for="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition"
+                id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-label"
+              >
+                <strong>
+                  <span>
+                    Disposition
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
+                      >
+                        Select...
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-label"
+                            aria-owns="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="ae4c4050-36e8-4df2-83a4-839cf73725dc-disposition"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <b>
+            Waive 90 Day Evidence Hold
+          </b>
+          <div
+            class="checkbox-wrapper-ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
+                id="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
+                name="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
+                type="checkbox"
+              />
+              <label
+                for="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
+              >
+                <span
+                  class=""
+                >
+                  Yes, Waive 90 Day Hold
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <b>
+            Copy Requested by Appellant/Rep
+          </b>
+          <div
+            class="checkbox-wrapper-ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                type="checkbox"
+              />
+              <label
+                for="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+              >
+                <span
+                  class=""
+                >
+                  Transcript Requested
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </div>
+        <div
+          class="cf-form-textarea"
+        >
+          <label
+            class="question-label"
+            for="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            data-css-many1x=""
+            id="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+            maxlength="1000"
+            name="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+          />
+        </div>
+      </div>
+      <div
+        data-css-leaxad=""
+      >
+        <div>
+          <b>
+            Hearing Prep Worksheet
+          </b>
+          <br />
+          <div
+            data-css-1rsr754=""
+          >
+            <a
+              href="/hearings/ae4c4050-36e8-4df2-83a4-839cf73725dc/worksheet"
+            >
+              Edit VLJ Hearing Worksheet
+              <span
+                data-css-1qcxu9b=""
+              >
+                <svg
+                  class=""
+                  height="25"
+                  version="1.1"
+                  viewBox="0 0 25 25"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill="#0071bc"
+                      fill-rule="nonzero"
+                      transform="translate(-729.000000, -307.000000)"
+                    >
+                      <g
+                        transform="translate(6.000000, 253.000000)"
+                      >
+                        <g
+                          transform="translate(0.000000, 29.000000)"
+                        >
+                          <path
+                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                            id="Shape"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-ae4c4050-36e8-4df2-83a4-839cf73725dc-aod"
+          >
+            <label
+              class="question-label"
+              for="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod"
+              id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-label"
+            >
+              <strong>
+                <span>
+                  AOD
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-label"
+                          aria-owns="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="ae4c4050-36e8-4df2-83a4-839cf73725dc-aod"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-ae4c4050-36e8-4df2-83a4-839cf73725dc-aodReason"
+          >
+            <label
+              class="question-label"
+              for="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-reason"
+              id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-reason-label"
+            >
+              <strong>
+                <span>
+                  AOD Reason
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class="cf-select--is-disabled css-14jk2my-container"
+              >
+                <div
+                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <input
+                      aria-autocomplete="list"
+                      class="css-62g3xt-dummyInput"
+                      disabled=""
+                      id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-aod-reason"
+                      readonly=""
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
+<div>
+  <div
+    class=""
+    data-css-18nid7q=""
+  >
+    <div>
+      <div />
+      <div>
+        <strong>
+          1
+        </strong>
+      </div>
+      <div>
+        <strong>
+          Keneth Murazik
+        </strong>
+        <br />
+        <strong>
+          <a
+            href="/queue/appeals/03cb63d8-5f44-4ebc-8c59-e4c0df680489"
+            id="100000026"
+          >
+            100000026
+          </a>
+        </strong>
+        <br />
+        <span
+          aria-describedby="badge-220428-968"
+          aria-label="Hearing Request"
+          currentitem="false"
+          data-css-2moai0=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="badge-220428-968"
+          data-tip="true"
+          tabindex="0"
+        >
+          H
+        </span>
+        <span
+          data-css-ht9rt8=""
+        >
+          <div
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="badge-220428-968"
+            role="tooltip"
+          >
+            <style>
+              
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+            </style>
+            Hearing Request
+          </div>
+        </span>
+        220428-968
+         
+        <br />
+        <br />
+        <br />
+        <br />
+        9999 MISSION ST
+        <br />
+        SAN FRANCISCO CA 94103
+        <br />
+        <br />
+        PARALYZED VETERANS OF AMERICA, INC.
+      </div>
+      <div>
+        <p
+          data-css-1j4x2ld=""
+        >
+          <b>
+            Video
+          </b>
+        </p>
+        <p>
+          <span>
+            9:30 AM EDT
+          </span>
+           /
+          <br />
+          8:30 AM CDT
+        </p>
+        <p>
+          12
+           issues
+        </p>
+      </div>
+    </div>
+    <div>
+      <div
+        data-css-leaxad=""
+      >
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
+        <div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-ae4c4050-36e8-4df2-83a4-839cf73725dc-disposition"
+            >
+              <label
+                class="question-label"
+                for="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition"
+                id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-label"
+              >
+                <strong>
+                  <span>
+                    Disposition
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
+                      >
+                        Select...
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-label"
+                            aria-owns="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="ae-4-c-4050-36-e-8-4-df-2-83-a-4-839-cf-73725-dc-disposition"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="ae4c4050-36e8-4df2-83a4-839cf73725dc-disposition"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <b>
+            Copy Requested by Appellant/Rep
+          </b>
+          <div
+            class="checkbox-wrapper-ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+                type="checkbox"
+              />
+              <label
+                for="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
+              >
+                <span
+                  class=""
+                >
+                  Transcript Requested
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <b>
+            Hearing Details
+          </b>
+          <br />
+          <div
+            data-css-1rsr754=""
+          >
+            <a
+              href="/ae4c4050-36e8-4df2-83a4-839cf73725dc/details"
+            >
+              Edit Hearing Details
+              <span
+                data-css-1qcxu9b=""
+              >
+                <svg
+                  class=""
+                  height="25"
+                  version="1.1"
+                  viewBox="0 0 25 25"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill="#0071bc"
+                      fill-rule="nonzero"
+                      transform="translate(-729.000000, -307.000000)"
+                    >
+                      <g
+                        transform="translate(6.000000, 253.000000)"
+                      >
+                        <g
+                          transform="translate(0.000000, 29.000000)"
+                        >
+                          <path
+                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                            id="Shape"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div
+          class="cf-form-textarea"
+        >
+          <label
+            class="question-label"
+            for="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            data-css-many1x=""
+            id="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+            maxlength="1000"
+            name="ae4c4050-36e8-4df2-83a4-839cf73725dc-notes"
+          />
+        </div>
+      </div>
+      <div
+        data-css-leaxad=""
+      >
+        <div>
+          <b>
+            Regional Office
+          </b>
+          <br />
+          <div
+            data-css-1rsr754=""
+          >
+            St. Paul regional office
+            <br />
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-appealHearingLocation"
+          >
+            <label
+              class="question-label"
+              for="appeal-hearing-location"
+              id="appeal-hearing-location-label"
+            >
+              <strong>
+                <span>
+                  Hearing Location
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="appeal-hearing-location-label"
+                          aria-owns="appeal-hearing-location-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="appeal-hearing-location"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="appealHearingLocation"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <b>
+            Hearing Day
+          </b>
+          <br />
+          <div
+            data-css-1rsr754=""
+          >
+            Fri 4/29/2022
+             
+            <br />
+             
+            <br />
+          </div>
+        </div>
+        <span
+          data-css-1042gbc=""
+        >
+          <fieldset
+            class="usa-fieldset-inputs cf-form-radio "
+          >
+            <legend
+              class=""
+            >
+              <strong>
+                <span>
+                  Hearing Time
+                   
+                </span>
+              </strong>
+            </legend>
+            <div
+              class="cf-form-radio-options"
+            >
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  checked=""
+                  disabled=""
+                  id="hearingTime0_08:30"
+                  name="hearingTime0"
+                  type="radio"
+                  value="08:30"
+                />
+                <label
+                  class="disabled"
+                  for="hearingTime0_08:30"
+                >
+                  8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
+                </label>
+              </div>
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  disabled=""
+                  id="hearingTime0_12:30"
+                  name="hearingTime0"
+                  type="radio"
+                  value="12:30"
+                />
+                <label
+                  class="disabled"
+                  for="hearingTime0_12:30"
+                >
+                  12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
+                </label>
+              </div>
+              <div
+                class="cf-form-radio-option"
+              >
+                <input
+                  disabled=""
+                  id="hearingTime0_other"
+                  name="hearingTime0"
+                  type="radio"
+                  value="other"
+                />
+                <label
+                  class="disabled"
+                  for="hearingTime0_other"
+                >
+                  Other
+                </label>
+              </div>
+            </div>
+          </fieldset>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
 <div>
   <div
