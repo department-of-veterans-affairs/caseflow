@@ -93,7 +93,7 @@ export const VSOHearingTypeConversionForm = ({
         <VSORepresentativeSection {...sectionProps} showDivider />
         <Checkbox
           label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
-          name="affirmPermission"
+          name="Affirm Permission"
           value = {checkedPermissions}
           onChange = {checkHandlerPermissions}
         />
@@ -110,7 +110,7 @@ export const VSOHearingTypeConversionForm = ({
               </a>
             </div>
           }
-          name="affirmAccess"
+          name="Affirm Access"
           value = {checkedAccess}
           onChange = {checkHandlerAccess}
         />
