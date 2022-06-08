@@ -43,6 +43,6 @@ class JudgeTask < Task
   end
 
   def reassign_clears_overtime?
-    true
+    false
   end
 end
