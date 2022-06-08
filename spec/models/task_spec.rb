@@ -981,11 +981,11 @@ describe Task, :all_dbs do
     end
 
     context "When the appeal has been marked for overtime" do
-      shared_examples "clears overtime" do
-        it "sets overtime to false" do
+      shared_examples "overtime status is unchanged" do
+        it "does not clear overtime status on reassignment" do
           expect(appeal.overtime?).to be true
           subject
-          expect(appeal.overtime?).to be false
+          expect(appeal.overtime?).to be true
         end
       end
 
@@ -999,7 +999,7 @@ describe Task, :all_dbs do
       after { FeatureToggle.disable!(:overtime_revamp) }
 
       context "when the task type is not a judge or attorney task" do
-        it "does not clear the overtime status" do
+        it "does not clear the overtime status on reassignment" do
           expect(appeal.overtime?).to be true
           subject
           expect(appeal.overtime?).to be true
@@ -1009,7 +1009,7 @@ describe Task, :all_dbs do
       context "when the task is a judge task" do
         let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
 
-        it_behaves_like "clears overtime"
+        it_behaves_like "overtime status is unchanged"
       end
 
       context "when the task is an attorney task" do
@@ -1020,7 +1020,7 @@ describe Task, :all_dbs do
 
         subject { task.reassign(params, judge) }
 
-        it_behaves_like "clears overtime"
+        it_behaves_like "overtime status is unchanged"
       end
     end
   end
