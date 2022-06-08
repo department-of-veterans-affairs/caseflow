@@ -1,9 +1,9 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
 
-export const HearingTypeConversionProvider = ({ children, appeal }) => {
+export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // Create state for appellant timezone check
   const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
 
@@ -21,28 +21,54 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
 
   const [originalEmail, setOriginalEmail] = useState('');
 
-  const [updatedAppeal, setUpdatedAppeal] = useState(appeal);
+  const updateAppellantEmail = (appeal, email) => {
+    appeal.veteranInfo.veteran.email_address = email;
 
-  const updateAppeal = (key, val) => {
-    setUpdatedAppeal(updateAppeal[key] = val);
+    return appeal;
   };
 
+  const updateAppellantTimezone = (appeal, timezone) => {
+    appeal.appellantTz = timezone;
+
+    return appeal;
+  };
+
+  const updatePoaTimezone = (appeal, timezone) => {
+    appeal.powerOfAttorney.representative_tz = timezone;
+
+    return appeal;
+  };
+
+  const reducer = (appeal, action) => {
+    switch (action.type) {
+    case 'SET_APPELLANT_EMAIL':
+      return updateAppellantEmail(appeal, action.payload);
+    case 'SET_APPELLANT_TZ':
+      return updateAppellantTimezone(appeal, action.payload);
+    case 'SET_POA_TZ':
+      return updatePoaTimezone(appeal, action.payload);
+    default:
+      return appeal;
+    }
+  };
+
+  const [appeal, dispatchAppeal] = useReducer(reducer, initialAppeal);
+
   const contextData = {
+    appeal,
     isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
     confirmIsEmptyMessage,
     isNotValidEmail,
     originalEmail,
-    updatedAppeal,
     setIsAppellantTZEmpty,
     setIsRepTZEmpty,
     setConfirmIsEmpty,
     setConfirmIsEmptyMessage,
     setIsNotValidEmail,
     setOriginalEmail,
-    setUpdatedAppeal,
-    updateAppeal
+    dispatchAppeal
   };
 
   return (

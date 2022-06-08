@@ -27,7 +27,8 @@ export const VSOHearingEmail = ({
     originalEmail,
     setOriginalEmail,
     confirmIsEmpty,
-    setConfirmIsEmpty
+    setConfirmIsEmpty,
+    dispatchAppeal
   } = useContext(HearingTypeConversionContext);
 
   const [message, setMessage] = useState('');
@@ -104,6 +105,7 @@ export const VSOHearingEmail = ({
             }),
           ]}
           onChange={(newEmail) => {
+            dispatchAppeal({ type: 'SET_APPELLANT_EMAIL', payload: newEmail });
             validateEmail(newEmail);
           }}
         />
