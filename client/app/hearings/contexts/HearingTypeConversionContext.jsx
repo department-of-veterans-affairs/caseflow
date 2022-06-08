@@ -7,14 +7,8 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
   // Create state for appellant timezone check
   const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
 
-  // Create state for appellant timezone error message
-  const [appellantTZErrorMessage, setAppellantTZErrorMessage] = useState('');
-
   // Create state for rep timezone check
   const [isRepTZEmpty, setIsRepTZEmpty] = useState(true);
-
-  // Create state for rep timezone error message
-  const [repTZErrorMessage, setRepTZErrorMessage] = useState('');
 
   // Create state to check if confirm field is empty
   const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
@@ -35,18 +29,14 @@ export const HearingTypeConversionProvider = ({ children, appeal }) => {
 
   const contextData = {
     isAppellantTZEmpty,
-    appellantTZErrorMessage,
     isRepTZEmpty,
-    repTZErrorMessage,
     confirmIsEmpty,
     confirmIsEmptyMessage,
     isNotValidEmail,
     originalEmail,
     updatedAppeal,
     setIsAppellantTZEmpty,
-    setAppellantTZErrorMessage,
     setIsRepTZEmpty,
-    setRepTZErrorMessage,
     setConfirmIsEmpty,
     setConfirmIsEmptyMessage,
     setIsNotValidEmail,

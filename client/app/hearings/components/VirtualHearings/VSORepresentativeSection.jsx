@@ -24,10 +24,7 @@ export const VSORepresentativeSection = ({
   formFieldsOnly,
   representativeEmailType,
 }) => {
-  const { isRepTZEmpty,
-    setIsRepTZEmpty,
-    repTZErrorMessage
-  } = useContext(HearingTypeConversionContext);
+  const { setIsRepTZEmpty } = useContext(HearingTypeConversionContext);
 
   const [repTZ, setRepTZ] = useState('');
 
@@ -92,7 +89,6 @@ export const VSORepresentativeSection = ({
           )}
         >
           <Timezone
-            errorMessage={isRepTZEmpty ? repTZErrorMessage : null}
             required
             value={repTZ}
             onChange={(repTz) => {

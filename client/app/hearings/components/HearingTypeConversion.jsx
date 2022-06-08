@@ -26,8 +26,6 @@ export const HearingTypeConversion = ({
     isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
-    setAppellantTZErrorMessage,
-    setRepTZErrorMessage,
     setConfirmIsEmptyMessage
   } = useContext(HearingTypeConversionContext);
 
@@ -58,14 +56,6 @@ export const HearingTypeConversion = ({
   const submit = async () => {
     if (userIsVsoEmployee && (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty)) {
       scrollUp();
-
-      if (isAppellantTZEmpty) {
-        setAppellantTZErrorMessage(COPY.CONVERT_HEARING_VALIDATE_TIMEZONE);
-      }
-
-      if (isRepTZEmpty) {
-        setRepTZErrorMessage(COPY.CONVERT_HEARING_VALIDATE_TIMEZONE);
-      }
 
       if (confirmIsEmpty) {
         setConfirmIsEmptyMessage(COPY.CONVERT_HEARING_VALIDATE_CONFIRM_EMAIL_EMPTY);
