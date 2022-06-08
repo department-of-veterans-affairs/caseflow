@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.feature "Convert hearing request type" do
-  let!(:appeal) { create(:appeal) }
-  let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
-  let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
-  let!(:task) { create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task, assigned_to: vso) }
+  let!(:appeal) do
+    a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket)
+    a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
+    a
+  end
 
   before do
     vso.add_user(vso_user)
@@ -20,15 +20,12 @@ RSpec.feature "Convert hearing request type" do
       step "navigate to the VSO Form" do
         visit "queue/appeals/#{appeal.uuid}"
 
-        expect(page).to have_content(ChangeHearingRequestTypeTask.label)
-        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(page).to have_content("Video")
 
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find(
-          "div",
-          class: "cf-select__option",
-          text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label
-        ).click
+        click_link("Convert to virtual")
+
+        expect(page).to have_current_path("/queue/appeals/#{appeal.external_id}" \
+          "/tasks/#{appeal.tasks.last.id}/#{Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}")
       end
 
       step "fill out the Form" do
