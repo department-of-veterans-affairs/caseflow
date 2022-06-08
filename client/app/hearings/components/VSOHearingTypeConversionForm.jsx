@@ -20,7 +20,12 @@ export const VSOHearingTypeConversionForm = ({
   type,
 }) => {
 
-  const { isNotValidEmail } = useContext(HearingTypeConversionContext);
+  const {
+    isNotValidEmail,
+    isAppellantTZEmpty,
+    isRepTZEmpty,
+    confirmIsEmpty
+  } = useContext(HearingTypeConversionContext);
 
   // initialize hook to manage state of affirm permissisons checkbox
   const [checkedPermissions, setCheckedPermissions] = useState(false);
@@ -34,6 +39,15 @@ export const VSOHearingTypeConversionForm = ({
 
   const checkHandlerAccess = () => {
     setCheckedAccess(!checkedAccess);
+  };
+
+  const preventSubmission = () => {
+    return isNotValidEmail ||
+    !checkedAccess ||
+    !checkedPermissions ||
+    isAppellantTZEmpty ||
+    isRepTZEmpty ||
+    confirmIsEmpty;
   };
 
   // 'Appellant' or 'Veteran'
@@ -116,7 +130,7 @@ export const VSOHearingTypeConversionForm = ({
             loading={isLoading}
             className="usa-button"
             onClick={onSubmit}
-            disabled={isNotValidEmail || !checkedAccess || !checkedPermissions}
+            disabled={preventSubmission()}
           >
             {convertTitle}
           </Button>
