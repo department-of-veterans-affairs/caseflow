@@ -86,8 +86,6 @@ export const HearingTypeConversion = ({
           }
         };
 
-        console.log(`data: ${Object.values(data)}`);
-
         setLoading(true);
 
         await ApiUtil.patch(`/tasks/${task.taskId}`, { data });

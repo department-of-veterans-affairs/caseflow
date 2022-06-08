@@ -50,7 +50,7 @@ export const VSOHearingEmail = ({
     }
   };
 
-  const confirmEmailCheck = (newEmail) => {
+  const confirmEmailCheck = (newEmail, unFocused) => {
 
     if (newEmail === '') {
       setConfirmIsEmpty(true);
@@ -61,8 +61,11 @@ export const VSOHearingEmail = ({
     if (newEmail === originalEmail) {
       setMessage('');
       setIsNotValidEmail(false);
-    } else {
+    } else if (unFocused) {
+      // Only display error message if field focus is exited.
       setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
+      setIsNotValidEmail(true);
+    } else {
       setIsNotValidEmail(true);
     }
   };
@@ -84,7 +87,10 @@ export const VSOHearingEmail = ({
             }),
           ]}
           onChange={(newEmail) => {
-            confirmEmailCheck(newEmail);
+            confirmEmailCheck(newEmail, false);
+          }}
+          onBlur={(newEmail) => {
+            confirmEmailCheck(newEmail, true);
           }}
         />
         {showHelper ? <HelperText label={helperLabel} /> : null}

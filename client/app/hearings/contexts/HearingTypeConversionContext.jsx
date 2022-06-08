@@ -1,4 +1,4 @@
-import React, { createContext, useState, useReducer } from 'react';
+import React, { createContext, useState, useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
@@ -19,7 +19,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // initiliaze hook to manage state for email validation
   const [isNotValidEmail, setIsNotValidEmail] = useState(true);
 
-  const [originalEmail, setOriginalEmail] = useState('');
+  const [originalEmail, setOriginalEmail] = useState(initialAppeal.veteranInfo.veteran.email_address);
 
   const updateAppellantEmail = (appeal, email) => {
     appeal.veteranInfo.veteran.email_address = email;
