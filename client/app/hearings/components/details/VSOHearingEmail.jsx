@@ -18,7 +18,8 @@ export const VSOHearingEmail = ({
   optional,
   helperLabel,
   showHelper,
-  confirmEmail
+  confirmEmail,
+  emailType
 }) => {
   const {
     setIsNotValidEmail,
@@ -105,7 +106,11 @@ export const VSOHearingEmail = ({
             }),
           ]}
           onChange={(newEmail) => {
-            dispatchAppeal({ type: 'SET_APPELLANT_EMAIL', payload: newEmail });
+            dispatchAppeal({
+              type: emailType === 'appellantEmailAddress' ?
+                'SET_APPELLANT_EMAIL' :
+                'SET_POA_EMAIL',
+              payload: newEmail });
             validateEmail(newEmail);
           }}
         />

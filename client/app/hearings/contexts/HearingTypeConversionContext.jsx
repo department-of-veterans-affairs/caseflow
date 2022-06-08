@@ -52,10 +52,10 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
     }
   };
 
-  const [appeal, dispatchAppeal] = useReducer(reducer, initialAppeal);
+  const [updatedAppeal, dispatchAppeal] = useReducer(reducer, initialAppeal);
 
   const contextData = {
-    appeal,
+    updatedAppeal,
     isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
@@ -80,7 +80,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
 
 HearingTypeConversionProvider.propTypes = {
   children: PropTypes.node,
-  appeal: PropTypes.object
+  initialAppeal: PropTypes.object
 };
 
 export default HearingTypeConversionContext;

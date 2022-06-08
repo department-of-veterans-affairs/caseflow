@@ -26,7 +26,8 @@ export const HearingTypeConversion = ({
     isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
-    setConfirmIsEmptyMessage
+    setConfirmIsEmptyMessage,
+    updatedAppeal
   } = useContext(HearingTypeConversionContext);
 
   // Function to scroll to top of window
@@ -74,16 +75,18 @@ export const HearingTypeConversion = ({
                 [userIsVsoEmployee && 'email_recipients']:
                 {
                   /* eslint-disable camelcase */
-                  appellant_tz: appeal?.appellantTz,
-                  representative_tz: appeal?.powerOfAttorney?.representative_tz,
-                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
-                  representative_email: appeal?.powerOfAttorney?.representative_email_address
+                  appellant_tz: updatedAppeal.appellantTz,
+                  representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
+                  appellant_email: updatedAppeal.veteranInfo?.veteran?.email_address,
+                  representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
                   /* eslint-enable camelcase */
                 }
               }
             }
           }
         };
+
+        console.log(`data: ${Object.values(data)}`);
 
         setLoading(true);
 

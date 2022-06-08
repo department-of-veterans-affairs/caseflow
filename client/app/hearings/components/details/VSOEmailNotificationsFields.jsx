@@ -17,7 +17,7 @@ export const VSOEmailNotificationsFields = ({
   time,
   roTimezone,
 }) => {
-  const { setIsAppellantTZEmpty, appeal } = useContext(HearingTypeConversionContext);
+  const { setIsAppellantTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
 
   const [appellantTZ, setAppellantTZ] = useState('');
 
@@ -40,7 +40,7 @@ export const VSOEmailNotificationsFields = ({
           error={errors?.appellantEmailAddress}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
           confirmEmail={false}
-          email={appeal.veteranInfo.veteran.email_address}
+          email={updatedAppeal.veteranInfo.veteran.email_address}
         />
         <VSOHearingEmail
           required
@@ -57,8 +57,9 @@ export const VSOEmailNotificationsFields = ({
         >
           <Timezone
             required
-            value={appellantTZ}
+            value={updatedAppeal.appellantTz}
             onChange={(appellantTz) => {
+              dispatchAppeal({ type: 'SET_APPELLANT_TZ', payload: appellantTz });
               timezoneCheck(appellantTz);
             }}
             readOnly={disableField}
