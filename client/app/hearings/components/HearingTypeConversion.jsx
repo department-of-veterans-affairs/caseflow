@@ -1,30 +1,15 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React, { useState, createContext } from 'react';
+import React, { useState, useContext } from 'react';
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
-import { appealWithDetailSelector, taskById } from '../../queue/selectors';
-import { deleteAppeal } from '../../queue/QueueActions';
-import {
-  showErrorMessage,
-  showSuccessMessage,
-} from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { formatChangeRequestType } from '../utils';
-
-export const AppellantTZContext = createContext([{}, () => {}]);
-export const AppellantTZErrorContext = createContext([{}, () => {}]);
-export const RepresentativeTZContext = createContext([{}, () => {}]);
-export const RepresentativeTZErrorContext = createContext([{}, () => {}]);
-export const EmptyConfirmContext = createContext([{}, () => {}]);
-export const EmptyConfirmMessageContext = createContext([{}, () => {}]);
 
 export const HearingTypeConversion = ({
   appeal,
@@ -37,23 +22,14 @@ export const HearingTypeConversion = ({
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
-  // Create state for appellant timezone check
-  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
-
-  // Create state for appellant timezone error message
-  const [appellantTZErrorMessage, setAppellantTZErrorMessage] = useState('');
-
-  // Create state for rep timezone check
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(true);
-
-  // Create state for rep timezone error message
-  const [repTZErrorMessage, setRepTZErrorMessage] = useState('');
-
-  // Create state to check if confirm field is empty
-  const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
-
-  // Create state for confirmIsEmpty error message
-  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useState('');
+  const {
+    isAppellantTZEmpty,
+    isRepTZEmpty,
+    confirmIsEmpty,
+    setAppellantTZErrorMessage,
+    setRepTZErrorMessage,
+    setConfirmIsEmptyMessage
+  } = useContext(HearingTypeConversionContext);
 
   // Function to scroll to top of window
   const scrollUp = () => {
@@ -80,8 +56,6 @@ export const HearingTypeConversion = ({
 
   // Set Payload based on whether user is VSO or not
   const submit = async () => {
-    let data = {};
-
     if (userIsVsoEmployee && (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty)) {
       scrollUp();
 
@@ -96,49 +70,31 @@ export const HearingTypeConversion = ({
       if (confirmIsEmpty) {
         setConfirmIsEmptyMessage(COPY.CONVERT_HEARING_VALIDATE_CONFIRM_EMAIL_EMPTY);
       }
-
     } else {
       try {
         const changedRequestType = formatChangeRequestType(type);
 
-        if (userIsVsoEmployee) {
-          data = {
-            task: {
-              status: TASK_STATUSES.completed,
-              business_payloads: {
-                values: {
-                  changed_hearing_request_type: changedRequestType,
-                  closest_regional_office:
-                    appeal?.closestRegionalOffice ||
-                    appeal?.regionalOffice?.key,
-                  email_recipients: {
-                    appellant_tz: appeal?.appellantTz,
-                    representative_tz:
-                      appeal?.powerOfAttorney?.representative_tz,
-                    appellant_email:
-                      appeal?.veteranInfo?.veteran?.email_address,
-                    representative_email:
-                      appeal?.powerOfAttorney?.representative_email_address,
-                  },
-                },
-              },
-            },
-          };
-        } else {
-          data = {
-            task: {
-              status: TASK_STATUSES.completed,
-              business_payloads: {
-                values: {
-                  changed_hearing_request_type: changedRequestType,
-                  closest_regional_office:
-                    appeal?.closestRegionalOffice ||
-                    appeal?.regionalOffice?.key,
-                },
-              },
-            },
-          };
-        }
+        const data = {
+          task: {
+            status: TASK_STATUSES.completed,
+            business_payloads: {
+              values: {
+                changed_hearing_request_type: changedRequestType,
+                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+                [userIsVsoEmployee && 'email_recipients']:
+                {
+                  /* eslint-disable camelcase */
+                  appellant_tz: appeal?.appellantTz,
+                  representative_tz: appeal?.powerOfAttorney?.representative_tz,
+                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
+                  representative_email: appeal?.powerOfAttorney?.representative_email_address
+                  /* eslint-enable camelcase */
+                }
+              }
+            }
+          }
+        };
+
         setLoading(true);
 
         await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
@@ -160,80 +116,38 @@ export const HearingTypeConversion = ({
     }
   };
 
-  // Render Convert to Virtual Form Depending on VSO User Status
-
   return (
-    <EmptyConfirmMessageContext.Provider value={[confirmIsEmptyMessage, setConfirmIsEmptyMessage]}>
-      <EmptyConfirmContext.Provider value={[confirmIsEmpty, setConfirmIsEmpty]}>
-        <RepresentativeTZErrorContext.Provider value={[repTZErrorMessage, setRepTZErrorMessage]}>
-          <RepresentativeTZContext.Provider value={[isRepTZEmpty, setIsRepTZEmpty]}>
-            <AppellantTZErrorContext.Provider value={[appellantTZErrorMessage, setAppellantTZErrorMessage]}>
-              <AppellantTZContext.Provider
-                value={[isAppellantTZEmpty, setIsAppellantTZEmpty]}
-              >
-                {userIsVsoEmployee ? (
-                  <VSOHearingTypeConversionForm
-                    appeal={appeal}
-                    history={history}
-                    isLoading={loading}
-                    onCancel={() => history.goBack()}
-                    onSubmit={submit}
-                    task={task}
-                    type={type}
-                  />
-                ) : (
-                  <HearingTypeConversionForm
-                    appeal={appeal}
-                    history={history}
-                    isLoading={loading}
-                    onCancel={() => history.goBack()}
-                    onSubmit={submit}
-                    task={task}
-                    type={type}
-                  />
-                )}
-              </AppellantTZContext.Provider>
-            </AppellantTZErrorContext.Provider>
-          </RepresentativeTZContext.Provider>
-        </RepresentativeTZErrorContext.Provider>
-      </EmptyConfirmContext.Provider>
-    </EmptyConfirmMessageContext.Provider>
+    userIsVsoEmployee ? (
+      <VSOHearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    ) : (
+      <HearingTypeConversionForm
+        appeal={appeal}
+        history={history}
+        isLoading={loading}
+        onCancel={() => history.goBack()}
+        onSubmit={submit}
+        task={task}
+        type={type}
+      />
+    )
   );
 };
 
 HearingTypeConversion.propTypes = {
   appeal: PropTypes.object,
-  appealId: PropTypes.string,
   deleteAppeal: PropTypes.func,
   showErrorMessage: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   task: PropTypes.object,
-  taskId: PropTypes.string,
   type: PropTypes.oneOf(['Virtual']),
-  // Router inherited props
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool,
+  userIsVsoEmployee: PropTypes.bool
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  appeal: appealWithDetailSelector(state, ownProps),
-  task: taskById(state, { taskId: ownProps.taskId }),
-  userIsVsoEmployee: state.ui.userIsVsoEmployee,
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      deleteAppeal,
-      showErrorMessage,
-      showSuccessMessage,
-    },
-    dispatch
-  );
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(HearingTypeConversion)
-);

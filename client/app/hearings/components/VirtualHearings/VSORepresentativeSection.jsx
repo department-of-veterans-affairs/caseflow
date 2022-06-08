@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import COPY from '../../../../COPY';
-import { RepresentativeTZContext, RepresentativeTZErrorContext } from '../HearingTypeConversion';
+import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
@@ -24,9 +24,11 @@ export const VSORepresentativeSection = ({
   formFieldsOnly,
   representativeEmailType,
 }) => {
+  const { isRepTZEmpty,
+    setIsRepTZEmpty,
+    repTZErrorMessage
+  } = useContext(HearingTypeConversionContext);
 
-  const [isRepTZEmpty, setIsRepTZEmpty] = useContext(RepresentativeTZContext);
-  const [repTZErrorMessage] = useContext(RepresentativeTZErrorContext);
   const [repTZ, setRepTZ] = useState('');
 
   const timezoneCheck = (repTz) => {

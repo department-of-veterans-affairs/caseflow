@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 import classnames from 'classnames';
 
-import { EmptyConfirmContext, EmptyConfirmMessageContext } from '../HearingTypeConversion';
-import { OriginalEmailContext } from './VSOEmailNotificationsFields';
-import { BtnContext } from '../VSOHearingTypeConversionForm';
+import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 import { HelperText } from '../VirtualHearings/HelperText';
 import { enablePadding } from '../details/style';
 import COPY from '../../../../COPY';
@@ -22,12 +20,17 @@ export const VSOHearingEmail = ({
   showHelper,
   confirmEmail
 }) => {
+  const {
+    setIsNotValidEmail,
+    confirmIsEmptyMessage,
+    setConfirmIsEmptyMessage,
+    originalEmail,
+    setOriginalEmail,
+    confirmIsEmpty,
+    setConfirmIsEmpty
+  } = useContext(HearingTypeConversionContext);
 
   const [message, setMessage] = useState('');
-  const [isNotValidEmail, setIsNotValidEmail] = useContext(BtnContext);
-  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useContext(EmptyConfirmMessageContext);
-  const [originalEmail, setOriginalEmail] = useContext(OriginalEmailContext);
-  const [confirmIsEmpty, setConfirmIsEmpty] = useContext(EmptyConfirmContext);
 
   // Regex to validate email input in real time
   const emailRegex = /\S+@\S+\.\S+/;
