@@ -65,23 +65,23 @@ class CaseHearingsDetail extends React.PureComponent {
   getHearingAttrs = (appeal, hearing, userIsVsoEmployee) => {
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11)
-    const hearing_day = new Date(hearing.date);
+    const hearingDay = new Date(hearing.date);
     // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
-        label: 'Type',
-        value: 
-        <React.Fragment>
-          {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
-          {userIsVsoEmployee && !hearing.isVirtual && hearing_day > deadline && 
-           <Link to={`/hearings/${appeal.externalId}/details`}>Convert to virtual</Link> }
-        </React.Fragment>
-      },
-      {
-        label: 'Disposition',
-        value: <React.Fragment>
-          {dispositionLabel(hearing?.disposition)}
-        </React.Fragment>
-      }];
+      label: 'Type',
+      value:
+      <React.Fragment>
+        {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
+        {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline &&
+         <Link to={`/hearings/${appeal.externalId}/details`}>Convert to virtual</Link> }
+      </React.Fragment>
+    },
+    {
+      label: 'Disposition',
+      value: <React.Fragment>
+        {dispositionLabel(hearing?.disposition)}
+      </React.Fragment>
+    }];
 
     if (!userIsVsoEmployee) {
       hearingAttrs.push(
@@ -109,20 +109,9 @@ class CaseHearingsDetail extends React.PureComponent {
         value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
       }
     );
-
-    if (!userIsVsoEmployee) {
-      hearingAttrs.push(
-        {
-          label: '',
-          value: <Link href={`/hearings/${hearing.externalId}/details`}>
-            {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
-          </Link>
-        }
-      );
-    }
-    //info alert for hearings within 11 days of scheduled date
-    else {
-      if (!hearing.isVirtual && hearing_day <= deadline) {
+    // info alert for hearings within 11 days of scheduled date
+    if (userIsVsoEmployee) {
+      if (!hearing.isVirtual && hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',
@@ -133,9 +122,20 @@ class CaseHearingsDetail extends React.PureComponent {
                 </Alert>
               </div>
           }
-        )
+        );
       }
-    }   
+    }
+    else {
+      hearingAttrs.push(
+        {
+          label: '',
+          value: <Link href={`/hearings/${hearing.externalId}/details`}>
+            {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
+          </Link>
+        }
+      );
+    }
+
     return hearingAttrs;
   }
 
