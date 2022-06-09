@@ -13,7 +13,6 @@ describe ConferenceLinkSerializer, :all_dbs do
   let(:hearing_day) { create(:hearing_day) }
   let(:conference_link) { create(:conference_link, hearing_day_id: hearing_day.id) }
 
-
   context "Converting conference link to hash" do
     subject { described_class.new(conference_link) }
     before do

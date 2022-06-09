@@ -44,9 +44,9 @@ class Hearings::HearingDayController < HearingsApplicationController
           hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
         )
       }
-    rescue VirtualHearings::LinkService::PINKeyMissingError, 
-    VirtualHearings::LinkService::URLHostMissingError, 
-    VirtualHearings::LinkService::URLPathMissingError => error
+    rescue VirtualHearings::LinkService::PINKeyMissingError,
+           VirtualHearings::LinkService::URLHostMissingError,
+           VirtualHearings::LinkService::URLPathMissingError => error
       log_error(error)
       render json: {
         hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
