@@ -5,10 +5,10 @@ const HearingTypeConversionContext = createContext({});
 
 export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // Create state for appellant timezone check
-  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(initialAppeal?.appellantTz);
+  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(!initialAppeal?.appellantTz);
 
   /* eslint-disable camelcase */
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(initialAppeal?.powerOfAttorney?.representative_tz);
+  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.powerOfAttorney?.representative_tz);
 
   const [originalEmail, setOriginalEmail] = useState(initialAppeal?.veteranInfo?.veteran?.email_address || '');
   /* eslint-enable camelcase */
