@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -16,6 +16,7 @@ import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -28,8 +29,11 @@ export const HearingConversion = ({
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
+  const { userVsoEmployee } = useContext(HearingsUserContext);
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
-  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
+  // const vsoStatus = userVsoEmployee;
+  const helperLabel = (virtual && userVsoEmployee) ? COPY.CONVERT_HEARING_TYPE_SUBTITLE_3 
+                    : ( virtual && !userVsoEmployee ) ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
   // Set the section props
   const sectionProps = {
