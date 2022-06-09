@@ -57,13 +57,11 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
     isAppellantTZEmpty,
     isRepTZEmpty,
     confirmIsEmpty,
-    confirmIsEmptyMessage,
     isNotValidEmail,
     originalEmail,
     setIsAppellantTZEmpty,
     setIsRepTZEmpty,
     setConfirmIsEmpty,
-    setConfirmIsEmptyMessage,
     setIsNotValidEmail,
     setOriginalEmail,
     dispatchAppeal
