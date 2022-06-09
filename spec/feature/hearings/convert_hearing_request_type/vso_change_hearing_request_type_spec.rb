@@ -35,17 +35,46 @@ RSpec.feature "Convert hearing request type" do
 
       step "fill out the Form" do
         expect(page).to have_content("Convert Hearing To Virtual")
-        # TODO: add front end validation checks here once changes are merged
-        # Fill out all fields on form
-        fill_in "Veteran Email", with: "veteran@veteran.com"
-        fill_in "Confirm Veteran Email", with: "veteran@veteran.com"
 
-        click_dropdown(name: "appellantTz", index: 1)
-        click_dropdown(name: "representativeTz", index: 1)
+        # Check if button is disabled on page load
+        expect(page).to have_button("Convert Hearing to Virtual", disabled: true)
 
+        # Affirm checkboxes first to test other fields
         click_label("Affirm Permission")
         click_label("Affirm Access")
 
+        # Check if buttone remains disabled
+        expect(page).to have_button("Convert Hearing to Virtual", disabled: true)
+
+        # Fill out email field and expect validation message on invalid email
+        fill_in "Veteran Email", with: "veteran@vetera"
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
+        fill_in "Veteran Email", with: "veteran@veteran.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert Hearing to Virtual", disabled: true)
+
+        # Fill out confirm email field and expect validation message on unmatched email
+        fill_in "Confirm Veteran Email", with: "veteran@veteran"
+        find(".body").click
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+        fill_in "Confirm Veteran Email", with: "veteran@veteran.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert Hearing to Virtual", disabled: true)
+
+        # Select appellant tz
+        click_dropdown(name: "appellantTz", index: 1)
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert Hearing to Virtual", disabled: true)
+
+        # Select rep tz
+        click_dropdown(name: "representativeTz", index: 1)
+
+        # Convert button should now be enabled
         click_button("Convert Hearing To Virtual")
       end
 
