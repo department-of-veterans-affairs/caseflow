@@ -22,21 +22,7 @@ export const HearingTypeConversion = ({
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
-  const {
-    isAppellantTZEmpty,
-    isRepTZEmpty,
-    confirmIsEmpty,
-    setConfirmIsEmptyMessage,
-    updatedAppeal
-  } = useContext(HearingTypeConversionContext);
-
-  // Function to scroll to top of window
-  const scrollUp = () => {
-    window.scrollTo({
-      top: 0,
-      behaviour: 'smooth',
-    });
-  };
+  const { updatedAppeal } = useContext(HearingTypeConversionContext);
 
   const getSuccessMsg = () => {
     const title = sprintf(
@@ -55,55 +41,47 @@ export const HearingTypeConversion = ({
 
   // Set Payload based on whether user is VSO or not
   const submit = async () => {
-    if (userIsVsoEmployee && (isAppellantTZEmpty || isRepTZEmpty || confirmIsEmpty)) {
-      scrollUp();
+    try {
+      const changedRequestType = formatChangeRequestType(type);
 
-      if (confirmIsEmpty) {
-        setConfirmIsEmptyMessage(COPY.CONVERT_HEARING_VALIDATE_CONFIRM_EMAIL_EMPTY);
-      }
-    } else {
-      try {
-        const changedRequestType = formatChangeRequestType(type);
-
-        const data = {
-          task: {
-            status: TASK_STATUSES.completed,
-            business_payloads: {
-              values: {
-                changed_hearing_request_type: changedRequestType,
-                closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-                [userIsVsoEmployee && 'email_recipients']:
-                {
-                  /* eslint-disable camelcase */
-                  appellant_tz: updatedAppeal.appellantTz,
-                  representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
-                  appellant_email: updatedAppeal.veteranInfo?.veteran?.email_address,
-                  representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
-                  /* eslint-enable camelcase */
-                }
+      const data = {
+        task: {
+          status: TASK_STATUSES.completed,
+          business_payloads: {
+            values: {
+              changed_hearing_request_type: changedRequestType,
+              closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
+              [userIsVsoEmployee && 'email_recipients']:
+              {
+                /* eslint-disable camelcase */
+                appellant_tz: updatedAppeal.appellantTz,
+                representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
+                appellant_email: updatedAppeal.veteranInfo?.veteran?.email_address,
+                representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
+                /* eslint-enable camelcase */
               }
             }
           }
-        };
+        }
+      };
 
-        setLoading(true);
+      setLoading(true);
 
-        await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
+      await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
 
-        props.showSuccessMessage(getSuccessMsg());
-        props.deleteAppeal(task.externalAppealId);
-      } catch (err) {
-        const error = get(err, 'response.body.errors[0]', {
-          title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
-          detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
-        });
+      props.showSuccessMessage(getSuccessMsg());
+      props.deleteAppeal(task.externalAppealId);
+    } catch (err) {
+      const error = get(err, 'response.body.errors[0]', {
+        title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
+      });
 
-        props.showErrorMessage(error);
-      } finally {
-        setLoading(false);
+      props.showErrorMessage(error);
+    } finally {
+      setLoading(false);
 
-        history.push(`/queue/appeals/${appeal.externalId}`);
-      }
+      history.push(`/queue/appeals/${appeal.externalId}`);
     }
   };
 
