@@ -378,6 +378,7 @@ DailyDocketContainer.propTypes = {
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,
   onResetDailyDocketAfterError: PropTypes.func,
+  onHandleConferenceLinkError: PropTypes.func,
   onUpdateLock: PropTypes.func,
   onHearingDayModified: PropTypes.func,
   print: PropTypes.bool,
