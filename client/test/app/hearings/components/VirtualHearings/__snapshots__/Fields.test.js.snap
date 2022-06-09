@@ -16277,6 +16277,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -32467,6 +32468,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -48769,6 +48771,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -64959,6 +64962,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
