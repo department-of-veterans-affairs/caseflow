@@ -48,6 +48,7 @@ RSpec.feature "Convert hearing request type" do
 
         # Fill out email field and expect validation message on invalid email
         fill_in "Veteran Email", with: "veteran@vetera"
+        find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
         fill_in "Veteran Email", with: "veteran@veteran.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)

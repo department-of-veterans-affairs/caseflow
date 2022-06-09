@@ -34,15 +34,18 @@ export const VSOHearingEmail = ({
   // Regex to validate email input in real time
   const emailRegex = /\S+@\S+\.\S+/;
 
-  const validateEmail = (newEmail) => {
+  const validateEmail = (newEmail, unFocused) => {
 
     setOriginalEmail(newEmail);
 
     if (emailRegex.test(newEmail)) {
       setMessage('');
       setIsNotValidEmail(false);
-    } else {
+    } else if (unFocused) {
+      // Only display error message if field focus is exited.
       setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL);
+      setIsNotValidEmail(true);
+    } else {
       setIsNotValidEmail(true);
     }
   };
@@ -114,7 +117,10 @@ export const VSOHearingEmail = ({
                 'SET_APPELLANT_EMAIL' :
                 'SET_POA_EMAIL',
               payload: newEmail });
-            validateEmail(newEmail);
+            validateEmail(newEmail, false);
+          }}
+          onBlur={(newEmail) => {
+            validateEmail(newEmail, true);
           }}
         />
         {showHelper ? <HelperText label={helperLabel} /> : null}
