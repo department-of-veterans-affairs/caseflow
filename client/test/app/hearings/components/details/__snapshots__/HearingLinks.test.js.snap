@@ -1060,6 +1060,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       "name": "John Smith",
       "userCanAssignHearingSchedule": false,
       "userCanVsoHearingSchedule": true,
+      "userVsoEmployee": true,
     }
   }
   virtualHearing={
@@ -1213,6 +1214,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "name": "John Smith",
           "userCanAssignHearingSchedule": false,
           "userCanVsoHearingSchedule": true,
+          "userVsoEmployee": true,
         }
       }
       virtualHearing={
@@ -1371,6 +1373,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               "name": "John Smith",
               "userCanAssignHearingSchedule": false,
               "userCanVsoHearingSchedule": true,
+              "userVsoEmployee": true,
             }
           }
           virtualHearing={
@@ -1520,6 +1523,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "name": "John Smith",
                 "userCanAssignHearingSchedule": false,
                 "userCanVsoHearingSchedule": true,
+                "userVsoEmployee": true,
               }
             }
             virtualHearing={

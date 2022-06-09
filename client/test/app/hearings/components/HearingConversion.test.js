@@ -11,10 +11,16 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
+import { Checkbox } from '../../../../../client/app/components/Checkbox'
 import RadioField from 'app/components/RadioField';
+import { anyUser, vsoUser} from 'test/data';
+import { COPY } from '../../../../../client/COPY.json'
+import { Details } from '../../../../../client/app/hearings/components/Details'
+import { node } from 'prop-types';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
+const mockUpdateCheckboxes = jest.fn();
 
 describe('HearingConversion', () => {
   test('Matches snapshot with default props', () => {
@@ -25,11 +31,13 @@ describe('HearingConversion', () => {
         title={defaultTitle}
         update={updateSpy}
         hearing={amaHearing}
+        updateCheckboxes= {mockUpdateCheckboxes}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
           userWithJudgeRole,
-          amaHearing
+          amaHearing,
+          anyUser
         ),
         wrappingComponentProps: { store: detailsStore },
       }
@@ -58,11 +66,13 @@ describe('HearingConversion', () => {
         title={defaultTitle}
         update={updateSpy}
         hearing={amaHearing}
+        updateCheckboxes= {mockUpdateCheckboxes}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
           userWithJudgeRole,
-          amaHearing
+          amaHearing,
+          anyUser
         ),
         wrappingComponentProps: { store: detailsStore },
       }
@@ -86,4 +96,53 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
+
+  test('When a non-VSO user converts to virtual, the checkboxes do not appear', () => {
+    const conversion = mount(
+      <HearingConversion
+        scheduledFor={amaHearing.scheduledFor.toString()}
+        type={HEARING_CONVERSION_TYPES[0]}
+        title={defaultTitle}
+        update={updateSpy}
+        hearing={amaHearing}
+        updateCheckboxes= {mockUpdateCheckboxes}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userWithJudgeRole,
+          amaHearing,
+          anyUser
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      });
+
+      const permissionCheckboxes = conversion.find(Checkbox);
+
+      expect(conversion.find(Checkbox)).toHaveLength(0);
+
+  });
+
+  test("When a VSO user converts to virtual, the checkboxes appear on the form", () => {
+    const conversion = mount(
+      <HearingConversion
+        scheduledFor={amaHearing.scheduledFor.toString()}
+        type={HEARING_CONVERSION_TYPES[0]}
+        title={defaultTitle}
+        update={updateSpy}
+        hearing={amaHearing}
+        updateCheckboxes= {mockUpdateCheckboxes}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userWithJudgeRole,
+          amaHearing,
+          vsoUser
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      });
+
+      //expect checkbox to show
+      expect(conversion.find(Checkbox)).toHaveLength(1);
+
+  })
 });

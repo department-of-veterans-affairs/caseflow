@@ -11,7 +11,8 @@ import {
   legacyHearing,
   amaHearing,
   defaultHearing,
-  virtualHearing
+  virtualHearing,
+  vsoUser
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -297,4 +298,44 @@ describe('Details', () => {
 
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
+
+  test('When a VSO user converts to virtual, the save button is disabled at first', () =>{
+    const details = mount(
+      <Details
+        hearing={virtualHearing}
+        saveHearing={saveHearingSpy}
+        setHearing={setHearingSpy}
+        goBack={goBackSpy}
+        onReceiveAlerts={onReceiveAlertsSpy}
+        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+        transitionAlert={transitionAlertSpy}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          vsoUser,
+          defaultHearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    // Change the value of the hearing type
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+
+    // Click save
+    details.
+    find(Button).
+    findWhere((node) => node.prop('name') === 'Save').
+    find('button').
+    simulate('click');
+
+    expect(Button.disabled).toEqual(true)
+  })
 });

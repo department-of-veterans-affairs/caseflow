@@ -15,9 +15,11 @@ export const userWithJudgeRole = {
 
 export const vsoUser = {
   ...anyUser,
+  userVsoEmployee: true,
   userCanVsoHearingSchedule: true,
   userCanAssignHearingSchedule: false
 };
+
 
 const attyTemplate = ({ id }) => {
   const name = faker.name.findName();
