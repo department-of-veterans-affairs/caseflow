@@ -1,25 +1,22 @@
-import React, { createContext, useState, useReducer, useEffect } from 'react';
+import React, { createContext, useState, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
 
 export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // Create state for appellant timezone check
-  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(true);
+  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(initialAppeal.appellantTz);
 
   // Create state for rep timezone check
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(true);
+  const [isRepTZEmpty, setIsRepTZEmpty] = useState(initialAppeal.powerOfAttorney?.representative_tz);
 
   // Create state to check if confirm field is empty
   const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
 
-  // Create state for confirmIsEmpty error message
-  const [confirmIsEmptyMessage, setConfirmIsEmptyMessage] = useState('');
-
   // initiliaze hook to manage state for email validation
   const [isNotValidEmail, setIsNotValidEmail] = useState(true);
 
-  const [originalEmail, setOriginalEmail] = useState(initialAppeal.veteranInfo.veteran.email_address);
+  const [originalEmail, setOriginalEmail] = useState(initialAppeal.veteranInfo?.veteran?.email_address || '');
 
   const updateAppellantEmail = (appeal, email) => {
     appeal.veteranInfo.veteran.email_address = email;

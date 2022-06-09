@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -19,15 +19,8 @@ export const VSOEmailNotificationsFields = ({
 }) => {
   const { setIsAppellantTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
 
-  const [appellantTZ, setAppellantTZ] = useState('');
-
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
-
-  const timezoneCheck = (appellantTz) => {
-    setIsAppellantTZEmpty(false);
-    setAppellantTZ(appellantTz);
-  };
 
   return (
     <React.Fragment>
@@ -60,7 +53,7 @@ export const VSOEmailNotificationsFields = ({
             value={updatedAppeal.appellantTz}
             onChange={(appellantTz) => {
               dispatchAppeal({ type: 'SET_APPELLANT_TZ', payload: appellantTz });
-              timezoneCheck(appellantTz);
+              setIsAppellantTZEmpty(false);
             }}
             readOnly={disableField}
             time={time}

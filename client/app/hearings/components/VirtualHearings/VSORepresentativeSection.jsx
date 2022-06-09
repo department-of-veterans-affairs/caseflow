@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -25,13 +25,6 @@ export const VSORepresentativeSection = ({
   representativeEmailType,
 }) => {
   const { setIsRepTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
-
-  const [repTZ, setRepTZ] = useState('');
-
-  const timezoneCheck = (repTz) => {
-    setIsRepTZEmpty(false);
-    setRepTZ(repTz);
-  };
 
   return (
     <VirtualHearingSection
@@ -93,7 +86,7 @@ export const VSORepresentativeSection = ({
             value={updatedAppeal.powerOfAttorney.representative_tz}
             onChange={(repTz) => {
               dispatchAppeal({ type: 'SET_POA_TZ', payload: repTz });
-              timezoneCheck(repTz);
+              setIsRepTZEmpty(false);
             }}
             time={hearing.scheduledTimeString}
             roTimezone={hearing?.regionalOfficeTimezone}

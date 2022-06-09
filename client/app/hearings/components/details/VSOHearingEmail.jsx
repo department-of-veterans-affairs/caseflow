@@ -23,11 +23,8 @@ export const VSOHearingEmail = ({
 }) => {
   const {
     setIsNotValidEmail,
-    confirmIsEmptyMessage,
-    setConfirmIsEmptyMessage,
     originalEmail,
     setOriginalEmail,
-    confirmIsEmpty,
     setConfirmIsEmpty,
     dispatchAppeal
   } = useContext(HearingTypeConversionContext);
@@ -76,7 +73,7 @@ export const VSOHearingEmail = ({
         <TextField
           optional={optional}
           readOnly={disabled}
-          errorMessage={confirmIsEmpty ? confirmIsEmptyMessage : message}
+          errorMessage={message}
           name={label}
           value={email}
           required={!disabled && required}
