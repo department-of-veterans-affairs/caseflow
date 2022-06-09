@@ -131,9 +131,11 @@ const HearingDetails = (props) => {
 
   // VSO convert success banner
   const getSuccessMsg = () => {
+    const appellantFullName = hearing?.appellantFirstName + ' ' + hearing?.appellantLastName;
+    const veteranFullName = hearing?.veteranFirstName + ' ' + hearing?.veteranLastName;
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
-      hearing?.appellantIsNotVeteran ? hearing?.appellantFullName : hearing?.veteranFullName,
+      hearing?.appellantIsNotVeteran ? appellantFullName : veteranFullName,
       'virtual'
     );
     const detail = COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL;
@@ -217,16 +219,13 @@ const HearingDetails = (props) => {
 
       const alerts = response.body?.alerts;
 
-      if (alerts) {
+      if (alerts && !userVsoEmployee) {
         processAlerts(alerts, props, setShouldStartPolling);
-        // props.showSuccessMessage(getSuccessMsg());
       }
 
       if (userVsoEmployee && convertingToVirtual) {
-        // props.showSuccessMessage(getSuccessMsg());
-        // Redirect back to the Case Details Page
-        // goBack();
-        // history.replace(`/queue/appeals/${hearing.externalId}`);
+        // Store success message and Redirect back to the Case Details Page
+        localStorage.setItem('VSOSuccessMsg', JSON.stringify(getSuccessMsg()));
         setVSOConvertSuccessful(true);
       } else {
         // Reset the state
@@ -291,12 +290,8 @@ const HearingDetails = (props) => {
 
 
   if (VSOConvertSuccessful && userVsoEmployee) {
-    console.log("navigating");
-     // Construct the URL to redirect
-     const baseUrl = `${window.location.origin}/queue/appeals`;
-
-    // return <Redirect to={`/queue/appeals/${hearing.appealExternalId}`} />;
-    // history.replace(`/queue/appeals/${hearing.appealExternalId}`);
+    // Construct the URL to redirect
+    const baseUrl = `${window.location.origin}/queue/appeals`;
     window.location.href = `${baseUrl}/${hearing.appealExternalId}`;
   }
 
