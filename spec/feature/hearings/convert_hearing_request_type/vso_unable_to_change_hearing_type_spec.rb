@@ -9,19 +9,12 @@ RSpec.feature "Convert scheduled hearing type" do
     a
   end
 
-  let!(:appeal_deadline) do
-    a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket)
-    a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
-    a
-  end
-
   context "for Hearing coordinator user" do
     before do
       current_user = User.authenticate!(roles: ["Edit HearSched", "Build HearSched"])
       HearingsManagement.singleton.add_user(current_user)
     end
-    let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days) }
-    let(:hearing_day_deadline) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days) }
+    let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
 
     scenario "Schedule veteran" do
       step "select from dropdown" do
@@ -31,10 +24,9 @@ RSpec.feature "Convert scheduled hearing type" do
 
       step "fill in form" do
         fill_in "Notes", with: "asfsefdsfdf"
-        click_dropdown(prompt: "Hearing Type", text: "Video")
-        click_dropdown(prompt: "Regional Office", text: "Boston, MA")
-        click_dropdown(prompt: "Hearing Location", text: "Holdrege, NE (VHA) 0 miles away")
-        choose("8:30 AM Eastern Time (US & Canada)")
+        click_dropdown(name: "regionalOffice", index: 1)
+        click_dropdown(name: "appealHearingLocation", index: 0)
+        click_dropdown(name: "optionalHearingTime0", index: 0)
         click_button(text: "Schedule")
       end
     end
@@ -47,18 +39,6 @@ RSpec.feature "Convert scheduled hearing type" do
     end
     let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
     let!(:vso_user) { create(:user, :vso_role) }
-    scenario "Convert scheduled hearing to Virtual" do
-      step "navigate to the hearings form" do
-        visit "queue/appeals/#{appeal.uuid}"
-        expect(page).to have_content("Video")
-        expect(page).to have_link("Convert to virtual")
-        click_link("Convert to virtual")
-        expect(page).to have_current_path("/hearings/#{appeal.external_id}/details")
-      end
-      step "cancel the step that starts the schedule workflow to test the next step" do
-        click_button("Cancel")
-      end
-    end
 
     scenario "Hearing will be held within 11 days" do
       visit "queue/appeals/#{appeal_deadline.uuid}"
