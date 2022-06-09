@@ -53,7 +53,7 @@ export const VSOEmailNotificationsFields = ({
             value={updatedAppeal.appellantTz}
             onChange={(appellantTz) => {
               dispatchAppeal({ type: 'SET_APPELLANT_TZ', payload: appellantTz });
-              setIsAppellantTZEmpty(false);
+              setIsAppellantTZEmpty(!appellantTz);
             }}
             readOnly={disableField}
             time={time}

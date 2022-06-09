@@ -86,7 +86,7 @@ export const VSORepresentativeSection = ({
             value={updatedAppeal.powerOfAttorney.representative_tz}
             onChange={(repTz) => {
               dispatchAppeal({ type: 'SET_POA_TZ', payload: repTz });
-              setIsRepTZEmpty(false);
+              setIsRepTZEmpty(!repTz);
             }}
             time={hearing.scheduledTimeString}
             roTimezone={hearing?.regionalOfficeTimezone}
