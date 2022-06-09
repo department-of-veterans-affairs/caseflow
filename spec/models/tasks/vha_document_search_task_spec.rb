@@ -11,7 +11,7 @@ describe VhaDocumentSearchTask, :postgres do
     before { FeatureToggle.enable!(:vha_predocket_workflow) }
     after { FeatureToggle.disable!(:vha_predocket_workflow) }
     it "uses a friendly label" do
-      expect(task.class.label).to eq COPY::VHA_REVIEW_DOCUMENTATION_TASK_LABEL
+      expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
     end
   end
 

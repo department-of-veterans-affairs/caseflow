@@ -51,6 +51,7 @@ class HearingDay < CaseflowRecord
 
   before_create :assign_created_by_user
   after_update :update_children_records
+  after_create :generate_link_on_create
 
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
@@ -135,7 +136,7 @@ class HearingDay < CaseflowRecord
     caseflow_and_vacols_hearings
   end
 
-  def to_hash
+  def to_hash(include_conference_link = false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
@@ -149,7 +150,8 @@ class HearingDay < CaseflowRecord
       self,
       params: {
         video_hearing_days_request_types: video_hearing_days_request_types,
-        judge_names: judge_names
+        judge_names: judge_names,
+        include_conference_link: include_conference_link
       }
     ).serializable_hash[:data][:attributes]
   end
@@ -213,10 +215,28 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
+  # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
+  def conference_link
+    @conference_link ||= find_or_create_conference_link!
+  end
+
   private
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
+  end
+
+  def log_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { hearing_day_id: id, message: error.message })
+  end
+
+  def generate_link_on_create
+    begin
+      this.conference_link
+    rescue StandardError => error
+      log_error(error)
+    end
   end
 
   def update_children_records
@@ -258,6 +278,16 @@ class HearingDay < CaseflowRecord
     formatted_datetime_string = combined_datetime.iso8601
 
     formatted_datetime_string
+  end
+
+  # Method to get the associated conference link record if exists and if not create  new one
+  def find_or_create_conference_link!
+    conference_link = ConferenceLink.find_by_hearing_day_id(id)
+    if conference_link.nil?
+      conference_link = ConferenceLink.create(hearing_day_id: id)
+    end
+
+    conference_link
   end
 
   class << self
