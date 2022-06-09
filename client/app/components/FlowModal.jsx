@@ -8,7 +8,8 @@ export default class FlowModal extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
+      pathAfterSubmit: this.props.pathAfterSubmit
     };
   }
 
@@ -20,7 +21,7 @@ export default class FlowModal extends React.PureComponent {
 
   cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
-  closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
+  closeHandler = () => this.props.history.replace(this.state.pathAfterSubmit);
 
   setLoading = (loading) => this.setState({ loading });
 
