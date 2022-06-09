@@ -56,7 +56,7 @@ export const HearingTypeConversion = ({
                 /* eslint-disable camelcase */
                 appellant_tz: updatedAppeal.appellantTz,
                 representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
-                appellant_email: updatedAppeal.veteranInfo?.veteran?.email_address,
+                appellant_email: updatedAppeal.appellantEmailAddress,
                 representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
                 /* eslint-enable camelcase */
               }

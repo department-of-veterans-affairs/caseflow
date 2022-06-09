@@ -20,7 +20,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   const [isNotValidEmail, setIsNotValidEmail] = useState(true);
 
   const updateAppellantEmail = (appeal, email) => {
-    appeal.veteranInfo.veteran.email_address = email;
+    appeal.appellantEmailAddress = email;
 
     return appeal;
   };
