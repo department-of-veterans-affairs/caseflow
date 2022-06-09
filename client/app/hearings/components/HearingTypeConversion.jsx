@@ -1,3 +1,6 @@
+/* eslint-disable camelcase */
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import PropTypes from 'prop-types';

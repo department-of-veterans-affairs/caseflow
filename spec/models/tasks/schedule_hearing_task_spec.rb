@@ -467,4 +467,17 @@ describe ScheduleHearingTask, :all_dbs do
       end
     end
   end
+
+  context "Check that task dropdown for VSO returns an empty array and does not appear" do
+    let(:task) { create(:schedule_hearing_task, :assigned) }
+    let(:vso_user) { create(:user, roles: ["VSO"]) }
+
+    context "#available_actions" do
+      describe "vso user" do
+        it "returns an empty array for VSO users" do
+          expect(task.available_actions(vso_user).count).to eq 0
+        end
+      end
+    end
+  end
 end

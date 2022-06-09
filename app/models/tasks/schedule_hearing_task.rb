@@ -99,6 +99,8 @@ class ScheduleHearingTask < Task
   end
 
   def available_actions(user)
+    return [] if user.vso_employee?
+
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
@@ -118,7 +120,6 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
-  # Override the available user actions to inject change hearing request type tasks
   def available_hearing_user_actions(user)
     # Capture the parent user actions
     parent_admin_actions = super(user)
