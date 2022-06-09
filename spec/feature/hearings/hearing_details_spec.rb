@@ -2,6 +2,7 @@
 
 RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"]) }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
   let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
@@ -186,11 +187,34 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
     end
+
+    scenario "vso user can convert hearing type to virtual" do
+      User.authenticate!(user: vso_user)
+
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      click_dropdown(name: "hearingType", index: 0)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+
+      # Update the POA and Appellant timezones
+      click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+      # click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
+
+      click_button("button-Save")
+
+      byebug
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appealExternalId}")
+    end
   end
 
   shared_examples "all hearing types" do
     context "when type is Video" do
       before do
+        User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
 
