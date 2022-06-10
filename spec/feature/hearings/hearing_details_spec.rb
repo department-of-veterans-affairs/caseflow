@@ -188,6 +188,22 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(fill_in_rep_tz)
     end
 
+    scenario "vso users are taken to case details page instead of the hearing details
+       if they click cancel" do
+      User.authenticate!(user: vso_user)
+
+      # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
+      visit "/queue/appeals/#{hearing.appeal_external_id}"
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      click_dropdown(name: "hearingType", index: 0)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      click_button("button-Cancel")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+    end
+
     scenario "vso user can convert hearing type to virtual" do
       User.authenticate!(user: vso_user)
 
