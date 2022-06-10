@@ -44,8 +44,11 @@ describe TasksForAppeal do
         end
 
         context "hearing has been postponed" do
-          let!(:hearing) { create(:hearing, :with_tasks, :postponed, appeal: appeal) }
-
+          let!(:hearing) do
+            new_hearing = create(:hearing, :with_tasks, appeal: appeal)
+            new_hearing.update!(disposition: :postponed)
+            new_hearing
+          end
           it "does not include the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to be_nil
           end
