@@ -205,6 +205,7 @@ export const CaseDetailsView = (props) => {
 
   // Retrieve VSO convert to virtual success message after getting redirected from Hearings app
   const displayVSOAlert = JSON.parse(localStorage.getItem('VSOSuccessMsg'));
+
   localStorage.removeItem('VSOSuccessMsg');
 
   return (
