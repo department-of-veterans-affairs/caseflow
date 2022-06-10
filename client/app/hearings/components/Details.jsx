@@ -1,6 +1,5 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { css } from 'glamor';
 import { isUndefined, get, omitBy } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -35,7 +34,6 @@ import {
   clearAlerts
 } from '../../components/common/actions';
 import {
-  showErrorMessage,
   showSuccessMessage
 } from '../../queue/uiReducer/uiActions';
 import Alert from '../../components/Alert';
@@ -61,7 +59,7 @@ const HearingDetails = (props) => {
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   // Pull out the inherited state to handle actions
-  const { saveHearing, goBack, disabled, history } = props;
+  const { saveHearing, goBack, disabled } = props;
 
   // Determine whether this is a legacy hearing
   const isLegacy = hearing?.docketName !== 'hearing';
@@ -360,7 +358,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={(!formsUpdated || disabled) && !userVsoEmployee}
+            disabled={!formsUpdated || (disabled && !userVsoEmployee)}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
