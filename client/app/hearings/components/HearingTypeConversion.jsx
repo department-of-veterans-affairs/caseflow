@@ -21,8 +21,6 @@ export const HearingTypeConversion = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
-  const { updatedAppeal } = useContext(HearingTypeConversionContext);
-
   const getSuccessMsg = () => {
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
@@ -53,10 +51,10 @@ export const HearingTypeConversion = ({
               [userIsVsoEmployee && 'email_recipients']:
               {
                 /* eslint-disable camelcase */
-                appellant_tz: updatedAppeal.appellantTz,
-                representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
-                appellant_email: updatedAppeal.appellantEmailAddress,
-                representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
+                appellant_tz: appeal.appellantTz,
+                representative_tz: appeal.powerOfAttorney?.representative_tz,
+                appellant_email: appeal.appellantEmailAddress,
+                representative_email: appeal.powerOfAttorney?.representative_email_address
                 /* eslint-enable camelcase */
               }
             }
@@ -85,7 +83,7 @@ export const HearingTypeConversion = ({
   };
 
   return (
-    !userIsVsoEmployee ? (
+    userIsVsoEmployee ? (
       <VSOHearingTypeConversionForm
         appeal={appeal}
         history={history}
