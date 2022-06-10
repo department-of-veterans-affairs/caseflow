@@ -49,7 +49,7 @@ class TasksForAppeal
       .select do |task|
       task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
         (task.is_a?(HearingTask) && task&.hearing&.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
-        task.is_a?(DistributionTask) || task.is_a?(HearingTask) || task.is_a?(ScheduleHearingTask)
+        task.is_a?(DistributionTask)
     end
   end
 
