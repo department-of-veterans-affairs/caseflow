@@ -42,12 +42,16 @@ RSpec.feature "Convert scheduled hearing type" do
     let!(:vso_user) { create(:user, :vso_role) }
     scenario "Convert scheduled hearing to Virtual" do
       step "navigate to the hearings form" do
+        #{}task = ScheduleHearingTask.find_by(status: Constants.TASK_STATUSES.completed)
+        #{}appeal_ = Appeal.find(id: task.appeal_id)
         visit "queue/appeals/#{appeal.uuid}"
+        byebug
         expect(page).to have_content("Video")
         expect(page).to have_link("Convert to virtual")
         click_link("Convert to virtual")
         expect(page).to have_current_path("/hearings/#{appeal.external_id}/details")
       end
+
       step "cancel the step that starts the schedule workflow to test the next step" do
         click_button("Cancel")
       end
