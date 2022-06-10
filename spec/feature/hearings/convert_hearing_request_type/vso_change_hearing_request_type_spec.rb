@@ -36,6 +36,18 @@ RSpec.feature "Convert hearing request type" do
     end
   end
 
+  context "When appeal has no scheduled hearings" do
+    scenario "no link appears in hearing section" do
+      step "navigate to the VSO Form" do
+        appeal.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.virtual)
+        User.authenticate!(user: vso_user)
+        visit "queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("Virtual")
+        expect(page).not_to have_link("Convert to virtual")
+      end
+    end
+  end
+
   context "When appeal has a scheduled hearing in over 11 days" do
     scenario "convert to virtual link appears and leads to hearing form" do
       step "select from dropdown" do
