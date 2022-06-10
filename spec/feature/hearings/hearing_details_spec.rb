@@ -222,6 +222,17 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_button("button-Save")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+
+      appellant_name = if hearing.appeal.appellant_is_not_veteran
+                         "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                       else
+                         "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                       end
+
+      success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+
+      expect(page).to have_content(success_title)
+      expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
     end
   end
 
