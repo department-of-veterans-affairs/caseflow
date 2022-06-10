@@ -196,7 +196,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       visit "/queue/appeals/#{hearing.appeal_external_id}"
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
       click_button("button-Cancel")
@@ -209,7 +208,6 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
       fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
