@@ -1069,7 +1069,7 @@
   "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
   "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
-  "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
+  "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone.",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "This email address will be used to send notifications for this hearing only.",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO": "An incorrect email address will impact the ability to access the hearing.",
 
@@ -1113,7 +1113,7 @@
   "VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL": "Please make sure the Veteran / Appellant has access to a computer, tablet, or mobile device with a reliable internet connection, a camera, and a microphone on the day of the virtual hearing.",
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE": "Cancel convert hearing to virtual",
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
-  "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION": "I affirm that I have the Veteran / Appellant's permisson to opt-in to a virtual hearing",
+  "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION": "I affirm that I have the Veteran / Appellant's permisson to opt-in to a virtual hearing.",
   "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS": "I affirm that the Veteran / Appellant and POA / Representative will have access to a computer, tablet, or mobile device with a reliable internet connection, a camera, and a microphone on the day of the virtual hearing.",
 
 
