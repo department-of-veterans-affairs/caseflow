@@ -131,8 +131,8 @@ const HearingDetails = (props) => {
 
   // VSO convert success banner
   const getSuccessMsg = () => {
-    const appellantFullName = hearing?.appellantFirstName + ' ' + hearing?.appellantLastName;
-    const veteranFullName = hearing?.veteranFirstName + ' ' + hearing?.veteranLastName;
+    const appellantFullName = `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`;
+    const veteranFullName = `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
       hearing?.appellantIsNotVeteran ? appellantFullName : veteranFullName,
@@ -288,10 +288,10 @@ const HearingDetails = (props) => {
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
 
-
   if (VSOConvertSuccessful && userVsoEmployee) {
     // Construct the URL to redirect
     const baseUrl = `${window.location.origin}/queue/appeals`;
+
     window.location.href = `${baseUrl}/${hearing.appealExternalId}`;
   }
 
@@ -361,7 +361,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            // disabled={!formsUpdated || disabled}
+            disabled={(!formsUpdated || disabled) && !userVsoEmployee}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
@@ -399,7 +399,13 @@ HearingDetails.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert, showSuccessMessage }, dispatch);
+  bindActionCreators({
+    clearAlerts,
+    onReceiveAlerts,
+    onReceiveTransitioningAlert,
+    transitionAlert,
+    showSuccessMessage },
+  dispatch);
 
 export default connect(
   null,
