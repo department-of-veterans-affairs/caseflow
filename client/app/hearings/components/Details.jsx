@@ -352,7 +352,6 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          // onClick={converting ? () => resetState(initialHearing) : goBack}
           onClick={handleCancelButton}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
