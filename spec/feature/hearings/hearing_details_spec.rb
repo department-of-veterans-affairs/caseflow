@@ -202,12 +202,10 @@ RSpec.feature "Hearing Details", :all_dbs do
       # Update the POA and Appellant timezones
       click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
-      # click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
 
       click_button("button-Save")
 
-      byebug
-      expect(page).to have_current_path("/queue/appeals/#{hearing.appealExternalId}")
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
     end
   end
 
