@@ -24,13 +24,8 @@ RSpec.feature "Convert hearing request type" do
         User.authenticate!(user: vso_user)
         visit "queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Video")
-        expect(page).to have_link("Convert to virtual")
         click_link("Convert to virtual")
 
-        expect(page).to have_current_path("/queue/appeals/#{appeal.external_id}" \
-          "/tasks/#{appeal.tasks.last.id}/#{Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}")
-      end
-      step "cancel the step that starts the schedule workflow to test the next step" do
         click_button("Cancel")
       end
     end

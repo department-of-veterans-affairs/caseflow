@@ -202,6 +202,9 @@ export const handleEdit = (init, current, fields) => {
   }, {});
 };
 
+export const userJudgeOrCoordinator = (user) =>
+  user.userIsJudge || user.userIsDvc || user.userIsHearingManagement || user.userIsBoardAttorney;
+
 export const virtualHearingRoleForUser = (user, hearing) =>
   user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :

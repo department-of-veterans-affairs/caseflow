@@ -27,7 +27,8 @@ import {
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHandleConferenceLinkError
 } from '../actions/dailyDocketActions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
@@ -96,12 +97,16 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
+      if (resp.conferenceLinkGenerateError) {
+        this.props.onHandleConferenceLinkError(resp.conferenceLinkGenerateErrorMessage);
+      }
+
       const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(hearingDay, hearings);
     });
-  };
+  }
 
   formatHearingFormData = (hearingFormData) => {
     const { virtualHearing, location, ...rest } = hearingFormData;
@@ -262,6 +267,7 @@ export class DailyDocketContainer extends React.Component {
             dailyDocketServerError={this.props.dailyDocketServerError}
             history={this.props.history}
             onErrorHearingDayLock={this.props.onErrorHearingDayLock}
+            conferenceLinkError={this.props.conferenceLinkError}
           />
         )}
 
@@ -292,7 +298,8 @@ const mapStateToProps = (state) => ({
   displayLockModal: state.dailyDocket.displayLockModal,
   displayLockSuccessMessage: state.dailyDocket.displayLockSuccessMessage,
   dailyDocketServerError: state.dailyDocket.dailyDocketServerError,
-  onErrorHearingDayLock: state.dailyDocket.onErrorHearingDayLock
+  onErrorHearingDayLock: state.dailyDocket.onErrorHearingDayLock,
+  conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -314,7 +321,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHandleConferenceLinkError
 }, dispatch);
 
 DailyDocketContainer.propTypes = {
@@ -370,9 +378,11 @@ DailyDocketContainer.propTypes = {
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,
   onResetDailyDocketAfterError: PropTypes.func,
+  onHandleConferenceLinkError: PropTypes.func,
   onUpdateLock: PropTypes.func,
   onHearingDayModified: PropTypes.func,
-  print: PropTypes.bool
+  print: PropTypes.bool,
+  conferenceLinkError: PropTypes.bool
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

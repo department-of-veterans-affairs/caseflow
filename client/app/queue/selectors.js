@@ -223,7 +223,7 @@ export const camoAssignTasksSelector = createSelector(
   (tasks) =>
     filter(tasks, (task) => {
       return (
-        task.label === COPY.VHA_REVIEW_DOCUMENTATION_TASK_LABEL &&
+        task.label === COPY.REVIEW_DOCUMENTATION_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
       );
     })
