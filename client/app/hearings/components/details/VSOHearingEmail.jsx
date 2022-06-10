@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import classnames from 'classnames';
 
 import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
@@ -23,9 +23,12 @@ export const VSOHearingEmail = ({
 }) => {
   const {
     setIsNotValidEmail,
+    setEmailsMismatch,
     originalEmail,
     setOriginalEmail,
     setConfirmIsEmpty,
+    confirmIsEmpty,
+    updatedAppeal,
     dispatchAppeal
   } = useContext(HearingTypeConversionContext);
 
@@ -60,15 +63,24 @@ export const VSOHearingEmail = ({
 
     if (newEmail === originalEmail) {
       setMessage('');
-      setIsNotValidEmail(false);
+      setEmailsMismatch(false);
     } else if (unFocused) {
       // Only display error message if field focus is exited.
-      setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
-      setIsNotValidEmail(true);
+      if (newEmail && !confirmIsEmpty) {
+        setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
+      }
+      setEmailsMismatch(true);
     } else {
-      setIsNotValidEmail(true);
+      setEmailsMismatch(true);
     }
   };
+
+  // Rerun original-to-confirmation email matching if original email changes
+  useEffect(() => {
+    if (confirmEmail) {
+      confirmEmailCheck(updatedAppeal.appellantConfirmEmailAddress, true);
+    }
+  }, [originalEmail]);
 
   return (
     confirmEmail ? (
@@ -88,6 +100,7 @@ export const VSOHearingEmail = ({
           ]}
           onChange={(newEmail) => {
             confirmEmailCheck(newEmail, false);
+            dispatchAppeal({ type: 'SET_APPELLANT_CONFIRM_EMAIL', payload: newEmail });
           }}
           onBlur={(newEmail) => {
             confirmEmailCheck(newEmail, true);

@@ -16,11 +16,19 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // Create state to check if confirm field is empty
   const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
 
+  const [emailsMismatch, setEmailsMismatch] = useState(true);
+
   // initiliaze hook to manage state for email validation
   const [isNotValidEmail, setIsNotValidEmail] = useState(true);
 
   const updateAppellantEmail = (appeal, email) => {
     appeal.appellantEmailAddress = email;
+
+    return appeal;
+  };
+
+  const updateAppellantConfirmEmail = (appeal, email) => {
+    appeal.appellantConfirmEmailAddress = email;
 
     return appeal;
   };
@@ -41,6 +49,8 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
     switch (action.type) {
     case 'SET_APPELLANT_EMAIL':
       return updateAppellantEmail(appeal, action.payload);
+    case 'SET_APPELLANT_CONFIRM_EMAIL':
+      return updateAppellantConfirmEmail(appeal, action.payload);
     case 'SET_APPELLANT_TZ':
       return updateAppellantTimezone(appeal, action.payload);
     case 'SET_POA_TZ':
@@ -59,11 +69,13 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
     confirmIsEmpty,
     isNotValidEmail,
     originalEmail,
+    emailsMismatch,
     setIsAppellantTZEmpty,
     setIsRepTZEmpty,
     setConfirmIsEmpty,
     setIsNotValidEmail,
     setOriginalEmail,
+    setEmailsMismatch,
     dispatchAppeal
   };
 

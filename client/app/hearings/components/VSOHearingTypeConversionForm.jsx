@@ -24,7 +24,7 @@ export const VSOHearingTypeConversionForm = ({
     isNotValidEmail,
     isAppellantTZEmpty,
     isRepTZEmpty,
-    confirmIsEmpty
+    emailsMismatch
   } = useContext(HearingTypeConversionContext);
 
   // initialize hook to manage state of affirm permissisons checkbox
@@ -47,7 +47,7 @@ export const VSOHearingTypeConversionForm = ({
     !checkedPermissions ||
     isAppellantTZEmpty ||
     isRepTZEmpty ||
-    confirmIsEmpty;
+    emailsMismatch;
   };
 
   // 'Appellant' or 'Veteran'
