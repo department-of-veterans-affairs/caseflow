@@ -33,7 +33,6 @@ export const VSOEmailNotificationsFields = ({
           error={errors?.appellantEmailAddress}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
           confirmEmail={false}
-          email={updatedAppeal.appellantEmailAddress}
         />
         <VSOHearingEmail
           required

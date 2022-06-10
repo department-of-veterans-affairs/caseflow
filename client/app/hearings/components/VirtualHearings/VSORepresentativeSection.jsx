@@ -67,7 +67,6 @@ export const VSORepresentativeSection = ({
             readOnly={readOnly}
             emailType={representativeEmailType}
             label="POA/Representative Email"
-            email={updatedAppeal.powerOfAttorney.representative_email_address}
             error={errors?.representativeEmailAddress}
             type={type}
             update={update}
@@ -83,7 +82,7 @@ export const VSORepresentativeSection = ({
         >
           <Timezone
             required
-            value={updatedAppeal.powerOfAttorney.representative_tz}
+            value={updatedAppeal.representativeTz}
             onChange={(repTz) => {
               dispatchAppeal({ type: 'SET_POA_TZ', payload: repTz });
               setIsRepTZEmpty(!repTz);
