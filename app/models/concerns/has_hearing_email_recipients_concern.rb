@@ -72,9 +72,9 @@ module HasHearingEmailRecipientsConcern
     # Reload the hearing first
     reload
     recipient = email_recipients.find_by(type: type.name)
-    
+
     appeal_email_recipient = appeal.email_recipients.find_by(type: type.name)
-    
+
     if appeal_email_recipient
       appeal_email_recipient.update!(
         hearing: self,

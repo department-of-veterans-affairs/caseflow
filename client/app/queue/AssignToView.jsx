@@ -54,6 +54,12 @@ class AssignToView extends React.Component {
   componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
+    const actionData = taskActionData(this.props);
+
+    if (actionData.body_optional) {
+      return this.state.selectedValue !== null;
+    }
+
     return this.state.selectedValue !== null && this.state.instructions !== '';
   };
 
@@ -220,10 +226,12 @@ class AssignToView extends React.Component {
         {!isPulacCerullo && (
           <TextareaField
             name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-            errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
+              COPY.FORM_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
+            optional={actionData.body_optional}
           />
         )}
         {isPulacCerullo && (

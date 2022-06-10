@@ -18,7 +18,7 @@ class BvaIntakePendingTab < QueueTab
   end
 
   def tasks
-    on_hold_task_children
+    on_hold_task_children.open
   end
 
   def column_names
