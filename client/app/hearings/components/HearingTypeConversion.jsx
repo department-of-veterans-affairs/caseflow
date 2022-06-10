@@ -19,7 +19,6 @@ export const HearingTypeConversion = ({
   userIsVsoEmployee,
   ...props
 }) => {
-  // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
   const { updatedAppeal } = useContext(HearingTypeConversionContext);
