@@ -1,8 +1,7 @@
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
-import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
+import React, { useState } from 'react';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
