@@ -16208,12 +16208,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -32399,12 +32399,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -48702,12 +48702,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -64893,12 +64893,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>

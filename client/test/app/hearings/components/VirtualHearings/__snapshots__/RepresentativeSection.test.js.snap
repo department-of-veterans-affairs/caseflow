@@ -16195,12 +16195,12 @@ SAN FRANCISCO, CA 94103
           </SearchableDropdown>
         </Timezone>
         <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone"
+          label="The hearing time in email notifications is calculated based on the timezone."
         >
           <div
             className="helper-text"
           >
-            The hearing time in email notifications is calculated based on the timezone
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </HelperText>
       </div>
