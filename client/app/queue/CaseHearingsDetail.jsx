@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -124,8 +123,7 @@ class CaseHearingsDetail extends React.PureComponent {
           }
         );
       }
-    }
-    else {
+    } else {
       hearingAttrs.push(
         {
           label: '',
@@ -189,48 +187,50 @@ class CaseHearingsDetail extends React.PureComponent {
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
   getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee) => {
-    if (userIsVsoEmployee){
+    if (userIsVsoEmployee) {
       return [
         {
           label: 'Type',
-          value: 
+          value:
             <React.Fragment>
               {appeal?.readableHearingRequestType}&nbsp;&nbsp;
-              {appeal?.readableHearingRequestType !== "Virtual" && 
-               <Link to={`/queue/appeals/${appeal.externalId}/tasks/` + 
-               `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>Convert to virtual</Link>}
+              {appeal?.readableHearingRequestType !== 'Virtual' &&
+                <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
+                  `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
+                  Convert to virtual
+                </Link>
+              }
             </React.Fragment>
         },
       ];
     }
-    else {
-      return [
-        {
-          label: 'Type',
-          value: 
-            appeal?.readableHearingRequestType
-        },
-        {
-          label: 'Notes',
-          value: <React.Fragment>
-            <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
-              <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
-              <span {...css({ marginLeft: '24px' })}>Edit</span>
-            </Button>
-            <br />
-            {task?.unscheduledHearingNotes?.notes && <UnscheduledNotes
-              readonly
-              styling={{ marginLeft: '2rem' }}
-              unscheduledNotes={task?.unscheduledHearingNotes?.notes}
-              updatedAt={task?.unscheduledHearingNotes?.updatedAt}
-              updatedByCssId={task?.unscheduledHearingNotes?.updatedByCssId}
-              uniqueId={task?.taskId} />
-            }
-          </React.Fragment>
-        },
-      ];
-    }
-  }
+
+    return [
+      {
+        label: 'Type',
+        value:
+          appeal?.readableHearingRequestType
+      },
+      {
+        label: 'Notes',
+        value: <React.Fragment>
+          <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
+            <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
+            <span {...css({ marginLeft: '24px' })}>Edit</span>
+          </Button>
+          <br />
+          {task?.unscheduledHearingNotes?.notes && <UnscheduledNotes
+            readonly
+            styling={{ marginLeft: '2rem' }}
+            unscheduledNotes={task?.unscheduledHearingNotes?.notes}
+            updatedAt={task?.unscheduledHearingNotes?.updatedAt}
+            updatedByCssId={task?.unscheduledHearingNotes?.updatedByCssId}
+            uniqueId={task?.taskId} />
+          }
+        </React.Fragment>
+      },
+    ];
+  };
 
   getUnscheduledHearingElements = () => {
     const {
