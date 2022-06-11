@@ -93,7 +93,6 @@ const HearingDetails = (props) => {
   useEffect(() => () => props.clearAlerts(), []);
 
   useEffect(() => userVsoEmployee ? convertHearing('change_to_virtual') : null, []);
-  
   const openEmailConfirmationModal = ({ type }) => {
     setEmailConfirmationModalOpen(true);
     setEmailConfirmationModalType(type);
