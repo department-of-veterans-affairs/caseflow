@@ -40,7 +40,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   };
 
   const updatePoaTimezone = (appeal, timezone) => {
-    appeal.powerOfAttorney.representative_tz = timezone;
+    appeal.representativeTz = timezone;
 
     return appeal;
   };
