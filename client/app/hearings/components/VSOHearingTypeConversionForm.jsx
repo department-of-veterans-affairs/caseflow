@@ -30,16 +30,8 @@ export const VSOHearingTypeConversionForm = ({
   // initialize hook to manage state of affirm permissisons checkbox
   const [checkedPermissions, setCheckedPermissions] = useState(false);
 
-  const checkHandlerPermissions = () => {
-    setCheckedPermissions(!checkedPermissions);
-  };
-
   // initialize hook to manage state of affirm access checkbox
   const [checkedAccess, setCheckedAccess] = useState(false);
-
-  const checkHandlerAccess = () => {
-    setCheckedAccess(!checkedAccess);
-  };
 
   const preventSubmission = () => {
     return isNotValidEmail ||
@@ -95,7 +87,7 @@ export const VSOHearingTypeConversionForm = ({
           label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
           name="Affirm Permission"
           value = {checkedPermissions}
-          onChange = {checkHandlerPermissions}
+          onChange={() => setCheckedPermissions(!checkedPermissions)}
         />
         <div />
         <Checkbox
@@ -112,7 +104,7 @@ export const VSOHearingTypeConversionForm = ({
           }
           name="Affirm Access"
           value = {checkedAccess}
-          onChange = {checkHandlerAccess}
+          onChange={() => setCheckedAccess(!checkedAccess)}
         />
       </AppSegment>
       <div {...marginTop(30)}>
