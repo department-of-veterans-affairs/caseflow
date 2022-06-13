@@ -8,7 +8,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(!initialAppeal?.appellantTz);
 
   /* eslint-disable camelcase */
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.powerOfAttorney?.representative_tz);
+  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.currentUserTimezone);
 
   const [originalEmail, setOriginalEmail] = useState(initialAppeal?.appellantEmailAddress || '');
   /* eslint-enable camelcase */
@@ -40,7 +40,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   };
 
   const updatePoaTimezone = (appeal, timezone) => {
-    appeal.powerOfAttorney.representative_tz = timezone;
+    appeal.currentUserTimezone = timezone;
 
     return appeal;
   };

@@ -58,9 +58,9 @@ export const HearingTypeConversion = ({
               {
                 /* eslint-disable camelcase */
                 appellant_tz: updatedAppeal.appellantTz,
-                representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
+                representative_tz: updatedAppeal.currentUserTimezone,
                 appellant_email: updatedAppeal.appellantEmailAddress,
-                representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
+                representative_email: updatedAppeal.currentUserEmail
                 /* eslint-enable camelcase */
               }
             }
@@ -88,7 +88,7 @@ export const HearingTypeConversion = ({
     }
   };
 
-  return userIsVsoEmployee ? (
+  return !userIsVsoEmployee ? (
     <VSOHearingTypeConversionForm
       appeal={appeal}
       history={history}
