@@ -1,8 +1,9 @@
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 import ApiUtil from '../../util/ApiUtil';
@@ -19,6 +20,8 @@ export const HearingTypeConversion = ({
   ...props
 }) => {
   const [loading, setLoading] = useState(false);
+
+  const { updatedAppeal } = useContext(HearingTypeConversionContext);
 
   const getSuccessMsg = () => {
     const title = sprintf(
@@ -54,10 +57,10 @@ export const HearingTypeConversion = ({
               [userIsVsoEmployee && 'email_recipients']:
               {
                 /* eslint-disable camelcase */
-                appellant_tz: appeal.appellantTz,
-                representative_tz: appeal.powerOfAttorney?.representative_tz,
-                appellant_email: appeal.appellantEmailAddress,
-                representative_email: appeal.powerOfAttorney?.representative_email_address
+                appellant_tz: updatedAppeal.appellantTz,
+                representative_tz: updatedAppeal.powerOfAttorney?.representative_tz,
+                appellant_email: updatedAppeal.appellantEmailAddress,
+                representative_email: updatedAppeal.powerOfAttorney?.representative_email_address
                 /* eslint-enable camelcase */
               }
             }
