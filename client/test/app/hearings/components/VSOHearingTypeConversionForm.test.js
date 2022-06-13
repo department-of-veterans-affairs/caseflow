@@ -3,16 +3,18 @@ import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { virtualAppeal, scheduleHearingTask } from 'test/data';
+import { HearingTypeConversionProvider } from '../../../../app/hearings/contexts/HearingTypeConversionContext';
 import { VSOHearingTypeConversionForm } from 'app/hearings/components/VSOHearingTypeConversionForm';
 
 const renderVSOHearingTypeConversionForm = (appeal) => {
   return render(
-    <VSOHearingTypeConversionForm
-      appeal={appeal}
-      task={scheduleHearingTask}
-      type={appeal.type}
-      update={jest.fn()}
-    />
+    <HearingTypeConversionProvider initialAppeal={appeal}>
+      <VSOHearingTypeConversionForm
+        appeal={appeal}
+        task={scheduleHearingTask}
+        type={appeal.type}
+      />
+    </HearingTypeConversionProvider>
   );
 };
 
