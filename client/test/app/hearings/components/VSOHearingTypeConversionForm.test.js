@@ -37,7 +37,7 @@ describe('VSOHearingTypeConversionForm', () => {
 
   test('Display appellant timezone on VSOHearingTypeConversionForm', async () => {
     // Default appellant timezone
-    screen.getByText('Eastern Time (US & Canada)');
+    screen.getByText('Nairobi');
 
     const appellantTzDropdown = screen.getByRole('combobox', { name: 'Appellant Timezone Required' });
 
@@ -45,19 +45,16 @@ describe('VSOHearingTypeConversionForm', () => {
     userEvent.click(screen.getByText('Guam'));
 
     expect(screen.findByText('Guam')).toBeTruthy();
-    expect(screen.queryByText('Eastern Time (US & Canada)')).not.toBeInDocument();
+    expect(screen.queryByText('Nairobi')).not.toBeInTheDocument();
   });
 
   test('Display current user email on VSOHearingTypeConversionForm', () => {
-    expect(
-      screen.getByRole('textbox', { name: 'POA/Representative Email Optional' }).
-        value
-    ).toBe(virtualAppeal.currentUserEmail);
+    expect(screen.getByText(virtualAppeal.currentUserEmail)).toBeTruthy();
   });
 
   test('Display current user time zone on VSOHearingTypeConversionForm', async () => {
     // Default representative timezone
-    screen.getByText('Central Time (US & Canada)');
+    screen.getByText('Eastern Time (US & Canada)');
 
     const representativeTzDropdown = screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' });
 
@@ -65,6 +62,6 @@ describe('VSOHearingTypeConversionForm', () => {
     userEvent.click(screen.getByText('Vienna'));
 
     expect(screen.getByText('Vienna')).toBeTruthy();
-    expect(screen.queryByText('Central Time (US & Canada)')).not.toBeInDocument();
+    expect(screen.queryByText('Eastern Time (US & Canada)')).not.toBeInTheDocument();
   });
 });

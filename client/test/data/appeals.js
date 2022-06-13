@@ -136,7 +136,7 @@ export const virtualAppeal = {
   appellantIsNotVeteran: true,
   appellantFullName: 'Susan Smith',
   appellantEmailAddress: 'susan@gmail.com',
-  appellantTz: 'America/Chicago',
+  appellantTz: 'Africa/Nairobi',
   powerOfAttorney: 'Tim Scott',
   representativeEmail: 'tom.brady@caseflow.gov',
   currentUserTimezone: 'America/New_York',
