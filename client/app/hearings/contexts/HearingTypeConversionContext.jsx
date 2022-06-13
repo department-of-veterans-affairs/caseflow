@@ -10,7 +10,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   /* eslint-disable camelcase */
   const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.powerOfAttorney?.representative_tz);
 
-  const [originalEmail, setOriginalEmail] = useState(initialAppeal?.veteranInfo?.veteran?.email_address || '');
+  const [originalEmail, setOriginalEmail] = useState(initialAppeal?.appellantEmailAddress || '');
   /* eslint-enable camelcase */
 
   // Create state to check if confirm field is empty
@@ -40,7 +40,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   };
 
   const updatePoaTimezone = (appeal, timezone) => {
-    appeal.representativeTz = timezone;
+    appeal.powerOfAttorney.representative_tz = timezone;
 
     return appeal;
   };
