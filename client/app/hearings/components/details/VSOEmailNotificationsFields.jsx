@@ -31,7 +31,7 @@ export const VSOEmailNotificationsFields = ({
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
-          confirmEmail={false}
+          email={updatedAppeal.appellantEmailAddress}
         />
         <VSOHearingEmail
           required
@@ -43,7 +43,7 @@ export const VSOEmailNotificationsFields = ({
           confirmEmail
         />
         <div
-          value={""} // updatedAppeal.appellantTz
+          value={updatedAppeal.appellantTz}
           className={classNames('usa-grid', { [marginTop(30)]: true })}
           {...input8px}
         >

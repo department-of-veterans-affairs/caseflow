@@ -145,6 +145,7 @@ export const VSOHearingEmail = ({
 VSOHearingEmail.defaultProps = {
   helperLabel: COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT,
   showHelper: true,
+  confirmEmail: false
 };
 
 VSOHearingEmail.propTypes = {
