@@ -8,8 +8,7 @@ export const VSOAppellantSection = ({
   showDivider,
   appellantTitle,
   formFieldsOnly,
-  appellantEmailAddress,
-  appellantTz
+  appellantTimezone
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -28,8 +27,7 @@ export const VSOAppellantSection = ({
       <React.Fragment>
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
         <VSOEmailNotificationsFields
-          appellantEmailAddress={appellantEmailAddress}
-          appellantTz={appellantTz}
+          appellantTz={appellantTimezone}
           hearing={hearing}
         />
       </React.Fragment>

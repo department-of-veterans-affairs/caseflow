@@ -247,6 +247,7 @@ SAN FRANCISCO, CA 94103
                 }
                 id="Appellant Email (for these notifications only)"
                 name="Appellant Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -16923,12 +16924,12 @@ SAN FRANCISCO, CA 94103
           </SearchableDropdown>
         </Timezone>
         <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone"
+          label="The hearing time in email notifications is calculated based on the timezone."
         >
           <div
             className="helper-text"
           >
-            The hearing time in email notifications is calculated based on the timezone
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </HelperText>
       </div>
@@ -16994,6 +16995,7 @@ SAN FRANCISCO, CA 94103
                 }
                 id="Veteran Email (for these notifications only)"
                 name="Veteran Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -17417,6 +17419,7 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
                 }
                 id="Appellant Email (for these notifications only)"
                 name="Appellant Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -17670,6 +17673,7 @@ SAN FRANCISCO, CA 94103
                 }
                 id="Veteran Email (for these notifications only)"
                 name="Veteran Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />

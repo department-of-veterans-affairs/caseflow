@@ -1,7 +1,9 @@
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useContext } from 'react';
+
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { getAppellantTitle } from '../utils';
@@ -16,6 +18,29 @@ export const VSOHearingTypeConversionForm = ({
   onSubmit,
   type,
 }) => {
+
+  const {
+    isNotValidEmail,
+    isAppellantTZEmpty,
+    isRepTZEmpty,
+    emailsMismatch
+  } = useContext(HearingTypeConversionContext);
+
+  // initialize hook to manage state of affirm permissisons checkbox
+  const [checkedPermissions, setCheckedPermissions] = useState(false);
+
+  // initialize hook to manage state of affirm access checkbox
+  const [checkedAccess, setCheckedAccess] = useState(false);
+
+  const preventSubmission = () => {
+    return isNotValidEmail ||
+    !checkedAccess ||
+    !checkedPermissions ||
+    isAppellantTZEmpty ||
+    isRepTZEmpty ||
+    emailsMismatch;
+  };
+
   // 'Appellant' or 'Veteran'
   const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
@@ -68,8 +93,8 @@ export const VSOHearingTypeConversionForm = ({
         <Checkbox
           label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
           name="Affirm Permission"
-          value
-          onChange
+          value = {checkedPermissions}
+          onChange={() => setCheckedPermissions(!checkedPermissions)}
         />
         <div />
         <Checkbox
@@ -85,8 +110,8 @@ export const VSOHearingTypeConversionForm = ({
             </div>
           }
           name="Affirm Access"
-          value
-          onChange
+          value = {checkedAccess}
+          onChange={() => setCheckedAccess(!checkedAccess)}
         />
       </AppSegment>
       <div {...marginTop(30)}>
@@ -104,6 +129,7 @@ export const VSOHearingTypeConversionForm = ({
             loading={isLoading}
             className="usa-button"
             onClick={onSubmit}
+            disabled={preventSubmission()}
           >
             {convertTitle}
           </Button>

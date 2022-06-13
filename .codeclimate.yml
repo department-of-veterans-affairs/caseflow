@@ -57,6 +57,7 @@ plugins:
     - 'spec/controllers/idt/api/appeals_controller_spec.rb'
     - 'spec/controllers/tasks_controller_spec.rb'
     - 'spec/controllers/decision_reviews_controller_spec.rb'
+    - 'spec/models/hearings/conference_link_spec.rb'
   eslint:
     enabled: true
   fixme:
