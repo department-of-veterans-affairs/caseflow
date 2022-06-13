@@ -65,7 +65,7 @@ class AttorneyTask < Task
   end
 
   def reassign_clears_overtime?
-    true
+    false
   end
 
   def send_back_to_judge_assign!(params = {})
