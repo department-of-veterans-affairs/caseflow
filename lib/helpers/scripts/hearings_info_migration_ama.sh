@@ -1,13 +1,13 @@
 #! /bin/bash
 if [ -z "$1" ]
   then
-    echo "Expecting arguments hearing uuid and new appeal uuid"
+    echo "Expecting arguments, hearing uuid and new appeal uuid"
     exit 1
 fi
 
 if [ -z "$2" ]
   then
-    echo "Expecting arguments hearing uuid and new appeal uuid"
+    echo "Expecting arguments, hearing uuid and new appeal uuid"
     exit 1
 fi
 
