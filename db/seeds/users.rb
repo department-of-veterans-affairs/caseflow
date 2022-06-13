@@ -129,7 +129,8 @@ module Seeds
           css_id: "#{name}_VSO",
           station_id: 101,
           full_name: "#{name} VSOUser Jones",
-          roles: %w[VSO]
+          roles: %w[VSO],
+          email: "#{name}@test.com"
         )
         vso.add_user(u)
 
