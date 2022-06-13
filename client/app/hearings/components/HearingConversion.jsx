@@ -25,13 +25,12 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
+  userVsoEmployee
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
-  const video = hearing.readableRequestType === 'Video';
-  const { userVsoEmployee } = useContext(HearingsUserContext);
+  const video = hearing.readableRequestType === 'Video';   
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
-  // const vsoStatus = userVsoEmployee;
   const helperLabel = (virtual && userVsoEmployee) ? COPY.CONVERT_HEARING_TYPE_SUBTITLE_3 
                     : ( virtual && !userVsoEmployee ) ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
@@ -76,7 +75,7 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{sprintf(helperLabel, appellantTitle)}</span>
+      <span>{sprintf(helperLabel, appellantTitle)}</span>  
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
@@ -117,4 +116,5 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
+  userVsoEmployee: PropTypes.bool,
 };
