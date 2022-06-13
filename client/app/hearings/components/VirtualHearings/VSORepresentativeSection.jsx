@@ -15,14 +15,11 @@ import { marginTop } from '../details/style';
 export const VSORepresentativeSection = ({
   hearing,
   errors,
-  type,
   fullWidth,
-  update,
   appellantTitle,
   showDivider,
   formFieldsOnly,
-  readOnly,
-  representativeEmailType,
+  readOnly
 }) => {
   const { setIsRepTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
 
@@ -32,21 +29,21 @@ export const VSORepresentativeSection = ({
       label="Power of Attorney (POA)"
       showDivider={showDivider}
     >
-      {hearing?.representative ? (
+      {hearing.representative ? (
         <React.Fragment>
           {formFieldsOnly ? (
             <ReadOnly
-              label={hearing?.representativeType}
-              text={hearing?.representativeName || hearing?.representative}
+              label={hearing.representativeType}
+              text={hearing.representativeName || hearing.representative}
             />
           ) : (
             <AddressLine
-              label={hearing?.representativeType}
-              name={hearing?.representativeName || hearing?.representative}
-              addressLine1={hearing?.representativeAddress?.addressLine1}
-              addressState={hearing?.representativeAddress?.state}
-              addressCity={hearing?.representativeAddress?.city}
-              addressZip={hearing?.representativeAddress?.zip}
+              label={hearing.representativeType}
+              name={hearing.representativeName || hearing.representative}
+              addressLine1={hearing.representativeAddress?.addressLine1}
+              addressState={hearing.representativeAddress?.state}
+              addressCity={hearing.representativeAddress?.city}
+              addressZip={hearing.representativeAddress?.zip}
             />
           )}
         </React.Fragment>
@@ -65,11 +62,9 @@ export const VSORepresentativeSection = ({
           <HearingEmail
             optional
             readOnly={readOnly}
-            emailType={representativeEmailType}
+            emailType="representativeEmailAddress"
             label="POA/Representative Email"
             error={errors?.representativeEmailAddress}
-            type={type}
-            update={update}
           />
         </div>
       </div>
@@ -88,7 +83,7 @@ export const VSORepresentativeSection = ({
               setIsRepTZEmpty(!repTz);
             }}
             time={hearing.scheduledTimeString}
-            roTimezone={hearing?.regionalOfficeTimezone}
+            roTimezone={hearing.regionalOfficeTimezone}
             label="POA/Representative Timezone"
             name="representativeTz"
           />
@@ -107,8 +102,6 @@ VSORepresentativeSection.defaultProps = {
 VSORepresentativeSection.propTypes = {
   hearing: PropTypes.object,
   errors: PropTypes.object,
-  type: PropTypes.string,
-  update: PropTypes.func,
   readOnly: PropTypes.bool,
   fullWidth: PropTypes.bool,
   appellantTitle: PropTypes.string,
@@ -119,6 +112,5 @@ VSORepresentativeSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
-  representativeEmailType: PropTypes.string,
   currentUserTimezone: PropTypes.string
 };

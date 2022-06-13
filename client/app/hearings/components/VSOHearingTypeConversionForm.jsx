@@ -16,7 +16,7 @@ export const VSOHearingTypeConversionForm = ({
   isLoading,
   onCancel,
   onSubmit,
-  type,
+  type
 }) => {
 
   const {
@@ -55,14 +55,7 @@ export const VSOHearingTypeConversionForm = ({
     veteranFullName: appeal?.veteranFullName,
     currentUserEmail: appeal?.currentUserEmail,
     currentUserTimezone: appeal?.currentUserTimezone,
-    appellantTz: appeal?.appellantTz,
-    appellantTitle
-  };
-
-  // veteranInfo gets loaded into redux store when case details page loads
-  const virtualHearing = {
-    appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
-    representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
+    appellantTz: appeal?.appellantTz
   };
 
   /* eslint-enable camelcase */
@@ -74,11 +67,7 @@ export const VSOHearingTypeConversionForm = ({
     showDivider: false,
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,
-    // props to populate form
-    appellantEmailAddress: appeal?.appellantEmailAddress,
-    appellantTz: appeal?.appellantTz,
-    type,
-    virtualHearing,
+    type
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
