@@ -88,7 +88,7 @@ export const HearingTypeConversion = ({
     }
   };
 
-  return !userIsVsoEmployee ? (
+  return userIsVsoEmployee ? (
     <VSOHearingTypeConversionForm
       appeal={appeal}
       history={history}
