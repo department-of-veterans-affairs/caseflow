@@ -16,7 +16,8 @@ export const userWithJudgeRole = {
 export const vsoUser = {
   ...anyUser,
   userCanVsoHearingSchedule: true,
-  userCanAssignHearingSchedule: false
+  userCanAssignHearingSchedule: false,
+  userVsoEmployee: true
 };
 
 const attyTemplate = ({ id }) => {
