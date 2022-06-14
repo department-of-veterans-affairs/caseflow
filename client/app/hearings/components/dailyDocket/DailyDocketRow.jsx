@@ -275,9 +275,7 @@ class DailyDocketRow extends React.Component {
   conferenceLinkOnClick = () => {
     const { conferenceLink } = this.props;
 
-    let conferenceLinkWindow = window.open(conferenceLink?.hostLink);
-
-    conferenceLinkWindow.focus();
+    window.open(conferenceLink?.hostLink, 'Recording Session').focus();
 
   }
 
