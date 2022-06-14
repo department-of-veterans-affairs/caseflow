@@ -31,7 +31,7 @@ export const HearingConversion = ({
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = (virtual && userVsoEmployee) ? COPY.CONVERT_HEARING_TYPE_SUBTITLE_3 :
-   ( virtual && !userVsoEmployee ) ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
+    (virtual && !userVsoEmployee) ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
   // Set the section props
   const sectionProps = {
