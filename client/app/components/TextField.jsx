@@ -11,6 +11,7 @@ const labelTextStyling = css({
 
 export const TextField = (props) => {
   const handleChange = (event) => props.onChange?.(event.target.value);
+  const handleBlur = (event) => props.onBlur?.(event.target.value);
 
   const {
     errorMessage,
@@ -84,6 +85,7 @@ export const TextField = (props) => {
           id={name}
           onChange={handleChange}
           onKeyPress={onKeyPress}
+          onBlur={handleBlur}
           type={type}
           defaultValue={defaultValue}
           value={adjustedVal}
@@ -165,6 +167,7 @@ TextField.propTypes = {
    * @param {string | number} value The current value of the component
    */
   onChange: PropTypes.func,
+  onBlur: PropTypes.func,
   title: PropTypes.string,
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,
