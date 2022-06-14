@@ -404,7 +404,7 @@ const mapDispatchToProps = (dispatch) =>
     clearAlerts,
     onReceiveAlerts,
     onReceiveTransitioningAlert,
-    transitionAlert},
+    transitionAlert },
   dispatch);
 
 export default connect(
