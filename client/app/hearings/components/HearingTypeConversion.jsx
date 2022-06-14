@@ -1,20 +1,10 @@
-/* eslint-disable camelcase */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
-import { appealWithDetailSelector, taskById } from '../../queue/selectors';
-import { deleteAppeal } from '../../queue/QueueActions';
-import {
-  showErrorMessage,
-  showSuccessMessage
-} from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
@@ -28,7 +18,6 @@ export const HearingTypeConversion = ({
   userIsVsoEmployee,
   ...props
 }) => {
-  // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
   const getSuccessMsg = () => {
@@ -59,14 +48,14 @@ export const HearingTypeConversion = ({
               changed_hearing_request_type: changedRequestType,
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
               [userIsVsoEmployee && 'email_recipients']:
-                {
+              {
                 /* eslint-disable camelcase */
-                  appellant_tz: appeal?.appellantTz,
-                  representative_tz: appeal?.powerOfAttorney?.representative_tz,
-                  appellant_email: appeal?.veteranInfo?.veteran?.email_address,
-                  representative_email: appeal?.powerOfAttorney?.representative_email_address
+                appellant_tz: appeal?.appellantTz,
+                representative_tz: appeal?.powerOfAttorney?.representative_tz,
+                appellant_email: appeal?.appellantEmailAddress,
+                representative_email: appeal?.powerOfAttorney?.representative_email_address
                 /* eslint-enable camelcase */
-                }
+              }
             }
           }
         }
@@ -79,14 +68,10 @@ export const HearingTypeConversion = ({
       props.showSuccessMessage(getSuccessMsg());
       props.deleteAppeal(task.externalAppealId);
     } catch (err) {
-      const error = get(
-        err,
-        'response.body.errors[0]',
-        {
-          title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
-          detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
-        }
-      );
+      const error = get(err, 'response.body.errors[0]', {
+        title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
+      });
 
       props.showErrorMessage(error);
     } finally {
@@ -95,8 +80,6 @@ export const HearingTypeConversion = ({
       history.push(`/queue/appeals/${appeal.externalId}`);
     }
   };
-
-  // Render Convert to Virtual Form Depending on VSO User Status
 
   return (
     userIsVsoEmployee ? (
@@ -125,37 +108,11 @@ export const HearingTypeConversion = ({
 
 HearingTypeConversion.propTypes = {
   appeal: PropTypes.object,
-  appealId: PropTypes.string,
   deleteAppeal: PropTypes.func,
   showErrorMessage: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   task: PropTypes.object,
-  taskId: PropTypes.string,
   type: PropTypes.oneOf(['Virtual']),
-  // Router inherited props
   history: PropTypes.object,
   userIsVsoEmployee: PropTypes.bool
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  appeal: appealWithDetailSelector(state, ownProps),
-  task: taskById(state, { taskId: ownProps.taskId }),
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      deleteAppeal,
-      showErrorMessage,
-      showSuccessMessage
-    },
-    dispatch
-  );
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(HearingTypeConversion)
-);
