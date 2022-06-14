@@ -16195,12 +16195,12 @@ SAN FRANCISCO, CA 94103
           </SearchableDropdown>
         </Timezone>
         <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone"
+          label="The hearing time in email notifications is calculated based on the timezone."
         >
           <div
             className="helper-text"
           >
-            The hearing time in email notifications is calculated based on the timezone
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </HelperText>
       </div>
@@ -16264,6 +16264,7 @@ SAN FRANCISCO, CA 94103
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -16675,6 +16676,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -16907,6 +16909,7 @@ SAN FRANCISCO, CA 94103
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -17156,6 +17159,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
@@ -17398,6 +17402,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
               />
