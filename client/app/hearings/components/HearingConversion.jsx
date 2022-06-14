@@ -17,7 +17,6 @@ import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { Checkbox } from '../../components/Checkbox';
-import { HearingsUserContext } from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -26,7 +25,8 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
-  updateCheckboxes
+  updateCheckboxes,
+  userVsoEmployee
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
@@ -37,8 +37,6 @@ export const HearingConversion = ({
   // set values for checkboxes
   const [checkboxPermission, setCheckboxPermission] = useState(false);
   const [checkboxAccess, setCheckboxAccess] = useState(false);
-
-  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Set the section props
   const sectionProps = {
@@ -104,7 +102,7 @@ export const HearingConversion = ({
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
       {userVsoEmployee &&
-        <div>
+        <div label="vsoCheckboxes">
           <Checkbox
             label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
             name="affirmPermission"
@@ -153,5 +151,6 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
-  updateCheckboxes: PropTypes.func
+  updateCheckboxes: PropTypes.func,
+  userVsoEmployee: PropTypes.bool
 };

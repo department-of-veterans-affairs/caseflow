@@ -106,6 +106,7 @@ describe('HearingConversion', () => {
         update={updateSpy}
         hearing={amaHearing}
         updateCheckboxes= {mockUpdateCheckboxes}
+        userVsoEmployee= {false}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
@@ -116,13 +117,15 @@ describe('HearingConversion', () => {
         wrappingComponentProps: { store: detailsStore },
       });
 
-      const permissionCheckboxes = conversion.find(Checkbox);
-
-      expect(conversion.find(Checkbox)).toHaveLength(0);
+    expect(
+      conversion.
+        findWhere((node) => node.prop('label') === 'vsoCheckboxes')
+    ).toHaveLength(0);
+    expect(conversion.find(Checkbox)).toHaveLength(0);
 
   });
 
-  test("When a VSO user converts to virtual, the checkboxes appear on the form", () => {
+  test('When a VSO user converts to virtual, the checkboxes appear on the form', () => {
     const conversion = mount(
       <HearingConversion
         scheduledFor={amaHearing.scheduledFor.toString()}
@@ -131,18 +134,23 @@ describe('HearingConversion', () => {
         update={updateSpy}
         hearing={amaHearing}
         updateCheckboxes= {mockUpdateCheckboxes}
+        userVsoEmployee= {true}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
-          userWithJudgeRole,
           amaHearing,
           vsoUser
         ),
         wrappingComponentProps: { store: detailsStore },
       });
 
-      //expect checkbox to show
-      expect(conversion.find(Checkbox)).toHaveLength(1);
+    //  expect checkbox div to show
+    expect(
+      conversion.
+        findWhere((node) => node.prop('label') === 'vsoCheckboxes')
+    ).toHaveLength(1);
 
+    //  expect both checkboxes to show
+    expect(conversion.find(Checkbox)).toHaveLength(2);
   })
 });
