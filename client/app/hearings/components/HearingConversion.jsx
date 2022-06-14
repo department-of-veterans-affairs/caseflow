@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -16,6 +16,7 @@ import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -30,8 +31,7 @@ export const HearingConversion = ({
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
-  
-  const userIsVsoEmployee = true;
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Set the section props
   const sectionProps = {
@@ -49,7 +49,7 @@ export const HearingConversion = ({
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
     schedulingToVirtual: virtual,
-    userIsVsoEmployee
+    userVsoEmployee
   };
 
   const prefillFields = () => {
@@ -77,7 +77,7 @@ export const HearingConversion = ({
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{sprintf(helperLabel, appellantTitle)}</span>
       
-      {!userIsVsoEmployee && <div>
+      {!userVsoEmployee && <div>
         <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-half">
@@ -97,7 +97,7 @@ export const HearingConversion = ({
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
         
-      {!userIsVsoEmployee && <div>
+      {!userVsoEmployee && <div>
         <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
           <div className="usa-grid">
             <div className="usa-width-one-half">
@@ -123,4 +123,5 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
+  userVsoEmployee: PropTypes.bool
 };
