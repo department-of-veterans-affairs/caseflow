@@ -83,7 +83,7 @@ describe('HearingTypeConversion', () => {
 
       const confirmEmailField = screen.getByRole('textbox', { name: 'Confirm Appellant Email Required' });
 
-      // Fill out required for fields/checkboxes
+      // Fill out required form fields/checkboxes
       userEvent.type(confirmEmailField, 'susan@gmail.com');
       userEvent.click(screen.getByRole('checkbox', { name: 'Affirm Permission' }));
       userEvent.click(screen.getByRole('checkbox', { name: 'Affirm Access' }));
