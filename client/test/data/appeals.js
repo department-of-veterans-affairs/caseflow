@@ -141,7 +141,8 @@ export const virtualAppeal = {
   representativeEmail: 'tom.brady@caseflow.gov',
   currentUserTimezone: 'America/New_York',
   currentUserEmail: 'tom@brady.com',
-  type: 'Virtual'
+  type: 'Virtual',
+  closestRegionalOffice: 'Somewhere, USA'
 };
 
 export const legacyAppeal = {

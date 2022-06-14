@@ -19,7 +19,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   const [emailsMismatch, setEmailsMismatch] = useState(true);
 
   // initiliaze hook to manage state for email validation
-  const [isNotValidEmail, setIsNotValidEmail] = useState(true);
+  const [isNotValidEmail, setIsNotValidEmail] = useState(false);
 
   const updateAppellantEmail = (appeal, email) => {
     appeal.appellantEmailAddress = email;
