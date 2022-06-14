@@ -63,7 +63,7 @@ export const AppellantSection = ({
                   label={`${appellantTitle} Name`}
                   text={appellantName}
                 />
-                 
+
                 {!userVsoEmployee && (hearing?.appellantIsNotVeteran && hearing?.appellantRelationship) && (
                   <ReadOnly
                     label="Relation to Veteran"
@@ -133,12 +133,12 @@ export const AppellantSection = ({
     </VirtualHearingSection>
   );
 };
-     
+
 AppellantSection.defaultProps = {
   schedulingToVirtual: true,
   userVsoEmployee: false
 };
-     
+
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
   errors: PropTypes.object,

@@ -76,7 +76,6 @@ export const HearingConversion = ({
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{sprintf(helperLabel, appellantTitle)}</span>
-      
       {!userVsoEmployee && <div>
         <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
@@ -96,7 +95,6 @@ export const HearingConversion = ({
       </div>}
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
-        
       {!userVsoEmployee && <div>
         <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
           <div className="usa-grid">
@@ -111,7 +109,6 @@ export const HearingConversion = ({
           <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
         </VirtualHearingSection>
       </div>}
-        
     </AppSegment>
   );
 };
