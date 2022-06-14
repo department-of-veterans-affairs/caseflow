@@ -30,7 +30,7 @@ export const AppellantSection = ({
   appellantTimezone,
   appellantEmailAddress,
   appellantEmailType,
-  userIsVsoEmployee
+  userVsoEmployee
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -64,13 +64,13 @@ export const AppellantSection = ({
                   text={appellantName}
                 />
                  
-                {!userIsVsoEmployee && (hearing?.appellantIsNotVeteran && hearing?.appellantRelationship) && (
+                {!userVsoEmployee && (hearing?.appellantIsNotVeteran && hearing?.appellantRelationship) && (
                   <ReadOnly
                     label="Relation to Veteran"
                     text={hearing?.appellantRelationship}
                   />
                 )}
-                {!userIsVsoEmployee && <AddressLine
+                {!userVsoEmployee && <AddressLine
                   label={`${appellantTitle} Mailing Address`}
                   name={appellantName}
                   addressLine1={hearing?.appellantAddressLine1}
@@ -136,7 +136,7 @@ export const AppellantSection = ({
      
 AppellantSection.defaultProps = {
   schedulingToVirtual: true,
-  userIsVsoEmployee: false
+  userVsoEmployee: false
 };
      
 AppellantSection.propTypes = {
@@ -158,5 +158,5 @@ AppellantSection.propTypes = {
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
   appellantEmailType: PropTypes.string,
-  userIsVsoEmployee: PropTypes.bool
+  userVsoEmployee: PropTypes.bool
 };
