@@ -22,13 +22,6 @@ let patchSpy;
 beforeEach(() => {
   patchSpy = jest.spyOn(ApiUtil, 'patch').
     mockImplementationOnce(() => new Promise((resolve) => resolve({ body: {} })));
-
-  jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useHistory: () => ({
-      push: jest.fn(),
-    }),
-  }));
 });
 
 afterEach(() => {
