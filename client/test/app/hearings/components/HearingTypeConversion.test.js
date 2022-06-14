@@ -46,7 +46,7 @@ describe('HearingTypeConversion', () => {
     expect(hearingTypeConversion).toMatchSnapshot();
   });
 
-  const renderHearingConversionForm = (userIsVsoEmployee) => {
+  const renderHearingTypeConversionForm = (userIsVsoEmployee) => {
     return render(
       <HearingTypeConversionProvider initialAppeal={virtualAppeal}>
         <HearingTypeConversion
@@ -64,7 +64,7 @@ describe('HearingTypeConversion', () => {
 
   describe('#submit payload', () => {
     test('Payload submitted by non-VSO employee meets expected format', () => {
-      renderHearingConversionForm(false);
+      renderHearingTypeConversionForm(false);
 
       userEvent.click(screen.getByRole('button', { name: 'Convert Hearing To Virtual' }));
 
@@ -79,7 +79,7 @@ describe('HearingTypeConversion', () => {
     });
 
     test('Payload submitted by VSO employee meets expected format', () => {
-      renderHearingConversionForm(true);
+      renderHearingTypeConversionForm(true);
 
       const confirmEmailField = screen.getByRole('textbox', { name: 'Confirm Appellant Email Required' });
 
