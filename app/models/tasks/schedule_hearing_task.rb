@@ -47,9 +47,25 @@ class ScheduleHearingTask < Task
     end
   end
 
+  def verify_vso_can_change_hearing_to_virtual!(params)
+    unless changed_hearing_request_type_present?(params) && change_hearing_request_type_valid?(params)
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+    end
+
+    request_type = changed_request_type_from_params(params)
+
+    unless request_type == Constants.HEARING_REQUEST_TYPES.virtual
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+    end
+  end
+
   def update_from_params(params, current_user)
     multi_transaction do
-      verify_user_can_update!(current_user)
+      if current_user.vso_employee?
+        verify_vso_can_change_hearing_to_virtual!(params)
+      else
+        verify_user_can_update!(current_user)
+      end
 
       # If the change_hearing_request_type is the same in the DB and the params,
       # don't update anything and return an empty array
