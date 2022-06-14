@@ -33,9 +33,6 @@ import {
   transitionAlert,
   clearAlerts
 } from '../../components/common/actions';
-import {
-  showSuccessMessage
-} from '../../queue/uiReducer/uiActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -402,12 +399,10 @@ HearingDetails.propTypes = {
   saveHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
-  history: PropTypes.object,
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  clearAlerts: PropTypes.func,
-  showSuccessMessage: PropTypes.func
+  clearAlerts: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -415,8 +410,7 @@ const mapDispatchToProps = (dispatch) =>
     clearAlerts,
     onReceiveAlerts,
     onReceiveTransitioningAlert,
-    transitionAlert,
-    showSuccessMessage },
+    transitionAlert},
   dispatch);
 
 export default connect(
