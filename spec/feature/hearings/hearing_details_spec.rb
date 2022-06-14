@@ -848,7 +848,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
     scenario "Convert to Virtual form hides sensitive data" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      ["Hearing Time", "Hearing Date", "Veterans Law Judge (VLJ)"].each do |label|
+      ["Hearing Time", "Hearing Date"].each do |label|
         expect(page).to_not have_content(label)
       end
     end
