@@ -50,10 +50,10 @@ export const HearingTypeConversion = ({
               [userIsVsoEmployee && 'email_recipients']:
               {
                 /* eslint-disable camelcase */
-                appellant_tz: appeal.appellantTz,
-                representative_tz: appeal.powerOfAttorney?.representative_tz,
-                appellant_email: appeal.appellantEmailAddress,
-                representative_email: appeal.powerOfAttorney?.representative_email_address
+                appellant_tz: appeal?.appellantTz,
+                representative_tz: appeal?.powerOfAttorney?.representative_tz,
+                appellant_email: appeal?.appellantEmailAddress,
+                representative_email: appeal?.powerOfAttorney?.representative_email_address
                 /* eslint-enable camelcase */
               }
             }
