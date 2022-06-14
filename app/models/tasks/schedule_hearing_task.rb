@@ -49,13 +49,14 @@ class ScheduleHearingTask < Task
 
   def verify_vso_can_change_hearing_to_virtual!(params)
     unless changed_hearing_request_type_present?(params) && change_hearing_request_type_valid?(params)
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+      fail Caseflow::Error::ActionForbiddenError, message: "The hearing request type was either missing or invalid"
     end
 
     request_type = changed_request_type_from_params(params)
 
     unless request_type == Constants.HEARING_REQUEST_TYPES.virtual
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+      fail Caseflow::Error::ActionForbiddenError,
+           message: "Current user can only convert hearing request types to virtual"
     end
   end
 
