@@ -54,15 +54,16 @@ export const HearingTypeConversion = ({
             values: {
               changed_hearing_request_type: changedRequestType,
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-              [userIsVsoEmployee && 'email_recipients']:
-              {
-                /* eslint-disable camelcase */
-                appellant_tz: updatedAppeal?.appellantTz,
-                representative_tz: updatedAppeal?.currentUserTimezone,
-                appellant_email: updatedAppeal?.appellantEmailAddress,
-                representative_email: updatedAppeal?.currentUserEmail
-                /* eslint-enable camelcase */
-              }
+              ...(userIsVsoEmployee && {
+                email_recipients: {
+                  /* eslint-disable camelcase */
+                  appellant_tz: updatedAppeal?.appellantTz,
+                  representative_tz: updatedAppeal?.currentUserTimezone,
+                  appellant_email: updatedAppeal?.appellantEmailAddress,
+                  representative_email: updatedAppeal?.currentUserEmail
+                  /* eslint-enable camelcase */
+                }
+              })
             }
           }
         }
