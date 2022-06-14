@@ -15,7 +15,7 @@ RSpec.feature "Convert hearing request type" do
   end
 
   let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
-  let!(:vso_user) { create(:user, :vso_role) }
+  let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
 
   context "for VSO users" do
     scenario "Convert unscheduled appeal to Virtual hearing type" do
