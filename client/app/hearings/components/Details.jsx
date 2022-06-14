@@ -101,13 +101,7 @@ const HearingDetails = (props) => {
   useEffect(() => {
     if (userVsoEmployee) {
       convertHearing('change_to_virtual');
-      updateHearing(
-        'virtualHearing',
-        {
-          requestCancelled: false,
-          jobCompleted: false
-        }
-      );
+      updateHearing('virtualHearing', { requestCancelled: false });
     }
   }, []);
 
