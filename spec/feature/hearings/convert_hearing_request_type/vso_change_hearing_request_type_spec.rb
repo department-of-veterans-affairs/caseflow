@@ -128,7 +128,7 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_content("Video")
         expect(page).to have_link("Convert to virtual")
         click_link("Convert to virtual")
-        expect(page).to have_current_path("/hearings/#{appeal.external_id}/details")
+        expect(page).to have_current_path("/hearings/#{appeal.hearings.first.uuid}/details")
       end
     end
   end
