@@ -61,7 +61,7 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-  getHearingAttrs = (appeal, hearing, userIsVsoEmployee) => {
+  getHearingAttrs = (hearing, userIsVsoEmployee) => {
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11);
     const hearingDay = new Date(hearing.date);
@@ -72,7 +72,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <React.Fragment>
         {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
         {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline &&
-         <Link to={`/hearings/${appeal.externalId}/details`}>Convert to virtual</Link> }
+         <Link to={`/hearings/${hearing.externalId}/details`}>Convert to virtual</Link> }
       </React.Fragment>
     },
     {
@@ -158,7 +158,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(this.props.appeal, hearing, userIsVsoEmployee).map(this.getDetailField)} />
+        items={this.getHearingAttrs(hearing, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
