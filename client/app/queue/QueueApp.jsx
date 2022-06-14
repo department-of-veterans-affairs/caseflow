@@ -94,7 +94,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import { substituteAppellantRoutes } from './substituteAppellant/routes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
-import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionContainer from '../hearings/components/HearingTypeConversionContainer';
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
@@ -459,7 +459,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
-    <HearingTypeConversion type="Virtual" {...props.match.params} />
+    <HearingTypeConversionContainer type="Virtual" {...props.match.params} />
   );
 
   routedChangeHearingRequestTypeModal = (props) => (
