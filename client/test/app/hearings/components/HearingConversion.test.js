@@ -12,7 +12,6 @@ import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
-import COPY from '../../../../../client/COPY.json';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
@@ -109,11 +108,11 @@ describe('HearingConversion', () => {
     // Assertions
     expect(conversion.find(RadioField)).toHaveLength(0);
     expect(conversion.find(VirtualHearingSection)).toHaveLength(3);
-    expect(
-      conversion.containsMatchingElement(
-        <span>Please work with the Veteran / Appellant to confirm that they have access to a phone or computer with internet access on the day of the virtual hearing. The Veteran / Appellant's email address will be used to send notifications for this hearing only.</span>
-      )
-    ).toBeTruthy()
+      expect(
+        conversion.containsMatchingElement(
+          <span>Please work with the Veteran / Appellant to confirm that they have access to a phone or computer with internet access on the day of the virtual hearing. The Veteran / Appellant's email address will be used to send notifications for this hearing only.</span>
+        )
+      ).toBeTruthy()
     expect(
       conversion.
         findWhere((node) => node.prop('label') === 'Hearing Date').
