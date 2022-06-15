@@ -893,7 +893,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
     end
 
-    scenario "Convert to Virtual form hides sensitive data for VSO User" do
+    scenario "convert to virtual form hides sensitive data for vso User" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       ["Hearing Time", "Hearing Date"].each do |label|
         expect(page).to_not have_content(label)
@@ -902,14 +902,14 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with hearings scheduler user role" do
-    let!(:current_user) { user }
+    User.authenticate!(user: user)
 
-    scenario "user is not immediately redirected to the Convert to Virtual form" do
+    scenario "user is not immediately redirected to the convert to virtual hearing form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to_not have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
     end
 
-    scenario "user can enter convert to virtual hearing form" do
+    scenario "user can visit convert to virtual hearing form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "hearingType", index: 0)
