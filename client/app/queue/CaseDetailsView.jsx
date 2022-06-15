@@ -207,6 +207,11 @@ export const CaseDetailsView = (props) => {
   );
   const parentHearingTasks = parentTasks(actionableScheduledHearingTasks, allHearingTasks);
 
+  // Retrieve VSO convert to virtual success message after getting redirected from Hearings app
+  const displayVSOAlert = JSON.parse(localStorage.getItem('VSOSuccessMsg'));
+
+  localStorage.removeItem('VSOSuccessMsg');
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -231,6 +236,15 @@ export const CaseDetailsView = (props) => {
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
+      {displayVSOAlert && (
+        <div>
+          <Alert
+            type="success"
+            title={displayVSOAlert.title}
+            message={displayVSOAlert.detail}
+          />
+        </div>
+      )}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
         {supportPendingAppealSubstitution && (
