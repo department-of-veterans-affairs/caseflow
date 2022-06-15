@@ -318,6 +318,7 @@ const HearingDetails = (props) => {
           hearing={hearing}
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
+          userVsoEmployee={userVsoEmployee}
         />
       ) : (
         <AppSegment filledBackground>

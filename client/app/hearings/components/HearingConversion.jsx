@@ -24,6 +24,7 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
+  userVsoEmployee
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
@@ -113,4 +114,5 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
+  userVsoEmployee: PropTypes.bool
 };
