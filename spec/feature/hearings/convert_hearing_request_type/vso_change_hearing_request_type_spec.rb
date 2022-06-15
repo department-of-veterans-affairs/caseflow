@@ -8,7 +8,7 @@ RSpec.feature "Convert hearing request type" do
   end
   after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
   let!(:appeal) do
-    a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket)
+    a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
     a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
     a
   end
@@ -17,6 +17,7 @@ RSpec.feature "Convert hearing request type" do
   let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
+  let!(:poa) { create(:bgs_power_of_attorney, :with_name_cached, appeal: appeal) }
 
   context "When appeal has no scheduled hearings" do
     scenario "convert to virtual link appears and leads to task form" do
@@ -32,8 +33,8 @@ RSpec.feature "Convert hearing request type" do
 
         [appeal.appellant_name,
          appeal.appellant.email_address,
-         "Service Organization",
-         vso_user.full_name,
+         poa.representative_name,
+         poa.representative_type,
          vso_user.email].each do |field_value|
           expect(page).to have_content(field_value)
         end
