@@ -925,7 +925,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
       ["Hearing Time", "Hearing Date"].each do |label|
-        expect(page).to_not have_content(label)
+        expect(page).to have_content(label)
       end
     end
   end
