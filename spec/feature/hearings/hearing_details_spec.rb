@@ -902,7 +902,9 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with hearings scheduler user role" do
-    User.authenticate!(user: user)
+    before do
+      User.authenticate!(user: user)
+    end
 
     scenario "user is not immediately redirected to the convert to virtual hearing form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
