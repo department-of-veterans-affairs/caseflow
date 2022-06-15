@@ -26,11 +26,13 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_content("Video")
         click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
       end
+
       step "verify pre-population of fields" do
         expect(page).to have_content("Convert Hearing To Virtual")
 
         [appeal.appellant_name,
          appeal.appellant.email_address,
+         "Service Organization",
          vso_user.full_name,
          vso_user.email].each do |field_value|
           expect(page).to have_content(field_value)
