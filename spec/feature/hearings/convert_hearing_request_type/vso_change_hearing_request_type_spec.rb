@@ -33,7 +33,6 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_content("Convert Hearing To Virtual")
 
         ["#{appeal.appellant.first_name} #{appeal.appellant.last_name}",
-         appeal.appellant.email_address,
          poa.representative_name,
          poa.representative_type,
          "Pacific Time (US & Canada)",
@@ -41,6 +40,8 @@ RSpec.feature "Convert hearing request type" do
          vso_user.email].each do |field_value|
           expect(page).to have_content(field_value)
         end
+
+        expect(page).to have_field("Appellant Email", with: appeal.appellant.email_address)
       end
 
       step "test form validation and submit it" do
