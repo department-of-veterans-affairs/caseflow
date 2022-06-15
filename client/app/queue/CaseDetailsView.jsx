@@ -13,7 +13,8 @@ import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
   openScheduleHearingTasksForAppeal,
-  allHearingTasksForAppeal
+  allHearingTasksForAppeal,
+  scheduleHearingTasksForAppeal
 } from './selectors';
 import {
   stopPollingHearing,
@@ -195,13 +196,16 @@ export const CaseDetailsView = (props) => {
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution);
 
-  const openScheduledHearingTasks = useSelector(
+  const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+  const allScheduleHearingTasks = useSelector(
+    (state) => scheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const allHearingTasks = useSelector(
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
-  const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
+  const parentHearingTasks = parentTasks(actionableScheduledHearingTasks, allHearingTasks);
 
   return (
     <React.Fragment>
@@ -301,11 +305,15 @@ export const CaseDetailsView = (props) => {
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
-            openScheduledHearingTasks.length) && (
+            actionableScheduledHearingTasks.length ||
+            // VSO users will not have any available task actions on the ScheduleHearingTask(s),
+            // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
+            (userIsVsoEmployee && allScheduleHearingTasks.length)
+          ) && (
             <CaseHearingsDetail
               title="Hearings"
               appeal={appeal}
-              hearingTasks={parentHearingTasks}
+              hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
             />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
