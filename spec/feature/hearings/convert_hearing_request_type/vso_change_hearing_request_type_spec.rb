@@ -9,7 +9,8 @@ RSpec.feature "Convert hearing request type" do
   after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
   let!(:appeal) do
     a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
-    a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
+    a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video,
+              veteran_is_not_claimant: true)
     a
   end
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
@@ -31,10 +32,12 @@ RSpec.feature "Convert hearing request type" do
       step "verify pre-population of fields" do
         expect(page).to have_content("Convert Hearing To Virtual")
 
-        [appeal.appellant_name,
+        ["#{appeal.appellant.first_name} #{appeal.appellant.last_name}",
          appeal.appellant.email_address,
          poa.representative_name,
          poa.representative_type,
+         "Pacific Time (US & Canada)",
+         "Eastern Time (US & Canada)",
          vso_user.email].each do |field_value|
           expect(page).to have_content(field_value)
         end
@@ -52,20 +55,20 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
-        fill_in "Veteran Email", with: "veteran@vetera"
+        fill_in "Appellant Email", with: "appellant@test"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
-        fill_in "Veteran Email", with: "veteran@veteran.com"
+        fill_in "Appellant Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
 
         # Check if button remains disabled
         expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
         # Fill out confirm email field and expect validation message on unmatched email
-        fill_in "Confirm Veteran Email", with: "veteran@veteran"
+        fill_in "Confirm Appellant Email", with: "appellant@not-matching"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-        fill_in "Confirm Veteran Email", with: "veteran@veteran.com"
+        fill_in "Confirm Appellant Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
         # Set appellant tz to null
@@ -90,7 +93,7 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
         expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
-        fill_in "Veteran Email", with: "veteran@veteran.com"
+        fill_in "Veteran Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
         # Convert button should now be enabled
         click_button("Convert Hearing To Virtual")
