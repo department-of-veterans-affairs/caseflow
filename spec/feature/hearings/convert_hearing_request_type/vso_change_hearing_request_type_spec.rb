@@ -2,7 +2,7 @@
 
 RSpec.feature "Convert hearing request type" do
   before do
-    FeatureToggle.enable!(:schedule_veteran_virtual_hearing) 
+    FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
   end
@@ -29,7 +29,10 @@ RSpec.feature "Convert hearing request type" do
       step "verify pre-population of fields" do
         expect(page).to have_content("Convert Hearing To Virtual")
 
-        [appeal.appellant_name, appeal.appellant.email_address, vso_user.full_name, vso_user.email].each do |field_value|
+        [appeal.appellant_name,
+         appeal.appellant.email_address,
+         vso_user.full_name,
+         vso_user.email].each do |field_value|
           expect(page).to have_content(field_value)
         end
       end
