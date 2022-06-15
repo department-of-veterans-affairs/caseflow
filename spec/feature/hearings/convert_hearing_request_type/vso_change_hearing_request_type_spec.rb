@@ -24,7 +24,7 @@ RSpec.feature "Convert hearing request type" do
         User.authenticate!(user: vso_user)
         visit "queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Video")
-        click_link("Convert to virtual")
+        click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
       end
       step "fill out the Form" do
         expect(page).to have_content("Convert Hearing To Virtual")
@@ -100,7 +100,7 @@ RSpec.feature "Convert hearing request type" do
         User.authenticate!(user: vso_user)
         visit "queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Virtual")
-        expect(page).not_to have_link("Convert to virtual")
+        expect(page).not_to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
       end
     end
   end
@@ -126,8 +126,8 @@ RSpec.feature "Convert hearing request type" do
         User.authenticate!(user: vso_user)
         visit "queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Video")
-        expect(page).to have_link("Convert to virtual")
-        click_link("Convert to virtual")
+        expect(page).to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+        click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
         expect(page).to have_current_path("/hearings/#{appeal.hearings.first.uuid}/details")
       end
     end
@@ -155,8 +155,8 @@ RSpec.feature "Convert hearing request type" do
         User.authenticate!(user: vso_user)
         visit "queue/appeals/#{appeal.uuid}"
 
-        expect(page).not_to have_link("Convert to virtual")
-        expect(page).to have_content("Hearing within next 10 days; contact Hearing Coordinator to convert to Virtual.")
+        expect(page).not_to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+        expect(page).to have_content(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)
       end
     end
   end

@@ -72,7 +72,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <React.Fragment>
         {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
         {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline &&
-         <Link href={`/hearings/${hearing.externalId}/details`}>Convert to virtual</Link> }
+         <Link href={`/hearings/${hearing.externalId}/details`}>{COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}</Link> }
       </React.Fragment>
     },
     {
@@ -117,7 +117,7 @@ class CaseHearingsDetail extends React.PureComponent {
             value:
               <div className="cf-sg-alert-slim">
                 <Alert type="info">
-                  Hearing within next 10 days; contact Hearing Coordinator to convert to Virtual.
+                  {COPY.VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT}
                 </Alert>
               </div>
           }
