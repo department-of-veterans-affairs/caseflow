@@ -69,6 +69,7 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+  const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
@@ -92,7 +93,14 @@ const HearingDetails = (props) => {
   // Create an effect to remove stale alerts on unmount
   useEffect(() => () => props.clearAlerts(), []);
 
-  useEffect(() => userVsoEmployee ? convertHearing('change_to_virtual') : null, []);
+  // Set hearing attrs to that of a virtual one if the user is a VSO employee
+  // since they will skip interacting with the hearing type dropdown.
+  useEffect(() => {
+    if (userVsoEmployee) {
+      convertHearing('change_to_virtual');
+      updateHearing('virtualHearing', { requestCancelled: false });
+    }
+  }, []);
 
   const openEmailConfirmationModal = ({ type }) => {
     setEmailConfirmationModalOpen(true);
@@ -113,6 +121,30 @@ const HearingDetails = (props) => {
       representativeTzEdited: !isUndefined(changes.representativeTz),
       appellantTzEdited: !isUndefined(changes.appellantTz)
     };
+  };
+
+  const handleCancelButton = () => {
+    if (userVsoEmployee) {
+      goBack();
+    } else if (converting) {
+      resetState(initialHearing);
+    } else {
+      goBack();
+    }
+  };
+
+  // VSO convert success banner
+  const getSuccessMsg = () => {
+    const appellantFullName = `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`;
+    const veteranFullName = `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
+    const title = sprintf(
+      COPY.CONVERT_HEARING_TYPE_SUCCESS,
+      hearing?.appellantIsNotVeteran ? appellantFullName : veteranFullName,
+      'virtual'
+    );
+    const detail = COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL;
+
+    return { title, detail };
   };
 
   const submit = async (editedEmailsAndTz) => {
@@ -191,12 +223,18 @@ const HearingDetails = (props) => {
 
       const alerts = response.body?.alerts;
 
-      if (alerts) {
+      if (alerts && !userVsoEmployee) {
         processAlerts(alerts, props, setShouldStartPolling);
       }
 
-      // Reset the state
-      resetState(hearingResp);
+      if (userVsoEmployee && convertingToVirtual) {
+        // Store success message and Redirect back to the Case Details Page
+        localStorage.setItem('VSOSuccessMsg', JSON.stringify(getSuccessMsg()));
+        setVSOConvertSuccessful(true);
+      } else {
+        // Reset the state
+        resetState(hearingResp);
+      }
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -253,6 +291,13 @@ const HearingDetails = (props) => {
   const editedEmailsAndTz = getEditedEmailsAndTz();
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
+
+  if (VSOConvertSuccessful && userVsoEmployee) {
+    // Construct the URL to redirect
+    const baseUrl = `${window.location.origin}/queue/appeals`;
+
+    window.location.href = `${baseUrl}/${hearing.appealExternalId}`;
+  }
 
   return (
     <React.Fragment>
@@ -311,7 +356,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => resetState(initialHearing) : goBack}
+          onClick={handleCancelButton}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -319,7 +364,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || disabled}
+            disabled={!formsUpdated || (disabled && !userVsoEmployee)}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
@@ -351,11 +396,16 @@ HearingDetails.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  clearAlerts: PropTypes.func,
+  clearAlerts: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert }, dispatch);
+  bindActionCreators({
+    clearAlerts,
+    onReceiveAlerts,
+    onReceiveTransitioningAlert,
+    transitionAlert },
+  dispatch);
 
 export default connect(
   null,

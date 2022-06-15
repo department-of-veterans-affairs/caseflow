@@ -14,6 +14,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Tooltip from '../components/Tooltip';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
 
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
 import { UnscheduledNotes } from '../hearings/components/UnscheduledNotes';
@@ -22,6 +23,7 @@ import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
 import { dispositionLabel } from '../hearings/utils';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -60,9 +62,18 @@ class CaseHearingsDetail extends React.PureComponent {
   }
 
   getHearingAttrs = (hearing, userIsVsoEmployee) => {
+    const today = new Date();
+    const deadline = today.setDate(today.getDate() + 11);
+    const hearingDay = new Date(hearing.date);
+    // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
       label: 'Type',
-      value: hearing.isVirtual ? 'Virtual' : hearing.type
+      value:
+      <React.Fragment>
+        {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
+        {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline &&
+         <Link href={`/hearings/${hearing.externalId}/details`}>{COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}</Link> }
+      </React.Fragment>
     },
     {
       label: 'Disposition',
@@ -97,8 +108,22 @@ class CaseHearingsDetail extends React.PureComponent {
         value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
       }
     );
-
-    if (!userIsVsoEmployee) {
+    // info alert for hearings within 11 days of scheduled date
+    if (userIsVsoEmployee) {
+      if (!hearing.isVirtual && hearingDay <= deadline) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value:
+              <div className="cf-sg-alert-slim">
+                <Alert type="info">
+                  {COPY.VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT}
+                </Alert>
+              </div>
+          }
+        );
+      }
+    } else {
       hearingAttrs.push(
         {
           label: '',
@@ -161,11 +186,30 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal) => {
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee) => {
+    if (userIsVsoEmployee) {
+      return [
+        {
+          label: 'Type',
+          value:
+            <React.Fragment>
+              {appeal?.readableHearingRequestType}&nbsp;&nbsp;
+              {appeal?.readableHearingRequestType !== 'Virtual' &&
+                <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
+                  `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
+                  {COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}
+                </Link>
+              }
+            </React.Fragment>
+        },
+      ];
+    }
+
     return [
       {
         label: 'Type',
-        value: appeal?.readableHearingRequestType
+        value:
+          appeal?.readableHearingRequestType
       },
       {
         label: 'Notes',
@@ -186,12 +230,13 @@ class CaseHearingsDetail extends React.PureComponent {
         </React.Fragment>
       },
     ];
-  }
+  };
 
   getUnscheduledHearingElements = () => {
     const {
       appeal,
-      hearingTasks
+      hearingTasks,
+      userIsVsoEmployee
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -202,7 +247,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getUnscheduledHearingAttrs(task, appeal).map(this.getDetailField)} />
+        items={this.getUnscheduledHearingAttrs(task, appeal, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
   }
 
@@ -258,7 +303,6 @@ CaseHearingsDetail.propTypes = {
       PropTypes.shape({
         externalId: PropTypes.string,
         type: PropTypes.string
-
       })
     ),
     caseType: PropTypes.string,
@@ -266,7 +310,7 @@ CaseHearingsDetail.propTypes = {
   }),
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
-  hearingTasks: PropTypes.array
+  hearingTasks: PropTypes.array,
 };
 
 const mapStateToProps = (state) => {
