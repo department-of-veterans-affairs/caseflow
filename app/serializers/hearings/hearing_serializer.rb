@@ -105,4 +105,12 @@ class HearingSerializer
   attribute :worksheet_issues
   attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
   attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
+
+  attribute :current_user_email do |_, params|
+    params[:user].email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user].timezone
+  end
 end
