@@ -93,6 +93,16 @@ const HearingDetails = (props) => {
   useEffect(() => () => props.clearAlerts(), []);
 
   useEffect(() => userVsoEmployee ? convertHearing('change_to_virtual') : null, []);
+
+  // Set hearing attrs to that of a virtual one if the user is a VSO employee
+  // since they will skip interacting with the hearing type dropdown.
+  useEffect(() => {
+    if (userVsoEmployee) {
+      convertHearing('change_to_virtual');
+      updateHearing('virtualHearing', { requestCancelled: false });
+    }
+  }, []);
+
   const openEmailConfirmationModal = ({ type }) => {
     setEmailConfirmationModalOpen(true);
     setEmailConfirmationModalType(type);
