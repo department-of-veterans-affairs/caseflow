@@ -1,3 +1,9 @@
+/*
+ * You can define express.js routes in this file for components you have mounted within
+ * Storybook to interact with. Any changes to the routes within this file will only take effect
+ * after restarting the Storybook server.
+ */
+
 const express = require('express');
 
 const expressMiddleWare = router => {
