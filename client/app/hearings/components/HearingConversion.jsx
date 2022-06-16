@@ -42,12 +42,17 @@ export const HearingConversion = ({
     appellantTitle,
     appellantEmailAddress: hearing?.appellantEmailAddress,
     appellantTimezone: hearing?.appellantTz,
-    representativeEmailAddress: hearing?.representativeEmailAddress,
-    representativeTimezone: hearing?.representativeTz,
+    representativeEmailAddress: userVsoEmployee ?
+      hearing?.currentUserEmail :
+      hearing?.representativeEmailAddress,
+    representativeTimezone: userVsoEmployee ?
+      hearing?.currentUserTimezone :
+      hearing?.representativeTz,
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
-    schedulingToVirtual: virtual
+    schedulingToVirtual: virtual,
+    userVsoEmployee
   };
 
   const prefillFields = () => {
@@ -114,4 +119,5 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
+  userVsoEmployee: PropTypes.bool
 };
