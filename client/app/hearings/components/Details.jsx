@@ -70,9 +70,27 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-  const [appellantFields, setAppellantFields] = useState(false);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
+  const [formNotSubmittable, setFormNotSubmittable] = useState(true);
+
+  const canSubmit = () => {
+
+    let emailIsValid = (/\S+@\S+\.\S+/).test(hearing.appellantEmailAddress);
+
+    let allFieldsValid = (
+      Boolean(hearing?.appellantEmailAddress) &&
+      Boolean(hearing?.appellantTz) &&
+      Boolean(hearing?.representativeTz) &&
+      emailIsValid
+    );
+
+    setFormNotSubmittable(!allFieldsValid);
+  };
+
+  useEffect(() => {
+    canSubmit();
+  }, [hearing]);
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -319,7 +337,6 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
-          appellantFieldsFilled={setAppellantFields}
         />
       ) : (
         <AppSegment filledBackground>
@@ -366,7 +383,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || disabled || (appellantFields && userVsoEmployee)}
+            disabled={!formsUpdated || (disabled && !userVsoEmployee) || (formNotSubmittable && userVsoEmployee)}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}

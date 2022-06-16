@@ -23,18 +23,13 @@ export const HearingConversion = ({
   type,
   scheduledFor,
   errors,
-  update,
-  userVsoEmployee,
-  appellantFieldsFilled
+  update
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
-
-  const [appellantEmail, setAppellantEmail] = useState(false);
-  const [appellantTz, setAppellantTz] = useState(false);
 
   // Set the section props
   const sectionProps = {
@@ -54,8 +49,6 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual
   };
 
-  //const handleChangeEmail()
-
   const prefillFields = () => {
     // Try to use the existing timezones if present
     update(
@@ -64,10 +57,6 @@ export const HearingConversion = ({
         representativeTz: hearing?.representativeTz || hearing?.appellantTz
       });
   };
-
-  useEffect(() => {
-    appellantFieldsFilled(appellantEmail && appellantTz);
-  }, [appellantEmail, appellantTz]);
 
   // Pre-fill appellant/veteran email address and representative email on mount.
   useEffect(() => {
