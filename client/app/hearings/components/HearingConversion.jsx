@@ -53,9 +53,7 @@ export const HearingConversion = ({
     representativeEmailAddress: userVsoEmployee ?
       hearing?.currentUserEmail :
       hearing?.representativeEmailAddress,
-    representativeTimezone: userVsoEmployee ?
-      hearing?.currentUserTimezone :
-      hearing?.representativeTz,
+    representativeTimezone: hearing?.representativeTz,
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
@@ -68,11 +66,13 @@ export const HearingConversion = ({
     update(
       'hearing', {
         ...hearing,
-        representativeTz: hearing?.representativeTz || hearing?.appellantTz
+        representativeTz: userVsoEmployee ?
+          hearing?.currentUserTimezone :
+          hearing?.representativeTz || hearing?.appellantTz
       });
   };
 
-  // Pre-fill appellant/veteran email address and representative email on mount.
+  // Pre-fill representative timezone on mount.
   useEffect(() => {
     // Focus the top of the page
     window.scrollTo(0, 0);
