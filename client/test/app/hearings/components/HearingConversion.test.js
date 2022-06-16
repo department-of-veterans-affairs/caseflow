@@ -55,6 +55,12 @@ describe('HearingConversion', () => {
     expect(conversion.find(Timezone)).toHaveLength(2);
     expect(conversion.find(HearingEmail)).toHaveLength(2);
     expect(conversion.find(JudgeDropdown)).toHaveLength(1);
+
+    expect(
+      conversion.
+        findWhere((node) => node.prop('label') === 'vsoCheckboxes')
+    ).toHaveLength(0);
+    expect(conversion.find(Checkbox)).toHaveLength(0);
     expect(conversion).toMatchSnapshot();
   });
 
@@ -67,6 +73,7 @@ describe('HearingConversion', () => {
         update={updateSpy}
         hearing={amaHearing}
         updateCheckboxes= {mockUpdateCheckboxes}
+        userVsoEmployee= {false}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
@@ -97,33 +104,33 @@ describe('HearingConversion', () => {
   });
 
 
-  test('When a non-VSO user converts to virtual, the checkboxes do not appear', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[0]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={amaHearing}
-        updateCheckboxes= {mockUpdateCheckboxes}
-        userVsoEmployee= {false}
-      />,
-      {
-        wrappingComponent: hearingDetailsWrapper(
-          userWithJudgeRole,
-          amaHearing,
-          anyUser
-        ),
-        wrappingComponentProps: { store: detailsStore },
-      });
+  // test('When a non-VSO user converts to virtual, the checkboxes do not appear', () => {
+  //   const conversion = mount(
+  //     <HearingConversion
+  //       scheduledFor={amaHearing.scheduledFor.toString()}
+  //       type={HEARING_CONVERSION_TYPES[0]}
+  //       title={defaultTitle}
+  //       update={updateSpy}
+  //       hearing={amaHearing}
+  //       updateCheckboxes= {mockUpdateCheckboxes}
+  //       userVsoEmployee= {false}
+  //     />,
+  //     {
+  //       wrappingComponent: hearingDetailsWrapper(
+  //         userWithJudgeRole,
+  //         amaHearing,
+  //         anyUser
+  //       ),
+  //       wrappingComponentProps: { store: detailsStore },
+  //     });
 
-    expect(
-      conversion.
-        findWhere((node) => node.prop('label') === 'vsoCheckboxes')
-    ).toHaveLength(0);
-    expect(conversion.find(Checkbox)).toHaveLength(0);
+  //   expect(
+  //     conversion.
+  //       findWhere((node) => node.prop('label') === 'vsoCheckboxes')
+  //   ).toHaveLength(0);
+  //   expect(conversion.find(Checkbox)).toHaveLength(0);
 
-  });
+  // });
 
   test('When a VSO user converts to virtual, the checkboxes appear on the form', () => {
     const conversion = mount(
@@ -152,5 +159,12 @@ describe('HearingConversion', () => {
 
     //  expect both checkboxes to show
     expect(conversion.find(Checkbox)).toHaveLength(2);
+
+    // expect span text to appear
+    expect(
+      conversion.containsMatchingElement(
+        <span>Please work with the Veteran / Appellant to confirm that they have access to a phone or computer with internet access on the day of the virtual hearing. The Veteran / Appellant's email address will be used to send notifications for this hearing only.</span>
+      )
+    ).toBeTruthy();
   })
 });
