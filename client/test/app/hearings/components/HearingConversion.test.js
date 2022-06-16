@@ -103,35 +103,6 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-
-  // test('When a non-VSO user converts to virtual, the checkboxes do not appear', () => {
-  //   const conversion = mount(
-  //     <HearingConversion
-  //       scheduledFor={amaHearing.scheduledFor.toString()}
-  //       type={HEARING_CONVERSION_TYPES[0]}
-  //       title={defaultTitle}
-  //       update={updateSpy}
-  //       hearing={amaHearing}
-  //       updateCheckboxes= {mockUpdateCheckboxes}
-  //       userVsoEmployee= {false}
-  //     />,
-  //     {
-  //       wrappingComponent: hearingDetailsWrapper(
-  //         userWithJudgeRole,
-  //         amaHearing,
-  //         anyUser
-  //       ),
-  //       wrappingComponentProps: { store: detailsStore },
-  //     });
-
-  //   expect(
-  //     conversion.
-  //       findWhere((node) => node.prop('label') === 'vsoCheckboxes')
-  //   ).toHaveLength(0);
-  //   expect(conversion.find(Checkbox)).toHaveLength(0);
-
-  // });
-
   test('When a VSO user converts to virtual, the checkboxes appear on the form', () => {
     const conversion = mount(
       <HearingConversion
