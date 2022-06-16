@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-
 import { marginTop, input8px } from '../details/style';
 import { VSOHearingEmail } from './VSOHearingEmail';
 import { Timezone } from '../VirtualHearings/Timezone';
@@ -15,7 +14,7 @@ export const VSOEmailNotificationsFields = ({
   hearing,
   readOnly,
   time,
-  roTimezone,
+  roTimezone
 }) => {
   const { setIsAppellantTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
 
@@ -32,7 +31,7 @@ export const VSOEmailNotificationsFields = ({
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
-          confirmEmail={false}
+          email={updatedAppeal.appellantEmailAddress}
         />
         <VSOHearingEmail
           required
@@ -44,6 +43,7 @@ export const VSOEmailNotificationsFields = ({
           confirmEmail
         />
         <div
+          value={updatedAppeal.appellantTz}
           className={classNames('usa-grid', { [marginTop(30)]: true })}
           {...input8px}
         >
@@ -70,14 +70,14 @@ export const VSOEmailNotificationsFields = ({
 };
 
 VSOEmailNotificationsFields.propTypes = {
-  requestType: PropTypes.string.isRequired,
-  time: PropTypes.string.isRequired,
-  roTimezone: PropTypes.string.isRequired,
-  appellantTitle: PropTypes.string.isRequired,
+  requestType: PropTypes.string,
+  time: PropTypes.string,
+  roTimezone: PropTypes.string,
+  appellantTitle: PropTypes.string,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
   hearing: PropTypes.object,
   errors: PropTypes.object,
   initialRepresentativeTz: PropTypes.string,
-  header: PropTypes.string,
+  header: PropTypes.string
 };

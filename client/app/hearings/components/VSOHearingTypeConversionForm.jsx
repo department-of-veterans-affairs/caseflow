@@ -11,13 +11,12 @@ import { marginTop, saveButton, cancelButton } from './details/style';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
-
 export const VSOHearingTypeConversionForm = ({
   appeal,
   isLoading,
   onCancel,
   onSubmit,
-  type,
+  type
 }) => {
 
   const {
@@ -53,15 +52,12 @@ export const VSOHearingTypeConversionForm = ({
     appellantFullName: appeal?.appellantFullName,
     appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
     veteranFullName: appeal?.veteranFullName,
+    currentUserEmail: appeal?.currentUserEmail,
+    currentUserTimezone: appeal?.currentUserTimezone,
+    appellantTz: appeal?.appellantTz
   };
 
-  // veteranInfo gets loaded into redux store when case details page loads
-  const virtualHearing = {
-    appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
-    representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
-  };
   /* eslint-enable camelcase */
-
   // Set the section props
   const sectionProps = {
     appellantTitle,
@@ -70,8 +66,7 @@ export const VSOHearingTypeConversionForm = ({
     showDivider: false,
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,
-    type,
-    virtualHearing,
+    type
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
@@ -93,7 +88,7 @@ export const VSOHearingTypeConversionForm = ({
         <Checkbox
           label={
             <div>
-              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span><br />
               <a
                 href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
                 style={{ textDecoration: 'underline' }}
