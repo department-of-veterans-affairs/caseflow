@@ -147,6 +147,11 @@ const actionableTasksForAppeal = createSelector(
   (tasks) => filter(tasks, (task) => task.availableActions.length)
 );
 
+export const scheduleHearingTasksForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
+);
+
 export const openScheduleHearingTasksForAppeal = createSelector(
   [actionableTasksForAppeal],
   (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
@@ -218,7 +223,7 @@ export const camoAssignTasksSelector = createSelector(
   (tasks) =>
     filter(tasks, (task) => {
       return (
-        task.label === COPY.VHA_REVIEW_DOCUMENTATION_TASK_LABEL &&
+        task.label === COPY.REVIEW_DOCUMENTATION_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
       );
     })

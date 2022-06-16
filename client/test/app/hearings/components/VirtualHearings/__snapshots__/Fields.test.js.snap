@@ -16208,12 +16208,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -16277,6 +16277,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -32398,12 +32399,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -32467,6 +32468,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -48700,12 +48702,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -48769,6 +48771,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -64890,12 +64893,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -64959,6 +64962,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"

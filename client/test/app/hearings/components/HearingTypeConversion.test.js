@@ -7,16 +7,20 @@ import {
 } from '../../../../app/hearings/components/HearingTypeConversionForm';
 import { legacyAppealForTravelBoard } from '../../../data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
-import HearingTypeConversion from
-  '../../../../app/hearings/components/HearingTypeConversion';
+import { HearingTypeConversion } from '../../../../app/hearings/components/HearingTypeConversion';
+import {
+  HearingTypeConversionProvider,
+} from '../../../../app/hearings/contexts/HearingTypeConversionContext';
 
 describe('HearingTypeConversion', () => {
   test('Matches snapshot with default props', () => {
     const hearingTypeConversion = mount(
-      <HearingTypeConversion
-        appeal={legacyAppealForTravelBoard}
-        type={'Virtual'}
-      />,
+      <HearingTypeConversionProvider>
+        <HearingTypeConversion
+          appeal={legacyAppealForTravelBoard}
+          type="Virtual"
+        />
+      </HearingTypeConversionProvider>,
       {
         wrappingComponent: queueWrapper,
       }

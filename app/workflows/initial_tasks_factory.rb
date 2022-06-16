@@ -36,10 +36,6 @@ class InitialTasksFactory
       if TrackVeteranTask.where(appeal: @appeal, assigned_to: rep).empty?
         TrackVeteranTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
       end
-      if ChangeHearingRequestTypeTask.where(appeal: @appeal, assigned_to: rep).empty? &&
-         @appeal.docket_type == "hearing"
-        ChangeHearingRequestTypeTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
-      end
     end
   end
 

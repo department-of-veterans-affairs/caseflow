@@ -463,7 +463,7 @@ class TaskActionRepository
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
-        instructions_label: COPY::VHA_MODAL_BODY,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
@@ -476,11 +476,31 @@ class TaskActionRepository
       }
     end
 
+    def emo_send_to_board_intake_for_review(*)
+      {
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        type: EducationDocumentSearchTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}",
+        body_optional: true
+      }
+    end
+
+    def education_rpo_send_to_board_intake_for_review(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE,
+        type: EducationAssessDocumentationTask.name,
+        body_optional: true,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
     def vha_assign_to_program_office_data(*)
       {
         options: organizations_to_options(VhaProgramOffice.all),
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
-        modal_body: COPY::VHA_MODAL_BODY,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
@@ -493,7 +513,7 @@ class TaskActionRepository
       {
         options: organizations_to_options(VhaRegionalOffice.all),
         modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
-        modal_body: COPY::VHA_MODAL_BODY,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
         instructions: [],
         type: AssessDocumentationTask.name,
@@ -534,9 +554,23 @@ class TaskActionRepository
         options: [{ label: camo.name, value: camo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
-        message_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
-        message_detail: COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def bva_intake_return_to_emo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      emo = EducationEmo.singleton
+      {
+        selected: emo,
+        options: [{ label: emo.name, value: emo.id }],
+        modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
+        modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
+        message_title: format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
+        type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
     end
@@ -545,10 +579,59 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        modal_title: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::VHA_MARK_TASK_IN_PROGRESS_MODAL_BODY,
-        message_title: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
-        message_detail: COPY::VHA_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        type: AssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def emo_return_to_board_intake(*)
+      {
+        modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        type: EducationDocumentSearchTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+      }
+    end
+
+    def emo_assign_to_education_rpo_data(*)
+      {
+        options: organizations_to_options(EducationRpo.all),
+        modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
+        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}",
+        body_optional: true
+      }
+    end
+
+    def education_rpo_return_to_emo(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        modal_title: COPY::EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE,
+        message_title: format(
+          COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
+          task.appeal.veteran_full_name
+        ),
+        type: EducationAssessDocumentationTask.name,
+        redirect_after: "/organizations/#{queue_url}",
+        modal_button_text: COPY::MODAL_RETURN_BUTTON
+      }
+    end
+
+    def education_rpo_mark_task_in_progress(task, _user)
+      org = Organization.find(task.assigned_to_id)
+      queue_url = org.url
+      {
+        # testing here
+        modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+        message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }

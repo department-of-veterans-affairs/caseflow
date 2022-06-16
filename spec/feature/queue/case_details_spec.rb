@@ -2331,6 +2331,63 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  # National VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:vso) { create(:vso) }
+    let!(:vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso) }
+
+    before do
+      vso.add_user(vso_user)
+      User.authenticate!(user: vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+  end
+
+  # Field VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:field_vso) { create(:field_vso) }
+    let!(:field_vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: field_vso) }
+
+    before do
+      field_vso.add_user(field_vso_user)
+      User.authenticate!(user: field_vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+  end
+
+  # Private Bar Test
+  context "when updating a hearing as a Private_Bar user to virtual hearing" do
+    let!(:private_bar) { create(:private_bar) }
+    let!(:private_bar_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: private_bar) }
+
+    before do
+      private_bar.add_user(private_bar_user)
+      User.authenticate!(user: private_bar_user)
+    end
+
+    it "should not display a dropdown menu for Private_Bar user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+  end
+
   describe "case title details" do
     shared_examples "show hearing request type" do
       it "displays hearing request type" do

@@ -104,13 +104,15 @@ RSpec.describe HearingsController, type: :controller do
     context "when updating an existing hearing to a virtual hearing" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
       let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain, judge: judge) }
+      let(:additional_hearing_params) { {} }
       let(:virtual_hearing_params) { {} }
 
       subject do
         hearing_params = {
           notes: "Notes",
           virtual_hearing_attributes: virtual_hearing_params
-        }
+        }.merge(additional_hearing_params)
+
         patch_params = {
           id: hearing.external_id,
           hearing: hearing_params
@@ -317,9 +319,49 @@ RSpec.describe HearingsController, type: :controller do
           expect(hearing.reload.virtual_hearing.representative_tz).to eq(timezone)
         end
       end
+
+      context "as a VSO user" do
+        let(:appellant_email) { "caseflow-veteran2@test.com" }
+
+        let!(:virtual_hearing_params) do
+          {
+            request_cancelled: false,
+            job_completed: false
+          }
+        end
+
+        let!(:additional_hearing_params) do
+          {
+            appellant_email_address: appellant_email,
+            appellant_tz: "America/Denver",
+            transcription_attributes: {},
+            email_recipients_attributes: {
+              "0": {
+                timezone: "America/Denver",
+                email_address: appellant_email,
+                type: "AppellantHearingEmailRecipient"
+              }
+            }
+          }
+        end
+
+        let!(:user) { User.authenticate!(roles: ["VSO"]) }
+
+        it "the hearing can be updated" do
+          expect(hearing.virtual?).to be false
+          expect(hearing.appellant_recipient&.email_address).to_not eq appellant_email
+
+          expect(subject.status).to eq(200)
+
+          hearing.reload
+          expect(hearing.appellant_recipient&.email_address).to eq appellant_email
+          expect(hearing.virtual?).to be true
+        end
+      end
     end
 
     context "when updating the judge of an existing virtual hearing" do
+      let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
       let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
       let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
       let!(:virtual_hearing) do

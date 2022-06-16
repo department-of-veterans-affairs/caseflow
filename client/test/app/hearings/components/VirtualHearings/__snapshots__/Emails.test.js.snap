@@ -59,6 +59,7 @@ exports[`HearingEmails Does not show required when ReadOnly 1`] = `
         }
         id="Appellant Email"
         name="Appellant Email"
+        onBlur={[Function]}
         onChange={[Function]}
         readOnly={true}
         type="text"
@@ -156,6 +157,7 @@ exports[`HearingEmails Respects required prop 1`] = `
         }
         id="Appellant Email"
         name="Appellant Email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="123@gmail.com"

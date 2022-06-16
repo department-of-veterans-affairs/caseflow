@@ -831,5 +831,61 @@ feature "Intake", :all_dbs do
         expect(page).to have_current_path("/intake/add_issues")
       end
     end
+
+    context "Education Issue on Appeal" do
+      context "eduPreDocketAppeals FeatureToggle is enabled" do
+        before { FeatureToggle.enable!(:edu_predocket_appeals) }
+        after { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        scenario "pre-docket selection is available with education issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to have_content("Is pre-docketing needed for this issue?")
+        end
+
+        scenario "pre-docket select is not available with compensation issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Compensation")
+
+          expect(page).to_not have_content("Is pre-docketing needed for this issue?")
+        end
+      end
+
+      context "eduPreDocketAppeals FeatureToggle is disabled" do
+        before { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        scenario "pre-docket selection is not available with education issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to_not have_content("Is pre-docketing needed for this issue?")
+        end
+      end
+    end
   end
 end

@@ -6,12 +6,13 @@ import { ReadOnly } from "../details/ReadOnly";
 import { VSOEmailNotificationsFields } from "../details/VSOEmailNotificationsFields";
 
 export const VSOAppellantSection = ({
+  errors,
   hearing,
   showDivider,
   appellantTitle,
   formFieldsOnly,
-  appellantEmailAddress,
-  appellantTz,
+  update,
+  appellantTimezone
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -30,9 +31,13 @@ export const VSOAppellantSection = ({
       <React.Fragment>
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
         <VSOEmailNotificationsFields
-          appellantEmailAddress={appellantEmailAddress}
-          appellantTz={appellantTz}
-        />
+          errors={errors}
+          hearing={hearing}
+          update={update}
+          time={hearing.scheduledTimeString}
+          roTimezone={hearing?.regionalOfficeTimezone}
+          requestType={hearing.readableRequestType}
+          appellantTimezone={appellantTimezone} />
       </React.Fragment>
     </VirtualHearingSection>
   );

@@ -4,7 +4,7 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE
   end
 
   def self.tab_name

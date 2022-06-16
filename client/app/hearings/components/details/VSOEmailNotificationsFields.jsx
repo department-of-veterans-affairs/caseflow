@@ -1,49 +1,49 @@
-import React from "react";
-import classNames from "classnames";
-import PropTypes from "prop-types";
+import React, { useContext } from 'react';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
-import { marginTop, input8px } from "../details/style";
-import { HearingEmail } from "./HearingEmail";
-import { Timezone } from "../VirtualHearings/Timezone";
-import { HelperText } from "../VirtualHearings/HelperText";
-import COPY from "../../../../COPY";
-import { getAppellantTitle, readOnlyEmails } from "../../utils";
+import { marginTop, input8px } from '../details/style';
+import { VSOHearingEmail } from './VSOHearingEmail';
+import { Timezone } from '../VirtualHearings/Timezone';
+import { HelperText } from '../VirtualHearings/HelperText';
+import COPY from '../../../../COPY';
+import { getAppellantTitle, readOnlyEmails } from '../../utils';
+import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 
 export const VSOEmailNotificationsFields = ({
   errors,
   hearing,
   readOnly,
-  update,
   time,
   roTimezone,
   appellantEmailAddress,
   appellantTz,
 }) => {
+  const { setIsAppellantTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
+
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   return (
     <React.Fragment>
       <div id="email-section" className="usa-grid">
-        <HearingEmail
+        <VSOHearingEmail
           required
           disabled={disableField}
           label={`${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={appellantEmailAddress}
           error={errors?.appellantEmailAddress}
-          update={update}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
+          confirmEmail={false}
         />
-        <HearingEmail
+        <VSOHearingEmail
           required
           disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
           emailType="appellantEmailAddress"
-          email={null}
           error={errors?.appellantEmailAddress}
-          update={update}
           showHelper={false}
+          confirmEmail
         />
         <div
           value={hearing?.appellantTz}
@@ -52,9 +52,11 @@ export const VSOEmailNotificationsFields = ({
         >
           <Timezone
             required
-            errorMessage={errors?.appellantTz}
-            value={appellantTz}
-            onChange={(appellantTz) => update("hearing", { appellantTz })}
+            value={updatedAppeal.appellantTz}
+            onChange={(appellantTz) => {
+              dispatchAppeal({ type: 'SET_APPELLANT_TZ', payload: appellantTz });
+              setIsAppellantTZEmpty(!appellantTz);
+            }}
             readOnly={disableField}
             time={time}
             roTimezone={roTimezone}
