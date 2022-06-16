@@ -24,6 +24,7 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
+  userVsoEmployee
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
