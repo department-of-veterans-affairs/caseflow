@@ -47,7 +47,7 @@ export const VSOHearingTypeConversionForm = ({
     appellantTz: updatedAppeal?.appellantTz,
     appellantEmailAddress: updatedAppeal?.appellantEmailAddress,
     representativeEmailAddress: updatedAppeal?.currentUserEmail,
-    representativeTz: updatedAppeal?.representativeTimezone,
+    representativeTz: updatedAppeal?.representativeTz,
     appellantConfirmEmailAddress: updatedAppeal?.appellantConfirmEmailAddress
   };
 
@@ -85,8 +85,8 @@ export const VSOHearingTypeConversionForm = ({
       !updatedAppeal?.appellantEmailAddress ||
       !checkedAccess ||
       !checkedPermissions ||
-      !updatedAppeal?.appellantTimezone ||
-      !updatedAppeal?.representativeTimezone ||
+      !updatedAppeal?.appellantTz ||
+      !updatedAppeal?.representativeTz ||
       (updatedAppeal?.appellantEmailAddress !==
         updatedAppeal?.appellantConfirmEmailAddress
       );
