@@ -26,10 +26,9 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
-  userVsoEmployee
+  userVsoEmployee,
+  setIsNotValidEmail
 }) => {
-  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
-
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
@@ -142,5 +141,6 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
-  userVsoEmployee: PropTypes.bool
+  userVsoEmployee: PropTypes.bool,
+  setIsNotValidEmail: PropTypes.func
 };
