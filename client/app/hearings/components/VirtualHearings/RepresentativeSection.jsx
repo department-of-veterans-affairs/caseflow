@@ -70,7 +70,7 @@ export const RepresentativeSection = ({
       <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
         <HearingEmail
           optional
-          readOnly={readOnly || userVsoEmployee}
+          readOnly={readOnly}
           emailType={representativeEmailType}
           label="POA/Representative Email (for these notifications only)"
           email={representativeEmailAddress}
