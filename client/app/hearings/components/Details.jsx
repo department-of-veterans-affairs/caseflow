@@ -75,14 +75,10 @@ const HearingDetails = (props) => {
   const [formNotSubmittable, setFormNotSubmittable] = useState(true);
 
   const canSubmit = () => {
-
-    let emailIsValid = (/\S+@\S+\.\S+/).test(hearing.appellantEmailAddress);
-
     let allFieldsValid = (
       Boolean(hearing?.appellantEmailAddress) &&
       Boolean(hearing?.appellantTz) &&
-      Boolean(hearing?.representativeTz) &&
-      emailIsValid
+      Boolean(hearing?.representativeTz)
     );
 
     setFormNotSubmittable(!allFieldsValid);
