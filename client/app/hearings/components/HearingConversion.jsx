@@ -16,7 +16,6 @@ import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
-// import { HearingsUserContext } from '../contexts/HearingsUserContext';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -31,7 +30,6 @@ export const HearingConversion = ({
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
-  // const { userVsoEmployee } = useContext(HearingsUserContext);
 
   let helperLabel = '';
 
