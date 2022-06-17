@@ -256,6 +256,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             showMissingEmailAlert={true}
             showOnlyAppellantName={true}
             type="Virtual"
+            userVsoEmployee={false}
             virtualHearing={
               Object {
                 "appellantEmail": "Abellona.Valtas@test.com",
@@ -298,7 +299,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   className="usa-width-one-half"
                 >
                   <HearingEmail
-                    helperLabel="This email address will be used to send notifications for this hearing only."
+                    helperLabel="The hearing time in email notifications is calculated based on the timezone."
                     label="Veteran Email (for these notifications only)"
                     optional={false}
                     readOnly={true}
