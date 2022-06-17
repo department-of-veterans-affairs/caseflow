@@ -22,8 +22,7 @@ export const VSOHearingEmail = ({
   emailType,
   actionType,
   setIsNotValidEmail,
-  update,
-  error
+  update
 }) => {
 
   const [message, setMessage] = useState('');
