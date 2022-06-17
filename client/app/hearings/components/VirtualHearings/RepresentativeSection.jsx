@@ -24,8 +24,7 @@ export const RepresentativeSection = ({
   formFieldsOnly,
   representativeEmailAddress,
   representativeTimezone,
-  representativeEmailType,
-  userVsoEmployee
+  representativeEmailType
 }) => (
   <VirtualHearingSection formFieldsOnly={formFieldsOnly} label="Power of Attorney (POA)" showDivider={showDivider}>
     {hearing?.representative ? (
