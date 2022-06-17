@@ -141,6 +141,10 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
 
+      # expect VSO checkboxes to not be present for non-VSO users
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
+
       # Test the links are not present
       within "#vlj-hearings-link" do
         expect(page).to have_content("Scheduling in progress")
