@@ -98,6 +98,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -369,6 +370,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
   showMissingEmailAlert={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "appellantEmail": null,
@@ -592,6 +594,7 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
   showMissingEmailAlert={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
 >
   <VirtualHearingSection
     formFieldsOnly={false}
@@ -809,6 +812,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   showTimezoneField={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -17116,6 +17120,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -17327,6 +17332,7 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
   schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -17539,6 +17545,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
+  userVsoEmployee={false}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
